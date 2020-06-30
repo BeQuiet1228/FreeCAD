@@ -6,7 +6,7 @@ add_subdirectory(Main)
 add_subdirectory(Mod)
 add_subdirectory(Ext)
 add_subdirectory(Doc)
-
+add_subdirectory(Contorl)
 if(BUILD_GUI)
     add_subdirectory(Gui)
 endif(BUILD_GUI)

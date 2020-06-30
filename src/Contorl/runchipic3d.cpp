@@ -1,0 +1,144 @@
+#include "runchipic3d.h"
+#include <iostream>
+#include <qfile.h>
+#include <qdir.h>
+#include <qtextstream.h>
+#include <qbytearray.h>
+#include <qtextcodec.h>
+/**
+ * @brief RunChipic3d::RunChipic3d 初始化启动器
+ * @param mode 运行模式 x32模式 x64模式
+ */
+RunChipic3d::RunChipic3d(const RunChipic3d::RunMode &mode)
+{
+    //初始化变量
+    mpiProcess = nullptr;
+
+    if(mode == X32)
+    {
+        mpiPath = QDir::currentPath() + q2s("/") + mpiX32Path;
+        chipicPath = QDir::currentPath() + q2s("/") + chipicX32Path;
+    }else if (mode == X64) {
+        mpiPath = QDir::currentPath() + q2s("/") + mpiX64Path;
+        chipicPath = QDir::currentPath() + q2s("/") + chipicX64Path;
+    }
+}
+/**
+ * @brief RunChipic3d::runWithLonelinessMode 单机启动CHIPIC3d
+ * @param m3dPath m3d文本路径
+ */
+void RunChipic3d::runWithLonelinessMode(const QString &m3dPath)
+{
+    QProcess *pro = new QProcess;
+    QString cmd =  chipicPath + q2s(" \"") + m3dPath + q2s("\"");
+#ifdef _DEBUG
+	std::cerr << "lonelinessMod start cmd:" << cmd.toStdString() << std::endl;
+#endif
+	pro->start(cmd);
+}
+/**
+ * @brief RunChipic3d::runWithNotLonelinessMode 并行启动chipic3d
+ * @param m3dpath m3d路径
+ * @param count 并行个数
+ */
+void RunChipic3d::runWithNotLonelinessMode(const QString &m3dpath, const int &count)
+{
+    //获取文件路径跟文件名
+    QDir dir(m3dpath);
+    QString m3dName = dir.dirName();
+    QString path = m3dpath;
+    path = path.remove(m3dName);
+    //初始化mpi
+    initMpi();
+    //生成配置文件
+    makeCfgFile(path,m3dName,count);
+
+    //执行并行运算
+    if(mpiProcess != nullptr)
+    {
+        delete  mpiProcess;
+    }
+    mpiProcess = new QProcess;
+
+    //启动mpi
+    QString cmd = mpiPath + q2s("smpd.exe -d 0");
+    mpiProcess->start(cmd);
+#ifdef _DEBUG
+    std::cerr << "notLonelinessMod init cmd:" << cmd.toStdString() << std::endl;
+#endif
+
+    //启动chipic3d
+    QProcess *process = new QProcess;
+    cmd = mpiPath + q2s("mpiexec.exe -configfile ") +path + q2s("cfg.txt -phrase 0");
+    process->start(cmd);
+#ifdef _DEBUG
+    std::cerr << "notLonelinessMod start cmd:" << cmd.toStdString() << std::endl;
+#endif
+
+}
+/**
+ * @brief RunChipic3d::makeCfgFile 在工程目录生成配置文件cfg.txt
+ * @param path 工程目录
+ * @param fileName 文件名
+ * @param count 并行数量
+ */
+void RunChipic3d::makeCfgFile(const QString &path, const QString &fileName, const int &count)
+{
+    QFile file(path + fileName);
+    QDir dir;
+    QStringList directories,filenames;
+    //新建并行文件夹并把工程拷贝进去
+    for(int i = 1; i <= count; i++)
+    {
+        QString d = path.arg(q2s("%1"));
+        d += QString(q2s("%1")).arg(i);
+        directories.append(d);
+        dir.mkdir(d);
+        d.append(q2s("\\"));
+        QFile f(d+fileName);
+        if(f.exists())
+            f.remove();
+        file.copy(d+fileName);
+        filenames.append(d+fileName);
+    }
+
+    //根据格式生成cfg文件夹
+    QFile cfg(path+q2s("cfg.txt"));
+    if (!cfg.open(QIODevice::WriteOnly)) {
+        return;
+    }
+    QTextStream out(&cfg);
+    for(int i = 1; i <= count; i++)
+    {
+        out << q2s("-n 1 -wdir") << QLatin1Char(' ')
+            << directories[i-1] << QLatin1Char(' ')
+            << chipicPath << QLatin1Char(' ')
+            << filenames[i-1] << QLatin1Char('\n');
+    }
+    cfg.close();
+}
+/**
+ * @brief RunChipic3d::initMpi 初始化mpi，需要程序拥有管理员权限才能初始化成功
+ */
+void RunChipic3d::initMpi()
+{
+    QProcess process;
+    QString cmd = mpiPath + q2s("smpd.exe -install -phrase behappy");
+    process.start(cmd);
+    process.waitForFinished();
+	cmd = mpiPath + q2s("smpd.exe -stop");
+	process.start(cmd);
+	process.waitForFinished();
+#ifdef _DEBUG
+    std::cerr << "init MPI output: " << QString::fromLocal8Bit(process.readAll()).toStdString() << std::endl;
+#endif
+}
+/**
+ * @brief RunChipic3d::q2s std::string转换为qstring
+ * @param str std::string
+ * @return qstring
+ */
+QString RunChipic3d::q2s(const char *s)
+{
+    return  QObject::tr(s);
+}
