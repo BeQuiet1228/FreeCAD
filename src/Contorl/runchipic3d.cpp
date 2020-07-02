@@ -76,6 +76,25 @@ void RunChipic3d::runWithNotLonelinessMode(const QString &m3dpath, const int &co
 #endif
 
 }
+
+/**
+* @brief RunChipic3d::run 运行chipic程序
+* @param const std::string & m3dpath m3d文件路径
+* @param const int & count 线程数
+* @return void
+*/
+void RunChipic3d::run(const std::string &m3dpath, const int &count /*= 1*/)
+{
+	if (count == 1)
+	{
+		runWithLonelinessMode(QString::fromStdString(m3dpath));
+	}
+	else if (count > 1)
+	{
+		runWithNotLonelinessMode(QString::fromStdString(m3dpath), count);
+	}
+}
+
 /**
  * @brief RunChipic3d::makeCfgFile 在工程目录生成配置文件cfg.txt
  * @param path 工程目录

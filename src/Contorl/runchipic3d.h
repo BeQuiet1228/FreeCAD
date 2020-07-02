@@ -19,7 +19,8 @@ public:
     void runWithLonelinessMode(const QString &m3dPath);
     //并行模式启动
     void runWithNotLonelinessMode(const QString &m3dpath,const int &count);
-
+	//启动chipic
+	void run(const std::string &m3dpath, const int &count = 1);
 private:
     //32位chipic路径
     const QString chipicX32Path = q2s("w32dll/Chipic3d.exe");

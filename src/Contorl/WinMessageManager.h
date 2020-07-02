@@ -15,10 +15,35 @@
 #include <string.h>
 #include <iostream>
 #include <qstring.h>
+#include <QThread>
+#include <mutex>
+#include <deque>
+/**
+* @brief 消息结构类
+*/
+struct Message
+{
+	Message(UINT msg = WM_USER, WPARAM wParam = 0, LPARAM lParam = 0) {
+		this->Msg = msg;
+		this->wParam = wParam;
+		this->lParam = lParam;
+		this->text = "";
+		this->threadId = 0;
+	}
+	//消息类型
+	UINT Msg;
+	//短参数
+	WPARAM wParam;
+	//长参数
+	LPARAM lParam;
+	//文本信息
+	std::string text;
+	//线程id
+	DWORD threadId;
 
-struct Message;
+};
 
-class WinMessageManager
+class WinMessageManager:public QThread
 {
 public:
 	WinMessageManager();
@@ -32,13 +57,38 @@ public:
     bool receiveMessage(Message &msg,const int &ms = 100);
     //测试发送消息是否成功
     bool testSendMessage();
+	//chipic线程id
 	DWORD mainThreadID;
+	//添加发送消息
+	void sendMessage(const Message& msg);
 
 private:
 	//根据进程名获取所有线程的id
 	int GetMainThreadIdFromName(LPCSTR szName, std::vector<DWORD>& threads);
 	//获取主线程id
 	void getMainThreadId(DWORD &_threadId);
+	//获取消息队列中的消息
+	bool getMessageForDeque(Message& msg);
+	//开启工作线程
+	void workThreadOn();
+	//关闭工作线程
+	void workThreadOff();
+	//设置工作线程循环标志
+	void setWorkThreadFlag(const bool& flag);
+	//获取工作线程循环标志
+	bool getWorkThreadFlag();
+private:
+	//消息队列
+	std::deque<Message> sendMessageDeque;
+	//消息队列锁
+	std::mutex sendMessageDequeMutex;
+	//工作线程循环锁
+	std::mutex workThreadMutex;
+	//工作线程循环标志
+	bool workThreadFlag;
+
+protected:
+	void run() override;
 
 };
 

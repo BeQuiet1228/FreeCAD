@@ -1,16 +1,20 @@
 #include "WinMessageManager.h"
 #include "lonelinessmode.h"
-
+#include "MessageTransition.h"
+#include "JsonMessageGetter.h"
 
 WinMessageManager::WinMessageManager()
 {
-
+	workThreadFlag = false;
 }
 
 
 WinMessageManager::~WinMessageManager()
 {
-
+	sendMessage(WM_USER, 0, 0);
+	//等待线程发送出关闭内核程序的消息
+	Sleep(30);
+	workThreadOff();
 }
 /**
 * @brief WinMessageManager::GetMainThreadIdFromName 根据进程名称获取进程下所有线程id
@@ -106,12 +110,97 @@ void WinMessageManager::getMainThreadId(DWORD &_threadId) {
 				if (msg.message == WM_USER + 20)
 				{
                     _threadId = (DWORD)msg.wParam;
+					std::cerr << "threadID:" << _threadId << ",Msg:" << GetWindowThreadProcessId(msg.hwnd, NULL) << std::endl;
+					
 					break;
 				}
 			}
 		}
 	}
 }
+
+/**
+* @brief WinMessageManager::getMessageForDeque 从消息队列中获取要发送的消息
+* @param Message & msg
+* @return bool 如果队列中没有消息则返回false
+*/
+bool WinMessageManager::getMessageForDeque(Message& msg)
+{
+	sendMessageDequeMutex.lock();
+	if (sendMessageDeque.empty())
+	{
+		sendMessageDequeMutex.unlock();
+		return false;
+	}
+	msg = sendMessageDeque.front();
+	sendMessageDeque.pop_front();
+	sendMessageDequeMutex.unlock();
+
+	return true;
+}
+
+/**
+* @brief WinMessageManager::workThreadOn 开启工作线程循环
+* @return void
+*/
+void WinMessageManager::workThreadOn()
+{
+	setWorkThreadFlag(true);
+	this->start();
+}
+
+void WinMessageManager::workThreadOff()
+{
+	setWorkThreadFlag(false);
+	this->wait();
+}
+
+/**
+* @brief WinMessageManager::setWorkThreadFlag
+* @param const bool & flag
+* @return void
+*/
+void WinMessageManager::setWorkThreadFlag(const bool& flag)
+{
+	workThreadMutex.lock();
+	workThreadFlag = flag;
+	workThreadMutex.unlock();
+}
+
+/**
+* @brief WinMessageManager::getWorkThreadFlag
+* @return bool
+*/
+bool WinMessageManager::getWorkThreadFlag()
+{
+	workThreadMutex.lock();
+	bool temp = workThreadFlag;
+	workThreadMutex.unlock();
+
+	return temp;
+}
+
+void WinMessageManager::run()
+{
+	while (getWorkThreadFlag())
+	{
+		//每次循环睡眠50ms,避免cpu被占用
+		Sleep(50);
+		Message msg;
+		//接收winmessga
+		while (receiveMessage(msg,0))
+		{
+			std::string json = MessageTransition::winMessageTojson(msg);
+			auto messageGetter = JsonMessageGetter::GetInstance();
+			messageGetter->addJsonMessage(json);
+		}
+		while (getMessageForDeque(msg))
+		{
+			sendMessage(msg.Msg, msg.wParam, msg.lParam);
+		}
+	}
+}
+
 /**
 * @brief WinMessageManager::sendMessage 发送消息
 * @param msg 消息类型
@@ -136,11 +225,25 @@ bool WinMessageManager::sendMessage(UINT Msg, WPARAM wParam, LPARAM lParam)
 #endif // _DEBUG
 	return b;
 }
+
+/**
+* @brief WinMessageManager::sendMessage 发送消息，实际是将消息放入队列，等待工作线程发送
+* @param const Message & msg
+* @return void
+*/
+void WinMessageManager::sendMessage(const Message& msg)
+{
+	sendMessageDequeMutex.lock();
+	sendMessageDeque.push_back(msg);
+	sendMessageDequeMutex.lock();
+}
+
 /**
 * @brief 初始化
 */
 void WinMessageManager::init(){
 	getMainThreadId(mainThreadID);
+	workThreadOn();
 }
 /**
 * @brief WinMessageManager::receiveMessage 接收消息

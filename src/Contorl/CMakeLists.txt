@@ -28,6 +28,8 @@ SET(Contorl_src
 	Chipic.h
 	ChipicManager.cpp
 	ChipicManager.h
+	MessageManager.cpp
+	MessageManager.h
 	${UI_SRC}
 	${JSON_SRC}
 )
