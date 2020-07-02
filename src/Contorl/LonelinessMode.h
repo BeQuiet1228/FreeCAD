@@ -162,6 +162,8 @@ struct Message
         this->Msg = msg;
         this->wParam = wParam;
         this->lParam = lParam;
+		this->text = "";
+		this->threadId = 0;
     }
     //消息类型
     UINT Msg;
@@ -169,6 +171,11 @@ struct Message
     WPARAM wParam;
     //长参数
     LPARAM lParam;
+	//文本信息
+	std::string text;
+	//线程id
+	DWORD threadId;
+	
 };
 /**
  * @brief The PyMessageType enum python消息的类型

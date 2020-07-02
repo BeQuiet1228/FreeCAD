@@ -4,6 +4,12 @@ project(Contorl)
 SET(UI_SRC
 	Contorl.ui
 )
+SET(JSON_SRC
+	cJSON.c
+	cJSON.h
+	CJsonObject.cpp
+	CJsonObject.hpp
+)
 SET(Contorl_src
 	main.cpp
 	Contorl.cpp
@@ -14,7 +20,16 @@ SET(Contorl_src
 	runchipic3d.h
 	WinMessageManager.cpp
 	WinMessageManager.h
+	MessageTransition.cpp
+	MessageTransition.h
+	JsonMessageGetter.cpp
+	JsonMessageGetter.h
+	Chipic.cpp
+	Chipic.h
+	ChipicManager.cpp
+	ChipicManager.h
 	${UI_SRC}
+	${JSON_SRC}
 )
 #设置编译生成文件类型
 add_executable(Contorl ${Contorl_src}) # 生成可执行文件
@@ -69,10 +84,16 @@ target_link_libraries(Contorl ${QT_LIB})
 SET(MY_MOC_HDR
 	lonelinessmode.h
 	Contorl.h
+	JsonMessageGetter.h
+	Chipic.h
+	ChipicManager.h
 )
 SET(MY_MOC_SRC
 	lonelinessmode.cpp
 	Contorl.cpp
+	JsonMessageGetter.cpp
+	Chipic.cpp
+	ChipicManager.cpp
 )
 fc_wrap_cpp(MY_MOC_SRCS ${MY_MOC_HDR})
 source_group("Properties" Files ${MY_MOC_SRCS})
