@@ -75,3 +75,23 @@ void MessageTransition::jsonGetStringValue(neb::CJsonObject& jsonObject, const s
 #endif // _DEBUG
 	}
 }
+
+/**
+* @brief MessageTransition::creatRunChipicJsonMessage 创建一个运行chipic的json消息
+* @param const std::string & m3dPath
+* @param const int & threadCount
+* @return std::string
+*/
+std::string MessageTransition::creatRunChipicJsonMessage(const std::string& m3dPath, const int& threadCount)
+{
+	neb::CJsonObject Message;
+	Message.Add("cmd", "RunChipic");
+
+	neb::CJsonObject temp;
+	temp.Add("m3dPath", m3dPath);
+	temp.Add("threadCount", threadCount);
+
+	Message.Add("Text", temp.ToString());
+
+	return Message.ToString();
+}

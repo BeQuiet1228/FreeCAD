@@ -2,6 +2,18 @@
 #include "JsonMessageGetter.h"
 #include "CJsonObject.hpp"
 #include <iostream>
+#include "JsonMessageGetter.h"
+ChipicManager::ChipicManager()
+{
+	auto getter = JsonMessageGetter::GetInstance();
+	connect(getter.get(), SIGNAL(hasNewMessage()), this, SLOT(hasNewMessage()));
+}
+
+ChipicManager::~ChipicManager()
+{
+
+}
+
 /**
 * @brief ChipicManager::hasNewMessage 获取json消息获取器中的消息  然后交给对应chipic对象处理
 * @return void

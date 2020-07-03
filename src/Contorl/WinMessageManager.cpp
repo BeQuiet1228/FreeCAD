@@ -11,7 +11,7 @@ WinMessageManager::WinMessageManager()
 
 WinMessageManager::~WinMessageManager()
 {
-	sendMessage(WM_USER, 0, 0);
+	sendMessage(0, 0, 0);
 	//等待线程发送出关闭内核程序的消息
 	Sleep(30);
 	workThreadOff();
@@ -109,9 +109,7 @@ void WinMessageManager::getMainThreadId(DWORD &_threadId) {
 			{
 				if (msg.message == WM_USER + 20)
 				{
-                    _threadId = (DWORD)msg.wParam;
-					std::cerr << "threadID:" << _threadId << ",Msg:" << GetWindowThreadProcessId(msg.hwnd, NULL) << std::endl;
-					
+                    _threadId = (DWORD)msg.wParam;	
 					break;
 				}
 			}
@@ -182,6 +180,7 @@ bool WinMessageManager::getWorkThreadFlag()
 
 void WinMessageManager::run()
 {
+	this->init();
 	while (getWorkThreadFlag())
 	{
 		//每次循环睡眠50ms,避免cpu被占用
@@ -190,8 +189,9 @@ void WinMessageManager::run()
 		//接收winmessga
 		while (receiveMessage(msg,0))
 		{
+			msg.threadId = this->mainThreadID;
 			std::string json = MessageTransition::winMessageTojson(msg);
-			auto messageGetter = JsonMessageGetter::GetInstance();
+			auto messageGetter = JsonMessageGetter::GetInstance();		
 			messageGetter->addJsonMessage(json);
 		}
 		while (getMessageForDeque(msg))
@@ -210,7 +210,7 @@ void WinMessageManager::run()
 */
 bool WinMessageManager::sendMessage(UINT Msg, WPARAM wParam, LPARAM lParam)
 {
-	auto b = (PostThreadMessage(this->mainThreadID, Msg, wParam, lParam));
+	auto b = (PostThreadMessage(this->mainThreadID, Msg + WM_USER, wParam, lParam));
 #ifdef _DEBUG
 	if (!b)
 	{
@@ -235,7 +235,7 @@ void WinMessageManager::sendMessage(const Message& msg)
 {
 	sendMessageDequeMutex.lock();
 	sendMessageDeque.push_back(msg);
-	sendMessageDequeMutex.lock();
+	sendMessageDequeMutex.unlock();
 }
 
 /**
@@ -243,7 +243,6 @@ void WinMessageManager::sendMessage(const Message& msg)
 */
 void WinMessageManager::init(){
 	getMainThreadId(mainThreadID);
-	workThreadOn();
 }
 /**
 * @brief WinMessageManager::receiveMessage 接收消息
@@ -257,9 +256,14 @@ bool WinMessageManager::receiveMessage(Message &msg,const int &ms){
 	Sleep(ms);
     if (::PeekMessage(&m, NULL, 0, 0, PM_REMOVE))
 	{
-        msg.Msg = m.message;
+        msg.Msg = m.message - WM_USER;
         msg.wParam = m.wParam;
         msg.lParam = m.lParam;
+#ifdef _DEBUG
+		std::cerr << "WinMessageManager::receiveMessage,Msg:" << msg.Msg <<
+			",wParam:" << msg.wParam << ",lParam:" << msg.lParam << std::endl;
+#endif // _DEBUG
+
 		return true;
 	}
 	else

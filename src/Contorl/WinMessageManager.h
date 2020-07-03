@@ -61,6 +61,10 @@ public:
 	DWORD mainThreadID;
 	//添加发送消息
 	void sendMessage(const Message& msg);
+	//开启工作线程
+	void workThreadOn();
+	//关闭工作线程
+	void workThreadOff();
 
 private:
 	//根据进程名获取所有线程的id
@@ -69,10 +73,6 @@ private:
 	void getMainThreadId(DWORD &_threadId);
 	//获取消息队列中的消息
 	bool getMessageForDeque(Message& msg);
-	//开启工作线程
-	void workThreadOn();
-	//关闭工作线程
-	void workThreadOff();
 	//设置工作线程循环标志
 	void setWorkThreadFlag(const bool& flag);
 	//获取工作线程循环标志

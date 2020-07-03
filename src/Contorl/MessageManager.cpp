@@ -16,7 +16,8 @@ MessageManager::MessageManager()
 */
 void MessageManager::sendJsonMessage(const std::string& json)
 {
-
+	if (disposRunChipicJsonMessage(json))
+		return;
 }
 
 /**
@@ -65,7 +66,7 @@ void MessageManager::runChipic(const std::string& m3dPath, const int& threadCoun
 	RunChipic3d run(RunChipic3d::X32);
 	run.run(m3dPath, threadCount);
 	std::shared_ptr<WinMessageManager> manager(new WinMessageManager);
-	manager->init();
+	manager->workThreadOn();
 
 	winMessageManagerMap.insert(WinMessageManagerMap::value_type(manager->mainThreadID, manager));
 

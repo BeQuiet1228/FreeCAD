@@ -1,5 +1,5 @@
 #include "JsonMessageGetter.h"
-
+#include <iostream>
 
 std::shared_ptr<JsonMessageGetter> JsonMessageGetter::_instance;
 
@@ -54,6 +54,10 @@ bool JsonMessageGetter::getJsonMessage(std::string& json)
 */
 void JsonMessageGetter::addJsonMessage(const std::string& json)
 {
+#if _DEBUG
+	std::cerr << "JsonMessageGetter::addJsonMessage,Json:" << json << std::endl;
+#endif // _DEBUG
+
 	jsonDequeMutex.lock();
 	jsonDeque.push_back(json);
 	jsonDequeMutex.unlock();
