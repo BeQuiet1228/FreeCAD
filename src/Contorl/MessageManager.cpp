@@ -2,6 +2,7 @@
 #include "CJsonObject.hpp"
 #include "runchipic3d.h"
 #include <QString>
+#include "MessageTransition.h"
 std::shared_ptr<MessageManager> MessageManager::_instance;
 
 MessageManager::MessageManager()
@@ -18,6 +19,7 @@ void MessageManager::sendJsonMessage(const std::string& json)
 {
 	if (disposRunChipicJsonMessage(json))
 		return;
+	sendWinMessage(json);
 }
 
 /**
@@ -70,6 +72,36 @@ void MessageManager::runChipic(const std::string& m3dPath, const int& threadCoun
 
 	winMessageManagerMap.insert(WinMessageManagerMap::value_type(manager->mainThreadID, manager));
 
+}
+
+void MessageManager::sendWinMessage(const std::string& json)
+{
+	neb::CJsonObject jsonObject(json);
+	std::string temp;
+	if (jsonObject.Get("threadID", temp))
+	{
+		DWORD threadId = std::stoi(temp);
+		auto winMessageManager = winMessageManagerMap.find(threadId);
+		if (winMessageManager != winMessageManagerMap.end())
+		{
+			Message msg = MessageTransition::jsonToWinMessage(json);
+			winMessageManager->second->sendMessage(msg);
+		}
+		else
+		{
+#if _DEBUG
+			std::cerr << "MessageManager::senWinMessage get WinMessageManager failde" << std::endl;
+#endif // _DEBUG
+
+		}
+	}
+	else
+	{
+#if _DEBUG
+		std::cerr << "MessageManager::sendWinMessage get ThreadId failed!" << std::endl;
+#endif // _DEBUG
+
+	}
 }
 
 MessageManager::~MessageManager()

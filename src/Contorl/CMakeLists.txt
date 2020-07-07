@@ -3,6 +3,7 @@ project(Contorl)
 #源文件
 SET(UI_SRC
 	Contorl.ui
+	HintDailog.ui
 )
 SET(JSON_SRC
 	cJSON.c
@@ -30,6 +31,8 @@ SET(Contorl_src
 	ChipicManager.h
 	MessageManager.cpp
 	MessageManager.h
+	HintDailog.cpp
+	HintDailog.h
 	${UI_SRC}
 	${JSON_SRC}
 )
@@ -89,6 +92,7 @@ SET(MY_MOC_HDR
 	JsonMessageGetter.h
 	Chipic.h
 	ChipicManager.h
+	HintDailog.h
 )
 SET(MY_MOC_SRC
 	lonelinessmode.cpp
@@ -96,6 +100,7 @@ SET(MY_MOC_SRC
 	JsonMessageGetter.cpp
 	Chipic.cpp
 	ChipicManager.cpp
+	HintDailog.cpp
 )
 fc_wrap_cpp(MY_MOC_SRCS ${MY_MOC_HDR})
 source_group("Properties" Files ${MY_MOC_SRCS})

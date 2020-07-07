@@ -2,6 +2,7 @@
 #include <qwidget.h>
 #include "MessageTransition.h"
 #include "LonelinessMode.h"
+
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);

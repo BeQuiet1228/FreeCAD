@@ -52,6 +52,7 @@ void ChipicManager::hasNewMessage()
 		if (chipicIterator == chipicMap.end())
 		{
 			chipic.reset(new Chipic(threadID));
+			chipicMap.insert(std::map<DWORD, std::shared_ptr<Chipic>>::value_type(chipic->threadID, chipic));
 		}
 		else
 		{

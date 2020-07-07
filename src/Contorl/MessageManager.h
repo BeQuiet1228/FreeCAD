@@ -37,5 +37,6 @@ private:
 	bool disposRunChipicJsonMessage(const std::string& json);
 	//Æô¶¯m3d
 	void runChipic(const std::string& m3dPath, const int& threadCount);
-
+	//·¢ËÍwinMessage
+	void sendWinMessage(const std::string& json);
 };

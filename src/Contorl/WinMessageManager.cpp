@@ -2,10 +2,12 @@
 #include "lonelinessmode.h"
 #include "MessageTransition.h"
 #include "JsonMessageGetter.h"
-
+#include <QByteArray>
+#include <QString>
 WinMessageManager::WinMessageManager()
 {
 	workThreadFlag = false;
+	mainThreadID = 0;
 }
 
 
@@ -138,19 +140,48 @@ bool WinMessageManager::getMessageForDeque(Message& msg)
 }
 
 /**
-* @brief WinMessageManager::workThreadOn 开启工作线程循环
+* @brief WinMessageManager::workThreadOn 开启工作线程循环,线程阻塞，直到获取到计算程序线程id
 * @return void
 */
 void WinMessageManager::workThreadOn()
 {
 	setWorkThreadFlag(true);
 	this->start();
+	while (getThreadId() == 0)
+	{
+		Sleep(10);
+	}
 }
 
 void WinMessageManager::workThreadOff()
 {
 	setWorkThreadFlag(false);
 	this->wait();
+}
+
+/**
+* @brief WinMessageManager::getThreadId 获取线程id
+* @return DWORD
+*/
+DWORD WinMessageManager::getThreadId()
+{
+	threadIdMutex.lock();
+	DWORD id = mainThreadID;
+	threadIdMutex.unlock();
+
+	return id;
+}
+
+/**
+* @brief WinMessageManager::setThreadId 设置线程id
+* @param const DWORD & id
+* @return void
+*/
+void WinMessageManager::setThreadId(const DWORD& id)
+{
+	threadIdMutex.lock();
+	mainThreadID = id;
+	threadIdMutex.unlock();
 }
 
 /**
@@ -178,6 +209,52 @@ bool WinMessageManager::getWorkThreadFlag()
 	return temp;
 }
 
+/**
+* @brief WinMessageManager::receiveStringMessage 循环接收字符串消息
+* @param Message & msg
+* @return void
+*/
+void WinMessageManager::receiveStringMessage(Message &msg)
+{
+	//判断消息是否为消息头
+	if (msg.Msg == 208
+		&&msg.wParam != 2
+		&&msg.lParam == 111111)
+	{
+		QByteArray buffer;
+		int failedCount = 0;//接收失败次数，超过最大值则停止接收该字符串消息
+		const int failedCountMax = 10000;
+		//循环接收字符串，直到接收到消息尾
+		do 
+		{
+			Message temp;
+			if (receiveMessage(temp,0))
+			{
+				if (temp.Msg != 208||temp.wParam == 2)
+				{
+					msg = temp;
+					break;
+				}
+				//接收到消息尾，则停止接收
+				if (temp.lParam == 999999)
+				{
+					msg.text = buffer.data();
+					//替换其中的特殊字符为空格
+					QString temp = QString::fromLocal8Bit(msg.text.c_str());
+					temp.replace("@#$","\n");
+					msg.text = temp.toLocal8Bit();
+					break;
+				}
+				buffer.append(temp.lParam);
+
+			}else
+			{
+				failedCount++;
+			}
+		} while (failedCount < failedCountMax);
+	}
+}
+
 void WinMessageManager::run()
 {
 	this->init();
@@ -189,6 +266,7 @@ void WinMessageManager::run()
 		//接收winmessga
 		while (receiveMessage(msg,0))
 		{
+			receiveStringMessage(msg);
 			msg.threadId = this->mainThreadID;
 			std::string json = MessageTransition::winMessageTojson(msg);
 			auto messageGetter = JsonMessageGetter::GetInstance();		
@@ -242,7 +320,9 @@ void WinMessageManager::sendMessage(const Message& msg)
 * @brief 初始化
 */
 void WinMessageManager::init(){
-	getMainThreadId(mainThreadID);
+	DWORD id;
+	getMainThreadId(id);
+	setThreadId(id);
 }
 /**
 * @brief WinMessageManager::receiveMessage 接收消息

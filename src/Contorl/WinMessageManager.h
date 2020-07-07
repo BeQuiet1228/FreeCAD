@@ -65,7 +65,10 @@ public:
 	void workThreadOn();
 	//关闭工作线程
 	void workThreadOff();
-
+	//获取线程ID
+	DWORD getThreadId();
+	//设置线程id
+	void setThreadId(const DWORD& id);
 private:
 	//根据进程名获取所有线程的id
 	int GetMainThreadIdFromName(LPCSTR szName, std::vector<DWORD>& threads);
@@ -77,6 +80,8 @@ private:
 	void setWorkThreadFlag(const bool& flag);
 	//获取工作线程循环标志
 	bool getWorkThreadFlag();
+	//接收字符串消息
+	void receiveStringMessage(Message &msg);
 private:
 	//消息队列
 	std::deque<Message> sendMessageDeque;
@@ -86,6 +91,8 @@ private:
 	std::mutex workThreadMutex;
 	//工作线程循环标志
 	bool workThreadFlag;
+	//线程id锁
+	std::mutex threadIdMutex;
 
 protected:
 	void run() override;
