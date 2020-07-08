@@ -12,19 +12,6 @@
 Chipic::Chipic(DWORD threadID)
 {
 	this->threadID = threadID;
-	widget = new QWidget;
-	QVBoxLayout *layout = new QVBoxLayout;
-	button = new QPushButton();
-	button->setText(QString::fromLocal8Bit("开始"));
-	label = new QLabel();
-	label->setMargin(5);
-	layout->addWidget(button);
-	layout->addWidget(label);
-
-	widget->setMinimumSize(100, 100);
-	widget->setLayout(layout);
-	widget->show();
-	connect(button, SIGNAL(clicked()), this, SLOT(buttonClicked()));
 }
 
 Chipic::~Chipic()
@@ -61,9 +48,6 @@ void Chipic::refreshButtonClicked()
 	auto messageManager = MessageManager::GetInstance();
 	messageManager->sendJsonMessage(json);
 
-	msg.Msg = 105;
-	json = MessageTransition::winMessageTojson(msg);
-	messageManager->sendJsonMessage(json);
 }
 
 /**
@@ -253,7 +237,6 @@ bool Chipic::disposHintMessage(const Message& msg)
 		hintDailog.showForMode2();
 		break;
 	}
-	label->setText(QString::fromLocal8Bit(titile.c_str()) + QString::fromLocal8Bit(titleNumber.c_str()));
 	return true;
 }
 
@@ -281,7 +264,11 @@ void Chipic::disposJsonMessage(const std::string& json)
 		return;
 	//处理提示消息
 	if (disposHintMessage(msg))
+	{
+		emit stateUpdate(this->threadID);
 		return;
+	}
+
 }
 
 void Chipic::buttonClicked()

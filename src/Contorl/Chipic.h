@@ -72,14 +72,11 @@ public:
 	std::string titile,titleNumber;
 	//ÌבÊ¾¿ע
 	HintDailog hintDailog;
-	QWidget *widget;
-	QPushButton *button;
-	QLabel *label;
 public:
 	void disposJsonMessage(const std::string& json);
 	
 signals:
-	void stateUpdate();
+	void stateUpdate(DWORD);
 
 public slots:
 	void buttonClicked();

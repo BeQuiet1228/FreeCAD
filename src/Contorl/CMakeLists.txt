@@ -4,37 +4,49 @@ project(Contorl)
 SET(UI_SRC
 	Contorl.ui
 	HintDailog.ui
+	ContorlDataBar.ui
+	ContorlButtonBar.ui
 )
 SET(JSON_SRC
 	cJSON.c
 	cJSON.h
 	CJsonObject.cpp
 	CJsonObject.hpp
+	ContorlButtonBar.cpp
+)
+SET(MY_MOC_HDR
+	lonelinessmode.h
+	Contorl.h
+	JsonMessageGetter.h
+	Chipic.h
+	ChipicManager.h
+	HintDailog.h
+	ContorlDataBar.h
+	ContorlButtonBar.h
+)
+SET(MY_MOC_SRC
+	lonelinessmode.cpp
+	Contorl.cpp
+	JsonMessageGetter.cpp
+	Chipic.cpp
+	ChipicManager.cpp
+	HintDailog.cpp
+	ContorlDataBar.cpp
 )
 SET(Contorl_src
 	main.cpp
-	Contorl.cpp
-	Contorl.h
-	LonelinessMode.cpp
-	LonelinessMode.h
 	runchipic3d.cpp
 	runchipic3d.h
 	WinMessageManager.cpp
 	WinMessageManager.h
 	MessageTransition.cpp
 	MessageTransition.h
-	JsonMessageGetter.cpp
-	JsonMessageGetter.h
-	Chipic.cpp
-	Chipic.h
-	ChipicManager.cpp
-	ChipicManager.h
 	MessageManager.cpp
 	MessageManager.h
-	HintDailog.cpp
-	HintDailog.h
 	${UI_SRC}
 	${JSON_SRC}
+	${MY_MOC_SRC}
+	${MY_MOC_HDR}
 )
 #设置编译生成文件类型
 add_executable(Contorl ${Contorl_src}) # 生成可执行文件
@@ -85,23 +97,6 @@ else()
 endif()
 #链接静态库
 target_link_libraries(Contorl ${QT_LIB})
-
-SET(MY_MOC_HDR
-	lonelinessmode.h
-	Contorl.h
-	JsonMessageGetter.h
-	Chipic.h
-	ChipicManager.h
-	HintDailog.h
-)
-SET(MY_MOC_SRC
-	lonelinessmode.cpp
-	Contorl.cpp
-	JsonMessageGetter.cpp
-	Chipic.cpp
-	ChipicManager.cpp
-	HintDailog.cpp
-)
 fc_wrap_cpp(MY_MOC_SRCS ${MY_MOC_HDR})
 source_group("Properties" Files ${MY_MOC_SRCS})
 

@@ -53,6 +53,9 @@ void ChipicManager::hasNewMessage()
 		{
 			chipic.reset(new Chipic(threadID));
 			chipicMap.insert(std::map<DWORD, std::shared_ptr<Chipic>>::value_type(chipic->threadID, chipic));
+			connect(chipic.get(), SIGNAL(stateUpdate(DWORD)), this, SLOT(chipicStateUpdate(DWORD)));
+			//切换到当前计算程序
+			CurrentChipic = chipic;
 		}
 		else
 		{
@@ -62,6 +65,16 @@ void ChipicManager::hasNewMessage()
 		//[4]
 		chipic->disposJsonMessage(jsonMsg);
 
+	}
+}
+
+void ChipicManager::chipicStateUpdate(DWORD threadId)
+{
+	auto  chipic = chipicMap.find(threadId);
+	if (chipic != chipicMap.end())
+	{
+		if (CurrentChipic.get() == chipic->second.get())
+			emit currentChipicStateUpdate();
 	}
 }
 

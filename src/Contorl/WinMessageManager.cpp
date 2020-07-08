@@ -296,7 +296,7 @@ bool WinMessageManager::sendMessage(UINT Msg, WPARAM wParam, LPARAM lParam)
                   << "  windows erro code:" << GetLastError() << std::endl;
     }else {
         std::cerr << "message send finish,Thread ID:" << this->mainThreadID
-                  << ",msg: WM_USER + " << Msg - WM_USER
+                  << ",msg: WM_USER + " << Msg
                   << ",wParaw: " << wParam
                   << ",lParaw: " << lParam << std::endl;
     }

@@ -30,7 +30,8 @@
    <item>
     <widget class="QLabel" name="labelContent">
      <property name="text">
-      <string>TextLabel</string>
+      <string>TextLabel
+546</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
