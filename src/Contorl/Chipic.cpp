@@ -12,6 +12,7 @@
 Chipic::Chipic(DWORD threadID)
 {
 	this->threadID = threadID;
+	init();
 }
 
 Chipic::~Chipic()
@@ -48,6 +49,10 @@ void Chipic::refreshButtonClicked()
 	auto messageManager = MessageManager::GetInstance();
 	messageManager->sendJsonMessage(json);
 
+	//msg.Msg = 105;
+	//json = MessageTransition::winMessageTojson(msg);
+	//messageManager->sendJsonMessage(json);
+
 }
 
 /**
@@ -56,6 +61,26 @@ void Chipic::refreshButtonClicked()
 */
 void Chipic::timerButtonClicked()
 {
+
+}
+
+/**
+* @brief Chipic::init
+* @return void
+*/
+void Chipic::init()
+{
+	//运行状态
+	runState = false;
+	//暂停状态
+	pausState = false;
+	//定时器状态
+	timerSate = false;
+	//迭代次数、当前迭代次数
+	iterationCount = 1;
+	currentIteration = 1;
+	//粒子数目
+	particleCount = 0;
 
 }
 
@@ -219,10 +244,11 @@ bool Chipic::disposHintMessage(const Message& msg)
 	case 5:
 	case 6:
 	case 7:
-		this->titile = msg.text;
+		title = titleStr =msg.text;
 		break;
 	case 2:
 		this->titleNumber = std::to_string(msg.lParam);
+		title = titleStr + titleNumber;
 		break;
 	case 3:
 		hintDailog.setText(msg.text);
@@ -246,22 +272,40 @@ void Chipic::disposJsonMessage(const std::string& json)
 
 	//处理迭代步数消息
 	if (disposIterationCountMessage(msg))
+	{
+		emit stateUpdate(this->threadID);
 		return;
+	}
 	//处理cpu消耗时间消息
-	if(disposUsedTimeMessage(msg))
+	if (disposUsedTimeMessage(msg))
+	{
+		emit stateUpdate(this->threadID);
 		return;
+	}
 	//处理粒子数目消息
-	if(disposParticleMessage(msg))
+	if (disposParticleMessage(msg))
+	{
+		emit stateUpdate(this->threadID);
 		return;
+	}
 	//处理迭代时间消息
 	if(disposeIterationTimeMessage(msg))
+	{ 
+		emit stateUpdate(this->threadID);
 		return;
+	}
 	//处理定时器状态消息
 	if(disposeChipicTimerState(msg))
+	{
+		emit stateUpdate(this->threadID);
 		return;
+	}
 	//处理chipic暂停状态消息
 	if(disposeChipicIsPause(msg))
+	{
+		emit stateUpdate(this->threadID);
 		return;
+	}
 	//处理提示消息
 	if (disposHintMessage(msg))
 	{

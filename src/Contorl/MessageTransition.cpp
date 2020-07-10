@@ -27,10 +27,10 @@ Message MessageTransition::jsonToWinMessage(const std::string &json)
 	msg.Msg = std::stol(temp);
 
 	jsonGetStringValue(jsonObject, "WParam", temp);
-	msg.wParam = std::stoi(temp);
+	msg.wParam = std::stol(temp);
 
 	jsonGetStringValue(jsonObject, "LParam", temp);
-	msg.lParam = std::stoi(temp);
+	msg.lParam = std::stol(temp);
 
 	jsonGetStringValue(jsonObject, "Text", temp);
 	msg.text = temp;

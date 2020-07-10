@@ -124,6 +124,7 @@ void RunChipic3d::makeCfgFile(const QString &path, const QString &fileName, cons
     //根据格式生成cfg文件夹
     QFile cfg(path+q2s("cfg.txt"));
     if (!cfg.open(QIODevice::WriteOnly)) {
+		std::cerr << "RunChipic3d::makeCfgFile open cfg.txt failed" << std::endl;
         return;
     }
     QTextStream out(&cfg);
@@ -149,7 +150,7 @@ void RunChipic3d::initMpi()
 	process.start(cmd);
 	process.waitForFinished();
 #ifdef _DEBUG
-    std::cerr << "init MPI output: " << QString::fromLocal8Bit(process.readAll()).toStdString() << std::endl;
+    std::cerr << "init MPI output: " << QString(process.readAll()).toStdString() << std::endl;
 #endif
 }
 /**

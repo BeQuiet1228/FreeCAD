@@ -19,6 +19,7 @@ void HintDailog::showForMode1()
 	ui.pushButtonContinue->setEnabled(true);
 	ui.pushButtonExit->setEnabled(true);
 	ui.pushButtonLose->setEnabled(true);
+	this->show();
 	
 }
 
@@ -31,6 +32,7 @@ void HintDailog::showForMode2()
 	ui.pushButtonContinue->setEnabled(true);
 	ui.pushButtonExit->setEnabled(true);
 	ui.pushButtonLose->setEnabled(false);
+	this->show();
 }
 
 /**
@@ -42,6 +44,7 @@ void HintDailog::showForMode3()
 	ui.pushButtonContinue->setEnabled(false);
 	ui.pushButtonExit->setEnabled(true);
 	ui.pushButtonLose->setEnabled(false);
+	this->show();
 }
 
 /**

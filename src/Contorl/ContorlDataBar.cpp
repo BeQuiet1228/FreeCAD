@@ -18,8 +18,19 @@ ContorlDataBar::~ContorlDataBar()
 */
 void ContorlDataBar::setChipicData(std::shared_ptr<Chipic> chipic)
 {
-	ui.labelHint->setText(QString::fromLocal8Bit(chipic->titile.c_str()));
+	ui.labelHint->setText(QString::fromLocal8Bit(chipic->title.c_str()));
 	ui.labelParticle->setText(QString::number(chipic->particleCount));
+	ui.labelIterationTimer->setText(QString::fromLocal8Bit(chipic->iterationTimeInt.c_str())
+		+ "." + QString::fromLocal8Bit(chipic->iterationTimeFloat.c_str()));
+	ui.labelUsedTime->setText(QString::fromLocal8Bit(chipic->currentUsedTime.toString().c_str())
+		+ "/" + QString::fromLocal8Bit(chipic->UsedTime.toString().c_str()));
+
+	float iterationValue = ((float)chipic->currentIteration / chipic->iterationCount) * 100;
+	ui.progressBarIterationCount->setValue(iterationValue);
+
+	std::string iteration = std::to_string(chipic->currentIteration) + "/" + std::to_string(chipic->iterationCount);
+	ui.progressBarIterationCount->setFormat(QString::fromLocal8Bit(iteration.c_str()));
+	
 }
 
 #include "moc_ContorlDataBar.cpp"

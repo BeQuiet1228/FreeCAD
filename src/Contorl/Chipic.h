@@ -36,6 +36,8 @@ public:
 	void refreshButtonClicked();
 	//定时器按钮被点击
 	void timerButtonClicked();
+	//初始化变量
+	void init();
 private:
 	//处理迭代步数消息
 	bool disposIterationCountMessage(const Message& msg);
@@ -62,14 +64,14 @@ public:
 	int iterationCount, currentIteration;
 	//粒子数目
 	int particleCount;
-	//消耗时间
+	//总迭代时间的整数部分和小数部分
 	std::string iterationTimeInt,iterationTimeFloat;
-	//总迭代时间、当前迭代时间
+	//预估消耗时间、当前消耗时间
 	Time UsedTime, currentUsedTime;
 	//线程id
 	DWORD threadID;
 	//计算程序，提示信息
-	std::string titile,titleNumber;
+	std::string title,titleStr,titleNumber;
 	//提示框
 	HintDailog hintDailog;
 public:
