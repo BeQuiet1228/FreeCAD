@@ -15,20 +15,28 @@ void ContorlButtonBar::setChipicData(std::shared_ptr<Chipic> Chipic)
 {
 	if (Chipic->pausState)
 	{
-		ui.toolButtonPause->setText(QString::fromLocal8Bit("开始"));
+		QIcon icon5;
+		icon5.addFile(QString::fromUtf8(":/icon/continue.svg"), QSize(), QIcon::Normal, QIcon::Off);
+		ui.toolButtonPause->setIcon(icon5);
 	}
 	else
 	{
-		ui.toolButtonPause->setText(QString::fromLocal8Bit("暂停"));
+		QIcon icon5;
+		icon5.addFile(QString::fromUtf8(":/icon/pause.svg"), QSize(), QIcon::Normal, QIcon::Off);
+		ui.toolButtonPause->setIcon(icon5);
 	}
 
 	if (Chipic->timerSate)
 	{
-		ui.toolButtonTimer->setText(QString::fromLocal8Bit("定时器(开)"));
+		QIcon icon5;
+		icon5.addFile(QString::fromUtf8(":/icon/on.svg"), QSize(), QIcon::Normal, QIcon::Off);
+		ui.toolButtonTimer->setIcon(icon5);
 	}
 	else
 	{
-		ui.toolButtonTimer->setText(QString::fromLocal8Bit("定时器(关)"));
+		QIcon icon5;
+		icon5.addFile(QString::fromUtf8(":/icon/off.svg"), QSize(), QIcon::Normal, QIcon::Off);
+		ui.toolButtonTimer->setIcon(icon5);
 	}
 }
 

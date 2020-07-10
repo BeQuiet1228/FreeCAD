@@ -38,6 +38,8 @@ public:
 	void timerButtonClicked();
 	//初始化变量
 	void init();
+	//发送消息
+	void sendMessage(const UINT& type, const WPARAM& wParam, const LPARAM& lParam,const DWORD& thradId = 0);
 private:
 	//处理迭代步数消息
 	bool disposIterationCountMessage(const Message& msg);
@@ -81,5 +83,5 @@ signals:
 	void stateUpdate(DWORD);
 
 public slots:
-	void buttonClicked();
+	void buttonClicked(int clickType);
 };

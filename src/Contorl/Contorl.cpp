@@ -19,7 +19,7 @@ Contorl::Contorl(QWidget *parent)
 void Contorl::on_pushButton_clicked()
 {
 	auto messageManager = MessageManager::GetInstance();
-	messageManager->sendJsonMessage(MessageTransition::creatRunChipicJsonMessage(this->ui.lineEdit->text().toStdString(), 4));
+	messageManager->sendJsonMessage(MessageTransition::creatRunChipicJsonMessage(this->ui.lineEdit->text().toStdString(), 1));
 
 }
 

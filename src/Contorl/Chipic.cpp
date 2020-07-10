@@ -13,6 +13,8 @@ Chipic::Chipic(DWORD threadID)
 {
 	this->threadID = threadID;
 	init();
+
+	connect(&hintDailog, SIGNAL(buttonClicked(int)), this, SLOT(buttonClicked(int)));
 }
 
 Chipic::~Chipic()
@@ -26,13 +28,14 @@ Chipic::~Chipic()
 */
 void Chipic::pausButtonClicked()
 {
-	Message msg;
-	msg.threadId = threadID;
-	msg.Msg = 101;
-	std::string json = MessageTransition::winMessageTojson(msg);
-	
-	auto messageManager = MessageManager::GetInstance();
-	messageManager->sendJsonMessage(json);
+	if (pausState)
+	{
+		sendMessage(101, 0, 0);
+	}
+	else
+	{
+		sendMessage(102, 0, 0);
+	}
 }
 
 /**
@@ -41,17 +44,8 @@ void Chipic::pausButtonClicked()
 */
 void Chipic::refreshButtonClicked()
 {
-	Message msg;
-	msg.threadId = threadID;
-	msg.Msg = 104;
-	std::string json = MessageTransition::winMessageTojson(msg);
-
-	auto messageManager = MessageManager::GetInstance();
-	messageManager->sendJsonMessage(json);
-
-	//msg.Msg = 105;
-	//json = MessageTransition::winMessageTojson(msg);
-	//messageManager->sendJsonMessage(json);
+	this->sendMessage(104, 0, 0);
+	this->sendMessage(105, 0, 0);
 
 }
 
@@ -61,7 +55,14 @@ void Chipic::refreshButtonClicked()
 */
 void Chipic::timerButtonClicked()
 {
-
+	if (timerSate)
+	{
+		sendMessage(103, 1, 0);
+	}
+	else
+	{
+		sendMessage(103, 0, 0);
+	}
 }
 
 /**
@@ -71,9 +72,9 @@ void Chipic::timerButtonClicked()
 void Chipic::init()
 {
 	//运行状态
-	runState = false;
+	runState = true;
 	//暂停状态
-	pausState = false;
+	pausState = true;
 	//定时器状态
 	timerSate = false;
 	//迭代次数、当前迭代次数
@@ -82,6 +83,34 @@ void Chipic::init()
 	//粒子数目
 	particleCount = 0;
 
+}
+
+
+/**
+* @brief Chipic::sendMessage 发送消息
+* @param const UINT & type 消息类型 自动加WM_USER
+* @param const WPARAM & wParam 参数
+* @param const LPARAM & lParam 参数
+* @param const DWORD & thradId 线程id，默认为0，则使用当前对象的threadID
+* @return void
+*/
+void Chipic::sendMessage(const UINT& type, const WPARAM& wParam, const LPARAM& lParam, const DWORD& thradId /*= 0*/)
+{
+	Message msg;
+	if (thradId == 0)
+	{
+		msg.threadId = this->threadID;
+	}
+	else
+	{
+		msg.threadId = threadID;
+	}
+	msg.Msg = type;
+	msg.wParam = wParam;
+	msg.lParam = lParam;
+	std::string json = MessageTransition::winMessageTojson(msg);
+	auto messageManager = MessageManager::GetInstance();
+	messageManager->sendJsonMessage(json);
 }
 
 /**
@@ -169,12 +198,12 @@ bool Chipic::disposeIterationTimeMessage(const Message& msg)
 		return false;
 	if (msg.wParam == 10)
 	{
-		iterationTimeInt = msg.lParam;
+		iterationTimeInt = std::to_string(msg.lParam);
 		return true;
 	}
 	else if (msg.wParam == 11)
 	{
-		iterationTimeFloat = msg.lParam;
+		iterationTimeFloat = std::to_string(msg.lParam);
 		return true;
 	}
 
@@ -188,7 +217,7 @@ bool Chipic::disposeIterationTimeMessage(const Message& msg)
 */
 bool Chipic::disposeChipicTimerState(const Message& msg)
 {
-	if (msg.Msg - WM_USER == 203)
+	if (msg.Msg  == 203)
 	{
 		if (msg.wParam == 1)
 			timerSate = true;
@@ -208,17 +237,17 @@ bool Chipic::disposeChipicTimerState(const Message& msg)
 bool Chipic::disposeChipicIsPause(const Message& msg)
 {
 	//如果不是对应的消息，则返回false
-	if (msg.Msg - WM_USER != 201
-		&& msg.Msg - WM_USER != 202
-		&& msg.Msg - WM_USER != 205)
+	if (msg.Msg != 201
+		&& msg.Msg != 202
+		&& msg.Msg != 205)
 		return false;
 
-	if (msg.Msg - WM_USER == 201)
+	if (msg.Msg == 201)
 		pausState = false;
-	if (msg.Msg - WM_USER == 202)
+	if (msg.Msg  == 202)
 		pausState = true;
 	//同样的功能的消息定义了两次，所以需要处理两次，不知何意
-	if (msg.Msg - WM_USER == 205)
+	if (msg.Msg  == 205)
 	{
 		if (msg.wParam == 0)
 			pausState = true;
@@ -315,10 +344,46 @@ void Chipic::disposJsonMessage(const std::string& json)
 
 }
 
-void Chipic::buttonClicked()
+
+/**
+* @brief Chipic::buttonClicked 提示框中的按钮被点击
+* @param int clickType 点击类型
+* @return void
+*/
+void Chipic::buttonClicked(int clickType)
 {
-	std::cerr << "mmm" << std::endl;
-	pausButtonClicked();
+	switch (HintDailog::ClinkeType(clickType))
+	{
+	case HintDailog::MODE1_EXIT:
+		sendMessage(108, 3, 4);
+		break;
+	case HintDailog::MODE1_LOSE:
+		sendMessage(108, 3, 1);
+		break;
+	case HintDailog::MODE1_LOSE_ALL:
+		sendMessage(108, 3, -1);
+		break;
+	case HintDailog::MODE1_CONTINUE:
+		sendMessage(108, 3, 2);
+		break;
+	case HintDailog::MODE1_CONTINUE_ALL:
+		sendMessage(108, 3, -2);
+		break;
+	case HintDailog::MODE2_EXIT:
+		sendMessage(108, 8, 3);
+		break;
+	case HintDailog::MODE2_CONTINUE:
+		sendMessage(108, 8, 1);
+		break;
+	case HintDailog::MODE2_CONTINUE_ALL:
+		sendMessage(108, 8, -1);
+		break;
+	case HintDailog::MODE3_EXIT:
+		sendMessage(108, 4, 0);
+		break;
+	case HintDailog::NULL_TYPE:
+		break;
+	}
 }
 
 #ifndef MY_QTC_DEBUG

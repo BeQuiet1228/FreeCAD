@@ -7,6 +7,9 @@ SET(UI_SRC
 	ContorlDataBar.ui
 	ContorlButtonBar.ui
 )
+SET(QRC_SRC
+	Contorl.qrc
+)
 SET(JSON_SRC
 	cJSON.c
 	cJSON.h
@@ -33,6 +36,14 @@ SET(MY_MOC_SRC
 	HintDailog.cpp
 	ContorlDataBar.cpp
 )
+#处理ui和qrc文件
+if (BUILD_QT5)
+    QT5_ADD_RESOURCES(Gui_QRC_SRCS ${QRC_SRC})
+    QT5_WRAP_UI(Gui_UIC_HDRS ${UI_SRC})
+else()
+    QT4_ADD_RESOURCES(Gui_QRC_SRCS ${QRC_SRC})
+    QT4_WRAP_UI(Gui_UIC_HDRS ${UI_SRC})
+endif()
 SET(Contorl_src
 	main.cpp
 	runchipic3d.cpp
@@ -47,6 +58,7 @@ SET(Contorl_src
 	${JSON_SRC}
 	${MY_MOC_SRC}
 	${MY_MOC_HDR}
+	${Gui_QRC_SRCS}
 )
 #设置编译生成文件类型
 add_executable(Contorl ${Contorl_src}) # 生成可执行文件
@@ -100,12 +112,4 @@ target_link_libraries(Contorl ${QT_LIB})
 fc_wrap_cpp(MY_MOC_SRCS ${MY_MOC_HDR})
 source_group("Properties" Files ${MY_MOC_SRCS})
 
-#处理ui文件
-if (BUILD_QT5)
-    #QT5_ADD_RESOURCES(Gui_QRC_SRCS ${Gui_RES_SRCS})
-    QT5_WRAP_UI(Gui_UIC_HDRS ${UI_SRC})
-else()
-    #QT4_ADD_RESOURCES(Gui_QRC_SRCS ${Gui_RES_SRCS})
-    QT4_WRAP_UI(Gui_UIC_HDRS ${UI_SRC})
-endif()
 SOURCE_GROUP("Uic" FILES ${Gui_UIC_HDRS})
