@@ -19,6 +19,8 @@ public:
 	ContorlDataBar contorlDataBar;
 private:
 	Ui::ContorlClass ui;
+private:
+	std::string m3dPath = "E:\\lingshiwenjianjia\\MILO_D\\MILO_D.m3d";
 public slots:
 	void on_pushButton_clicked();
 

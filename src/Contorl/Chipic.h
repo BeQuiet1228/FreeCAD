@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <QPushButton>
-#include "WinMessageManager.h"
+#include "RunChipic3dListener.h"
 #include "HintDailog.h"
 class Chipic:public QObject
 {
@@ -24,7 +24,7 @@ class Chipic:public QObject
 	Q_OBJECT
 public:
 	Chipic();
-	Chipic(DWORD threadID);
+	Chipic(DWORD threadID = 0);
 	~Chipic();
 
 public:
@@ -40,6 +40,8 @@ public:
 	void init();
 	//发送消息
 	void sendMessage(const UINT& type, const WPARAM& wParam, const LPARAM& lParam,const DWORD& thradId = 0);
+	//关闭chipic
+	void closeChipic();
 private:
 	//处理迭代步数消息
 	bool disposIterationCountMessage(const Message& msg);

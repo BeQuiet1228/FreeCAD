@@ -84,12 +84,24 @@ void HintDailog::buttonContinueClicked()
 
 void HintDailog::buttonExitClincked()
 {
+	this->close();
+}
+
+/**
+* @brief HintDailog::closeEvent 窗口关闭事件
+* @param QCloseEvent * e
+* @return void
+*/
+void HintDailog::closeEvent(QCloseEvent *e)
+{
 	int temp = MODE1_EXIT;
 	temp += (mode - 1) * 5;
 	if (ui.checkBox->isChecked())
 		temp++;
 	auto  t = ClinkeType(temp);
 	emit buttonClicked(t);
+
+	QDialog::closeEvent(e);
 }
 
 #include "moc_HintDailog.cpp"

@@ -95,3 +95,17 @@ std::string MessageTransition::creatRunChipicJsonMessage(const std::string& m3dP
 
 	return Message.ToString();
 }
+
+/**
+* @brief MessageTransition::creatCloseChipicJsonMessage 创建一个关闭chipic的消息
+* @param const DWORD threadId
+* @return std::string
+*/
+std::string MessageTransition::creatCloseChipicJsonMessage(const DWORD threadId)
+{
+	neb::CJsonObject Message;
+	Message.Add("cmd", "CloseChipic");
+	Message.Add("threadID", threadId);
+
+	return Message.ToString();
+}

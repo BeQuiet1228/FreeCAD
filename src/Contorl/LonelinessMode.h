@@ -5,7 +5,7 @@
 #include <qthread.h>
 #include <Windows.h>
 #include <qlist.h>
-#include "WinMessageManager.h"
+#include "RunChipic3dListener.h"
 #include "runchipic3d.h"
 #include <qcoreevent.h>
 class LonelinessMode;
@@ -129,7 +129,7 @@ private:
     //是否开启单机模式标志
     bool modeFlag;
     //消息管理器
-    WinMessageManager messgaeManager;
+	RunChipic3dListener messgaeManager;
     //内核计算时的线程数量
     int chipic3dTreadCount;
     //m3d文件名称

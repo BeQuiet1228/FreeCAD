@@ -24,4 +24,8 @@ public slots:
 	void hasNewMessage();
 	//更新ui状态
 	void chipicStateUpdate(DWORD threadId);
+	//运行按钮被点击
+	void runButtonClicked(const std::string& m3dPtah = "");
+	//关闭当前运行的chipic
+	void closeCurrentChipic();
 };

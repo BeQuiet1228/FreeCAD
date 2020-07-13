@@ -12,4 +12,5 @@ public:
 	static std::string winMessageTojson(const Message &msg);
 	static void jsonGetStringValue(neb::CJsonObject& jsonObject,const std::string& key,std::string& value);
 	static std::string creatRunChipicJsonMessage(const std::string& m3dPath,const int& threadCount);
+	static std::string creatCloseChipicJsonMessage(const DWORD threadId);
 };

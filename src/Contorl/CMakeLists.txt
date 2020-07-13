@@ -48,12 +48,15 @@ SET(Contorl_src
 	main.cpp
 	runchipic3d.cpp
 	runchipic3d.h
-	WinMessageManager.cpp
-	WinMessageManager.h
+	RunChipic3dListener.cpp
+	RunChipic3dListener.h
 	MessageTransition.cpp
 	MessageTransition.h
-	MessageManager.cpp
-	MessageManager.h
+	MessageSender.cpp
+	MessageSender.h
+	EmitterInterface.h
+	LocalEimtter.cpp
+	LocalEimtter.h
 	${UI_SRC}
 	${JSON_SRC}
 	${MY_MOC_SRC}

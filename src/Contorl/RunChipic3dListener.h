@@ -18,6 +18,8 @@
 #include <QThread>
 #include <mutex>
 #include <deque>
+#include "runchipic3d.h"
+#include <memory>
 /**
 * @brief 消息结构类
 */
@@ -43,12 +45,11 @@ struct Message
 
 };
 
-class WinMessageManager:public QThread
+class RunChipic3dListener:public QThread
 {
 public:
-	WinMessageManager();
-	virtual ~WinMessageManager();
-
+	RunChipic3dListener();
+	virtual ~RunChipic3dListener();
 
 	void init();
 	//发送消息
@@ -69,6 +70,8 @@ public:
 	DWORD getThreadId();
 	//设置线程id
 	void setThreadId(const DWORD& id);
+public:
+	static std::shared_ptr<RunChipic3dListener> runChipic3d(const std::string &m3dpath, const int &count);
 private:
 	//根据进程名获取所有线程的id
 	int GetMainThreadIdFromName(LPCSTR szName, std::vector<DWORD>& threads);
@@ -93,6 +96,8 @@ private:
 	bool workThreadFlag;
 	//线程id锁
 	std::mutex threadIdMutex;
+	
+	std::shared_ptr<RunChipic3d> runchipic3dPtr;
 
 protected:
 	void run() override;

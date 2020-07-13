@@ -23,18 +23,30 @@ RunChipic3d::RunChipic3d(const RunChipic3d::RunMode &mode)
         chipicPath = QDir::currentPath() + q2s("/") + chipicX64Path;
     }
 }
+
+RunChipic3d::~RunChipic3d()
+{
+	if (chipicProcess != nullptr)
+		delete chipicProcess;
+	if (mpiProcess != nullptr)
+		delete mpiProcess;
+}
+
 /**
  * @brief RunChipic3d::runWithLonelinessMode 单机启动CHIPIC3d
  * @param m3dPath m3d文本路径
  */
 void RunChipic3d::runWithLonelinessMode(const QString &m3dPath)
 {
-    QProcess *pro = new QProcess;
+	if (chipicProcess != nullptr)
+		delete chipicProcess;
+
+    chipicProcess = new QProcess;
     QString cmd =  chipicPath + q2s(" \"") + m3dPath + q2s("\"");
 #ifdef _DEBUG
 	std::cerr << "lonelinessMod start cmd:" << cmd.toStdString() << std::endl;
 #endif
-	pro->start(cmd);
+	chipicProcess->start(cmd);
 }
 /**
  * @brief RunChipic3d::runWithNotLonelinessMode 并行启动chipic3d
@@ -68,9 +80,11 @@ void RunChipic3d::runWithNotLonelinessMode(const QString &m3dpath, const int &co
 #endif
 
     //启动chipic3d
-    QProcess *process = new QProcess;
+	if (chipicProcess != nullptr)
+		delete chipicProcess;
+    chipicProcess = new QProcess;
     cmd = mpiPath + q2s("mpiexec.exe -configfile ") +path + q2s("cfg.txt -phrase 0");
-    process->start(cmd);
+	chipicProcess->start(cmd);
 #ifdef _DEBUG
     std::cerr << "notLonelinessMod start cmd:" << cmd.toStdString() << std::endl;
 #endif

@@ -15,6 +15,7 @@ public:
     };
     RunChipic3d() = delete ;
     RunChipic3d(const RunMode &mode = X32);
+	~RunChipic3d();
     //单机模式启动
     void runWithLonelinessMode(const QString &m3dPath);
     //并行模式启动
@@ -30,7 +31,7 @@ private:
     const QString mpiX32Path = q2s("MPICH2/bin/");
     //64位mpi路径
     const QString mpiX64Path = q2s("");
-
+	//chipic路径 mpi路径
     QString chipicPath,mpiPath;
 
 private:
@@ -43,7 +44,9 @@ private:
 
 private:
     //mpi启动窗口
-    QProcess *mpiProcess;
+    QProcess *mpiProcess = nullptr;
+	//chipic cmd对象
+	QProcess *chipicProcess = nullptr;
 
 };
 

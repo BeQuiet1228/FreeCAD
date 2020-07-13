@@ -8,7 +8,7 @@
 #include <QVBoxLayout>
 #include "LonelinessMode.h"
 #include "MessageTransition.h"
-#include "MessageManager.h"
+#include "MessageSender.h"
 Chipic::Chipic(DWORD threadID)
 {
 	this->threadID = threadID;
@@ -109,8 +109,20 @@ void Chipic::sendMessage(const UINT& type, const WPARAM& wParam, const LPARAM& l
 	msg.wParam = wParam;
 	msg.lParam = lParam;
 	std::string json = MessageTransition::winMessageTojson(msg);
-	auto messageManager = MessageManager::GetInstance();
+	auto messageManager = MessageSender::GetInstance();
 	messageManager->sendJsonMessage(json);
+}
+
+
+/**
+* @brief Chipic::closeChipic
+* @return void
+*/
+void Chipic::closeChipic()
+{
+	auto msg = MessageTransition::creatCloseChipicJsonMessage(threadID);
+	auto sender = MessageSender::GetInstance();
+	sender->sendJsonMessage(msg);
 }
 
 /**
@@ -355,7 +367,8 @@ void Chipic::buttonClicked(int clickType)
 	switch (HintDailog::ClinkeType(clickType))
 	{
 	case HintDailog::MODE1_EXIT:
-		sendMessage(108, 3, 4);
+		//sendMessage(108, 3, 4);
+		closeChipic();
 		break;
 	case HintDailog::MODE1_LOSE:
 		sendMessage(108, 3, 1);
@@ -370,7 +383,8 @@ void Chipic::buttonClicked(int clickType)
 		sendMessage(108, 3, -2);
 		break;
 	case HintDailog::MODE2_EXIT:
-		sendMessage(108, 8, 3);
+		//sendMessage(108, 8, 3);
+		closeChipic();
 		break;
 	case HintDailog::MODE2_CONTINUE:
 		sendMessage(108, 8, 1);
@@ -379,7 +393,8 @@ void Chipic::buttonClicked(int clickType)
 		sendMessage(108, 8, -1);
 		break;
 	case HintDailog::MODE3_EXIT:
-		sendMessage(108, 4, 0);
+		//sendMessage(108, 4, 0);
+		closeChipic();
 		break;
 	case HintDailog::NULL_TYPE:
 		break;

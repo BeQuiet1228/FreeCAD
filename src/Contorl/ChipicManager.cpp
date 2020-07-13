@@ -3,6 +3,8 @@
 #include "CJsonObject.hpp"
 #include <iostream>
 #include "JsonMessageGetter.h"
+#include "MessageSender.h"
+#include "MessageTransition.h"
 ChipicManager::ChipicManager()
 {
 	auto getter = JsonMessageGetter::GetInstance();
@@ -76,6 +78,39 @@ void ChipicManager::chipicStateUpdate(DWORD threadId)
 		if (CurrentChipic.get() == chipic->second.get())
 			emit currentChipicStateUpdate();
 	}
+}
+
+/**
+* @brief ChipicManager::runButtonClicked 运行按钮被点击
+* @param const std::string & m3dPtah 路径
+* @return void
+*/
+void ChipicManager::runButtonClicked(const std::string& m3dPtah /*= ""*/)
+{
+	if (!CurrentChipic)
+	{
+		auto messageManager = MessageSender::GetInstance();
+		messageManager->sendJsonMessage(MessageTransition::creatRunChipicJsonMessage(m3dPtah, 1));
+	}
+	else{
+		CurrentChipic->closeChipic();
+
+		//移除chipic对象
+		for (auto i = chipicMap.begin(); i != chipicMap.end(); i++)
+		{
+			if (i->second == CurrentChipic)
+			{
+				chipicMap.erase(i);
+				break;
+			}
+		}
+		CurrentChipic.reset();
+	}
+}
+
+void ChipicManager::closeCurrentChipic()
+{
+
 }
 
 #ifndef MY_QTC_DEBUG

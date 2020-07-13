@@ -1,6 +1,7 @@
 #pragma once
 #include "ui_HintDailog.h"
 #include <QtGui/QDialog>
+#include <QCloseEvent>
 class HintDailog : public QDialog
 {
 
@@ -43,4 +44,6 @@ public slots:
 	void buttonExitClincked();
 signals:
 	void buttonClicked(int);
+protected:
+	void closeEvent(QCloseEvent *e) override;
 };
