@@ -13,10 +13,10 @@ LocalEmitter::~LocalEmitter()
 
 /**
 * @brief LocalEmitter::sendMessage 发送消息,在发送之前会预先处理非winmessage消息
-* @param const std::string json
+* @param const std::string& json
 * @return void
 */
-void LocalEmitter::sendMessage(const std::string json)
+void LocalEmitter::sendMessage(const std::string& json)
 {
 	neb::CJsonObject jsonObject(json);
 	std::string cmd = "";
@@ -33,7 +33,7 @@ void LocalEmitter::sendMessage(const std::string json)
 	}
 	else
 	{
-		sendMessage(json);
+		sendWinMessage(json);
 	}
 
 }
@@ -69,7 +69,7 @@ bool LocalEmitter::disposRunChipicJsonMessage(const std::string& json)
 * @param const std::string json
 * @return bool
 */
-bool LocalEmitter::disposeCloseChipicJsonMessage(const std::string json)
+bool LocalEmitter::disposeCloseChipicJsonMessage(const std::string& json)
 {
 	neb::CJsonObject jsonObject(json);
 	std::string temp;
@@ -83,17 +83,17 @@ bool LocalEmitter::disposeCloseChipicJsonMessage(const std::string json)
 		}
 		else
 		{
-#if _DEBUG
+#if MY_DEBUG
 			std::cerr << "LocalEmitter::disposeCloseChipicJsonMessage get RunChipic3dListener failde" << std::endl;
-#endif // _DEBUG
+#endif // MY_DEBUG
 			return false;
 		}
 	}
 	else
 	{
-#if _DEBUG
+#if MY_DEBUG
 		std::cerr << "LocalEmitter::disposeCloseChipicJsonMessage get ThreadId failed!" << std::endl;
-#endif // _DEBUG
+#endif // MY_DEBUG
 		return false;
 	}
 
@@ -133,17 +133,17 @@ void LocalEmitter::sendWinMessage(const std::string& json)
 		}
 		else
 		{
-#if _DEBUG
+#if MY_DEBUG
 			std::cerr << "LocalEmitter::sendWinMessage get RunChipic3dListener failde" << std::endl;
-#endif // _DEBUG
+#endif // MY_DEBUG
 
 		}
 	}
 	else
 	{
-#if _DEBUG
+#if MY_DEBUG
 		std::cerr << "LocalEmitter::sendWinMessage get ThreadId failed!" << std::endl;
-#endif // _DEBUG
+#endif // MY_DEBUG
 
 	}
 }

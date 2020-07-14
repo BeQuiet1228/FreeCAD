@@ -18,7 +18,7 @@ ContorlDataBar::~ContorlDataBar()
 */
 void ContorlDataBar::setChipicData(std::shared_ptr<Chipic> chipic)
 {
-	ui.labelHint->setText(QString::fromLocal8Bit(chipic->title.c_str()));
+	ui.labelHint->setText(QString::fromStdString(chipic->title));
 	ui.labelParticle->setText(QString::number(chipic->particleCount));
 	ui.labelIterationTimer->setText(QString::fromLocal8Bit(chipic->iterationTimeInt.c_str())
 		+ "." + QString::fromLocal8Bit(chipic->iterationTimeFloat.c_str()));

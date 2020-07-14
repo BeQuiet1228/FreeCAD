@@ -490,22 +490,20 @@ void ToolBarManager::setup_taskMonitorToolBar(ToolBarItem* item, QToolBar* toolb
 
     auto sp = QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     
-    TaskMonitorWidget_File *widget_file = new TaskMonitorWidget_File(item, toolbar);
-    TaskMonitorWidget_1 *widget_1 = new TaskMonitorWidget_1(toolbar);
-    TaskMonitorWidget_2 *widget_2 = new TaskMonitorWidget_2(toolbar);
-    //TaskMonitorWidget_3 *widget_3 = new TaskMonitorWidget_3(toolbar);
-    widget_file->setSizePolicy(sp);
-    widget_1->setSizePolicy(sp);
-    widget_2->setSizePolicy(sp);
-    //widget_3->setSizePolicy(sp);
-    toolbar->addWidget(widget_file);
-    toolbar->addWidget(new TaskMonitorWidget_Spacer(toolbar));
-    toolbar->addWidget(widget_1);
-    toolbar->addWidget(new TaskMonitorWidget_Spacer(toolbar));
-    toolbar->addWidget(widget_2);
+	
+	auto mainWindow = MainWindow::getInstance();
+	mainWindow->buttonBar->setSizePolicy(sp);
+	mainWindow->dateBar->setSizePolicy(sp);
+	mainWindow->buttonBar->setParent(toolbar);
+	mainWindow->dateBar->setParent(toolbar);
+	toolbar->addWidget(mainWindow->buttonBar);
+	toolbar->addWidget(mainWindow->dateBar);
     //toolbar->addWidget(new TaskMonitorWidget_Spacer(toolbar));
     //toolbar->addWidget(widget_3);
-    
+	mainWindow->buttonBar->show();
+	mainWindow->dateBar->show();
+
+	std::cerr << "tttttttttttttttttttt" << std::endl;
 }
 
 void ToolBarManager::saveState() const

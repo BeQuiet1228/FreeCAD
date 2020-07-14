@@ -13,12 +13,12 @@ public:
 	~LocalEmitter();
 
 public:
-	void sendMessage(const std::string json) override;
+	void sendMessage(const std::string& json) override;
 private:
 	//处理chipic启动消息
 	bool disposRunChipicJsonMessage(const std::string& json);
 	//处理cihpic关闭消息
-	bool disposeCloseChipicJsonMessage(const std::string json);
+	bool disposeCloseChipicJsonMessage(const std::string& json);
 	//启动m3d
 	void runChipic(const std::string& m3dPath, const int& threadCount);
 	//发送winMessage

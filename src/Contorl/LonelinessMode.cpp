@@ -52,7 +52,7 @@ void LonelinessMode::run()
         //查看消息列队里是否有消息，有则读取出来
         //并阻塞50毫秒
         Message msg;
-        if(messgaeManager.receiveMessage(msg,50))
+       // if(messgaeManager.receiveMessage(msg,50))
         {
 			disposeWinMessage(msg);
             //Python代码使用被动式获取消息，所以不要信号触发
@@ -229,7 +229,7 @@ void LonelinessMode::killChipic3d()
  */
 void LonelinessMode::disposeWinMessage(Message &msg)
 {
-#ifdef _DEBUG
+#ifdef MY_DEBUG
 	std::cerr << "receive message,msg: WM_USER + " << msg.Msg - WM_USER
 		<< ",wParaw:" << msg.wParam
 		<< ",lParaw:" << msg.lParam << std::endl;
@@ -541,7 +541,7 @@ void LonelinessMode::timerEvent(QTimerEvent *event)
 	{
 		if (event->timerId() == timerId)
 		{
-#ifdef _DEBUG
+#ifdef MY_DEBUG
 			std::cerr << "timer event-> send message!" << std::endl;
 #endif
 			{
@@ -568,6 +568,6 @@ void LonelinessMode::timerEvent(QTimerEvent *event)
 		}
 	}
 }
-#ifndef MY_QTC_DEBUG
+#ifndef MY_QTCMY_DEBUG
 #include "moc_LonelinessMode.cpp"
 #endif

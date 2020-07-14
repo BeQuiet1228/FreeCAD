@@ -57,7 +57,7 @@ void HintDailog::showForMode3()
 */
 void HintDailog::setText(const std::string& text)
 {
-	ui.labelContent->setText(QString::fromLocal8Bit(text.c_str()));
+	ui.labelContent->setText(QString::fromStdString(text));
 }
 
 void HintDailog::buttonLoseClicked()

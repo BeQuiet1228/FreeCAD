@@ -43,7 +43,7 @@ void RunChipic3d::runWithLonelinessMode(const QString &m3dPath)
 
     chipicProcess = new QProcess;
     QString cmd =  chipicPath + q2s(" \"") + m3dPath + q2s("\"");
-#ifdef _DEBUG
+#ifdef MY_DEBUG
 	std::cerr << "lonelinessMod start cmd:" << cmd.toStdString() << std::endl;
 #endif
 	chipicProcess->start(cmd);
@@ -75,7 +75,7 @@ void RunChipic3d::runWithNotLonelinessMode(const QString &m3dpath, const int &co
     //Æô¶¯mpi
     QString cmd = mpiPath + q2s("smpd.exe -d 0");
     mpiProcess->start(cmd);
-#ifdef _DEBUG
+#ifdef MY_DEBUG
     std::cerr << "notLonelinessMod init cmd:" << cmd.toStdString() << std::endl;
 #endif
 
@@ -85,7 +85,7 @@ void RunChipic3d::runWithNotLonelinessMode(const QString &m3dpath, const int &co
     chipicProcess = new QProcess;
     cmd = mpiPath + q2s("mpiexec.exe -configfile ") +path + q2s("cfg.txt -phrase 0");
 	chipicProcess->start(cmd);
-#ifdef _DEBUG
+#ifdef MY_DEBUG
     std::cerr << "notLonelinessMod start cmd:" << cmd.toStdString() << std::endl;
 #endif
 
@@ -163,7 +163,7 @@ void RunChipic3d::initMpi()
 	cmd = mpiPath + q2s("smpd.exe -stop");
 	process.start(cmd);
 	process.waitForFinished();
-#ifdef _DEBUG
+#ifdef MY_DEBUG
     std::cerr << "init MPI output: " << QString(process.readAll()).toStdString() << std::endl;
 #endif
 }

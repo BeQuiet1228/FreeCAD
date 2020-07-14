@@ -401,6 +401,6 @@ void Chipic::buttonClicked(int clickType)
 	}
 }
 
-#ifndef MY_QTC_DEBUG
+#ifndef MY_QTCMY_DEBUG
 #include "moc_Chipic.cpp"
 #endif

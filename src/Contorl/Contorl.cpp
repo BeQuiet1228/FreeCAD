@@ -13,8 +13,6 @@ Contorl::Contorl(QWidget *parent)
 	connect(&contorlButtonBar, SIGNAL(buttonClicked(int)), this, SLOT(buttonClinked(int)));
 	connect(&chipicManager, SIGNAL(currentChipicStateUpdate()), this, SLOT(chipicStateUpdate()));
 
-	contorlButtonBar.show();
-	contorlDataBar.show();
 	auto sender = MessageSender::GetInstance();
 	sender->setEmitter(new LocalEmitter);
 

@@ -83,7 +83,7 @@ void RunChipic3dListener::getMainThreadId(DWORD &_threadId) {
 		threads.clear();
 		//通过进程名查找线程Id
 		int ret = GetMainThreadIdFromName("Chipic3d.exe", threads);
-#ifdef _DEBUG
+#ifdef MY_DEBUG
 		if (ret == 0)
 		{
 			std::cerr << "not found chipic3d thread" << std::endl;
@@ -94,7 +94,7 @@ void RunChipic3dListener::getMainThreadId(DWORD &_threadId) {
 		{
 			auto b = ::PostThreadMessage(threads[i], WM_USER + 10, GetCurrentThreadId(), 1);
 
-#ifdef _DEBUG
+#ifdef MY_DEBUG
 			if (!b)
 			{
 				auto er = ::GetLastError();
@@ -305,7 +305,7 @@ void RunChipic3dListener::run()
 bool RunChipic3dListener::sendMessage(UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	auto b = (PostThreadMessage(this->mainThreadID, Msg + WM_USER, wParam, lParam));
-#ifdef _DEBUG
+#ifdef MY_DEBUG
 	if (!b)
 	{
         std::cerr << "message send erro,thread ID:" << this->mainThreadID
@@ -316,7 +316,7 @@ bool RunChipic3dListener::sendMessage(UINT Msg, WPARAM wParam, LPARAM lParam)
                   << ",wParaw: " << wParam
                   << ",lParaw: " << lParam << std::endl;
     }
-#endif // _DEBUG
+#endif // MY_DEBUG
 	return b;
 }
 
@@ -355,16 +355,16 @@ bool RunChipic3dListener::receiveMessage(Message &msg,const int &ms){
         msg.Msg = m.message - WM_USER;
         msg.wParam = m.wParam;
         msg.lParam = m.lParam;
-#ifdef _DEBUG
+#ifdef MY_DEBUG
 		std::cerr << "RunChipic3dListener::receiveMessage,Msg:" << msg.Msg <<
 			",wParam:" << msg.wParam << ",lParam:" << msg.lParam << std::endl;
-#endif // _DEBUG
+#endif // MY_DEBUG
 
 		return true;
 	}
 	else
 	{
-//#ifdef _DEBUG
+//#ifdef MY_DEBUG
 //		std::cout << "接收消息失败" << std::endl;
 //#endif
 		return false;

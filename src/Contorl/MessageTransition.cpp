@@ -51,7 +51,7 @@ std::string MessageTransition::winMessageTojson(const Message &msg)
 		json.Add("WParam", msg.wParam)&&
 		json.Add("LParam", msg.lParam)&&
 		json.Add("Text", msg.text);
-#ifdef _DEBUG
+#ifdef MY_DEBUG
 	if (!ok)
 		std::cerr << "MessageTransition WinMessageTojson add json value failed!" << std::endl;
 #endif // DEBUG
@@ -70,9 +70,9 @@ void MessageTransition::jsonGetStringValue(neb::CJsonObject& jsonObject, const s
 {
 	if (!jsonObject.Get(key, value))
 	{
-#ifdef _DEBUG
+#ifdef MY_DEBUG
 		std::cerr << "MessageTransition jsonGetStringValue failed!" << "key:" << key << std::endl;
-#endif // _DEBUG
+#endif // MY_DEBUG
 	}
 }
 

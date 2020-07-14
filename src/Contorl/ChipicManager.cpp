@@ -39,9 +39,9 @@ void ChipicManager::hasNewMessage()
 		//[2]
 		if (!jsonObject.Get("threadID", temp))
 		{
-#if _DEBUG
+#if MY_DEBUG
 			std::cerr << "ChipicManager hasNewMessgae jsonObject get threadid faild" << std::endl;
-#endif // _DEBUG
+#endif // MY_DEBUG
 
 			return;
 		}
@@ -113,6 +113,6 @@ void ChipicManager::closeCurrentChipic()
 
 }
 
-#ifndef MY_QTC_DEBUG
+#ifndef MY_QTCMY_DEBUG
 #include "moc_ChipicManager.cpp"
 #endif

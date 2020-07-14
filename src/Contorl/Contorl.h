@@ -5,10 +5,9 @@
 #include "ChipicManager.h"
 #include "ContorlButtonBar.h"
 #include "ContorlDataBar.h"
-class Contorl : public QMainWindow
+class  Contorl : public QMainWindow
 {
 	Q_OBJECT
-
 public:
 	Contorl(QWidget *parent = 0);
 	

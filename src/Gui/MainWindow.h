@@ -32,7 +32,7 @@
 #include <QEvent>
 #include <QMainWindow>
 #include <QMdiArea>
-
+#include "Contorl/ContorlInterface.h"
 class QMimeData;
 class QUrl;
 class QMdiSubWindow;
@@ -276,6 +276,11 @@ private:
     /// some kind of singleton
     static MainWindow* instance;
     struct MainWindowP* d;
+
+	//chnegtong
+public:
+	QWidget *buttonBar, *dateBar;
+	ContorlInterface contorlInterface;
 };
 
 inline MainWindow* getMainWindow()

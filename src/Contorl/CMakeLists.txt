@@ -18,7 +18,6 @@ SET(JSON_SRC
 	ContorlButtonBar.cpp
 )
 SET(MY_MOC_HDR
-	lonelinessmode.h
 	Contorl.h
 	JsonMessageGetter.h
 	Chipic.h
@@ -28,7 +27,6 @@ SET(MY_MOC_HDR
 	ContorlButtonBar.h
 )
 SET(MY_MOC_SRC
-	lonelinessmode.cpp
 	Contorl.cpp
 	JsonMessageGetter.cpp
 	Chipic.cpp
@@ -57,6 +55,8 @@ SET(Contorl_src
 	EmitterInterface.h
 	LocalEimtter.cpp
 	LocalEimtter.h
+	ContorlInterface.h
+	ContorlInterface.cpp
 	${UI_SRC}
 	${JSON_SRC}
 	${MY_MOC_SRC}
@@ -64,13 +64,14 @@ SET(Contorl_src
 	${Gui_QRC_SRCS}
 )
 #设置编译生成文件类型
-add_executable(Contorl ${Contorl_src}) # 生成可执行文件
+#add_executable(Contorl ${Contorl_src}) # 生成可执行文件
 #SET(OUTPUT_BINDIR ${CMAKE_CURRENT_BINARY_DIR}/../../bin) #设置可执行文件输出目录
-SET_BIN_DIR(Contorl Contorl) #设置可执行文件目录
-#SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_BINARY_DIR}/../../bin)
+
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORYMY_DEBUG ${CMAKE_CURRENT_BINARY_DIR}/../../bin)
 #add_library(common STATIC util.cpp) # 生成静态库
 #add_library(common SHARED util.cpp) # 生成动态库或共享库
-#add_library(Contorl SHARED ${Contorl_src})
+add_library(Contorl SHARED ${Contorl_src})
+
 #增加包含目录
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
@@ -112,6 +113,7 @@ else()
 endif()
 #链接静态库
 target_link_libraries(Contorl ${QT_LIB})
+SET_BIN_DIR(Contorl Contorl) #设置文件输出目录
 fc_wrap_cpp(MY_MOC_SRCS ${MY_MOC_HDR})
 source_group("Properties" Files ${MY_MOC_SRCS})
 

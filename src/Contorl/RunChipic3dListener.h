@@ -54,12 +54,6 @@ public:
 	void init();
 	//发送消息
 	bool sendMessage(UINT Msg, WPARAM wParam, LPARAM lParam);
-	//接收消息
-    bool receiveMessage(Message &msg,const int &ms = 100);
-    //测试发送消息是否成功
-    bool testSendMessage();
-	//chipic线程id
-	DWORD mainThreadID;
 	//添加发送消息
 	void sendMessage(const Message& msg);
 	//开启工作线程
@@ -85,6 +79,13 @@ private:
 	bool getWorkThreadFlag();
 	//接收字符串消息
 	void receiveStringMessage(Message &msg);
+	//接收消息
+	bool receiveMessage(Message &msg, const int &ms = 100);
+	//测试发送消息是否成功
+	bool testSendMessage();
+	//gbk转utf8
+	QString GBK2UTF8(const std::string &inStr);
+
 private:
 	//消息队列
 	std::deque<Message> sendMessageDeque;
@@ -96,6 +97,8 @@ private:
 	bool workThreadFlag;
 	//线程id锁
 	std::mutex threadIdMutex;
+	//chipic线程id
+	DWORD mainThreadID;
 	
 	std::shared_ptr<RunChipic3d> runchipic3dPtr;
 

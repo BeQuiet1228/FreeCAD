@@ -54,9 +54,9 @@ bool JsonMessageGetter::getJsonMessage(std::string& json)
 */
 void JsonMessageGetter::addJsonMessage(const std::string& json)
 {
-#if _DEBUG
+#if MY_DEBUG
 	std::cerr << "JsonMessageGetter::addJsonMessage,Json:" << json << std::endl;
-#endif // _DEBUG
+#endif // MY_DEBUG
 
 	jsonDequeMutex.lock();
 	jsonDeque.push_back(json);
@@ -65,6 +65,6 @@ void JsonMessageGetter::addJsonMessage(const std::string& json)
 	emit hasNewMessage();
 }
 
-#ifndef MY_QTC_DEBUG
+#ifndef MY_QTCMY_DEBUG
 #include "moc_JsonMessageGetter.cpp"
 #endif

@@ -22,12 +22,21 @@
        <height>40</height>
       </size>
      </property>
+     <property name="toolTip">
+      <string>运行/停止</string>
+     </property>
      <property name="text">
       <string>运行/停止</string>
      </property>
      <property name="icon">
       <iconset resource="Contorl.qrc">
        <normaloff>:/icon/run.svg</normaloff>:/icon/run.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
      </property>
     </widget>
    </item>
@@ -39,12 +48,21 @@
        <height>40</height>
       </size>
      </property>
+     <property name="toolTip">
+      <string>并行运行</string>
+     </property>
      <property name="text">
       <string>并行运行</string>
      </property>
      <property name="icon">
       <iconset resource="Contorl.qrc">
        <normaloff>:/icon/muti-run.svg</normaloff>:/icon/muti-run.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
      </property>
     </widget>
    </item>
@@ -56,12 +74,21 @@
        <height>40</height>
       </size>
      </property>
+     <property name="toolTip">
+      <string>刷新显示</string>
+     </property>
      <property name="text">
       <string>刷新</string>
      </property>
      <property name="icon">
       <iconset resource="Contorl.qrc">
        <normaloff>:/icon/refresh.svg</normaloff>:/icon/refresh.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
      </property>
     </widget>
    </item>
@@ -73,12 +100,21 @@
        <height>40</height>
       </size>
      </property>
+     <property name="toolTip">
+      <string>打开log文件</string>
+     </property>
      <property name="text">
       <string>LOG</string>
      </property>
      <property name="icon">
       <iconset resource="Contorl.qrc">
        <normaloff>:/icon/check.svg</normaloff>:/icon/check.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
      </property>
     </widget>
    </item>
@@ -90,12 +126,21 @@
        <height>40</height>
       </size>
      </property>
+     <property name="toolTip">
+      <string>暂停继续</string>
+     </property>
      <property name="text">
       <string>暂停/开始</string>
      </property>
      <property name="icon">
       <iconset resource="Contorl.qrc">
        <normaloff>:/icon/pause.svg</normaloff>:/icon/pause.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
      </property>
     </widget>
    </item>
@@ -107,12 +152,21 @@
        <height>40</height>
       </size>
      </property>
+     <property name="toolTip">
+      <string>定时器开/关</string>
+     </property>
      <property name="text">
       <string>定时器</string>
      </property>
      <property name="icon">
       <iconset resource="Contorl.qrc">
        <normaloff>:/icon/off.svg</normaloff>:/icon/off.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
      </property>
     </widget>
    </item>
@@ -124,12 +178,21 @@
        <height>40</height>
       </size>
      </property>
+     <property name="toolTip">
+      <string>批处理</string>
+     </property>
      <property name="text">
       <string>批处理</string>
      </property>
      <property name="icon">
       <iconset resource="Contorl.qrc">
        <normaloff>:/icon/batch.svg</normaloff>:/icon/batch.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
      </property>
     </widget>
    </item>
