@@ -22,7 +22,7 @@ public:
 private:
 	Ui::ContorlClass ui;
 private:
-public slots:
+public Q_SLOTS:
 	void on_pushButton_clicked();
 
 	//chipic×´Ì¬¸üÐÂ

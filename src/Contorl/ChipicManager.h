@@ -21,7 +21,7 @@ public:
 Q_SIGNALS:
 	//当前计算程序有信息更新
 	void currentChipicStateUpdate();
-public slots:
+public Q_SLOTS:
 	void hasNewMessage();
 	//更新ui状态
 	void chipicStateUpdate(DWORD threadId);

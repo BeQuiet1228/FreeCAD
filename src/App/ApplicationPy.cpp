@@ -1309,6 +1309,7 @@ PyObject* Application::sSetM3dpath(PyObject *self, PyObject *args, PyObject *kwd
 	wchar_t *unicodeWorkpath = 0;
 	if (!PyArg_ParseTuple(args, "s", &workpath))     // convert args: Python->C
 		return NULL;
+	std::cerr << workpath << std::endl;
 	//CN2Unicode(workpath, unicodeWorkpath);
 	auto contorl = ContorlInterface::GetInstance();
 	contorl->setM3dPath(workpath);

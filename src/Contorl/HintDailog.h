@@ -41,7 +41,7 @@ public:
 
 private:
 	Ui::Dialog *ui;
-public slots:
+public Q_SLOTS:
 	void buttonLoseClicked();
 	void buttonContinueClicked();
 	void buttonExitClincked();

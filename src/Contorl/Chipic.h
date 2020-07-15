@@ -84,6 +84,6 @@ public:
 Q_SIGNALS:
 	void stateUpdate(DWORD);
 
-public slots:
+public Q_SLOTS:
 	void buttonClicked(int clickType);
 };
