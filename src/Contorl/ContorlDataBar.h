@@ -1,10 +1,14 @@
 #pragma once
 
 #include <QtGui/QWidget>
-#include "ui_ContorlDataBar.h"
 #include "Chipic.h"
 #include <memory>
-class ContorlDataBar: public QWidget
+#include "ContorlConfig.hpp"
+
+namespace Ui{
+	class Form;
+}
+class CONTROL_EXPORT ContorlDataBar: public QWidget
 {
 	Q_OBJECT
 
@@ -16,5 +20,5 @@ public:
 	//设置显示数据
 	void setChipicData(std::shared_ptr<Chipic> chipic);
 private:
-	Ui::Form ui;
+	Ui::Form *ui;
 };

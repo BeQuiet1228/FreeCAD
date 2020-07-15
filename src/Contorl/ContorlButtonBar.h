@@ -1,10 +1,14 @@
 #pragma once
 
 #include <QWidget>
-#include "ui_ContorlButtonBar.h"
 #include <memory>
 #include "Chipic.h"
-class ContorlButtonBar : public QWidget
+#include "ContorlConfig.hpp"
+
+namespace Ui {
+	class ContorlButtonBar;
+}
+class CONTROL_EXPORT ContorlButtonBar : public QWidget
 {
 	Q_OBJECT
 public:
@@ -21,7 +25,7 @@ public:
 	ContorlButtonBar (QWidget *parent = 0);
 	~ContorlButtonBar();
 private:
-	Ui::ContorlButtonBar ui;
+	Ui::ContorlButtonBar *ui;
 public:
 	//设置计算程序数据
 	void setChipicData(std::shared_ptr<Chipic> Chipic);
@@ -40,6 +44,6 @@ public slots:
 	void on_toolButtonTimer_clicked();
 	//批处理按钮被点击
 	void on_toolButton_clicked();
-signals:
+Q_SIGNALS:
 	void buttonClicked(int);
 };

@@ -1,14 +1,16 @@
 #include "ContorlButtonBar.h"
 #include <iostream>
 #include <QMetaType>
+#include "ui_ContorlButtonBar.h"
 ContorlButtonBar::ContorlButtonBar(QWidget *parent /*= 0*/)
+	:ui(new Ui::ContorlButtonBar)
 {
-	ui.setupUi(this);
+	ui->setupUi(this);
 }
 
 ContorlButtonBar::~ContorlButtonBar()
 {
-
+	delete ui;
 }
 
 void ContorlButtonBar::setChipicData(std::shared_ptr<Chipic> Chipic)
@@ -17,26 +19,26 @@ void ContorlButtonBar::setChipicData(std::shared_ptr<Chipic> Chipic)
 	{
 		QIcon icon5;
 		icon5.addFile(QString::fromUtf8(":/icon/continue.svg"), QSize(), QIcon::Normal, QIcon::Off);
-		ui.toolButtonPause->setIcon(icon5);
+		ui->toolButtonPause->setIcon(icon5);
 	}
 	else
 	{
 		QIcon icon5;
 		icon5.addFile(QString::fromUtf8(":/icon/pause.svg"), QSize(), QIcon::Normal, QIcon::Off);
-		ui.toolButtonPause->setIcon(icon5);
+		ui->toolButtonPause->setIcon(icon5);
 	}
 
 	if (Chipic->timerSate)
 	{
 		QIcon icon5;
 		icon5.addFile(QString::fromUtf8(":/icon/on.svg"), QSize(), QIcon::Normal, QIcon::Off);
-		ui.toolButtonTimer->setIcon(icon5);
+		ui->toolButtonTimer->setIcon(icon5);
 	}
 	else
 	{
 		QIcon icon5;
 		icon5.addFile(QString::fromUtf8(":/icon/off.svg"), QSize(), QIcon::Normal, QIcon::Off);
-		ui.toolButtonTimer->setIcon(icon5);
+		ui->toolButtonTimer->setIcon(icon5);
 	}
 }
 

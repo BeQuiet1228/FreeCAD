@@ -11,6 +11,6 @@ int main(int argc, char *argv[])
 	Contorl w;
 	w.contorlButtonBar.show();
 	w.contorlDataBar.show();
-	ContorlInterface in;
+	auto contorl = ContorlInterface::GetInstance();
 	return a.exec();
 }

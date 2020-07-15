@@ -35,6 +35,6 @@ public:
 	//添加一个消息
 	void addJsonMessage(const std::string& json);
 
-signals:
+Q_SIGNALS:
 	void hasNewMessage();
 };

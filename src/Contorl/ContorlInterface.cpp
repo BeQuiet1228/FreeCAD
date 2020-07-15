@@ -2,6 +2,8 @@
 #include "Contorl.h"
 #include "ContorlDataBar.h"
 #include "ContorlButtonBar.h"
+#include <QString>
+std::shared_ptr<ContorlInterface> ContorlInterface::_instance;
 ContorlInterface::ContorlInterface()
 {
 	contorl = new Contorl;
@@ -12,13 +14,22 @@ ContorlInterface::~ContorlInterface()
 	delete contorl;
 }
 
-void * ContorlInterface::getContorlButtonBar()
+ContorlButtonBar * ContorlInterface::getContorlButtonBar()
 {
 	return &(contorl->contorlButtonBar);
 }
 
-void * ContorlInterface::getContorlDataBar()
+ContorlDataBar * ContorlInterface::getContorlDataBar()
 {
 	return &(contorl->contorlDataBar);
+}
+
+void ContorlInterface::setM3dPath(const std::string& path)
+{
+	auto temp = QString::fromStdString(path);
+
+	temp.replace("FCStd", "m3d");
+
+	contorl->m3dPath = temp.toStdString();
 }
 

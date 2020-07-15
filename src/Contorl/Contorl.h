@@ -5,7 +5,8 @@
 #include "ChipicManager.h"
 #include "ContorlButtonBar.h"
 #include "ContorlDataBar.h"
-class  Contorl : public QMainWindow
+#include "ContorlConfig.hpp"
+class  CONTROL_EXPORT Contorl : public QMainWindow
 {
 	Q_OBJECT
 public:
@@ -16,10 +17,11 @@ public:
 	ChipicManager chipicManager;
 	ContorlButtonBar contorlButtonBar;
 	ContorlDataBar contorlDataBar;
+
+	std::string m3dPath = "E:\\lingshiwenjianjia\\MILO_D\\MILO_D.m3d";
 private:
 	Ui::ContorlClass ui;
 private:
-	std::string m3dPath = "E:\\lingshiwenjianjia\\MILO_D\\MILO_D.m3d";
 public slots:
 	void on_pushButton_clicked();
 

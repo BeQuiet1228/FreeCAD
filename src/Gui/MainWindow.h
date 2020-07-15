@@ -280,7 +280,6 @@ private:
 	//chnegtong
 public:
 	QWidget *buttonBar, *dateBar;
-	ContorlInterface contorlInterface;
 };
 
 inline MainWindow* getMainWindow()

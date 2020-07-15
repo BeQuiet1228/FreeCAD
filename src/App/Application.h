@@ -414,6 +414,9 @@ private:
 	static PyObject* sClientGetWorkpath(PyObject *self, PyObject *args, PyObject *kwd);
 	//设置工作路径
 	static PyObject* sClientSetWorkpath(PyObject *self, PyObject *args, PyObject *kwd);
+	//设置M3d路径
+	static PyObject* sSetM3dpath(PyObject *self, PyObject *args, PyObject *kwd);
+
 
 	//
 	static PyObject* sClientSetUserId(PyObject *self, PyObject *args, PyObject *kwd);

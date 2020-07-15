@@ -99,6 +99,9 @@ void RunChipic3d::runWithNotLonelinessMode(const QString &m3dpath, const int &co
 */
 void RunChipic3d::run(const std::string &m3dpath, const int &count /*= 1*/)
 {
+	
+	QString qstr = QString::fromLocal8Bit(m3dpath.c_str());
+
 	if (count == 1)
 	{
 		runWithLonelinessMode(QString::fromStdString(m3dpath));

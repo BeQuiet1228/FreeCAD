@@ -18,12 +18,12 @@
 #include <QThread>
 #include <mutex>
 #include <deque>
-#include "runchipic3d.h"
 #include <memory>
+#include "ContorlConfig.hpp"
 /**
 * @brief 消息结构类
 */
-struct Message
+struct CONTROL_EXPORT Message
 {
 	Message(UINT msg = WM_USER, WPARAM wParam = 0, LPARAM lParam = 0) {
 		this->Msg = msg;
@@ -44,8 +44,8 @@ struct Message
 	DWORD threadId;
 
 };
-
-class RunChipic3dListener:public QThread
+class RunChipic3d;
+class CONTROL_EXPORT RunChipic3dListener:public QThread
 {
 public:
 	RunChipic3dListener();

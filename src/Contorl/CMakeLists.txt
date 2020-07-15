@@ -1,3 +1,7 @@
+#设置预定义
+if(WIN32)
+add_definitions(-D_CONTORL_)
+endif(WIN32)
 #设置项目名称
 project(Contorl)
 #源文件
@@ -57,6 +61,7 @@ SET(Contorl_src
 	LocalEimtter.h
 	ContorlInterface.h
 	ContorlInterface.cpp
+	ContorlConfig.hpp
 	${UI_SRC}
 	${JSON_SRC}
 	${MY_MOC_SRC}

@@ -43,7 +43,6 @@
 
 #include<Gui/Command.h>
 
-
 // FreeCAD Base header
 #include <Base/Interpreter.h>
 #include <Base/Exception.h>
@@ -53,12 +52,13 @@
 #include <Base/FileInfo.h>
 #include <Base/UnitsApi.h>
 #include<Base/Tools.h>
-
 #include <ctime>
 #include "Config.hpp"
 #include "NetMsg.hpp"
 
 #include"UserJson.hpp"
+
+#include "Contorl/ContorlInterface.h"
 //using Base::GetConsole;
 using namespace Base;
 using namespace App;
@@ -204,6 +204,8 @@ PyMethodDef Application::Methods[] = {
 	 "clientGetWorkpath() -- client Get Workpath" },
 	 { "clientSetWorkpath", (PyCFunction)Application::sClientSetWorkpath, 1,
 	 "clientSetWorkpath() -- client Set Workpath" },
+	 { "setM3dPath", (PyCFunction)Application::sSetM3dpath, 1,
+	 "setM3dPath() -- g" },
 	 /*用户id和密码*/
 	 { "clientSetUserId", (PyCFunction)Application::sClientSetUserId, 1,
 	 "clientSetUserId(int) -- Connect the server" },
@@ -1300,6 +1302,17 @@ int CN2Unicode(char *input, wchar_t *output)
 	len = MultiByteToWideChar(CP_ACP, 0, input, -1, output, MAX_PATH);
 
 	return 1;
+}
+PyObject* Application::sSetM3dpath(PyObject *self, PyObject *args, PyObject *kwd)
+{
+	char* workpath = 0;
+	wchar_t *unicodeWorkpath = 0;
+	if (!PyArg_ParseTuple(args, "s", &workpath))     // convert args: Python->C
+		return NULL;
+	//CN2Unicode(workpath, unicodeWorkpath);
+	auto contorl = ContorlInterface::GetInstance();
+	contorl->setM3dPath(workpath);
+	Py_Return;
 }
 
 //设置工作路径

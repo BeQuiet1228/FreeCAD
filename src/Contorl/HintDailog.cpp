@@ -1,13 +1,14 @@
 #include "HintDailog.h"
 #include <QPushButton>
+#include "ui_HintDailog.h"
 HintDailog::HintDailog(QWidget *parent /*= 0*/)
-	:QDialog(parent)
+	:QDialog(parent), ui(new Ui::Dialog)
 {
-	ui.setupUi(this);
+	ui->setupUi(this);
 
-	connect(ui.pushButtonContinue, SIGNAL(clicked()), this, SLOT(buttonContinueClicked()));
-	connect(ui.pushButtonExit, SIGNAL(clicked()), this, SLOT(buttonExitClincked()));
-	connect(ui.pushButtonLose, SIGNAL(clicked()), this, SLOT(buttonLoseClicked()));
+	connect(ui->pushButtonContinue, SIGNAL(clicked()), this, SLOT(buttonContinueClicked()));
+	connect(ui->pushButtonExit, SIGNAL(clicked()), this, SLOT(buttonExitClincked()));
+	connect(ui->pushButtonLose, SIGNAL(clicked()), this, SLOT(buttonLoseClicked()));
 }
 
 /**
@@ -17,9 +18,9 @@ HintDailog::HintDailog(QWidget *parent /*= 0*/)
 void HintDailog::showForMode1()
 {
 	mode = 1;
-	ui.pushButtonContinue->setEnabled(true);
-	ui.pushButtonExit->setEnabled(true);
-	ui.pushButtonLose->setEnabled(true);
+	ui->pushButtonContinue->setEnabled(true);
+	ui->pushButtonExit->setEnabled(true);
+	ui->pushButtonLose->setEnabled(true);
 	this->show();
 	
 }
@@ -31,9 +32,9 @@ void HintDailog::showForMode1()
 void HintDailog::showForMode2()
 {
 	mode = 2;
-	ui.pushButtonContinue->setEnabled(true);
-	ui.pushButtonExit->setEnabled(true);
-	ui.pushButtonLose->setEnabled(false);
+	ui->pushButtonContinue->setEnabled(true);
+	ui->pushButtonExit->setEnabled(true);
+	ui->pushButtonLose->setEnabled(false);
 	this->show();
 }
 
@@ -44,9 +45,9 @@ void HintDailog::showForMode2()
 void HintDailog::showForMode3()
 {
 	mode = 3;
-	ui.pushButtonContinue->setEnabled(false);
-	ui.pushButtonExit->setEnabled(true);
-	ui.pushButtonLose->setEnabled(false);
+	ui->pushButtonContinue->setEnabled(false);
+	ui->pushButtonExit->setEnabled(true);
+	ui->pushButtonLose->setEnabled(false);
 	this->show();
 }
 
@@ -57,14 +58,14 @@ void HintDailog::showForMode3()
 */
 void HintDailog::setText(const std::string& text)
 {
-	ui.labelContent->setText(QString::fromStdString(text));
+	ui->labelContent->setText(QString::fromStdString(text));
 }
 
 void HintDailog::buttonLoseClicked()
 {
 	int temp = MODE1_LOSE;
 	temp += (mode - 1) * 5;
-	if (ui.checkBox->isChecked())
+	if (ui->checkBox->isChecked())
 		temp++;
 	auto  t = ClinkeType(temp);
 
@@ -75,7 +76,7 @@ void HintDailog::buttonContinueClicked()
 {
 	int temp = MODE1_CONTINUE;
 	temp += (mode - 1) * 5;
-	if (ui.checkBox->isChecked())
+	if (ui->checkBox->isChecked())
 		temp++;
 	auto  t = ClinkeType(temp);
 	
@@ -96,7 +97,7 @@ void HintDailog::closeEvent(QCloseEvent *e)
 {
 	int temp = MODE1_EXIT;
 	temp += (mode - 1) * 5;
-	if (ui.checkBox->isChecked())
+	if (ui->checkBox->isChecked())
 		temp++;
 	auto  t = ClinkeType(temp);
 	emit buttonClicked(t);

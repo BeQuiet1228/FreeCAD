@@ -6,7 +6,8 @@
 #include <QPushButton>
 #include "RunChipic3dListener.h"
 #include "HintDailog.h"
-class Chipic:public QObject
+#include "ContorlConfig.hpp"
+class CONTROL_EXPORT Chipic:public QObject
 {
 	class Time{
 	public:
@@ -23,7 +24,6 @@ class Chipic:public QObject
 
 	Q_OBJECT
 public:
-	Chipic();
 	Chipic(DWORD threadID = 0);
 	~Chipic();
 
@@ -81,7 +81,7 @@ public:
 public:
 	void disposJsonMessage(const std::string& json);
 	
-signals:
+Q_SIGNALS:
 	void stateUpdate(DWORD);
 
 public slots:

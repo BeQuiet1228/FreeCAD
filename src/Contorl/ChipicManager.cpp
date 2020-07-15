@@ -5,6 +5,7 @@
 #include "JsonMessageGetter.h"
 #include "MessageSender.h"
 #include "MessageTransition.h"
+#include "Chipic.h"
 ChipicManager::ChipicManager()
 {
 	auto getter = JsonMessageGetter::GetInstance();

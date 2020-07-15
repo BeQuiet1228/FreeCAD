@@ -2,6 +2,7 @@
 #include "lonelinessmode.h"
 #include "MessageTransition.h"
 #include "JsonMessageGetter.h"
+#include "runchipic3d.h"
 #include <QByteArray>
 #include <QString>
 RunChipic3dListener::RunChipic3dListener()

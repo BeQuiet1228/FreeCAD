@@ -442,9 +442,9 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
     // accept drops on the window, get handled in dropEvent, dragEnterEvent
     setAcceptDrops(true);
     statusBar()->showMessage(tr("Ready"), 2001);
-
-	dateBar = static_cast<QWidget*>(contorlInterface.getContorlDataBar());
-	buttonBar = static_cast<QWidget*>(contorlInterface.getContorlButtonBar());
+	auto cn = ContorlInterface::GetInstance();
+	dateBar = static_cast<QWidget*>(cn->getContorlDataBar());
+	buttonBar = static_cast<QWidget*>(cn->getContorlButtonBar());
 
 
 }

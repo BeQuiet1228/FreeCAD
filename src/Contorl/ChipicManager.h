@@ -1,11 +1,12 @@
 #pragma once
 #include <QObject>
-#include "Chipic.h"
 #include <map>
 #include <Windows.h>
 #include <memory>
 #include "ContorlDataBar.h"
-class ChipicManager:public QObject
+#include "ContorlConfig.hpp"
+class Chipic;
+class CONTROL_EXPORT ChipicManager:public QObject
 {
 	Q_OBJECT
 public:
@@ -17,7 +18,7 @@ private:
 public:
 	//当前管理的计算程序
 	std::shared_ptr<Chipic> CurrentChipic;
-signals:
+Q_SIGNALS:
 	//当前计算程序有信息更新
 	void currentChipicStateUpdate();
 public slots:
