@@ -5,6 +5,8 @@
 #include "MessageTransition.h"
 #include "ChipicManager.h"
 #include "LocalEimtter.h"
+#include <FCConfig.h>
+#include <Base\Interpreter.h>
 Contorl::Contorl(QWidget *parent)
 	: QMainWindow(parent)
 {
@@ -16,6 +18,14 @@ Contorl::Contorl(QWidget *parent)
 	auto sender = MessageSender::GetInstance();
 	sender->setEmitter(new LocalEmitter);
 
+}
+
+void Contorl::getM3dPathForRunPython()
+{
+	Base::InterpreterSingleton python;
+	python.runString("import Control.controlCommand.LonelinessCmd");
+	python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
+	python.runString("lonemod.setM3dPath()");
 }
 
 void Contorl::on_pushButton_clicked()
@@ -39,9 +49,12 @@ void Contorl::buttonClinked(int buttonType)
 	switch (ContorlButtonBar::ButtonType(buttonType))
 	{
 	case ContorlButtonBar::RUN:
+		getM3dPathForRunPython();
 		chipicManager.runButtonClicked(m3dPath);
 		break;
 	case ContorlButtonBar::PARALLE_RUN:
+		getM3dPathForRunPython();
+		chipicManager.ButtonParalleRunClicked(m3dPath);
 		break;
 	case ContorlButtonBar::REFREASH:
 		chipicManager.CurrentChipic->refreshButtonClicked();

@@ -57,6 +57,12 @@ private:
 	bool disposeChipicIsPause(const Message& msg);
 	//处理提示信息消息
 	bool disposHintMessage(const Message& msg);
+	//处理结构图消息
+	bool disposeStructMapMessage(const Message& msg);
+	//处理结果图消息
+	bool disposResultMapMessage(const Message& msg);
+	//按照固定格式生成文件路径
+	std::string makePath(const std::string& fileName);
 public:
 	//运行状态
 	bool runState;
@@ -78,6 +84,10 @@ public:
 	std::string title,titleStr,titleNumber;
 	//提示框
 	HintDailog hintDailog;
+	//线程数
+	int threadCount;
+	//文件路径
+	std::string m3dPath;
 public:
 	void disposJsonMessage(const std::string& json);
 	

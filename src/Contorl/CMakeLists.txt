@@ -10,6 +10,7 @@ SET(UI_SRC
 	HintDailog.ui
 	ContorlDataBar.ui
 	ContorlButtonBar.ui
+	ThreadCountDialog.ui
 )
 SET(QRC_SRC
 	Contorl.qrc
@@ -29,6 +30,7 @@ SET(MY_MOC_HDR
 	HintDailog.h
 	ContorlDataBar.h
 	ContorlButtonBar.h
+	ThreadCountDialog.h
 )
 SET(MY_MOC_SRC
 	Contorl.cpp
@@ -37,7 +39,21 @@ SET(MY_MOC_SRC
 	ChipicManager.cpp
 	HintDailog.cpp
 	ContorlDataBar.cpp
+	ThreadCountDialog.cpp
 )
+#引入头文件
+include_directories(
+    ${CMAKE_BINARY_DIR}/src
+    ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${Boost_INCLUDE_DIRS}
+    ${PYTHON_INCLUDE_DIRS}
+    ${XercesC_INCLUDE_DIRS}
+    ${ZLIB_INCLUDE_DIR}
+    ${PYCXX_INCLUDE_DIR}
+)
+
 #处理ui和qrc文件
 if (BUILD_QT5)
     QT5_ADD_RESOURCES(Gui_QRC_SRCS ${QRC_SRC})

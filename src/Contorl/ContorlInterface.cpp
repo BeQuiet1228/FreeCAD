@@ -33,3 +33,11 @@ void ContorlInterface::setM3dPath(const std::string& path)
 	contorl->m3dPath = temp.toStdString();
 }
 
+void ContorlInterface::senWinMessage(const int& type, const int& wParam, const int& lParam)
+{
+	if (contorl->chipicManager.CurrentChipic)
+	{
+		contorl->chipicManager.CurrentChipic->sendMessage(type, wParam, lParam);
+	}
+}
+

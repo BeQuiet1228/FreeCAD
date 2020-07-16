@@ -27,7 +27,13 @@ public:
 	static std::shared_ptr<ContorlInterface> _instance;
 
 public:
+	//获取按钮widget
 	ContorlButtonBar * getContorlButtonBar();
+	//获取展示信息widget
 	ContorlDataBar * getContorlDataBar();
+	//设置运行m3d路径
 	void setM3dPath(const std::string& path);
+	//发送消息win
+	void senWinMessage(const int& type, const int& wParam, const int& lParam);
+	
 };

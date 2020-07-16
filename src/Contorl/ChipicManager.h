@@ -18,6 +18,8 @@ private:
 public:
 	//当前管理的计算程序
 	std::shared_ptr<Chipic> CurrentChipic;
+	//新建计算程序，用于启动时未获取线程id时暂存
+	std::shared_ptr<Chipic> newChipic;
 Q_SIGNALS:
 	//当前计算程序有信息更新
 	void currentChipicStateUpdate();
@@ -26,7 +28,11 @@ public Q_SLOTS:
 	//更新ui状态
 	void chipicStateUpdate(DWORD threadId);
 	//运行按钮被点击
-	void runButtonClicked(const std::string& m3dPtah = "");
+	void runButtonClicked(const std::string& m3dPath = "");
 	//关闭当前运行的chipic
 	void closeCurrentChipic();
+
+public:
+	//并行按钮被点击
+	void ButtonParalleRunClicked(const std::string& m3dPath);
 };

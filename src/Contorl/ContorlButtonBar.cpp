@@ -10,7 +10,8 @@ ContorlButtonBar::ContorlButtonBar(QWidget *parent /*= 0*/)
 
 ContorlButtonBar::~ContorlButtonBar()
 {
-	delete ui;
+	//由于加入到了mainwindow中，会先析，这个析构会有问题，暂时先注释
+	//delete ui;
 }
 
 void ContorlButtonBar::setChipicData(std::shared_ptr<Chipic> Chipic)

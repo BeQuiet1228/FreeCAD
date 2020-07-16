@@ -9,7 +9,8 @@ ContorlDataBar::ContorlDataBar(QWidget *parent /*= 0*/)
 
 ContorlDataBar::~ContorlDataBar()
 {
-	delete ui;
+	//由于加入到了mainwindow中，会先析，这个析构会有问题，暂时先注释
+	//delete ui;
 }
 
 /**

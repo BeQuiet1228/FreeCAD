@@ -22,6 +22,8 @@ public:
 private:
 	Ui::ContorlClass ui;
 private:
+	//运行脚本获取m3d路径
+	void getM3dPathForRunPython();
 public Q_SLOTS:
 	void on_pushButton_clicked();
 

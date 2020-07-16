@@ -9,6 +9,9 @@
 #include "LonelinessMode.h"
 #include "MessageTransition.h"
 #include "MessageSender.h"
+#include <QFileInfo>
+#include <FCConfig.h>
+#include <Base\Interpreter.h>
 Chipic::Chipic(DWORD threadID)
 {
 	this->threadID = threadID;
@@ -82,6 +85,8 @@ void Chipic::init()
 	currentIteration = 1;
 	//粒子数目
 	particleCount = 0;
+
+	threadCount = 1;
 
 }
 
@@ -307,10 +312,88 @@ bool Chipic::disposHintMessage(const Message& msg)
 	return true;
 }
 
+/**
+* @brief Chipic::disposeStructMapMessage 处理结构图消息
+* @param const Message & msg
+* @return bool
+*/
+bool Chipic::disposeStructMapMessage(const Message& msg)
+{
+	if (msg.Msg == 208)
+	{
+		if (msg.wParam == 100 && msg.lParam == 0)
+		{
+			std::string fileName = this->makePath("_Temp.h5");
+			Base::InterpreterSingleton python;
+			python.runString("import Control.controlCommand.LonelinessCmd");
+			python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
+			python.runStringArg("lonemod.openStruct(\'%s\')", fileName.c_str());
+		}
+	}
+
+	return false;
+}
+
+/**
+* @brief Chipic::disposResultMapMessage 处理结果图消息
+* @param const Message & msg
+* @return bool
+*/
+bool Chipic::disposResultMapMessage(const Message& msg)
+{
+	if (msg.Msg == 209)
+	{
+		if (msg.wParam != -1000 && msg.lParam != -1000)
+		{
+			std::string fileName = this->makePath("_Temp.h5");
+			Base::InterpreterSingleton python;
+			python.runString("import Control.controlCommand.LonelinessCmd");
+			python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
+			python.runStringArg("lonemod.openMap(\'%s\',%d,%d)", fileName.c_str(),msg.wParam,msg.lParam);
+
+			return  true;
+		}
+	}
+
+	return false;
+}
+
+/**
+* @brief Chipic::makePath 按照固定格式 生成文件路径
+* @param const std::string & fileName
+* @return std::string
+*/
+std::string Chipic::makePath(const std::string& fileName)
+{
+	//将winmsg消息转换为文件消息
+	//使Python代码直接打开文件
+	std::string filePath;
+	//去掉文件名的后缀
+	QString temp = QString::fromStdString(m3dPath);
+	QFileInfo fileInfo(temp);
+	QString name = fileInfo.fileName();
+	name = name.left(name.size() - 4);
+	//将qstring转换为stdstring
+	//直接tostdstring中文转换会有问题
+	std::string m3dFileName = std::string(name.toLocal8Bit());
+	std::string path = std::string(fileInfo.absolutePath().toLocal8Bit());
+	if (threadCount > 1)
+	{
+		filePath = path + "/1/" + m3dFileName + fileName;
+	}
+	else if (threadCount == 1) {
+		filePath = path + "/" + m3dFileName + fileName;
+	}
+
+	return filePath;
+}
+
 void Chipic::disposJsonMessage(const std::string& json)
 {
 	Message msg = MessageTransition::jsonToWinMessage(json);
-
+	//处理器件结构消息
+	if (disposeStructMapMessage(msg))
+		return;
 	//处理迭代步数消息
 	if (disposIterationCountMessage(msg))
 	{
@@ -353,7 +436,8 @@ void Chipic::disposJsonMessage(const std::string& json)
 		emit stateUpdate(this->threadID);
 		return;
 	}
-
+	if (disposResultMapMessage(msg))
+		return;
 }
 
 

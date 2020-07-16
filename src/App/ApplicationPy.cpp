@@ -1112,6 +1112,13 @@ PyObject *Application::sClientSendWinMsg(PyObject *self, PyObject *args, PyObjec
 
 	if (!PyArg_ParseTuple(args, "iii", &id, &wParam,&lParam))
 		return NULL;
+	//新控制部分的看图接口，暂时使用
+	if (id == 109 || id == 107)
+	{
+		auto contor = ContorlInterface::GetInstance();
+		contor->senWinMessage(id, wParam, lParam);
+	}
+	
 
 	if (GetApplication().m_clientController
 		&& GetApplication().m_clientController->SendWinMsg(id,wParam,lParam))

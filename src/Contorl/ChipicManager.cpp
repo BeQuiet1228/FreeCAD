@@ -6,6 +6,7 @@
 #include "MessageSender.h"
 #include "MessageTransition.h"
 #include "Chipic.h"
+#include "ThreadCountDialog.h"
 ChipicManager::ChipicManager()
 {
 	auto getter = JsonMessageGetter::GetInstance();
@@ -26,7 +27,8 @@ void ChipicManager::hasNewMessage()
 	/*
 	*[1] 获取消息获取器中的消息
 	*[2] 获取消息中的线程id
-	*[3] 通过线程id寻找chipic对象，如果未找到对应的chipic对象，则创建对应的chipic对象
+	*[3] 通过线程id寻找chipic对象，如果未找到对应的chipic对象，则判断是否有未获取线程id的chipic对象，如有有则
+	*	 赋值线程id，然后将对象加入map，并处理消息
 	*[4] 将json对应给到对应的chipic对象处理
 	*/
 	auto msgGetter = JsonMessageGetter::GetInstance();
@@ -54,14 +56,19 @@ void ChipicManager::hasNewMessage()
 
 		if (chipicIterator == chipicMap.end())
 		{
-			chipic.reset(new Chipic(threadID));
-			chipicMap.insert(std::map<DWORD, std::shared_ptr<Chipic>>::value_type(chipic->threadID, chipic));
-			connect(chipic.get(), SIGNAL(stateUpdate(DWORD)), this, SLOT(chipicStateUpdate(DWORD)));
-			//切换到当前计算程序
-			CurrentChipic = chipic;
-		}
-		else
-		{
+			//如果存在未获取线程id的chipic对象
+			if (newChipic)
+			{
+				newChipic->threadID = threadID;
+				chipic = newChipic;
+				newChipic.reset();
+				chipicMap.insert(std::map<DWORD, std::shared_ptr<Chipic>>::value_type(chipic->threadID, chipic));
+				connect(chipic.get(), SIGNAL(stateUpdate(DWORD)), this, SLOT(chipicStateUpdate(DWORD)));
+			}else{
+				return;
+			}
+
+		}else{
 			chipic = chipicIterator->second;
 		}
 
@@ -86,12 +93,19 @@ void ChipicManager::chipicStateUpdate(DWORD threadId)
 * @param const std::string & m3dPtah 路径
 * @return void
 */
-void ChipicManager::runButtonClicked(const std::string& m3dPtah /*= ""*/)
+void ChipicManager::runButtonClicked(const std::string& m3dPath /*= ""*/)
 {
 	if (!CurrentChipic)
 	{
+		//暂存一个新建chipic对象，直到获取到线程id
+		newChipic.reset(new Chipic(0));
+		CurrentChipic = newChipic;
+		newChipic->m3dPath = m3dPath;
+		newChipic->threadCount = 1;
 		auto messageManager = MessageSender::GetInstance();
-		messageManager->sendJsonMessage(MessageTransition::creatRunChipicJsonMessage(m3dPtah, 1));
+		messageManager->sendJsonMessage(MessageTransition::creatRunChipicJsonMessage(m3dPath, 1));
+
+
 	}
 	else{
 		CurrentChipic->closeChipic();
@@ -112,6 +126,38 @@ void ChipicManager::runButtonClicked(const std::string& m3dPtah /*= ""*/)
 void ChipicManager::closeCurrentChipic()
 {
 
+}
+
+/**
+* @brief ChipicManager::ButtonParalleRunClicked
+* @param const std::string & m3dPath
+* @param const int & threadCount
+* @return void
+*/
+void ChipicManager::ButtonParalleRunClicked(const std::string& m3dPath)
+{
+	if (!CurrentChipic)
+	{
+		//获取并行线程
+		int threadCount = 1;
+		ThreadCountDialog dialog;
+		dialog.exec();
+		if (!dialog.okBuutonClicked)
+			return;
+		threadCount = dialog.threadCount;
+
+		//暂存一个新建chipic对象，直到获取到线程id
+		newChipic.reset(new Chipic(0));
+		CurrentChipic = newChipic;
+		newChipic->m3dPath = m3dPath;
+		newChipic->threadCount = threadCount;
+		auto messageManager = MessageSender::GetInstance();
+		messageManager->sendJsonMessage(MessageTransition::creatRunChipicJsonMessage(m3dPath, threadCount));
+
+
+	}else{
+
+	}
 }
 
 #ifndef MY_QTCMY_DEBUG
