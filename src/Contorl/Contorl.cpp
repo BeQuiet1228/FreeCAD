@@ -39,7 +39,10 @@ void Contorl::chipicStateUpdate()
 {
 	auto chipic = chipicManager.CurrentChipic;
 	if (!chipic)
+	{
+		contorlButtonBar.chipicClose();
 		return;
+	}
 	contorlDataBar.setChipicData(chipic);
 	contorlButtonBar.setChipicData(chipic);
 }
@@ -66,6 +69,7 @@ void Contorl::buttonClinked(int buttonType)
 		chipicManager.CurrentChipic->timerButtonClicked();
 		break;
 	case ContorlButtonBar::LOG:
+		chipicManager.CurrentChipic->openLogFile();
 		break;
 	default:
 		break;

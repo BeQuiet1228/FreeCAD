@@ -16,6 +16,13 @@ ContorlButtonBar::~ContorlButtonBar()
 
 void ContorlButtonBar::setChipicData(std::shared_ptr<Chipic> Chipic)
 {
+	//有chipic在运行 则改变图标可用状态
+	this->ui->toolButtonLOG->setEnabled(true);
+	this->ui->toolButtonRefreash->setEnabled(true);
+	this->ui->toolButtonPause->setEnabled(true);
+	this->ui->toolButtonTimer->setEnabled(true);
+	this->ui->toolButtonParalleRun->setEnabled(false);
+
 	if (Chipic->pausState)
 	{
 		QIcon icon5;
@@ -41,8 +48,23 @@ void ContorlButtonBar::setChipicData(std::shared_ptr<Chipic> Chipic)
 		icon5.addFile(QString::fromUtf8(":/icon/off.svg"), QSize(), QIcon::Normal, QIcon::Off);
 		ui->toolButtonTimer->setIcon(icon5);
 	}
-}
 
+	QIcon icon;
+	icon.addFile(QString::fromUtf8(":/icon/finish.svg"), QSize(), QIcon::Normal, QIcon::Off);
+	ui->toolButtonRun->setIcon(icon);
+}
+void ContorlButtonBar::chipicClose()
+{
+	this->ui->toolButtonLOG->setEnabled(false);
+	this->ui->toolButtonRefreash->setEnabled(false);
+	this->ui->toolButtonPause->setEnabled(false);
+	this->ui->toolButtonTimer->setEnabled(false);
+	this->ui->toolButtonParalleRun->setEnabled(true);
+
+	QIcon icon;
+	icon.addFile(QString::fromUtf8(":/icon/run.svg"), QSize(), QIcon::Normal, QIcon::Off);
+	ui->toolButtonRun->setIcon(icon);
+}
 void ContorlButtonBar::on_toolButtonRun_clicked()
 {
 	emit buttonClicked(RUN);

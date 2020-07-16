@@ -29,6 +29,8 @@ private:
 public:
 	//设置计算程序数据
 	void setChipicData(std::shared_ptr<Chipic> Chipic);
+	//chipic被关闭 重新设置按钮状态
+	void chipicClose();
 public Q_SLOTS:
 	//运行按钮被点击
 	void on_toolButtonRun_clicked();

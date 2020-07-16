@@ -1,5 +1,5 @@
 #include "MessageTransition.h"
-
+#include <qtextcodec.h>
 
 MessageTransition::MessageTransition()
 {
@@ -108,4 +108,12 @@ std::string MessageTransition::creatCloseChipicJsonMessage(const DWORD threadId)
 	Message.Add("threadID", threadId);
 
 	return Message.ToString();
+}
+QString MessageTransition::gbkStdstringToQstring(const std::string &str)
+{
+	QTextCodec* pCodec = QTextCodec::codecForName("gb2312");
+	if (!pCodec) return "";
+
+	QString qstr = pCodec->toUnicode(str.c_str(), str.length());
+	return qstr;
 }

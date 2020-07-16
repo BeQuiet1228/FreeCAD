@@ -257,9 +257,9 @@ void RunChipic3dListener::receiveStringMessage(Message &msg)
 				{
 					msg.text = buffer.data();
 					//替换其中的特殊字符为空格
-					QString temp = QString::fromLocal8Bit(msg.text.c_str());
-					temp.replace("@#$","\n");
-					msg.text = temp.toLocal8Bit();
+				//	QString temp = QString::fromStdString(msg.text.c_str());
+				//	temp.replace("@#$","\n");
+				//	msg.text = temp.toStdString();
 					break;
 				}
 				buffer.append(temp.lParam);

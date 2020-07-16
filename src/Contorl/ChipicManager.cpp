@@ -120,6 +120,8 @@ void ChipicManager::runButtonClicked(const std::string& m3dPath /*= ""*/)
 			}
 		}
 		CurrentChipic.reset();
+
+		emit currentChipicStateUpdate();
 	}
 }
 

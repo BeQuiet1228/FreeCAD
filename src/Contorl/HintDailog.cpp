@@ -1,6 +1,7 @@
 #include "HintDailog.h"
 #include <QPushButton>
 #include "ui_HintDailog.h"
+#include "MessageTransition.h"
 HintDailog::HintDailog(QWidget *parent /*= 0*/)
 	:QDialog(parent), ui(new Ui::Dialog)
 {
@@ -58,7 +59,7 @@ void HintDailog::showForMode3()
 */
 void HintDailog::setText(const std::string& text)
 {
-	ui->labelContent->setText(QString::fromStdString(text));
+	ui->labelContent->setText(MessageTransition::gbkStdstringToQstring(text));
 }
 
 void HintDailog::buttonLoseClicked()

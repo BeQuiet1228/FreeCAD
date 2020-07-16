@@ -42,6 +42,8 @@ public:
 	void sendMessage(const UINT& type, const WPARAM& wParam, const LPARAM& lParam,const DWORD& thradId = 0);
 	//关闭chipic
 	void closeChipic();
+	//打开log文件
+	void openLogFile();
 private:
 	//处理迭代步数消息
 	bool disposIterationCountMessage(const Message& msg);
