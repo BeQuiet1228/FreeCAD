@@ -7,6 +7,7 @@
 #include "RunChipic3dListener.h"
 #include "HintDailog.h"
 #include "ContorlConfig.hpp"
+#include <QTimer>
 class CONTROL_EXPORT Chipic:public QObject
 {
 	class Time{
@@ -65,6 +66,8 @@ private:
 	bool disposResultMapMessage(const Message& msg);
 	//按照固定格式生成文件路径
 	std::string makePath(const std::string& fileName);
+	//处理chipic关闭消息
+	bool disposChipicCloseMessage(const std::string& json);
 public:
 	//运行状态
 	bool runState;
@@ -90,6 +93,8 @@ public:
 	int threadCount;
 	//文件路径
 	std::string m3dPath;
+	//刷新界面定时器
+	QTimer * timer;
 public:
 	void disposJsonMessage(const std::string& json);
 	
@@ -98,4 +103,5 @@ Q_SIGNALS:
 
 public Q_SLOTS:
 	void buttonClicked(int clickType);
+	void timerOut();
 };

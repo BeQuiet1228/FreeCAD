@@ -1,10 +1,9 @@
 #pragma once
 
 #include <QtGui/QWidget>
-#include "Chipic.h"
 #include <memory>
 #include "ContorlConfig.hpp"
-
+class Chipic;
 namespace Ui{
 	class Form;
 }
@@ -19,6 +18,8 @@ public:
 public: 
 	//设置显示数据
 	void setChipicData(std::shared_ptr<Chipic> chipic);
+	//chipic关闭
+	void chipicClose();
 private:
 	Ui::Form *ui;
 };

@@ -9,8 +9,8 @@ int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 	Contorl w;
-	w.contorlButtonBar.show();
-	w.contorlDataBar.show();
+	w.contorlButtonBar->show();
+	w.contorlDataBar->show();
 	auto contorl = ContorlInterface::GetInstance();
 	return a.exec();
 }

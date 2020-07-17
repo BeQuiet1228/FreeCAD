@@ -7,12 +7,16 @@
 #include "LocalEimtter.h"
 #include <FCConfig.h>
 #include <Base\Interpreter.h>
+#include "Chipic.h"
 Contorl::Contorl(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
 	
-	connect(&contorlButtonBar, SIGNAL(buttonClicked(int)), this, SLOT(buttonClinked(int)));
+	contorlButtonBar = new ContorlButtonBar;
+	contorlDataBar = new ContorlDataBar;
+
+	connect(contorlButtonBar, SIGNAL(buttonClicked(int)), this, SLOT(buttonClinked(int)));
 	connect(&chipicManager, SIGNAL(currentChipicStateUpdate()), this, SLOT(chipicStateUpdate()));
 
 	auto sender = MessageSender::GetInstance();
@@ -40,11 +44,12 @@ void Contorl::chipicStateUpdate()
 	auto chipic = chipicManager.CurrentChipic;
 	if (!chipic)
 	{
-		contorlButtonBar.chipicClose();
+		contorlButtonBar->chipicClose();
+		contorlDataBar->chipicClose();
 		return;
 	}
-	contorlDataBar.setChipicData(chipic);
-	contorlButtonBar.setChipicData(chipic);
+	contorlDataBar->setChipicData(chipic);
+	contorlButtonBar->setChipicData(chipic);
 }
 
 void Contorl::buttonClinked(int buttonType)

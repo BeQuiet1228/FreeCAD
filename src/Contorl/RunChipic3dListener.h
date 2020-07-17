@@ -23,7 +23,7 @@
 /**
 * @brief 消息结构类
 */
-struct CONTROL_EXPORT Message
+struct  Message
 {
 	Message(UINT msg = WM_USER, WPARAM wParam = 0, LPARAM lParam = 0) {
 		this->Msg = msg;

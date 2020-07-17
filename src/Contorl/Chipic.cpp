@@ -12,17 +12,21 @@
 #include <QFileInfo>
 #include <FCConfig.h>
 #include <Base\Interpreter.h>
+#include <QProcess>
 Chipic::Chipic(DWORD threadID)
 {
 	this->threadID = threadID;
 	init();
-
 	connect(&hintDailog, SIGNAL(buttonClicked(int)), this, SLOT(buttonClicked(int)));
+
+	timer = new QTimer;
+	connect(timer, SIGNAL(timeout()), this, SLOT(timerOut()));
+	timer->start(5 * 1000);
 }
 
 Chipic::~Chipic()
 {
-
+	delete timer;
 }
 
 /**
@@ -75,7 +79,7 @@ void Chipic::timerButtonClicked()
 void Chipic::init()
 {
 	//运行状态
-	runState = true;
+	runState = false;
 	//暂停状态
 	pausState = true;
 	//定时器状态
@@ -128,6 +132,21 @@ void Chipic::closeChipic()
 	auto msg = MessageTransition::creatCloseChipicJsonMessage(threadID);
 	auto sender = MessageSender::GetInstance();
 	sender->sendJsonMessage(msg);
+}
+
+/**
+* @brief Chipic::openLogFile 打开log文件
+* @return void
+*/
+void Chipic::openLogFile()
+{
+	auto  path = QString::fromStdString(this->m3dPath);
+	path = "notepad.exe " + path.left(path.size() - 4) + ".LOG";
+
+	QProcess process;
+	process.start(path);
+	process.waitForFinished();
+
 }
 
 /**
@@ -322,12 +341,14 @@ bool Chipic::disposeStructMapMessage(const Message& msg)
 	if (msg.Msg == 208)
 	{
 		if (msg.wParam == 100 && msg.lParam == 0)
+
 		{
 			std::string fileName = this->makePath("_Temp.h5");
+			fileName = MessageTransition::utf8StdstringToGbkStdstring(fileName);
 			Base::InterpreterSingleton python;
 			python.runString("import Control.controlCommand.LonelinessCmd");
 			python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
-			python.runStringArg("lonemod.openStruct(\'%s\')", fileName.c_str());
+			python.runStringArg("lonemod.openStruct(\'%s\')",fileName.c_str());
 		}
 	}
 
@@ -346,6 +367,7 @@ bool Chipic::disposResultMapMessage(const Message& msg)
 		if (msg.wParam != -1000 && msg.lParam != -1000)
 		{
 			std::string fileName = this->makePath("_Temp.h5");
+			fileName = MessageTransition::utf8StdstringToGbkStdstring(fileName);
 			Base::InterpreterSingleton python;
 			python.runString("import Control.controlCommand.LonelinessCmd");
 			python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
@@ -388,9 +410,36 @@ std::string Chipic::makePath(const std::string& fileName)
 	return filePath;
 }
 
+/**
+* @brief Chipic::disposChipicCloseMessage 处理chipic关闭消息
+* @param const std::string & json
+* @return bool
+*/
+bool Chipic::disposChipicCloseMessage(const std::string& json)
+{
+	neb::CJsonObject jsonObject(json);
+	std::string cmd = "";
+	if (jsonObject.Get("cmd", cmd))
+	{
+		if (cmd == "CloseChipic")
+		{
+			runState = false;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void Chipic::disposJsonMessage(const std::string& json)
 {
 	Message msg = MessageTransition::jsonToWinMessage(json);
+	//处理chipic关闭消息
+	if (disposChipicCloseMessage(json))
+	{
+		emit stateUpdate(threadID);
+		return;
+	}
 	//处理器件结构消息
 	if (disposeStructMapMessage(msg))
 		return;
@@ -483,6 +532,15 @@ void Chipic::buttonClicked(int clickType)
 	case HintDailog::NULL_TYPE:
 		break;
 	}
+}
+
+/**
+* @brief Chipic::timerOut 定时器超时
+* @return void
+*/
+void Chipic::timerOut()
+{
+	this->refreshButtonClicked();
 }
 
 #ifndef MY_QTCMY_DEBUG

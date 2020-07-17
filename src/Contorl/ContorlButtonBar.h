@@ -2,13 +2,12 @@
 
 #include <QWidget>
 #include <memory>
-#include "Chipic.h"
 #include "ContorlConfig.hpp"
-
+class Chipic;
 namespace Ui {
 	class ContorlButtonBar;
 }
-class CONTROL_EXPORT ContorlButtonBar : public QWidget
+class  ContorlButtonBar : public QWidget
 {
 	Q_OBJECT
 public:
@@ -28,7 +27,7 @@ private:
 	Ui::ContorlButtonBar *ui;
 public:
 	//设置计算程序数据
-	void setChipicData(std::shared_ptr<Chipic> Chipic);
+	void setChipicData(std::shared_ptr<Chipic> chipic);
 	//chipic被关闭 重新设置按钮状态
 	void chipicClose();
 public Q_SLOTS:

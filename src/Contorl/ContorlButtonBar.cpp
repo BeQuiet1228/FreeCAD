@@ -2,6 +2,7 @@
 #include <iostream>
 #include <QMetaType>
 #include "ui_ContorlButtonBar.h"
+#include "Chipic.h"
 ContorlButtonBar::ContorlButtonBar(QWidget *parent /*= 0*/)
 	:ui(new Ui::ContorlButtonBar)
 {
@@ -10,11 +11,10 @@ ContorlButtonBar::ContorlButtonBar(QWidget *parent /*= 0*/)
 
 ContorlButtonBar::~ContorlButtonBar()
 {
-	//由于加入到了mainwindow中，会先析，这个析构会有问题，暂时先注释
-	//delete ui;
+	delete ui;
 }
 
-void ContorlButtonBar::setChipicData(std::shared_ptr<Chipic> Chipic)
+void ContorlButtonBar::setChipicData(std::shared_ptr<Chipic> chipic)
 {
 	//有chipic在运行 则改变图标可用状态
 	this->ui->toolButtonLOG->setEnabled(true);
@@ -23,7 +23,7 @@ void ContorlButtonBar::setChipicData(std::shared_ptr<Chipic> Chipic)
 	this->ui->toolButtonTimer->setEnabled(true);
 	this->ui->toolButtonParalleRun->setEnabled(false);
 
-	if (Chipic->pausState)
+	if (chipic->pausState)
 	{
 		QIcon icon5;
 		icon5.addFile(QString::fromUtf8(":/icon/continue.svg"), QSize(), QIcon::Normal, QIcon::Off);
@@ -36,7 +36,7 @@ void ContorlButtonBar::setChipicData(std::shared_ptr<Chipic> Chipic)
 		ui->toolButtonPause->setIcon(icon5);
 	}
 
-	if (Chipic->timerSate)
+	if (chipic->timerSate)
 	{
 		QIcon icon5;
 		icon5.addFile(QString::fromUtf8(":/icon/on.svg"), QSize(), QIcon::Normal, QIcon::Off);

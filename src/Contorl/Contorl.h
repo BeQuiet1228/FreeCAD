@@ -6,7 +6,7 @@
 #include "ContorlButtonBar.h"
 #include "ContorlDataBar.h"
 #include "ContorlConfig.hpp"
-class  CONTROL_EXPORT Contorl : public QMainWindow
+class  Contorl : public QMainWindow
 {
 	Q_OBJECT
 public:
@@ -15,10 +15,10 @@ public:
 
 public:
 	ChipicManager chipicManager;
-	ContorlButtonBar contorlButtonBar;
-	ContorlDataBar contorlDataBar;
+	ContorlButtonBar *contorlButtonBar;
+	ContorlDataBar *contorlDataBar;
 
-	std::string m3dPath = "E:\\lingshiwenjianjia\\MILO_D\\MILO_D.m3d";
+	std::string m3dPath = "";
 private:
 	Ui::ContorlClass ui;
 private:

@@ -1,11 +1,10 @@
 #pragma once
 #include <QtGui/QDialog>
-#include <QCloseEvent>
 #include "ContorlConfig.hpp"
 namespace Ui{
 	class Dialog;
 }
-class CONTROL_EXPORT HintDailog : public QDialog
+class  HintDailog : public QDialog
 {
 
 	Q_OBJECT
@@ -26,6 +25,7 @@ public:
 	};
 public:
 	HintDailog(QWidget *parent = 0);
+	~HintDailog();
 
 	//ÏÔÊ¾¼ÌÐø¡¢ÍË³ö¡¢ºöÂÔ
 	void showForMode1();
@@ -47,6 +47,4 @@ public Q_SLOTS:
 	void buttonExitClincked();
 Q_SIGNALS:
 	void buttonClicked(int);
-protected:
-	void closeEvent(QCloseEvent *e) override;
 };

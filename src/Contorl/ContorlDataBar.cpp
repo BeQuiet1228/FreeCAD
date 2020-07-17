@@ -2,16 +2,17 @@
 #include <QString>
 #include "ui_ContorlDataBar.h"
 #include "MessageTransition.h"
+#include "Chipic.h"
 ContorlDataBar::ContorlDataBar(QWidget *parent /*= 0*/)
 	:QWidget(parent), ui(new Ui::Form)
 {
 	ui->setupUi(this);
+	chipicClose();
 }
 
 ContorlDataBar::~ContorlDataBar()
 {
-	//由于加入到了mainwindow中，会先析，这个析构会有问题，暂时先注释
-	//delete ui;
+	delete ui;
 }
 /**
 * @brief ContorlDataBar::setChipicData 设置显示数据
@@ -39,6 +40,20 @@ void ContorlDataBar::setChipicData(std::shared_ptr<Chipic> chipic)
 	std::string iteration = std::to_string(chipic->currentIteration) + "/" + std::to_string(chipic->iterationCount);
 	ui->progressBarIterationCount->setFormat(QString::fromLocal8Bit(iteration.c_str()));
 	
+}
+
+void ContorlDataBar::chipicClose()
+{
+	ui->labelHint->setText(MessageTransition::gbkStdstringToQstring("未运行"));
+	//设置粒子数目
+	ui->labelParticle->setText("0");
+	//设置迭代时间
+	ui->labelIterationTimer->setText("0.0");
+	//设置预估时间
+	ui->labelUsedTime->setText("0:0:0/0:0:0");
+	//设置迭代次数
+	ui->progressBarIterationCount->setValue(100);
+	ui->progressBarIterationCount->setFormat("1/1");
 }
 
 #include "moc_ContorlDataBar.cpp"

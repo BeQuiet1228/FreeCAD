@@ -6,7 +6,7 @@
 #include "ContorlDataBar.h"
 #include "ContorlConfig.hpp"
 class Chipic;
-class CONTROL_EXPORT ChipicManager:public QObject
+class  ChipicManager:public QObject
 {
 	Q_OBJECT
 public:
@@ -35,4 +35,7 @@ public Q_SLOTS:
 public:
 	//并行按钮被点击
 	void ButtonParalleRunClicked(const std::string& m3dPath);
+
+private:
+	bool detectionFilePathUTF8(const std::string& path);
 };

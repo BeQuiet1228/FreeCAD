@@ -7,6 +7,8 @@
 #include "MessageTransition.h"
 #include "Chipic.h"
 #include "ThreadCountDialog.h"
+#include <QDir>
+#include <QMessageBox>
 ChipicManager::ChipicManager()
 {
 	auto getter = JsonMessageGetter::GetInstance();
@@ -60,10 +62,12 @@ void ChipicManager::hasNewMessage()
 			if (newChipic)
 			{
 				newChipic->threadID = threadID;
+				newChipic->runState = true;
 				chipic = newChipic;
 				newChipic.reset();
 				chipicMap.insert(std::map<DWORD, std::shared_ptr<Chipic>>::value_type(chipic->threadID, chipic));
 				connect(chipic.get(), SIGNAL(stateUpdate(DWORD)), this, SLOT(chipicStateUpdate(DWORD)));
+				emit currentChipicStateUpdate();
 			}else{
 				return;
 			}
@@ -78,13 +82,29 @@ void ChipicManager::hasNewMessage()
 	}
 }
 
+/**
+* @brief ChipicManager::chipicStateUpdate chipic状态更新槽
+* @param DWORD threadId
+* @return void
+*/
 void ChipicManager::chipicStateUpdate(DWORD threadId)
 {
 	auto  chipic = chipicMap.find(threadId);
 	if (chipic != chipicMap.end())
 	{
-		if (CurrentChipic.get() == chipic->second.get())
-			emit currentChipicStateUpdate();
+		//判断chipic的运行状态 如果没有在运行 则释放掉对象
+		if (!(chipic->second->runState))
+		{
+			if (CurrentChipic.get() == chipic->second.get())
+			{
+				CurrentChipic.reset();
+				emit currentChipicStateUpdate();	
+			}
+			chipicMap.erase(chipic);
+		}else{
+			if (CurrentChipic.get() == chipic->second.get())
+				emit currentChipicStateUpdate();
+		}
 	}
 }
 
@@ -97,6 +117,9 @@ void ChipicManager::runButtonClicked(const std::string& m3dPath /*= ""*/)
 {
 	if (!CurrentChipic)
 	{
+		//判断路径是否存在
+		if (!detectionFilePathUTF8(m3dPath))
+			return;
 		//暂存一个新建chipic对象，直到获取到线程id
 		newChipic.reset(new Chipic(0));
 		CurrentChipic = newChipic;
@@ -109,19 +132,6 @@ void ChipicManager::runButtonClicked(const std::string& m3dPath /*= ""*/)
 	}
 	else{
 		CurrentChipic->closeChipic();
-
-		//移除chipic对象
-		for (auto i = chipicMap.begin(); i != chipicMap.end(); i++)
-		{
-			if (i->second == CurrentChipic)
-			{
-				chipicMap.erase(i);
-				break;
-			}
-		}
-		CurrentChipic.reset();
-
-		emit currentChipicStateUpdate();
 	}
 }
 
@@ -140,6 +150,9 @@ void ChipicManager::ButtonParalleRunClicked(const std::string& m3dPath)
 {
 	if (!CurrentChipic)
 	{
+		//判断路径是否存在
+		if (!detectionFilePathUTF8(m3dPath))
+			return;
 		//获取并行线程
 		int threadCount = 1;
 		ThreadCountDialog dialog;
@@ -160,6 +173,26 @@ void ChipicManager::ButtonParalleRunClicked(const std::string& m3dPath)
 	}else{
 
 	}
+}
+
+/**
+* @brief ChipicManager::detectionFilePathUTF8 检测路径是否存在 路径为utf8编码
+* @param const std::string & path
+* @return bool
+*/
+bool ChipicManager::detectionFilePathUTF8(const std::string& path)
+{
+	auto temp = QString::fromStdString(path);
+	QDir dir;
+	if (!dir.exists(temp))
+	{
+		QMessageBox box;
+		box.setText(MessageTransition::gbkStdstringToQstring("路径不存在，路径: ") + temp);
+		box.exec();
+		return false;
+	}
+
+	return true;
 }
 
 #ifndef MY_QTCMY_DEBUG

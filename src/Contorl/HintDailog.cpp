@@ -10,6 +10,13 @@ HintDailog::HintDailog(QWidget *parent /*= 0*/)
 	connect(ui->pushButtonContinue, SIGNAL(clicked()), this, SLOT(buttonContinueClicked()));
 	connect(ui->pushButtonExit, SIGNAL(clicked()), this, SLOT(buttonExitClincked()));
 	connect(ui->pushButtonLose, SIGNAL(clicked()), this, SLOT(buttonLoseClicked()));
+
+	this->setModal(true);
+}
+
+HintDailog::~HintDailog()
+{
+
 }
 
 /**
@@ -69,8 +76,9 @@ void HintDailog::buttonLoseClicked()
 	if (ui->checkBox->isChecked())
 		temp++;
 	auto  t = ClinkeType(temp);
-
+	this->close();
 	emit buttonClicked(t);
+
 }
 
 void HintDailog::buttonContinueClicked()
@@ -80,30 +88,22 @@ void HintDailog::buttonContinueClicked()
 	if (ui->checkBox->isChecked())
 		temp++;
 	auto  t = ClinkeType(temp);
-	
+	this->close();
 	emit buttonClicked(t);
+
 }
 
 void HintDailog::buttonExitClincked()
-{
-	this->close();
-}
-
-/**
-* @brief HintDailog::closeEvent 窗口关闭事件
-* @param QCloseEvent * e
-* @return void
-*/
-void HintDailog::closeEvent(QCloseEvent *e)
 {
 	int temp = MODE1_EXIT;
 	temp += (mode - 1) * 5;
 	if (ui->checkBox->isChecked())
 		temp++;
 	auto  t = ClinkeType(temp);
+	this->close();
 	emit buttonClicked(t);
 
-	QDialog::closeEvent(e);
 }
+
 
 #include "moc_HintDailog.cpp"

@@ -1,6 +1,7 @@
 #include "LocalEimtter.h"
 #include "CJsonObject.hpp"
 #include "MessageTransition.h"
+#include "JsonMessageGetter.h"
 LocalEmitter::LocalEmitter()
 {
 
@@ -80,6 +81,10 @@ bool LocalEmitter::disposeCloseChipicJsonMessage(const std::string& json)
 		if (listener != listenerMap.end())
 		{
 			listenerMap.erase(listener);
+			//回执一个chipic关闭消息，通知管理器释放对象
+			std::string aj = MessageTransition::creatCloseChipicJsonMessage(threadId);
+			auto getter = JsonMessageGetter::GetInstance();
+			getter->addJsonMessage(aj);
 		}
 		else
 		{
