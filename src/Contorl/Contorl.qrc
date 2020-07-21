@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>image/loading.gif</file>
     <file>icon/muti-run.svg</file>
     <file>icon/off.svg</file>
     <file>icon/on.svg</file>

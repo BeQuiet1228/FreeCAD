@@ -431,6 +431,29 @@ bool Chipic::disposChipicCloseMessage(const std::string& json)
 	return false;
 }
 
+/**
+* @brief Chipic::disposChipicSendMessagePauseMessage 因为消息队列有大小限制，在消息比较多的时候，计算程序会先发送一部分消息，然后暂停，等待处理完消息 
+* @param const Message & msg
+* @return bool
+*/
+bool Chipic::disposChipicSendMessagePauseMessage(const Message& msg)
+{
+	if (msg.Msg == 250 && msg.wParam == 1)
+	{
+		if (msg.lParam == 0)
+		{
+			this->pausState = true;
+			this->pausButtonClicked();
+		}else{
+			this->pausState = false;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
 void Chipic::disposJsonMessage(const std::string& json)
 {
 	Message msg = MessageTransition::jsonToWinMessage(json);
@@ -481,6 +504,12 @@ void Chipic::disposJsonMessage(const std::string& json)
 	}
 	//处理提示消息
 	if (disposHintMessage(msg))
+	{
+		emit stateUpdate(this->threadID);
+		return;
+	}
+	//处理发送消息中的暂停消息
+	if (disposChipicSendMessagePauseMessage(msg))
 	{
 		emit stateUpdate(this->threadID);
 		return;

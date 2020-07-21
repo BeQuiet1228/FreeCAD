@@ -3,8 +3,9 @@
 #include <map>
 #include "RunChipic3dListener.h"
 #include <memory>
+#include <list>
 using RunChipic3dListenerPtr = std::shared_ptr<RunChipic3dListener>;
-using RunChipic3dListenerMap = std::map<DWORD, RunChipic3dListenerPtr>;
+using RunChipic3dListenerList = std::list<RunChipic3dListenerPtr>;
 
 class LocalEmitter:public EmitterInterface
 {
@@ -25,6 +26,6 @@ private:
 	void sendWinMessage(const std::string& json);
 private:
 	//winmessage消息管理器集合
-	RunChipic3dListenerMap listenerMap;
+	RunChipic3dListenerList listenerList;
 
 };

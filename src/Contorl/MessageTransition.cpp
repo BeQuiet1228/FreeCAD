@@ -103,11 +103,7 @@ std::string MessageTransition::creatRunChipicJsonMessage(const std::string& m3dP
 */
 std::string MessageTransition::creatCloseChipicJsonMessage(const DWORD threadId)
 {
-	neb::CJsonObject Message;
-	Message.Add("cmd", "CloseChipic");
-	Message.Add("threadID", threadId);
-
-	return Message.ToString();
+	return creatCmdMessage("CloseChipic", threadId);
 }
 QString MessageTransition::gbkStdstringToQstring(const std::string &str)
 {
@@ -130,4 +126,36 @@ std::string MessageTransition::utf8StdstringToGbkStdstring(const std::string& st
 	QString temp = QString::fromUtf8(str.c_str());
 	std::string ret = gbk->fromUnicode(temp).data();
 	return ret;
+}
+
+/**
+* @brief MessageTransition::creatCmdMessage 创建一个cmd消息
+* @param const std::string & Cmd
+* @param const DWORD & threadId
+* @return std::string
+*/
+std::string MessageTransition::creatCmdMessage(const std::string& Cmd, const DWORD& threadId /*= 0*/)
+{
+	neb::CJsonObject Message;
+	Message.Add("cmd", Cmd);
+	Message.Add("threadID", threadId);
+
+	return Message.ToString();
+}
+
+/**
+* @brief MessageTransition::creatChipicStartfinishedJsonMessage 创建一个chipic启动完成的消息
+* @param const std::string & m3dPath
+* @param const DWORD & threadId
+* @param const int & threadCount
+* @return std::string
+*/
+std::string MessageTransition::creatChipicStartfinishedJsonMessage(const std::string& m3dPath, const DWORD& threadId, const int& threadCount)
+{
+	std::string json = creatCmdMessage("startFinished", threadId);
+	neb::CJsonObject message(json);
+	message.Add("m3dPath", m3dPath);
+	message.Add("threadCount", threadCount);
+
+	return message.ToString();
 }

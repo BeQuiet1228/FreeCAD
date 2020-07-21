@@ -1,6 +1,7 @@
 #设置预定义
 if(WIN32)
-add_definitions(-D_CONTORL_)
+#add_definitions(-D_CONTORL_ -DMY_DEBUG)
+add_definitions(-D_CONTORL_ )
 endif(WIN32)
 #设置项目名称
 project(Contorl)
@@ -11,6 +12,7 @@ SET(UI_SRC
 	ContorlDataBar.ui
 	ContorlButtonBar.ui
 	ThreadCountDialog.ui
+	LoadingDialog.ui
 )
 SET(QRC_SRC
 	Contorl.qrc
@@ -20,7 +22,6 @@ SET(JSON_SRC
 	cJSON.h
 	CJsonObject.cpp
 	CJsonObject.hpp
-	ContorlButtonBar.cpp
 )
 SET(MY_MOC_HDR
 	Contorl.h
@@ -31,6 +32,7 @@ SET(MY_MOC_HDR
 	ContorlDataBar.h
 	ContorlButtonBar.h
 	ThreadCountDialog.h
+	LoadingDialog.h
 )
 SET(MY_MOC_SRC
 	Contorl.cpp
@@ -40,6 +42,8 @@ SET(MY_MOC_SRC
 	HintDailog.cpp
 	ContorlDataBar.cpp
 	ThreadCountDialog.cpp
+	LoadingDialog.cpp
+	ContorlButtonBar.cpp
 )
 #引入头文件
 include_directories(

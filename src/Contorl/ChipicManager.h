@@ -3,9 +3,8 @@
 #include <map>
 #include <Windows.h>
 #include <memory>
-#include "ContorlDataBar.h"
-#include "ContorlConfig.hpp"
 class Chipic;
+class LoadingDialog;
 class  ChipicManager:public QObject
 {
 	Q_OBJECT
@@ -15,11 +14,11 @@ public:
 private:
 	//计算程序集合
 	std::map<DWORD, std::shared_ptr<Chipic>> chipicMap;
+	//载入提示框
+	LoadingDialog *loadingDialog;
 public:
 	//当前管理的计算程序
 	std::shared_ptr<Chipic> CurrentChipic;
-	//新建计算程序，用于启动时未获取线程id时暂存
-	std::shared_ptr<Chipic> newChipic;
 Q_SIGNALS:
 	//当前计算程序有信息更新
 	void currentChipicStateUpdate();
@@ -37,5 +36,12 @@ public:
 	void ButtonParalleRunClicked(const std::string& m3dPath);
 
 private:
+	//检测路径是否存在
 	bool detectionFilePathUTF8(const std::string& path);
+	//处理消息
+	bool disposeMessage(const std::string& json);
+	//处理关闭chipic的消息
+	bool disposeCloseChipicMessage(const DWORD& threadId);
+	//处理启动chipic的消息
+	bool dispoesStartChipicMessage(const std::string json);
 };

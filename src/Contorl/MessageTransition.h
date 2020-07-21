@@ -22,4 +22,8 @@ public:
 	static QString gbkStdstringToQstring(const std::string& str);
 	//UTF-8编码的std::string 转GBK std::string
 	static std::string utf8StdstringToGbkStdstring(const std::string& str);
+	//创建一个cmd消息
+	static std::string creatCmdMessage(const std::string& Cmd, const DWORD& threadId = 0);
+	//创建一个chipic启动完成消息
+	static std::string creatChipicStartfinishedJsonMessage(const std::string& m3dPath,const DWORD& threadId,const int& threadCount);
 };

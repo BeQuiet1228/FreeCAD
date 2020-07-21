@@ -117,6 +117,7 @@
 #include "View3DInventorViewer.h"
 
 #include "qwidgetaction.h"
+#include "Contorl/ContorlInterface.h"
 
 #if defined(Q_OS_WIN32)
 #define slots

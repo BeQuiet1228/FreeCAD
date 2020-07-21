@@ -145,10 +145,6 @@ void RunChipic3dListener::workThreadOn()
 {
 	setWorkThreadFlag(true);
 	this->start();
-	while (getThreadId() == 0)
-	{
-		Sleep(10);
-	}
 }
 
 void RunChipic3dListener::workThreadOff()
@@ -197,6 +193,8 @@ std::shared_ptr<RunChipic3dListener> RunChipic3dListener::runChipic3d(const std:
 	std::shared_ptr<RunChipic3dListener> listener(new RunChipic3dListener);
 
 	listener->runchipic3dPtr = chipic3d;
+	listener->m3dPath = m3dpath;
+	listener->threadCount = count;
 	listener->workThreadOn();
 	return listener;
 }
@@ -274,25 +272,49 @@ void RunChipic3dListener::receiveStringMessage(Message &msg)
 
 void RunChipic3dListener::run()
 {
+	//初始化chipic程序
 	this->init();
+	//发送初始化完成消息
+	{
+		std::string json = MessageTransition::creatChipicStartfinishedJsonMessage(this->m3dPath, this->getThreadId(), this->threadCount);
+		auto messageGetter = JsonMessageGetter::GetInstance();
+		messageGetter->addJsonMessage(json);
+	}
+
 	while (getWorkThreadFlag())
 	{
+		/*
+			为了能尽快的接收消息，又能在接收时兼顾发送，并且空闲时不占用cpu大量资源。
+			如果有未发送的消息，或者接收消息未失败，则一直循环接收。
+			否则跳出循环，休眠一会儿再接收或者发送。
+		*/
 		//每次循环睡眠1ms,避免cpu被占用
-		Sleep(1);
-		Message msg;
-		//接收winmessga
-		if (receiveMessage(msg,0))
+		Sleep(10);
+
+		bool ok = true;
+		while (ok)
 		{
-			receiveStringMessage(msg);
-			msg.threadId = this->mainThreadID;
-			std::string json = MessageTransition::winMessageTojson(msg);
-			auto messageGetter = JsonMessageGetter::GetInstance();		
-			messageGetter->addJsonMessage(json);
+			Message msg;
+			//接收winmessga
+			if (receiveMessage(msg, 0))
+			{
+				receiveStringMessage(msg);
+				msg.threadId = this->mainThreadID;
+				std::string json = MessageTransition::winMessageTojson(msg);
+				auto messageGetter = JsonMessageGetter::GetInstance();
+				messageGetter->addJsonMessage(json);
+			}else{
+				ok = false;
+			}
+			//发送winMessage
+			if (getMessageForDeque(msg))
+			{
+				sendMessage(msg.Msg, msg.wParam, msg.lParam);
+			}else{
+				ok = false || ok;
+			}
 		}
-		if (getMessageForDeque(msg))
-		{
-			sendMessage(msg.Msg, msg.wParam, msg.lParam);
-		}
+
 	}
 }
 
@@ -356,7 +378,7 @@ bool RunChipic3dListener::receiveMessage(Message &msg,const int &ms){
         msg.Msg = m.message - WM_USER;
         msg.wParam = m.wParam;
         msg.lParam = m.lParam;
-#ifdef MY_DEBUG
+#ifdef IMY_DEBUG
 		std::cerr << "RunChipic3dListener::receiveMessage,Msg:" << msg.Msg <<
 			",wParam:" << msg.wParam << ",lParam:" << msg.lParam << std::endl;
 #endif // MY_DEBUG

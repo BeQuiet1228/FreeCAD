@@ -19,7 +19,6 @@
 #include <mutex>
 #include <deque>
 #include <memory>
-#include "ContorlConfig.hpp"
 /**
 * @brief 消息结构类
 */
@@ -45,10 +44,11 @@ struct  Message
 
 };
 class RunChipic3d;
-class CONTROL_EXPORT RunChipic3dListener:public QThread
+class  RunChipic3dListener:public QThread
 {
-public:
+private:
 	RunChipic3dListener();
+public:
 	virtual ~RunChipic3dListener();
 
 	void init();
@@ -99,8 +99,12 @@ private:
 	std::mutex threadIdMutex;
 	//chipic线程id
 	DWORD mainThreadID;
-	
+	//chipic程序的process对象
 	std::shared_ptr<RunChipic3d> runchipic3dPtr;
+	//m3d路径
+	std::string m3dPath;
+	//chipic运行线程数
+	int threadCount;
 
 protected:
 	void run() override;

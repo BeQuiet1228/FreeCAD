@@ -8,20 +8,32 @@
 #include <FCConfig.h>
 #include <Base\Interpreter.h>
 #include "Chipic.h"
+#include "LoadingDialog.h"
 Contorl::Contorl(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
 	
+	//初始化ui
 	contorlButtonBar = new ContorlButtonBar;
 	contorlDataBar = new ContorlDataBar;
 
 	connect(contorlButtonBar, SIGNAL(buttonClicked(int)), this, SLOT(buttonClinked(int)));
 	connect(&chipicManager, SIGNAL(currentChipicStateUpdate()), this, SLOT(chipicStateUpdate()));
 
+	//初始化消息发射器
 	auto sender = MessageSender::GetInstance();
 	sender->setEmitter(new LocalEmitter);
 
+	//初始化ui定时器
+	uiTimer = new QTimer;
+	connect(uiTimer, SIGNAL(timeout()), this, SLOT(uiUpdateTimerout()));
+	uiTimer->start(500);
+
+	//LoadingDialog *d = new LoadingDialog;
+	//d->show();
+
+	//this->m3dPath = "E:/lingshiwenjianjia/MILO_D/MILO_D.m3d";
 }
 
 void Contorl::getM3dPathForRunPython()
@@ -41,15 +53,7 @@ void Contorl::on_pushButton_clicked()
 
 void Contorl::chipicStateUpdate()
 {
-	auto chipic = chipicManager.CurrentChipic;
-	if (!chipic)
-	{
-		contorlButtonBar->chipicClose();
-		contorlDataBar->chipicClose();
-		return;
-	}
-	contorlDataBar->setChipicData(chipic);
-	contorlButtonBar->setChipicData(chipic);
+	uiUpdateFlag = true;
 }
 
 void Contorl::buttonClinked(int buttonType)
@@ -78,6 +82,29 @@ void Contorl::buttonClinked(int buttonType)
 		break;
 	default:
 		break;
+	}
+}
+
+/**
+* @brief Contorl::uiUpdateTimerout 500ms刷新一次，判断界面是否有信息需要刷新
+* @return void
+*/
+void Contorl::uiUpdateTimerout()
+{
+	if (uiUpdateFlag)
+	{
+		uiUpdateFlag = false;
+
+		auto chipic = chipicManager.CurrentChipic;
+		if (!chipic)
+		{
+			contorlButtonBar->chipicClose();
+			contorlDataBar->chipicClose();
+			return;
+		}
+		contorlDataBar->setChipicData(chipic);
+		contorlButtonBar->setChipicData(chipic);
+
 	}
 }
 

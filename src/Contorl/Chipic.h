@@ -6,9 +6,8 @@
 #include <QPushButton>
 #include "RunChipic3dListener.h"
 #include "HintDailog.h"
-#include "ContorlConfig.hpp"
 #include <QTimer>
-class CONTROL_EXPORT Chipic:public QObject
+class  Chipic:public QObject
 {
 	class Time{
 	public:
@@ -68,6 +67,8 @@ private:
 	std::string makePath(const std::string& fileName);
 	//处理chipic关闭消息
 	bool disposChipicCloseMessage(const std::string& json);
+	//处理发送消息中的暂停消息
+	bool disposChipicSendMessagePauseMessage(const Message& msg);
 public:
 	//运行状态
 	bool runState;

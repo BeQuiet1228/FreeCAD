@@ -77,22 +77,23 @@ bool LocalEmitter::disposeCloseChipicJsonMessage(const std::string& json)
 	if (jsonObject.Get("threadID", temp))
 	{
 		DWORD threadId = std::stoi(temp);
-		auto listener = listenerMap.find(threadId);
-		if (listener != listenerMap.end())
+
+		for (auto i = listenerList.begin(); i != listenerList.end(); i++)
 		{
-			listenerMap.erase(listener);
-			//回执一个chipic关闭消息，通知管理器释放对象
-			std::string aj = MessageTransition::creatCloseChipicJsonMessage(threadId);
-			auto getter = JsonMessageGetter::GetInstance();
-			getter->addJsonMessage(aj);
+			if ((*i)->getThreadId() == threadId)
+			{
+				listenerList.erase(i);
+				//回执一个chipic关闭消息，通知管理器释放对象
+				std::string aj = MessageTransition::creatCloseChipicJsonMessage(threadId);
+				auto getter = JsonMessageGetter::GetInstance();
+				getter->addJsonMessage(aj);
+				return true;
+			}
 		}
-		else
-		{
 #if MY_DEBUG
 			std::cerr << "LocalEmitter::disposeCloseChipicJsonMessage get RunChipic3dListener failde" << std::endl;
 #endif // MY_DEBUG
 			return false;
-		}
 	}
 	else
 	{
@@ -115,7 +116,7 @@ void LocalEmitter::runChipic(const std::string& m3dPath, const int& threadCount)
 {
 	auto  listener = RunChipic3dListener::runChipic3d(m3dPath, threadCount);
 
-	listenerMap.insert(RunChipic3dListenerMap::value_type(listener->getThreadId(), listener));
+	listenerList.push_back(listener);
 }
 
 /**
@@ -130,19 +131,20 @@ void LocalEmitter::sendWinMessage(const std::string& json)
 	if (jsonObject.Get("threadID", temp))
 	{
 		DWORD threadId = std::stoi(temp);
-		auto listener = listenerMap.find(threadId);
-		if (listener != listenerMap.end())
+
+		for (auto i = listenerList.begin(); i != listenerList.end(); i++)
 		{
-			Message msg = MessageTransition::jsonToWinMessage(json);
-			listener->second->sendMessage(msg);
+			if ((*i)->getThreadId() == threadId)
+			{
+				Message msg = MessageTransition::jsonToWinMessage(json);
+				(*i)->sendMessage(msg);
+				return;
+			}
 		}
-		else
-		{
 #if MY_DEBUG
 			std::cerr << "LocalEmitter::sendWinMessage get RunChipic3dListener failde" << std::endl;
 #endif // MY_DEBUG
 
-		}
 	}
 	else
 	{

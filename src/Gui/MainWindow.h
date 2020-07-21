@@ -32,7 +32,6 @@
 #include <QEvent>
 #include <QMainWindow>
 #include <QMdiArea>
-#include "Contorl/ContorlInterface.h"
 class QMimeData;
 class QUrl;
 class QMdiSubWindow;

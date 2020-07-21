@@ -9,15 +9,19 @@
 #include "ThreadCountDialog.h"
 #include <QDir>
 #include <QMessageBox>
+#include "ContorlDataBar.h"
+#include "LoadingDialog.h"
 ChipicManager::ChipicManager()
 {
 	auto getter = JsonMessageGetter::GetInstance();
 	connect(getter.get(), SIGNAL(hasNewMessage()), this, SLOT(hasNewMessage()));
+
+	loadingDialog = new LoadingDialog;
 }
 
 ChipicManager::~ChipicManager()
 {
-
+	delete loadingDialog;
 }
 
 /**
@@ -28,20 +32,24 @@ void ChipicManager::hasNewMessage()
 {
 	/*
 	*[1] 获取消息获取器中的消息
-	*[2] 获取消息中的线程id
-	*[3] 通过线程id寻找chipic对象，如果未找到对应的chipic对象，则判断是否有未获取线程id的chipic对象，如有有则
-	*	 赋值线程id，然后将对象加入map，并处理消息
-	*[4] 将json对应给到对应的chipic对象处理
+	*[2] 处理消息cmd消息，如果是cmd消息则不往下执行
+	*[3] 获取消息中的线程id
+	*[4] 通过线程id寻找chipic对象,未找到对象就不处理
+	*[5] 将json对应给到对应的chipic对象处理
 	*/
 	auto msgGetter = JsonMessageGetter::GetInstance();
 
 	std::string jsonMsg;
 	//[1]
-	if (msgGetter->getJsonMessage(jsonMsg))
+	while (msgGetter->getJsonMessage(jsonMsg))
 	{
+		//[2]
+		if (disposeMessage(jsonMsg))
+			return;
+
 		neb::CJsonObject jsonObject(jsonMsg);
 		std::string temp;
-		//[2]
+		//[3]
 		if (!jsonObject.Get("threadID", temp))
 		{
 #if MY_DEBUG
@@ -50,7 +58,7 @@ void ChipicManager::hasNewMessage()
 
 			return;
 		}
-		//[3]
+		//[4]
 		DWORD threadID = std::stol(temp);
 		auto chipicIterator = chipicMap.find(threadID);
 		
@@ -58,25 +66,13 @@ void ChipicManager::hasNewMessage()
 
 		if (chipicIterator == chipicMap.end())
 		{
-			//如果存在未获取线程id的chipic对象
-			if (newChipic)
-			{
-				newChipic->threadID = threadID;
-				newChipic->runState = true;
-				chipic = newChipic;
-				newChipic.reset();
-				chipicMap.insert(std::map<DWORD, std::shared_ptr<Chipic>>::value_type(chipic->threadID, chipic));
-				connect(chipic.get(), SIGNAL(stateUpdate(DWORD)), this, SLOT(chipicStateUpdate(DWORD)));
-				emit currentChipicStateUpdate();
-			}else{
-				return;
-			}
+			return;
 
 		}else{
 			chipic = chipicIterator->second;
 		}
 
-		//[4]
+		//[5]
 		chipic->disposJsonMessage(jsonMsg);
 
 	}
@@ -92,19 +88,8 @@ void ChipicManager::chipicStateUpdate(DWORD threadId)
 	auto  chipic = chipicMap.find(threadId);
 	if (chipic != chipicMap.end())
 	{
-		//判断chipic的运行状态 如果没有在运行 则释放掉对象
-		if (!(chipic->second->runState))
-		{
-			if (CurrentChipic.get() == chipic->second.get())
-			{
-				CurrentChipic.reset();
-				emit currentChipicStateUpdate();	
-			}
-			chipicMap.erase(chipic);
-		}else{
-			if (CurrentChipic.get() == chipic->second.get())
-				emit currentChipicStateUpdate();
-		}
+		if (CurrentChipic.get() == chipic->second.get())
+			emit currentChipicStateUpdate();
 	}
 }
 
@@ -120,15 +105,12 @@ void ChipicManager::runButtonClicked(const std::string& m3dPath /*= ""*/)
 		//判断路径是否存在
 		if (!detectionFilePathUTF8(m3dPath))
 			return;
-		//暂存一个新建chipic对象，直到获取到线程id
-		newChipic.reset(new Chipic(0));
-		CurrentChipic = newChipic;
-		newChipic->m3dPath = m3dPath;
-		newChipic->threadCount = 1;
+		//发送启动消息
 		auto messageManager = MessageSender::GetInstance();
 		messageManager->sendJsonMessage(MessageTransition::creatRunChipicJsonMessage(m3dPath, 1));
 
-
+		//显示loading提示框
+		loadingDialog->show();
 	}
 	else{
 		CurrentChipic->closeChipic();
@@ -160,15 +142,13 @@ void ChipicManager::ButtonParalleRunClicked(const std::string& m3dPath)
 		if (!dialog.okBuutonClicked)
 			return;
 		threadCount = dialog.threadCount;
-
-		//暂存一个新建chipic对象，直到获取到线程id
-		newChipic.reset(new Chipic(0));
-		CurrentChipic = newChipic;
-		newChipic->m3dPath = m3dPath;
-		newChipic->threadCount = threadCount;
+		
+		//发送启动消息
 		auto messageManager = MessageSender::GetInstance();
 		messageManager->sendJsonMessage(MessageTransition::creatRunChipicJsonMessage(m3dPath, threadCount));
 
+		//显示loading提示框
+		loadingDialog->show();
 
 	}else{
 
@@ -191,6 +171,88 @@ bool ChipicManager::detectionFilePathUTF8(const std::string& path)
 		box.exec();
 		return false;
 	}
+
+	return true;
+}
+
+/**
+* @brief ChipicManager::disposeMessage
+* @param const std::string & json
+* @return bool
+*/
+bool ChipicManager::disposeMessage(const std::string& json)
+{
+	neb::CJsonObject jsonObject(json);
+	std::string cmd = "";
+	if (jsonObject.Get("cmd", cmd))
+	{
+		std::string threadID;
+		if (!jsonObject.Get("threadID", threadID))
+			return false;
+		long int id = std::stol(threadID);
+
+		if (cmd == "CloseChipic")
+		{
+			disposeCloseChipicMessage(id);
+			return true;
+		}else if(cmd  == "startFinished"){
+			dispoesStartChipicMessage(json);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+* @brief ChipicManager::disposeCloseChipicMessage
+* @param const DWORD & threadId
+* @return bool
+*/
+bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId)
+{
+	auto  chipic = chipicMap.find(threadId);
+	if (chipic != chipicMap.end())
+	{
+		if (CurrentChipic.get() == chipic->second.get())
+		{
+			CurrentChipic.reset();
+		}
+		chipicMap.erase(chipic);
+		emit currentChipicStateUpdate();
+	}
+
+	return true;
+}
+
+bool ChipicManager::dispoesStartChipicMessage(const std::string json)
+{
+	loadingDialog->close();
+
+	//新建计算程序，用于启动时未获取线程id时暂存
+	std::shared_ptr<Chipic> newChipic(new Chipic);
+	//获取chipic的各种信息
+	neb::CJsonObject jsonObject(json);
+	std::string temp;
+
+	jsonObject.Get("threadID", temp);
+	DWORD threadId = std::stol(temp);
+
+	jsonObject.Get("m3dPath", temp);
+	std::string m3dPath = temp;
+
+	jsonObject.Get("threadCount", temp);
+	int threadCount = std::stoi(temp);
+
+	newChipic->threadID = threadId;
+	newChipic->runState = true;
+	newChipic->m3dPath = m3dPath;
+	newChipic->threadCount = threadCount;
+	chipicMap.insert(std::map<DWORD, std::shared_ptr<Chipic>>::value_type(newChipic->threadID, newChipic));
+	connect(newChipic.get(), SIGNAL(stateUpdate(DWORD)), this, SLOT(chipicStateUpdate(DWORD)));
+	CurrentChipic = newChipic;
+	newChipic.reset();
+	emit currentChipicStateUpdate();
 
 	return true;
 }
