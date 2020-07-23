@@ -288,8 +288,6 @@ void RunChipic3dListener::run()
 			如果有未发送的消息，或者接收消息未失败，则一直循环接收。
 			否则跳出循环，休眠一会儿再接收或者发送。
 		*/
-		//每次循环睡眠1ms,避免cpu被占用
-		Sleep(10);
 
 		bool ok = true;
 		while (ok)
@@ -313,8 +311,12 @@ void RunChipic3dListener::run()
 			}else{
 				ok = false || ok;
 			}
-		}
 
+			if (!getWorkThreadFlag())
+				return;
+		}
+		//每次循环睡眠10ms,避免cpu被占用
+		Sleep(10);
 	}
 }
 
@@ -328,7 +330,7 @@ void RunChipic3dListener::run()
 bool RunChipic3dListener::sendMessage(UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	auto b = (PostThreadMessage(this->mainThreadID, Msg + WM_USER, wParam, lParam));
-#ifdef MY_DEBUG
+//#ifdef MY_DEBUG
 	if (!b)
 	{
         std::cerr << "message send erro,thread ID:" << this->mainThreadID
@@ -339,7 +341,7 @@ bool RunChipic3dListener::sendMessage(UINT Msg, WPARAM wParam, LPARAM lParam)
                   << ",wParaw: " << wParam
                   << ",lParaw: " << lParam << std::endl;
     }
-#endif // MY_DEBUG
+//#endif // MY_DEBUG
 	return b;
 }
 

@@ -66,7 +66,9 @@ void HintDailog::showForMode3()
 */
 void HintDailog::setText(const std::string& text)
 {
-	ui->labelContent->setText(MessageTransition::gbkStdstringToQstring(text));
+	QString temp = MessageTransition::gbkStdstringToQstring(text);
+	temp = temp.replace("@#$", "\n");
+	ui->labelContent->setText(temp);
 }
 
 void HintDailog::buttonLoseClicked()

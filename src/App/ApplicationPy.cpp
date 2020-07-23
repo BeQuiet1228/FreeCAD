@@ -950,6 +950,8 @@ PyObject *Application::sClientConnect(PyObject *self, PyObject *args, PyObject *
 //返回链接是否可用
 PyObject *Application::sClientIsEnable(PyObject *self, PyObject *args, PyObject *kwd)
 {
+	//新控制部分需要这样返回
+	return Py_BuildValue("O", Py_True);
 	//连接成功
 	if (GetApplication().m_netServer && GetApplication().m_netServer->GetConnectState()
 		== PicNet::NetServer::ConnectState::CONNECTED)

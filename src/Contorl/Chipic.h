@@ -81,7 +81,7 @@ public:
 	//粒子数目
 	int particleCount;
 	//总迭代时间的整数部分和小数部分
-	std::string iterationTimeInt,iterationTimeFloat;
+	float iterationTime = 0;
 	//预估消耗时间、当前消耗时间
 	Time UsedTime, currentUsedTime;
 	//线程id

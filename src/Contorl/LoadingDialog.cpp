@@ -10,6 +10,11 @@ LoadingDialog::LoadingDialog(QWidget *parent /*= 0*/)
 	ui->label_2->setMovie(movie);
 
 	this->setModal(true);
+
+	//±³¾°Í¸Ã÷
+	//this->setAttribute(Qt::WA_TranslucentBackground);
+	//ÎÞ±ß¿ò
+	this->setWindowFlags(Qt::FramelessWindowHint);
 }
 
 LoadingDialog::~LoadingDialog()

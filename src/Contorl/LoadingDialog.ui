@@ -33,7 +33,7 @@
       <string notr="true">font: 14pt &quot;方正等线&quot;;</string>
      </property>
      <property name="text">
-      <string>CHIPIC正在载入中，请稍后...</string>
+      <string>CHIPIC正在启动中，请稍后...</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

@@ -21,7 +21,6 @@ Chipic::Chipic(DWORD threadID)
 
 	timer = new QTimer;
 	connect(timer, SIGNAL(timeout()), this, SLOT(timerOut()));
-	timer->start(5 * 1000);
 }
 
 Chipic::~Chipic()
@@ -234,12 +233,12 @@ bool Chipic::disposeIterationTimeMessage(const Message& msg)
 		return false;
 	if (msg.wParam == 10)
 	{
-		iterationTimeInt = std::to_string(msg.lParam);
+		iterationTime = msg.lParam;
 		return true;
 	}
 	else if (msg.wParam == 11)
 	{
-		iterationTimeFloat = std::to_string(msg.lParam);
+		iterationTime += msg.lParam / 1000;
 		return true;
 	}
 
@@ -323,10 +322,13 @@ bool Chipic::disposHintMessage(const Message& msg)
 		hintDailog.setText(msg.text);
 		hintDailog.showForMode3();
 		break;
+	case 9:
 	case 8:
 		hintDailog.setText(msg.text);
 		hintDailog.showForMode2();
 		break;
+	default:
+		return false;
 	}
 	return true;
 }
@@ -349,6 +351,8 @@ bool Chipic::disposeStructMapMessage(const Message& msg)
 			python.runString("import Control.controlCommand.LonelinessCmd");
 			python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
 			python.runStringArg("lonemod.openStruct(\'%s\')",fileName.c_str());
+			//开启定时器刷新
+			timer->start(5 * 1000);
 		}
 	}
 
@@ -443,7 +447,7 @@ bool Chipic::disposChipicSendMessagePauseMessage(const Message& msg)
 		if (msg.lParam == 0)
 		{
 			this->pausState = true;
-			this->pausButtonClicked();
+			sendMessage(150, 0, 0);
 		}else{
 			this->pausState = false;
 		}
@@ -457,6 +461,14 @@ bool Chipic::disposChipicSendMessagePauseMessage(const Message& msg)
 void Chipic::disposJsonMessage(const std::string& json)
 {
 	Message msg = MessageTransition::jsonToWinMessage(json);
+	//处理提示消息
+	if (disposHintMessage(msg))
+	{
+		emit stateUpdate(this->threadID);
+		return;
+	}
+	//输出除了提示消息意外的消息
+	std::cerr << json << std::endl;
 	//处理chipic关闭消息
 	if (disposChipicCloseMessage(json))
 	{
@@ -498,12 +510,6 @@ void Chipic::disposJsonMessage(const std::string& json)
 	}
 	//处理chipic暂停状态消息
 	if(disposeChipicIsPause(msg))
-	{
-		emit stateUpdate(this->threadID);
-		return;
-	}
-	//处理提示消息
-	if (disposHintMessage(msg))
 	{
 		emit stateUpdate(this->threadID);
 		return;
