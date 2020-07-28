@@ -238,7 +238,7 @@ bool Chipic::disposeIterationTimeMessage(const Message& msg)
 	}
 	else if (msg.wParam == 11)
 	{
-		iterationTime += msg.lParam / 1000;
+		iterationTime += (float)msg.lParam / 1000;
 		return true;
 	}
 
