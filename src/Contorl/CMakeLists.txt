@@ -1,7 +1,7 @@
 #设置预定义
 if(WIN32)
-#add_definitions(-D_CONTORL_ -DMY_DEBUG)
-add_definitions(-D_CONTORL_ )
+add_definitions(-D_CONTORL_ -DMY_DEBUG)
+#add_definitions(-D_CONTORL_ )
 endif(WIN32)
 #设置项目名称
 project(Contorl)
@@ -33,6 +33,8 @@ SET(MY_MOC_HDR
 	ContorlButtonBar.h
 	ThreadCountDialog.h
 	LoadingDialog.h
+	NetworkClient.h
+	NetworkServer.h
 )
 SET(MY_MOC_SRC
 	Contorl.cpp
@@ -44,6 +46,14 @@ SET(MY_MOC_SRC
 	ThreadCountDialog.cpp
 	LoadingDialog.cpp
 	ContorlButtonBar.cpp
+)
+SET(NETWORK_SRC
+	NetworkClient.cpp
+	NetworkClient.h
+	NetworkServer.h
+	NetworkServer.cpp
+	NetworkSocket.cpp
+	NetworkSocket.h
 )
 #引入头文件
 include_directories(
@@ -87,15 +97,16 @@ SET(Contorl_src
 	${MY_MOC_SRC}
 	${MY_MOC_HDR}
 	${Gui_QRC_SRCS}
+	${NETWORK_SRC}
 )
 #设置编译生成文件类型
-#add_executable(Contorl ${Contorl_src}) # 生成可执行文件
-#SET(OUTPUT_BINDIR ${CMAKE_CURRENT_BINARY_DIR}/../../bin) #设置可执行文件输出目录
+add_executable(Contorl ${Contorl_src}) # 生成可执行文件
+SET(OUTPUT_BINDIR ${CMAKE_CURRENT_BINARY_DIR}/../../bin) #设置可执行文件输出目录
 
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORYMY_DEBUG ${CMAKE_CURRENT_BINARY_DIR}/../../bin)
 #add_library(common STATIC util.cpp) # 生成静态库
 #add_library(common SHARED util.cpp) # 生成动态库或共享库
-add_library(Contorl SHARED ${Contorl_src})
+#add_library(Contorl SHARED ${Contorl_src})
 
 #增加包含目录
 include_directories(
@@ -139,7 +150,11 @@ endif()
 #链接静态库
 target_link_libraries(Contorl ${QT_LIB})
 SET_BIN_DIR(Contorl Contorl) #设置文件输出目录
+#生成moc文件
 fc_wrap_cpp(MY_MOC_SRCS ${MY_MOC_HDR})
+
 source_group("Properties" Files ${MY_MOC_SRCS})
 
 SOURCE_GROUP("Uic" FILES ${Gui_UIC_HDRS})
+
+SOURCE_GROUP("Network" FILES ${NETWORK_SRC})

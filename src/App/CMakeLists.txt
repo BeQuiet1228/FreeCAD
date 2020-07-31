@@ -48,7 +48,7 @@ include_directories(
 
 set(FreeCADApp_LIBS
     FreeCADBase
-	Contorl
+	#Contorl
     ${Boost_LIBRARIES}
 )
 
