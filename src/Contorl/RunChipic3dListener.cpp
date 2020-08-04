@@ -330,7 +330,7 @@ void RunChipic3dListener::run()
 bool RunChipic3dListener::sendMessage(UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	auto b = (PostThreadMessage(this->mainThreadID, Msg + WM_USER, wParam, lParam));
-//#ifdef MY_DEBUG
+#ifdef MY_DEBUG
 	if (!b)
 	{
         std::cerr << "message send erro,thread ID:" << this->mainThreadID
@@ -341,7 +341,7 @@ bool RunChipic3dListener::sendMessage(UINT Msg, WPARAM wParam, LPARAM lParam)
                   << ",wParaw: " << wParam
                   << ",lParaw: " << lParam << std::endl;
     }
-//#endif // MY_DEBUG
+#endif // MY_DEBUG
 	return b;
 }
 

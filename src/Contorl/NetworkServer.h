@@ -5,6 +5,8 @@
 #include <list>
 class QTcpServer;
 class QTcpSocket;
+class NetworkSocket;
+using NetworkSocketList = std::list<std::shared_ptr<NetworkSocket>>;
 class NetworkServer:public QObject
 {
 	Q_OBJECT
@@ -27,7 +29,9 @@ public:
 private:
 	static std::shared_ptr<NetworkServer> _instance;
 	//tcp服务端
-	QTcpServer *server;
+	std::shared_ptr<QTcpServer> server;
+	//已连接的socket
+	NetworkSocketList socketList;
 public:
 	struct ConnectSocket{
 		QTcpSocket * socket;
@@ -43,13 +47,10 @@ public:
 	void startListene();
 	//设置监听地址及端口
 	void setAddressAndPort(const QString& address, const int& prot);
-
 private:
 	std::list<ConnectSocket> listConnectSocket;
 
 public slots:
 	//新的连接
 	void serverNewConnection();
-	//有新的消息
-	void socketReadReady();
 };

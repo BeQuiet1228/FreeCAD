@@ -13,6 +13,7 @@ SET(UI_SRC
 	ContorlButtonBar.ui
 	ThreadCountDialog.ui
 	LoadingDialog.ui
+	NetworkClientLoginDailog.ui
 )
 SET(QRC_SRC
 	Contorl.qrc
@@ -35,6 +36,8 @@ SET(MY_MOC_HDR
 	LoadingDialog.h
 	NetworkClient.h
 	NetworkServer.h
+	NetworkSocket.h
+	NetworkClientLoginDailog.h
 )
 SET(MY_MOC_SRC
 	Contorl.cpp
@@ -54,6 +57,10 @@ SET(NETWORK_SRC
 	NetworkServer.cpp
 	NetworkSocket.cpp
 	NetworkSocket.h
+	NetworkEmitter.h
+	NetworkEmitter.cpp
+	NetworkClientLoginDailog.h
+	NetworkClientLoginDailog.cpp
 )
 #引入头文件
 include_directories(

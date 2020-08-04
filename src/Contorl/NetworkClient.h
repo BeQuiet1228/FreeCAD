@@ -3,6 +3,7 @@
 #include <mutex>
 #include <QObject>
 class QTcpSocket;
+class NetworkSocket;
 class NetworkClient:public QObject
 {
 	Q_OBJECT
@@ -25,6 +26,18 @@ public:
 private:
 	static std::shared_ptr<NetworkClient> _instance;
 	
-	QTcpSocket *socket;
+	std::shared_ptr<NetworkSocket> socket;
+	
+public:
+	//获取监听地址
+	QString getListeneAddress();
+	//获取监听端口
+	int getListenePort();
+	//开始监听
+	void startConnect();
+	//设置监听地址及端口
+	void setAddressAndPort(const QString& address, const int& prot);
+	//客户端的连接状态
+	bool isConnect();
 
 };

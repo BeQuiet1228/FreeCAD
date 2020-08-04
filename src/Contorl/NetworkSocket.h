@@ -1,10 +1,28 @@
 #pragma once
 #include <QObject>
 #include <QByteArray>
+#include <QList>
 class QTcpSocket;
 class NetworkSocket:public QObject
 {
 	Q_OBJECT
+	enum SocketMessageBodyState{
+		HEAD = 0,	//等待接收消息头
+		JSON,		//等待接收json消息
+		DATA		//等待接收其他消息
+	};
+	struct SocketMessageBody
+	{
+		SocketMessageBody(){
+			state = JSON;
+		}
+		//消息体状态
+		SocketMessageBodyState state;
+		//json
+		QByteArray json;
+		//其他信息
+		QByteArray data;
+	};
 public:
 	NetworkSocket();
 	~NetworkSocket();
@@ -13,19 +31,31 @@ private:
 	//socket指针
 	QTcpSocket *socket  = nullptr;
 	//tcp包头
-	const char BLOCK_HEADE[5] = {0x55,0x54,0x53,0x52,0x51};
+	QByteArray BLOCK_HEADE;
 	//tcp包分割段
-	const char BLOCK_SPECE[5] = { 0x35, 0x36, 0x37, 0x38, 0x39 };
+	QByteArray BLOCK_SPECE;
 	//tcp包尾
-	const char BLOCK_END[5] = { 0x45, 0x46, 0x47, 0x48, 0x49};
+	QByteArray BLOCK_END;
+	//接收socket消息体
+	SocketMessageBody messageBody;
 public:
 	//设置qtcpsocket
 	void setSocket(QTcpSocket *tcpSocket);
 	//发送json消息
 	bool sendMessage(const std::string& json, const QByteArray& byteArray);
-
+	//解析一个消息块
+	void analysisBlock(const QByteArray& block);
+	//将数据放入消息体中
+	void addMessageBodyData(const QByteArray& data);
+	//接收完成一个消息
+	void receiveOneMessageFinished(const SocketMessageBody& msgBody);
+	//判断连接是否可用
+	bool usable();
 private:
+	//
 	void socketWriteIsSuccess(const int& ok);
+	//切割字符数组
+	QList<QByteArray> byteArraySplit(const QByteArray& byteArray,const QByteArray& split);
 public slots :
 	void readReady();
 };

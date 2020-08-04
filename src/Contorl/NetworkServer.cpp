@@ -3,18 +3,18 @@
 #include <qsettings.h>
 #include <QTcpSocket>
 #include <iostream>
+#include "NetworkSocket.h"
 std::shared_ptr<NetworkServer> NetworkServer::_instance;
 
 NetworkServer::~NetworkServer()
 {
-	delete server;
 }
 
 NetworkServer::NetworkServer()
 {
-	server = new QTcpServer;
+	server.reset(new QTcpServer);
 
-	connect(server, SIGNAL(newConnection()), this, SLOT(serverNewConnection()));
+	connect(server.get(), SIGNAL(newConnection()), this, SLOT(serverNewConnection()));
 }
 
 /**
@@ -74,6 +74,7 @@ void NetworkServer::setAddressAndPort(const QString& address, const int& prot)
 	setting.setValue("port", prot);
 }
 
+
 /**
 * @brief NetworkServer::serverNewConnection tcp服务器有新的链接槽
 * @return void
@@ -82,8 +83,10 @@ void NetworkServer::serverNewConnection()
 {
 	auto socket = server->nextPendingConnection();
 
-	connect(socket, SIGNAL(readyRead()), this, SLOT(socketReadReady()));
-
+	std::shared_ptr<NetworkSocket> networkSocket(new NetworkSocket);
+	networkSocket->setSocket(socket);
+	socketList.push_back(networkSocket);
+	networkSocket->sendMessage("你好啊！"," ");
 #ifdef MY_DEBUG
 	std::cerr << "NetworkServer::serverNewConnection()，address:"
 		<< socket->peerAddress().toString().toStdString()
@@ -92,13 +95,5 @@ void NetworkServer::serverNewConnection()
 
 }
 
-/**
-* @brief NetworkServer::socketReadReady 有新的消息
-* @return void
-*/
-void NetworkServer::socketReadReady()
-{
-
-}
 
 #include "moc_NetworkServer.cpp"
