@@ -406,8 +406,7 @@ std::string Chipic::makePath(const std::string& fileName)
 	if (threadCount > 1)
 	{
 		filePath = path + "/1/" + m3dFileName + fileName;
-	}
-	else if (threadCount == 1) {
+	}else if (threadCount == 1) {
 		filePath = path + "/" + m3dFileName + fileName;
 	}
 

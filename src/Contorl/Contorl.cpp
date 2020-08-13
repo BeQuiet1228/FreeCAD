@@ -9,6 +9,7 @@
 #include <Base\Interpreter.h>
 #include "Chipic.h"
 #include "LoadingDialog.h"
+#include "NetworkEmitter.h"
 Contorl::Contorl(QWidget *parent)
 	: QMainWindow(parent)
 {
@@ -23,7 +24,9 @@ Contorl::Contorl(QWidget *parent)
 
 	//初始化消息发射器
 	auto sender = MessageSender::GetInstance();
-	sender->setEmitter(new LocalEmitter);
+	//sender->setEmitter(new LocalEmitter);
+	//测试网络发射器
+	sender->setEmitter(new NetworkEmitter);
 
 	//初始化ui定时器
 	uiTimer = new QTimer;

@@ -21,7 +21,7 @@ private:
 	//处理cihpic关闭消息
 	bool disposeCloseChipicJsonMessage(const std::string& json);
 	//启动m3d
-	void runChipic(const std::string& m3dPath, const int& threadCount);
+	void runChipic(const std::string& m3dPath, const int& threadCount,const std::string& userName = "defaultUser");
 	//发送winMessage
 	void sendWinMessage(const std::string& json);
 private:

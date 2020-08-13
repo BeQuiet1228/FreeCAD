@@ -1,6 +1,8 @@
 #include "NetworkSocket.h"
 #include <QTcpSocket>
 #include <iostream>
+#include <qmetatype.h>
+#include "NetworkUser.h"
 NetworkSocket::NetworkSocket()
 {
 	//tcp包头
@@ -21,12 +23,18 @@ NetworkSocket::NetworkSocket()
 	BLOCK_END.append(0x23);
 	BLOCK_END.append(0x24);
 	BLOCK_END.append(0x25);
+	//注册信号参数类型
+	qRegisterMetaType<NetworkSocket::SocketMessageBody>("NetworkSocket::SocketMessageBody");
+
+	//初始化账号指针
+	user = new NetworkUser();
 }
 
 NetworkSocket::~NetworkSocket()
 {
 	if (socket != nullptr)
 		delete socket;
+	delete user;
 }
 
 /**
@@ -50,7 +58,6 @@ bool NetworkSocket::sendMessage(const std::string& json, const QByteArray& byteA
 {
 	if (socket == nullptr)
 		return false;
-	
 	//发送包头
 	socketWriteIsSuccess(socket->write(BLOCK_HEADE));
 	//发送json消息
@@ -61,6 +68,17 @@ bool NetworkSocket::sendMessage(const std::string& json, const QByteArray& byteA
 	socketWriteIsSuccess(socket->write(byteArray));
 	//发送包尾
 	socketWriteIsSuccess(socket->write(BLOCK_END));
+}
+
+/**
+* @brief NetworkSocket::sendJsonMessage 发送json消息
+* @param const std::string & json
+* @return bool
+*/
+bool NetworkSocket::sendJsonMessage(const std::string& json)
+{
+	sendMessage(json, "  ");
+	return true;
 }
 
 /**
@@ -90,8 +108,6 @@ void NetworkSocket::analysisBlock(const QByteArray& block)
 */
 void NetworkSocket::addMessageBodyData(const QByteArray& data)
 {
-
-	std::cerr << QString(data.toHex()).toStdString() << std::endl;
 
 	int index = 0;
 	switch (messageBody.state)
@@ -126,10 +142,11 @@ void NetworkSocket::addMessageBodyData(const QByteArray& data)
 */
 void NetworkSocket::receiveOneMessageFinished(const SocketMessageBody& msgBody)
 {
+	emit receiveMessageFinished(msgBody);
 #ifdef MY_DEBUG
-	std::cerr << QString(msgBody.json).toStdString() << std::endl;
+	std::cerr << "NetworkServer::receiveMessageFinished,json:" << msgBody.json.data()
+		<< ",dataSizi:" << msgBody.data.size() << std::endl;
 #endif // MY_DEBUG
-
 }
 
 /**

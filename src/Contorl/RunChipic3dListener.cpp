@@ -180,22 +180,25 @@ void RunChipic3dListener::setThreadId(const DWORD& id)
 }
 
 /**
-* @brief RunChipic3dListener::runChipic3d 运行chipic
-* @param const std::string & m3dpath	路径
+* @brief RunChipic3dListener::runChipic3d 运行chipic 并返回一个监听器指针  这个指针需要在外部释放
+* @param const std::string & m3dpath 路径
 * @param const int & count 线程数
-* @return std::shared_ptr<RunChipic3dListener> 监听器
+* @param const std::string userName chipic所属用户名，这个参数主要用于服务器有多个用户链接时判断chipic的归属
+* @return std::shared_ptr<RunChipic3dListener::RunChipic3dListener> 监听器
 */
-std::shared_ptr<RunChipic3dListener> RunChipic3dListener::runChipic3d(const std::string &m3dpath, const int &count)
+std::shared_ptr<RunChipic3dListener> RunChipic3dListener::runChipic3d(const std::string &m3dpath, const int &count, const std::string userName /*= "default_userName"*/)
 {
 	std::shared_ptr<RunChipic3d> chipic3d(new RunChipic3d(RunChipic3d::X32));
 	chipic3d->run(m3dpath, count);
-	
+
 	std::shared_ptr<RunChipic3dListener> listener(new RunChipic3dListener);
 
 	listener->runchipic3dPtr = chipic3d;
 	listener->m3dPath = m3dpath;
 	listener->threadCount = count;
+	listener->userName = userName;
 	listener->workThreadOn();
+
 	return listener;
 }
 
@@ -276,7 +279,7 @@ void RunChipic3dListener::run()
 	this->init();
 	//发送初始化完成消息
 	{
-		std::string json = MessageTransition::creatChipicStartfinishedJsonMessage(this->m3dPath, this->getThreadId(), this->threadCount);
+		std::string json = MessageTransition::creatChipicStartfinishedJsonMessage(this->m3dPath, this->getThreadId(), this->threadCount,this->userName);
 		auto messageGetter = JsonMessageGetter::GetInstance();
 		messageGetter->addJsonMessage(json);
 	}

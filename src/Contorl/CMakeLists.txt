@@ -1,6 +1,6 @@
 #设置预定义
 if(WIN32)
-add_definitions(-D_CONTORL_ -DMY_DEBUG)
+add_definitions(-D_CONTORL_ -DMY_DEBUG -DMY_LOG)
 #add_definitions(-D_CONTORL_ )
 endif(WIN32)
 #设置项目名称
@@ -61,6 +61,8 @@ SET(NETWORK_SRC
 	NetworkEmitter.cpp
 	NetworkClientLoginDailog.h
 	NetworkClientLoginDailog.cpp
+	NetworkUser.h
+	NetworkUser.cpp
 )
 #引入头文件
 include_directories(

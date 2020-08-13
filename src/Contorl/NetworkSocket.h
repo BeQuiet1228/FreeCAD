@@ -3,9 +3,11 @@
 #include <QByteArray>
 #include <QList>
 class QTcpSocket;
+class NetworkUser;
 class NetworkSocket:public QObject
 {
 	Q_OBJECT
+public:
 	enum SocketMessageBodyState{
 		HEAD = 0,	//等待接收消息头
 		JSON,		//等待接收json消息
@@ -39,10 +41,15 @@ private:
 	//接收socket消息体
 	SocketMessageBody messageBody;
 public:
+	//账号
+	NetworkUser *user;
+public:
 	//设置qtcpsocket
 	void setSocket(QTcpSocket *tcpSocket);
-	//发送json消息
+	//发送消息
 	bool sendMessage(const std::string& json, const QByteArray& byteArray);
+	//发送json消息
+	bool sendJsonMessage(const std::string& json);
 	//解析一个消息块
 	void analysisBlock(const QByteArray& block);
 	//将数据放入消息体中
@@ -58,4 +65,6 @@ private:
 	QList<QByteArray> byteArraySplit(const QByteArray& byteArray,const QByteArray& split);
 public slots :
 	void readReady();
+Q_SIGNALS:
+	void receiveMessageFinished(NetworkSocket::SocketMessageBody);
 };

@@ -47,20 +47,14 @@ void LocalEmitter::sendMessage(const std::string& json)
 bool LocalEmitter::disposRunChipicJsonMessage(const std::string& json)
 {
 	neb::CJsonObject jsonObject(json);
-	std::string runChipicParm, temp;
-	if (jsonObject.Get("Text", runChipicParm))
-	{
-		neb::CJsonObject parmJsonObject(runChipicParm);
-		std::string m3dPath;
-		int threadCount;
+	std::string temp,m3dPath,userName = "defaultUser";
 
-		parmJsonObject.Get("m3dPath", m3dPath);
-		parmJsonObject.Get("threadCount", temp);
-		threadCount = std::stoi(temp);
-		runChipic(m3dPath, threadCount);
+	jsonObject.Get("m3dPath", m3dPath);
+	jsonObject.Get("threadCount", temp);
+	int threadCount = std::stoi(temp);
 
-		return true;
-	}
+	MessageTransition::getUserName(jsonObject, userName);
+	runChipic(m3dPath, threadCount,userName);
 
 	return false;
 }
@@ -106,15 +100,17 @@ bool LocalEmitter::disposeCloseChipicJsonMessage(const std::string& json)
 	return true;
 }
 
+
 /**
 * @brief LocalEmitter::runChipic 启动chipic
 * @param const std::string & m3dPath 文件路径
 * @param const int & threadCount 线程数
+* @param const std::string & userName 账户名,服务器版本中使用
 * @return void
 */
-void LocalEmitter::runChipic(const std::string& m3dPath, const int& threadCount)
+void LocalEmitter::runChipic(const std::string& m3dPath, const int& threadCount, const std::string& userName /*= "defaultUser"*/)
 {
-	auto  listener = RunChipic3dListener::runChipic3d(m3dPath, threadCount);
+	auto  listener = RunChipic3dListener::runChipic3d(m3dPath, threadCount,userName);
 
 	listenerList.push_back(listener);
 }

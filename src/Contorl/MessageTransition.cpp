@@ -86,12 +86,8 @@ std::string MessageTransition::creatRunChipicJsonMessage(const std::string& m3dP
 {
 	neb::CJsonObject Message;
 	Message.Add("cmd", "RunChipic");
-
-	neb::CJsonObject temp;
-	temp.Add("m3dPath", m3dPath);
-	temp.Add("threadCount", threadCount);
-
-	Message.Add("Text", temp.ToString());
+	Message.Add("m3dPath", m3dPath);
+	Message.Add("threadCount", threadCount);
 
 	return Message.ToString();
 }
@@ -144,18 +140,75 @@ std::string MessageTransition::creatCmdMessage(const std::string& Cmd, const DWO
 }
 
 /**
-* @brief MessageTransition::creatChipicStartfinishedJsonMessage 创建一个chipic启动完成的消息
+* @brief MessageTransition::creatChipicStartfinishedJsonMessage  创建一个chipic启动完成的消息
 * @param const std::string & m3dPath
 * @param const DWORD & threadId
 * @param const int & threadCount
+* @param const std::string & userName
 * @return std::string
 */
-std::string MessageTransition::creatChipicStartfinishedJsonMessage(const std::string& m3dPath, const DWORD& threadId, const int& threadCount)
+std::string MessageTransition::creatChipicStartfinishedJsonMessage(const std::string& m3dPath, const DWORD& threadId, const int& threadCount, const std::string& userName)
 {
 	std::string json = creatCmdMessage("startFinished", threadId);
 	neb::CJsonObject message(json);
 	message.Add("m3dPath", m3dPath);
 	message.Add("threadCount", threadCount);
-
+	message.Add("userName", userName);
 	return message.ToString();
+}
+
+/**
+* @brief MessageTransition::creatLoginCmd 创建一个登录cmd
+* @param const std::string username	用户名
+* @param const std::string password 密码
+* @return std::string
+*/
+std::string MessageTransition::creatLoginCmd(const std::string username, const std::string password)
+{
+	neb::CJsonObject json;
+
+	addCmd(json, "login");
+	addPassword(json, password);
+	addUserName(json,username);
+
+	return json.ToString();
+}
+
+/**
+* @brief MessageTransition::creatRegisterCmd 创建一个注册cmd
+* @param const std::string username
+* @param const std::string password
+* @return std::string
+*/
+std::string MessageTransition::creatRegisterCmd(const std::string username, const std::string password)
+{
+	neb::CJsonObject json;
+
+	addCmd(json, "register");
+	addPassword(json, password);
+	addUserName(json, username);
+
+	return json.ToString();
+}
+
+/**
+* @brief MessageTransition::addCmd 向json中添加一个cmd
+* @param neb::CJsonObject & json	json对象
+* @param const std::string & cmd cmd
+* @return bool
+*/
+bool MessageTransition::addCmd(neb::CJsonObject& json, const std::string& cmd)
+{
+	return json.Add("cmd", cmd);
+}
+
+/**
+* @brief MessageTransition::getCmd 获取一个cmd
+* @param neb::CJsonObject & json
+* @param std::string & cmd
+* @return bool
+*/
+bool MessageTransition::getCmd(const neb::CJsonObject& json, std::string& cmd)
+{
+	return json.Get("cmd", cmd);
 }

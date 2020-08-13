@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>NetworkClientDialog</class>
+ <widget class="QDialog" name="NetworkClientDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>273</width>
-    <height>172</height>
+    <width>281</width>
+    <height>263</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,25 +43,11 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <item>
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>密码：</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="lineEditPassword"/>
-     </item>
-    </layout>
-   </item>
-   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>账号：</string>
+        <string>账号    ：</string>
        </property>
       </widget>
      </item>
@@ -71,9 +57,44 @@
     </layout>
    </item>
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>密码    ：</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEditPassword"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QLabel" name="labelPassword_2">
+       <property name="text">
+        <string>确认密码：</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEditPassword_2"/>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="QPushButton" name="pushButtonLogin">
      <property name="text">
       <string>登录</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButton">
+     <property name="text">
+      <string>没有账号，转到注册</string>
      </property>
     </widget>
    </item>

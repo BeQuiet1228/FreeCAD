@@ -65,7 +65,7 @@ public:
 	//设置线程id
 	void setThreadId(const DWORD& id);
 public:
-	static std::shared_ptr<RunChipic3dListener> runChipic3d(const std::string &m3dpath, const int &count);
+	static std::shared_ptr<RunChipic3dListener> runChipic3d(const std::string &m3dpath, const int &count,const std::string userName = "default_userName");
 private:
 	//根据进程名获取所有线程的id
 	int GetMainThreadIdFromName(LPCSTR szName, std::vector<DWORD>& threads);
@@ -105,7 +105,8 @@ private:
 	std::string m3dPath;
 	//chipic运行线程数
 	int threadCount;
-
+	//chipic所属用户的用户名，主要用于服务器有多个链接时判断chipic的归属
+	std::string userName;
 protected:
 	void run() override;
 
