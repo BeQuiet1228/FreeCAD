@@ -1,14 +1,14 @@
-#include "VolPyramid.h"
+#include "VolAnnularSection.h"
 
-VolPyramid::VolPyramid()
+VolAnnularSection::VolAnnularSection()
 {
 
 }
-VolPyramid::~VolPyramid()
+VolAnnularSection::~VolAnnularSection()
 {
 
 }
-std::string VolPyramid::toCommand()
+std::string VolAnnularSection::toCommand()
 {
 	if (notOutputCommand || name == "")
 		return "";
@@ -39,20 +39,20 @@ std::string VolPyramid::toCommand()
 		point4.name = name + ".P4";
 		cmd += point4.toCommand();
 	}
-	if (point5.name == "")
-	{
-		point5.name = name + ".P5";
-		cmd += point5.toCommand();
-	}
 
-	std::string AreaCmd = "VOLUME " + name + " PYRAMID " + point1.name + " " + point2.name + " " + point3.name + " " + point4.name + " " + point5.name  + ";\n";
-	cmd += AreaCmd;
+	std::string VolumeCmd = "VOLUME " + name + " ANNULAR_SECTION " + point1.name + " " + point2.name + " " + value4 + " " + value5 + " " + point3.name + " " + point4.name + ";\n";
+	cmd += VolumeCmd;
 	cmd += markGrid.toCommand();
 
 	return cmd;
 }
 
-bool VolPyramid::fromCommand(const std::string& command)
+bool VolAnnularSection::fromCommand(const std::string& command)
 {
 	return false;
+}
+void VolAnnularSection::setRadius(const std::string& value4, const std::string& value5)
+{
+	this->value4 = value4;
+	this->value5 = value5;
 }

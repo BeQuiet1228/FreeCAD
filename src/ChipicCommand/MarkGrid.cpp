@@ -84,7 +84,7 @@ std::string MarkGrid::makeMark(const std::string& direction, const std::string& 
 {
 	std::string cmd = "";
 	cmd = "MARK " + this->name + " " + direction + " " + makeMidCommand(mini, mid, max)
-		+ " SIZE " + value + ";\n";
+		+ "SIZE " + value + ";\n";
 	return cmd;
 }
 

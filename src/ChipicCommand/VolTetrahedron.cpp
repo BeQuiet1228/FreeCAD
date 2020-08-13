@@ -1,14 +1,14 @@
-#include "VolPyramid.h"
+#include "VolTetrahedron.h"
 
-VolPyramid::VolPyramid()
+VolTetrahedron::VolTetrahedron()
 {
 
 }
-VolPyramid::~VolPyramid()
+VolTetrahedron::~VolTetrahedron()
 {
 
 }
-std::string VolPyramid::toCommand()
+std::string VolTetrahedron::toCommand()
 {
 	if (notOutputCommand || name == "")
 		return "";
@@ -39,20 +39,15 @@ std::string VolPyramid::toCommand()
 		point4.name = name + ".P4";
 		cmd += point4.toCommand();
 	}
-	if (point5.name == "")
-	{
-		point5.name = name + ".P5";
-		cmd += point5.toCommand();
-	}
 
-	std::string AreaCmd = "VOLUME " + name + " PYRAMID " + point1.name + " " + point2.name + " " + point3.name + " " + point4.name + " " + point5.name  + ";\n";
-	cmd += AreaCmd;
+	std::string VolumeCmd = "VOLUME " + name + " TETRAHEDRON " + point1.name + " " + point2.name + " " + point3.name + " " + point4.name + ";\n";
+	cmd += VolumeCmd;
 	cmd += markGrid.toCommand();
 
 	return cmd;
 }
 
-bool VolPyramid::fromCommand(const std::string& command)
+bool VolTetrahedron::fromCommand(const std::string& command)
 {
 	return false;
 }

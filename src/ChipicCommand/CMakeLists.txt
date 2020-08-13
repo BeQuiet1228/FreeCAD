@@ -60,6 +60,16 @@ SET(volume_src
                 VolPyramid.cpp
                 VolRhombus.h
                 VolRhombus.cpp
+                VolTetrahedron.h
+                VolTetrahedron.cpp
+                VolToroidalSection.h
+                VolToroidalSection.cpp
+                VolAnnularSection.h
+                VolAnnularSection.cpp
+                VolHelical.h
+                VolHelical.cpp
+                VolFunction.h
+                VolFunction.cpp
 )
 SOURCE_GROUP("Volume" FILES ${volume_src})
 #处理ui和qrc文件
