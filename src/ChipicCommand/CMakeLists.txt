@@ -40,6 +40,36 @@ SET(volume_src
 	ModelTexture.cpp
 	Line.h
 	Line.cpp
+	LineOblique.h
+                LineOblique.cpp
+                AreaConformal.h
+                AreaConformal.cpp
+                AreaRectangular.h
+                AreaRectangular.cpp
+                VolConformal.h
+                VolConformal.cpp
+                VolAnnular.h
+                VolAnnular.cpp
+                VolParallelepipedal.h
+                VolParallelepipedal.cpp
+                VolSpherical.h
+                VolSpherical.cpp
+                VolWedge.h
+                VolWedge.cpp
+                VolPyramid.h
+                VolPyramid.cpp
+                VolRhombus.h
+                VolRhombus.cpp
+                VolTetrahedron.h
+                VolTetrahedron.cpp
+                VolToroidalSection.h
+                VolToroidalSection.cpp
+                VolAnnularSection.h
+                VolAnnularSection.cpp
+                VolHelical.h
+                VolHelical.cpp
+                VolFunction.h
+                VolFunction.cpp
 )
 SOURCE_GROUP("Volume" FILES ${volume_src})
 #处理ui和qrc文件
