@@ -86,7 +86,7 @@ std::string MessageTransition::creatRunChipicJsonMessage(const std::string& m3dP
 {
 	neb::CJsonObject Message;
 	Message.Add("cmd", "RunChipic");
-	Message.Add("m3dPath", m3dPath);
+	addPath(Message, m3dPath);
 	Message.Add("threadCount", threadCount);
 
 	return Message.ToString();
@@ -151,9 +151,9 @@ std::string MessageTransition::creatChipicStartfinishedJsonMessage(const std::st
 {
 	std::string json = creatCmdMessage("startFinished", threadId);
 	neb::CJsonObject message(json);
-	message.Add("m3dPath", m3dPath);
+	addPath(message, m3dPath);
 	message.Add("threadCount", threadCount);
-	message.Add("userName", userName);
+	addUserName(message, userName);
 	return message.ToString();
 }
 

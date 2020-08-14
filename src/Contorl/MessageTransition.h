@@ -40,9 +40,38 @@ public:
 	static bool getThreadID(const neb::CJsonObject& json, std::string& threadId){
 		return json.Get("threadID", threadId);
 	};
+	//向json中添加一个threadid
 	static bool addThreadID(neb::CJsonObject& json, const std::string& threadId){
 		return json.Add("threadID", threadId);
 	};
+	//向json中添加一个路径
+	static bool addPath(neb::CJsonObject& json, const std::string& path){
+		return json.Add("path", path);
+	}
+	//向json中获取一个路径
+	static bool getPath(const neb::CJsonObject& json, std::string& path){
+		return json.Get("path", path);
+	}
+	//设置路径 针对json中已有的键 更改其值
+	static bool setPath(neb::CJsonObject& json, const std::string& path){
+		return json.Replace("path", path);
+	}
+	//向json中添加一个文件名
+	static bool addFileName(neb::CJsonObject& json, const std::string& fileName){
+		return json.Add("fileName", fileName);
+	}
+	//从json中获取一个文件名
+	static bool getFileName(const neb::CJsonObject& json,std::string& fileName){
+		return json.Get("fileName", fileName);
+	}
+	//获取一个线程数
+	static bool getThreadCount(const neb::CJsonObject& json, std::string& threadCount){
+		return json.Get("threadCount", threadCount);
+	}
+	//添加一个线程数
+	static bool addThreadCount(neb::CJsonObject& json, std::string& threadCount){
+		return json.Add("threadCount", threadCount);
+	}
 	//json消息转换为winmessage
 	static Message jsonToWinMessage(const std::string &json);
 	//winmessage转换为json消息

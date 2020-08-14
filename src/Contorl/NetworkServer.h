@@ -61,6 +61,10 @@ private:
 	bool startFinishedCmd(const std::string& json);
 	//处理本地消息
 	bool disposeLocalMessage(const std::string& json);
+	//处理runchipic消息
+	bool disposeRunchipicMessage(const neb::CJsonObject& json, const std::string& cmd);
+	//处m3dfile消息
+	bool disposeM3dFileMessage(NetworkSocket::SocketMessageBody& messageBody);
 private:
 	std::list<ConnectSocket> listConnectSocket;
 

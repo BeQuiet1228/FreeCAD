@@ -225,6 +225,11 @@ bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId)
 	return true;
 }
 
+/**
+* @brief ChipicManager::dispoesStartChipicMessage 处理chipic启动完成消息
+* @param const std::string json
+* @return bool
+*/
 bool ChipicManager::dispoesStartChipicMessage(const std::string json)
 {
 	loadingDialog->close();
@@ -238,7 +243,7 @@ bool ChipicManager::dispoesStartChipicMessage(const std::string json)
 	jsonObject.Get("threadID", temp);
 	DWORD threadId = std::stol(temp);
 
-	jsonObject.Get("m3dPath", temp);
+	MessageTransition::getPath(jsonObject, temp);
 	std::string m3dPath = temp;
 
 	jsonObject.Get("threadCount", temp);

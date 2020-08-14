@@ -49,7 +49,7 @@ bool LocalEmitter::disposRunChipicJsonMessage(const std::string& json)
 	neb::CJsonObject jsonObject(json);
 	std::string temp,m3dPath,userName = "defaultUser";
 
-	jsonObject.Get("m3dPath", m3dPath);
+	MessageTransition::getPath(jsonObject, m3dPath);
 	jsonObject.Get("threadCount", temp);
 	int threadCount = std::stoi(temp);
 

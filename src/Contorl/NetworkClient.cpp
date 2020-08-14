@@ -10,6 +10,8 @@
 #include "MessageTransition.h"
 #include <QMessageBox>
 #include "NetworkUser.h"
+#include "QFileInfo"
+#include "File.h"
 std::shared_ptr<NetworkClient> NetworkClient::_instance;
 
 NetworkClient::~NetworkClient()
@@ -127,11 +129,15 @@ void NetworkClient::sendJonsMessage(const std::string json)
 		if (cmd == "RunChipic")
 		{
 			MessageTransition::addUserName(jsonObject, this->userName);
+			
+			std::string path;
+			if (MessageTransition::getPath(jsonObject, path))
+				sendM3dFile(path);
 		}
 	}
 
 	//如果客户端处于未登录状态,则不能发送除了登录和注册以外的信息
-	if (cmd != "login" && cmd != "register" && login)
+	if (cmd != "login" && cmd != "register" && !login)
 	{
 		showMessageBox("未连接到服务端或者未登录,无法进行当前操作!");
 		return;
@@ -195,6 +201,14 @@ void NetworkClient::disposeLoginMessage(const neb::CJsonObject jsonObject)
 		showMessageBox("登录成功!");
 		login = true;
 		loginDialog->close();
+
+		//测试daima
+		{
+			std::string json = MessageTransition::creatRunChipicJsonMessage("E:/lingshiwenjianjia/MILO_D/MILO_D.m3d", 1);
+			sendJonsMessage(json);
+		}
+
+
 	}else{
 		showMessageBox("登录失败,请检车用户名与密码是否正确!");
 	}
@@ -247,6 +261,31 @@ void NetworkClient::showMessageBox(std::string tr)
 	box.setWindowTitle(QString::fromLocal8Bit("提示框:"));
 	box.setText(QString::fromLocal8Bit(tr.c_str()));
 	box.exec();
+}
+
+/**
+* @brief NetworkClient::sendM3dFile 向服务器发送m3d文件
+* @param const std::string & path
+* @return void
+*/
+void NetworkClient::sendM3dFile(const std::string& path)
+{
+	//向json中添加命令
+	neb::CJsonObject jsonObject;
+	MessageTransition::addCmd(jsonObject, "m3dFile");
+	
+	QFileInfo fileInfo(QString::fromLocal8Bit(path.c_str()));
+	std::string fileName = fileInfo.fileName().toLocal8Bit();
+	MessageTransition::addFileName(jsonObject, fileName);
+
+	//分包发送文件
+	File file;
+	file.openForReadonly(path);
+	QByteArray bytes;
+	while (file.readNextData(bytes))
+	{
+		socket->sendMessage(jsonObject.ToString(), bytes);
+	}
 }
 
 void NetworkClient::receiveMessageFinished(NetworkSocket::SocketMessageBody messageBody)

@@ -61,6 +61,8 @@ private:
 	void disposeRegisterMessage(const neb::CJsonObject jsonObject);
 	//显示提示框
 	void showMessageBox(std::string tr);
+	//发送m3d文件
+	void sendM3dFile(const std::string& path);
 public Q_SLOTS:
 	void receiveMessageFinished(NetworkSocket::SocketMessageBody messageBody);
 	//登录提示框按钮被点击

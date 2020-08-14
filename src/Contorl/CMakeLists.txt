@@ -1,7 +1,7 @@
 #设置预定义
 if(WIN32)
-add_definitions(-D_CONTORL_ -DMY_DEBUG -DMY_LOG)
-#add_definitions(-D_CONTORL_ )
+#add_definitions(-D_CONTORL_ -DMY_DEBUG -DMY_LOG)
+add_definitions(-D_CONTORL_ -DMY_LOG)
 endif(WIN32)
 #设置项目名称
 project(Contorl)
@@ -63,6 +63,8 @@ SET(NETWORK_SRC
 	NetworkClientLoginDailog.cpp
 	NetworkUser.h
 	NetworkUser.cpp
+	File.cpp
+	File.h
 )
 #引入头文件
 include_directories(

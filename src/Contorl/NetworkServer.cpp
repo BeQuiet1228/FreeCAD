@@ -8,6 +8,9 @@
 #include "JsonMessageGetter.h"
 #include "MessageTransition.h"
 #include "NetworkUser.h"
+#include "File.h"
+#include <QDir>
+#include <QFileInfo>
 std::shared_ptr<NetworkServer> NetworkServer::_instance;
 
 NetworkServer::~NetworkServer()
@@ -85,7 +88,7 @@ void NetworkServer::setAddressAndPort(const QString& address, const int& prot)
 /**
 * @brief NetworkServer::disposeCmdMessage 处理命令消息
 * @param const std::string & json
-* @return bool
+* @return bool true 表示消息无需后续处理
 */
 bool NetworkServer::disposeCmdMessage(const std::string& json)
 {
@@ -98,6 +101,8 @@ bool NetworkServer::disposeCmdMessage(const std::string& json)
 	if (disposeLoginMessage(jsonObject, cmd))
 		return true;
 	if (disposeRegisterMessage(jsonObject, cmd))
+		return true;
+	if (disposeRunchipicMessage(jsonObject, cmd))
 		return true;
 
 	return false;
@@ -223,13 +228,17 @@ NetworkSocket * NetworkServer::getSocketSender()
 bool NetworkServer::startFinishedCmd(const std::string& json)
 {
 	//获取 cmd threadid userName
-	std::string cmd = "default", threadId;
+	std::string cmd = "default", threadId,m3dPath;
 	MessageTransition::getCmd(json, cmd);
-	MessageTransition::getThreadID(json, threadId);
-	unsigned long  id = std::stoul(threadId);
 
 	if (cmd != "startFinished")
 		return false;
+
+	MessageTransition::getThreadID(json, threadId);
+	MessageTransition::getPath(json, m3dPath);
+	unsigned long  id = std::stoul(threadId);
+
+
 
 	std::string userName;
 	if (!MessageTransition::getUserName(json, userName))
@@ -254,8 +263,13 @@ bool NetworkServer::startFinishedCmd(const std::string& json)
 #endif // MY_LOG
 		return false;
 	}
+
+	//获取服务器路径,以用于匹配chipicData对象
+	std::string servicFilePath;
+	MessageTransition::getPath(json, servicFilePath);
+
 	//将threadid 赋予socket 然后将消息发送出去
-	(*i)->user->addThreadId(id);
+	(*i)->user->addThreadId(id,servicFilePath);
 	(*i)->sendJsonMessage(json);
 	return true;
 }
@@ -299,6 +313,138 @@ bool NetworkServer::disposeLocalMessage(const std::string& json)
 }
 
 /**
+* @brief NetworkServer::disposeRunchipicMessage 处理客户端发来的启动消息
+* @param const neb::CJsonObject & json
+* @param const std::string & cmd
+* @return bool ture 表示不做后续处理
+*/
+bool NetworkServer::disposeRunchipicMessage(const neb::CJsonObject& json, const std::string& cmd)
+{
+	if (cmd != "RunChipic")
+		return false;
+
+	//获取带文件名的路径
+	std::string filePath;
+	MessageTransition::getPath(json, filePath);
+
+	QFileInfo fileInfo(QString::fromLocal8Bit(filePath.c_str()));
+	//获取带后缀的文件名
+	QString m3dFileName = fileInfo.fileName();
+	//获取不带后缀的文件名
+	QString fileName = fileInfo.baseName();
+	//获取不包含文件名的路径
+	QString path = QString::fromLocal8Bit(filePath.c_str()).remove(m3dFileName);
+
+	auto sender = getSocketSender();
+	if (sender == nullptr)
+	{
+#ifdef MY_LOG
+		std::cerr << "NetworkServer::disposeRunchipicMessage get sender is nullptr" << std::endl;
+#endif // MY_LOG
+		return false;
+	}
+
+	//拼接服务端的路径
+	std::string userName = sender->user->userName;
+	//不带文件名的服务端路径
+	std::string servicePath = "E:/" + userName;
+	//带文件名的服务端完整路径
+	std::string serviceFilePath = servicePath + "/" + std::string(m3dFileName.toLocal8Bit());
+
+	QDir dir;
+	if (!dir.exists(QString::fromLocal8Bit(serviceFilePath.c_str())))
+	{
+#ifdef MY_LOG
+		std::cerr << "NetworkServer::disposeRunchipicMessage service file path is not exists! path:"
+			<< serviceFilePath << std::endl;
+#endif // MY_LOG
+		return true;
+	}
+
+	//获取线程数
+	std::string temp;
+	MessageTransition::getThreadCount(json, temp);
+	int threadCount = std::stoi(temp);
+
+	//根据信息构建一个chipic信息对象
+	NetworkUser::ChipicData chipicData;
+	chipicData.clientPath = path.toLocal8Bit();
+	chipicData.fileName = fileName.toLocal8Bit();
+	chipicData.m3dFileName = m3dFileName.toLocal8Bit();
+	chipicData.servicePath = servicePath;
+	chipicData.threadCount = threadCount;
+	//将信息对象 放入list
+	sender->user->chipicDataList.push_back(chipicData);
+
+	//将json消息中的客户端路径 修改为服务端上的路径 然后将消息发送出去
+	auto newJson = json;
+	MessageTransition::setPath(newJson, serviceFilePath);
+	//添加用户名
+	MessageTransition::addUserName(newJson, sender->user->userName);
+
+	auto messageSender = MessageSender::GetInstance();
+	messageSender->sendJsonMessage(newJson.ToString());
+	return true;
+}
+
+/**
+* @brief NetworkServer::disposeM3dFileMessage 接收m3d文件
+* @param NetworkSocket::SocketMessageBody & messageBody
+* @return bool
+*/
+bool NetworkServer::disposeM3dFileMessage(NetworkSocket::SocketMessageBody& messageBody)
+{
+	neb::CJsonObject jsonObjcet(messageBody.json.data());
+
+	std::string cmd;
+	if (!MessageTransition::getCmd(jsonObjcet, cmd))
+		return false;
+	if (cmd != "m3dFile")
+		return false;
+	
+	//获取文件名
+	std::string fileName;
+	if (!MessageTransition::getFileName(jsonObjcet, fileName))
+	{
+#ifdef MY_LOG
+		std::cerr << "NetworkServer::diposeM3dFileMessage get file name failed!" << std::endl;
+#endif // MY_LOG
+		return false;
+	}
+
+	//获取发送信号的socket
+	auto sender = getSocketSender();
+	if (sender == nullptr)
+	{
+#ifdef MY_LOG
+		std::cerr << "NetworkServer::diposeM3dFileMessage sender is nullptr!" << std::endl;
+#endif // MY_LOG
+		return false;
+	}
+
+	//拼接路径
+	std::string filePath = "E:/" + sender->user->userName;
+	
+	//检查路径是否存在 如果不存在 则创建
+	QDir dir;
+	if (!dir.exists(QString::fromLocal8Bit(filePath.c_str())))
+		dir.mkpath(QString::fromLocal8Bit(filePath.c_str()));
+
+	//写入文件
+	File file;
+	if (!file.openForAppend(filePath + "/" + fileName))
+	{
+#ifdef MY_LOG
+		std::cerr << "NetworkServer::diposeM3dFileMessage sender open file failed! path:" 
+			<< filePath << std::endl;
+#endif // MY_LOG
+		return false;
+	}
+	file.writeData(messageBody.data);
+	return true;
+}
+
+/**
 * @brief NetworkServer::serverNewConnection tcp服务器有新的链接槽
 * @return void
 */
@@ -328,11 +474,12 @@ void NetworkServer::serverNewConnection()
 */
 void NetworkServer::receiveMessageFinished(NetworkSocket::SocketMessageBody msgBody)
 {
-
+	if (disposeM3dFileMessage(msgBody))
+		return ;
 	if(disposeCmdMessage(msgBody.json.data()))
 		return;
 	auto sender = MessageSender::GetInstance();
-	sender->sendJsonMessage(msgBody.json.data());
+	//sender->sendJsonMessage(msgBody.json.data());
 
 }
 

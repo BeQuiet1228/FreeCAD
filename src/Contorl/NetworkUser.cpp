@@ -1,4 +1,5 @@
 #include "NetworkUser.h"
+#include <iostream>
 NetworkUser::NetworkUser()
 {
 
@@ -70,13 +71,31 @@ bool NetworkUser::findThreadId(const unsigned long& threadId)
 }
 
 /**
-* @brief NetworkUser::addThreadId 添加一个threadid到该账户
-* @param const unsigned long & thradId
+* @brief NetworkUser::addThreadId 添加一个threadid到该账户 并记录chipic的路径信息
+* @param const unsigned long & threadId
+* @param const std::string & servicePath 服务端路径,这个路径含有文件名 根据这个路径匹配账户下已有的chipic信息 如果没有匹配到 则键入一个空的对象
 * @return bool
 */
-bool NetworkUser::addThreadId(const unsigned long &threadId)
+bool NetworkUser::addThreadId(const unsigned long &threadId, const std::string& servicePath)
 {
-	threadIdMap.insert(std::map<unsigned long,int>::value_type(threadId,0));
+	auto i = chipicDataList.begin();
+	for (; i != chipicDataList.end(); i++)
+	{
+		if ((i->servicePath +"/"+ i->m3dFileName) == servicePath)
+			break;
+	}
+
+	ChipicData chipicData;
+	if (i == chipicDataList.end())
+	{
+#ifdef MY_LOG
+		std::cerr << "NetworkUser::addThreadId not find chipicData! servic path :"
+			<< servicePath << std::endl;
+#endif // MY_LOG
+	}else{
+		chipicData = (*i);
+	}
+	threadIdMap.insert(std::map<unsigned long, ChipicData>::value_type(threadId, chipicData));
 	return true;
 }
 
