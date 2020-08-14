@@ -13,5 +13,6 @@ public:
 	virtual bool fromCommand(const std::string& command) = 0;
 
 public:
+	//不需要输出命令选项
 	bool notOutputCommand = false;
 };

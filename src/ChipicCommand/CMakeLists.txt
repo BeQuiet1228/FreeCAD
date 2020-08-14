@@ -41,37 +41,42 @@ SET(volume_src
 	Line.h
 	Line.cpp
 	LineOblique.h
-                LineOblique.cpp
-                AreaConformal.h
-                AreaConformal.cpp
-                AreaRectangular.h
-                AreaRectangular.cpp
-                VolConformal.h
-                VolConformal.cpp
-                VolAnnular.h
-                VolAnnular.cpp
-                VolParallelepipedal.h
-                VolParallelepipedal.cpp
-                VolSpherical.h
-                VolSpherical.cpp
-                VolWedge.h
-                VolWedge.cpp
-                VolPyramid.h
-                VolPyramid.cpp
-                VolRhombus.h
-                VolRhombus.cpp
-                VolTetrahedron.h
-                VolTetrahedron.cpp
-                VolToroidalSection.h
-                VolToroidalSection.cpp
-                VolAnnularSection.h
-                VolAnnularSection.cpp
-                VolHelical.h
-                VolHelical.cpp
-                VolFunction.h
-                VolFunction.cpp
+    LineOblique.cpp
+    AreaConformal.h
+    AreaConformal.cpp
+    AreaRectangular.h
+    AreaRectangular.cpp
+    VolConformal.h
+    VolConformal.cpp
+    VolAnnular.h
+    VolAnnular.cpp
+    VolParallelepipedal.h
+    VolParallelepipedal.cpp
+    VolSpherical.h
+    VolSpherical.cpp
+    VolWedge.h
+    VolWedge.cpp
+    VolPyramid.h
+    VolPyramid.cpp
+    VolRhombus.h
+    VolRhombus.cpp
+    VolTetrahedron.h
+    VolTetrahedron.cpp
+    VolToroidalSection.h
+    VolToroidalSection.cpp
+    VolAnnularSection.h
+    VolAnnularSection.cpp
+    VolHelical.h
+    VolHelical.cpp
+    VolFunction.h
+    VolFunction.cpp
+)
+SET(observation_src
+	Observation.h
+	Observation.cpp
 )
 SOURCE_GROUP("Volume" FILES ${volume_src})
+SOURCE_GROUP("Observation" FILES ${observation_src})
 #处理ui和qrc文件
 if (BUILD_QT5)
     QT5_ADD_RESOURCES(Gui_QRC_SRCS ${QRC_SRC})
@@ -91,6 +96,7 @@ SET(ChipicCommand_src
 	${MY_MOC_HDR}
 	${Gui_QRC_SRCS}
 	${volume_src}
+	${observation_src}
 )
 #设置编译生成文件类型
 add_executable(ChipicCommand ${ChipicCommand_src}) # 生成可执行文件
