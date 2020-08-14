@@ -1,6 +1,7 @@
 #include "Model.h"
 
 Model::Model()
+	:name("")
 {
 
 }
