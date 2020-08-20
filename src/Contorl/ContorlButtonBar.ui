@@ -211,6 +211,32 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="3">
+    <widget class="QToolButton" name="toolButtonConnectionWay">
+     <property name="minimumSize">
+      <size>
+       <width>40</width>
+       <height>40</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>切换连接方式</string>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="Contorl.qrc">
+       <normaloff>:/icon/network .svg</normaloff>:/icon/network .svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
+    </widget>
+   </item>
   </layout>
   <action name="actionRun">
    <property name="text">

@@ -44,6 +44,9 @@ NetworkSocket::~NetworkSocket()
 */
 void NetworkSocket::setSocket(QTcpSocket * tcpSocket)
 {
+	if (this->socket != nullptr)
+		delete this->socket;
+
 	this->socket = tcpSocket;
 	connect(socket, SIGNAL(readyRead()), this, SLOT(readReady()));
 }

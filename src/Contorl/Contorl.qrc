@@ -1,5 +1,7 @@
 <RCC>
   <qresource>
+    <file>icon/local.svg</file>
+    <file>icon/network .svg</file>
     <file>image/loading.gif</file>
     <file>icon/muti-run.svg</file>
     <file>icon/off.svg</file>

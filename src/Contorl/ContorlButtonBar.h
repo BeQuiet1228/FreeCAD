@@ -18,7 +18,8 @@ public:
 		REFREASH,	//刷新按钮
 		PAUSE,		//暂停开始
 		TIMER,		//定时器按钮
-		LOG			//LOG按钮
+		LOG,			//LOG按钮
+		CONNECTION_WAY  //连接方式被点击
 	};
 public:
 	ContorlButtonBar (QWidget *parent = 0);
@@ -30,6 +31,8 @@ public:
 	void setChipicData(std::shared_ptr<Chipic> chipic);
 	//chipic被关闭 重新设置按钮状态
 	void chipicClose();
+	//设置连接方式图标
+	void setConnectionWayIcon(const int& way);
 public Q_SLOTS:
 	//运行按钮被点击
 	void on_toolButtonRun_clicked();
@@ -45,6 +48,8 @@ public Q_SLOTS:
 	void on_toolButtonTimer_clicked();
 	//批处理按钮被点击
 	void on_toolButton_clicked();
+	//切换连接模式按钮被点击
+	void on_toolButtonConnectionWay_clicked();
 Q_SIGNALS:
 	void buttonClicked(int);
 };

@@ -21,11 +21,11 @@ public:
 		return json.Add("password", password);
 	};
 	//从json中获取一个用户名
-	static bool getUserName(const neb::CJsonObject& json,std::string& userName){
+	static bool getUserName(const neb::CJsonObject& json, std::string& userName){
 		return json.Get("userName", userName);
 	};
 	//从json中获取一个密码
-	static bool getPassword(const neb::CJsonObject& json,std::string& password){
+	static bool getPassword(const neb::CJsonObject& json, std::string& password){
 		return json.Get("password", password);
 	};
 	//向json中添加一个错误代码
@@ -61,7 +61,7 @@ public:
 		return json.Add("fileName", fileName);
 	}
 	//从json中获取一个文件名
-	static bool getFileName(const neb::CJsonObject& json,std::string& fileName){
+	static bool getFileName(const neb::CJsonObject& json, std::string& fileName){
 		return json.Get("fileName", fileName);
 	}
 	//获取一个线程数
@@ -71,6 +71,22 @@ public:
 	//添加一个线程数
 	static bool addThreadCount(neb::CJsonObject& json, std::string& threadCount){
 		return json.Add("threadCount", threadCount);
+	}
+	//添加一个索引
+	static bool addIndex(neb::CJsonObject& json, const int& index)
+	{
+		return json.Add("index", std::to_string(index));
+	}
+	//设置一个索引  针对已有元素 进行修改
+	static bool setIndex(neb:: CJsonObject& json, const int& index){
+		return json.Replace("index", std::to_string(index));
+	}
+	//获取一个索引
+	static bool getIndex(const neb::CJsonObject& json, int& index){
+		std::string temp;
+		bool ok = json.Get("index", temp);
+		index = std::stoi(temp);
+		return ok;
 	}
 	//json消息转换为winmessage
 	static Message jsonToWinMessage(const std::string &json);

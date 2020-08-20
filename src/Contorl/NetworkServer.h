@@ -65,6 +65,10 @@ private:
 	bool disposeRunchipicMessage(const neb::CJsonObject& json, const std::string& cmd);
 	//处m3dfile消息
 	bool disposeM3dFileMessage(NetworkSocket::SocketMessageBody& messageBody);
+	//处理本地图形文件消息
+	bool disposeH5FileMessage(const std::string& json);
+	//通过threadId找到对应的socket对象
+	std::shared_ptr<NetworkSocket> findSocketObjectForThreadID(const unsigned long& threadID);
 private:
 	std::list<ConnectSocket> listConnectSocket;
 

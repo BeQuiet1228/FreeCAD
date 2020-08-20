@@ -65,6 +65,25 @@ void ContorlButtonBar::chipicClose()
 	icon.addFile(QString::fromUtf8(":/icon/run.svg"), QSize(), QIcon::Normal, QIcon::Off);
 	ui->toolButtonRun->setIcon(icon);
 }
+
+/**
+* @brief ContorlButtonBar::setConnectionWayIcon 设置连接方式图标
+* @param const int & way  1:本地连接图标 2:网络连接图标 其他:不做处理
+* @return void
+*/
+void ContorlButtonBar::setConnectionWayIcon(const int& way)
+{
+	QIcon icon;
+	if (way == 1)
+	{
+		icon.addFile(QString::fromUtf8(":/icon/local.svg"), QSize(), QIcon::Normal, QIcon::Off);
+		ui->toolButtonConnectionWay->setIcon(icon);
+	} else if (way == 2){
+		icon.addFile(QString::fromUtf8(":/icon/network .svg"), QSize(), QIcon::Normal, QIcon::Off);
+		ui->toolButtonConnectionWay->setIcon(icon);
+	}
+}
+
 void ContorlButtonBar::on_toolButtonRun_clicked()
 {
 	emit buttonClicked(RUN);
@@ -98,6 +117,11 @@ void ContorlButtonBar::on_toolButtonTimer_clicked()
 void ContorlButtonBar::on_toolButton_clicked()
 {
 	std::cerr << "mm" << std::endl;
+}
+
+void ContorlButtonBar::on_toolButtonConnectionWay_clicked()
+{
+	emit buttonClicked(CONNECTION_WAY);
 }
 
 #include "moc_ContorlButtonBar.cpp"

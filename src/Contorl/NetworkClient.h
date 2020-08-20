@@ -59,6 +59,8 @@ private:
 	void disposeLoginMessage(const neb::CJsonObject jsonObject);
 	//处理注册消息
 	void disposeRegisterMessage(const neb::CJsonObject jsonObject);
+	//处理服务器发来得文件消息
+	bool disposeFileMessage(NetworkSocket::SocketMessageBody messageBody);
 	//显示提示框
 	void showMessageBox(std::string tr);
 	//发送m3d文件

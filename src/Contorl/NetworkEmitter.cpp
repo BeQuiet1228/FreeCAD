@@ -3,7 +3,6 @@
 NetworkEmitter::NetworkEmitter()
 {
 	auto client = NetworkClient::GetInstance();
-
 	client->startConnect();
 }
 

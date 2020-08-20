@@ -114,3 +114,18 @@ bool NetworkUser::removeThreadId(const unsigned long& threadId)
 	return true;
 }
 
+/**
+* @brief NetworkUser::getChipicDataForThreadID 根据threadID寻找对应的chipic信息对象
+* @param const unsigned long & threadId 
+* @param ChipicData & data
+* @return bool false 表示不存在这个信息
+*/
+bool NetworkUser::getChipicDataForThreadID(const unsigned long& threadId, ChipicData& data)
+{
+	auto iter = threadIdMap.find(threadId);
+	if (iter == threadIdMap.end())
+		return false;
+	data = iter->second;
+	return true;
+}
+

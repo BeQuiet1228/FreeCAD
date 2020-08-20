@@ -12,6 +12,7 @@
 #include "NetworkUser.h"
 #include "QFileInfo"
 #include "File.h"
+#include <QDir>
 std::shared_ptr<NetworkClient> NetworkClient::_instance;
 
 NetworkClient::~NetworkClient()
@@ -74,8 +75,6 @@ void NetworkClient::startConnect()
 	auto s = new QTcpSocket;
 	s->connectToHost(QHostAddress(getListeneAddress()), getListenePort());
 	socket->setSocket(s);
-
-	loginDialog->show();
 }
 
 /**
@@ -140,6 +139,7 @@ void NetworkClient::sendJonsMessage(const std::string json)
 	if (cmd != "login" && cmd != "register" && !login)
 	{
 		showMessageBox("未连接到服务端或者未登录,无法进行当前操作!");
+		showLocginDialog();
 		return;
 	}
 
@@ -201,14 +201,6 @@ void NetworkClient::disposeLoginMessage(const neb::CJsonObject jsonObject)
 		showMessageBox("登录成功!");
 		login = true;
 		loginDialog->close();
-
-		//测试daima
-		{
-			std::string json = MessageTransition::creatRunChipicJsonMessage("E:/lingshiwenjianjia/MILO_D/MILO_D.m3d", 1);
-			sendJonsMessage(json);
-		}
-
-
 	}else{
 		showMessageBox("登录失败,请检车用户名与密码是否正确!");
 	}
@@ -250,6 +242,79 @@ void NetworkClient::disposeRegisterMessage(const neb::CJsonObject jsonObject)
 	}
 }
 
+
+/**
+* @brief NetworkClient::disposeFileMessage
+* @param NetworkSocket::SocketMessageBody messageBody
+* @return bool
+*/
+bool NetworkClient::disposeFileMessage(NetworkSocket::SocketMessageBody messageBody)
+{
+	neb::CJsonObject jsonObjcet(messageBody.json.data());
+
+	std::string cmd;
+	if (!MessageTransition::getCmd(jsonObjcet, cmd))
+		return false;
+	if (cmd != "File")
+		return false;
+
+	//获取文件名
+	std::string filePath;
+	if (!MessageTransition::getPath(jsonObjcet, filePath))
+	{
+#ifdef MY_LOG
+		std::cerr << "NetworkClient::disposeFileMessage get file name failed!" << std::endl;
+#endif // MY_LOG
+		return false;
+	}
+	//检查路径是否存在 不存在则创建一个路径
+	{
+		auto qfilePath = QString::fromLocal8Bit(filePath.c_str());
+		QFileInfo fileInfo(qfilePath);
+		qfilePath = qfilePath.remove(fileInfo.fileName());
+		qfilePath = qfilePath.left(qfilePath.length() - 1);
+		QDir dir;
+		if (!dir.exists(qfilePath))
+			dir.mkpath(qfilePath);
+	}
+
+	//获取包的索引 如果索引为0 则将本地文件移除 写入一个新的文件
+	do 
+	{
+		int index;
+		if (!(MessageTransition::getIndex(jsonObjcet, index)))
+		{
+#ifdef MY_LOG
+			std::cerr << "NetworkClient::disposeFileMessage,get block index  failed! json:"
+				<< jsonObjcet.ToString() << std::endl;
+#endif // MY_LOG
+			return false;
+		}
+		std::cerr << "index1:" << index << std::endl;
+		if (index != 0)
+			break;
+		//移除文件
+		QFile file(QString::fromLocal8Bit(filePath.c_str()));
+		if (!file.open(QIODevice::ReadWrite))
+			break;
+		file.remove();
+		file.close();
+		std::cerr << "index:" << index << std::endl;
+	} while (false);
+	//写入文件
+	File file;
+	if (!file.openForAppend(filePath))
+	{
+#ifdef MY_LOG
+		std::cerr << "NetworkClient::disposeFileMessage open file failed! path:"
+			<< filePath << std::endl;
+#endif // MY_LOG
+		return false;
+	}
+	file.writeData(messageBody.data);
+	return true;
+}
+
 /**
 * @brief NetworkClient::showMessageBox 显示提示框 且阻塞
 * @param std::string tr
@@ -289,7 +354,9 @@ void NetworkClient::sendM3dFile(const std::string& path)
 }
 
 void NetworkClient::receiveMessageFinished(NetworkSocket::SocketMessageBody messageBody)
-{
+{ 
+	if (disposeFileMessage(messageBody))
+		return;
 	if (disposeCmdMessage(messageBody))
 		return;
 	auto msgGetter = JsonMessageGetter::GetInstance();

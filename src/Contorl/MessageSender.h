@@ -2,6 +2,7 @@
 #include <memory>
 #include <mutex>
 #include "EmitterInterface.h"
+#include <typeinfo.h>
 class MessageSender
 {
 public:
@@ -25,7 +26,8 @@ public:
 	void sendJsonMessage(const std::string& json);
 	//设置消息发射器
 	void setEmitter(EmitterInterface *em);
-
+	//获取发射器的typeid
+	std::string getEmitterTypeID();
 private:
 	EmitterInterface * emitter = nullptr;
 };

@@ -24,9 +24,7 @@ Contorl::Contorl(QWidget *parent)
 
 	//初始化消息发射器
 	auto sender = MessageSender::GetInstance();
-	//sender->setEmitter(new LocalEmitter);
-	//测试网络发射器
-	sender->setEmitter(new NetworkEmitter);
+	sender->setEmitter(new LocalEmitter);
 
 	//初始化ui定时器
 	uiTimer = new QTimer;
@@ -39,12 +37,36 @@ Contorl::Contorl(QWidget *parent)
 	//this->m3dPath = "E:/lingshiwenjianjia/MILO_D/MILO_D.m3d";
 }
 
+Contorl::~Contorl()
+{
+
+}
+
 void Contorl::getM3dPathForRunPython()
 {
 	Base::InterpreterSingleton python;
 	python.runString("import Control.controlCommand.LonelinessCmd");
 	python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
 	python.runString("lonemod.setM3dPath()");
+}
+
+/**
+* @brief Contorl::changeConnectionWay 切换连接方式
+* @return void
+*/
+void Contorl::changeConnectionWay()
+{
+	auto sender = MessageSender::GetInstance();
+	LocalEmitter *emitter = new LocalEmitter;
+	if (typeid(emitter).name() != sender->getEmitterTypeID())
+	{
+		sender->setEmitter(emitter);
+		contorlButtonBar->setConnectionWayIcon(1);
+		return;
+	}
+	delete emitter;
+	sender->setEmitter(new NetworkEmitter);
+	contorlButtonBar->setConnectionWayIcon(2);
 }
 
 void Contorl::on_pushButton_clicked()
@@ -82,6 +104,9 @@ void Contorl::buttonClinked(int buttonType)
 		break;
 	case ContorlButtonBar::LOG:
 		chipicManager.CurrentChipic->openLogFile();
+		break;
+	case ContorlButtonBar::CONNECTION_WAY:
+		changeConnectionWay();
 		break;
 	default:
 		break;

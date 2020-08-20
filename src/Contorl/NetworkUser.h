@@ -49,6 +49,8 @@ public:
 	bool addThreadId(const unsigned long &threadId,const std::string& servicePath);
 	//移除一个trheadid
 	bool removeThreadId(const unsigned long& threadId);
+	//通过threadID获取对应的chipic信息
+	bool getChipicDataForThreadID(const unsigned long& threadId,ChipicData& data);
 private:
 	std::map<unsigned long,ChipicData> threadIdMap;
 };

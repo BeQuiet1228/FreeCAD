@@ -7,12 +7,13 @@
 #include "ContorlButtonBar.h"
 #include "ContorlDataBar.h"
 #include "ContorlConfig.hpp"
+#include "EmitterInterface.h"
 class  Contorl : public QMainWindow
 {
 	Q_OBJECT
 public:
 	Contorl(QWidget *parent = 0);
-	
+	~Contorl();
 
 public:
 	//chipic管理器
@@ -22,7 +23,7 @@ public:
 	//信息条
 	ContorlDataBar *contorlDataBar;
 	//m3d路径
-	std::string m3dPath = "";
+	std::string m3dPath = "E:/lingshiwenjianjia/MILO_D/MILO_D.m3d";
 private:
 	Ui::ContorlClass ui;
 	
@@ -38,6 +39,8 @@ private:
 private:
 	//运行脚本获取m3d路径
 	void getM3dPathForRunPython();
+	//切换连接方式
+	void changeConnectionWay();
 public Q_SLOTS:
 	void on_pushButton_clicked();
 

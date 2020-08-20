@@ -17,7 +17,7 @@ MessageTransition::~MessageTransition()
 Message MessageTransition::jsonToWinMessage(const std::string &json)
 {
 	neb::CJsonObject jsonObject(json);
-	std::string temp;
+	std::string temp = "0";
 	Message msg;
 	//获取线程id
 	jsonGetStringValue(jsonObject, "threadID", temp);

@@ -13,24 +13,28 @@
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
+
+#ifdef SERVICE
+	QWidget qw;
+	qw.show();
+	auto server = NetworkServer::GetInstance();
+	server->startListene();
+
+	auto sender = MessageSender::GetInstance();
+	LocalEmitter *emiter = new LocalEmitter;
+	sender->setEmitter(emiter);
+#else
+
 	Contorl w;
 	w.contorlButtonBar->show();
 	w.contorlDataBar->show();
 	auto contorl = ContorlInterface::GetInstance();
 
-
-	auto server = NetworkServer::GetInstance();
-	server->startListene();
-
 	auto client = NetworkClient::GetInstance();
 	client->startConnect();
 
-	auto sender = MessageSender::GetInstance();
-	LocalEmitter *emiter = new LocalEmitter;
-	sender->setEmitter(emiter);
+#endif // SERVICE
 
-	//NetworkClientDialog d;
-	//d.show();
 
 	return a.exec();
 }

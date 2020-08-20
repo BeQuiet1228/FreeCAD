@@ -67,7 +67,16 @@ void NetworkServer::startListene()
 {
 	if (server->isListening())
 		server->close();
-	server->listen(QHostAddress(getListeneAddress()), getListenePort());
+	if (!server->listen(QHostAddress(getListeneAddress()), getListenePort()))
+	{
+#ifdef MY_LOG
+		std::cerr << "NetworkServer::startListene, listen is failed! address:"
+			<< getListeneAddress().toStdString() << ",port:"
+			<< getListenePort() << ",Error code:"
+			<< server->serverError() << std::endl;
+#endif // MY_LOG
+
+	}
 }
 
 /**
@@ -270,7 +279,19 @@ bool NetworkServer::startFinishedCmd(const std::string& json)
 
 	//将threadid 赋予socket 然后将消息发送出去
 	(*i)->user->addThreadId(id,servicFilePath);
-	(*i)->sendJsonMessage(json);
+
+	//将消息中的路径替换为客户端的上的路径
+	NetworkUser::ChipicData chipicData;
+	if (!(*i)->user->getChipicDataForThreadID(std::stoul(threadId), chipicData))
+	{
+#ifdef MY_LOG
+		std::cerr << "NetworkServer::startFinishedCmd get chipic data failed!" << std::endl;
+#endif // MY_LOG
+		return false;
+	}
+	neb::CJsonObject jsonObject(json);
+	MessageTransition::setPath(jsonObject, chipicData.clientPath + "/" + chipicData.m3dFileName);
+	(*i)->sendJsonMessage(jsonObject.ToString());
 	return true;
 }
 
@@ -293,23 +314,10 @@ bool NetworkServer::disposeLocalMessage(const std::string& json)
 	}
 	unsigned long threadId = std::stoul(temp);
 
-	auto i = socketList.begin();
-	for (; i != socketList.end(); i++)
-	{
-		if ((*i)->user->findThreadId(threadId))
-			break;
-	}
-
-	if (i == socketList.end())
-	{
-#ifdef MY_LOG
-		std::cerr << "NetworkServer::disposeLocalMessage get socket failed! threadId:"
-			<< threadId << std::endl;
-#endif // MY_LOG
+	auto socket = findSocketObjectForThreadID(threadId);
+	if (!socket)
 		return false;
-	}
-
-	(*i)->sendJsonMessage(json);
+	socket->sendJsonMessage(json);
 }
 
 /**
@@ -334,6 +342,8 @@ bool NetworkServer::disposeRunchipicMessage(const neb::CJsonObject& json, const 
 	QString fileName = fileInfo.baseName();
 	//获取不包含文件名的路径
 	QString path = QString::fromLocal8Bit(filePath.c_str()).remove(m3dFileName);
+	//去掉路径中的斜杠
+	path = path.left(path.length() - 1);
 
 	auto sender = getSocketSender();
 	if (sender == nullptr)
@@ -445,6 +455,113 @@ bool NetworkServer::disposeM3dFileMessage(NetworkSocket::SocketMessageBody& mess
 }
 
 /**
+* @brief NetworkServer::disposeH5FileMessage 处理本地发来的h5文件消息 在发送文件回执命令前先将文件发往客户端
+* @param const std::string & json
+* @return bool
+*/
+bool NetworkServer::disposeH5FileMessage(const std::string& json)
+{
+	auto winMessage = MessageTransition::jsonToWinMessage(json);
+	if (winMessage.threadId == 0)
+		return false;
+	//是否为结构图消息
+	bool structBool = (winMessage.Msg == 208 && winMessage.wParam ==100 && winMessage.lParam == 0);
+	//是否为结果图消息
+	bool resultBool = (winMessage.Msg == 209 && winMessage.wParam != -1000 && winMessage.lParam != -1000);
+	//如果不为以上类型 处理失败
+	if (!(structBool || resultBool))
+		return false;
+
+	//获取对应的socket对象
+	auto socket = findSocketObjectForThreadID(winMessage.threadId);
+	NetworkUser::ChipicData chipicData;
+	if (!(socket->user->getChipicDataForThreadID(winMessage.threadId, chipicData)))
+		return false;
+
+	//拼接路径
+	std::string clientFilePath, serviceFilePath;
+	std::string typeName = "_Temp.h5";
+	if (chipicData.threadCount == 1)
+	{
+		serviceFilePath = chipicData.servicePath + "/" + chipicData.fileName + typeName;
+		clientFilePath = chipicData.clientPath + "/" + chipicData.fileName + typeName;
+		
+	}else{
+		serviceFilePath = chipicData.servicePath + "/1/" + chipicData.fileName + typeName;
+		clientFilePath = chipicData.clientPath + "/1/" + chipicData.fileName + typeName;
+	}
+
+	QDir dir;
+	if (!dir.exists(QString::fromLocal8Bit(serviceFilePath.c_str())))
+	{
+#ifdef MY_LOG
+		std::cerr << "NetworkServer::disposeH5FileMessage service path not exists!path:"
+			<< serviceFilePath << std::endl;
+#endif // MY_LOG
+
+		return false;
+	}
+
+	//向json中添加命令
+	neb::CJsonObject jsonObject;
+	MessageTransition::addCmd(jsonObject, "File");
+
+	MessageTransition::addPath(jsonObject, clientFilePath);
+
+	//分包发送文件
+	File file;
+	file.openForReadonly(serviceFilePath);
+	QByteArray bytes;
+	//包的索引
+	int blockIndex = 0;
+	MessageTransition::addIndex(jsonObject, blockIndex);
+	while (file.readNextData(bytes))
+	{
+		if (!MessageTransition::setIndex(jsonObject, blockIndex))
+		{
+#ifdef MY_LOG
+			std::cerr << "NetworkServer::disposeH5FileMessage ,set block index failde!" << std::endl;
+#endif // MY_LOG
+				return false;
+		}
+		socket->sendMessage(jsonObject.ToString(), bytes);
+		blockIndex++;
+	}
+	socket->sendJsonMessage(json);
+	return true;
+}
+
+
+/**
+* @brief NetworkServer::findSocketObjectForThreadID 通过线程id寻找可用的socket对象
+* @param const unsigned long & threadID
+* @return std::shared_ptr<NetworkSocket> 如果找不到 智能指针则为空
+*/
+std::shared_ptr<NetworkSocket> NetworkServer::findSocketObjectForThreadID(const unsigned long& threadID)
+{
+	auto i = socketList.begin();
+	for (; i != socketList.end(); i++)
+	{
+		if ((*i)->user->findThreadId(threadID))
+			break;
+	}
+
+	std::shared_ptr<NetworkSocket> socket;
+
+	if (i != socketList.end())
+	{
+		socket = *i;
+		return socket;
+	}
+
+#ifdef MY_LOG
+	std::cerr << "NetworkServer::disposeLocalMessage get socket failed! threadId:"
+		<< threadID << std::endl;
+#endif // MY_LOG
+	return socket;
+}
+
+/**
 * @brief NetworkServer::serverNewConnection tcp服务器有新的链接槽
 * @return void
 */
@@ -479,7 +596,7 @@ void NetworkServer::receiveMessageFinished(NetworkSocket::SocketMessageBody msgB
 	if(disposeCmdMessage(msgBody.json.data()))
 		return;
 	auto sender = MessageSender::GetInstance();
-	//sender->sendJsonMessage(msgBody.json.data());
+	sender->sendJsonMessage(msgBody.json.data());
 
 }
 
@@ -499,6 +616,9 @@ void NetworkServer::hasLocalMessage()
 		return;
 	//处理启动完成消息
 	if (startFinishedCmd(json))
+		return;
+	//处理hdf5文件消息
+	if (disposeH5FileMessage(json))
 		return;
 	if (disposeLocalMessage(json))
 		return;

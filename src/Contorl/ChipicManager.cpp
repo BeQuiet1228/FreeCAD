@@ -14,7 +14,9 @@
 ChipicManager::ChipicManager()
 {
 	auto getter = JsonMessageGetter::GetInstance();
+#ifndef SERVICE
 	connect(getter.get(), SIGNAL(hasNewMessage()), this, SLOT(hasNewMessage()));
+#endif // !SERVICE
 
 	loadingDialog = new LoadingDialog;
 }
