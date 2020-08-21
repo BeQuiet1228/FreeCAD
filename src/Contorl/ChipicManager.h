@@ -44,4 +44,6 @@ private:
 	bool disposeCloseChipicMessage(const DWORD& threadId);
 	//处理启动chipic的消息
 	bool dispoesStartChipicMessage(const std::string json);
+	//发送启动消息
+	void sendStartChipicMessage(const std::string& path, const int& threadCount);
 };

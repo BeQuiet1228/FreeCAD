@@ -37,8 +37,8 @@ void MessageSender::setEmitter(EmitterInterface *em)
 	emitter = em;
 }
 
-std::string MessageSender::getEmitterTypeID()
+int MessageSender::getEmitterTypeID()
 {
-	return typeid(emitter).name();
+	return emitter->getEmitterId();
 }
 

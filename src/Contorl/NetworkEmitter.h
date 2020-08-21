@@ -9,4 +9,5 @@ public:
 
 public:
 	virtual void sendMessage(const std::string& json) override;
+	virtual int getEmitterId() override;
 };

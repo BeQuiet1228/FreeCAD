@@ -7,6 +7,8 @@ NetworkClientDialog::NetworkClientDialog(QWidget *parent /*= 0*/)
 	this->state = LOGIN;
 	ui->lineEditPassword_2->hide();
 	ui->labelPassword_2->hide();
+
+	this->setModal(true);
 }
 
 NetworkClientDialog::~NetworkClientDialog()

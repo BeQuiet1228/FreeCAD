@@ -8,5 +8,6 @@ public:
 
 public:
 	virtual void sendMessage(const std::string& json) = 0;
+	virtual int getEmitterId() = 0;
 
 };

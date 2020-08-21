@@ -27,7 +27,7 @@ public:
 	//设置消息发射器
 	void setEmitter(EmitterInterface *em);
 	//获取发射器的typeid
-	std::string getEmitterTypeID();
+	int getEmitterTypeID();
 private:
 	EmitterInterface * emitter = nullptr;
 };

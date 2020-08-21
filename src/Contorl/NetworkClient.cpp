@@ -324,7 +324,7 @@ void NetworkClient::showMessageBox(std::string tr)
 {
 	QMessageBox box;
 	box.setWindowTitle(QString::fromLocal8Bit("提示框:"));
-	box.setText(QString::fromLocal8Bit(tr.c_str()));
+	box.setText(MessageTransition::gbkStdstringToQstring(tr));
 	box.exec();
 }
 
@@ -369,6 +369,21 @@ void NetworkClient::receiveMessageFinished(NetworkSocket::SocketMessageBody mess
 */
 void NetworkClient::loginDialogButtonClicked()
 {
+	//从登录框设置ip和端口
+	QString address, port;
+	loginDialog->getIpAndPort(address, port);
+	this->setAddressAndPort(address, port.toInt());
+
+	//判断socket是否可用 若不可用则重新连接
+	if (!socket->usable())
+	{
+		this->startConnect();
+		if (!socket->usable())
+		{
+			showMessageBox("未连接到服务器，请检查服务器是否开启！");
+			return;
+		}
+	}
 	if (loginDialog->state == NetworkClientDialog::LOGIN)
 	{
 		//如果窗口为登录状态则发送登录消息

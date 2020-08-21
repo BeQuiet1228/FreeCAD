@@ -3,6 +3,7 @@
 #include <iostream>
 #include <qmetatype.h>
 #include "NetworkUser.h"
+#include <QHostAddress>
 NetworkSocket::NetworkSocket()
 {
 	//tcp包头
@@ -157,9 +158,24 @@ void NetworkSocket::receiveOneMessageFinished(const SocketMessageBody& msgBody)
 * @return bool
 */
 bool NetworkSocket::usable()
-{
-	return socket->isOpen();
+{	
+	return socktetIsConnect;
 }
+
+bool NetworkSocket::socketConnect(const QString& ip, const QString& port)
+{
+	if (socket = nullptr)
+	{
+		socket = new QTcpSocket();
+		QObject::connect(socket, SIGNAL(disconnected()), this, SLOT());
+	}
+		
+	socket->connectToHost(QHostAddress(ip), port.toInt());
+
+	socktetIsConnect = socket->waitForConnected(5 * 1000);
+	return socktetIsConnect;
+}
+
 
 /**
 * @brief NetworkSocket::socketWriteIsSuccess 判断ok的值 然后打印写入结果
@@ -211,6 +227,11 @@ void NetworkSocket::readReady()
 	{
 		this->analysisBlock(*i);
 	}
+}
+
+void NetworkSocket::socketDisconnect()
+{
+
 }
 
 #include "moc_NetworkSocket.cpp"

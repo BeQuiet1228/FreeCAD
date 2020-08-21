@@ -40,6 +40,15 @@ void LocalEmitter::sendMessage(const std::string& json)
 }
 
 /**
+* @brief LocalEmitter::getEmitterId 获取发射器id
+* @return int
+*/
+int LocalEmitter::getEmitterId()
+{
+	return 1;
+}
+
+/**
 * @brief LocalEmitter::disposRunChipicJsonMessage 判断消息是否为chipic启动消息，是则启动chipic 并返回true
 * @param const std::string & json
 * @return bool 

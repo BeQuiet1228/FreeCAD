@@ -30,8 +30,6 @@ int main(int argc, char *argv[])
 	w.contorlDataBar->show();
 	auto contorl = ContorlInterface::GetInstance();
 
-	auto client = NetworkClient::GetInstance();
-	client->startConnect();
 
 #endif // SERVICE
 

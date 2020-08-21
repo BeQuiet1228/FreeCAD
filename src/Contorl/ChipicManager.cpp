@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include "ContorlDataBar.h"
 #include "LoadingDialog.h"
+#include "NetworkClient.h"
 ChipicManager::ChipicManager()
 {
 	auto getter = JsonMessageGetter::GetInstance();
@@ -104,17 +105,8 @@ void ChipicManager::runButtonClicked(const std::string& m3dPath /*= ""*/)
 {
 	if (!CurrentChipic)
 	{
-		//判断路径是否存在
-		if (!detectionFilePathUTF8(m3dPath))
-			return;
-		//发送启动消息
-		auto messageManager = MessageSender::GetInstance();
-		messageManager->sendJsonMessage(MessageTransition::creatRunChipicJsonMessage(m3dPath, 1));
-
-		//显示loading提示框
-		loadingDialog->show();
-	}
-	else{
+		sendStartChipicMessage(m3dPath, 1);
+	}else{
 		CurrentChipic->closeChipic();
 	}
 }
@@ -134,9 +126,6 @@ void ChipicManager::ButtonParalleRunClicked(const std::string& m3dPath)
 {
 	if (!CurrentChipic)
 	{
-		//判断路径是否存在
-		if (!detectionFilePathUTF8(m3dPath))
-			return;
 		//获取并行线程
 		int threadCount = 1;
 		ThreadCountDialog dialog;
@@ -145,12 +134,7 @@ void ChipicManager::ButtonParalleRunClicked(const std::string& m3dPath)
 			return;
 		threadCount = dialog.threadCount;
 		
-		//发送启动消息
-		auto messageManager = MessageSender::GetInstance();
-		messageManager->sendJsonMessage(MessageTransition::creatRunChipicJsonMessage(m3dPath, threadCount));
-
-		//显示loading提示框
-		loadingDialog->show();
+		sendStartChipicMessage(m3dPath, threadCount);
 
 	}else{
 
@@ -262,6 +246,37 @@ bool ChipicManager::dispoesStartChipicMessage(const std::string json)
 	emit currentChipicStateUpdate();
 
 	return true;
+}
+
+/**
+* @brief ChipicManager::sendStartChipicMessage 发送chipic启动消息
+* @param const std::string & path
+* @param const int & threadCount
+* @return void
+*/
+void ChipicManager::sendStartChipicMessage(const std::string& path, const int& threadCount)
+{
+	//判断路径是否存在
+	if (!detectionFilePathUTF8(path))
+		return;
+	//发送启动消息
+	auto sender = MessageSender::GetInstance();
+	
+	//如果消息发射器为网络发射器 则需要判断客户端是否已是登录状态
+	if (sender->getEmitterTypeID() == 2)
+	{
+		auto client = NetworkClient::GetInstance();
+		//如果客户端处于未登录状态 则显示登录提示框
+		if (!client->login)
+		{
+			client->showLocginDialog();
+			return;
+		}
+	}
+	sender->sendJsonMessage(MessageTransition::creatRunChipicJsonMessage(path, threadCount));
+
+	//显示loading提示框
+	loadingDialog->show();
 }
 
 #ifndef MY_QTCMY_DEBUG

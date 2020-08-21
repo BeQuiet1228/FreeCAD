@@ -40,6 +40,8 @@ private:
 	QByteArray BLOCK_END;
 	//接收socket消息体
 	SocketMessageBody messageBody;
+	//socket是否已连接
+	bool socktetIsConnect = false;
 public:
 	//账号
 	NetworkUser *user;
@@ -58,6 +60,8 @@ public:
 	void receiveOneMessageFinished(const SocketMessageBody& msgBody);
 	//判断连接是否可用
 	bool usable();
+	//连接socket服务端
+	bool socketConnect(const QString& ip, const QString& port);
 private:
 	//
 	void socketWriteIsSuccess(const int& ok);
@@ -65,6 +69,7 @@ private:
 	QList<QByteArray> byteArraySplit(const QByteArray& byteArray,const QByteArray& split);
 public slots :
 	void readReady();
+	void socketDisconnect();
 Q_SIGNALS:
 	void receiveMessageFinished(NetworkSocket::SocketMessageBody);
 };

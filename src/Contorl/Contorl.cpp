@@ -57,16 +57,16 @@ void Contorl::getM3dPathForRunPython()
 void Contorl::changeConnectionWay()
 {
 	auto sender = MessageSender::GetInstance();
-	LocalEmitter *emitter = new LocalEmitter;
-	if (typeid(emitter).name() != sender->getEmitterTypeID())
+	EmitterInterface *emitter;
+	if (sender->getEmitterTypeID() == 1)
 	{
-		sender->setEmitter(emitter);
-		contorlButtonBar->setConnectionWayIcon(1);
-		return;
+		emitter = new NetworkEmitter;
 	}
-	delete emitter;
-	sender->setEmitter(new NetworkEmitter);
-	contorlButtonBar->setConnectionWayIcon(2);
+	else if (sender->getEmitterTypeID() == 2){
+		emitter = new LocalEmitter;
+	}
+	sender->setEmitter(emitter);
+	contorlButtonBar->setConnectionWayIcon(sender->getEmitterTypeID());
 }
 
 void Contorl::on_pushButton_clicked()
@@ -86,7 +86,7 @@ void Contorl::buttonClinked(int buttonType)
 	switch (ContorlButtonBar::ButtonType(buttonType))
 	{
 	case ContorlButtonBar::RUN:
-		getM3dPathForRunPython();
+		//getM3dPathForRunPython();
 		chipicManager.runButtonClicked(m3dPath);
 		break;
 	case ContorlButtonBar::PARALLE_RUN:

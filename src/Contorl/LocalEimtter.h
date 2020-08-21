@@ -15,6 +15,7 @@ public:
 
 public:
 	void sendMessage(const std::string& json) override;
+	int getEmitterId() override;
 private:
 	//处理chipic启动消息
 	bool disposRunChipicJsonMessage(const std::string& json);
