@@ -72,9 +72,12 @@ int NetworkClient::getListenePort()
 */
 void NetworkClient::startConnect()
 {
-	auto s = new QTcpSocket;
-	socket->socketConnect(getListeneAddress(), QString::number(getListenePort()));
-	socket->setSocket(s);
+	bool ok = socket->socketConnect(getListeneAddress(), QString::number(getListenePort()));
+#ifdef MY_LOG
+	if (!ok)
+		std::cerr << "NetworkClient::startConnect connect failed!" << std::endl;
+#endif // MY_LOG
+
 }
 
 /**
@@ -290,7 +293,6 @@ bool NetworkClient::disposeFileMessage(NetworkSocket::SocketMessageBody messageB
 #endif // MY_LOG
 			return false;
 		}
-		std::cerr << "index1:" << index << std::endl;
 		if (index != 0)
 			break;
 		//移除文件
@@ -299,7 +301,6 @@ bool NetworkClient::disposeFileMessage(NetworkSocket::SocketMessageBody messageB
 			break;
 		file.remove();
 		file.close();
-		std::cerr << "index:" << index << std::endl;
 	} while (false);
 	//写入文件
 	File file;

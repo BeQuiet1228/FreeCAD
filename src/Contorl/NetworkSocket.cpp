@@ -167,6 +167,7 @@ bool NetworkSocket::socketConnect(const QString& ip, const QString& port)
 	{
 		socket = new QTcpSocket();
 		QObject::connect(socket, SIGNAL(disconnected()), this, SLOT(socketDisconnect()));
+		connect(socket, SIGNAL(readyRead()), this, SLOT(readReady()));
 	}
 		
 	socket->connectToHost(QHostAddress(ip), port.toInt());

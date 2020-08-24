@@ -227,7 +227,7 @@
      </property>
      <property name="icon">
       <iconset resource="Contorl.qrc">
-       <normaloff>:/icon/network .svg</normaloff>:/icon/network .svg</iconset>
+       <normaloff>:/icon/local.svg</normaloff>:/icon/local.svg</iconset>
      </property>
      <property name="iconSize">
       <size>

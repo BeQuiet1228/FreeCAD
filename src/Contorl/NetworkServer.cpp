@@ -166,10 +166,16 @@ bool NetworkServer::disposeLoginMessage(const neb::CJsonObject& json, const std:
 		{
 			auto iter = userMap.find(s->user->userName);
 			if (iter == userMap.end())
+			{
+				userMap.insert(UserMap::value_type(s->user->userName, s->user));
 				break;
+			}
+			//将之前的账号信息指针给到现在的socket
+			s->user = iter->second;
+			//检查是否有在运行的chipic
 			if (iter->second->chipicDataList.size() == 0)
 				break;
-			s->user = iter->second;
+			
 			//将该账号上正在运行的chipic信息发送到客户端
 			std::list<NetworkUser::ChipicData> &chipicDataList = s->user->chipicDataList;
 
