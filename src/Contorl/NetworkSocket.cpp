@@ -28,14 +28,13 @@ NetworkSocket::NetworkSocket()
 	qRegisterMetaType<NetworkSocket::SocketMessageBody>("NetworkSocket::SocketMessageBody");
 
 	//³õÊ¼»¯ÕËºÅÖ¸Õë
-	user = new NetworkUser();
+	user.reset(new NetworkUser);
 }
 
 NetworkSocket::~NetworkSocket()
 {
 	if (socket != nullptr)
 		delete socket;
-	delete user;
 }
 
 /**
@@ -164,10 +163,10 @@ bool NetworkSocket::usable()
 
 bool NetworkSocket::socketConnect(const QString& ip, const QString& port)
 {
-	if (socket = nullptr)
+	if (socket == nullptr)
 	{
 		socket = new QTcpSocket();
-		QObject::connect(socket, SIGNAL(disconnected()), this, SLOT());
+		QObject::connect(socket, SIGNAL(disconnected()), this, SLOT(socketDisconnect()));
 	}
 		
 	socket->connectToHost(QHostAddress(ip), port.toInt());
@@ -231,6 +230,9 @@ void NetworkSocket::readReady()
 
 void NetworkSocket::socketDisconnect()
 {
+#ifdef MY_LOG
+	std::cerr << "NetworkSocket::socketDisconnect!" << std::endl;
+#endif // MY_LOG
 
 }
 

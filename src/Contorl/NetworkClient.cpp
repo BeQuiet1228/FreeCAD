@@ -73,7 +73,7 @@ int NetworkClient::getListenePort()
 void NetworkClient::startConnect()
 {
 	auto s = new QTcpSocket;
-	s->connectToHost(QHostAddress(getListeneAddress()), getListenePort());
+	socket->socketConnect(getListeneAddress(), QString::number(getListenePort()));
 	socket->setSocket(s);
 }
 
@@ -323,7 +323,7 @@ bool NetworkClient::disposeFileMessage(NetworkSocket::SocketMessageBody messageB
 void NetworkClient::showMessageBox(std::string tr)
 {
 	QMessageBox box;
-	box.setWindowTitle(QString::fromLocal8Bit("提示框:"));
+	box.setWindowTitle(MessageTransition::gbkStdstringToQstring("提示框:"));
 	box.setText(MessageTransition::gbkStdstringToQstring(tr));
 	box.exec();
 }

@@ -2,6 +2,7 @@
 #include <QObject>
 #include <QByteArray>
 #include <QList>
+#include <memory>
 class QTcpSocket;
 class NetworkUser;
 class NetworkSocket:public QObject
@@ -44,7 +45,7 @@ private:
 	bool socktetIsConnect = false;
 public:
 	//’À∫≈
-	NetworkUser *user;
+	std::shared_ptr<NetworkUser> user;
 public:
 	//…Ë÷√qtcpsocket
 	void setSocket(QTcpSocket *tcpSocket);

@@ -25,6 +25,8 @@ public:
 		std::string servicePath;
 		//线程数
 		int threadCount;
+		//线程id
+		unsigned long threadID;
 	};
 
 public:

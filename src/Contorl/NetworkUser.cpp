@@ -94,6 +94,9 @@ bool NetworkUser::addThreadId(const unsigned long &threadId, const std::string& 
 #endif // MY_LOG
 	}else{
 		chipicData = (*i);
+		chipicData.threadID = threadId;
+		//移除已取到的chipic信息
+		chipicDataList.erase(i);
 	}
 	threadIdMap.insert(std::map<unsigned long, ChipicData>::value_type(threadId, chipicData));
 	return true;

@@ -8,6 +8,7 @@
 class QTcpServer;
 class QTcpSocket;
 using NetworkSocketList = std::list<std::shared_ptr<NetworkSocket>>;
+using UserMap = std::map<std::string, std::shared_ptr<NetworkUser>>;
 class NetworkServer:public QObject
 {
 	Q_OBJECT
@@ -33,6 +34,8 @@ private:
 	std::shared_ptr<QTcpServer> server;
 	//已连接的socket
 	NetworkSocketList socketList;
+	//记录所有已经登录的的账号数据
+	UserMap userMap;
 public:
 	struct ConnectSocket{
 		QTcpSocket * socket;
@@ -69,8 +72,11 @@ private:
 	bool disposeH5FileMessage(const std::string& json);
 	//通过threadId找到对应的socket对象
 	std::shared_ptr<NetworkSocket> findSocketObjectForThreadID(const unsigned long& threadID);
+	//发送chipic启动完成消息
+	void sendFile(const std::string& targetPath, const std::string& filePath,std::shared_ptr<NetworkSocket> socket);
+
 private:
-	std::list<ConnectSocket> listConnectSocket;
+	//std::list<ConnectSocket> listConnectSocket;
 
 public slots:
 	//新的连接

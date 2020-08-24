@@ -51,6 +51,7 @@ public:
 	//显示登录窗口
 	void showLocginDialog();
 public:
+	//客户端是否已经登录
 	bool login;
 private:
 	//处理消息

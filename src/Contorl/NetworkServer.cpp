@@ -157,6 +157,35 @@ bool NetworkServer::disposeLoginMessage(const neb::CJsonObject& json, const std:
 	if (s->user->verification())
 	{
 		MessageTransition::addErrorCode(jsonobject, "0");
+		/*
+			如果登录成功，则检查登录历史。
+			查看该账号知否之前有登录过，再查看是否有未停止的chipic正在与运行。
+			如果有，则将之前的登录信息给到现在的socket。
+		*/
+		do 
+		{
+			auto iter = userMap.find(s->user->userName);
+			if (iter == userMap.end())
+				break;
+			if (iter->second->chipicDataList.size() == 0)
+				break;
+			s->user = iter->second;
+			//将该账号上正在运行的chipic信息发送到客户端
+			std::list<NetworkUser::ChipicData> &chipicDataList = s->user->chipicDataList;
+
+			for (auto i = chipicDataList.begin(); i != chipicDataList.end(); i++)
+			{
+				std::string clientM3dPath = i->clientPath + "/" + i->m3dFileName;
+				std::string msg = MessageTransition::creatChipicStartfinishedJsonMessage(
+					clientM3dPath, i->threadID, i->threadCount, s->user->userName);
+				s->sendJsonMessage(msg);
+				/*
+					也许有发文件的需求，后续再这里调用sendfile函数即可！
+				*/
+			}			
+			
+		} while (false);
+
 	}else{
 		MessageTransition::addErrorCode(jsonobject, "1");
 #ifdef MY_LOG
@@ -502,32 +531,12 @@ bool NetworkServer::disposeH5FileMessage(const std::string& json)
 		return false;
 	}
 
-	//向json中添加命令
-	neb::CJsonObject jsonObject;
-	MessageTransition::addCmd(jsonObject, "File");
+	//发送文件
+	this->sendFile(clientFilePath, serviceFilePath, socket);
 
-	MessageTransition::addPath(jsonObject, clientFilePath);
-
-	//分包发送文件
-	File file;
-	file.openForReadonly(serviceFilePath);
-	QByteArray bytes;
-	//包的索引
-	int blockIndex = 0;
-	MessageTransition::addIndex(jsonObject, blockIndex);
-	while (file.readNextData(bytes))
-	{
-		if (!MessageTransition::setIndex(jsonObject, blockIndex))
-		{
-#ifdef MY_LOG
-			std::cerr << "NetworkServer::disposeH5FileMessage ,set block index failde!" << std::endl;
-#endif // MY_LOG
-				return false;
-		}
-		socket->sendMessage(jsonObject.ToString(), bytes);
-		blockIndex++;
-	}
+	//发送看图消息
 	socket->sendJsonMessage(json);
+
 	return true;
 }
 
@@ -559,6 +568,44 @@ std::shared_ptr<NetworkSocket> NetworkServer::findSocketObjectForThreadID(const 
 		<< threadID << std::endl;
 #endif // MY_LOG
 	return socket;
+}
+
+
+/**
+* @brief NetworkServer::sendFile 发送一个文件到客户端
+* @param const std::string & targetPath 目标路径 发送到客户端上的什么路径
+* @param const std::string & filePath 当前文件路径
+* @param std::shared_ptr<NetworkSocket> socket 对应发送的socket
+* @return void
+*/
+void NetworkServer::sendFile(const std::string& targetPath, const std::string& filePath, std::shared_ptr<NetworkSocket> socket)
+{
+	//向json中添加命令
+	neb::CJsonObject jsonObject;
+	MessageTransition::addCmd(jsonObject, "File");
+
+	MessageTransition::addPath(jsonObject, targetPath);
+
+	//分包发送文件
+	File file;
+	file.openForReadonly(filePath);
+	QByteArray bytes;
+	//包的索引
+	int blockIndex = 0;
+	MessageTransition::addIndex(jsonObject, blockIndex);
+	while (file.readNextData(bytes))
+	{
+		if (!MessageTransition::setIndex(jsonObject, blockIndex))
+		{
+#ifdef MY_LOG
+			std::cerr << "NetworkServer::disposeH5FileMessage ,set block index failde! json:"
+				<< jsonObject.ToString() << std::endl;
+#endif // MY_LOG
+			return;
+		}
+		socket->sendMessage(jsonObject.ToString(), bytes);
+		blockIndex++;
+	}
 }
 
 /**
