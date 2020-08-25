@@ -1,8 +1,8 @@
 #设置预定义
 if(WIN32)
-#add_definitions(-D_CONTORL_ -DMY_DEBUG -DMY_LOG -DSERVICE)
+add_definitions(-D_CONTORL_ -DMY_DEBUG -DMY_LOG -DSERVICE)
 #add_definitions(-D_CONTORL_ -DMY_DEBUG -DMY_LOG)
-add_definitions(-D_CONTORL_ -DMY_LOG)
+#add_definitions(-D_CONTORL_ -DMY_LOG)
 endif(WIN32)
 #设置项目名称
 project(Contorl)
@@ -15,6 +15,7 @@ SET(UI_SRC
 	ThreadCountDialog.ui
 	LoadingDialog.ui
 	NetworkClientLoginDailog.ui
+	ServiceUI.ui
 )
 SET(QRC_SRC
 	Contorl.qrc
@@ -39,6 +40,7 @@ SET(MY_MOC_HDR
 	NetworkServer.h
 	NetworkSocket.h
 	NetworkClientLoginDailog.h
+	ServiceUI.h
 )
 SET(MY_MOC_SRC
 	Contorl.cpp
@@ -66,6 +68,8 @@ SET(NETWORK_SRC
 	NetworkUser.cpp
 	File.cpp
 	File.h
+	ServiceUI.h
+	ServiceUI.cpp
 )
 #引入头文件
 include_directories(

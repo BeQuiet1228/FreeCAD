@@ -73,4 +73,6 @@ public slots :
 	void socketDisconnect();
 Q_SIGNALS:
 	void receiveMessageFinished(NetworkSocket::SocketMessageBody);
+
+	void disconnect();
 };

@@ -15,6 +15,7 @@ std::shared_ptr<NetworkServer> NetworkServer::_instance;
 
 NetworkServer::~NetworkServer()
 {
+	server->close();
 }
 
 NetworkServer::NetworkServer()
@@ -25,6 +26,7 @@ NetworkServer::NetworkServer()
 	connect(server.get(), SIGNAL(newConnection()), this, SLOT(serverNewConnection()));
 	//连接本地消息槽
 	connect(JsonMessageGetter::GetInstance().get(), SIGNAL(hasNewMessage()), this, SLOT(hasLocalMessage()));
+	workPath = getWorkPath().toLocal8Bit();
 }
 
 /**
@@ -80,6 +82,28 @@ void NetworkServer::startListene()
 }
 
 /**
+* @brief NetworkServer::killService 结束服务器监听 并强制终止已运行的chipic
+* @return void
+*/
+void NetworkServer::killService()
+{
+	//关闭所有正在运行的chipic
+	for (auto userIter = userMap.begin(); userIter != userMap.end(); userIter++)
+	{
+		auto user = userIter->second;
+		for (auto chipicData = user->threadIdMap.begin(); chipicData != user->threadIdMap.end(); chipicData++)
+		{
+			std::string msg = MessageTransition::creatCloseChipicJsonMessage(chipicData->first);
+			auto sender = MessageSender::GetInstance();
+			sender->sendJsonMessage(msg);
+		}
+	}
+	this->socketList.clear();
+
+	server->close();
+}
+
+/**
 * @brief NetworkServer::setAddressAndPort 向注册表写入监听地址与端口
 * @param const QString & address
 * @param const int & prot
@@ -93,6 +117,31 @@ void NetworkServer::setAddressAndPort(const QString& address, const int& prot)
 	setting.setValue("port", prot);
 }
 
+
+/**
+* @brief NetworkServer::setWorkPath 设置服务器工作路径
+* @param const QString & workPath
+* @return void
+*/
+void NetworkServer::setWorkPath(const QString& workPath)
+{
+	QSettings setting("PICGUI", "NetworkServerConfig");
+
+	setting.setValue("workPath", workPath);
+
+	this->workPath = workPath.toLocal8Bit();
+}
+
+/**
+* @brief NetworkServer::getWorkPath 获取工作路径
+* @return QT_NAMESPACE::QString
+*/
+QString NetworkServer::getWorkPath()
+{
+	QSettings setting("PICGUI", "NetworkServerConfig");
+
+	return setting.value("workPath", "C:/chipicServiceWorkPath").toString();
+}
 
 /**
 * @brief NetworkServer::disposeCmdMessage 处理命令消息
@@ -392,7 +441,7 @@ bool NetworkServer::disposeRunchipicMessage(const neb::CJsonObject& json, const 
 	//拼接服务端的路径
 	std::string userName = sender->user->userName;
 	//不带文件名的服务端路径
-	std::string servicePath = "E:/" + userName;
+	std::string servicePath = workPath + userName;
 	//带文件名的服务端完整路径
 	std::string serviceFilePath = servicePath + "/" + std::string(m3dFileName.toLocal8Bit());
 
@@ -468,7 +517,7 @@ bool NetworkServer::disposeM3dFileMessage(NetworkSocket::SocketMessageBody& mess
 	}
 
 	//拼接路径
-	std::string filePath = "E:/" + sender->user->userName;
+	std::string filePath = workPath + sender->user->userName;
 	
 	//检查路径是否存在 如果不存在 则创建
 	QDir dir;

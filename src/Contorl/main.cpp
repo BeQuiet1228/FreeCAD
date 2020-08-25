@@ -10,15 +10,15 @@
 #include "LocalEimtter.h"
 #include "MessageSender.h"
 #include "NetworkClientLoginDailog.h"
+#include "ServiceUI.h"
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 
 #ifdef SERVICE
-	QWidget qw;
+	ServiceUI qw;
 	qw.show();
-	auto server = NetworkServer::GetInstance();
-	server->startListene();
+
 
 	auto sender = MessageSender::GetInstance();
 	LocalEmitter *emiter = new LocalEmitter;

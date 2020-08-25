@@ -70,4 +70,6 @@ public Q_SLOTS:
 	void receiveMessageFinished(NetworkSocket::SocketMessageBody messageBody);
 	//登录提示框按钮被点击
 	void loginDialogButtonClicked();
+	//与服务器连接断开
+	void serviceClose();
 };

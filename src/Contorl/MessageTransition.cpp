@@ -93,7 +93,7 @@ std::string MessageTransition::creatRunChipicJsonMessage(const std::string& m3dP
 }
 
 /**
-* @brief MessageTransition::creatCloseChipicJsonMessage 创建一个关闭chipic的消息
+* @brief MessageTransition::creatCloseChipicJsonMessage 创建一个关闭chipic的消息 线程id为0代表关闭所有的对象
 * @param const DWORD threadId
 * @return std::string
 */

@@ -49,8 +49,14 @@ public:
 	int getListenePort();
 	//开始监听
 	void startListene();
+	//结束服务
+	void killService();
 	//设置监听地址及端口
 	void setAddressAndPort(const QString& address, const int& prot);
+	//设置工作路径
+	void setWorkPath(const QString& workPath);
+	//获取工作路径
+	QString getWorkPath();
 private:
 	//处理cmd消息
 	bool disposeCmdMessage(const std::string& json);
@@ -77,7 +83,8 @@ private:
 
 private:
 	//std::list<ConnectSocket> listConnectSocket;
-
+	//服务器工作路径
+	std::string workPath ;
 public slots:
 	//新的连接
 	void serverNewConnection();

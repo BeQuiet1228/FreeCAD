@@ -191,12 +191,21 @@ bool ChipicManager::disposeMessage(const std::string& json)
 }
 
 /**
-* @brief ChipicManager::disposeCloseChipicMessage
+* @brief ChipicManager::disposeCloseChipicMessage 处理chipic关闭xiaox
 * @param const DWORD & threadId
 * @return bool
 */
 bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId)
 {
+	//如果id为0则清理掉所有的chipic对象
+	if (threadId == 0)
+	{
+		chipicMap.clear();
+		CurrentChipic.reset();
+		emit currentChipicStateUpdate();
+		return true;
+	}
+	//如果id不为0 则寻找对应的chipic关闭
 	auto  chipic = chipicMap.find(threadId);
 	if (chipic != chipicMap.end())
 	{

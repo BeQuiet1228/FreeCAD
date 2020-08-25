@@ -86,7 +86,7 @@ void Contorl::buttonClinked(int buttonType)
 	switch (ContorlButtonBar::ButtonType(buttonType))
 	{
 	case ContorlButtonBar::RUN:
-		//getM3dPathForRunPython();
+		getM3dPathForRunPython();
 		chipicManager.runButtonClicked(m3dPath);
 		break;
 	case ContorlButtonBar::PARALLE_RUN:

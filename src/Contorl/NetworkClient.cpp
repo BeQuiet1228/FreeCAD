@@ -25,6 +25,7 @@ NetworkClient::NetworkClient()
 	socket.reset(new NetworkSocket);
 	//链接消息收槽
 	connect(socket.get(), SIGNAL(receiveMessageFinished(NetworkSocket::SocketMessageBody)), this, SLOT(receiveMessageFinished(NetworkSocket::SocketMessageBody)));
+	connect(socket.get(), SIGNAL(disconnect()), this, SLOT(serviceClose()));
 	//初始化提示框
 	loginDialog.reset(new NetworkClientDialog);
 	loginDialog->setIpAndPort(getListeneAddress(),QString::number( getListenePort()));
@@ -407,6 +408,19 @@ void NetworkClient::loginDialogButtonClicked()
 		std::string json = MessageTransition::creatRegisterCmd(userName.toStdString(), password1.toStdString());
 		socket->sendJsonMessage(json);
 	}
+}
+
+/**
+* @brief NetworkClient::serviceClose 与服务器断开槽 与服务器断开之后需要发送关闭并消息，关闭客户端上所有的chipic对象
+* @return void
+*/
+void NetworkClient::serviceClose()
+{
+	this->login = false;
+	//线程id为0 则代表关闭所有的对象
+	std::string json = MessageTransition::creatCloseChipicJsonMessage(0);
+	auto msgGetter = JsonMessageGetter::GetInstance();
+	msgGetter->addJsonMessage(json);
 }
 
 #include "moc_NetworkClient.cpp"

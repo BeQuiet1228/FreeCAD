@@ -231,6 +231,8 @@ void NetworkSocket::readReady()
 
 void NetworkSocket::socketDisconnect()
 {
+	socktetIsConnect = false;
+	emit disconnect();
 #ifdef MY_LOG
 	std::cerr << "NetworkSocket::socketDisconnect!" << std::endl;
 #endif // MY_LOG

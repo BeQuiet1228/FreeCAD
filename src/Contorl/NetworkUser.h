@@ -38,6 +38,8 @@ public:
 		所以将信息暂存到容器中.在设置threadId时,根据服务端的路径匹配对应的chipic信息对象.
 	*/
 	std::list<ChipicData> chipicDataList;
+	//存已经开始运行的chipic信息
+	std::map<unsigned long, ChipicData> threadIdMap;
 public:
 	//验证用户合法性
 	bool verification();
@@ -54,5 +56,5 @@ public:
 	//通过threadID获取对应的chipic信息
 	bool getChipicDataForThreadID(const unsigned long& threadId,ChipicData& data);
 private:
-	std::map<unsigned long,ChipicData> threadIdMap;
+	
 };
