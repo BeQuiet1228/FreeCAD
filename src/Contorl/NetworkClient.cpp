@@ -156,6 +156,18 @@ void NetworkClient::sendJonsMessage(const std::string json)
 */
 void NetworkClient::showLocginDialog()
 {
+	//从设置中读取以往登录使用过的密码 然后显示到窗口上
+	QSettings setting("PICGUI", "NetworkClientConfig");
+
+	QString userName, password;
+	userName = setting.value("account", "default").toString();
+	password = setting.value("password", "default").toString();
+
+	if (userName != "default" && password != "default")
+	{
+		loginDialog->setUserNameAndPassword(userName, password);
+	}
+
 	loginDialog->show();
 }
 /**
@@ -205,6 +217,12 @@ void NetworkClient::disposeLoginMessage(const neb::CJsonObject jsonObject)
 		showMessageBox("登录成功!");
 		login = true;
 		loginDialog->close();
+		//将登录成功的账号和密码保存起来
+		QSettings setting("PICGUI", "NetworkClientConfig");
+		QString userName, password;
+		loginDialog->getUserNameAndPassword(userName, password);
+		setting.setValue("account", userName);
+		setting.setValue("password", password);
 	}else{
 		showMessageBox("登录失败,请检车用户名与密码是否正确!");
 	}
@@ -234,6 +252,8 @@ void NetworkClient::disposeRegisterMessage(const neb::CJsonObject jsonObject)
 	case NetworkUser::NOT_ERROR:
 		showMessageBox("注册成功,并已自动登录!");
 		login = true;
+		loginDialog->on_pushButton_clicked();
+		this->loginDialogButtonClicked();
 		break;
 	case NetworkUser::DEFAULT_PASSWORD:
 		showMessageBox("不能使用默认密码!");

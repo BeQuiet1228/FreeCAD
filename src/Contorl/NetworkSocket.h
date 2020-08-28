@@ -43,6 +43,12 @@ private:
 	SocketMessageBody messageBody;
 	//socket是否已连接
 	bool socktetIsConnect = false;
+	/*
+		在本对象释放的时候 是否自动释放成员的socket指针。
+		主要作用是从tcpservice中获取到的socket是由service来管理的，
+		如果由外部进行释放，会引发异常。
+	*/
+	bool deleteSocket = true;
 public:
 	//账号
 	std::shared_ptr<NetworkUser> user;
@@ -63,6 +69,10 @@ public:
 	bool usable();
 	//连接socket服务端
 	bool socketConnect(const QString& ip, const QString& port);
+	//在本对象被释放的时候是否释放socket指针
+	void setDeleteSocket(const bool& d){
+		deleteSocket = d;
+	}
 private:
 	//
 	void socketWriteIsSuccess(const int& ok);

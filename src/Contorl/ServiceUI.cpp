@@ -11,6 +11,7 @@
 #include <qfont.h>
 #include <QApplication>
 #include "NetworkServer.h"
+#include <iostream>
 ServiceUI::ServiceUI(QWidget *parent) :
 QMainWindow(parent),
 ui(new Ui::MainWindow)
@@ -142,9 +143,9 @@ void ServiceUI::on_pushButtonClose_clicked()
 void ServiceUI::closeEvent(QCloseEvent *event)
 {
 
-	event->ignore();
+	//event->ignore();
 	//Òþ²ØÖ÷´°¿Ú
-	this->hide();
+	//this->hide();
 
 }
 

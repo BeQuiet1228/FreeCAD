@@ -23,6 +23,7 @@ int main(int argc, char *argv[])
 	auto sender = MessageSender::GetInstance();
 	LocalEmitter *emiter = new LocalEmitter;
 	sender->setEmitter(emiter);
+
 #else
 
 	Contorl w;

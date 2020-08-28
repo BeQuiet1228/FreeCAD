@@ -1,8 +1,8 @@
 #设置预定义
 if(WIN32)
-add_definitions(-D_CONTORL_ -DMY_DEBUG -DMY_LOG -DSERVICE)
+#add_definitions(-D_CONTORL_ -DMY_DEBUG -DMY_LOG -DSERVICE)
 #add_definitions(-D_CONTORL_ -DMY_DEBUG -DMY_LOG)
-#add_definitions(-D_CONTORL_ -DMY_LOG)
+add_definitions(-D_CONTORL_ -DMY_LOG)
 endif(WIN32)
 #设置项目名称
 project(Contorl)
@@ -108,6 +108,8 @@ SET(Contorl_src
 	ContorlInterface.h
 	ContorlInterface.cpp
 	ContorlConfig.hpp
+	openLog.cpp
+	openLog.h
 	${UI_SRC}
 	${JSON_SRC}
 	${MY_MOC_SRC}
@@ -116,13 +118,13 @@ SET(Contorl_src
 	${NETWORK_SRC}
 )
 #设置编译生成文件类型
-add_executable(Contorl ${Contorl_src}) # 生成可执行文件
-SET(OUTPUT_BINDIR ${CMAKE_CURRENT_BINARY_DIR}/../../bin) #设置可执行文件输出目录
+#add_executable(Contorl ${Contorl_src}) # 生成可执行文件
+#SET(OUTPUT_BINDIR ${CMAKE_CURRENT_BINARY_DIR}/../../bin) #设置可执行文件输出目录
 
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORYMY_DEBUG ${CMAKE_CURRENT_BINARY_DIR}/../../bin)
+#SET(CMAKE_RUNTIME_OUTPUT_DIRECTORYMY_DEBUG ${CMAKE_CURRENT_BINARY_DIR}/../../bin)
 #add_library(common STATIC util.cpp) # 生成静态库
 #add_library(common SHARED util.cpp) # 生成动态库或共享库
-#add_library(Contorl SHARED ${Contorl_src})
+add_library(Contorl SHARED ${Contorl_src})
 
 #增加包含目录
 include_directories(

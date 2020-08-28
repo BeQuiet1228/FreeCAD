@@ -222,17 +222,19 @@ bool NetworkServer::disposeLoginMessage(const neb::CJsonObject& json, const std:
 			//将之前的账号信息指针给到现在的socket
 			s->user = iter->second;
 			//检查是否有在运行的chipic
-			if (iter->second->chipicDataList.size() == 0)
+			if (iter->second->threadIdMap.size() == 0)
 				break;
 			
 			//将该账号上正在运行的chipic信息发送到客户端
-			std::list<NetworkUser::ChipicData> &chipicDataList = s->user->chipicDataList;
+			std::map<unsigned long, NetworkUser::ChipicData> &chipicDataMap = s->user->threadIdMap;
 
-			for (auto i = chipicDataList.begin(); i != chipicDataList.end(); i++)
+			for (auto i = chipicDataMap.begin(); i != chipicDataMap.end(); i++)
 			{
-				std::string clientM3dPath = i->clientPath + "/" + i->m3dFileName;
+				auto chipicData = i->second;
+
+				std::string clientM3dPath = chipicData.clientPath + "/" + chipicData.m3dFileName;
 				std::string msg = MessageTransition::creatChipicStartfinishedJsonMessage(
-					clientM3dPath, i->threadID, i->threadCount, s->user->userName);
+					clientM3dPath, chipicData.threadID, chipicData.threadCount, s->user->userName);
 				s->sendJsonMessage(msg);
 				/*
 					也许有发文件的需求，后续再这里调用sendfile函数即可！
@@ -673,10 +675,13 @@ void NetworkServer::serverNewConnection()
 	auto socket = server->nextPendingConnection();
 	//将对象放入list
 	std::shared_ptr<NetworkSocket> networkSocket(new NetworkSocket);
+	//设置当networksocket被释放的时候不释放socketzhizhen
+	networkSocket->setDeleteSocket(false);
 	networkSocket->setSocket(socket);
 	socketList.push_back(networkSocket);
 	//链接接受消息槽
 	connect(networkSocket.get(), SIGNAL(receiveMessageFinished(NetworkSocket::SocketMessageBody)), this, SLOT(receiveMessageFinished(NetworkSocket::SocketMessageBody)));
+	connect(networkSocket.get(), SIGNAL(disconnect()), this, SLOT(socketDisconnect()));
 #ifdef MY_DEBUG
 	std::cerr << "NetworkServer::serverNewConnection()，address:"
 		<< socket->peerAddress().toString().toStdString()
@@ -724,6 +729,31 @@ void NetworkServer::hasLocalMessage()
 		return;
 	if (disposeLocalMessage(json))
 		return;
+}
+
+/**
+* @brief NetworkServer::socketDisconnect socket断开槽
+* @return void
+*/
+void NetworkServer::socketDisconnect()
+{
+	//获取发送信号的对象
+	auto sender = this->sender();
+	auto networkSocket = dynamic_cast<NetworkSocket *>(sender);
+
+	if (!networkSocket)
+		return;
+
+	//遍历所有的socket 找到对应的socket 然后释放掉
+	for (auto i = socketList.begin(); i != socketList.end();i++)
+	{
+		if ((*i).get() == networkSocket)
+		{
+			socketList.erase(i);
+			return;
+		}
+	}
+
 }
 
 #include "moc_NetworkServer.cpp"

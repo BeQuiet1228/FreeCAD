@@ -274,6 +274,7 @@ void ToolBarManager::setup(ToolBarItem* item, QToolBar* toolbar) const
 
 		auto mainWindow = MainWindow::getInstance();
 		mainWindow->buttonBar->setSizePolicy(sp);
+		toolbar->setFixedSize(mainWindow->buttonBar->size());
 		mainWindow->buttonBar->setParent(toolbar);
 		toolbar->addWidget(mainWindow->buttonBar);
 	}
@@ -502,6 +503,7 @@ void ToolBarManager::setup_taskMonitorToolBar(ToolBarItem* item, QToolBar* toolb
 	
 	auto mainWindow = MainWindow::getInstance();
 	mainWindow->dateBar->setSizePolicy(sp);
+	toolbar->setFixedSize(mainWindow->dateBar->size());
 	mainWindow->dateBar->setParent(toolbar);
 	toolbar->addWidget(mainWindow->dateBar);
 

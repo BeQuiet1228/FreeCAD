@@ -1,5 +1,8 @@
 #include "NetworkClientLoginDailog.h"
 #include "ui_NetworkClientLoginDailog.h"
+#include <QRegExp>
+#include <QRegExpValidator>
+#include "MessageTransition.h"
 NetworkClientDialog::NetworkClientDialog(QWidget *parent /*= 0*/)
 	:QDialog(parent), ui(new Ui::NetworkClientDialog)
 {
@@ -9,6 +12,30 @@ NetworkClientDialog::NetworkClientDialog(QWidget *parent /*= 0*/)
 	ui->labelPassword_2->hide();
 
 	this->setModal(true);
+	
+	//设置账号密码输入规则
+	{
+		QRegExp rx("^[a-zA-Z0-9_-]{5,16}$");
+		QRegExpValidator *validator = new QRegExpValidator(rx, this);
+		ui->lineEditAcount->setValidator(validator);
+		ui->lineEditPassword->setValidator(validator);
+		ui->lineEditPassword_2->setValidator(validator);
+	}
+	//设置ip地址输入规则
+	{
+		QRegExp rx("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
+		QRegExpValidator *validator = new QRegExpValidator(rx, this);
+		ui->lineEditIP->setValidator(validator);
+	}
+	//设置端口输入规则
+	{
+		QRegExp rx("^[0-9]{0,5}$");
+		QRegExpValidator *validator = new QRegExpValidator(rx, this);
+		ui->lineEditPort->setValidator(validator);
+	}
+	//设置密码框显示格式
+	ui->lineEditPassword->setEchoMode(QLineEdit::Password);
+	ui->lineEditPassword_2->setEchoMode(QLineEdit::Password);
 }
 
 NetworkClientDialog::~NetworkClientDialog()
@@ -21,13 +48,13 @@ void NetworkClientDialog::on_pushButton_clicked()
 	if (state == LOGIN)
 	{
 		state = REGISTER;
-		ui->pushButtonLogin->setText(QString::fromLocal8Bit("注册"));
+		ui->pushButtonLogin->setText(MessageTransition::gbkStdstringToQstring("注册"));
 		ui->lineEditPassword_2->show();
 		ui->labelPassword_2->show();
 
 	}else{
 		state = LOGIN;
-		ui->pushButtonLogin->setText(QString::fromLocal8Bit("登录"));
+		ui->pushButtonLogin->setText(MessageTransition::gbkStdstringToQstring("登录"));
 		ui->lineEditPassword_2->hide();
 		ui->labelPassword_2->hide();
 	}

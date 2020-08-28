@@ -12,6 +12,7 @@
 #include "ContorlDataBar.h"
 #include "LoadingDialog.h"
 #include "NetworkClient.h"
+#include "openLog.h"
 ChipicManager::ChipicManager()
 {
 	auto getter = JsonMessageGetter::GetInstance();
@@ -268,6 +269,9 @@ void ChipicManager::sendStartChipicMessage(const std::string& path, const int& t
 	//判断路径是否存在
 	if (!detectionFilePathUTF8(path))
 		return;
+	//设置当前log文件的路径
+	auto log = OpenLog::GetInstance();
+	log->setCurrentChipicM3dPath(path);
 	//发送启动消息
 	auto sender = MessageSender::GetInstance();
 	

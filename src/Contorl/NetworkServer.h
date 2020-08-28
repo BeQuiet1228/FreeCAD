@@ -90,6 +90,8 @@ public slots:
 	void serverNewConnection();
 	//接受socket到消息
 	void receiveMessageFinished(NetworkSocket::SocketMessageBody msgBody);
-	//有本地游戏
+	//有本地消息
 	void hasLocalMessage();
+	//socket已断开
+	void socketDisconnect();
 };

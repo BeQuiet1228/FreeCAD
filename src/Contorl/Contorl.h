@@ -41,6 +41,8 @@ private:
 	void getM3dPathForRunPython();
 	//切换连接方式
 	void changeConnectionWay();
+	//打开log文件
+	void openLog();
 public Q_SLOTS:
 	void on_pushButton_clicked();
 

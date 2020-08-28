@@ -33,7 +33,7 @@ NetworkSocket::NetworkSocket()
 
 NetworkSocket::~NetworkSocket()
 {
-	if (socket != nullptr)
+	if (socket != nullptr && deleteSocket)
 		delete socket;
 }
 
@@ -49,6 +49,7 @@ void NetworkSocket::setSocket(QTcpSocket * tcpSocket)
 
 	this->socket = tcpSocket;
 	connect(socket, SIGNAL(readyRead()), this, SLOT(readReady()));
+	connect(socket, SIGNAL(disconnected()), this, SLOT(socketDisconnect()));
 }
 
 /**
@@ -166,7 +167,7 @@ bool NetworkSocket::socketConnect(const QString& ip, const QString& port)
 	if (socket == nullptr)
 	{
 		socket = new QTcpSocket();
-		QObject::connect(socket, SIGNAL(disconnected()), this, SLOT(socketDisconnect()));
+		connect(socket, SIGNAL(disconnected()), this, SLOT(socketDisconnect()));
 		connect(socket, SIGNAL(readyRead()), this, SLOT(readReady()));
 	}
 		

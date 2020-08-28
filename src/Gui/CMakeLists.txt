@@ -49,14 +49,14 @@ include_directories(
 if(MSVC)
     set(FreeCADGui_LIBS
          FreeCADApp
-		 #Contorl
+		 Contorl
          ${COIN3D_LIBRARIES}
          ${OPENGL_gl_LIBRARY}
     )
 else(MSVC)
     set(FreeCADGui_LIBS
         FreeCADApp
-		#Contorl
+		Contorl
         ${COIN3D_LIBRARIES}
         ${Boost_LIBRARIES}
         ${OPENGL_gl_LIBRARY}

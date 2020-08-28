@@ -758,7 +758,7 @@ QTableView {
     alternate-background-color: #e6e6e6; /* related with QListView background  */
     /* border: 1px solid #c3c3c3;  */
     selection-color: #423538;
-    selection-background-color: #f5f5f5; /* should be similar to QListView::item selected background-color */
+    selection-background-color: #46a0f5; /* should be similar to QListView::item selected background-color */
     show-decoration-selected: 1; /* make the selection span the entire width of the view */
     border-radius: 3px;
 }
@@ -770,13 +770,13 @@ QTreeView::item  {
 
 QListView::item:hover,
 QTreeView::item:hover  {
-    background-color: #f5f5f5; /* fix to homogenize it on all OSs */
+    background-color: #46a0f5; /* fix to homogenize it on all OSs */
 }
 
 QListView::item:selected,
 QTreeView::item:selected  {
     /*color: white;  should be similar to QListView selection-color */
-    background-color: #f5f5f5;  /*should be similar to QListView selection-background-color */
+    background-color: #46a0f5;  /*should be similar to QListView selection-background-color */
     /*show-decoration-selected: 1;  make the selection span the entire width of the view */
 }
 

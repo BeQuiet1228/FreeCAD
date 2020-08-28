@@ -10,6 +10,7 @@
 #include "Chipic.h"
 #include "LoadingDialog.h"
 #include "NetworkEmitter.h"
+#include "openLog.h"
 Contorl::Contorl(QWidget *parent)
 	: QMainWindow(parent)
 {
@@ -69,6 +70,16 @@ void Contorl::changeConnectionWay()
 	contorlButtonBar->setConnectionWayIcon(sender->getEmitterTypeID());
 }
 
+/**
+* @brief Contorl::openLog
+* @return void
+*/
+void Contorl::openLog()
+{
+	auto log = OpenLog::GetInstance();
+	log->openLog();
+}
+
 void Contorl::on_pushButton_clicked()
 {
 	auto messageManager = MessageSender::GetInstance();
@@ -86,11 +97,15 @@ void Contorl::buttonClinked(int buttonType)
 	switch (ContorlButtonBar::ButtonType(buttonType))
 	{
 	case ContorlButtonBar::RUN:
+		//获取m3d路径
 		getM3dPathForRunPython();
+		//运行m3d
 		chipicManager.runButtonClicked(m3dPath);
 		break;
 	case ContorlButtonBar::PARALLE_RUN:
+		//获取m3d路径
 		getM3dPathForRunPython();
+		//运行m3d
 		chipicManager.ButtonParalleRunClicked(m3dPath);
 		break;
 	case ContorlButtonBar::REFREASH:
@@ -103,7 +118,7 @@ void Contorl::buttonClinked(int buttonType)
 		chipicManager.CurrentChipic->timerButtonClicked();
 		break;
 	case ContorlButtonBar::LOG:
-		chipicManager.CurrentChipic->openLogFile();
+	 	this->openLog();
 		break;
 	case ContorlButtonBar::CONNECTION_WAY:
 		changeConnectionWay();

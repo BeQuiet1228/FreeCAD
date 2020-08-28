@@ -352,7 +352,9 @@ bool Chipic::disposeStructMapMessage(const Message& msg)
 			python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
 			python.runStringArg("lonemod.openStruct(\'%s\')",fileName.c_str());
 			//开启定时器刷新
-			timer->start(5 * 1000);
+			//timer->start(5 * 1000);
+			//刷新一下数据
+			this->refreshButtonClicked();
 		}
 	}
 

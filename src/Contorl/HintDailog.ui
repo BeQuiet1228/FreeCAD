@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>418</width>
+    <width>346</width>
     <height>387</height>
    </rect>
   </property>
@@ -14,11 +14,20 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">font: 18pt &quot;仿宋&quot;;</string>
+   <string notr="true">font: 12pt &quot;微软雅黑&quot;;</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="1,5,1,1">
    <item>
     <widget class="QLabel" name="labelTitle">
+     <property name="font">
+      <font>
+       <family>微软雅黑</family>
+       <pointsize>12</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
      <property name="text">
       <string>提示</string>
      </property>
@@ -29,6 +38,15 @@
    </item>
    <item>
     <widget class="QLabel" name="labelContent">
+     <property name="font">
+      <font>
+       <family>微软雅黑</family>
+       <pointsize>12</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
      <property name="text">
       <string>TextLabel
 546</string>
