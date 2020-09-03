@@ -180,7 +180,9 @@ bool ChipicManager::disposeMessage(const std::string& json)
 
 		if (cmd == "CloseChipic")
 		{
-			disposeCloseChipicMessage(id);
+			std::string errorCode = "0";
+			MessageTransition::getErrorCOde(jsonObject,errorCode);
+			disposeCloseChipicMessage(id,std::stoi(errorCode));
 			return true;
 		}else if(cmd  == "startFinished"){
 			dispoesStartChipicMessage(json);
@@ -191,12 +193,14 @@ bool ChipicManager::disposeMessage(const std::string& json)
 	return false;
 }
 
+
 /**
-* @brief ChipicManager::disposeCloseChipicMessage 处理chipic关闭xiaox
+* @brief ChipicManager::disposeCloseChipicMessage 处理chipic关闭消息
 * @param const DWORD & threadId
+* @param const int & errorCode 错误代码  从json消息中获取
 * @return bool
 */
-bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId)
+bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId, const int& errorCode)
 {
 	//如果id为0则清理掉所有的chipic对象
 	if (threadId == 0)
@@ -206,9 +210,20 @@ bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId)
 		emit currentChipicStateUpdate();
 		return true;
 	}
-	//如果id不为0 则寻找对应的chipic关闭
+	/*
+		如果id不为0 则寻找对应的chipic关闭
+		判断错误代码。
+		这个错误代码主要针对chipic在非正常退出的情况下。
+		0 为正常退出
+		1 为异常结束 异常结束的时候需要chipic管理器对象发送关闭消息释放监听器。
+		因为在释放监听器的时候 监听器还会返回一个关闭消息，所以这里就先不处理关闭消息。
+	*/
 	auto  chipic = chipicMap.find(threadId);
-	if (chipic != chipicMap.end())
+	if (chipic == chipicMap.end())
+		return false;
+
+	//正常退出
+	if (errorCode == 0)
 	{
 		if (CurrentChipic.get() == chipic->second.get())
 		{
@@ -216,6 +231,12 @@ bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId)
 		}
 		chipicMap.erase(chipic);
 		emit currentChipicStateUpdate();
+	}else if (errorCode == 1){
+		QMessageBox box;
+		box.setWindowTitle(MessageTransition::gbkStdstringToQstring("提示"));
+		box.setText(MessageTransition::gbkStdstringToQstring("chipic异常退出！"));
+		box.exec();
+		chipic->second->closeChipic();
 	}
 
 	return true;

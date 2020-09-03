@@ -10,9 +10,16 @@
 #include "MessageTransition.h"
 #include "MessageSender.h"
 #include <QFileInfo>
+#include <QProcess>
+#include <QMessageBox>
+
+#ifndef SERVICE
 #include <FCConfig.h>
 #include <Base\Interpreter.h>
-#include <QProcess>
+#endif // !SERVICE
+
+
+
 Chipic::Chipic(DWORD threadID)
 {
 	this->threadID = threadID;
@@ -343,18 +350,19 @@ bool Chipic::disposeStructMapMessage(const Message& msg)
 	if (msg.Msg == 208)
 	{
 		if (msg.wParam == 100 && msg.lParam == 0)
-
 		{
+#ifndef SERVICE
 			std::string fileName = this->makePath("_Temp.h5");
 			fileName = MessageTransition::utf8StdstringToGbkStdstring(fileName);
 			Base::InterpreterSingleton python;
 			python.runString("import Control.controlCommand.LonelinessCmd");
 			python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
-			python.runStringArg("lonemod.openStruct(\'%s\')",fileName.c_str());
+			python.runStringArg("lonemod.openStruct(\'%s\')", fileName.c_str());
 			//开启定时器刷新
-			//timer->start(5 * 1000);
+			timer->start(5 * 1000);
 			//刷新一下数据
 			this->refreshButtonClicked();
+#endif
 		}
 	}
 
@@ -372,13 +380,14 @@ bool Chipic::disposResultMapMessage(const Message& msg)
 	{
 		if (msg.wParam != -1000 && msg.lParam != -1000)
 		{
+#ifndef SERVICE
 			std::string fileName = this->makePath("_Temp.h5");
 			fileName = MessageTransition::utf8StdstringToGbkStdstring(fileName);
 			Base::InterpreterSingleton python;
 			python.runString("import Control.controlCommand.LonelinessCmd");
 			python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
-			python.runStringArg("lonemod.openMap(\'%s\',%d,%d)", fileName.c_str(),msg.wParam,msg.lParam);
-
+			python.runStringArg("lonemod.openMap(\'%s\',%d,%d)", fileName.c_str(), msg.wParam, msg.lParam);
+#endif // !SERVICE
 			return  true;
 		}
 	}
@@ -447,8 +456,8 @@ bool Chipic::disposChipicSendMessagePauseMessage(const Message& msg)
 	{
 		if (msg.lParam == 0)
 		{
-			this->pausState = true;
 			sendMessage(150, 0, 0);
+			this->pausState = true;
 		}else{
 			this->pausState = false;
 		}
@@ -457,6 +466,56 @@ bool Chipic::disposChipicSendMessagePauseMessage(const Message& msg)
 	}
 
 	return false;
+}
+
+/**
+* @brief Chipic::disposChipicFinished 处理计算完成消息
+* @param const Message & msg
+* @return bool
+*/
+bool Chipic::disposChipicFinished(const Message& msg)
+{
+	if (msg.Msg != 208)
+		return false;
+	if (msg.wParam != 200)
+		return false;
+	if (msg.lParam != 0)
+		return false;
+
+	QMessageBox box;
+	box.setWindowTitle(MessageTransition::gbkStdstringToQstring("提示"));
+	box.setText(MessageTransition::gbkStdstringToQstring("计算已完成！"));
+	box.exec();
+
+	this->closeChipic();
+	return true;
+}
+
+/**
+* @brief Chipic::disposChipicBusy
+* @param const Message & msg
+* @return bool
+*/
+bool Chipic::disposChipicBusy(const Message& msg)
+{
+	if (msg.Msg != 260)
+		return false;
+	QMessageBox box;
+	box.setWindowTitle(MessageTransition::gbkStdstringToQstring("提示"));
+	box.setText(MessageTransition::gbkStdstringToQstring("计算程序正在绘制其他图形，请勿频繁点击绘图按钮！"));
+	box.exec();
+
+
+#ifndef SERVICE
+	std::string fileName = this->makePath("_Temp.h5");
+	fileName = MessageTransition::utf8StdstringToGbkStdstring(fileName);
+	Base::InterpreterSingleton python;
+	python.runString("import Control.controlCommand.LonelinessCmd");
+	python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
+	python.runStringArg("lonemod.clearTree()");
+#endif
+
+	return  true;
 }
 
 void Chipic::disposJsonMessage(const std::string& json)
@@ -468,17 +527,6 @@ void Chipic::disposJsonMessage(const std::string& json)
 		emit stateUpdate(this->threadID);
 		return;
 	}
-	//输出除了提示消息意外的消息
-	//std::cerr << json << std::endl;
-	//处理chipic关闭消息
-	if (disposChipicCloseMessage(json))
-	{
-		emit stateUpdate(threadID);
-		return;
-	}
-	//处理器件结构消息
-	if (disposeStructMapMessage(msg))
-		return;
 	//处理迭代步数消息
 	if (disposIterationCountMessage(msg))
 	{
@@ -503,25 +551,43 @@ void Chipic::disposJsonMessage(const std::string& json)
 		emit stateUpdate(this->threadID);
 		return;
 	}
+	//处理chipic暂停状态消息
+	if (disposeChipicIsPause(msg))
+	{
+		emit stateUpdate(this->threadID);
+		return;
+	}
+	//输出除了提示消息以外的消息
+	std::cerr << json << std::endl;
+	//处理chipic关闭消息
+	if (disposChipicCloseMessage(json))
+	{
+		emit stateUpdate(threadID);
+		return;
+	}
+	//处理器件结构消息
+	if (disposeStructMapMessage(msg))
+		return;
 	//处理定时器状态消息
 	if(disposeChipicTimerState(msg))
 	{
 		emit stateUpdate(this->threadID);
 		return;
 	}
-	//处理chipic暂停状态消息
-	if(disposeChipicIsPause(msg))
-	{
-		emit stateUpdate(this->threadID);
-		return;
-	}
+
 	//处理发送消息中的暂停消息
 	if (disposChipicSendMessagePauseMessage(msg))
 	{
 		emit stateUpdate(this->threadID);
 		return;
 	}
+	//查看结果图
 	if (disposResultMapMessage(msg))
+		return;
+	//计算程序计算完成
+	if (disposChipicFinished(msg))
+		return;
+	if (disposChipicBusy(msg))
 		return;
 }
 
@@ -576,7 +642,11 @@ void Chipic::buttonClicked(int clickType)
 */
 void Chipic::timerOut()
 {
-	this->refreshButtonClicked();
+	/*
+		定时发送一个消息出去，然后由消息发送是否成功判断chipic程序是否还在正常运行。
+		该消息没有实际意义。
+	*/
+	this->sendMessage(886, 886, 886, this->threadID);
 }
 
 #ifndef MY_QTCMY_DEBUG

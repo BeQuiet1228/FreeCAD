@@ -95,12 +95,19 @@ std::string MessageTransition::creatRunChipicJsonMessage(const std::string& m3dP
 /**
 * @brief MessageTransition::creatCloseChipicJsonMessage 创建一个关闭chipic的消息 线程id为0代表关闭所有的对象
 * @param const DWORD threadId
+* @param const int & errorCode 0 代表正常退出 1 代表意外退出
 * @return std::string
 */
-std::string MessageTransition::creatCloseChipicJsonMessage(const DWORD threadId)
+std::string MessageTransition::creatCloseChipicJsonMessage(const DWORD threadId, const int& errorCode /*= 0*/)
 {
-	return creatCmdMessage("CloseChipic", threadId);
+	neb::CJsonObject json;
+	addCmd(json, "CloseChipic");
+	addThreadID(json, std::to_string(threadId));
+	addErrorCode(json, std::to_string(errorCode));
+	
+	return json.ToString();
 }
+
 QString MessageTransition::gbkStdstringToQstring(const std::string &str)
 {
 	QTextCodec* pCodec = QTextCodec::codecForName("gb2312");

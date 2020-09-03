@@ -69,6 +69,10 @@ private:
 	bool disposChipicCloseMessage(const std::string& json);
 	//处理发送消息中的暂停消息
 	bool disposChipicSendMessagePauseMessage(const Message& msg);
+	//处理计算完成消息
+	bool disposChipicFinished(const Message& msg);
+	//处理chipic输出图繁忙消息
+	bool disposChipicBusy(const Message& msg);
 public:
 	//运行状态
 	bool runState;
@@ -94,7 +98,7 @@ public:
 	int threadCount;
 	//文件路径
 	std::string m3dPath;
-	//刷新界面定时器
+	//定时检查内核是否还在运行
 	QTimer * timer;
 public:
 	void disposJsonMessage(const std::string& json);

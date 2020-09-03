@@ -49,19 +49,28 @@ include_directories(
 if(MSVC)
     set(FreeCADGui_LIBS
          FreeCADApp
-		 Contorl
          ${COIN3D_LIBRARIES}
          ${OPENGL_gl_LIBRARY}
     )
+	if(contorl_client_dll)
+	list(APPEND FreeCADGui_LIBS
+		Contorl
+	)
+	endif()
 else(MSVC)
     set(FreeCADGui_LIBS
         FreeCADApp
-		Contorl
         ${COIN3D_LIBRARIES}
         ${Boost_LIBRARIES}
         ${OPENGL_gl_LIBRARY}
         ${3DCONNEXION_LINKFLAGS}
     )
+	
+	if(contorl_client_dll)
+	list(APPEND FreeCADGui_LIBS
+		Contorl
+	)
+	endif()	
 endif(MSVC)
 
 if (BUILD_QT5)

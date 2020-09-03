@@ -41,7 +41,7 @@ private:
 	//处理消息
 	bool disposeMessage(const std::string& json);
 	//处理关闭chipic的消息
-	bool disposeCloseChipicMessage(const DWORD& threadId);
+	bool disposeCloseChipicMessage(const DWORD& threadId,const int& errorCode = 0);
 	//处理启动chipic的消息
 	bool dispoesStartChipicMessage(const std::string json);
 	//发送启动消息

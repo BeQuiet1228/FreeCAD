@@ -5,12 +5,16 @@
 #include "MessageTransition.h"
 #include "ChipicManager.h"
 #include "LocalEimtter.h"
-#include <FCConfig.h>
-#include <Base\Interpreter.h>
 #include "Chipic.h"
 #include "LoadingDialog.h"
 #include "NetworkEmitter.h"
 #include "openLog.h"
+
+#ifndef SERVICE
+	#include <FCConfig.h>
+	#include <Base\Interpreter.h>
+#endif
+
 Contorl::Contorl(QWidget *parent)
 	: QMainWindow(parent)
 {
@@ -45,10 +49,13 @@ Contorl::~Contorl()
 
 void Contorl::getM3dPathForRunPython()
 {
+#ifndef SERVICE
 	Base::InterpreterSingleton python;
 	python.runString("import Control.controlCommand.LonelinessCmd");
 	python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
 	python.runString("lonemod.setM3dPath()");
+#endif
+
 }
 
 /**

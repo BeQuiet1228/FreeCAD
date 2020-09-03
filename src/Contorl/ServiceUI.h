@@ -30,26 +30,14 @@ public Q_SLOTS:
 
 	void on_pushButtonClose_clicked();
 
-	void activatedSysTrayIcon(QSystemTrayIcon::ActivationReason reason);
-
-	void showMainAction();
-
-	void exitAppAction();
-
 	void inputText(QString str);
 
-protected:
-	void closeEvent(QCloseEvent *event);
 
 private:
 	Ui::MainWindow *ui;
-	void errorMessageBox(const QString &error);
+	void errorMessageBox(const std::string &error);
 	bool closeB;
-	QSystemTrayIcon *mSysTrayIcon;
-	QMenu *mMenu;
-	QAction *mShowMainAction, *mExitAppAction;
-	void createActions();
-	void createMenu();
+
 };
 
 #endif // MAINWINDOW_H

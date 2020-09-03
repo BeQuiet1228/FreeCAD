@@ -48,9 +48,21 @@ include_directories(
 
 set(FreeCADApp_LIBS
     FreeCADBase
-	Contorl
     ${Boost_LIBRARIES}
+	debug hdf5_D.lib
+	debug hdf5_cpp_D.lib
+	debug zlibd.lib
+	debug zlibstaticd.lib
+	optimized hdf5.lib
+	optimized hdf5_cpp.lib
+	optimized zlib.lib
+	optimized zlibstatic.lib
 )
+if(contorl_client_dll)
+	list(APPEND FreeCADApp_LIBS
+		Contorl
+	)
+endif()
 
 if (BUILD_QT5)
     include_directories(

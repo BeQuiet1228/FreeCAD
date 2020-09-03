@@ -12,6 +12,7 @@
 #include <QApplication>
 #include "NetworkServer.h"
 #include <iostream>
+#include "MessageTransition.h"
 ServiceUI::ServiceUI(QWidget *parent) :
 QMainWindow(parent),
 ui(new Ui::MainWindow)
@@ -23,22 +24,6 @@ ui(new Ui::MainWindow)
 
 	ui->textEdit->setFont(QFont("", 12));
 
-	//新建QSystemTrayIcon对象
-	mSysTrayIcon = new QSystemTrayIcon(this);
-	//新建托盘要显示的icon
-	QIcon icon = QIcon(":/icon.ico");
-	//将icon设到QSystemTrayIcon对象中
-	mSysTrayIcon->setIcon(icon);
-	//当鼠标移动到托盘上的图标时，会显示此处设置的内容
-	mSysTrayIcon->setToolTip(QObject::trUtf8("CHIPIC 服务端程序"));
-	//给QSystemTrayIcon添加槽函数
-	connect(mSysTrayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(activatedSysTrayIcon(QSystemTrayIcon::ActivationReason)));
-
-	//建立托盘操作的菜单
-	createActions();
-	createMenu();
-	//在系统托盘显示此对象
-	mSysTrayIcon->show();
 
 	auto service = NetworkServer::GetInstance();
 
@@ -55,8 +40,6 @@ ui(new Ui::MainWindow)
 
 ServiceUI::~ServiceUI()
 {
-	if (mSysTrayIcon)
-		delete mSysTrayIcon;
 	delete ui;
 }
 
@@ -128,73 +111,21 @@ void ServiceUI::on_pushButtonCHIPICPath_clicked()
 	ui->lineEditCHIPICPath->setText(fileName);
 }
 
-void ServiceUI::errorMessageBox(const QString &error)
+void ServiceUI::errorMessageBox(const std::string &error)
 {
 	QMessageBox mes;
-	mes.setText(error);
+	mes.setText(MessageTransition::gbkStdstringToQstring(error));
 	mes.exec();
 }
 
 void ServiceUI::on_pushButtonClose_clicked()
 {
-	exit(0);
-}
-
-void ServiceUI::closeEvent(QCloseEvent *event)
-{
-
-	//event->ignore();
-	//隐藏主窗口
-	//this->hide();
-
+	this->close();
 }
 
 
-void ServiceUI::activatedSysTrayIcon(QSystemTrayIcon::ActivationReason reason)
-{
-	switch (reason){
-	case QSystemTrayIcon::Trigger:
-		//        mSysTrayIcon->showMessage(QObject::trUtf8("Message Title"),
-		//                                  QObject::trUtf8("欢迎使用此程序"),
-		//                                  QSystemTrayIcon::Information,
-		//                                  1000);
-		this->show();
-	default:
-		break;
-	}
-}
 
-void ServiceUI::createActions()
-{
-	mShowMainAction = new QAction(QObject::trUtf8("显示主界面"), this);
-	connect(mShowMainAction, SIGNAL(triggered()), this, SLOT(showMainAction()));
 
-	mExitAppAction = new QAction(QObject::trUtf8("退出"), this);
-	connect(mExitAppAction, SIGNAL(triggered()), this, SLOT(exitAppAction()));
-
-}
-
-void ServiceUI::createMenu()
-{
-	mMenu = new QMenu(this);
-	mMenu->addAction(mShowMainAction);
-
-	mMenu->addSeparator();
-
-	mMenu->addAction(mExitAppAction);
-
-	mSysTrayIcon->setContextMenu(mMenu);
-}
-
-void ServiceUI::showMainAction()
-{
-	this->show();
-}
-
-void ServiceUI::exitAppAction()
-{
-	exit(0);
-}
 
 void ServiceUI::inputText(QString str)
 {

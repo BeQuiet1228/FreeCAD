@@ -1,11 +1,18 @@
-#设置预定义
-if(WIN32)
-#add_definitions(-D_CONTORL_ -DMY_DEBUG -DMY_LOG -DSERVICE)
-#add_definitions(-D_CONTORL_ -DMY_DEBUG -DMY_LOG)
-add_definitions(-D_CONTORL_ -DMY_LOG)
-endif(WIN32)
 #设置项目名称
 project(Contorl)
+
+
+#设置预定义
+#编译服务器端
+#SET(contorl_service)
+#以exe形式编译客户端
+#SET(contorl_client_exe)
+#以动态链接库的形式编译客户端
+#SET(contorl_client_dll)
+
+
+
+
 #源文件
 SET(UI_SRC
 	Contorl.ui
@@ -124,7 +131,23 @@ SET(Contorl_src
 #SET(CMAKE_RUNTIME_OUTPUT_DIRECTORYMY_DEBUG ${CMAKE_CURRENT_BINARY_DIR}/../../bin)
 #add_library(common STATIC util.cpp) # 生成静态库
 #add_library(common SHARED util.cpp) # 生成动态库或共享库
-add_library(Contorl SHARED ${Contorl_src})
+#add_library(Contorl SHARED ${Contorl_src})
+
+if(contorl_service)
+	add_definitions(-D_CONTORL_ -DMY_DEBUG -DMY_LOG -DSERVICE)
+	add_executable(Contorl ${Contorl_src}) # 生成可执行文件
+	SET(OUTPUT_BINDIR ${CMAKE_CURRENT_BINARY_DIR}/../../bin) #设置可执行文件输出目录
+endif()
+if(contorl_client_exe)
+	add_executable(Contorl ${Contorl_src}) # 生成可执行文件
+	SET(OUTPUT_BINDIR ${CMAKE_CURRENT_BINARY_DIR}/../../bin) #设置可执行文件输出目录
+	add_definitions(-D_CONTORL_ -DMY_DEBUG -DMY_LOG)
+endif()
+if(contorl_client_dll)
+	add_definitions(-D_CONTORL_ -DMY_LOG)
+	add_library(Contorl SHARED ${Contorl_src})
+endif()
+
 
 #增加包含目录
 include_directories(
@@ -133,9 +156,28 @@ include_directories(
 )
 #增加外部库
 list(APPEND QT_LIB
-	FreeCADBase
-    ${Boost_LIBRARIES}
+    #${Boost_LIBRARIES}
+    #${PYTHON_LIBRARIES}
+    #debug ${XercesC_DEBUG_LIBRARIES}
+    #optimized ${XercesC_LIBRARIES}
+    #${ZLIB_LIBRARIES}
+    debug MSVCRTD.LIB
+    debug MSVCPRTD.LIB
+    optimized MSVCRT.LIB
+    optimized MSVCPRT.LIB
+    #Rpcrt4.lib
+    #version.lib
 	)
+if(contorl_client_dll)
+	list(APPEND QT_LIB
+	FreeCADBase
+	)
+endif()
+if(contorl_client_exe)
+	list(APPEND QT_LIB
+	FreeCADBase
+	)
+endif()
 #引入Qt库
 if (BUILD_QT5)
     include_directories(
