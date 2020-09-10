@@ -3,9 +3,10 @@
 #include <map>
 #include <Windows.h>
 #include <memory>
+#include "ContorlConfig.hpp"
 class Chipic;
 class LoadingDialog;
-class  ChipicManager:public QObject
+class CONTROL_EXPORT ChipicManager :public QObject
 {
 	Q_OBJECT
 public:
@@ -16,12 +17,16 @@ private:
 	std::map<DWORD, std::shared_ptr<Chipic>> chipicMap;
 	//载入提示框
 	LoadingDialog *loadingDialog;
+	//计算完成之后是否显示提示框
+	bool isDisplayChipicFinishBox = true;
 public:
 	//当前管理的计算程序
 	std::shared_ptr<Chipic> CurrentChipic;
 Q_SIGNALS:
 	//当前计算程序有信息更新
 	void currentChipicStateUpdate();
+	//chipic计算完成 并将文件路径发送出去
+	void finishChipicM3dPath(std::string);
 public Q_SLOTS:
 	void hasNewMessage();
 	//更新ui状态
@@ -30,11 +35,15 @@ public Q_SLOTS:
 	void runButtonClicked(const std::string& m3dPath = "");
 	//关闭当前运行的chipic
 	void closeCurrentChipic();
-
+	//chipic计算完成
+	void chipicWorkFinished();
 public:
 	//并行按钮被点击
 	void ButtonParalleRunClicked(const std::string& m3dPath);
-
+	//设置是否显示计算完成之后的提示框
+	void setisDisplayChipicFinishBox(const bool& temp){
+		isDisplayChipicFinishBox = temp;
+	}
 private:
 	//检测路径是否存在
 	bool detectionFilePathUTF8(const std::string& path);

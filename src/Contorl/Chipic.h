@@ -105,7 +105,8 @@ public:
 	
 Q_SIGNALS:
 	void stateUpdate(DWORD);
-
+	//计算完成信号
+	void workFinished();
 public Q_SLOTS:
 	void buttonClicked(int clickType);
 	void timerOut();

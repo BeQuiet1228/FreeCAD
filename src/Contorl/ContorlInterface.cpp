@@ -39,3 +39,12 @@ void ContorlInterface::senWinMessage(const int& type, const int& wParam, const i
 	}
 }
 
+/**
+* @brief ContorlInterface::getChipicManager 返回chipic管理器指针  这个指针由contorl对象管理 
+* @return ChipicManager*
+*/
+ChipicManager* ContorlInterface::getChipicManager()
+{
+	return &(contorl->chipicManager);
+}
+

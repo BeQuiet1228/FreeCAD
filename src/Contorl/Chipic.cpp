@@ -481,12 +481,10 @@ bool Chipic::disposChipicFinished(const Message& msg)
 		return false;
 	if (msg.lParam != 0)
 		return false;
-
-	QMessageBox box;
-	box.setWindowTitle(MessageTransition::gbkStdstringToQstring("提示"));
-	box.setText(MessageTransition::gbkStdstringToQstring("计算已完成！"));
-	box.exec();
-
+	/*
+		发送计算完成信号，在这个之后会释放掉chipic相关对象。
+	*/
+	emit workFinished();
 	this->closeChipic();
 	return true;
 }

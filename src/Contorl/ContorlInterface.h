@@ -5,6 +5,7 @@
 #include "ContorlConfig.hpp"
 #include "ContorlButtonBar.h"
 #include "ContorlDataBar.h"
+#include "ChipicManager.h"
 class Contorl;
 class CONTROL_EXPORT ContorlInterface
 {
@@ -35,5 +36,7 @@ public:
 	void setM3dPath(const std::string& path);
 	//发送消息win
 	void senWinMessage(const int& type, const int& wParam, const int& lParam);
+	//获取chipicManager
+	ChipicManager* getChipicManager();
 	
 };

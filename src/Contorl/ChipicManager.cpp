@@ -118,6 +118,30 @@ void ChipicManager::closeCurrentChipic()
 }
 
 /**
+* @brief ChipicManager::chipicWorkFinished chipic计算完成
+* @return void
+*/
+void ChipicManager::chipicWorkFinished()
+{
+	//获取信号发送者
+	auto sender = this->sender();
+	auto chipic = dynamic_cast<Chipic *>(sender);
+	if (!chipic)
+		return;
+	//发送完成计算chipic的m3d路径
+	std::string path = chipic->m3dPath;
+	emit finishChipicM3dPath(path);
+
+	//判断是否显示提示框
+	if (!isDisplayChipicFinishBox)
+		return;
+	QMessageBox box;
+	box.setWindowTitle(MessageTransition::gbkStdstringToQstring("提示框"));
+	box.setText(MessageTransition::gbkStdstringToQstring("计算程序已完成计算，自动退出！"));
+	box.exec();
+}
+
+/**
 * @brief ChipicManager::ButtonParalleRunClicked
 * @param const std::string & m3dPath
 * @param const int & threadCount
@@ -249,9 +273,9 @@ bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId, const int& 
 */
 bool ChipicManager::dispoesStartChipicMessage(const std::string json)
 {
+	//关闭启动动画
 	loadingDialog->close();
-
-	//新建计算程序，用于启动时未获取线程id时暂存
+	//新建chipic对象
 	std::shared_ptr<Chipic> newChipic(new Chipic);
 	//获取chipic的各种信息
 	neb::CJsonObject jsonObject(json);
@@ -270,8 +294,14 @@ bool ChipicManager::dispoesStartChipicMessage(const std::string json)
 	newChipic->runState = true;
 	newChipic->m3dPath = m3dPath;
 	newChipic->threadCount = threadCount;
+
+	//将对象放入map
 	chipicMap.insert(std::map<DWORD, std::shared_ptr<Chipic>>::value_type(newChipic->threadID, newChipic));
+	//链接数据更新槽
 	connect(newChipic.get(), SIGNAL(stateUpdate(DWORD)), this, SLOT(chipicStateUpdate(DWORD)));
+	//链接计算完成槽
+	connect(newChipic.get(), SIGNAL(workFinished()), this, SLOT(chipicWorkFinished()));
+
 	CurrentChipic = newChipic;
 	newChipic.reset();
 	emit currentChipicStateUpdate();
