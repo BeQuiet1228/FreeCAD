@@ -362,6 +362,8 @@ bool Chipic::disposeStructMapMessage(const Message& msg)
 			timer->start(5 * 1000);
 			//刷新一下数据
 			this->refreshButtonClicked();
+			//发送解析完成信号
+			emit analysisFinished();
 #endif
 		}
 	}

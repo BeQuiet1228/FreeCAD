@@ -19,6 +19,8 @@ private:
 	LoadingDialog *loadingDialog;
 	//计算完成之后是否显示提示框
 	bool isDisplayChipicFinishBox = true;
+	//是否显示load提示框
+	bool isDisplayLoadDialog = true;
 public:
 	//当前管理的计算程序
 	std::shared_ptr<Chipic> CurrentChipic;
@@ -37,12 +39,18 @@ public Q_SLOTS:
 	void closeCurrentChipic();
 	//chipic计算完成
 	void chipicWorkFinished();
+	//chipic解析完成信号
+	void chipicAnalysisFinished();
 public:
 	//并行按钮被点击
 	void ButtonParalleRunClicked(const std::string& m3dPath);
 	//设置是否显示计算完成之后的提示框
-	void setisDisplayChipicFinishBox(const bool& temp){
+	void setIsDisplayChipicFinishBox(const bool& temp){
 		isDisplayChipicFinishBox = temp;
+	}
+	//设置是否显示载入动画提示框
+	void setIsDisplayLoadDialog(const bool& temp){
+		isDisplayLoadDialog = temp;
 	}
 private:
 	//检测路径是否存在

@@ -11,6 +11,12 @@ class  LoadingDialog : public QDialog
 public:
 	LoadingDialog(QWidget *parent = 0);
 	~LoadingDialog();
+	void  setText(const std::string& text);
+	void show();
+	void close();
+
+public:
+	bool isShow = false;
 private:
 	Ui::LoadingDialog *ui;
 };

@@ -90,11 +90,21 @@ void ChipicManager::hasNewMessage()
 void ChipicManager::chipicStateUpdate(DWORD threadId)
 {
 	auto  chipic = chipicMap.find(threadId);
-	if (chipic != chipicMap.end())
+	if (chipic == chipicMap.end())
+		return;
+
+	if (CurrentChipic.get() == chipic->second.get())
 	{
-		if (CurrentChipic.get() == chipic->second.get())
+		//如果dailog还在显示状态，说明chipic还没有解析完文本
+		//则所有的提示信息都在提示框中显示
+		if (loadingDialog->isShow)
+		{
+			loadingDialog->setText(CurrentChipic->title);
+		}else{
 			emit currentChipicStateUpdate();
+		}
 	}
+			
 }
 
 /**
@@ -139,6 +149,15 @@ void ChipicManager::chipicWorkFinished()
 	box.setWindowTitle(MessageTransition::gbkStdstringToQstring("提示框"));
 	box.setText(MessageTransition::gbkStdstringToQstring("计算程序已完成计算，自动退出！"));
 	box.exec();
+}
+
+/**
+* @brief ChipicManager::chipicAnalysisFinished chipic解析完成槽
+* @return void
+*/
+void ChipicManager::chipicAnalysisFinished()
+{
+	loadingDialog->close();
 }
 
 /**
@@ -255,6 +274,7 @@ bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId, const int& 
 		}
 		chipicMap.erase(chipic);
 		emit currentChipicStateUpdate();
+		loadingDialog->close();
 	}else if (errorCode == 1){
 		QMessageBox box;
 		box.setWindowTitle(MessageTransition::gbkStdstringToQstring("提示"));
@@ -273,8 +293,6 @@ bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId, const int& 
 */
 bool ChipicManager::dispoesStartChipicMessage(const std::string json)
 {
-	//关闭启动动画
-	loadingDialog->close();
 	//新建chipic对象
 	std::shared_ptr<Chipic> newChipic(new Chipic);
 	//获取chipic的各种信息
@@ -301,6 +319,8 @@ bool ChipicManager::dispoesStartChipicMessage(const std::string json)
 	connect(newChipic.get(), SIGNAL(stateUpdate(DWORD)), this, SLOT(chipicStateUpdate(DWORD)));
 	//链接计算完成槽
 	connect(newChipic.get(), SIGNAL(workFinished()), this, SLOT(chipicWorkFinished()));
+	//链接解析完成槽
+	connect(newChipic.get(), SIGNAL(analysisFinished()), this, SLOT(chipicAnalysisFinished()));
 
 	CurrentChipic = newChipic;
 	newChipic.reset();
@@ -340,7 +360,8 @@ void ChipicManager::sendStartChipicMessage(const std::string& path, const int& t
 	sender->sendJsonMessage(MessageTransition::creatRunChipicJsonMessage(path, threadCount));
 
 	//显示loading提示框
-	loadingDialog->show();
+	if (isDisplayLoadDialog)
+		loadingDialog->show();
 }
 
 #ifndef MY_QTCMY_DEBUG
