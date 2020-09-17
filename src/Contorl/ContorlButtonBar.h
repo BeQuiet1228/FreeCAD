@@ -3,11 +3,12 @@
 #include <QWidget>
 #include <memory>
 #include "ContorlConfig.hpp"
+#include "ContorlBar.h"
 class Chipic;
 namespace Ui {
 	class ContorlButtonBar;
 }
-class  ContorlButtonBar : public QWidget
+class  ContorlButtonBar : public ContorlBar
 {
 	Q_OBJECT
 public:
@@ -27,12 +28,12 @@ public:
 private:
 	Ui::ContorlButtonBar *ui;
 public:
-	//设置计算程序数据
-	void setChipicData(std::shared_ptr<Chipic> chipic);
 	//chipic被关闭 重新设置按钮状态
 	void chipicClose();
 	//设置连接方式图标
 	void setConnectionWayIcon(const int& way);
+	//刷新ui显示
+	void updateUI() override;
 public Q_SLOTS:
 	//运行按钮被点击
 	void on_toolButtonRun_clicked();

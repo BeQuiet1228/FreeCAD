@@ -13,6 +13,8 @@
 #include "LoadingDialog.h"
 #include "NetworkClient.h"
 #include "openLog.h"
+#include "ContorlDataBar.h"
+#include "ContorlButtonBar.h"
 ChipicManager::ChipicManager()
 {
 	auto getter = JsonMessageGetter::GetInstance();
@@ -21,11 +23,17 @@ ChipicManager::ChipicManager()
 #endif // !SERVICE
 
 	loadingDialog = new LoadingDialog;
+	connect(loadingDialog, SIGNAL(dialogClose()), this, SLOT(loadDialogClose()));
 }
 
 ChipicManager::~ChipicManager()
 {
 	delete loadingDialog;
+	for (auto i = ChipicUIMap.begin(); i != ChipicUIMap.end(); i++)
+	{
+		delete i->second.buttonBar;
+		delete i->second.dataBar;
+	}
 }
 
 /**
@@ -92,17 +100,24 @@ void ChipicManager::chipicStateUpdate(DWORD threadId)
 	auto  chipic = chipicMap.find(threadId);
 	if (chipic == chipicMap.end())
 		return;
-
-	if (CurrentChipic.get() == chipic->second.get())
+	auto chipicUI = ChipicUIMap.find(threadId);
+	//更新chipic的ui信息
+	if (chipicUI != ChipicUIMap.end())
 	{
-		//如果dailog还在显示状态，说明chipic还没有解析完文本
-		//则所有的提示信息都在提示框中显示
-		if (loadingDialog->isShow)
-		{
-			loadingDialog->setText(CurrentChipic->title);
-		}else{
-			emit currentChipicStateUpdate();
-		}
+		chipicUI->second.buttonBar->setChipicData(chipic->second);
+		chipicUI->second.dataBar->setChipicData(chipic->second);
+	}
+
+	//如果是当前chipic信息更新，则发送更新信息。
+	if (CurrentChipic->threadID != threadId)
+		return;
+	//如果dailog还在显示状态，说明chipic还没有解析完文本
+	//则所有的提示信息都在提示框中显示
+	if (loadingDialog->isShow)
+	{
+		loadingDialog->setText(CurrentChipic->title);
+	}else{
+		emit currentChipicStateUpdate();
 	}
 			
 }
@@ -141,14 +156,7 @@ void ChipicManager::chipicWorkFinished()
 	//发送完成计算chipic的m3d路径
 	std::string path = chipic->m3dPath;
 	emit finishChipicM3dPath(path);
-
-	//判断是否显示提示框
-	if (!isDisplayChipicFinishBox)
-		return;
-	QMessageBox box;
-	box.setWindowTitle(MessageTransition::gbkStdstringToQstring("提示框"));
-	box.setText(MessageTransition::gbkStdstringToQstring("计算程序已完成计算，自动退出！"));
-	box.exec();
+	showWorkFinishedBox();
 }
 
 /**
@@ -158,6 +166,15 @@ void ChipicManager::chipicWorkFinished()
 void ChipicManager::chipicAnalysisFinished()
 {
 	loadingDialog->close();
+}
+
+/**
+* @brief ChipicManager::loadDialogClose load提示框被关闭
+* @return void
+*/
+void ChipicManager::loadDialogClose()
+{
+	this->runButtonClicked();
 }
 
 /**
@@ -268,18 +285,25 @@ bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId, const int& 
 	//正常退出
 	if (errorCode == 0)
 	{
+		//移除chipic对象
 		if (CurrentChipic.get() == chipic->second.get())
 		{
 			CurrentChipic.reset();
 		}
 		chipicMap.erase(chipic);
+		//移除chipicui对象
+		auto chipicui = ChipicUIMap.find(threadId);
+		if (chipicui != ChipicUIMap.end())
+		{
+			delete chipicui->second.buttonBar;
+			delete chipicui->second.dataBar;
+			ChipicUIMap.erase(chipicui);
+		}
+			
 		emit currentChipicStateUpdate();
 		loadingDialog->close();
 	}else if (errorCode == 1){
-		QMessageBox box;
-		box.setWindowTitle(MessageTransition::gbkStdstringToQstring("提示"));
-		box.setText(MessageTransition::gbkStdstringToQstring("chipic异常退出！"));
-		box.exec();
+		showDailLog("提示", "chipic异常退出");
 		chipic->second->closeChipic();
 	}
 
@@ -313,6 +337,10 @@ bool ChipicManager::dispoesStartChipicMessage(const std::string json)
 	newChipic->m3dPath = m3dPath;
 	newChipic->threadCount = threadCount;
 
+	//根据运行模式 设置是否处理看图消息
+	if (runType == AUTO)
+		newChipic->setIsAuto(true);
+
 	//将对象放入map
 	chipicMap.insert(std::map<DWORD, std::shared_ptr<Chipic>>::value_type(newChipic->threadID, newChipic));
 	//链接数据更新槽
@@ -326,7 +354,64 @@ bool ChipicManager::dispoesStartChipicMessage(const std::string json)
 	newChipic.reset();
 	emit currentChipicStateUpdate();
 
+	//新建chipic信息显示ui，放入管理器中
+	ChipicUI chipicUi;
+	chipicUi.buttonBar = new ContorlButtonBar;
+	chipicUi.dataBar = new ContorlDataBar;
+	chipicUi.buttonBar->setChipicData(CurrentChipic);
+	chipicUi.dataBar->setChipicData(CurrentChipic);
+	ChipicUIMap.insert(std::map<unsigned long,ChipicUI>::value_type(CurrentChipic->threadID, chipicUi));
+
+	//发送chipic启动完成信号
+	emit chipicStartFinished(threadId);
+
 	return true;
+}
+
+/**
+* @brief ChipicManager::showLoadDailog 显示载入的提示框
+* @return void
+*/
+void ChipicManager::showLoadDailog()
+{
+	//显示loading提示框
+	if (runType == AUTO)
+		return;
+	loadingDialog->setText("CHIPIC正在启动中");
+	loadingDialog->show();
+
+		
+}
+
+/**
+* @brief ChipicManager::showWorkFinishedBox 弹出计算完成提示框
+* @return void
+*/
+void ChipicManager::showWorkFinishedBox()
+{
+	//判断是否显示提示框
+	if (runType == AUTO)
+		return;
+	QMessageBox box;
+	box.setWindowTitle(MessageTransition::gbkStdstringToQstring("提示框"));
+	box.setText(MessageTransition::gbkStdstringToQstring("计算程序已完成计算，自动退出！"));
+	box.exec();
+}
+
+/**
+* @brief ChipicManager::showDailLog
+* @param const std::string & title
+* @param const std::string & content
+* @return void
+*/
+void ChipicManager::showDailLog(const std::string& title, const std::string& content)
+{
+	if (runType == AUTO)
+		return;
+	QMessageBox box;
+	box.setWindowTitle(MessageTransition::gbkStdstringToQstring(title));
+	box.setText(MessageTransition::gbkStdstringToQstring(content));
+	box.exec();
 }
 
 /**
@@ -359,9 +444,8 @@ void ChipicManager::sendStartChipicMessage(const std::string& path, const int& t
 	}
 	sender->sendJsonMessage(MessageTransition::creatRunChipicJsonMessage(path, threadCount));
 
-	//显示loading提示框
-	if (isDisplayLoadDialog)
-		loadingDialog->show();
+	showLoadDailog();
+
 }
 
 #ifndef MY_QTCMY_DEBUG

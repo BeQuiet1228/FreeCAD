@@ -1,5 +1,5 @@
 #设置项目名称
-project(Contorl)
+project(SmartContorl)
 
 
 #设置预定义
@@ -15,70 +15,22 @@ project(Contorl)
 
 #源文件
 SET(UI_SRC
-	Contorl.ui
-	HintDailog.ui
-	ContorlDataBar.ui
-	ContorlButtonBar.ui
-	ThreadCountDialog.ui
-	LoadingDialog.ui
-	NetworkClientLoginDailog.ui
-	ServiceUI.ui
+	SmartContorlUI.ui
 )
 SET(QRC_SRC
-	Contorl.qrc
+
 )
 SET(JSON_SRC
-	cJSON.c
-	cJSON.h
-	CJsonObject.cpp
-	CJsonObject.hpp
+
 )
 SET(MY_MOC_HDR
-	Contorl.h
-	JsonMessageGetter.h
-	Chipic.h
-	ChipicManager.h
-	HintDailog.h
-	ContorlDataBar.h
-	ContorlButtonBar.h
-	ThreadCountDialog.h
-	LoadingDialog.h
-	NetworkClient.h
-	NetworkServer.h
-	NetworkSocket.h
-	NetworkClientLoginDailog.h
-	ServiceUI.h
-	ContorlBar.h
+	SmartContorlUI.h
 )
 SET(MY_MOC_SRC
-	Contorl.cpp
-	JsonMessageGetter.cpp
-	Chipic.cpp
-	ChipicManager.cpp
-	HintDailog.cpp
-	ContorlDataBar.cpp
-	ThreadCountDialog.cpp
-	LoadingDialog.cpp
-	ContorlButtonBar.cpp
-	ContorlBar.cpp
+	SmartContorlUI.cpp
 )
 SET(NETWORK_SRC
-	NetworkClient.cpp
-	NetworkClient.h
-	NetworkServer.h
-	NetworkServer.cpp
-	NetworkSocket.cpp
-	NetworkSocket.h
-	NetworkEmitter.h
-	NetworkEmitter.cpp
-	NetworkClientLoginDailog.h
-	NetworkClientLoginDailog.cpp
-	NetworkUser.h
-	NetworkUser.cpp
-	File.cpp
-	File.h
-	ServiceUI.h
-	ServiceUI.cpp
+
 )
 #引入头文件
 include_directories(
@@ -101,24 +53,12 @@ else()
     QT4_ADD_RESOURCES(Gui_QRC_SRCS ${QRC_SRC})
     QT4_WRAP_UI(Gui_UIC_HDRS ${UI_SRC})
 endif()
-SET(Contorl_src
+SET(SmartContorl_src
 	main.cpp
-	runchipic3d.cpp
-	runchipic3d.h
-	RunChipic3dListener.cpp
-	RunChipic3dListener.h
-	MessageTransition.cpp
-	MessageTransition.h
-	MessageSender.cpp
-	MessageSender.h
-	EmitterInterface.h
-	LocalEimtter.cpp
-	LocalEimtter.h
-	ContorlInterface.h
-	ContorlInterface.cpp
-	ContorlConfig.hpp
-	openLog.cpp
-	openLog.h
+	VariateAnalysis.h
+	VariateAnalysis.cpp
+	FileMaker.h
+	FileMaker.cpp
 	${UI_SRC}
 	${JSON_SRC}
 	${MY_MOC_SRC}
@@ -135,20 +75,15 @@ SET(Contorl_src
 #add_library(common SHARED util.cpp) # 生成动态库或共享库
 #add_library(Contorl SHARED ${Contorl_src})
 
-if(contorl_service)
-	add_definitions(-D_CONTORL_ -DMY_DEBUG -DMY_LOG -DSERVICE)
-	add_executable(Contorl ${Contorl_src}) # 生成可执行文件
+#if(contorl_client_exe)
+	add_executable(SmartContorl ${SmartContorl_src}) # 生成可执行文件
 	SET(OUTPUT_BINDIR ${CMAKE_CURRENT_BINARY_DIR}/../../bin) #设置可执行文件输出目录
-endif()
-if(contorl_client_exe)
-	add_executable(Contorl ${Contorl_src}) # 生成可执行文件
-	SET(OUTPUT_BINDIR ${CMAKE_CURRENT_BINARY_DIR}/../../bin) #设置可执行文件输出目录
-	add_definitions(-D_CONTORL_ -DMY_DEBUG -DMY_LOG)
-endif()
-if(contorl_client_dll)
-	add_definitions(-D_CONTORL_ -DMY_LOG)
-	add_library(Contorl SHARED ${Contorl_src})
-endif()
+	add_definitions( -DMY_DEBUG -DMY_LOG)
+#endif()
+#if(contorl_client_dll)
+#	add_definitions( -DMY_LOG)
+#	add_library(SmartContorl SHARED ${Contorl_src})
+#endif()
 
 
 #增加包含目录
@@ -158,28 +93,12 @@ include_directories(
 )
 #增加外部库
 list(APPEND QT_LIB
-    #${Boost_LIBRARIES}
-    #${PYTHON_LIBRARIES}
-    #debug ${XercesC_DEBUG_LIBRARIES}
-    #optimized ${XercesC_LIBRARIES}
-    #${ZLIB_LIBRARIES}
     debug MSVCRTD.LIB
     debug MSVCPRTD.LIB
     optimized MSVCRT.LIB
     optimized MSVCPRT.LIB
-    #Rpcrt4.lib
-    #version.lib
+	Contorl
 	)
-if(contorl_client_dll)
-	list(APPEND QT_LIB
-	FreeCADBase
-	)
-endif()
-if(contorl_client_exe)
-	list(APPEND QT_LIB
-	FreeCADBase
-	)
-endif()
 #引入Qt库
 if (BUILD_QT5)
     include_directories(
@@ -210,8 +129,8 @@ else()
     )
 endif()
 #链接静态库
-target_link_libraries(Contorl ${QT_LIB})
-SET_BIN_DIR(Contorl Contorl) #设置文件输出目录
+target_link_libraries(SmartContorl ${QT_LIB})
+SET_BIN_DIR(SmartContorl SmartContorl) #设置文件输出目录
 #生成moc文件
 fc_wrap_cpp(MY_MOC_SRCS ${MY_MOC_HDR})
 

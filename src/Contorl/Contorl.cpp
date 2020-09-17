@@ -31,11 +31,6 @@ Contorl::Contorl(QWidget *parent)
 	auto sender = MessageSender::GetInstance();
 	sender->setEmitter(new LocalEmitter);
 
-	//初始化ui定时器
-	uiTimer = new QTimer;
-	connect(uiTimer, SIGNAL(timeout()), this, SLOT(uiUpdateTimerout()));
-	uiTimer->start(500);
-
 	//LoadingDialog *d = new LoadingDialog;
 	//d->show();
 
@@ -96,7 +91,15 @@ void Contorl::on_pushButton_clicked()
 
 void Contorl::chipicStateUpdate()
 {
-	uiUpdateFlag = true;
+	auto chipic = chipicManager.CurrentChipic;
+	if (!chipic)
+	{
+		contorlButtonBar->chipicClose();
+		contorlDataBar->chipicClose();
+		return;
+	}
+	contorlDataBar->setChipicData(chipic);
+	contorlButtonBar->setChipicData(chipic);
 }
 
 void Contorl::buttonClinked(int buttonType)
@@ -132,29 +135,6 @@ void Contorl::buttonClinked(int buttonType)
 		break;
 	default:
 		break;
-	}
-}
-
-/**
-* @brief Contorl::uiUpdateTimerout 500ms刷新一次，判断界面是否有信息需要刷新
-* @return void
-*/
-void Contorl::uiUpdateTimerout()
-{
-	if (uiUpdateFlag)
-	{
-		uiUpdateFlag = false;
-
-		auto chipic = chipicManager.CurrentChipic;
-		if (!chipic)
-		{
-			contorlButtonBar->chipicClose();
-			contorlDataBar->chipicClose();
-			return;
-		}
-		contorlDataBar->setChipicData(chipic);
-		contorlButtonBar->setChipicData(chipic);
-
 	}
 }
 

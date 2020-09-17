@@ -26,16 +26,6 @@ public:
 	std::string m3dPath = "E:/lingshiwenjianjia/MILO_D/MILO_D.m3d";
 private:
 	Ui::ContorlClass ui;
-	
-	/*
-		计算程序解析m3d文本时，短时间内会有数以万计的消息更新界面信息，
-		这样会消耗许多的性能，且意义不大。
-		解决方案是使用定时器定时刷新界面。
-		每次刷新界面信号来的时候只改变flag的值，定时器触发的时候判断flag的值，来决定界面是否需要刷新
-	*/
-	bool uiUpdateFlag = false;
-	//ui刷新定时器
-	QTimer *uiTimer;
 private:
 	//运行脚本获取m3d路径
 	void getM3dPathForRunPython();
@@ -51,7 +41,6 @@ public Q_SLOTS:
 
 	void buttonClinked(int buttonType);
 
-	//定时刷新ui
-	void uiUpdateTimerout();
+
 
 };

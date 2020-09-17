@@ -7,6 +7,7 @@ ContorlButtonBar::ContorlButtonBar(QWidget *parent /*= 0*/)
 	:ui(new Ui::ContorlButtonBar)
 {
 	ui->setupUi(this);
+	ui->toolButtonConnectionWay->hide();
 }
 
 ContorlButtonBar::~ContorlButtonBar()
@@ -14,7 +15,38 @@ ContorlButtonBar::~ContorlButtonBar()
 	delete ui;
 }
 
-void ContorlButtonBar::setChipicData(std::shared_ptr<Chipic> chipic)
+void ContorlButtonBar::chipicClose()
+{
+	this->ui->toolButtonRefreash->setEnabled(false);
+	this->ui->toolButtonPause->setEnabled(false);
+	this->ui->toolButtonTimer->setEnabled(false);
+	this->ui->toolButtonParalleRun->setEnabled(true);
+	this->ui->toolButtonConnectionWay->setEnabled(true);
+
+	QIcon icon;
+	icon.addFile(QString::fromUtf8(":/icon/run.svg"), QSize(), QIcon::Normal, QIcon::Off);
+	ui->toolButtonRun->setIcon(icon);
+}
+
+/**
+* @brief ContorlButtonBar::setConnectionWayIcon 设置连接方式图标
+* @param const int & way  1:本地连接图标 2:网络连接图标 其他:不做处理
+* @return void
+*/
+void ContorlButtonBar::setConnectionWayIcon(const int& way)
+{
+	QIcon icon;
+	if (way == 1)
+	{
+		icon.addFile(QString::fromUtf8(":/icon/local.svg"), QSize(), QIcon::Normal, QIcon::Off);
+		ui->toolButtonConnectionWay->setIcon(icon);
+	} else if (way == 2){
+		icon.addFile(QString::fromUtf8(":/icon/network .svg"), QSize(), QIcon::Normal, QIcon::Off);
+		ui->toolButtonConnectionWay->setIcon(icon);
+	}
+}
+
+void ContorlButtonBar::updateUI()
 {
 	//有chipic在运行 则改变图标可用状态
 	this->ui->toolButtonRefreash->setEnabled(true);
@@ -52,36 +84,8 @@ void ContorlButtonBar::setChipicData(std::shared_ptr<Chipic> chipic)
 	QIcon icon;
 	icon.addFile(QString::fromUtf8(":/icon/finish.svg"), QSize(), QIcon::Normal, QIcon::Off);
 	ui->toolButtonRun->setIcon(icon);
-}
-void ContorlButtonBar::chipicClose()
-{
-	this->ui->toolButtonRefreash->setEnabled(false);
-	this->ui->toolButtonPause->setEnabled(false);
-	this->ui->toolButtonTimer->setEnabled(false);
-	this->ui->toolButtonParalleRun->setEnabled(true);
-	this->ui->toolButtonConnectionWay->setEnabled(true);
 
-	QIcon icon;
-	icon.addFile(QString::fromUtf8(":/icon/run.svg"), QSize(), QIcon::Normal, QIcon::Off);
-	ui->toolButtonRun->setIcon(icon);
-}
-
-/**
-* @brief ContorlButtonBar::setConnectionWayIcon 设置连接方式图标
-* @param const int & way  1:本地连接图标 2:网络连接图标 其他:不做处理
-* @return void
-*/
-void ContorlButtonBar::setConnectionWayIcon(const int& way)
-{
-	QIcon icon;
-	if (way == 1)
-	{
-		icon.addFile(QString::fromUtf8(":/icon/local.svg"), QSize(), QIcon::Normal, QIcon::Off);
-		ui->toolButtonConnectionWay->setIcon(icon);
-	} else if (way == 2){
-		icon.addFile(QString::fromUtf8(":/icon/network .svg"), QSize(), QIcon::Normal, QIcon::Off);
-		ui->toolButtonConnectionWay->setIcon(icon);
-	}
+	this->update();
 }
 
 void ContorlButtonBar::on_toolButtonRun_clicked()

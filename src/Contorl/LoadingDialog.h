@@ -19,4 +19,9 @@ public:
 	bool isShow = false;
 private:
 	Ui::LoadingDialog *ui;
+protected:
+	void closeEvent(QCloseEvent *event) override;
+
+Q_SIGNALS:
+	void dialogClose();
 };

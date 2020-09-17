@@ -28,6 +28,9 @@ Chipic::Chipic(DWORD threadID)
 
 	timer = new QTimer;
 	connect(timer, SIGNAL(timeout()), this, SLOT(timerOut()));
+
+	//开启定时器刷新
+	timer->start(5 * 1000);
 }
 
 Chipic::~Chipic()
@@ -322,15 +325,33 @@ bool Chipic::disposHintMessage(const Message& msg)
 		title = titleStr + titleNumber;
 		break;
 	case 3:
+		//如果为自动运行模式，则直接发送继续消息
+		if (getIsAuto())
+		{
+			sendMessage(108, 3, -2);
+			break;
+		}
 		hintDailog.setText(msg.text);
 		hintDailog.showForMode1();
 		break;
 	case 4:
+		//如果为自动运行模式，则直接发送继续消息
+		if (getIsAuto())
+		{
+			closeChipic();
+			break;
+		}
 		hintDailog.setText(msg.text);
 		hintDailog.showForMode3();
 		break;
 	case 9:
 	case 8:
+		//如果为自动运行模式，则直接发送继续消息
+		if (getIsAuto())
+		{
+			sendMessage(108, 3, -2);
+			break;
+		}
 		hintDailog.setText(msg.text);
 		hintDailog.showForMode2();
 		break;
@@ -347,26 +368,25 @@ bool Chipic::disposHintMessage(const Message& msg)
 */
 bool Chipic::disposeStructMapMessage(const Message& msg)
 {
-	if (msg.Msg == 208)
-	{
-		if (msg.wParam == 100 && msg.lParam == 0)
-		{
+	if (msg.Msg != 208)
+		return false;
+	if (msg.wParam != 100 || msg.lParam != 0)
+		return false;
 #ifndef SERVICE
-			std::string fileName = this->makePath("_Temp.h5");
-			fileName = MessageTransition::utf8StdstringToGbkStdstring(fileName);
-			Base::InterpreterSingleton python;
-			python.runString("import Control.controlCommand.LonelinessCmd");
-			python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
-			python.runStringArg("lonemod.openStruct(\'%s\')", fileName.c_str());
-			//开启定时器刷新
-			timer->start(5 * 1000);
-			//刷新一下数据
-			this->refreshButtonClicked();
-			//发送解析完成信号
-			emit analysisFinished();
-#endif
-		}
+	if (!getIsAuto())
+	{
+		std::string fileName = this->makePath("_Temp.h5");
+		fileName = MessageTransition::utf8StdstringToGbkStdstring(fileName);
+		Base::InterpreterSingleton python;
+		python.runString("import Control.controlCommand.LonelinessCmd");
+		python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
+		python.runStringArg("lonemod.openStruct(\'%s\')", fileName.c_str());
 	}
+	//刷新一下数据
+	this->refreshButtonClicked();
+	//发送解析完成信号
+	emit analysisFinished();
+#endif
 
 	return false;
 }
@@ -378,6 +398,9 @@ bool Chipic::disposeStructMapMessage(const Message& msg)
 */
 bool Chipic::disposResultMapMessage(const Message& msg)
 {
+	if (getIsAuto())
+		return false;
+
 	if (msg.Msg == 209)
 	{
 		if (msg.wParam != -1000 && msg.lParam != -1000)

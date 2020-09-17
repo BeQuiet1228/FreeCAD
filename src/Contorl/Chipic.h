@@ -26,7 +26,6 @@ class  Chipic:public QObject
 public:
 	Chipic(DWORD threadID = 0);
 	~Chipic();
-
 public:
 	//运行按钮被点击
 	void runButtonClicked();
@@ -44,6 +43,13 @@ public:
 	void closeChipic();
 	//打开log文件
 	void openLogFile();
+	//设置是否为auto运行模式
+	void setIsAuto(const bool& a){
+		this->isAuto = a;
+	}
+	bool getIsAuto(){
+		return this->isAuto;
+	}
 private:
 	//处理迭代步数消息
 	bool disposIterationCountMessage(const Message& msg);
@@ -112,4 +118,8 @@ Q_SIGNALS:
 public Q_SLOTS:
 	void buttonClicked(int clickType);
 	void timerOut();
+
+private:
+	//是否运行模式为auto
+	bool isAuto = false;
 };

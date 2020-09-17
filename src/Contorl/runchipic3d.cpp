@@ -145,6 +145,7 @@ void RunChipic3d::makeCfgFile(const QString &path, const QString &fileName, cons
         return;
     }
     QTextStream out(&cfg);
+	out.setCodec("GB2312");
     for(int i = 1; i <= count; i++)
     {
         out << q2s("-n 1 -wdir") << QLatin1Char(' ')
