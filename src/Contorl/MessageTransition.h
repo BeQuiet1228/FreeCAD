@@ -1,5 +1,6 @@
 #pragma once
-#include "LonelinessMode.h"
+#include "RunChipic3dListener.h"
+#include "runchipic3d.h"
 #include "CJsonObject.hpp"
 class MessageTransition
 {
@@ -87,7 +88,7 @@ public:
 		bool ok = json.Get("index", temp);
 		index = std::stoi(temp);
 		return ok;
-	}
+	};
 	//json消息转换为winmessage
 	static Message jsonToWinMessage(const std::string &json);
 	//winmessage转换为json消息

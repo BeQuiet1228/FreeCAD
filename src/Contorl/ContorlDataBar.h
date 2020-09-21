@@ -18,7 +18,7 @@ public:
 
 public: 
 	//chipic¹Ø±Õ
-	void chipicClose();
+	void chipicClose() override;
 	
 	void updateUI() override;
 private:

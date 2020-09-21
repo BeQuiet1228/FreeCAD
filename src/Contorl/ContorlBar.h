@@ -2,12 +2,13 @@
 #include <qwidget.h>
 #include <QTimer>
 #include <memory>
+#include "ContorlConfig.hpp"
 /*
 	chipic有时候会有过快的信息更新，为了节省数据刷新时的性能。
 	用定时器去刷新界面信息的显示。
 */
 class Chipic;
-class ContorlBar:public QWidget
+class CONTROL_EXPORT ContorlBar :public QWidget
 {
 	Q_OBJECT
 public:
@@ -24,6 +25,8 @@ protected:
 public:
 	//刷新界面信息
 	virtual void updateUI() = 0;
+	//chipic关闭时界面状态初始化
+	virtual void chipicClose() = 0;
 	//设置chipic
 	void setChipicData(std::shared_ptr<Chipic> chipic);
 

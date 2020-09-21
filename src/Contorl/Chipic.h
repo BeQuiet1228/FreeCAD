@@ -50,6 +50,14 @@ public:
 	bool getIsAuto(){
 		return this->isAuto;
 	}
+	//设置是否有数据更新
+	void setIsUpdate(const bool& b){
+		this->isUpdate = b;
+	}
+	//获取是否有数据更新
+	bool getIsUpdate(){
+		return this->isUpdate;
+	}
 private:
 	//处理迭代步数消息
 	bool disposIterationCountMessage(const Message& msg);
@@ -122,4 +130,6 @@ public Q_SLOTS:
 private:
 	//是否运行模式为auto
 	bool isAuto = false;
+	//数据是否有更新
+	bool isUpdate = false;
 };

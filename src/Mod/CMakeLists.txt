@@ -11,6 +11,10 @@ if(BUILD_TEST)
   add_subdirectory(Test)
 endif(BUILD_TEST)
 
+if(BUILD_PARTCHIPIC)
+  add_subdirectory(PartChipic)
+endif(BUILD_PARTCHIPIC)
+
 #add_subdirectory(TemplatePyMod)
 
 if(BUILD_IMAGE)

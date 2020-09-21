@@ -2,10 +2,12 @@
 #include <QWidget>
 #include "FileMaker.h"
 #include <deque>
+#include <QListWidgetItem>
+#include <map>
+#include <QModelIndex>
 namespace Ui{
 	class SmartContorlUI;
 }
-
 class SmartContorlUI:public QWidget{
 	Q_OBJECT
 public:
@@ -15,7 +17,14 @@ private:
 	Ui::SmartContorlUI *ui;
 	//组合之后的文件信息
 	std::deque<FileMaker::M3dData> m3dDatas;
+	//信息栏
+	std::map<unsigned long, QListWidgetItem*> itemMap;
+	//文件生成器
+	FileMaker fileMaker;
+	//threadID对应的m3d路径
+	std::map<unsigned long, QString> pathMap;
 public Q_SLOTS:
 	void on_pushButton_clicked();
 	void chipicStartFinished(unsigned long threadID);
+	void chipicWorkFinished(unsigned long threadID);
 };

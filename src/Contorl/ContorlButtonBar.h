@@ -8,7 +8,7 @@ class Chipic;
 namespace Ui {
 	class ContorlButtonBar;
 }
-class  ContorlButtonBar : public ContorlBar
+class  CONTROL_EXPORT ContorlButtonBar : public ContorlBar
 {
 	Q_OBJECT
 public:
@@ -29,7 +29,7 @@ private:
 	Ui::ContorlButtonBar *ui;
 public:
 	//chipic被关闭 重新设置按钮状态
-	void chipicClose();
+	void chipicClose() override;
 	//设置连接方式图标
 	void setConnectionWayIcon(const int& way);
 	//刷新ui显示

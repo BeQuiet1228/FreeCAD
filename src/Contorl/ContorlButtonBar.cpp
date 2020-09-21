@@ -4,7 +4,7 @@
 #include "ui_ContorlButtonBar.h"
 #include "Chipic.h"
 ContorlButtonBar::ContorlButtonBar(QWidget *parent /*= 0*/)
-	:ui(new Ui::ContorlButtonBar)
+	:ContorlBar(parent), ui(new Ui::ContorlButtonBar)
 {
 	ui->setupUi(this);
 	ui->toolButtonConnectionWay->hide();

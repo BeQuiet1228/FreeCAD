@@ -29,11 +29,6 @@ ChipicManager::ChipicManager()
 ChipicManager::~ChipicManager()
 {
 	delete loadingDialog;
-	for (auto i = ChipicUIMap.begin(); i != ChipicUIMap.end(); i++)
-	{
-		delete i->second.buttonBar;
-		delete i->second.dataBar;
-	}
 }
 
 /**
@@ -100,15 +95,10 @@ void ChipicManager::chipicStateUpdate(DWORD threadId)
 	auto  chipic = chipicMap.find(threadId);
 	if (chipic == chipicMap.end())
 		return;
-	auto chipicUI = ChipicUIMap.find(threadId);
-	//更新chipic的ui信息
-	if (chipicUI != ChipicUIMap.end())
-	{
-		chipicUI->second.buttonBar->setChipicData(chipic->second);
-		chipicUI->second.dataBar->setChipicData(chipic->second);
-	}
 
 	//如果是当前chipic信息更新，则发送更新信息。
+	if (!CurrentChipic)
+		return;
 	if (CurrentChipic->threadID != threadId)
 		return;
 	//如果dailog还在显示状态，说明chipic还没有解析完文本
@@ -153,9 +143,7 @@ void ChipicManager::chipicWorkFinished()
 	auto chipic = dynamic_cast<Chipic *>(sender);
 	if (!chipic)
 		return;
-	//发送完成计算chipic的m3d路径
-	std::string path = chipic->m3dPath;
-	emit finishChipicM3dPath(path);
+	emit finishChipicM3dPath(chipic->threadID);
 	showWorkFinishedBox();
 }
 
@@ -265,6 +253,11 @@ bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId, const int& 
 	//如果id为0则清理掉所有的chipic对象
 	if (threadId == 0)
 	{
+		//更改所有chipic的运行状态
+		for (auto i = chipicMap.begin(); i != chipicMap.end(); i++)
+		{
+			i->second->runState = false;
+		}
 		chipicMap.clear();
 		CurrentChipic.reset();
 		emit currentChipicStateUpdate();
@@ -281,7 +274,8 @@ bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId, const int& 
 	auto  chipic = chipicMap.find(threadId);
 	if (chipic == chipicMap.end())
 		return false;
-
+	//设置chipic运行状态
+	chipic->second->runState = false;
 	//正常退出
 	if (errorCode == 0)
 	{
@@ -291,14 +285,6 @@ bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId, const int& 
 			CurrentChipic.reset();
 		}
 		chipicMap.erase(chipic);
-		//移除chipicui对象
-		auto chipicui = ChipicUIMap.find(threadId);
-		if (chipicui != ChipicUIMap.end())
-		{
-			delete chipicui->second.buttonBar;
-			delete chipicui->second.dataBar;
-			ChipicUIMap.erase(chipicui);
-		}
 			
 		emit currentChipicStateUpdate();
 		loadingDialog->close();
@@ -353,14 +339,6 @@ bool ChipicManager::dispoesStartChipicMessage(const std::string json)
 	CurrentChipic = newChipic;
 	newChipic.reset();
 	emit currentChipicStateUpdate();
-
-	//新建chipic信息显示ui，放入管理器中
-	ChipicUI chipicUi;
-	chipicUi.buttonBar = new ContorlButtonBar;
-	chipicUi.dataBar = new ContorlDataBar;
-	chipicUi.buttonBar->setChipicData(CurrentChipic);
-	chipicUi.dataBar->setChipicData(CurrentChipic);
-	ChipicUIMap.insert(std::map<unsigned long,ChipicUI>::value_type(CurrentChipic->threadID, chipicUi));
 
 	//发送chipic启动完成信号
 	emit chipicStartFinished(threadId);
@@ -446,6 +424,22 @@ void ChipicManager::sendStartChipicMessage(const std::string& path, const int& t
 
 	showLoadDailog();
 
+}
+
+/**
+* @brief ChipicManager::getM3dpathForThreadID 根据线程id获取一个 chipic的m3d路径
+* @param unsigned long threadID
+* @return QString
+*/
+QString ChipicManager::getM3dpathForThreadID(unsigned long threadID)
+{
+	auto chipic = chipicMap.find(threadID);
+	if (chipic == chipicMap.end())
+		return "";
+	auto temp = chipic->second->m3dPath;
+	
+	QString result = QString::fromStdString(temp);
+	return result;
 }
 
 #ifndef MY_QTCMY_DEBUG

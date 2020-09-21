@@ -2,14 +2,16 @@
 #include <QProcess>
 std::shared_ptr<OpenLog> OpenLog::_instance;
 
-OpenLog::~OpenLog()
-{
-
-}
 OpenLog::OpenLog()
 {
-
+	process = new QProcess;
 }
+
+OpenLog::~OpenLog()
+{
+	delete process;
+}
+
 
 /**
 * @brief OpenLog::setCurrentChipicM3dPath 设置当前运算中的工程路径
@@ -29,7 +31,6 @@ void OpenLog::setCurrentChipicM3dPath(const std::string& path)
 void OpenLog::openLog()
 {
 	QString cmd = "notepad.exe " + this->m3dPath;
-	QProcess *process = new QProcess;
 
 	process->start(cmd);
 	process->waitForFinished();

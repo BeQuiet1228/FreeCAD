@@ -14,10 +14,6 @@ class CONTROL_EXPORT ChipicManager :public QObject
 public:
 	ChipicManager();
 	~ChipicManager();
-	struct ChipicUI{
-		ContorlButtonBar *buttonBar;
-		ContorlDataBar *dataBar;
-	};
 	enum RunType{
 		AUTO,
 		MANUAL
@@ -30,15 +26,13 @@ private:
 public:
 	//当前管理的计算程序
 	std::shared_ptr<Chipic> CurrentChipic;
-	//chipicUI管理器
-	std::map<unsigned long, ChipicUI> ChipicUIMap;
 	//计算程序集合
 	std::map<DWORD, std::shared_ptr<Chipic>> chipicMap;
 Q_SIGNALS:
 	//当前计算程序有信息更新
 	void currentChipicStateUpdate();
 	//chipic计算完成 并将文件路径发送出去
-	void finishChipicM3dPath(std::string);
+	void finishChipicM3dPath(unsigned long);
 	//chipic成功启动信号
 	void chipicStartFinished(unsigned long);
 public Q_SLOTS:
@@ -64,6 +58,8 @@ public:
 	void setRunType(const RunType& runType){
 		this->runType = runType;
 	}
+	//获取一个chipic的m3d路径
+	QString getM3dpathForThreadID(unsigned long threadID);
 private:
 	//检测路径是否存在
 	bool detectionFilePathUTF8(const std::string& path);

@@ -1,4 +1,5 @@
 #include "ContorlBar.h"
+#include "Chipic.h"
 std::shared_ptr<QTimer> ContorlBar::timer;
 
 ContorlBar::ContorlBar(QWidget *parent /*= 0*/)
@@ -37,12 +38,20 @@ void ContorlBar::setChipicData(std::shared_ptr<Chipic> chipic)
 */
 void ContorlBar::uiTimerOut()
 {
-	if (chipic)
+	//如果chipic存在 且有数据更新 则更新界面信息
+	if (!chipic)
+		return;
+	//如果chipic不为运行状态了  那么将界面初始化为最初的状态
+	if (chipic->runState == false)
 	{
-		updateUI();
 		chipic.reset();
-	}
-		
+		this->chipicClose();
+		return;
+	}	
+	if (!chipic->getIsUpdate())
+		return;
+	updateUI();
+
 }
 
 #include "moc_ContorlBar.cpp"

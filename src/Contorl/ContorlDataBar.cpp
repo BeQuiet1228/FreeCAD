@@ -4,7 +4,7 @@
 #include "MessageTransition.h"
 #include "Chipic.h"
 ContorlDataBar::ContorlDataBar(QWidget *parent /*= 0*/)
-	:ui(new Ui::Form)
+	:ContorlBar(parent), ui(new Ui::Form)
 {
 	ui->setupUi(this);
 	chipicClose();

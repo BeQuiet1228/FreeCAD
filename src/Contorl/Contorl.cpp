@@ -1,6 +1,5 @@
 #include "Contorl.h"
 #include <qdebug.h>
-#include "LonelinessMode.h"
 #include "MessageSender.h"
 #include "MessageTransition.h"
 #include "ChipicManager.h"

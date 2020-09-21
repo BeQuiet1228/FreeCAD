@@ -5,7 +5,8 @@
 #include <QFile>
 #include <iostream>
 #include <QTextStream>
-
+#include <QProcess>
+#include <QDebug>
 FileMaker::FileMaker()
 {
 
@@ -37,7 +38,6 @@ void FileMaker::setM3dPath(const std::string& m3dPath)
 	auto fileName = fileinfo.baseName();
 	auto filePath = QString(temp).remove(fileinfo.fileName());
 	QString newPath = filePath + fileName;
-
 	if (!dir.exists(newPath))
 		dir.mkdir(newPath);
 
@@ -69,10 +69,10 @@ std::deque<FileMaker::M3dData> FileMaker::makeFile(std::vector<QString>& variate
 	for (auto i = variates.begin(); i != variates.end(); i++)
 	{
 		M3dData data;
-		auto path = this->filePath + QString::number(count) + "/";
+		auto path = this->newFilePath + "/" + QString::number(count) + "/";
 		if (!dir.exists(path))
 			dir.mkdir(path);
-		auto name =this->fileName + ".m3d";
+		auto name =this->fileName + "_" + QString::number(count) + ".m3d";
 		data.m3dPath = path + name;
 		data.variates = *i;
 		//生成m3d文件
@@ -95,4 +95,27 @@ std::deque<FileMaker::M3dData> FileMaker::makeFile(std::vector<QString>& variate
 	file.close();
 
 	return datas;
+}
+
+/**
+* @brief FileMaker::cutFile 剪切数据
+* @param const QString & fileName
+* @param const QString & path
+* @return bool
+*/
+bool FileMaker::cutFile(const QString& fileName, const QString& path)
+{
+	QString cmd = "move " + fileName + " " + path;
+	cmd = cmd.replace("/", "\\");
+	//调用windows命令实现剪切功能
+	QProcess *process = new QProcess;
+	process->startDetached(cmd);
+	process->start(cmd);
+	process->waitForStarted();
+	process->waitForFinished();
+	//当文件已存在时可能出现是否要求替换的选项 直接覆盖
+	process->start("yes");
+	process->waitForFinished();
+
+	return true;
 }

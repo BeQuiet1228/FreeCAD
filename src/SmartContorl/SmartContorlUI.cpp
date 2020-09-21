@@ -6,6 +6,7 @@
 #include <Contorl/ContorlInterface.h>
 #include <contorl/ContorlDataBar.h>
 #include <QListWidgetItem>
+#include <Contorl/Chipic.h>
 SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	:QWidget(parent), ui(new Ui::SmartContorlUI)
 {
@@ -15,6 +16,9 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	chipicManger->setRunType(ChipicManager::AUTO);
 
 	connect(chipicManger, SIGNAL(chipicStartFinished(unsigned long)), this, SLOT(chipicStartFinished(unsigned long)));
+	connect(chipicManger, SIGNAL(finishChipicM3dPath(unsigned long)), this, SLOT(chipicWorkFinished(unsigned long)));
+
+	fileMaker.setM3dPath("E:/lingshiwenjianjia/MILO_C/MILO_C.m3d");
 }
 
 SmartContorlUI::~SmartContorlUI()
@@ -33,37 +37,78 @@ void SmartContorlUI::on_pushButton_clicked()
 		std::cerr << "string:/n" << std::endl;
 		std::cerr << (*i).toStdString() << std::endl;
 	}
-	FileMaker maker;
-	maker.setM3dPath("E:/lingshiwenjianjia/MILO_C/MILO_C.m3d");
-	m3dDatas = maker.makeFile(str);
+	m3dDatas = fileMaker.makeFile(str);
 
 	auto contorl = ContorlInterface::GetInstance();
 	auto chipicManger = contorl->getChipicManager();
+	if (m3dDatas.size() == 0)
+		return;
 	auto data = m3dDatas.front();
+	m3dDatas.pop_front();
 	chipicManger->sendStartChipicMessage(data.m3dPath.toStdString(), 1);
 }
 
 void SmartContorlUI::chipicStartFinished(unsigned long threadID)
 {
-	m3dDatas.pop_front();
-	
 	auto contorl = ContorlInterface::GetInstance();
 	auto manager = contorl->getChipicManager();
 
-	auto chipicUI = manager->ChipicUIMap.find(threadID);
-	if (chipicUI != manager->ChipicUIMap.end())
-	{
-		auto item = new QListWidgetItem(ui->listWidget);
-		item->setSizeHint(chipicUI->second.dataBar->size());
-		ui->listWidget->setItemWidget(item,chipicUI->second.dataBar);
-	}
+	auto item = new QListWidgetItem(ui->listWidget);
+	auto dataBar = new ContorlDataBar;
+	item->setSizeHint(dataBar->size());
+	ui->listWidget->setItemWidget(item, dataBar);
+
+	auto chipic = manager->chipicMap.find(threadID);
+	if (chipic != manager->chipicMap.end())
+		dataBar->setChipicData(chipic->second);
+
+	itemMap.insert(std::map<unsigned long, QListWidgetItem*>::value_type(threadID, item));
 
 	if (manager->chipicMap.size() < 8)
 	{
+		if (m3dDatas.size() <= 0)
+			return;
 		auto data = m3dDatas.front();
+		m3dDatas.pop_front();
 		manager->sendStartChipicMessage(data.m3dPath.toStdString(), 1);
 	}
 
+	auto m3dPath = manager->getM3dpathForThreadID(threadID);
+	pathMap.insert(std::map<unsigned long, QString>::value_type(threadID, m3dPath));
+
+}
+
+void SmartContorlUI::chipicWorkFinished(unsigned long threadID)
+{
+	//寻找到对应的ui 然后释放掉
+	auto iter = itemMap.find(threadID);
+	if (iter != itemMap.end())
+	{
+		auto databar = ui->listWidget->itemWidget(iter->second);
+		delete iter->second;
+		delete databar;
+	}
+
+	auto contorl = ContorlInterface::GetInstance();
+	auto manager = contorl->getChipicManager();
+
+
+	if (manager->chipicMap.size() < 8)
+	{
+		if (m3dDatas.size() <= 0)
+			return;
+		auto data = m3dDatas.front();
+		m3dDatas.pop_front();
+		manager->sendStartChipicMessage(data.m3dPath.toStdString(), 1);
+	}
+
+	//剪切文件
+	auto it = pathMap.find(threadID);
+	if (it == pathMap.end())
+		return;
+	auto m3dpath = it->second;
+	m3dpath = m3dpath.left(m3dpath.length() - 4) + ".h5";
+	fileMaker.cutFile(m3dpath, fileMaker.filePath);
 }
 
 #include "moc_SmartContorlUI.cpp"

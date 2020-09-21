@@ -6,7 +6,6 @@
 #include <Qt>
 #include <iostream>
 #include <QVBoxLayout>
-#include "LonelinessMode.h"
 #include "MessageTransition.h"
 #include "MessageSender.h"
 #include <QFileInfo>
@@ -506,11 +505,9 @@ bool Chipic::disposChipicFinished(const Message& msg)
 		return false;
 	if (msg.lParam != 0)
 		return false;
-	/*
-		发送计算完成信号，在这个之后会释放掉chipic相关对象。
-	*/
-	emit workFinished();
 	this->closeChipic();
+
+	emit workFinished();
 	return true;
 }
 
@@ -548,36 +545,42 @@ void Chipic::disposJsonMessage(const std::string& json)
 	if (disposHintMessage(msg))
 	{
 		emit stateUpdate(this->threadID);
+		setIsUpdate(true);
 		return;
 	}
 	//处理迭代步数消息
 	if (disposIterationCountMessage(msg))
 	{
 		emit stateUpdate(this->threadID);
+		setIsUpdate(true);
 		return;
 	}
 	//处理cpu消耗时间消息
 	if (disposUsedTimeMessage(msg))
 	{
 		emit stateUpdate(this->threadID);
+		setIsUpdate(true);
 		return;
 	}
 	//处理粒子数目消息
 	if (disposParticleMessage(msg))
 	{
 		emit stateUpdate(this->threadID);
+		setIsUpdate(true);
 		return;
 	}
 	//处理迭代时间消息
 	if(disposeIterationTimeMessage(msg))
 	{ 
 		emit stateUpdate(this->threadID);
+		setIsUpdate(true);
 		return;
 	}
 	//处理chipic暂停状态消息
 	if (disposeChipicIsPause(msg))
 	{
 		emit stateUpdate(this->threadID);
+		setIsUpdate(true);
 		return;
 	}
 	//输出除了提示消息以外的消息
@@ -586,6 +589,7 @@ void Chipic::disposJsonMessage(const std::string& json)
 	if (disposChipicCloseMessage(json))
 	{
 		emit stateUpdate(threadID);
+		setIsUpdate(true);
 		return;
 	}
 	//处理器件结构消息
@@ -595,6 +599,7 @@ void Chipic::disposJsonMessage(const std::string& json)
 	if(disposeChipicTimerState(msg))
 	{
 		emit stateUpdate(this->threadID);
+		setIsUpdate(true);
 		return;
 	}
 
@@ -602,6 +607,7 @@ void Chipic::disposJsonMessage(const std::string& json)
 	if (disposChipicSendMessagePauseMessage(msg))
 	{
 		emit stateUpdate(this->threadID);
+		setIsUpdate(true);
 		return;
 	}
 	//查看结果图
