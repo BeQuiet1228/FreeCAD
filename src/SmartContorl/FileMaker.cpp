@@ -105,17 +105,37 @@ std::deque<FileMaker::M3dData> FileMaker::makeFile(std::vector<QString>& variate
 */
 bool FileMaker::cutFile(const QString& fileName, const QString& path)
 {
-	QString cmd = "move " + fileName + " " + path;
+	QFileInfo fileInfo(fileName);
+
+	auto newFileName = path +"/"+ fileInfo.fileName();
+
+	std::cerr << newFileName.toStdString() << std::endl;
+	std::cerr << fileName.toStdString() << std::endl;
+
+	QFile::remove(newFileName);
+	{
+		QFile file(fileName);
+		if (file.open(QIODevice::ReadWrite))
+		{
+			if(file.rename(newFileName))
+				file.close();
+		}
+
+	}
+
+	/*QString cmd = "move " + fileName + " " + path;
 	cmd = cmd.replace("/", "\\");
+
+	std::cerr << cmd.toStdString() << std::endl;
+
 	//调用windows命令实现剪切功能
 	QProcess *process = new QProcess;
-	process->startDetached(cmd);
 	process->start(cmd);
-	process->waitForStarted();
 	process->waitForFinished();
 	//当文件已存在时可能出现是否要求替换的选项 直接覆盖
-	process->start("yes");
+	process->start("ping www.baidu.com");
 	process->waitForFinished();
 
+	std::cerr << process->readAll().data() << "23333" <<std::endl;*/
 	return true;
 }

@@ -64,6 +64,9 @@ void SmartContorlUI::chipicStartFinished(unsigned long threadID)
 
 	itemMap.insert(std::map<unsigned long, QListWidgetItem*>::value_type(threadID, item));
 
+	auto m3dPath = manager->getM3dpathForThreadID(threadID);
+	pathMap.insert(std::map<unsigned long, QString>::value_type(threadID, m3dPath));
+
 	if (manager->chipicMap.size() < 8)
 	{
 		if (m3dDatas.size() <= 0)
@@ -73,8 +76,6 @@ void SmartContorlUI::chipicStartFinished(unsigned long threadID)
 		manager->sendStartChipicMessage(data.m3dPath.toStdString(), 1);
 	}
 
-	auto m3dPath = manager->getM3dpathForThreadID(threadID);
-	pathMap.insert(std::map<unsigned long, QString>::value_type(threadID, m3dPath));
 
 }
 
@@ -92,6 +93,14 @@ void SmartContorlUI::chipicWorkFinished(unsigned long threadID)
 	auto contorl = ContorlInterface::GetInstance();
 	auto manager = contorl->getChipicManager();
 
+	//剪切文件
+	auto it = pathMap.find(threadID);
+	if (it != pathMap.end())
+	{
+		auto m3dpath = it->second;
+		m3dpath = m3dpath.left(m3dpath.length() - 4) + ".h5";
+		fileMaker.cutFile(m3dpath, fileMaker.filePath);
+	}
 
 	if (manager->chipicMap.size() < 8)
 	{
@@ -102,13 +111,6 @@ void SmartContorlUI::chipicWorkFinished(unsigned long threadID)
 		manager->sendStartChipicMessage(data.m3dPath.toStdString(), 1);
 	}
 
-	//剪切文件
-	auto it = pathMap.find(threadID);
-	if (it == pathMap.end())
-		return;
-	auto m3dpath = it->second;
-	m3dpath = m3dpath.left(m3dpath.length() - 4) + ".h5";
-	fileMaker.cutFile(m3dpath, fileMaker.filePath);
 }
 
 #include "moc_SmartContorlUI.cpp"
