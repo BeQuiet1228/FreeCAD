@@ -2,6 +2,7 @@
 #include <QString>
 #include <deque>
 #include <vector>
+#include "ChipicRunData.h"
 class FileMaker{
 public:
 	struct M3dData{
@@ -12,9 +13,9 @@ public:
 	~FileMaker();
 
 	//设置原始m3d路径
-	void setM3dPath(const std::string& m3dPath);
+	void setM3dPath(const QString& m3dPath);
 	//生成文件
-	std::deque<M3dData> makeFile(std::vector<QString>& variates);
+	ChipicRunDatas makeFile(std::vector<QString>& variates);
 	//剪切文件至指定目录
 	bool cutFile(const QString& fileName,const QString& path);
 

@@ -22,21 +22,20 @@ FileMaker::~FileMaker()
 * @param const std::string & m3dPath
 * @return void
 */
-void FileMaker::setM3dPath(const std::string& m3dPath)
+void FileMaker::setM3dPath(const QString& m3dPath)
 {
-	QString temp = QString::fromStdString(m3dPath);
 	QDir dir;
-	if (!dir.exists(temp))
+	if (!dir.exists(m3dPath))
 	{
 		QMessageBox box;
-		box.setText("FileMaker::setM3dPath path not exists， path:" + temp);
+		box.setText("FileMaker::setM3dPath path not exists， path:" + m3dPath);
 		box.exec();
 		return;
 	}
-	QFileInfo fileinfo(temp);
+	QFileInfo fileinfo(m3dPath);
 	
 	auto fileName = fileinfo.baseName();
-	auto filePath = QString(temp).remove(fileinfo.fileName());
+	auto filePath = QString(m3dPath).remove(fileinfo.fileName());
 	QString newPath = filePath + fileName;
 	if (!dir.exists(newPath))
 		dir.mkdir(newPath);
@@ -44,7 +43,7 @@ void FileMaker::setM3dPath(const std::string& m3dPath)
 	this->newFilePath = newPath;
 	this->filePath = filePath;
 	this->fileName = fileName;
-	this->m3dPath = temp;
+	this->m3dPath = m3dPath;
 }
 
 /**
@@ -52,7 +51,7 @@ void FileMaker::setM3dPath(const std::string& m3dPath)
 * @param std::vector<QString> & variates
 * @return std::deque<FileMaker::M3dData>
 */
-std::deque<FileMaker::M3dData> FileMaker::makeFile(std::vector<QString>& variates)
+ChipicRunDatas FileMaker::makeFile(std::vector<QString>& variates)
 {
 	int count = 0;
 
@@ -63,24 +62,28 @@ std::deque<FileMaker::M3dData> FileMaker::makeFile(std::vector<QString>& variate
 	}
 	QString m3d = file.readAll();
 
-	std::deque<M3dData> datas;
+	ChipicRunDatas datas;
 	QDir dir;
 
 	for (auto i = variates.begin(); i != variates.end(); i++)
 	{
-		M3dData data;
+		ChipicRunDataPtr data;
 		auto path = this->newFilePath + "/" + QString::number(count) + "/";
 		if (!dir.exists(path))
 			dir.mkdir(path);
 		auto name =this->fileName + "_" + QString::number(count) + ".m3d";
-		data.m3dPath = path + name;
-		data.variates = *i;
+		data->m3dPath = path + name;
+		auto h5file = this->fileName + "_" + QString::number(count) + ".h5";
+		data->h5FilePath = h5file;
+		data->variate = *i;
 		//生成m3d文件
 		auto newM3d = *i + m3d;
 		QFile newFile(path + name);
 		if (!newFile.open(QIODevice::ReadWrite))
 		{
+#ifdef MY_LOG
 			std::cerr << "FileMaker::makeFile file is not open! path:" << path.toStdString() << std::endl;
+#endif // MY_LOG
 			continue;
 		}
 

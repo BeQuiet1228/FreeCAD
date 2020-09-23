@@ -28,7 +28,7 @@ SmartContorlUI::~SmartContorlUI()
 
 void SmartContorlUI::on_pushButton_clicked()
 {
-	VariateAnalysis var;
+/*	VariateAnalysis var;
 	auto tt = var.analysisTextToVariate(ui->textEdit->toPlainText());
 
 	auto str = Variate::makeStringForVariates(tt);
@@ -45,7 +45,34 @@ void SmartContorlUI::on_pushButton_clicked()
 		return;
 	auto data = m3dDatas.front();
 	m3dDatas.pop_front();
-	chipicManger->sendStartChipicMessage(data.m3dPath.toStdString(), 1);
+	chipicManger->sendStartChipicMessage(data.m3dPath.toStdString(), 1);*/
+}
+//载入按钮
+void SmartContorlUI::on_pushButton_3_clicked()
+{
+	auto  str = ui->textEdit->toPlainText();
+
+	smartContorl.luaLoadFromString(str.toStdString());
+}
+//初始化按钮
+void SmartContorlUI::on_pushButton_4_clicked()
+{
+	smartContorl.luaInit();
+}
+//数据筛选按钮
+void SmartContorlUI::on_pushButton_5_clicked()
+{
+	smartContorl.luaResultDataFilter();
+}
+//预期对比按钮
+void SmartContorlUI::on_pushButton_6_clicked()
+{
+	smartContorl.luaResultExpcet();
+}
+//参数优化
+void SmartContorlUI::on_pushButton_7_clicked()
+{
+	smartContorl.luaOptimize();
 }
 
 void SmartContorlUI::chipicStartFinished(unsigned long threadID)

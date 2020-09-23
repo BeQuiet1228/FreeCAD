@@ -123,6 +123,14 @@ SET(SmartContorl_src
 	VariateAnalysis.cpp
 	FileMaker.h
 	FileMaker.cpp
+	SmartContorl.cpp
+	SmartContorl.h
+	SmartContorlData.cpp
+	SmartContorlData.h
+	LuaCInterface.h
+	LuaCInterface.cpp
+	ChipicRunData.cpp
+	ChipicRunData.h
 	${UI_SRC}
 	${JSON_SRC}
 	${MY_MOC_SRC}

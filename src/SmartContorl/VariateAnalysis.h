@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 #include <QString>
 #include <QStringList>
@@ -17,6 +18,13 @@ public:
 	//穷举出两组字符串的所有组合
 	static std::vector<QString> makeStringForTowVariate(const std::vector<QString> variate1, const std::vector<QString> variate2);
 
+	//添加值
+	void addValue(const std::string& t){
+		values.push_back(QString::fromLocal8Bit(t.c_str()));
+	}
+	void addValue(const QString& t){
+		values.push_back(t);
+	}
 };
 
 class VariateAnalysis
