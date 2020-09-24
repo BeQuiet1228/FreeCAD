@@ -195,7 +195,8 @@
 #endif
 
 DWORD start, stop;
-#define TEST_OUTPUT 1
+#define TEST_OUTPUT 0
+
 namespace PartChipic {
 	class Module : public Py::ExtensionModule<Module>
 	{
