@@ -477,7 +477,6 @@ PyObject *ConsoleSingleton::sPyMessage(PyObject * /*self*/, PyObject *args, PyOb
     PyObject *output;
     if (!PyArg_ParseTuple(args, "O", &output))
         return NULL;
-
 #if PY_MAJOR_VERSION >= 3
     const char* string=0;
     PyObject* unicode=0;
@@ -510,7 +509,7 @@ PyObject *ConsoleSingleton::sPyMessage(PyObject * /*self*/, PyObject *args, PyOb
     PY_TRY {
 		if (string){
 			write_string_to_file_append("Msg:",string);
-			Instance().Message("%s", string);            // process message
+			//Instance().Message("%s", string);            // process message
 		}
 
             
