@@ -25,7 +25,7 @@ private:
 	//threadID对应的m3d路径
 	std::map<unsigned long, QString> pathMap;
 
-	SmartContorl smartContorl;
+	SmartContorl *smartContorl;
 public Q_SLOTS:
 	void on_pushButton_clicked();
 	void on_pushButton_3_clicked();
@@ -35,4 +35,5 @@ public Q_SLOTS:
 	void on_pushButton_7_clicked();
 	void chipicStartFinished(unsigned long threadID);
 	void chipicWorkFinished(unsigned long threadID);
+	void addListWidgetItem(QListWidgetItem *item,QWidget *widget);
 };

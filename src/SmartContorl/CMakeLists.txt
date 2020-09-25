@@ -89,9 +89,11 @@ SET(JSON_SRC
 )
 SET(MY_MOC_HDR
 	SmartContorlUI.h
+	SmartContorl.h
 )
 SET(MY_MOC_SRC
 	SmartContorlUI.cpp
+	SmartContorl.cpp
 )
 SET(NETWORK_SRC
 
@@ -123,8 +125,6 @@ SET(SmartContorl_src
 	VariateAnalysis.cpp
 	FileMaker.h
 	FileMaker.cpp
-	SmartContorl.cpp
-	SmartContorl.h
 	SmartContorlData.cpp
 	SmartContorlData.h
 	LuaCInterface.h

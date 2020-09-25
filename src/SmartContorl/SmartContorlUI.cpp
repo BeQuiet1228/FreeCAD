@@ -7,18 +7,18 @@
 #include <contorl/ContorlDataBar.h>
 #include <QListWidgetItem>
 #include <Contorl/Chipic.h>
+#include <SmartContorlData.h>
 SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	:QWidget(parent), ui(new Ui::SmartContorlUI)
 {
 	ui->setupUi(this);
-	auto contorl = ContorlInterface::GetInstance();
-	auto chipicManger = contorl->getChipicManager();
-	chipicManger->setRunType(ChipicManager::AUTO);
 
-	connect(chipicManger, SIGNAL(chipicStartFinished(unsigned long)), this, SLOT(chipicStartFinished(unsigned long)));
-	connect(chipicManger, SIGNAL(finishChipicM3dPath(unsigned long)), this, SLOT(chipicWorkFinished(unsigned long)));
+	auto contorlData = SmartContorlData::GetInstance();
+	smartContorl = contorlData->smartContorl;
 
-	fileMaker.setM3dPath("E:/lingshiwenjianjia/MILO_C/MILO_C.m3d");
+	std::string m3dPath = "E:/lingshiwenjianjia/MILO_C/MILO_C.m3d";
+	smartContorl->setM3dPath(m3dPath);
+	connect(smartContorl, SIGNAL(addDataBar(QListWidgetItem*, QWidget*)), this, SLOT(addListWidgetItem(QListWidgetItem*, QWidget*)));
 }
 
 SmartContorlUI::~SmartContorlUI()
@@ -46,33 +46,35 @@ void SmartContorlUI::on_pushButton_clicked()
 	auto data = m3dDatas.front();
 	m3dDatas.pop_front();
 	chipicManger->sendStartChipicMessage(data.m3dPath.toStdString(), 1);*/
+	smartContorl->makeRunData();
+	smartContorl->runChipic();
 }
 //载入按钮
 void SmartContorlUI::on_pushButton_3_clicked()
 {
 	auto  str = ui->textEdit->toPlainText();
 
-	smartContorl.luaLoadFromString(str.toStdString());
+	smartContorl->luaLoadFromString(str.toStdString());
 }
 //初始化按钮
 void SmartContorlUI::on_pushButton_4_clicked()
 {
-	smartContorl.luaInit();
+	smartContorl->luaInit();
 }
 //数据筛选按钮
 void SmartContorlUI::on_pushButton_5_clicked()
 {
-	smartContorl.luaResultDataFilter();
+	smartContorl->luaResultDataFilter();
 }
 //预期对比按钮
 void SmartContorlUI::on_pushButton_6_clicked()
 {
-	smartContorl.luaResultExpcet();
+	smartContorl->luaResultExpcet();
 }
 //参数优化
 void SmartContorlUI::on_pushButton_7_clicked()
 {
-	smartContorl.luaOptimize();
+	smartContorl->luaOptimize();
 }
 
 void SmartContorlUI::chipicStartFinished(unsigned long threadID)
@@ -138,6 +140,12 @@ void SmartContorlUI::chipicWorkFinished(unsigned long threadID)
 		manager->sendStartChipicMessage(data.m3dPath.toStdString(), 1);
 	}
 
+}
+
+void SmartContorlUI::addListWidgetItem(QListWidgetItem *item, QWidget *widget)
+{
+	ui->listWidget->addItem(item);
+	ui->listWidget->setItemWidget(item, widget);
 }
 
 #include "moc_SmartContorlUI.cpp"

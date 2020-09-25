@@ -3,9 +3,13 @@
 #include "VariateAnalysis.h"
 #include "ChipicRunData.h"
 #include "FileMaker.h"
+#include "Contorl/ChipicManager.h"
+#include <QObject>
+#include <QListWidgetItem>
+#include <QWidget>
 struct lua_State;
-class SmartContorl{
-
+class SmartContorl:public QObject{
+	Q_OBJECT
 public:
 	SmartContorl();
 	~SmartContorl();
@@ -24,7 +28,10 @@ public:
 	void luaLoadFromFile(const std::string& filePath);
 	//根据参数组生成新的运行信息
 	void makeRunData();
-	
+	//运行chipic
+	void runChipic();
+	//数据优化
+	void dataOptimize();
 	//添加一个参数组
 	void addVariate(const Variate& v){
 		this->variates.push_back(v);
@@ -36,11 +43,15 @@ public:
 	//设置优化的m3d路径
 	void setM3dPath(const QString& s){
 		this->m3dPath = s;
+		fileMaker.setM3dPath(s);
 	}
 	void setM3dPath(const std::string s){
 		this->m3dPath = QString::fromStdString(s);
+		fileMaker.setM3dPath(m3dPath);
 	}
 private:
+	//同时运行chipic的个数
+	unsigned int chipicCount = 6;
 	//lua虚拟机
 	lua_State *lua_state;
 	//参数组
@@ -55,4 +66,13 @@ private:
 	QString m3dPath;
 	//参数文件生成器
 	FileMaker fileMaker;
+	//contorl模块中的chipicManager 这个对象由contorl模块管理  不能在外部释放
+	ChipicManager *chipicManager;
+
+public Q_SLOTS:
+	void chipicWorkFinished(unsigned long threadID);
+	void chipicStartFinished(unsigned long threadID);
+
+Q_SIGNALS:
+	void addDataBar(QListWidgetItem*,QWidget*);
 };

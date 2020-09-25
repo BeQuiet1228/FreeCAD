@@ -6,12 +6,22 @@ extern "C"{
 }
 #include <iostream>
 #include "LuaCInterface.h"
+#include "Contorl/ContorlInterface.h"
+#include "Contorl/Chipic.h"
 SmartContorl::SmartContorl()
 {
 	lua_state = luaL_newstate();
 	luaL_openlibs(lua_state);
 	//注册lua函数
 	registerLuaFunction(lua_state);
+	//获取chipicmanager管理对象
+	auto contorl = ContorlInterface::GetInstance();
+	chipicManager = contorl->getChipicManager();
+	chipicManager->setRunType(ChipicManager::AUTO);
+	//链接计算完成槽
+	connect(chipicManager, SIGNAL(finishChipicM3dPath(unsigned long)), this, SLOT(chipicWorkFinished(unsigned long)));
+	connect(chipicManager, SIGNAL(chipicStartFinished(unsigned long)), this, SLOT(chipicStartFinished(unsigned long)));
+
 }
 
 SmartContorl::~SmartContorl()
@@ -102,3 +112,100 @@ void SmartContorl::makeRunData()
 	this->chipicDataWait = fileMaker.makeFile(m3ds);
 }
 
+/**
+* @brief SmartContorl::runChipic 判断已运行的chipic数量，根据设置的最大运行数量，运行等待区中的m3d
+* @return void
+*/
+void SmartContorl::runChipic()
+{
+	auto iter = this->chipicDataWait.begin();
+	while (iter != this->chipicDataWait.end())
+	{
+		//已有足够多的chipic在运行则不操作
+		if (chipicDataRuning.size() >= chipicCount)
+			return;
+
+		//启动chipic
+		chipicManager->sendStartChipicMessage((*iter)->m3dPath.toStdString(), 1);
+		chipicDataRuning.insert(ChipicRunDataMap::value_type((*iter)->m3dPath, *iter));
+		chipicDataWait.erase(iter);
+
+		iter = chipicDataWait.begin();
+	}
+}
+
+/**
+* @brief SmartContorl::dataOptimize 调用lua对参数进行优化
+* @return void
+*/
+void SmartContorl::dataOptimize()
+{
+	//运算结果数据筛选
+	this->luaResultDataFilter();
+	//判断数据是否符合预期，符合则结束运行
+	if (this->luaResultExpcet())
+		return;
+	//调用优化算法对参数进行优化
+	this->luaOptimize();
+}
+
+/**
+* @brief SmartContorl::chipicWorkFinished chipic计算完成槽
+* @param unsigned long threadID
+* @return void
+*/
+void SmartContorl::chipicWorkFinished(unsigned long threadID)
+{
+	//找到chipicdata对象
+	auto dataIter = chipicDataRuning.begin();
+	for (; dataIter != chipicDataRuning.end(); dataIter++)
+	{
+		if (dataIter->second->threadID == threadID)
+			break;
+	}
+
+	auto chipicData = dataIter->second;
+	chipicData->deleteItemAndBarPtr();
+
+	chipicDataFinish.push_back(chipicData);
+	chipicDataRuning.erase(dataIter);
+
+	this->runChipic();
+
+	//如果等待区和运行区没有任务了 则直接调用lua脚本优化参数
+	if (this->chipicDataWait.size() == 0
+		&& this->chipicDataRuning.size() == 0)
+	{
+		this->dataOptimize();
+	}
+}
+
+/**
+* @brief SmartContorl::chipicStartFinished chipic启动完成槽
+* @param unsigned long threadID
+* @return void
+*/
+void SmartContorl::chipicStartFinished(unsigned long threadID)
+{
+	//获取chipic对象
+	auto chipicIter = chipicManager->chipicMap.find(threadID);
+	if (chipicIter == chipicManager->chipicMap.end())
+		return;
+	auto chipic = chipicIter->second;
+
+	//判断这个chipic对象是否是由this启动的
+	QString path = QString::fromStdString(chipic->m3dPath);
+	auto dataIter = chipicDataRuning.find(path);
+	if (dataIter == chipicDataRuning.end())
+		return;
+	auto chipicData = dataIter->second;
+
+	//生成ui 
+	chipicData->setCreatDataBar(chipic);
+	chipicData->threadID = threadID;
+	chipicDataFinish.push_back(chipicData);
+
+	emit addDataBar(chipicData->widgetItem, chipicData->dataBar);
+}
+
+#include "moc_SmartContorl.cpp"

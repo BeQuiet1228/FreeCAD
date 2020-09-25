@@ -68,6 +68,7 @@ ChipicRunDatas FileMaker::makeFile(std::vector<QString>& variates)
 	for (auto i = variates.begin(); i != variates.end(); i++)
 	{
 		ChipicRunDataPtr data;
+		data.reset(new ChipicRunData);
 		auto path = this->newFilePath + "/" + QString::number(count) + "/";
 		if (!dir.exists(path))
 			dir.mkdir(path);

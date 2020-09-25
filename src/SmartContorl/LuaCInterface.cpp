@@ -17,7 +17,6 @@ int addVariate(lua_State *L)
 	Variate variate;
 	//获取名称参数
 	variate.name = lua_tostring(L, 1);
-	std::cerr << "variate name : " << variate.name.toStdString() << std::endl;
 	int iiii = lua_gettop(L);
 	//获取值
 	lua_pushnil(L);
@@ -30,6 +29,7 @@ int addVariate(lua_State *L)
 		variate.addValue(temp);
 		lua_pop(L, 1);
 	}
+	contorl->addVariate(variate);
 #ifdef MY_DEBUG
 	std::cerr << "variate name : " << variate.name.toStdString() << std::endl;
 	auto v = variate.values;
