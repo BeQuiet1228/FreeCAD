@@ -8,6 +8,30 @@
 #include <QListWidgetItem>
 #include <QWidget>
 struct lua_State;
+//提供给lua接口获取运算结果
+class ChipicResultGetter{
+
+public:
+	ChipicResultGetter() = default;
+	ChipicResultGetter(const ChipicRunDatas& result){
+		setData(result);
+	}
+	~ChipicResultGetter(){};
+
+	bool next(ChipicRunDataPtr& runData);
+	//重新将迭代器指向第一个
+	void reset(){
+		this->iter = this->result.begin();
+	};
+	//设置数据
+	void setData(const ChipicRunDatas& result){
+		this->result = result;
+		this->iter = this->result.begin();
+	}
+private:
+	ChipicRunDatas::iterator iter;
+	ChipicRunDatas result;
+};
 class SmartContorl:public QObject{
 	Q_OBJECT
 public:
@@ -48,6 +72,11 @@ public:
 	void setM3dPath(const std::string s){
 		this->m3dPath = QString::fromStdString(s);
 		fileMaker.setM3dPath(m3dPath);
+	}
+	//获取运算结果
+	ChipicResultGetter getResult(){
+		ChipicResultGetter result(chipicDataFinish);
+		return result;
 	}
 private:
 	//同时运行chipic的个数

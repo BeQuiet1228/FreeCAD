@@ -2,8 +2,32 @@
 #include <memory>
 Hdf5IO::Hdf5IO(std::string fileName)
 {
-    Hdf5File = new H5File(fileName,H5F_ACC_RDWR);
+	setFilePath(fileName);
 }
+
+Hdf5IO::Hdf5IO()
+{
+	Hdf5File = nullptr;
+}
+
+Hdf5IO::~Hdf5IO()
+{
+	if (Hdf5File != nullptr)
+		delete Hdf5File;
+}
+
+/**
+* @brief Hdf5IO::setFilePath 设置h5文件路径
+* @param const std::string & path
+* @return void
+*/
+void Hdf5IO::setFilePath(const std::string& path)
+{
+	if (Hdf5File != nullptr)
+		delete Hdf5File;
+	Hdf5File = new H5File(path, H5F_ACC_RDWR);
+}
+
 /*
  * 获取一个数据组
  */
@@ -193,47 +217,6 @@ bool Hdf5IO::getValue(const DataSet& dataSet, VectorF& values)
 }
 
 /*
- * 获取数据库中的数据
- *
- */
-std::vector<float> Hdf5IO::getVlue(const Group &group,const std::string &dataName)
-{
-    DataSet dataset = group.openDataSet(dataName);
-    return getVlue(dataset);
-}
-
-/*
- * 获取数据库中的数据
- */
-std::vector<float> Hdf5IO::getVlue(const DataSet &dataSet)
-{
-    hsize_t size[2];
-    DataSpace dataSpace;
-
-    try
-    {
-        dataSpace = dataSet.getSpace();
-    }catch(...){
-        std::cerr << "";
-        std::vector<float> fbc;
-        return fbc;
-    }
-
-    dataSpace.getSimpleExtentDims(size,0);
-    std::shared_ptr<float> value(new float[size[0]*size[1]]);
-
-    dataSet.read(value.get(),PredType::NATIVE_FLOAT);
-
-	std::vector<float> listVlue;
-	listVlue.reserve(size[0] * size[1]);
-    for(int i = 0;i < size[0] * size[1];i++)
-    {
-        listVlue.push_back(value.get()[i]);
-
-    }
-    return listVlue;
-}
-/*
  * 打开一个h5文件，从中获取一个数据组
  */
 Group Hdf5IO::OpenH5File(H5File &file, const std::string &groupName, bool &ok)
@@ -326,6 +309,8 @@ void Hdf5IO::getAllSubGroupAndDataSet(const Group& group, const std::vector<std:
 		data.listDataSet = datas;
 		data.group = subGroup;
 		data.headList = headList;
+		if (headList.size() >= 1)
+			data.name = headList.at(0);
 		hdf5DataList.push_back(data);
 	}
 }
@@ -385,9 +370,11 @@ void Hdf5IO::getParData()
 		}
 
 		Hdf5Data data;
-		data.dataSet = dataSet;
+		data.listDataSet.push_back(dataSet);
 		data.group = subGroup;
 		data.headList = headList;
+		if (headList.size() >= 1)
+			data.name = headList.at(0);		
 		hdf5DataList.push_back(data);
 	}
 }

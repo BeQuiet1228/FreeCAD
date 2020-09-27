@@ -22,6 +22,11 @@ SmartContorl::SmartContorl()
 	connect(chipicManager, SIGNAL(finishChipicM3dPath(unsigned long)), this, SLOT(chipicWorkFinished(unsigned long)));
 	connect(chipicManager, SIGNAL(chipicStartFinished(unsigned long)), this, SLOT(chipicStartFinished(unsigned long)));
 
+	//测试使用代码
+	ChipicRunDataPtr data;
+	data.reset(new ChipicRunData);
+	data->h5FilePath = "E:\\lingshiwenjianjia\\MILO_C\\MILO_C.h5";
+	chipicDataFinish.push_back(data);
 }
 
 SmartContorl::~SmartContorl()
@@ -110,6 +115,9 @@ void SmartContorl::makeRunData()
 
 	fileMaker.setM3dPath(m3dPath);
 	this->chipicDataWait = fileMaker.makeFile(m3ds);
+
+	//清空变量组
+	this->variates.clear();
 }
 
 /**
@@ -209,3 +217,17 @@ void SmartContorl::chipicStartFinished(unsigned long threadID)
 }
 
 #include "moc_SmartContorl.cpp"
+
+/**
+* @brief ChipicResultGetter::next 获取一个结果
+* @param ChipicRunDataPtr & runData 
+* @return bool false代表获取失败
+*/
+bool ChipicResultGetter::next(ChipicRunDataPtr& runData)
+{
+	if (this->iter == result.end())
+		return false;
+	runData = *iter;
+	iter++;
+	return true;
+}

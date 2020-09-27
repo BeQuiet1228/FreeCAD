@@ -1,4 +1,10 @@
 #pragma once
+#ifdef _HDF5_READER_
+#define CONTROL_EXPORT __declspec(dllexport)
+#else
+#define CONTROL_EXPORT   __declspec(dllimport)
+#endif // _CONTORL_
+
 
 #include "H5Cpp.h"
 #include <iostream>
@@ -6,26 +12,28 @@
 using namespace  H5;
 class Hdf5IO;
 using VectorF = std::vector<float>;
- struct Hdf5Data
+struct CONTROL_EXPORT Hdf5Data
 {
     Group group;
-    DataSet dataSet;
     std::vector<std::string> headList;
     Hdf5IO *hdf5Io;
     std::vector<DataSet> listDataSet;
+	std::string name;
 };
 
-class Hdf5IO
+class CONTROL_EXPORT Hdf5IO
 {
 public:
+	Hdf5IO();
     Hdf5IO(std::string fileName);
+	~Hdf5IO();
+	//设置文件路径
+	void setFilePath(const std::string& path);
     void initHdf5Data();
     std::vector<Hdf5Data> hdf5DataList;
 	//获取数据库中的值
 	bool getValue(const Group& group, const std::string& datasetName,VectorF &values);
 	bool getValue(const DataSet& dataSet,VectorF& values);
-    std::vector<float> getVlue(const Group &group,const std::string &dataName);
-    std::vector<float> getVlue(const DataSet &dataSet);
 private:
     H5File *Hdf5File;
 	//获取一个数据组

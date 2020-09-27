@@ -1,15 +1,130 @@
 #include "SmartContorlData.h"
 #include "smartcontorl.h"
+#include "CInterfaceStack.h"
+#include <QDir>
 std::shared_ptr<SmartContorlData> SmartContorlData::_instance;
 
 SmartContorlData::SmartContorlData()
 {
 	smartContorl = new SmartContorl;
+	resultGetter = new ChipicResultGetter();
+	cStack = new CInterfaceStack;
+	//测试代码
+	getChipicRunResult();
 }
 
 SmartContorlData::~SmartContorlData()
 {
-
+	delete smartContorl;
+	delete resultGetter;
+	delete cStack;
 }
 
+/**
+* @brief SmartContorlData::openActiveH5File 打开当前h5文件
+* @return bool
+*/
+bool SmartContorlData::openActiveH5File()
+{
+	auto qPath = cStack->activeRunData.h5FilePath;
+	QDir dir;
+	if (!(dir.exists(qPath)))
+	{
+#ifdef MY_LOG
+		std::cerr << "SmartContorlData::openActiveH5File() file is not exists! path: "
+			<< qPath.toStdString();
+		return false;
+#endif // MY_LOG
+	}
+	std::string h5filePath = qPath.toStdString();
+	
+	//设置文件路径
+	this->hdf5IO.setFilePath(h5filePath);
+	//初始化对象
+	this->hdf5IO.initHdf5Data();
 
+	return true;
+}
+
+/**
+* @brief SmartContorlData::findResultData 通过名称寻找一个结果图
+* @param const std::string & name
+* @return bool false 查找失败
+*/
+bool SmartContorlData::findResultData(const std::string& name)
+{
+	std::vector<Hdf5Data> &dataList = hdf5IO.hdf5DataList;
+	auto iter = dataList.begin();
+	for (; iter != dataList.end(); iter++)
+	{
+		//名称中会有许多多余的空格，暂时先这样去掉
+		QString temp = QString::fromStdString(iter->name);
+		temp = temp.simplified();
+		iter->name = temp.toStdString();
+		std::cerr << iter->name << std::endl;
+		if (iter->name == name)
+			break;
+	}
+	if (iter == dataList.end())
+		return false;
+	cStack->activeH5Data = *iter;
+	return true;
+}
+
+/**
+* @brief SmartContorlData::openDataSet 打开一个数据库
+* @param const int & index
+* @return bool false 打开失败
+*/
+bool SmartContorlData::openDataSet(const int& index /*= 0*/)
+{
+	if (cStack->activeH5Data.listDataSet.size() <= index)
+		return false;
+	auto dataSet = cStack->activeH5Data.listDataSet.at(index);
+
+	VectorF values;
+	if (!hdf5IO.getValue(dataSet,values))
+		return false;
+	cStack->activeValues = values;
+	return true;
+}
+
+/**
+* @brief SmartContorlData::getDataSetValue 根据索引 获取一个数据
+* @param const int & index
+* @return float
+*/
+float SmartContorlData::getDataSetValue(const int& index)
+{
+	if (cStack->activeValues.size() <= index)
+		return 0;
+	float value = cStack->activeValues.at(index);
+	return value;
+}
+
+/**
+* @brief SmartContorlData::nextResult 获取一下个结果
+* @return bool false 没有下一个
+*/
+bool SmartContorlData::nextResult()
+{
+	ChipicRunDataPtr data;
+	if (resultGetter->next(data))
+	{
+		cStack->activeRunData = *data;
+		return true;
+	}else{
+		return false;
+	}
+}
+
+/**
+* @brief SmartContorlData::getChipicRunResult 获取下一个结果
+* @return void
+*/
+void SmartContorlData::getChipicRunResult()
+{
+	*resultGetter = smartContorl->getResult();
+	resultGetter->reset();
+
+}

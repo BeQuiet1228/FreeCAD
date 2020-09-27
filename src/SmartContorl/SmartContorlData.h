@@ -2,7 +2,10 @@
 #include <mutex>
 #include <memory>
 #include <map>
+#include <HDF5Reader/hdf5io.h>
 class SmartContorl;
+class ChipicResultGetter;
+class CInterfaceStack;
 class SmartContorlData{
 
 public:
@@ -22,6 +25,25 @@ private:
 	static std::shared_ptr<SmartContorlData> _instance;
 
 public:
+	//控制对象
 	SmartContorl *smartContorl;
-
+	//运算结果对象
+	ChipicResultGetter *resultGetter;
+	//h5文件io
+	Hdf5IO hdf5IO;
+	//lua接口栈
+	CInterfaceStack *cStack;
+public:
+	//打开当前hdf5文件
+	bool openActiveH5File();
+	//找到结果数据
+	bool findResultData(const std::string& name);
+	//打开一个数据库
+	bool openDataSet(const int& index = 0);
+	//获取一个数据
+	float getDataSetValue(const int& index);
+	//获取下一个运算结果
+	bool nextResult();
+	//获取运算结果对象
+	void getChipicRunResult();
 };

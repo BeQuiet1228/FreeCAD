@@ -131,6 +131,8 @@ SET(SmartContorl_src
 	LuaCInterface.cpp
 	ChipicRunData.cpp
 	ChipicRunData.h
+	CInterfaceStack.cpp
+	CInterfaceStack.h
 	${UI_SRC}
 	${JSON_SRC}
 	${MY_MOC_SRC}
@@ -171,6 +173,7 @@ list(APPEND QT_LIB
     optimized MSVCRT.LIB
     optimized MSVCPRT.LIB
 	Contorl
+	HDF5Reader
 	)
 #引入Qt库
 if (BUILD_QT5)

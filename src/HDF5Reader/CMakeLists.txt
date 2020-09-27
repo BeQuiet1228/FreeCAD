@@ -2,8 +2,8 @@
 project(HDF5Reader)
 
 #设置生成工程类型
-SET(generate_exe " ")
-#SET(generate_dll " ")
+#SET(generate_exe " ")
+SET(generate_dll " ")
 
 #引入头文件
 include_directories(
@@ -26,12 +26,12 @@ SET(HDF5Reader_src
 )
 
 if(generate_exe)
-	add_definitions(-D_CONTORL_ -DMY_DEBUG -DMY_LOG -DSERVICE -DH5_BUILT_AS_DYNAMIC_LIB)
+	add_definitions(-D_HDF5_READER_ -DMY_DEBUG -DMY_LOG -DH5_BUILT_AS_DYNAMIC_LIB)
 	add_executable(HDF5Reader ${HDF5Reader_src}) # 生成可执行文件
 	SET(OUTPUT_BINDIR ${CMAKE_CURRENT_BINARY_DIR}/../../bin) #设置可执行文件输出目录
 endif()
 if(generate_dll)
-	add_definitions(-D_CONTORL_ -DMY_LOG -DH5_BUILT_AS_DYNAMIC_LIB)
+	add_definitions(-D_HDF5_READER_ -DMY_LOG -DH5_BUILT_AS_DYNAMIC_LIB)
 	add_library(HDF5Reader SHARED ${HDF5Reader_src})
 endif()
 

@@ -41,6 +41,49 @@ int addVariate(lua_State *L)
 	return 0;
 }
 
+int nextResult(lua_State *luaState)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	bool b = contorlData->nextResult();
+	lua_pushboolean(luaState,b);
+	return 1;
+}
+
+int openH5File(lua_State *luaState)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	bool b = contorlData->openActiveH5File();
+	lua_pushboolean(luaState, b);
+	return 1;
+}
+
+int findResultData(lua_State *luaState)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	std::string name = lua_tostring(luaState, 1);
+	bool b = contorlData->findResultData(name);
+	lua_pushboolean(luaState, b);
+	return 1;
+}
+
+int openDataSet(lua_State *luaState)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	int index = lua_tointeger(luaState, 1);
+	bool b = contorlData->openDataSet(index);
+	lua_pushboolean(luaState, b);
+	return 1;
+}
+
+int getValue(lua_State *luaState)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	int index = lua_tointeger(luaState, 1);
+	float value = contorlData->getDataSetValue(index);
+	lua_pushnumber(luaState, value);
+	return 1;
+}
+
 /**
 * @brief registerLuaFunction 向虚拟机中注册lua函数
 * @param lua_State * L
@@ -49,6 +92,11 @@ int addVariate(lua_State *L)
 void registerLuaFunction(lua_State *L)
 {
 	lua_register(L, "addVariate", addVariate);
+	lua_register(L, "nextResult", nextResult);
+	lua_register(L, "findResultData", findResultData);
+	lua_register(L, "openDataSet", openDataSet);
+	lua_register(L, "getValue", getValue);
+	lua_register(L, "openH5File", openH5File);
 }
 
 
