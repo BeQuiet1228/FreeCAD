@@ -1,5 +1,7 @@
 #include "hdf5io.h"
 #include <memory>
+#include <QString>
+#include <QStringList>
 Hdf5IO::Hdf5IO(std::string fileName)
 {
 	setFilePath(fileName);
@@ -309,8 +311,7 @@ void Hdf5IO::getAllSubGroupAndDataSet(const Group& group, const std::vector<std:
 		data.listDataSet = datas;
 		data.group = subGroup;
 		data.headList = headList;
-		if (headList.size() >= 1)
-			data.name = headList.at(0);
+		data.name = getNameFromHeadList(headList);
 		hdf5DataList.push_back(data);
 	}
 }
@@ -373,8 +374,7 @@ void Hdf5IO::getParData()
 		data.listDataSet.push_back(dataSet);
 		data.group = subGroup;
 		data.headList = headList;
-		if (headList.size() >= 1)
-			data.name = headList.at(0);		
+		data.name = getNameFromHeadList(headList);
 		hdf5DataList.push_back(data);
 	}
 }
@@ -402,6 +402,23 @@ void Hdf5IO::getFildData()
 	getAllSubGroupAndDataSet(subGroup, dataSetNames);
 
 	//这里没有获取三维等位图的数据，以后再添加
+}
+
+/**
+* @brief Hdf5IO::getNameFromHeadList 在投部信息中获取观测别名
+* @param const std::vector<std::string> & headList
+* @return std::string
+*/
+std::string Hdf5IO::getNameFromHeadList(const std::vector<std::string>& headList)
+{
+	if (headList.size() < 14)
+		return "";
+	auto temp = headList.at(13);
+	QString qs = QString::fromStdString(temp);
+	qs = qs.simplified();
+	qs = qs.split(":").last().toLower();
+
+	return qs.toStdString();
 }
 
 /**
@@ -435,7 +452,7 @@ void Hdf5IO::initHdf5Data()
 
     // 获取结构数据
      {
-		 getStructData();
+		// getStructData();
      }
     //获取所有grd的数据组
     {
@@ -443,11 +460,11 @@ void Hdf5IO::initHdf5Data()
     }
     //获取par的数据组
     {
-		getParData();
+		//getParData();
     }
     //获取二维等位图数据
     {
-		getFildData();
+		//getFildData();
     }
 }
 

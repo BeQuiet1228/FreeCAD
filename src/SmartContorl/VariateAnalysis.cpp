@@ -1,5 +1,14 @@
 #include "VariateAnalysis.h"
 
+VariateAnalysis::VariateAnalysis()
+{
+
+}
+
+VariateAnalysis::~VariateAnalysis()
+{
+
+}
 std::vector<QString> Variate::makeStringForVariates(std::vector<Variate>& variates)
 {
 	std::vector<QString> v;
@@ -51,13 +60,33 @@ std::vector<QString> Variate::getValues()
 	return v;
 }
 
-VariateAnalysis::VariateAnalysis()
+std::vector<QString> Variate::combinationStringForVariates(std::vector<Variate>& variates)
 {
+	std::vector<QString> m3d;
+	auto iter = variates.begin();
+	if (iter == variates.end())
+		return m3d;
+	m3d = iter->getValues();
+	iter++;
+	for (; iter != variates.end(); iter++)
+	{
+		combinationVariates(m3d,*iter);
+	}
 
+	return m3d;
 }
 
-VariateAnalysis::~VariateAnalysis()
+void Variate::combinationVariates(std::vector<QString>& m3d,Variate& variate)
 {
+	auto m3dIter = m3d.begin();
+	std::vector<QString> values = variate.getValues();
+	auto valueIter = values.begin();
+
+	for (; (m3dIter != m3d.end()) && (valueIter != values.end()); 
+		m3dIter++, valueIter++)
+	{
+		*m3dIter += *valueIter;
+	}
 
 }
 

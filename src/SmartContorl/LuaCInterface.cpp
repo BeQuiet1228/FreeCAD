@@ -41,6 +41,13 @@ int addVariate(lua_State *L)
 	return 0;
 }
 
+int getAllResult(lua_State *L)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	contorlData->getChipicRunResult();
+	return 0;
+}
+
 int nextResult(lua_State *luaState)
 {
 	auto contorlData = SmartContorlData::GetInstance();
@@ -75,12 +82,73 @@ int openDataSet(lua_State *luaState)
 	return 1;
 }
 
+int getDataSetVlaueSize(lua_State *luaState)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	int size = contorlData->getDataSetValueSize();
+	lua_pushinteger(luaState,size);
+	return 1;
+}
+
 int getValue(lua_State *luaState)
 {
 	auto contorlData = SmartContorlData::GetInstance();
 	int index = lua_tointeger(luaState, 1);
 	float value = contorlData->getDataSetValue(index);
 	lua_pushnumber(luaState, value);
+	return 1;
+}
+
+int getHistorySize(lua_State *luaState)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	int size = contorlData->smartContorl->getHistorySize();
+	lua_pushinteger(luaState, size);
+
+	return 1;
+}
+
+int getGroupSize(lua_State *luaState)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	int index = lua_tointeger(luaState, 1);
+
+	int size = contorlData->smartContorl->getHistoryGroupSize(index);
+	lua_pushinteger(luaState, size);
+
+	return 1;
+}
+
+int getParamSize(lua_State *luaState)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	int groupIndex = lua_tointeger(luaState, 1);
+	int index = lua_tointeger(luaState, 2);
+
+	int size = contorlData->smartContorl->getHistoryGroupParamSize(groupIndex,index);
+	lua_pushinteger(luaState, size);
+	return 1;
+}
+
+int addParam(lua_State *luaState)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	float value = lua_tonumber(luaState, 1);
+	contorlData->addParam(value);
+	return 0;
+
+}
+
+int getParam(lua_State *luaState)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	int groupIndex = lua_tointeger(luaState, 1);
+	int index = lua_tointeger(luaState, 2);
+	int paramIndex = lua_tointeger(luaState, 3);
+
+	float value = contorlData->smartContorl->getHistoryGroupParam(groupIndex, index, paramIndex);
+	lua_pushnumber(luaState, value);
+
 	return 1;
 }
 
@@ -97,6 +165,13 @@ void registerLuaFunction(lua_State *L)
 	lua_register(L, "openDataSet", openDataSet);
 	lua_register(L, "getValue", getValue);
 	lua_register(L, "openH5File", openH5File);
+	lua_register(L, "getHistorySize", getHistorySize);
+	lua_register(L, "getGroupSize", getGroupSize);
+	lua_register(L, "getParamSize", getParamSize);
+	lua_register(L, "getParam", getParam);
+	lua_register(L, "addParam", addParam);
+	lua_register(L, "getAllResult", getAllResult);
+	lua_register(L, "getDataSetVlaueSize", getDataSetVlaueSize);
 }
 
 

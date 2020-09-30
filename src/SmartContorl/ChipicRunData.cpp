@@ -5,6 +5,7 @@ ChipicRunData::ChipicRunData()
 {
 	this->widgetItem = nullptr;
 	this->dataBar = nullptr;
+	resultData.reset(new ResultData);
 }
 
 ChipicRunData::~ChipicRunData()

@@ -6,6 +6,28 @@
 #include <QListWidgetItem>
 class ContorlDataBar;
 class Chipic;
+class ResultData{
+public:
+	ResultData(){};
+	~ResultData(){};
+	//添加数据
+	void addValue(const float& v){
+		data.push_back(v);
+	};
+	//获取大小
+	int size(){
+		return data.size();
+	}
+	//获取数据 如果超出索引范围则返回0
+	float getValue(const int& index){
+		if (data.size() <= index)
+			return 0.0;
+		return data.at(index);
+	}
+private:
+	std::vector<float> data;
+};
+using ResultDataPtr = std::shared_ptr<ResultData>;
 class ChipicRunData{
 public:
 	ChipicRunData();
@@ -19,6 +41,8 @@ public:
 	QString variate;
 	//启动程序之后的线程id
 	unsigned long threadID = 0;
+	//数据筛选之后的结果
+	ResultDataPtr resultData;
 public:
 	void setCreatDataBar(std::shared_ptr<Chipic> chipic);
 	void deleteItemAndBarPtr();

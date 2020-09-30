@@ -56,6 +56,16 @@ public:
 	void runChipic();
 	//数据优化
 	void dataOptimize();
+	//获取历史数据中一个组的数据大小
+	int getHistoryGroupSize(const int& groupIndex);
+	//获取一组数据中的参数个数大小
+	int getHistoryGroupParamSize(const int& groupIndex,const int& index);
+	//获取一个参数的值
+	float getHistoryGroupParam(const int& goupIdex, const int& index, const int& paramIndex);
+	//获取历史运行数据大小
+	int getHistorySize(){
+		return historyData.size();
+	}
 	//添加一个参数组
 	void addVariate(const Variate& v){
 		this->variates.push_back(v);
@@ -91,13 +101,17 @@ private:
 	ChipicRunDataMap chipicDataRuning;
 	//已经运行完的m3d数据
 	ChipicRunDatas chipicDataFinish;
+	//已筛选完数据的历史信息
+	std::vector<ChipicRunDatas> historyData;
 	//m3d文件路径
 	QString m3dPath;
 	//参数文件生成器
 	FileMaker fileMaker;
 	//contorl模块中的chipicManager 这个对象由contorl模块管理  不能在外部释放
 	ChipicManager *chipicManager;
-
+private:
+	//清空已完成的数据，并将数据存到历史数据中
+	void clearFinishData();
 public Q_SLOTS:
 	void chipicWorkFinished(unsigned long threadID);
 	void chipicStartFinished(unsigned long threadID);

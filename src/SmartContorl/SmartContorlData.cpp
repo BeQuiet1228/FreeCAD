@@ -10,7 +10,7 @@ SmartContorlData::SmartContorlData()
 	resultGetter = new ChipicResultGetter();
 	cStack = new CInterfaceStack;
 	//测试代码
-	getChipicRunResult();
+	//getChipicRunResult();
 }
 
 SmartContorlData::~SmartContorlData()
@@ -26,7 +26,7 @@ SmartContorlData::~SmartContorlData()
 */
 bool SmartContorlData::openActiveH5File()
 {
-	auto qPath = cStack->activeRunData.h5FilePath;
+	auto qPath = cStack->activeRunData->h5FilePath;
 	QDir dir;
 	if (!(dir.exists(qPath)))
 	{
@@ -58,10 +58,6 @@ bool SmartContorlData::findResultData(const std::string& name)
 	for (; iter != dataList.end(); iter++)
 	{
 		//名称中会有许多多余的空格，暂时先这样去掉
-		QString temp = QString::fromStdString(iter->name);
-		temp = temp.simplified();
-		iter->name = temp.toStdString();
-		std::cerr << iter->name << std::endl;
 		if (iter->name == name)
 			break;
 	}
@@ -89,6 +85,11 @@ bool SmartContorlData::openDataSet(const int& index /*= 0*/)
 	return true;
 }
 
+int SmartContorlData::getDataSetValueSize()
+{
+	return cStack->activeValues.size();
+}
+
 /**
 * @brief SmartContorlData::getDataSetValue 根据索引 获取一个数据
 * @param const int & index
@@ -111,7 +112,7 @@ bool SmartContorlData::nextResult()
 	ChipicRunDataPtr data;
 	if (resultGetter->next(data))
 	{
-		cStack->activeRunData = *data;
+		cStack->activeRunData = data;
 		return true;
 	}else{
 		return false;
@@ -127,4 +128,14 @@ void SmartContorlData::getChipicRunResult()
 	*resultGetter = smartContorl->getResult();
 	resultGetter->reset();
 
+}
+
+/**
+* @brief SmartContorlData::addParam 向当前的cstack中的resultData中添加优化参数
+* @param const float & value
+* @return void
+*/
+void SmartContorlData::addParam(const float& value)
+{
+	cStack->activeRunData->resultData->addValue(value);
 }

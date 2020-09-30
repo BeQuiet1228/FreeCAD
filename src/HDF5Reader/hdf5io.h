@@ -62,4 +62,7 @@ private:
 	//获取fild中的数据
 	void getFildData();
 
+	//使用headlist获取观测的名称
+	std::string getNameFromHeadList(const std::vector<std::string>& headList);
+
 };

@@ -9,7 +9,7 @@ public:
 
 public:
 	//当前运算结果
-	ChipicRunData activeRunData;
+	ChipicRunDataPtr activeRunData;
 	//当前图的h5d对象
 	Hdf5Data activeH5Data;
 	//当前数据

@@ -40,10 +40,14 @@ public:
 	bool findResultData(const std::string& name);
 	//打开一个数据库
 	bool openDataSet(const int& index = 0);
+	//获取数据库中的值的大小
+	int getDataSetValueSize();
 	//获取一个数据
 	float getDataSetValue(const int& index);
 	//获取下一个运算结果
 	bool nextResult();
 	//获取运算结果对象
 	void getChipicRunResult();
+	//添加一个已优化参数
+	void addParam(const float& value);
 };

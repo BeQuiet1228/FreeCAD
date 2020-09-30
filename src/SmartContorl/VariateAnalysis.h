@@ -13,6 +13,10 @@ public:
 	std::vector<QString> values;
 	//获取变量所有的值
 	std::vector<QString> getValues();
+	//把变量成对的组合起来
+	static std::vector<QString> combinationStringForVariates(std::vector<Variate>& variates);
+	//把两个变量成对的组合起来
+	static void combinationVariates(std::vector<QString>& m3d,Variate& variate);
 	//穷举出多个变量的值的所有组合
 	static std::vector<QString> makeStringForVariates(std::vector<Variate>& variates);
 	//穷举出两组字符串的所有组合

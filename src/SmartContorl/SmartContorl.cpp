@@ -23,10 +23,10 @@ SmartContorl::SmartContorl()
 	connect(chipicManager, SIGNAL(chipicStartFinished(unsigned long)), this, SLOT(chipicStartFinished(unsigned long)));
 
 	//测试使用代码
-	ChipicRunDataPtr data;
+	/*ChipicRunDataPtr data;
 	data.reset(new ChipicRunData);
 	data->h5FilePath = "E:\\lingshiwenjianjia\\MILO_C\\MILO_C.h5";
-	chipicDataFinish.push_back(data);
+	chipicDataFinish.push_back(data);*/
 }
 
 SmartContorl::~SmartContorl()
@@ -111,7 +111,8 @@ void SmartContorl::luaLoadFromFile(const std::string& filePath)
 void SmartContorl::makeRunData()
 {
 	//将变量组生成多组m3d文本
-	auto m3ds = Variate::makeStringForVariates(variates);
+	//auto m3ds = Variate::makeStringForVariates(variates);
+	auto m3ds = Variate::combinationStringForVariates(variates);
 
 	fileMaker.setM3dPath(m3dPath);
 	this->chipicDataWait = fileMaker.makeFile(m3ds);
@@ -150,11 +151,76 @@ void SmartContorl::dataOptimize()
 {
 	//运算结果数据筛选
 	this->luaResultDataFilter();
+	//清空完成运算数据
+	this->clearFinishData();
 	//判断数据是否符合预期，符合则结束运行
 	if (this->luaResultExpcet())
 		return;
 	//调用优化算法对参数进行优化
 	this->luaOptimize();
+}
+
+/**
+* @brief SmartContorl::getHistoryGroupSize 获取历史记录中的一组数据的大小
+* @param const int & groupIndex 组的索引
+* @return int
+*/
+int SmartContorl::getHistoryGroupSize(const int& groupIndex)
+{
+	int size = 0;
+	if (historyData.size() > groupIndex)
+	{
+		size = historyData.at(groupIndex).size();
+	}
+
+	return size;
+}
+
+/**
+* @brief SmartContorl::getHistoryGroupParamSize 获取历史记录中某一次运算的参数个数
+* @param const int & groupIndex 组的索引
+* @param const int & index 某一次运算的索引
+* @return int
+*/
+int SmartContorl::getHistoryGroupParamSize(const int& groupIndex, const int& index)
+{
+	int size = 0;
+	if (getHistoryGroupSize(groupIndex) > index)
+	{
+		auto chipicData = historyData.at(groupIndex).at(index);
+		size = chipicData->resultData->size();
+	}
+
+	return size;
+}
+
+/**
+* @brief SmartContorl::getHistoryGroupParam 获取运行历史记录中一个参数的值
+* @param const int & goupIdex 组的索引
+* @param const int & index 某次运行的索引
+* @param const int & paramIndex 参数索引
+* @return float
+*/
+float SmartContorl::getHistoryGroupParam(const int& goupIdex, const int& index, const int& paramIndex)
+{
+	float param = 0.0;
+	if (getHistoryGroupParamSize(goupIdex, index) <= paramIndex)
+		return param;
+
+	auto chipicData = historyData.at(goupIdex).at(index);
+	param = chipicData->resultData->getValue(paramIndex);
+
+	return param;
+}
+
+/**
+* @brief SmartContorl::clearFinishData清空已完成的数据，并将数据存到历史数据中
+* @return void
+*/
+void SmartContorl::clearFinishData()
+{
+	historyData.push_back(this->chipicDataFinish);
+	chipicDataFinish.clear();
 }
 
 /**
