@@ -206,10 +206,10 @@ namespace PartChipic {
 			add_varargs_method("customBoolean", &Module::customBoolean,
 				"customBoolean([list]) -- refresh the boolean from order"
 				);
-			add_varargs_method("updateBoolean0", &Module::updateBoolean0,
+			add_varargs_method("updateBoolean", &Module::updateBoolean,
 				"updateBoolean() -- update the boolean of Document."
 				);
-			add_varargs_method("updateBoolean", &Module::updateBoolean,
+			add_varargs_method("updateBoolean0", &Module::updateBoolean0,
 				"updateBoolean() -- update the boolean of Document."
 				);
 			add_varargs_method("makeFuncMesh", &Module::makeFuncMesh,
@@ -543,7 +543,7 @@ namespace PartChipic {
 		/*
 		调用函数前先判断是否需要bool运算
 		*/
-		Py::Object updateBoolean(const Py::Tuple& args)
+		Py::Object updateBoolean0(const Py::Tuple& args)
 		{
 			DWORD start, stop, mid;
 			start = GetTickCount();
@@ -1373,7 +1373,7 @@ namespace PartChipic {
 			static_cast<PartGui::ViewProviderPart*>(vp)->DiffuseColor.setValues(compCol);
 			//vp->DiffuseColor.setValues(compCol);
 		}
-		Py::Object updateBoolean0(const Py::Tuple& args)
+		Py::Object updateBoolean(const Py::Tuple& args)
 		{
 			start = GetTickCount();
 			int curOrder = 0, beforeOrder = 0, maxOrder = 0;
@@ -2406,6 +2406,32 @@ namespace PartChipic {
 			cerr << "bool time:" << (stop - start)*1.0 / 1000 << endl;
 			return Py::None();
 		}
+		PM3::DefValue3D transferToDefValue3DRECTANGULAR(double x, double y, double z)
+		{
+			PM3::DefValue3D point;
+			point.X() = PM3::convertToStringd(x) + "m";
+			point.Y() = PM3::convertToStringd(y) + "m";
+			point.Z() = PM3::convertToStringd(z) + "m";
+
+			return point;
+		}
+		PM3::DefValue3D transferToDefValue3D(double x, double y, double z)
+		{
+			PM3::DefValue3D point;
+			point.X() = PM3::convertToStringd(x) + "m";
+			point.Y() = PM3::convertToStringd(y) + "deg";
+			point.Z() = PM3::convertToStringd(z) + "m";
+
+			return point;
+		}
+		/*
+		type：0面，1体
+		func：函数表达式，已经被解析
+		xmax, xmin, ymax, ymin, zmax, zmin：函数体范围，已经被解析，距离单位米m，角度单位度deg
+		coor：坐标系
+		precision：精度
+		attribute：
+		*/
 		Py::Object makeFuncMesh(const Py::Tuple& args)
 		{
 			//clock_t t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
@@ -2686,45 +2712,49 @@ namespace PartChipic {
 
 				*/
 				//划分为6个象限
+				if (std::string(coor) != S_COOR_RECTANGULAR)
+				{
+					ymax = ymax - 360. * ((int)(ymax) / 360);
+					ymin = ymin - 360. * ((int)(ymin) / 360);
+				}
 				boost::format fmt("if(x=%2%,1,if(x=%3%,1,if(y=%4%,1,if(y=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))");
 				fmt%func% xmin % xmax % ymin %ymax%zmin%zmax;
 				Base::Console().Log("fmt: ");
 				Base::Console().Log(fmt.str().c_str());
-				xmino = xmin;
-				xmaxo = xmax;
-				ymino = ymin;
-				ymaxo = ymax;
-				zmino = zmin;
-				zmaxo = zmax;
+				
 				PM3::ExpParser exparser;
 				vcg::Point3d Start, End;
 				std::string er;
 				PM3::DefValue3D far_ori, near_ori;
+				int nb_ligne = 10, nb_colon = 10, nb_depth = 10;
 				double yreso = (ymax - ymin) * 3.1415926 / 20. / 180;
-				if (std::string(attribute) == "Void")
+				float extVoid = 0.00001;//0.1mm
+				float extVoidAngle = 0.01;//deg度
+				
+				if (std::string(attribute) == S_VOID)//当为空扩大体
 				{
 					if (std::string(coor) == S_COOR_RECTANGULAR) {
-						far_ori.X() = PM3::convertToStringd(xmax + 0.0001);
-						far_ori.Y() = PM3::convertToStringd(ymax + 0.0001);
-						far_ori.Z() = PM3::convertToStringd(zmax + 0.0001);
-						near_ori.X() = PM3::convertToStringd(xmin - 0.0001);
-						near_ori.Y() = PM3::convertToStringd(ymin - 0.0001);
-						near_ori.Z() = PM3::convertToStringd(zmin - 0.0001);
+						far_ori.X() = PM3::convertToStringd(xmax + extVoid);
+						far_ori.Y() = PM3::convertToStringd(ymax + extVoid);
+						far_ori.Z() = PM3::convertToStringd(zmax + extVoid);
+						near_ori.X() = PM3::convertToStringd(xmin - extVoid);
+						near_ori.Y() = PM3::convertToStringd(ymin - extVoid);
+						near_ori.Z() = PM3::convertToStringd(zmin - extVoid);
 						far_ori.Parser(&exparser, End, er);
 						near_ori.Parser(&exparser, Start, er);
 					}
-					else {
-						far_ori.X() = PM3::convertToStringd(xmax + 0.0001);
-						far_ori.Y() = PM3::convertToStringd(ymax + 0.01);
-						far_ori.Z() = PM3::convertToStringd(zmax + 0.0001);
-						near_ori.X() = PM3::convertToStringd(xmin - 0.0001);
-						near_ori.Y() = PM3::convertToStringd(ymin - 0.01);
-						near_ori.Z() = PM3::convertToStringd(zmin - 0.0001);
+					else {						
+						far_ori.X() = PM3::convertToStringd(xmax + extVoid);
+						far_ori.Y() = PM3::convertToStringd(ymax + extVoidAngle);
+						far_ori.Z() = PM3::convertToStringd(zmax + extVoid);
+						near_ori.X() = PM3::convertToStringd(xmin - extVoid);
+						near_ori.Y() = PM3::convertToStringd(ymin - extVoidAngle);
+						near_ori.Z() = PM3::convertToStringd(zmin - extVoid);
 						far_ori.Parser(&exparser, End, er);
 						near_ori.Parser(&exparser, Start, er);
 					}
 				}
-				else
+				else//其它保持不变
 				{
 					far_ori.X() = PM3::convertToStringd(xmax);
 					far_ori.Y() = PM3::convertToStringd(ymax);
@@ -2735,8 +2765,9 @@ namespace PartChipic {
 					far_ori.Parser(&exparser, End, er);
 					near_ori.Parser(&exparser, Start, er);
 				}
-
-				{//计算边界
+				/*
+				{//计算边界，可能存在函数区域选择过大，模型变形的问题
+				 //可能情况太多，不能这样做
 					//存放点
 					std::vector<Base::Vector3d> Points;
 					//存放面
@@ -2818,35 +2849,32 @@ namespace PartChipic {
 							//if (zmax > zmaxo) zmax = zmaxo;
 						}
 					}
-				}
-				int nb_ligne = 10, nb_colon = 10, nb_depth = 10;
-
-				yreso = (ymax - ymin) * 3.1415926 / (8) / 180;
-				if (std::string(attribute) == "Void")
-				{
+					yreso = (ymax - ymin) * 3.1415926 / (8) / 180;
+					if (std::string(attribute) == S_VOID)//当为空扩大体
+					{
 					if (std::string(coor) == S_COOR_RECTANGULAR) {
-						far_ori.X() = PM3::convertToStringd(xmax + 0.0001);
-						far_ori.Y() = PM3::convertToStringd(ymax + 0.0001);
-						far_ori.Z() = PM3::convertToStringd(zmax + 0.0001);
-						near_ori.X() = PM3::convertToStringd(xmin - 0.0001);
-						near_ori.Y() = PM3::convertToStringd(ymin - 0.0001);
-						near_ori.Z() = PM3::convertToStringd(zmin - 0.0001);
-						far_ori.Parser(&exparser, End, er);
-						near_ori.Parser(&exparser, Start, er);
+					far_ori.X() = PM3::convertToStringd(xmax + extVoid);
+					far_ori.Y() = PM3::convertToStringd(ymax + extVoid);
+					far_ori.Z() = PM3::convertToStringd(zmax + extVoid);
+					near_ori.X() = PM3::convertToStringd(xmin - extVoid);
+					near_ori.Y() = PM3::convertToStringd(ymin - extVoid);
+					near_ori.Z() = PM3::convertToStringd(zmin - extVoid);
+					far_ori.Parser(&exparser, End, er);
+					near_ori.Parser(&exparser, Start, er);
 					}
 					else {
-						far_ori.X() = PM3::convertToStringd(xmax + 0.0001);
-						far_ori.Y() = PM3::convertToStringd(ymax + 0.01);
-						far_ori.Z() = PM3::convertToStringd(zmax + 0.0001);
-						near_ori.X() = PM3::convertToStringd(xmin - 0.0001);
-						near_ori.Y() = PM3::convertToStringd(ymin - 0.01);
-						near_ori.Z() = PM3::convertToStringd(zmin - 0.0001);
-						far_ori.Parser(&exparser, End, er);
-						near_ori.Parser(&exparser, Start, er);
+					far_ori.X() = PM3::convertToStringd(xmax + extVoid);
+					far_ori.Y() = PM3::convertToStringd(ymax + extVoidAngle);
+					far_ori.Z() = PM3::convertToStringd(zmax + extVoid);
+					near_ori.X() = PM3::convertToStringd(xmin - extVoid);
+					near_ori.Y() = PM3::convertToStringd(ymin - extVoidAngle);
+					near_ori.Z() = PM3::convertToStringd(zmin - extVoid);
+					far_ori.Parser(&exparser, End, er);
+					near_ori.Parser(&exparser, Start, er);
 					}
-				}
-				else
-				{
+					}
+					else//其它保持不变
+					{
 					far_ori.X() = PM3::convertToStringd(xmax);
 					far_ori.Y() = PM3::convertToStringd(ymax);
 					far_ori.Z() = PM3::convertToStringd(zmax);
@@ -2855,7 +2883,8 @@ namespace PartChipic {
 					near_ori.Z() = PM3::convertToStringd(zmin);
 					far_ori.Parser(&exparser, End, er);
 					near_ori.Parser(&exparser, Start, er);
-				}
+					}
+				}*/				
 				{
 					xmax = End.X();
 					ymax = End.Y();
@@ -2863,412 +2892,281 @@ namespace PartChipic {
 					xmin = Start.X();
 					ymin = Start.Y();
 					zmin = Start.Z();
+					xmino = xmin;
+					xmaxo = xmax;
+					ymino = ymin;
+					ymaxo = ymax;
+					zmino = zmin;
+					zmaxo = zmax;
 				}
 				std::vector<PM3::DefValue3D> far_pointV, near_pointV, far_pointVo, near_pointVo;
 				if (std::string(coor) == S_COOR_RECTANGULAR) {
 					nb_ligne = 20, nb_colon = 20, nb_depth = 20;
 
 					yreso = (ymax - ymin) / (20 - 4) / 180;
-					//vfunc.setSystem(PM3::SYSCARTESIAN);
-					PM3::DefValue3D far_point, near_point;
-					far_point.X() = PM3::convertToStringd(xmax) + "m";
-					far_point.Y() = PM3::convertToStringd(ymax) + "m";
-					far_point.Z() = PM3::convertToStringd(zmax) + "m";
-					near_point.X() = PM3::convertToStringd(xmin) + "m";
-					near_point.Y() = PM3::convertToStringd(ymin) + "m";
-					near_point.Z() = PM3::convertToStringd(zmin) + "m";
-					far_pointV.push_back(far_point);
-					near_pointV.push_back(near_point);
-					far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-					far_point.Y() = PM3::convertToStringd(ymaxo) + "m";
-					far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-					near_point.X() = PM3::convertToStringd(xmino) + "m";
-					near_point.Y() = PM3::convertToStringd(ymino) + "m";
-					near_point.Z() = PM3::convertToStringd(zmino) + "m";
-					far_pointVo.push_back(far_point);
-					near_pointVo.push_back(near_point);
+					far_pointV.push_back(transferToDefValue3DRECTANGULAR(xmax, ymax, zmax));
+					near_pointV.push_back(transferToDefValue3DRECTANGULAR(xmin, ymin, zmin));
+					far_pointVo.push_back(transferToDefValue3DRECTANGULAR(xmaxo, ymaxo, zmaxo));
+					near_pointVo.push_back(transferToDefValue3DRECTANGULAR(xmino, ymino, zmino));
 				}
 				else {
 					nb_ligne = 20, nb_colon = 8, nb_depth = 20;
 					yreso = 90 * 3.1415926 / (nb_colon) / 180;
-					if (ymax > 270) {
+					double temp = ymax - ymin;//角度的差
+					double pymax = ymax,
+						pymin = ymin;//上一个范围角度值
+					
+					double pymaxo = ymaxo,
+						pymino = pymin;
+					//角度范围 - 360—360deg，且跨度Point_2.Theta - Point_1.Theta <= 360deg、Point_2.Theta > Point_1.Theta。
+					//在python代码添加此限制条件，以提醒用户
+					if (ymax <= 360 && ymin <= 360 && 
+						ymax >= -360 && ymin >= -360 &&
+						(ymax - ymin) <= 360 && 
+						ymax > ymin) {
+						int ite = 6;//最大迭代次数，避免死循环
+						do {							
+							if (pymax - ymin > 90) {
+								if (pymax > 270) pymin = 270;
+								else if (pymax > 180) pymin = 180;
+								else if (pymax > 90) pymin = 90;
+								else if (pymax > 0) pymin = 0;
+								else if (pymax > -90) pymin = -90;
+								else if (pymax > -180) pymin = -180;
+								else //if (ymax > -270)
+									pymin = -270;
+								far_pointV.push_back(transferToDefValue3D(xmax, pymax, zmax));
+								near_pointV.push_back(transferToDefValue3D(xmin, pymin, zmin));
+								far_pointVo.push_back(transferToDefValue3D(xmaxo, pymaxo, zmaxo));
+								near_pointVo.push_back(transferToDefValue3D(xmino, pymin, zmino));
+								pymax = pymin;
+								pymaxo = pymin;
+							}
+							else {
+								far_pointV.push_back(transferToDefValue3D(xmax, pymax, zmax));
+								near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+								far_pointVo.push_back(transferToDefValue3D(xmaxo, pymaxo, zmaxo));
+								near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
+								break;
+							}
+							ite--;
+						} while (ite >= 0);
+					}
+					
+					/*if (ymax > 270) {
 						if (ymin > 270) {
-							PM3::DefValue3D far_point, near_point;
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(ymax) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(ymin) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-
-							far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-							far_point.Y() = PM3::convertToStringd(ymaxo) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-							near_point.X() = PM3::convertToStringd(xmino) + "m";
-							near_point.Y() = PM3::convertToStringd(ymino) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmino) + "m";
-							far_pointVo.push_back(far_point);
-							near_pointVo.push_back(near_point);
+							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
 						}
 						else if (ymin > 180) {
-							PM3::DefValue3D far_point, near_point;
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(ymax) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(270) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-							far_point.Y() = PM3::convertToStringd(ymaxo) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-							near_point.X() = PM3::convertToStringd(xmino) + "m";
-							near_point.Y() = PM3::convertToStringd(270) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmino) + "m";
-							far_pointVo.push_back(far_point);
-							near_pointVo.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(270) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(ymin) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-							far_point.Y() = PM3::convertToStringd(270) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-							near_point.X() = PM3::convertToStringd(xmino) + "m";
-							near_point.Y() = PM3::convertToStringd(ymino) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmino) + "m";
-							far_pointVo.push_back(far_point);
-							near_pointVo.push_back(near_point);
+							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 270, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 270, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 270, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 270, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
 						}
 						else if (ymin > 90) {
-							PM3::DefValue3D far_point, near_point;
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(ymax) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(270) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-							far_point.Y() = PM3::convertToStringd(ymaxo) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-							near_point.X() = PM3::convertToStringd(xmino) + "m";
-							near_point.Y() = PM3::convertToStringd(270) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmino) + "m";
-							far_pointVo.push_back(far_point);
-							near_pointVo.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(270) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(180) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-							far_point.Y() = PM3::convertToStringd(270) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-							near_point.X() = PM3::convertToStringd(xmino) + "m";
-							near_point.Y() = PM3::convertToStringd(180) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmino) + "m";
-							far_pointVo.push_back(far_point);
-							near_pointVo.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(180) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(ymin) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-							far_point.Y() = PM3::convertToStringd(180) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-							near_point.X() = PM3::convertToStringd(xmino) + "m";
-							near_point.Y() = PM3::convertToStringd(ymino) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmino) + "m";
-							far_pointVo.push_back(far_point);
-							near_pointVo.push_back(near_point);
+							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 270, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 270, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 270, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 180, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 270, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 180, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 180, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 180, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
+						}
+						else if (ymin > 0){
+							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 270, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 270, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 270, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 180, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 270, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 180, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 180, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 90, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 180, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 90, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 90, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 90, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
 						}
 						else {
-							PM3::DefValue3D far_point, near_point;
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(ymax) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(270) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-							far_point.Y() = PM3::convertToStringd(ymaxo) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-							near_point.X() = PM3::convertToStringd(xmino) + "m";
-							near_point.Y() = PM3::convertToStringd(270) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmino) + "m";
-							far_pointVo.push_back(far_point);
-							near_pointVo.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(270) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(180) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-							far_point.Y() = PM3::convertToStringd(270) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-							near_point.X() = PM3::convertToStringd(xmino) + "m";
-							near_point.Y() = PM3::convertToStringd(180) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmino) + "m";
-							far_pointVo.push_back(far_point);
-							near_pointVo.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(180) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(90) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-							far_point.Y() = PM3::convertToStringd(180) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-							near_point.X() = PM3::convertToStringd(xmino) + "m";
-							near_point.Y() = PM3::convertToStringd(90) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmino) + "m";
-							far_pointVo.push_back(far_point);
-							near_pointVo.push_back(near_point);
-							/*if (ymin < 0) {
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(90) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(0) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(0) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(ymin) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							}
-							else */
-							{
-								far_point.X() = PM3::convertToStringd(xmax) + "m";
-								far_point.Y() = PM3::convertToStringd(90) + "deg";
-								far_point.Z() = PM3::convertToStringd(zmax) + "m";
-								near_point.X() = PM3::convertToStringd(xmin) + "m";
-								near_point.Y() = PM3::convertToStringd(ymin) + "deg";
-								near_point.Z() = PM3::convertToStringd(zmin) + "m";
-								far_pointV.push_back(far_point);
-								near_pointV.push_back(near_point);
-								far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-								far_point.Y() = PM3::convertToStringd(90) + "deg";
-								far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-								near_point.X() = PM3::convertToStringd(xmino) + "m";
-								near_point.Y() = PM3::convertToStringd(ymino) + "deg";
-								near_point.Z() = PM3::convertToStringd(zmino) + "m";
-								far_pointVo.push_back(far_point);
-								near_pointVo.push_back(near_point);
-							}
+							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 270, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 270, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 270, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 180, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 270, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 180, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 180, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 90, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 180, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 90, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 90, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 0, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 90, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 0, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 0, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 0, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
 						}
-
 					}
 					else if (ymax > 180) {
 						if (ymin > 180) {
-							PM3::DefValue3D far_point, near_point;
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(ymax) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(ymin) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-							far_point.Y() = PM3::convertToStringd(ymaxo) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-							near_point.X() = PM3::convertToStringd(xmino) + "m";
-							near_point.Y() = PM3::convertToStringd(ymino) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmino) + "m";
-							far_pointVo.push_back(far_point);
-							near_pointVo.push_back(near_point);
+							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
 						}
 						else if (ymin > 90) {
-							PM3::DefValue3D far_point, near_point;
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(ymax) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(180) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-							far_point.Y() = PM3::convertToStringd(ymaxo) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-							near_point.X() = PM3::convertToStringd(xmino) + "m";
-							near_point.Y() = PM3::convertToStringd(180) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmino) + "m";
-							far_pointVo.push_back(far_point);
-							near_pointVo.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(180) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(ymin) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-							far_point.Y() = PM3::convertToStringd(180) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-							near_point.X() = PM3::convertToStringd(xmino) + "m";
-							near_point.Y() = PM3::convertToStringd(ymino) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmino) + "m";
-							far_pointVo.push_back(far_point);
-							near_pointVo.push_back(near_point);
+							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 180, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 180, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 180, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 180, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
+						}
+						else if (ymin > 0) {
+							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 180, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 180, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 180, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 90, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 180, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 90, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 90, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 90, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
+						} 
+						else if (ymin > -90) {
+							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 180, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 180, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 180, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 90, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 180, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 90, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 90, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 0, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 90, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 0, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 0, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 0, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
 						}
 						else {
-							PM3::DefValue3D far_point, near_point;
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(ymax) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(180) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-							far_point.Y() = PM3::convertToStringd(ymaxo) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-							near_point.X() = PM3::convertToStringd(xmino) + "m";
-							near_point.Y() = PM3::convertToStringd(180) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmino) + "m";
-							far_pointVo.push_back(far_point);
-							near_pointVo.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(180) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(90) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-							far_point.Y() = PM3::convertToStringd(180) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-							near_point.X() = PM3::convertToStringd(xmino) + "m";
-							near_point.Y() = PM3::convertToStringd(90) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmino) + "m";
-							far_pointVo.push_back(far_point);
-							near_pointVo.push_back(near_point);
-							/*if (ymin < 0) {
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(90) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(0) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(0) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(ymin) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							}
-							else*/ {
-								far_point.X() = PM3::convertToStringd(xmax) + "m";
-								far_point.Y() = PM3::convertToStringd(90) + "deg";
-								far_point.Z() = PM3::convertToStringd(zmax) + "m";
-								near_point.X() = PM3::convertToStringd(xmin) + "m";
-								near_point.Y() = PM3::convertToStringd(ymin) + "deg";
-								near_point.Z() = PM3::convertToStringd(zmin) + "m";
-								far_pointV.push_back(far_point);
-								near_pointV.push_back(near_point);
-								far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-								far_point.Y() = PM3::convertToStringd(90) + "deg";
-								far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-								near_point.X() = PM3::convertToStringd(xmino) + "m";
-								near_point.Y() = PM3::convertToStringd(ymino) + "deg";
-								near_point.Z() = PM3::convertToStringd(zmino) + "m";
-								far_pointVo.push_back(far_point);
-								near_pointVo.push_back(near_point);
-							}
+							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 180, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 180, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 180, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 90, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 180, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 90, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 90, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 0, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 90, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 0, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 0, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, -90, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 0, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, -90, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, -90, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, -90, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
 						}
 					}
 					else if (ymax > 90) {
 						if (ymin > 90) {
-							PM3::DefValue3D far_point, near_point;
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(ymax) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(ymin) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-							far_point.Y() = PM3::convertToStringd(ymaxo) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-							near_point.X() = PM3::convertToStringd(xmino) + "m";
-							near_point.Y() = PM3::convertToStringd(ymino) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmino) + "m";
-							far_pointVo.push_back(far_point);
-							near_pointVo.push_back(near_point);
+							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
+						}
+						else if (ymin > 0) {
+							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 90, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 90, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 90, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 90, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
+						}
+						else if (ymin > -90) {
+							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 90, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 90, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 90, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 0, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 90, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 0, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 0, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 0, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
+						}
+						else if (ymin > -180) {
+							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 90, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 90, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 90, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 0, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 90, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 0, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 0, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, -90, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 0, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, -90, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, -90, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, -90, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
 						}
 						else {
-							PM3::DefValue3D far_point, near_point;
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(ymax) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(90) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-							far_point.Y() = PM3::convertToStringd(ymaxo) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-							near_point.X() = PM3::convertToStringd(xmino) + "m";
-							near_point.Y() = PM3::convertToStringd(90) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmino) + "m";
-							far_pointVo.push_back(far_point);
-							near_pointVo.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmax) + "m";
-							far_point.Y() = PM3::convertToStringd(90) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmax) + "m";
-							near_point.X() = PM3::convertToStringd(xmin) + "m";
-							near_point.Y() = PM3::convertToStringd(ymin) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmin) + "m";
-							far_pointV.push_back(far_point);
-							near_pointV.push_back(near_point);
-							far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-							far_point.Y() = PM3::convertToStringd(90) + "deg";
-							far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-							near_point.X() = PM3::convertToStringd(xmino) + "m";
-							near_point.Y() = PM3::convertToStringd(ymino) + "deg";
-							near_point.Z() = PM3::convertToStringd(zmino) + "m";
-							far_pointVo.push_back(far_point);
-							near_pointVo.push_back(near_point);
+							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 90, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 90, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 90, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, 0, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 90, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, 0, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, 0, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, -90, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, 0, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, -90, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, -90, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, -180, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, -90, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, -180, zmino));
+							far_pointV.push_back(transferToDefValue3D(xmax, -180, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+							far_pointVo.push_back(transferToDefValue3D(xmaxo, -180, zmaxo));
+							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
 
 						}
 					}
@@ -3290,35 +3188,8 @@ namespace PartChipic {
 						near_point.Z() = PM3::convertToStringd(zmino) + "m";
 						far_pointVo.push_back(far_point);
 						near_pointVo.push_back(near_point);
-						/*if (ymin < 0) {
-						far_point.X() = PM3::convertToStringd(xmax) + "m";
-						far_point.Y() = PM3::convertToStringd(ymax) + "deg";
-						far_point.Z() = PM3::convertToStringd(zmax) + "m";
-						near_point.X() = PM3::convertToStringd(xmin) + "m";
-						near_point.Y() = PM3::convertToStringd(0) + "deg";
-						near_point.Z() = PM3::convertToStringd(zmin) + "m";
-						far_pointV.push_back(far_point);
-						near_pointV.push_back(near_point);
-						far_point.X() = PM3::convertToStringd(xmax) + "m";
-						far_point.Y() = PM3::convertToStringd(0) + "deg";
-						far_point.Z() = PM3::convertToStringd(zmax) + "m";
-						near_point.X() = PM3::convertToStringd(xmin) + "m";
-						near_point.Y() = PM3::convertToStringd(ymin) + "deg";
-						near_point.Z() = PM3::convertToStringd(zmin) + "m";
-						far_pointV.push_back(far_point);
-						near_pointV.push_back(near_point);
-						}
-						else {
-						far_point.X() = PM3::convertToStringd(xmax) + "m";
-						far_point.Y() = PM3::convertToStringd(ymax) + "deg";
-						far_point.Z() = PM3::convertToStringd(zmax) + "m";
-						near_point.X() = PM3::convertToStringd(xmin) + "m";
-						near_point.Y() = PM3::convertToStringd(ymin) + "deg";
-						near_point.Z() = PM3::convertToStringd(zmin) + "m";
-						far_pointV.push_back(far_point);
-						near_pointV.push_back(near_point);
-						}*/
-					}
+						
+					}*/
 				}
 				/*else {
 				vfunc.setSystem(PM3::SYSMYCC);
