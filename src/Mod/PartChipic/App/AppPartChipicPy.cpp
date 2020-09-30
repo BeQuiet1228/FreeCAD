@@ -195,7 +195,7 @@
 #endif
 
 DWORD start, stop;
-#define TEST_OUTPUT 0
+#define TEST_OUTPUT 1
 
 namespace PartChipic {
 	class Module : public Py::ExtensionModule<Module>
@@ -2714,8 +2714,8 @@ namespace PartChipic {
 				//划分为6个象限
 				if (std::string(coor) != S_COOR_RECTANGULAR)
 				{
-					ymax = ymax - 360. * ((int)(ymax) / 360);
-					ymin = ymin - 360. * ((int)(ymin) / 360);
+					if (fabs(ymax) > 360) ymax = ymax - 360. * ((int)(ymax) / 360);
+					if (fabs(ymin) > 360) ymin = ymin - 360. * ((int)(ymin) / 360);
 				}
 				boost::format fmt("if(x=%2%,1,if(x=%3%,1,if(y=%4%,1,if(y=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))");
 				fmt%func% xmin % xmax % ymin %ymax%zmin%zmax;
@@ -2912,18 +2912,18 @@ namespace PartChipic {
 				else {
 					nb_ligne = 20, nb_colon = 8, nb_depth = 20;
 					yreso = 90 * 3.1415926 / (nb_colon) / 180;
-					double temp = ymax - ymin;//角度的差
-					double pymax = ymax,
-						pymin = ymin;//上一个范围角度值
 					
-					double pymaxo = ymaxo,
-						pymino = pymin;
 					//角度范围 - 360—360deg，且跨度Point_2.Theta - Point_1.Theta <= 360deg、Point_2.Theta > Point_1.Theta。
 					//在python代码添加此限制条件，以提醒用户
 					if (ymax <= 360 && ymin <= 360 && 
 						ymax >= -360 && ymin >= -360 &&
 						(ymax - ymin) <= 360 && 
 						ymax > ymin) {
+						double pymax = ymax,
+							pymin = ymin;//上一个范围角度值
+
+						double pymaxo = ymaxo,
+							pymino = pymin;
 						int ite = 6;//最大迭代次数，避免死循环
 						do {							
 							if (pymax - ymin > 90) {
