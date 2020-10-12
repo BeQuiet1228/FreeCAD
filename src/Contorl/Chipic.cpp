@@ -584,7 +584,7 @@ void Chipic::disposJsonMessage(const std::string& json)
 		return;
 	}
 	//输出除了提示消息以外的消息
-	std::cerr << json << std::endl;
+	//std::cerr << json << std::endl;
 	//处理chipic关闭消息
 	if (disposChipicCloseMessage(json))
 	{

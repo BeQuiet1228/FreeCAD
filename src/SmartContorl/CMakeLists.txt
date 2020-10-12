@@ -20,6 +20,16 @@ SET(UI_SRC
 SET(QRC_SRC
 
 )
+SET(CODE_EDIT
+	codeEdit/casewordlistwidget.cpp
+	codeEdit/casewordlistwidget.h
+	codeEdit/codeeditor.cpp
+	codeEdit/codeeditor.h
+	codeEdit/matchwordsthrea.cpp
+	codeEdit/matchwordsthrea.h
+	codeEdit/myhightlighter.cpp
+	codeEdit/myhightlighter.h
+)
 SET(LUA_SRC
 	lua/lapi.c
 	lua/lapi.h
@@ -90,6 +100,10 @@ SET(JSON_SRC
 SET(MY_MOC_HDR
 	SmartContorlUI.h
 	SmartContorl.h
+	codeEdit/casewordlistwidget.h
+	codeEdit/codeeditor.h
+	codeEdit/matchwordsthrea.h
+	codeEdit/myhightlighter.h
 )
 SET(MY_MOC_SRC
 	SmartContorlUI.cpp
@@ -140,6 +154,7 @@ SET(SmartContorl_src
 	${Gui_QRC_SRCS}
 	${NETWORK_SRC}
 	${LUA_SRC}
+	${CODE_EDIT}
 )
 #设置编译生成文件类型
 #add_executable(Contorl ${Contorl_src}) # 生成可执行文件
@@ -216,3 +231,4 @@ SOURCE_GROUP("Uic" FILES ${Gui_UIC_HDRS})
 
 SOURCE_GROUP("Network" FILES ${NETWORK_SRC})
 SOURCE_GROUP("lua" FILES ${LUA_SRC})
+SOURCE_GROUP("codeEdit" FILES ${CODE_EDIT})

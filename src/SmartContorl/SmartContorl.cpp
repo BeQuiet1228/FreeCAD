@@ -158,6 +158,9 @@ void SmartContorl::dataOptimize()
 		return;
 	//调用优化算法对参数进行优化
 	this->luaOptimize();
+	//运行优化之后的参数
+	this->makeRunData();
+	this->runChipic();
 }
 
 /**

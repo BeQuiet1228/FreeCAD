@@ -26,7 +26,12 @@ Hdf5IO::~Hdf5IO()
 void Hdf5IO::setFilePath(const std::string& path)
 {
 	if (Hdf5File != nullptr)
+	{
+		Hdf5File->close();
 		delete Hdf5File;
+		Hdf5File = nullptr;
+		hdf5DataList.clear();
+	}
 	Hdf5File = new H5File(path, H5F_ACC_RDWR);
 }
 
@@ -419,6 +424,15 @@ std::string Hdf5IO::getNameFromHeadList(const std::vector<std::string>& headList
 	qs = qs.split(":").last().toLower();
 
 	return qs.toStdString();
+}
+
+/**
+* @brief Hdf5IO::deleteH5File 释放调h5文件 并关闭所有的组与数据库
+* @return void
+*/
+void Hdf5IO::deleteH5File()
+{
+	
 }
 
 /**

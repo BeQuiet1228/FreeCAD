@@ -24,7 +24,7 @@ private:
 	QProcess *process;
 public:
 	//设置当前运行的m3d路径
-	void setCurrentChipicM3dPath(const std::string& path);
+	void setCurrentChipicM3dPath(const std::string& path, const int& threadCount = 1);
 	//打开log文件
 	void openLog();
 private:

@@ -64,5 +64,7 @@ private:
 
 	//使用headlist获取观测的名称
 	std::string getNameFromHeadList(const std::vector<std::string>& headList);
+	//释放h5文件
+	void deleteH5File();
 
 };

@@ -405,7 +405,7 @@ void ChipicManager::sendStartChipicMessage(const std::string& path, const int& t
 		return;
 	//设置当前log文件的路径
 	auto log = OpenLog::GetInstance();
-	log->setCurrentChipicM3dPath(path);
+	log->setCurrentChipicM3dPath(path,threadCount);
 	//发送启动消息
 	auto sender = MessageSender::GetInstance();
 	
