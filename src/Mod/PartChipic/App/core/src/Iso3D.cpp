@@ -347,10 +347,10 @@ Iso3D::Iso3D(){
 	MatGen.unit();
 	MatRot.unit();
 	MatRotSave.unit();
-
+	type = 1;//volume
 	NbPointIsoMap = 0;
 	NbTriangleIsoSurface = 0;
-	type = 1;
+
 	morph_param = 1;
 	step = 0.05;
 	yreso = 1.0;
@@ -464,15 +464,15 @@ bool Iso3D::ParseExpression() {
 		;
 	}
 	/*else {
-		Start = PM3::cyl2car(Start);
-		End = PM3::cyl2car(End);
+	Start = PM3::cyl2car(Start);
+	End = PM3::cyl2car(End);
 
-		vcg::Point3d dit = (End - Start) / 20.;
-		Start = Start - dit;
-		End = End + dit;
-		boost::format fmt("if(x=%2%,0,if(x=%3%,0,if(y=%4%,0,if(y=%5%,0,if(z=%6%,0,if(z=%7%,0,%1%))))))");
-		fmt%ImplicitFunction% Start[0] % End[0] % Start[1] % End[1] % Start[2] % End[2];
-		ImplicitFunction = fmt.str();
+	vcg::Point3d dit = (End - Start) / 20.;
+	Start = Start - dit;
+	End = End + dit;
+	boost::format fmt("if(x=%2%,0,if(x=%3%,0,if(y=%4%,0,if(y=%5%,0,if(z=%6%,0,if(z=%7%,0,%1%))))))");
+	fmt%ImplicitFunction% Start[0] % End[0] % Start[1] % End[1] % Start[2] % End[2];
+	ImplicitFunction = fmt.str();
 	}*/
 	else {
 		/*vcg::Point3d dit = (End - Start) / (VSIZE - 4);
@@ -486,13 +486,15 @@ bool Iso3D::ParseExpression() {
 		if (End[0] < 0) End[0] = 0;
 		//if (End[1] < 0) End[1] = 0;
 		//if (End[1] > 2 * M_PI) End[1] = 2 * M_PI;		*/
-//		boost::format fmt("if(r=%2%,0,if(r=%3%,0,if(phi=%4%,0,if(phi=%5%,0,if(z=%6%,0,if(z=%7%,0,%1%))))))");
-//		fmt%ImplicitFunction% Start[0] % End[0] % Start[1] % End[1] % Start[2] % End[2];
-//		ImplicitFunction = fmt.str();
+		//		boost::format fmt("if(r=%2%,0,if(r=%3%,0,if(phi=%4%,0,if(phi=%5%,0,if(z=%6%,0,if(z=%7%,0,%1%))))))");
+		//		fmt%ImplicitFunction% Start[0] % End[0] % Start[1] % End[1] % Start[2] % End[2];
+		//		ImplicitFunction = fmt.str();
 		;
 	}
-	
-	if(	(pValParser->ParseExp(ImplicitFunction, er, gsysType == PM3::SYSCARTESIAN ? "x,y,z" : "r,phi,z") != -1))
+	/*		boost::format fmt("if(r=%2%,0,if(r=%3%,0,if(phi=%4%,0,if(phi=%5%,0,if(z=%6%,0,if(z=%7%,0,%1%))))))");
+	fmt%ImplicitFunction% Start[0] % End[0] % Start[1] % End[1] % Start[2] % End[2];
+	ImplicitFunction = fmt.str();*/
+	if ((pValParser->ParseExp(ImplicitFunction, er, gsysType == PM3::SYSCARTESIAN ? "x,y,z" : "r,phi,z") != -1))
 		return false;
 
 	//       pValParser->ParseExp(XlimitSup);//std::string((const char *)(XlimitSup.toLocal8Bit())), "x,y,z,t");
@@ -524,7 +526,7 @@ void Iso3D::InitParser(){
 ///+++++++++++++++++++++++++++++++++++++++++
 bool Iso3D::ComputeIsoMap()
 {
-	if (!ParseExpression()) return false;	
+	if (!ParseExpression()) return false;
 	VoxelEvaluation();
 	SaveIsoMapUnifColor();
 	PointEdgeComputation();
@@ -1030,13 +1032,87 @@ void Iso3D::ConstructIsoSurface()
 }
 
 
-
+/*if (gsysType != PM3::SYSCARTESIAN)
+Step[0] = (End[0] - Start[0]) / (nb_ligne - 2);
+else
+Step[0] = (End[0] - Start[0]) / (nb_ligne - 2 - 1);
+Step[1] = (End[1] - Start[1]) / (nb_colon - 2 - 1);
+Step[2] = (End[2] - Start[2]) / (nb_depth - 2 - 1);
+if (gsysType != PM3::SYSCARTESIAN)
+for (i = 0; i < nb_ligne; i++) XLocal[i] = Start[0] + (i - 0)*Step[0];
+else
+for (i = 0; i < nb_ligne; i++) XLocal[i] = Start[0] + (i - 1)*Step[0];
+for (j = 0; j < nb_colon; j++) YLocal[j] = Start[1] + (j - 1)*Step[1];
+for (k = 0; k < nb_depth; k++) ZLocal[k] = Start[2] + (k - 1)*Step[2];*/
+/*std::string json =
+"{\n"
+"    \"MathModels\": [\n"
+"        {\n"
+"            \"Iso3D\": {\n"
+"                \"Cnd\": [\n"
+"                    \"\"\n"
+"                ],\n"
+"                \"Component\": [\n"
+"                    \"Model\"\n"
+"                ],\n"
+"                \"Fxyz\": [\n"
+"                    \"if(r=%2%,1,if(r=%3%,1,if(phi=%4%,1,if(phi=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))\"\n"
+"                ],\n"
+"                \"Name\": [\n"
+"                    \"Model\"\n"
+"                ],\n"
+"                \"Xmax\": [\n"
+"                    \"%3%\"\n"
+"                ],\n"
+"                \"Xmin\": [\n"
+"                    \"%2%\"\n"
+"                ],\n"
+"                \"Ymax\": [\n"
+"                    \"%5%\"\n"
+"                ],\n"
+"                \"Ymin\": [\n"
+"                    \"%4%\"\n"
+"                ],\n"
+"                \"Zmax\": [\n"
+"                    \"%7%\"\n"
+"                ],\n"
+"                \"Zmin\": [\n"
+"                    \"%6%\"\n"
+"                ]\n"
+"            }\n"
+"        }\n"
+"    ]\n"
+"}\n";
+boost::format fmt(json);
+fmt%ImplicitFunction% XLocal[0] % XLocal[nb_ligne - 1] % YLocal[1] % YLocal[nb_colon - 1] % ZLocal[1] % ZLocal[nb_depth-1];
+//fmt%ImplicitFunction% Start[0] % End[0] % Start[1] % End[1] % Start[2] % End[2];
+ImplicitFunction = fmt.str();
+std::string er;
+if ((pValParser->ParseExp(ImplicitFunction, er, gsysType == PM3::SYSCARTESIAN ? "x,y,z" : "r,phi,z") != -1))
+return;*/
+/*std::string iso;
+if (gsysType == PM3::SYSCARTESIAN)
+iso = "x > %1% & x < %2% & y > %3% & y < %4% & z > %5% & z < %6%";
+else
+iso = "r > %1% & r < %2% & phi > %3% & phi < %4% & z > %5% & z < %6%";
+boost::format fmt(iso);
+fmt% XLocal[0] % XLocal[nb_ligne - 1] % YLocal[1] % YLocal[nb_colon - 1] % ZLocal[1] % ZLocal[nb_depth - 1];
+IsoCondition = fmt.str();*/
+/*if (gsysType == PM3::SYSCYLINDRICAL && yreso > 0)
+{
+vcg::Point3d in(vals), out;
+out = PM3::cyl2car(in);
+vals[0] = out[0];
+vals[1] = out[1];
+vals[2] = out[2];
+}*/
 ///+++++++++++++++++++++++++++++++++++++++++
 void Iso3D::VoxelEvaluation()
 {
+	int cutIndex[6] = { 0, nb_ligne - 1, 0, nb_colon - 1, 0, nb_depth - 1 };
 	/// this is for the morph effect...
-//	if (morph_param >= 0.0)  vals[3] = morph_param;
-//	else  vals[3] = -morph_param;
+	//	if (morph_param >= 0.0)  vals[3] = morph_param;
+	//	else  vals[3] = -morph_param;
 	morph_param += step;
 	if (morph_param == 1) morph_param = 0;
 	if (gsysType != PM3::SYSCARTESIAN && yreso > 0) {
@@ -1052,19 +1128,27 @@ void Iso3D::VoxelEvaluation()
 	//        for (i = 0; i < nb_ligne; i++) XLocal[i] = Start[0] - (i-1)*Step[0];
 	//        for (j = 0; j < nb_colon; j++) YLocal[j] = Start[1] - (j-1)*Step[1];
 	//        for (k = 0; k < nb_depth; k++) ZLocal[k] = Start[2] - (k-1)*Step[2];
-	if (gsysType != PM3::SYSCARTESIAN)
-		Step[0] = (End[0] - Start[0]) / (nb_ligne - 2);
-	else
-		Step[0] = (End[0] - Start[0]) / (nb_ligne - 2 - 1);
-	Step[1] = (End[1] - Start[1]) / (nb_colon - 2 - 1);
-	Step[2] = (End[2] - Start[2]) / (nb_depth - 2 - 1);
-	if (gsysType != PM3::SYSCARTESIAN)
+
+	if (gsysType != PM3::SYSCARTESIAN) {
+		Step[0] = (End[0] - Start[0]) / (nb_ligne - 1);
+		Step[1] = (End[1] - Start[1]) / (nb_colon - 0 - 1);
+		Step[2] = (End[2] - Start[2]) / (nb_depth - 1);
+
 		for (i = 0; i < nb_ligne; i++) XLocal[i] = Start[0] + (i - 0)*Step[0];
-	else
-		for (i = 0; i < nb_ligne; i++) XLocal[i] = Start[0] + (i - 1)*Step[0];
-	for (j = 0; j < nb_colon; j++) YLocal[j] = Start[1] + (j - 1)*Step[1];
-	for (k = 0; k < nb_depth; k++) ZLocal[k] = Start[2] + (k - 1)*Step[2];
-//#pragma omp parallel for
+		for (j = 0; j < nb_colon; j++) YLocal[j] = Start[1] + (j - 0)*Step[1];
+		for (k = 0; k < nb_depth; k++) ZLocal[k] = Start[2] + (k - 0)*Step[2];
+	}
+	else {
+		Step[0] = (End[0] - Start[0]) / (nb_ligne - 1);
+		Step[1] = (End[1] - Start[1]) / (nb_colon - 0 - 1);
+		Step[2] = (End[2] - Start[2]) / (nb_depth - 1);
+
+		for (i = 0; i < nb_ligne; i++) XLocal[i] = Start[0] + (i - 0)*Step[0];
+		for (j = 0; j < nb_colon; j++) YLocal[j] = Start[1] + (j - 0)*Step[1];
+		for (k = 0; k < nb_depth; k++) ZLocal[k] = Start[2] + (k - 0)*Step[2];
+	}
+
+	//#pragma omp parallel for
 	for (int i = 0; i<nb_ligne; i++) {
 		double vals[] = { 0, 0, 0, 0 };
 		for (j = 0; j<nb_colon; j++) {
@@ -1086,14 +1170,7 @@ void Iso3D::VoxelEvaluation()
 				for (l = 0; l<12; l++)
 					GridVoxel[i][j][k].Edge_Points[l] = -20; /// just for verification
 
-				/**/if (gsysType == PM3::SYSCYLINDRICAL && yreso > 0)
-				{
-				        vcg::Point3d in(vals), out;
-				        out = PM3::cyl2car(in);
-				        vals[0] = out[0];
-				        vals[1] = out[1];
-				        vals[2] = out[2];
-				}
+
 
 				GridVoxel[i][j][k].PositionX = vals[0];
 				GridVoxel[i][j][k].PositionY = vals[1];
@@ -1101,13 +1178,14 @@ void Iso3D::VoxelEvaluation()
 			}
 		}
 	}
-	if (type == 1) {
+	if (type == 12) {
 		for (i = 0; i == 0; i++) {
 
 			for (j = 0; j < nb_colon; j++) {
 
 				for (k = 0; k < nb_depth; k++) {
-					if (GridVoxel[i][j][k].Value < 0) {
+					if (GridVoxel[i][j][k].Value < 0)
+					{
 						//GridVoxel[i][j][k].Value = -GridVoxel[i+1][j][k].Value;//pValParser->Eval(vals);
 						//GridVoxel[i+1][j][k].Value = 0;
 						GridVoxel[i][j][k].Value = 0;
@@ -1120,7 +1198,8 @@ void Iso3D::VoxelEvaluation()
 			for (j = 0; j < nb_colon; j++) {
 
 				for (k = 0; k < nb_depth; k++) {
-					if (GridVoxel[i][j][k].Value < 0) {
+					if (GridVoxel[i][j][k].Value < 0)
+					{
 						//GridVoxel[i][j][k].Value = -GridVoxel[i-1][j][k].Value;//pValParser->Eval(vals);
 						//GridVoxel[i-1][j][k].Value = 0;
 						GridVoxel[i][j][k].Value = 0;
@@ -1134,7 +1213,8 @@ void Iso3D::VoxelEvaluation()
 			{
 
 				for (k = 0; k < nb_depth; k++) {
-					if (GridVoxel[i][j][k].Value < 0) {
+					if (GridVoxel[i][j][k].Value < 0)
+					{
 						//GridVoxel[i][j][k].Value = -GridVoxel[i][j+1][k].Value;//pValParser->Eval(vals);
 						//GridVoxel[i][j+1][k].Value = 0;
 						GridVoxel[i][j][k].Value = 0;
@@ -1148,7 +1228,8 @@ void Iso3D::VoxelEvaluation()
 			{
 
 				for (k = 0; k < nb_depth; k++) {
-					if (GridVoxel[i][j][k].Value < 0) {
+					if (GridVoxel[i][j][k].Value < 0)
+					{
 						//GridVoxel[i][j][k].Value = -GridVoxel[i][j-1][k].Value;//pValParser->Eval(vals);
 						//GridVoxel[i][j-1][k].Value = 0;
 						GridVoxel[i][j][k].Value = 0;
@@ -1162,7 +1243,8 @@ void Iso3D::VoxelEvaluation()
 			for (j = 0; j < nb_colon; j++) {
 
 				{
-					if (GridVoxel[i][j][k].Value < 0) {
+					if (GridVoxel[i][j][k].Value < 0)
+					{
 						//GridVoxel[i][j][k].Value = -GridVoxel[i][j][k+1].Value;//pValParser->Eval(vals);
 						//GridVoxel[i][j][k+1].Value = 0;
 						GridVoxel[i][j][k].Value = 0;
@@ -1175,7 +1257,8 @@ void Iso3D::VoxelEvaluation()
 
 			for (j = 0; j < nb_colon; j++) {
 				{
-					if (GridVoxel[i][j][k].Value < 0) {
+					if (GridVoxel[i][j][k].Value < 0)
+					{
 						//GridVoxel[i][j][k].Value = -GridVoxel[i][j][k-1].Value;//pValParser->Eval(vals);
 						//GridVoxel[i][j][k-1].Value = 0;
 						GridVoxel[i][j][k].Value = 0;
@@ -1185,42 +1268,282 @@ void Iso3D::VoxelEvaluation()
 		}
 	}
 
-	//      pValParser->ParseExp(IsoCondition, gsysType == PM3::SYSCARTESIAN ? "x,y,z" : "r,t,z");
-	//      for (i = 0; i<nb_ligne; i++) {
+	{//计算相切
+		for (i = 0; i < nb_ligne; i++) {//xmin
+			for (j = 0; j < nb_colon; j++) {
+				for (k = 0; k < nb_depth; k++) {
+					if (GridVoxel[i][j][k].Value < 0)
+					{
+						cutIndex[0] = i;
+						if (i > 0) cutIndex[0] = i - 1;
+						i = nb_ligne;
+						j = nb_colon;
+						k = nb_depth;
+						break;
+					}
+				}
+			}
+		}
+		for (i = nb_ligne - 1; i >= 0; i--) {//xmax
+			for (j = 0; j < nb_colon; j++) {
+				for (k = 0; k < nb_depth; k++) {
+					if (GridVoxel[i][j][k].Value < 0)
+					{
+						cutIndex[1] = i;
+						if (i < nb_ligne - 1) cutIndex[1] = i + 1;
+						i = -1;
+						j = nb_colon;
+						k = nb_depth;
+						break;
+					}
+				}
+			}
+		}
+		for (j = 0; j < nb_colon; j++) {////ymin
+			for (i = 0; i < nb_ligne; i++) {
+				for (k = 0; k < nb_depth; k++) {
+					if (GridVoxel[i][j][k].Value < 0)
+					{
+						cutIndex[2] = j;
+						if (j > 0) cutIndex[2] = j - 1;
+						i = nb_ligne;
+						j = nb_colon;
+						k = nb_depth;
+						break;
+					}
+				}
+			}
+		}
+		for (j = nb_colon - 1; j >= 0; j--) {////ymax
+			for (i = 0; i < nb_ligne; i++) {
+				for (k = 0; k < nb_depth; k++) {
+					if (GridVoxel[i][j][k].Value < 0)
+					{
+						cutIndex[3] = j;
+						if (j < nb_colon - 1) cutIndex[3] = j + 1;
+						i = nb_ligne;
+						j = -1;
+						k = nb_depth;
+						break;
+					}
+				}
+			}
+		}
+		for (k = 0; k < nb_depth; k++) {////zmin
+			for (i = 0; i < nb_ligne; i++) {
+				for (j = 0; j < nb_colon; j++) {
+					if (GridVoxel[i][j][k].Value < 0)
+					{
+						cutIndex[4] = k;
+						if (k > 0) cutIndex[4] = k - 1;
+						i = nb_ligne;
+						j = nb_colon;
+						k = nb_depth;
+						break;
+					}
+				}
+			}
+		}
+		for (k = nb_depth - 1; k >= 0; k--) {////zmax
+			for (i = 0; i < nb_ligne; i++) {
+				for (j = 0; j < nb_colon; j++) {
+					if (GridVoxel[i][j][k].Value < 0)
+					{
+						cutIndex[5] = k;
+						if (k < nb_depth - 1) cutIndex[5] = k + 1;
+						i = nb_ligne;
+						j = nb_colon;
+						k = -1;
+						break;
+					}
+				}
+			}
+		}
+	}
+	int offset = 1, offset2 = 2, xoffset = 2;
+	double slocal[3] = { XLocal[cutIndex[0]], YLocal[cutIndex[2]], ZLocal[cutIndex[4]] };
+	double elocal[3] = { XLocal[cutIndex[1]], YLocal[cutIndex[3]], ZLocal[cutIndex[5]] };
+	if (slocal[0] > Start[0]) Start[0] = slocal[0];
+	if (slocal[1] > Start[1]) Start[1] = slocal[1];
+	if (slocal[2] > Start[2]) Start[2] = slocal[2];
+	if (elocal[0] < End[0]) End[0] = elocal[0];
+	if (elocal[1] < End[1]) End[1] = elocal[1];
+	if (elocal[2] < End[2]) End[2] = elocal[2];
+	std::string json;
+	/**/if (gsysType != PM3::SYSCARTESIAN)
+	{
+		Step[0] = (elocal[0] - slocal[0]) / (nb_ligne - offset - xoffset);
+		if (Step[0] > slocal[0]) {
+			xoffset = 0;
+			Step[0] = (elocal[0] - slocal[0]) / (nb_ligne - offset2 - xoffset);
+		}
+		Step[1] = (elocal[1] - slocal[1]) / (nb_colon - offset - offset2);
+		Step[2] = (elocal[2] - slocal[2]) / (nb_depth - offset - offset2);
 
-	//              for (j = 0; j<nb_colon; j++) {
+		for (i = 0; i < nb_ligne; i++) {
+			XLocal[i] = slocal[0] + (i + 0 - xoffset)*Step[0];
+			//if (fabs(XLocal[i]) < 0.000001) XLocal[i] = Step[0] / 100;
+		}
+		for (j = 0; j < nb_colon; j++) {
+			YLocal[j] = slocal[1] + (j - offset)*Step[1];
+			if (fabs(YLocal[j]) < 0.000001) YLocal[j] = Step[1] / 100;
+		}
+		for (k = 0; k < nb_depth; k++) {
+			ZLocal[k] = slocal[2] + (k - offset)*Step[2];
+			if (fabs(ZLocal[k]) < 0.000001) ZLocal[k] = Step[2] / 100;
+		}
+		json = "if(r=%2%,1,if(r=%3%,1,if(phi=%4%,1,if(phi=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))";
+	}
+	else
+	{
+		Step[0] = (elocal[0] - slocal[0]) / (nb_ligne - offset - offset2);
+		Step[1] = (elocal[1] - slocal[1]) / (nb_colon - offset - offset2);
+		Step[2] = (elocal[2] - slocal[2]) / (nb_depth - offset - offset2);
 
-	//                      for (k = 0; k<nb_depth; k++) {
-	//                              vals[0] = XLocal[i];
-	//                              vals[1] = YLocal[j];
-	//                              vals[2] = ZLocal[k];
-	//                              double temp = fabs(pValParser->Eval(vals));
+		for (i = 0; i < nb_ligne; i++)  {
+			XLocal[i] = slocal[0] + (i - offset)*Step[0];
+			if (fabs(XLocal[i]) < 0.000001) XLocal[i] = Step[0] / 100;
+		}
+		for (j = 0; j < nb_colon; j++) {
+			YLocal[j] = slocal[1] + (j - offset)*Step[1];
+			if (fabs(YLocal[j]) < 0.000001) YLocal[j] = Step[1] / 100;
+		}
+		for (k = 0; k < nb_depth; k++) {
+			ZLocal[k] = slocal[2] + (k - offset)*Step[2];
+			if (fabs(ZLocal[k]) < 0.000001) ZLocal[k] = Step[2] / 100;
+		}
+		json = "if(x=%2%,1,if(x=%3%,1,if(y=%4%,1,if(y=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))";
+	}
+	//boost::format fmt(json);
+	//fmt%ImplicitFunction% XLocal[0] % XLocal[nb_ligne - 1] % YLocal[0] % YLocal[nb_colon - 1] % ZLocal[0] % ZLocal[nb_depth - 1];
+	//fmt%ImplicitFunction% Start[0] % End[0] % Start[1] % End[1] % Start[2] % End[2];
+	//ImplicitFunction = fmt.str();
+	//std::string er;
+	//if ((pValParser->ParseExp(ImplicitFunction, er, gsysType == PM3::SYSCARTESIAN ? "x,y,z" : "r,phi,z") != -1))
+	//	return;
+	//#pragma omp parallel for
+	for (int i = 0; i<nb_ligne; i++) {
+		double vals[] = { 0, 0, 0, 0 };
+		for (j = 0; j<nb_colon; j++) {
+			for (k = 0; k<nb_depth; k++) {
+				vals[0] = XLocal[i];
+				vals[1] = YLocal[j];
+				vals[2] = ZLocal[k];
+				GridVoxel[i][j][k].Value = pValParser->Eval(vals);
+				if (!isfinite(GridVoxel[i][j][k].Value)) {
+					GridVoxel[i][j][k].Value = 0;
+				}
+				GridVoxel[i][j][k].Signature = 0; // Signature initialisation
+				GridVoxel[i][j][k].NbEdgePoint = 0; // No EdgePoint yet!
+				GridVoxel[i][j][k].Index[0] = i;
+				GridVoxel[i][j][k].Index[1] = j;
+				GridVoxel[i][j][k].Index[2] = k;
 
-	//                              if(temp < 0.0000001)
-	//                              GridVoxel[i][j][k].Signature = 0; // Signature initialisation
-	//                              GridVoxel[i][j][k].NbEdgePoint = 0; // No EdgePoint yet!
-	//                              GridVoxel[i][j][k].Index[0] = i;
-	//                              GridVoxel[i][j][k].Index[1] = j;
-	//                              GridVoxel[i][j][k].Index[2] = k;
+				for (l = 0; l<12; l++)
+					GridVoxel[i][j][k].Edge_Points[l] = -20; /// just for verification
 
-	//                              for (l = 0; l<12; l++)
-	//                                      GridVoxel[i][j][k].Edge_Points[l] = -20; /// just for verification
+				GridVoxel[i][j][k].PositionX = vals[0];
+				GridVoxel[i][j][k].PositionY = vals[1];
+				GridVoxel[i][j][k].PositionZ = vals[2];
+			}
+		}
+	}
 
-	////                                if (gsysType == PM3::SYSCYLINDRICAL)
-	////                                {
-	////                                        vcg::Point3d in(vals), out;
-	////                                        out = PM3::cyl2car(in);
-	////                                        vals[0] = out[0];
-	////                                        vals[1] = out[1];
-	////                                        vals[2] = out[2];
-	////                                }
+	if (type == 1) {
+		float v = 1;
+		if (gsysType != PM3::SYSCARTESIAN)
+			v = 0;
+		for (i = 0; i == 0; i++) {
 
-	//                              GridVoxel[i][j][k].PositionX = vals[0];
-	//                              GridVoxel[i][j][k].PositionY = vals[1];
-	//                              GridVoxel[i][j][k].PositionZ = vals[2];
-	//                      }
-	//              }
-	//      }
+			for (j = 0; j < nb_colon; j++) {
+
+				for (k = 0; k < nb_depth; k++) {
+					if (GridVoxel[i][j][k].Value < 0)
+					{
+						//GridVoxel[i][j][k].Value = -GridVoxel[i+1][j][k].Value;//pValParser->Eval(vals);
+						//GridVoxel[i+1][j][k].Value = 0;
+						if (gsysType != PM3::SYSCARTESIAN)
+							GridVoxel[i][j][k].Value = 0;
+						else
+							GridVoxel[i][j][k].Value = v;
+					}
+				}
+			}
+		}
+		for (i = nb_ligne - 1; i == nb_ligne - 1; i++) {
+
+			for (j = 0; j < nb_colon; j++) {
+
+				for (k = 0; k < nb_depth; k++) {
+					if (GridVoxel[i][j][k].Value < 0)
+					{
+						//GridVoxel[i][j][k].Value = -GridVoxel[i-1][j][k].Value;//pValParser->Eval(vals);
+						//GridVoxel[i-1][j][k].Value = 0;
+						GridVoxel[i][j][k].Value = v;
+					}
+				}
+			}
+		}
+		j = 0;
+		for (i = 1; i < nb_ligne; i++) {
+
+			{
+
+				for (k = 0; k < nb_depth; k++) {
+					if (GridVoxel[i][j][k].Value < 0)
+					{
+						//GridVoxel[i][j][k].Value = -GridVoxel[i][j+1][k].Value;//pValParser->Eval(vals);
+						//GridVoxel[i][j+1][k].Value = 0;
+						GridVoxel[i][j][k].Value = v;
+					}
+				}
+			}
+		}
+		j = nb_colon - 1;
+		for (i = 1; i < nb_ligne; i++) {
+
+			{
+
+				for (k = 0; k < nb_depth; k++) {
+					if (GridVoxel[i][j][k].Value < 0)
+					{
+						//GridVoxel[i][j][k].Value = -GridVoxel[i][j-1][k].Value;//pValParser->Eval(vals);
+						//GridVoxel[i][j-1][k].Value = 0;
+						GridVoxel[i][j][k].Value = v;
+					}
+				}
+			}
+		}
+		k = 0;
+		for (i = 1; i < nb_ligne; i++) {
+
+			for (j = 0; j < nb_colon; j++) {
+
+				{
+					if (GridVoxel[i][j][k].Value < 0)
+					{
+						//GridVoxel[i][j][k].Value = -GridVoxel[i][j][k+1].Value;//pValParser->Eval(vals);
+						//GridVoxel[i][j][k+1].Value = 0;
+						GridVoxel[i][j][k].Value = v;
+					}
+				}
+			}
+		}
+		k = nb_depth - 1;
+		for (i = 1; i < nb_ligne; i++) {
+
+			for (j = 0; j < nb_colon; j++) {
+				{
+					if (GridVoxel[i][j][k].Value < 0)
+					{
+						//GridVoxel[i][j][k].Value = -GridVoxel[i][j][k-1].Value;//pValParser->Eval(vals);
+						//GridVoxel[i][j][k-1].Value = 0;
+						GridVoxel[i][j][k].Value = v;
+					}
+				}
+			}
+		}
+	}
 };
 
 ///+++++++++++++++++++++++++++++++++++++++++
@@ -1245,7 +1568,8 @@ void Iso3D::PointEdgeComputation()
 
 #define EXPP1 (IsoValue_1 * IsoValue_2 SEL 0) && ((rapport = IsoValue_2 - IsoValue_1) != 0) && (IsoValue_1 <= 0 || IsoValue_2 <= 0)
 #define EXPP (IsoValue_1 * IsoValue_2 SEL 0) && ((rapport = IsoValue_2 - IsoValue_1) != 0)
-	pValParser->ParseExp(IsoCondition, er, gsysType == PM3::SYSCARTESIAN ? "x,y,z" : "r,t,z");
+
+	pValParser->ParseExp(IsoCondition, er, gsysType == PM3::SYSCARTESIAN ? "x,y,z" : "r,phi,z");
 	for (i = i_Start; i < i_End; i++)
 		for (j = j_Start; j < j_End; j++)
 			for (k = k_Start; k < k_End; k++)
@@ -1329,7 +1653,7 @@ void Iso3D::PointEdgeComputation()
 					NbPointIsoMap++;
 				}
 			}
-	if (type == 1)
+	//if (type == 1)
 	{
 		/// Now we have to compute the Grid's limits...
 		/// The code is quite big but this is much more easy to compute

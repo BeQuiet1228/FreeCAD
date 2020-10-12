@@ -195,7 +195,7 @@
 #endif
 
 DWORD start, stop;
-#define TEST_OUTPUT 1
+#define TEST_OUTPUT 0
 
 namespace PartChipic {
 	class Module : public Py::ExtensionModule<Module>
@@ -2409,18 +2409,33 @@ namespace PartChipic {
 		PM3::DefValue3D transferToDefValue3DRECTANGULAR(double x, double y, double z)
 		{
 			PM3::DefValue3D point;
-			point.X() = PM3::convertToStringd(x) + "m";
-			point.Y() = PM3::convertToStringd(y) + "m";
-			point.Z() = PM3::convertToStringd(z) + "m";
+			point.X() = PM3::convertToStringd(x);// +"m";
+			point.Y() = PM3::convertToStringd(y);// +"m";
+			point.Z() = PM3::convertToStringd(z);// +"m";
 
 			return point;
 		}
 		PM3::DefValue3D transferToDefValue3D(double x, double y, double z)
 		{
 			PM3::DefValue3D point;
-			point.X() = PM3::convertToStringd(x) + "m";
-			point.Y() = PM3::convertToStringd(y) + "deg";
-			point.Z() = PM3::convertToStringd(z) + "m";
+			point.X() = PM3::convertToStringd(x);// +"m";
+			point.Y() = PM3::convertToStringd(y*PI / 180.0);// +"deg";
+			point.Z() = PM3::convertToStringd(z);// +"m";
+
+			return point;
+		}
+		PM3::DefValue3D transferToDefValue3Dd(double x, double y, double z)
+		{
+			vcg::Point3d in(x, y*PI / 180.0, z), out;
+			out = PM3::cyl2car(in);
+			x = out[0];
+			y = out[1];
+			z = out[2];
+
+			PM3::DefValue3D point;
+			point.X() = PM3::convertToStringd(x);// +"m";
+			point.Y() = PM3::convertToStringd(y);// +"deg";
+			point.Z() = PM3::convertToStringd(z);// +"m";
 
 			return point;
 		}
@@ -2721,7 +2736,7 @@ namespace PartChipic {
 				fmt%func% xmin % xmax % ymin %ymax%zmin%zmax;
 				Base::Console().Log("fmt: ");
 				Base::Console().Log(fmt.str().c_str());
-				
+
 				PM3::ExpParser exparser;
 				vcg::Point3d Start, End;
 				std::string er;
@@ -2730,7 +2745,7 @@ namespace PartChipic {
 				double yreso = (ymax - ymin) * 3.1415926 / 20. / 180;
 				float extVoid = 0.00001;//0.1mm
 				float extVoidAngle = 0.01;//deg度
-				
+
 				if (std::string(attribute) == S_VOID)//当为空扩大体
 				{
 					if (std::string(coor) == S_COOR_RECTANGULAR) {
@@ -2743,7 +2758,7 @@ namespace PartChipic {
 						far_ori.Parser(&exparser, End, er);
 						near_ori.Parser(&exparser, Start, er);
 					}
-					else {						
+					else {
 						far_ori.X() = PM3::convertToStringd(xmax + extVoid);
 						far_ori.Y() = PM3::convertToStringd(ymax + extVoidAngle);
 						far_ori.Z() = PM3::convertToStringd(zmax + extVoid);
@@ -2767,131 +2782,142 @@ namespace PartChipic {
 				}
 				/*
 				{//计算边界，可能存在函数区域选择过大，模型变形的问题
-				 //可能情况太多，不能这样做
-					//存放点
-					std::vector<Base::Vector3d> Points;
-					//存放面
-					std::vector<Data::ComplexGeoData::Facet> Facets;
-					double maxf = -1;
-					Mesh::MeshObject mesh;
-					PM3::VFunctional vfunc;
-					vfunc.yreso = -1;// yreso;
-					if (std::string(coor) == S_COOR_RECTANGULAR)
-						vfunc.setSystem(PM3::SYSCARTESIAN);
-					else
-						vfunc.setSystem(PM3::SYSCYLINDRICAL);
-					vfunc.f = func;
-					vfunc.name = "bbox";
-					PM3::DefValue3D far_pointV, near_pointV;
-					if (std::string(coor) == S_COOR_RECTANGULAR) {
-						//vfunc.setSystem(PM3::SYSCARTESIAN);
-						PM3::DefValue3D far_point, near_point;
-						far_point.X() = PM3::convertToStringd(End[0]) + "m";
-						far_point.Y() = PM3::convertToStringd(End[1]) + "m";
-						far_point.Z() = PM3::convertToStringd(End[2]) + "m";
-						near_point.X() = PM3::convertToStringd(Start[0]) + "m";
-						near_point.Y() = PM3::convertToStringd(Start[1]) + "m";
-						near_point.Z() = PM3::convertToStringd(Start[2]) + "m";
-						far_pointV = (far_point);
-						near_pointV = (near_point);
-					}
-					else {
-						PM3::DefValue3D far_point, near_point;
-						far_point.X() = PM3::convertToStringd(xmax) + "m";
-						far_point.Y() = PM3::convertToStringd(ymax) + "deg";
-						far_point.Z() = PM3::convertToStringd(zmax) + "m";
-						near_point.X() = PM3::convertToStringd(xmin) + "m";
-						near_point.Y() = PM3::convertToStringd(ymin) + "deg";
-						near_point.Z() = PM3::convertToStringd(zmin) + "m";
-						far_pointV = (far_point);
-						near_pointV = (near_point);
-					}
-					vfunc.far_point = far_pointV;// .setValue(PM3::convertToStringd(xmax) + "," + PM3::convertToStringd(ymax) + "," + PM3::convertToStringd(zmax));
-					vfunc.near_point = near_pointV;// .setValue(PM3::convertToStringd(xmin) + "," + PM3::convertToStringd(ymin) + "," + PM3::convertToStringd(zmin));
-					PM3::ExpParser exparser;
-					vfunc.pexparser = &exparser;
+				//可能情况太多，不能这样做
+				//存放点
+				std::vector<Base::Vector3d> Points;
+				//存放面
+				std::vector<Data::ComplexGeoData::Facet> Facets;
+				double maxf = -1;
+				Mesh::MeshObject mesh;
+				PM3::VFunctional vfunc;
+				vfunc.yreso = -1;// yreso;
+				if (std::string(coor) == S_COOR_RECTANGULAR)
+				vfunc.setSystem(PM3::SYSCARTESIAN);
+				else
+				vfunc.setSystem(PM3::SYSCYLINDRICAL);
+				vfunc.f = func;
+				vfunc.name = "bbox";
+				PM3::DefValue3D far_pointV, near_pointV;
+				if (std::string(coor) == S_COOR_RECTANGULAR) {
+				//vfunc.setSystem(PM3::SYSCARTESIAN);
+				PM3::DefValue3D far_point, near_point;
+				far_point.X() = PM3::convertToStringd(End[0]) + "m";
+				far_point.Y() = PM3::convertToStringd(End[1]) + "m";
+				far_point.Z() = PM3::convertToStringd(End[2]) + "m";
+				near_point.X() = PM3::convertToStringd(Start[0]) + "m";
+				near_point.Y() = PM3::convertToStringd(Start[1]) + "m";
+				near_point.Z() = PM3::convertToStringd(Start[2]) + "m";
+				far_pointV = (far_point);
+				near_pointV = (near_point);
+				}
+				else {
+				PM3::DefValue3D far_point, near_point;
+				far_point.X() = PM3::convertToStringd(xmax) + "m";
+				far_point.Y() = PM3::convertToStringd(ymax) + "deg";
+				far_point.Z() = PM3::convertToStringd(zmax) + "m";
+				near_point.X() = PM3::convertToStringd(xmin) + "m";
+				near_point.Y() = PM3::convertToStringd(ymin) + "deg";
+				near_point.Z() = PM3::convertToStringd(zmin) + "m";
+				far_pointV = (far_point);
+				near_pointV = (near_point);
+				}
+				vfunc.far_point = far_pointV;// .setValue(PM3::convertToStringd(xmax) + "," + PM3::convertToStringd(ymax) + "," + PM3::convertToStringd(zmax));
+				vfunc.near_point = near_pointV;// .setValue(PM3::convertToStringd(xmin) + "," + PM3::convertToStringd(ymin) + "," + PM3::convertToStringd(zmin));
+				PM3::ExpParser exparser;
+				vfunc.pexparser = &exparser;
 
-					vfunc.update_mesh_topology(Points, Facets, maxf);
-					vcg::Point3d nStart = Start, nEnd = End;
-					if (Facets.size() > 0)
-					{
-						mesh.setFacets(Facets, Points);
-						Base::BoundBox3d bbox = mesh.getBoundBox();
-						Start = vcg::Point3d(bbox.MinX, bbox.MinY, bbox.MinZ);
-						End = vcg::Point3d(bbox.MaxX, bbox.MaxY, bbox.MaxZ);
-						if (std::string(coor) == S_COOR_RECTANGULAR)
-						{
-							xmin = Start[0] - 1 * vfunc.iso->Step[0];
-							//if (xmin < xmino) xmin = xmino;
-							xmax = End[0] + 1 * vfunc.iso->Step[0];
-							//if (xmax > xmaxo) xmax = xmaxo;
-							ymin = Start[1] - 1 * vfunc.iso->Step[1];
-							ymax = End[1] + 1 * vfunc.iso->Step[1];
-							zmin = Start[2] - 1 * vfunc.iso->Step[2];
-							//if (zmin < zmino) zmin = zmino;
-							zmax = End[2] + 1 * vfunc.iso->Step[2];
-							//if (zmax > zmaxo) zmax = zmaxo;
-						}
-						else //if (std::string(coor) != "Rectangular")
-						{
-							xmin = Start[0] - 1 * vfunc.iso->Step[0];
-							if (xmin < 0) xmin = 0;
-							//if (xmin < xmino) xmin = xmino;
-							xmax = End[0] + 1 * vfunc.iso->Step[0];
-							//if (xmax > xmaxo) xmax = xmaxo;
-							ymin = Start[1] * 180. / PM3::pi() - 1 * (ymaxo - ymino) / 20.;
-							if (ymin < ymino) ymin = ymino;
-							ymax = End[1] * 180. / PM3::pi() + 1 * (ymaxo - ymino) / 20.;
-							if (ymax > ymaxo) ymax = ymaxo;
-							zmin = Start[2] - 1 * vfunc.iso->Step[2];
-							//if (zmin < zmino) zmin = zmino;
-							zmax = End[2] + 1 * vfunc.iso->Step[2];
-							//if (zmax > zmaxo) zmax = zmaxo;
-						}
-					}
-					yreso = (ymax - ymin) * 3.1415926 / (8) / 180;
-					if (std::string(attribute) == S_VOID)//当为空扩大体
-					{
-					if (std::string(coor) == S_COOR_RECTANGULAR) {
-					far_ori.X() = PM3::convertToStringd(xmax + extVoid);
-					far_ori.Y() = PM3::convertToStringd(ymax + extVoid);
-					far_ori.Z() = PM3::convertToStringd(zmax + extVoid);
-					near_ori.X() = PM3::convertToStringd(xmin - extVoid);
-					near_ori.Y() = PM3::convertToStringd(ymin - extVoid);
-					near_ori.Z() = PM3::convertToStringd(zmin - extVoid);
-					far_ori.Parser(&exparser, End, er);
-					near_ori.Parser(&exparser, Start, er);
-					}
-					else {
-					far_ori.X() = PM3::convertToStringd(xmax + extVoid);
-					far_ori.Y() = PM3::convertToStringd(ymax + extVoidAngle);
-					far_ori.Z() = PM3::convertToStringd(zmax + extVoid);
-					near_ori.X() = PM3::convertToStringd(xmin - extVoid);
-					near_ori.Y() = PM3::convertToStringd(ymin - extVoidAngle);
-					near_ori.Z() = PM3::convertToStringd(zmin - extVoid);
-					far_ori.Parser(&exparser, End, er);
-					near_ori.Parser(&exparser, Start, er);
-					}
-					}
-					else//其它保持不变
-					{
-					far_ori.X() = PM3::convertToStringd(xmax);
-					far_ori.Y() = PM3::convertToStringd(ymax);
-					far_ori.Z() = PM3::convertToStringd(zmax);
-					near_ori.X() = PM3::convertToStringd(xmin);
-					near_ori.Y() = PM3::convertToStringd(ymin);
-					near_ori.Z() = PM3::convertToStringd(zmin);
-					far_ori.Parser(&exparser, End, er);
-					near_ori.Parser(&exparser, Start, er);
-					}
-				}*/				
+				vfunc.update_mesh_topology(Points, Facets, maxf);
+				vcg::Point3d nStart = Start, nEnd = End;
+				if (Facets.size() > 0)
 				{
+				mesh.setFacets(Facets, Points);
+				Base::BoundBox3d bbox = mesh.getBoundBox();
+				Start = vcg::Point3d(bbox.MinX, bbox.MinY, bbox.MinZ);
+				End = vcg::Point3d(bbox.MaxX, bbox.MaxY, bbox.MaxZ);
+				if (std::string(coor) == S_COOR_RECTANGULAR)
+				{
+				xmin = Start[0] - 1 * vfunc.iso->Step[0];
+				//if (xmin < xmino) xmin = xmino;
+				xmax = End[0] + 1 * vfunc.iso->Step[0];
+				//if (xmax > xmaxo) xmax = xmaxo;
+				ymin = Start[1] - 1 * vfunc.iso->Step[1];
+				ymax = End[1] + 1 * vfunc.iso->Step[1];
+				zmin = Start[2] - 1 * vfunc.iso->Step[2];
+				//if (zmin < zmino) zmin = zmino;
+				zmax = End[2] + 1 * vfunc.iso->Step[2];
+				//if (zmax > zmaxo) zmax = zmaxo;
+				}
+				else //if (std::string(coor) != "Rectangular")
+				{
+				xmin = Start[0] - 1 * vfunc.iso->Step[0];
+				if (xmin < 0) xmin = 0;
+				//if (xmin < xmino) xmin = xmino;
+				xmax = End[0] + 1 * vfunc.iso->Step[0];
+				//if (xmax > xmaxo) xmax = xmaxo;
+				ymin = Start[1] * 180. / PM3::pi() - 1 * (ymaxo - ymino) / 20.;
+				if (ymin < ymino) ymin = ymino;
+				ymax = End[1] * 180. / PM3::pi() + 1 * (ymaxo - ymino) / 20.;
+				if (ymax > ymaxo) ymax = ymaxo;
+				zmin = Start[2] - 1 * vfunc.iso->Step[2];
+				//if (zmin < zmino) zmin = zmino;
+				zmax = End[2] + 1 * vfunc.iso->Step[2];
+				//if (zmax > zmaxo) zmax = zmaxo;
+				}
+				}
+				yreso = (ymax - ymin) * 3.1415926 / (8) / 180;
+				if (std::string(attribute) == S_VOID)//当为空扩大体
+				{
+				if (std::string(coor) == S_COOR_RECTANGULAR) {
+				far_ori.X() = PM3::convertToStringd(xmax + extVoid);
+				far_ori.Y() = PM3::convertToStringd(ymax + extVoid);
+				far_ori.Z() = PM3::convertToStringd(zmax + extVoid);
+				near_ori.X() = PM3::convertToStringd(xmin - extVoid);
+				near_ori.Y() = PM3::convertToStringd(ymin - extVoid);
+				near_ori.Z() = PM3::convertToStringd(zmin - extVoid);
+				far_ori.Parser(&exparser, End, er);
+				near_ori.Parser(&exparser, Start, er);
+				}
+				else {
+				far_ori.X() = PM3::convertToStringd(xmax + extVoid);
+				far_ori.Y() = PM3::convertToStringd(ymax + extVoidAngle);
+				far_ori.Z() = PM3::convertToStringd(zmax + extVoid);
+				near_ori.X() = PM3::convertToStringd(xmin - extVoid);
+				near_ori.Y() = PM3::convertToStringd(ymin - extVoidAngle);
+				near_ori.Z() = PM3::convertToStringd(zmin - extVoid);
+				far_ori.Parser(&exparser, End, er);
+				near_ori.Parser(&exparser, Start, er);
+				}
+				}
+				else//其它保持不变
+				{
+				far_ori.X() = PM3::convertToStringd(xmax);
+				far_ori.Y() = PM3::convertToStringd(ymax);
+				far_ori.Z() = PM3::convertToStringd(zmax);
+				near_ori.X() = PM3::convertToStringd(xmin);
+				near_ori.Y() = PM3::convertToStringd(ymin);
+				near_ori.Z() = PM3::convertToStringd(zmin);
+				far_ori.Parser(&exparser, End, er);
+				near_ori.Parser(&exparser, Start, er);
+				}
+				}*/
+				{
+					double d = 0.0001;
 					xmax = End.X();
 					ymax = End.Y();
 					zmax = End.Z();
 					xmin = Start.X();
 					ymin = Start.Y();
 					zmin = Start.Z();
+					/*if (fabs(xmax*ymax*zmax) < 0.000001) {
+					xmax = End.X() + d;
+					ymax = End.Y() + d;
+					zmax = End.Z() + d;
+					}
+					if (fabs(xmin*ymin*zmin) < 0.000001) {
+					xmin = Start.X() - d;
+					ymin = Start.Y() - d;
+					zmin = Start.Z() - d;
+					}*/
 					xmino = xmin;
 					xmaxo = xmax;
 					ymino = ymin;
@@ -2899,25 +2925,37 @@ namespace PartChipic {
 					zmino = zmin;
 					zmaxo = zmax;
 				}
-				std::vector<PM3::DefValue3D> far_pointV, near_pointV, far_pointVo, near_pointVo;
+				float dev = 0.000001;
+				std::vector<PM3::DefValue3D> far_pointV, near_pointV, far_pointVo, near_pointVo, far_pointV_cut, near_pointV_cut;
+				std::vector < std::string > funcV;
 				if (std::string(coor) == S_COOR_RECTANGULAR) {
 					nb_ligne = 20, nb_colon = 20, nb_depth = 20;
-
+					float dev = 0;
 					yreso = (ymax - ymin) / (20 - 4) / 180;
+					double stepx = 0;// (xmax - xmin) / (16 - 5);
+					double stepy = 0;// (ymax - ymin) / (16 - 5);
+					double stepz = 0;// (zmax - zmin) / (16 - 5);
 					far_pointV.push_back(transferToDefValue3DRECTANGULAR(xmax, ymax, zmax));
 					near_pointV.push_back(transferToDefValue3DRECTANGULAR(xmin, ymin, zmin));
-					far_pointVo.push_back(transferToDefValue3DRECTANGULAR(xmaxo, ymaxo, zmaxo));
-					near_pointVo.push_back(transferToDefValue3DRECTANGULAR(xmino, ymino, zmino));
+					far_pointV_cut.push_back(transferToDefValue3DRECTANGULAR(xmaxo + (xmaxo - xmino)/10, ymaxo + (ymax - ymino)/10, zmaxo + (zmaxo - zmino)/10));
+					near_pointV_cut.push_back(transferToDefValue3DRECTANGULAR(xmino - (xmaxo - xmino)/10, ymino - (ymax - ymino)/10, zmino - (zmaxo - zmino)/10));
+					far_pointVo.push_back(transferToDefValue3DRECTANGULAR(xmaxo + dev * 0, ymaxo + dev * 0, zmaxo + dev * 0));
+					near_pointVo.push_back(transferToDefValue3DRECTANGULAR(xmino - dev * 0, ymino - dev * 0, zmino - dev * 0));
+					xmax += stepx, ymax += stepy, zmax += stepz;
+					xmin -= stepx, ymin -= stepy, zmin -= stepz;
+					boost::format fmt("if(x=%2%,1,if(x=%3%,1,if(y=%4%,1,if(y=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))");
+					fmt%func% xmin % xmax % ymin %ymax%zmin%zmax;
+					funcV.push_back(fmt.str().c_str());
 				}
 				else {
 					nb_ligne = 20, nb_colon = 8, nb_depth = 20;
 					yreso = 90 * 3.1415926 / (nb_colon) / 180;
-					
+
 					//角度范围 - 360—360deg，且跨度Point_2.Theta - Point_1.Theta <= 360deg、Point_2.Theta > Point_1.Theta。
 					//在python代码添加此限制条件，以提醒用户
-					if (ymax <= 360 && ymin <= 360 && 
+					if (ymax <= 360 && ymin <= 360 &&
 						ymax >= -360 && ymin >= -360 &&
-						(ymax - ymin) <= 360 && 
+						(ymax - ymin) <= 360 &&
 						ymax > ymin) {
 						double pymax = ymax,
 							pymin = ymin;//上一个范围角度值
@@ -2925,7 +2963,7 @@ namespace PartChipic {
 						double pymaxo = ymaxo,
 							pymino = pymin;
 						int ite = 6;//最大迭代次数，避免死循环
-						do {							
+						do {
 							if (pymax - ymin > 90) {
 								if (pymax > 270) pymin = 270;
 								else if (pymax > 180) pymin = 180;
@@ -2935,271 +2973,35 @@ namespace PartChipic {
 								else if (pymax > -180) pymin = -180;
 								else //if (ymax > -270)
 									pymin = -270;
+								boost::format fmt("if(r=%2%,1,if(r=%3%,1,if(phi=%4%,1,if(phi=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))");
+								fmt%func% xmin % xmax % (pymin*PI / 180.0) % (pymax*PI / 180.0) % zmin%zmax;
+								funcV.push_back(fmt.str().c_str());
 								far_pointV.push_back(transferToDefValue3D(xmax, pymax, zmax));
 								near_pointV.push_back(transferToDefValue3D(xmin, pymin, zmin));
+								far_pointV_cut.push_back(transferToDefValue3D(xmaxo + (xmaxo - xmino)/10, pymaxo + 15, zmaxo + (zmaxo - zmino)/10));
+								near_pointV_cut.push_back(transferToDefValue3D(0, pymin - 15, zmino - (zmaxo - zmino)/10));
 								far_pointVo.push_back(transferToDefValue3D(xmaxo, pymaxo, zmaxo));
 								near_pointVo.push_back(transferToDefValue3D(xmino, pymin, zmino));
 								pymax = pymin;
 								pymaxo = pymin;
 							}
 							else {
+								boost::format fmt("if(r=%2%,1,if(r=%3%,1,if(phi=%4%,1,if(phi=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))");
+								fmt%func% xmin % xmax % (ymin*PI / 180.0) % (pymax*PI / 180.0) % zmin%zmax;
+								funcV.push_back(fmt.str().c_str());
 								far_pointV.push_back(transferToDefValue3D(xmax, pymax, zmax));
 								near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+								far_pointV_cut.push_back(transferToDefValue3D(xmaxo + (xmaxo - xmino)/10, pymaxo + 15, zmaxo + (zmaxo - zmino)/10));
+								near_pointV_cut.push_back(transferToDefValue3D(0, ymino - 15, zmino - (zmaxo- zmino)/10));
 								far_pointVo.push_back(transferToDefValue3D(xmaxo, pymaxo, zmaxo));
 								near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
+
 								break;
 							}
 							ite--;
 						} while (ite >= 0);
 					}
-					
-					/*if (ymax > 270) {
-						if (ymin > 270) {
-							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
-						}
-						else if (ymin > 180) {
-							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 270, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 270, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 270, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 270, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
-						}
-						else if (ymin > 90) {
-							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 270, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 270, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 270, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 180, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 270, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 180, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 180, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 180, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
-						}
-						else if (ymin > 0){
-							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 270, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 270, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 270, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 180, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 270, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 180, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 180, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 90, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 180, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 90, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 90, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 90, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
-						}
-						else {
-							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 270, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 270, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 270, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 180, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 270, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 180, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 180, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 90, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 180, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 90, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 90, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 0, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 90, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 0, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 0, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 0, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
-						}
-					}
-					else if (ymax > 180) {
-						if (ymin > 180) {
-							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
-						}
-						else if (ymin > 90) {
-							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 180, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 180, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 180, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 180, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
-						}
-						else if (ymin > 0) {
-							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 180, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 180, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 180, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 90, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 180, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 90, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 90, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 90, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
-						} 
-						else if (ymin > -90) {
-							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 180, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 180, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 180, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 90, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 180, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 90, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 90, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 0, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 90, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 0, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 0, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 0, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
-						}
-						else {
-							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 180, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 180, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 180, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 90, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 180, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 90, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 90, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 0, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 90, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 0, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 0, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, -90, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 0, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, -90, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, -90, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, -90, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
-						}
-					}
-					else if (ymax > 90) {
-						if (ymin > 90) {
-							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
-						}
-						else if (ymin > 0) {
-							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 90, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 90, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 90, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 90, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
-						}
-						else if (ymin > -90) {
-							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 90, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 90, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 90, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 0, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 90, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 0, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 0, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 0, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
-						}
-						else if (ymin > -180) {
-							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 90, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 90, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 90, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 0, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 90, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 0, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 0, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, -90, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 0, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, -90, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, -90, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, -90, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
-						}
-						else {
-							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 90, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, ymaxo, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 90, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 90, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, 0, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 90, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, 0, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, 0, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, -90, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, 0, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, -90, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, -90, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, -180, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, -90, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, -180, zmino));
-							far_pointV.push_back(transferToDefValue3D(xmax, -180, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
-							far_pointVo.push_back(transferToDefValue3D(xmaxo, -180, zmaxo));
-							near_pointVo.push_back(transferToDefValue3D(xmino, ymino, zmino));
-
-						}
-					}
-					else {//>0
-						PM3::DefValue3D far_point, near_point;
-						far_point.X() = PM3::convertToStringd(xmax) + "m";
-						far_point.Y() = PM3::convertToStringd(ymax) + "deg";
-						far_point.Z() = PM3::convertToStringd(zmax) + "m";
-						near_point.X() = PM3::convertToStringd(xmin) + "m";
-						near_point.Y() = PM3::convertToStringd(ymin) + "deg";
-						near_point.Z() = PM3::convertToStringd(zmin) + "m";
-						far_pointV.push_back(far_point);
-						near_pointV.push_back(near_point);
-						far_point.X() = PM3::convertToStringd(xmaxo) + "m";
-						far_point.Y() = PM3::convertToStringd(ymaxo) + "deg";
-						far_point.Z() = PM3::convertToStringd(zmaxo) + "m";
-						near_point.X() = PM3::convertToStringd(xmino) + "m";
-						near_point.Y() = PM3::convertToStringd(ymino) + "deg";
-						near_point.Z() = PM3::convertToStringd(zmino) + "m";
-						far_pointVo.push_back(far_point);
-						near_pointVo.push_back(near_point);
-						
-					}*/
 				}
-				/*else {
-				vfunc.setSystem(PM3::SYSMYCC);
-				vfunc.far_point.X() = PM3::convertToStringd(xmax) + "m";
-				vfunc.far_point.Y() = PM3::convertToStringd(ymax) + "m";
-				vfunc.far_point.Z() = PM3::convertToStringd(zmax) + "deg";
-				vfunc.near_point.X() = PM3::convertToStringd(xmin) + "m";
-				vfunc.near_point.Y() = PM3::convertToStringd(ymin) + "m";
-				vfunc.near_point.Z() = PM3::convertToStringd(zmin) + "deg";
-				}*/
 				Part::TopoShape* topoShapeV[5] = { 0 };
 				if (far_pointV.size() > 0)
 				{
@@ -3216,7 +3018,7 @@ namespace PartChipic {
 						std::vector<Data::ComplexGeoData::Facet> Facets;
 						double maxf = -1;
 						Mesh::MeshObject mesh;
-						PM3::VFunctional vfunc;
+						/**/PM3::VFunctional vfunc;
 						vfunc.yreso = yreso;
 						vfunc.iso->type = type;
 						vfunc.iso->nb_ligne = nb_ligne;
@@ -3241,12 +3043,26 @@ namespace PartChipic {
 						vfunc.pexparser = &exparser;
 
 						vfunc.update_mesh_topology(Points, Facets, maxf);
+						/*Parametersoptions Parameters;
+						//Creation of the two most important objects:
+						MathMod mm((std::string(coor) == S_COOR_RECTANGULAR)?0:1,uint(Parameters.MaxTri), uint(Parameters.MaxPt), uint(Parameters.MaxGrid),
+						uint(Parameters.NbComponent), uint(Parameters.NbVariables), uint(Parameters.NbConstantes),
+						uint(Parameters.NbDefinedFunctions), uint(Parameters.NbTextures), Parameters.NbSliders,
+						Parameters.NbSliderValues, uint(Parameters.Threads[0]), 16,//<<<
+						uint(Parameters.CalculFactor[0]), uint(Parameters.CalculFactor[1]), uint(Parameters.CalculFactor[2])
+						);
+						mm.SetParameters("", func, far_pointV[nn][0], near_pointV[nn][0],
+						far_pointV[nn][1], near_pointV[nn][1],
+						far_pointV[nn][2], near_pointV[nn][2]);
+						mm.ProcessNewIsoSurface(Points, Facets, maxf);*/
 
 						if (Facets.size() > 0)
 						{
 							mesh.setFacets(Facets, Points);
+							mesh.harmonizeNormals();
+							mesh.removeNonManifolds();
 							std::string filename;
-							if (TEST_OUTPUT == 1) {								
+							if (TEST_OUTPUT == 1) {
 								filename = "d://mesh";
 								_itoa(nn, s, 10);
 								filename = filename + s;
@@ -3263,25 +3079,6 @@ namespace PartChipic {
 							{
 								try {
 
-
-									//TopoDS_Shell mkPoly;
-
-									//LoadOBJ(str, mkPoly);
-									//TopoDS_Shell resultShape;
-									//					Part::TopoShape resultShape;
-									//std::shared_ptr<TopoShape> resultShapePtr(new TopoShape());
-									//testTime("t4 ", t0, t1);
-									//					LoadOBJ2_2(resultShape, facePrecision, Points, Facets);
-									//testTime("t5 ", t0, t1);
-									//	if (!mkPoly.IsDone())
-									//		Standard_Failure::Raise("Cannot create polygon because less than two vertices are given");
-									//ZD
-									//Py::Object result = Py::asObject(new Part::TopoShapePy(new Part::TopoShape(resultShape)));
-									//					Py::Object result = Py::asObject(new Part::TopoShapePy(new Part::TopoShape(resultShape)));
-									//testTime("t6 ", t0, t1);
-									//					return result;
-									//Mesh::MeshObject *mesh_copy = new Mesh::MeshObject(mesh->getKernel());
-									float dev = 0.000001;
 									unsigned long minFacets = 0;
 									std::vector<Mesh::Segment> segments = mesh.getSegmentsFromType
 										(Mesh::MeshObject::PLANE, dev, minFacets);
@@ -3290,7 +3087,7 @@ namespace PartChipic {
 									std::vector<unsigned long> all;
 									//std::vector<unsigned long> invalid;
 									std::string str("Py::Object makeFuncMesh: ");
-									if (TEST_OUTPUT == 1) {										
+									if (TEST_OUTPUT == 1) {
 										_itoa(mesh.countFacets(), s, 10);
 										str = str + s;
 										str = str + "\n";
@@ -3408,29 +3205,64 @@ namespace PartChipic {
 										shell->write(filename.c_str());
 									}
 									Part::TopoShape* funcShape = Solid(shell);
+									bool isshape = true;
+									/*Part::TopoShape shell;
+									bool isshape = shapeFromMesh(shell, Points, Facets, 0.001);
+									Part::TopoShape* funcShape = 0;// ;
+									if (isshape)
+									funcShape = Solid(&shell);*/
+
 									if (TEST_OUTPUT == 1) {
+
 										filename = "d://solid";
 										_itoa(nn, s, 10);
 										filename = filename + s;
 										filename = filename + ".stl";
 										funcShape->write(filename.c_str());
 									}
-									if (type == 1) {
+									if (isshape && type == 1) {
 
 										vcg::Point3d Start, End;
+										End = vfunc.iso->End;
+										Start = vfunc.iso->Start;
 										std::string er;
-										far_pointVo[nn].Parser(&exparser, End, er);
-										near_pointVo[nn].Parser(&exparser, Start, er);
+										//far_pointVo[nn].Parser(&exparser, End, er);
+										//near_pointVo[nn].Parser(&exparser, Start, er);//
 										Part::TopoShape* com = getShapeOfComformal(coor,
 											Base::Vector3f(Start[0], Start[1], Start[2]),
 											Vector3f(End[0], End[1], End[2]));
 										if (TEST_OUTPUT == 1) {
-											filename = "d://com";
+											filename = "d://comformal";
 											_itoa(nn, s, 10);
 											filename = filename + s;
-											filename = filename + ".stl";
-											//com->write(filename.c_str());
+											filename = filename + ".brp";
+											com->write(filename.c_str());
 										}
+										/*far_pointV_cut[nn].Parser(&exparser, End, er);
+										near_pointV_cut[nn].Parser(&exparser, Start, er);//
+										Part::TopoShape* cut = getShapeOfComformal(coor,
+											Base::Vector3f(Start[0], Start[1], Start[2]),
+											Vector3f(End[0], End[1], End[2]));
+										if (TEST_OUTPUT == 1) {
+											filename = "d://cut";
+											_itoa(nn, s, 10);
+											filename = filename + s;
+											filename = filename + ".brp";
+											cut->write(filename.c_str());
+										}
+										BRepAlgoAPI_Cut mkCut(cut->getShape(), com->getShape());
+										TopoDS_Shape cutcut = mkCut.Shape();
+										com->setShape(cutcut);
+										if (TEST_OUTPUT == 1) {
+											filename = "d://cutcut";
+											_itoa(nn, s, 10);
+											filename = filename + s;
+											filename = filename + ".brp";
+											com->write(filename.c_str());
+										}
+										//TopoDS_Shape SH = funcShape->cut(com->getShape());
+										//funcShape->setShape(SH);
+										//BRepAlgoAPI_Cut mkCommon(cutcut,funcShape->getShape());*/
 										BRepAlgoAPI_Common mkCommon(com->getShape(), funcShape->getShape());
 										if (!mkCommon.IsDone()) {
 											Base::Console().Log("makeFuncMesh - mkCommon not done\n");
@@ -3441,8 +3273,10 @@ namespace PartChipic {
 											;// return new App::DocumentObjectExecReturn("DVD::execute - mkCommon.Shape is Null");
 										}
 
-										funcShape->setShape(mkCommon.Shape());
+										funcShape->setShape(mkCommon.Shape());/**/
+										
 										delete com;
+										//delete cut;
 										if (TEST_OUTPUT == 1) {
 											filename = "d://common";
 											_itoa(nn, s, 10);
@@ -4307,6 +4141,109 @@ namespace PartChipic {
 			//t2 = clock();
 			//cerr << "load obj time:" << (double)(t2 - t1) << endl;
 
+			return 1;
+		}
+
+		bool shapeFromMesh(Part::TopoShape &resultShape, std::vector<Base::Vector3d> Points, std::vector<Data::ComplexGeoData::Facet> Facets, const Standard_Real facePrecision){
+
+			float fX, fY, fZ, maxf;
+			int  i1 = 1, i2 = 1, i3 = 1, i4 = 1;
+			std::string line;
+			boost::cmatch what;
+			int flag = 0;
+			try{
+				//存放点
+				//std::vector<Base::Vector3d> Points;
+				//存放面
+				//std::vector<Data::ComplexGeoData::Facet> Facets;
+
+				//t4 = clock();
+				//cerr << "read obj time:" << (double)(t4 - t3) << endl;
+				//有效点的索引
+				std::set<int> validPointIndex;
+
+
+				//int* inValidPointIndex = new int[validPointIndex.size()+1];
+				std::map<int, int> numsOfInvalidthisIndex;
+				std::vector<Base::Vector3d> validPoints;
+				//去除无效的点
+				std::vector<Data::ComplexGeoData::Facet>::iterator itFace = Facets.begin();
+				//clock_t  t7, t8;
+				//t7 = clock();
+				//遍历所有面的点，剩下的就是无效的点
+				for (; itFace != Facets.end(); ++itFace){
+					validPointIndex.insert(itFace->I1);
+					validPointIndex.insert(itFace->I2);
+					validPointIndex.insert(itFace->I3);
+
+				}
+				//t8 = clock();
+				//cerr << "time1:" << (double)(t8 - t7) << endl;
+				//删除多余的点的索引
+				std::set<int>::iterator itValidP = validPointIndex.begin();
+				//定义一个和点数一样的多数组，初始化为-1，值表示该索引之前无效点的个数
+				int numOdInvalidPoints = { 0 };
+
+				int indexPoint = 0;
+				int inValidPoints = 0;
+				//clock_t  t9, t10;
+				//t9 = clock();
+				for (; itValidP != validPointIndex.end();){
+					//set是有序的,无效的
+					if (*itValidP != indexPoint){
+						inValidPoints++;
+						//inValidPointIndex[indexPoint] = inValidPoints;
+					}
+					//有效的
+					else{
+						validPoints.push_back(*(Points.begin() + indexPoint));
+						++itValidP;
+					}
+					//indexPoint处无效点的个数
+					numsOfInvalidthisIndex[indexPoint] = inValidPoints;
+					indexPoint++;
+				}
+				//t10 = clock();
+				//cerr << "time2:" << (double)(t10 - t9) << endl;
+				//size_t numofValid = validPointIndex.size();
+				//size_t numofInValid = inValidPoints;
+				//重新计算面，去掉无用的点
+				std::vector<Data::ComplexGeoData::Facet> validFacets;
+				itFace = Facets.begin();
+				//clock_t  t11, t12;
+				//t11 = clock();
+				for (; itFace != Facets.end(); ++itFace){
+					Data::ComplexGeoData::Facet face;
+					face.I1 = itFace->I1 - numsOfInvalidthisIndex[itFace->I1];
+					face.I2 = itFace->I2 - numsOfInvalidthisIndex[itFace->I2];
+					face.I3 = itFace->I3 - numsOfInvalidthisIndex[itFace->I3];
+					validFacets.push_back(face);
+				}
+				//t12 = clock();
+				//cerr << "time3:" << (double)(t12 - t11) << endl;
+				/*
+				for (int i = 0; i < validPoints.size(); ++i){
+				Base::Console().Error("%lf %lf %lf\n", validPoints[i].x, validPoints[i].y, validPoints[i].z);
+				}
+				Base::Console().Error("=============================================================\n");
+				for (int i = 0; i < validFacets.size(); ++i){
+				Base::Console().Error("%d %d %d\n", validFacets[i].I1, validFacets[i].I3, validFacets[i].I2);
+				}*/
+				//clock_t  t5, t6;
+				//t5 = clock();
+				std::shared_ptr<Part::TopoShape> shapePtr(new Part::TopoShape());
+
+				shapePtr->setFaces(validPoints, validFacets, facePrecision);
+				//t6 = clock();
+				//cerr << "makeface obj time:" << (double)(t6 - t5) << endl;
+				//TopoShape *pShape=
+				resultShape = *shapePtr;
+			}
+			catch (...){
+				std::cerr << "makeFace Wrong\n" << std::endl;
+			}
+			//t2 = clock();
+			//cerr << "load obj time:" << (double)(t2 - t1) << endl;
 			return 1;
 		}
 
