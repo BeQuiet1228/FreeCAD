@@ -62,6 +62,10 @@ public:
 	int getHistoryGroupParamSize(const int& groupIndex,const int& index);
 	//获取一个参数的值
 	float getHistoryGroupParam(const int& goupIdex, const int& index, const int& paramIndex);
+	//清空已完成的数据，并将数据存到历史数据中
+	void clearFinishData();
+	//打印出运行信息
+	void printLog(const std::string& log);
 	//获取历史运行数据大小
 	int getHistorySize(){
 		return historyData.size();
@@ -110,12 +114,19 @@ private:
 	//contorl模块中的chipicManager 这个对象由contorl模块管理  不能在外部释放
 	ChipicManager *chipicManager;
 private:
-	//清空已完成的数据，并将数据存到历史数据中
-	void clearFinishData();
+	//获取错误处理函数再栈中的位置
+	int getLuaErrorCallBackFunction();
+	//打印lua脚本中的错误
+	void printLuaError(const int& error);
+	//调用一个lua函数
+	void callLuaFunction(const std::string& functionName, const int& paramCount = 0, const int& returnCount = 0);
 public Q_SLOTS:
 	void chipicWorkFinished(unsigned long threadID);
 	void chipicStartFinished(unsigned long threadID);
 
 Q_SIGNALS:
+	//chipic启动成功之后的ui
 	void addDataBar(QListWidgetItem*,QWidget*);
+	//运行时的信息
+	void smartContorlLog(std::string);
 };

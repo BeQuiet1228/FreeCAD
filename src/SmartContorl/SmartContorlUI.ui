@@ -18,32 +18,60 @@
     <widget class="CodeEditor" name="textEdit">
      <property name="plainText">
       <string>require &quot;math&quot;
-RAAA = {1.5/1000,2/1000,2.5/1000,3/1000,3.5/1000,4/1000};
-RBBB = {11/1000,12/1000,14/1000,16/1000,18/1000,20/1000};
+--声明一个参数容器
+variates = {};
+--一个参数的值的个数
+valueCount = 6;
+--一共又多少个参数
+variateCount = 2;
+--初始化参数，将参数放入参数容器
+--生命一个参数表
+variate1 = {};
+--设置参数的值
+variate1.variate = {1.5/1000,2/1000,2.5/1000,3/1000,3.5/1000,4/1000};
+--设置参数名称
+variate1.name = &quot;RAAA&quot;;
+--设置参数的范围，在优化参数时将会让该参数的值固定在这个范围内
+variate1.max = 5/1000;
+variate1.mini = 1/1000;
+--将参数表放入参数容器中
+variates[1] = variate1;
+--重复以上操作 放入第二个参数
+variate2 = {};
+variate2.variate = {11/1000,12/1000,14/1000,16/1000,18/1000,20/1000};
+variate2.name = &quot;RBBB&quot;;
+variate2.mini = 10/1000;
+variate2.max = 30/1000;
+variates[2] = variate2;
+
+--观测对象在m3d中设置的别名
+observeName = &quot;test&quot;;
+--数据筛选时的时间范围
+maxTime = 15;
+miniTime = 1;
+--预期功率值 当F达到这个预期值时停止优化
+excpectF = 800000000;
 pgtF = 0;
 pitF = 0
-pgtA = 0;
-pgtB = 0;
-pitA = 0;
-pitB = 0;
+--优化算法中的参数
 omiga = 0.829;
 c1 = 1.49;
 c2 = 1.49;
-vitA = {0,0,0,0,0,0};
-vitB = {0,0,0,0,0,0};
-miniA = 1/1000;
-maxA = 5/1000;
-miniB = 10/1000;
-maxB = 30/1000;
 function rand()
 	local n = math.random(10000);
 	return n/10000;
 end
-
 function init()
  print(&quot;call init&quot;);
- addVariate(&quot;RAAA&quot;,RAAA);
- addVariate(&quot;RBBB&quot;,RBBB);
+ local index = 1;
+ while(index &lt; variateCount + 1)
+ do
+	variates[index].vit = {0,0,0,0,0,0};
+	variates[index].pgt = 0;
+	variates[index].pit = 0;
+	addVariate(variates[index].name,variates[index].variate);
+	index = index + 1;
+ end
 end
 function resultDataFilter()
  getAllResult();
@@ -53,7 +81,7 @@ function resultDataFilter()
 	then
 		print(&quot;open h5file false!&quot;);
 	end
-	if(not findResultData(&quot;test&quot;))
+	if(not findResultData(observeName))
 	then
 		print(&quot;find result false!&quot;);
 		return;
@@ -72,7 +100,7 @@ function resultDataFilter()
 	while(i &lt; valueSize)
 	do
 		local time = getValue(i);
-		if(time &gt; 1)
+		if(time &gt; miniTime and time &lt; maxTime)
 		then
 			local value = getValue(i+1);
 			addCount = addCount + 1;
@@ -84,25 +112,13 @@ function resultDataFilter()
 		end
 		i = i + 2;
 	end
-	local av = add/addCount
+	local av = add/addCount;
 	local f = av*math.exp(-math.abs(max/av - 2));
 	print(&quot;f&quot;);
 	print(f);
 	addParam(f);
  end
-end
-
-function resultExpcet()
- print(&quot;call result expcet&quot;);
- if(pgtF &gt; 800000000)
- then
-	return true;
- end
- return false;
-end
-
-function optimize()
- print(&quot;call optimize&quot;);
+ saveParamsInHistory();
  local groupIndex = getHistorySize() - 1;
  local groupSize = getGroupSize(groupIndex);
  local index = 0;
@@ -110,68 +126,78 @@ function optimize()
  local maxFIndex = 0;
  while(index &lt; groupSize)
  do
-	local F = getParam(groupIndex,index,0);
-	print(&quot;F&quot;);
-	print(F);
+    local F = getParam(groupIndex,index,0);
 	if(F &gt; maxF)
 	then
 		maxF = F;
 		maxFIndex = index;
-	end
+    end
 	if(F &gt; pgtF)
 	then
 		pgtF = F;
-		pgtA = RAAA[index + 1];
-		pgtB = RBBB[index + 1];
-	end
+        local tempIndex = 1;
+        while(tempIndex &lt; variateCount + 1)
+        do
+			variates[tempIndex].pgt = variates[tempIndex].variate[index + 1];
+			tempIndex = tempIndex + 1;
+		end
+    end
 	index = index + 1;
  end
- pitA = RAAA[maxFIndex + 1];
- pitB = RBBB[maxFIndex + 1];
+ local tempIndex = 1;
+ while(tempIndex &lt; variateCount + 1)
+ do
+	variates[tempIndex].pit = variates[tempIndex].variate[maxFIndex + 1];
+    tempIndex = tempIndex + 1;
+ end
  pitF = maxF;
  print(&quot;pgtF&quot;);
  print(pgtF);
  print(&quot;pitF&quot;);
  print(pitF);
- index = 1;
- while(index &lt; 7)
- do
-	local temp = 0;
-	temp = omiga*vitA[index] + c1*rand()*(pitA - RAAA[index]) + c2*rand()*(pgtA - RAAA[index]);
-	vitA[index] = temp;
-	RAAA[index] = RAAA[index] + temp;
-	
-	while(RAAA[index] &lt; miniA or RAAA[index] &gt; maxA)
-	do
-		if(RAAA[index] &lt; miniA)
-		then
-			RAAA[index] = miniA + math.abs(RAAA[index] - miniA);
-		else
-			RAAA[index] = maxA - math.abs(RAAA[index] - maxA);
-		end
-	end
-	
-	index = index + 1;	
+end
+
+function resultExpcet()
+ print(&quot;call result expcet&quot;);
+ if(pgtF &gt; excpectF)
+ then
+	return true;
  end
- index = 1;
- while(index &lt; 7)
+ return false;
+end
+function optimize()
+ print(&quot;call optimize&quot;);
+ local variateIndex = 1;
+ while(variateIndex &lt; variateCount + 1)
  do
-	local temp = 0;
-	temp = omiga*vitB[index] + c1*rand()*(pitB - RBBB[index]) + c2*rand()*(pgtB - RBBB[index]);
-	vitB[index] = temp;
-	RBBB[index] = RBBB[index] + temp;
-	
-	while(RBBB[index] &lt; miniB or RBBB[index] &gt; maxB)
-	do
-		if(RBBB[index] &lt; miniB)
-		then
-			RBBB[index] = miniB + (math.abs(RBBB[index] - miniB));
-		else
-			RBBB[index] = maxB - math.abs(RBBB[index] - maxB);
+     local index = 1;
+     local tempVariate = variates[variateIndex];
+     while(index &lt; valueCount + 1)
+	 do
+        local temp = 0;
+        local value = tempVariate.variate[index];
+        local vit = tempVariate.vit[index];
+        local pit = tempVariate.pit;
+        local pgt = tempVariate.pgt;
+        local mini = tempVariate.mini;
+        local max = tempVariate.max;
+        temp = omiga*vit + c1*rand()*(pit - value) + c2*rand()*(pgt - value);
+		tempVariate.vit[index] = temp;
+        value = value + temp;
+		while(value &lt; mini or value &gt; max)
+		do
+			if(value &lt; mini)
+			then
+				value = mini + math.abs(value - mini);
+			else
+				value = max - math.abs(max - value);
+			end
 		end
-	end
-	
-	index = index + 1;
+		tempVariate.variate[index] = value;
+		index = index + 1;	
+     end
+     variates[variateIndex] = tempVariate;
+	 variateIndex = variateIndex + 1;
  end
  init();
 end</string>

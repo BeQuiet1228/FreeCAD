@@ -2,7 +2,7 @@
 #include "SmartContorlData.h"
 #include "SmartContorl.h"
 #include <iostream>
-
+#include <sstream>
 
 
 /**
@@ -152,6 +152,47 @@ int getParam(lua_State *luaState)
 	return 1;
 }
 
+int saveParamsInHistory(lua_State *luaState)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	contorlData->smartContorl->clearFinishData();
+	return 0;
+}
+
+int cppPrint(lua_State *luaState)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	std::string s = lua_tostring(luaState, 1);
+	contorlData->smartContorl->printLog(s + "\n");
+	return 0;
+}
+
+int pcallErrorCallBack(lua_State *luaState)
+{
+	lua_Debug debug = {};
+	int live = 0;
+	while (lua_getstack(luaState, live, &debug))
+	{
+		live++;
+	}
+	lua_getinfo(luaState, "Sln", &debug);
+	if (lua_gettop(luaState) < 1)
+		return 0;
+	int type = lua_type(luaState, -1);
+	std::string err = lua_tostring(luaState, -1);
+	lua_pop(luaState, 1);
+	std::string msg;
+	//msg += debug.short_src + ":line " + debug.currentline;
+	/*if (debug.name != 0) {
+		msg << "(" << debug.namewhat << " " << debug.name << ")";
+	}*/
+
+	msg += " [" + err + "]";
+	lua_pushstring(luaState, msg.c_str());
+	return 1;
+
+}
+
 /**
 * @brief registerLuaFunction 向虚拟机中注册lua函数
 * @param lua_State * L
@@ -172,6 +213,8 @@ void registerLuaFunction(lua_State *L)
 	lua_register(L, "addParam", addParam);
 	lua_register(L, "getAllResult", getAllResult);
 	lua_register(L, "getDataSetVlaueSize", getDataSetVlaueSize);
+	lua_register(L, "saveParamsInHistory", saveParamsInHistory);
+	lua_register(L, "cppPrint", cppPrint);
 }
 
 

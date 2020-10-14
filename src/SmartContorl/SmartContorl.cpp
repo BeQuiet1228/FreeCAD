@@ -40,8 +40,7 @@ SmartContorl::~SmartContorl()
 */
 void SmartContorl::luaInit()
 {
-	lua_getglobal(lua_state, "init");
-	lua_pcall(lua_state, 0, 0, 0);
+	callLuaFunction("init");
 }
 
 /**
@@ -50,8 +49,7 @@ void SmartContorl::luaInit()
 */
 void SmartContorl::luaResultDataFilter()
 {
-	lua_getglobal(lua_state, "resultDataFilter");
-	lua_pcall(lua_state, 0, 0, 0);
+	callLuaFunction("resultDataFilter");
 }
 
 /**
@@ -60,8 +58,7 @@ void SmartContorl::luaResultDataFilter()
 */
 bool SmartContorl::luaResultExpcet()
 {
-	lua_getglobal(lua_state,"resultExpcet");
-	lua_pcall(lua_state, 0, 1, 0);
+	callLuaFunction("resultExpcet", 0, 1);
 	bool re = false;
 	if (lua_gettop(lua_state) != 0)
 	{
@@ -80,8 +77,7 @@ bool SmartContorl::luaResultExpcet()
 */
 void SmartContorl::luaOptimize()
 {
-	lua_getglobal(lua_state, "optimize");
-	lua_pcall(lua_state, 0, 0, 0);
+	callLuaFunction("optimize");
 }
 
 /**
@@ -152,15 +148,15 @@ void SmartContorl::dataOptimize()
 	//运算结果数据筛选
 	this->luaResultDataFilter();
 	//清空完成运算数据
-	this->clearFinishData();
+	//this->clearFinishData();
 	//判断数据是否符合预期，符合则结束运行
 	if (this->luaResultExpcet())
 		return;
 	//调用优化算法对参数进行优化
 	this->luaOptimize();
 	//运行优化之后的参数
-	this->makeRunData();
-	this->runChipic();
+	//this->makeRunData();
+	//this->runChipic();
 }
 
 /**
@@ -227,6 +223,57 @@ void SmartContorl::clearFinishData()
 }
 
 /**
+* @brief SmartContorl::printLog 在这里集中处理lua中打印出来的信息
+* @param const std::string
+* @return void
+*/
+void SmartContorl::printLog(const std::string& log)
+{
+	emit smartContorlLog(log);
+}
+
+/**
+* @brief SmartContorl::getLuaErrorCallBackFunction 将错误处理函数放入栈中，并返回再栈中位置
+* @return int
+*/
+int SmartContorl::getLuaErrorCallBackFunction()
+{
+	lua_pushcfunction(lua_state, pcallErrorCallBack);
+	int callBack = lua_gettop(lua_state);
+
+	return callBack;
+}
+
+void SmartContorl::printLuaError(const int& error)
+{
+	if (error != 0)
+	{
+		int t = lua_type(lua_state, -1);
+		if (t != 4)
+			return;
+		std::string str = lua_tostring(lua_state, -1);
+		std::cerr << str;
+		lua_pop(lua_state, -1);
+	}
+}
+
+/**
+* @brief SmartContorl::callLuaFunction 调用一个lua函数
+* @param const std::string & functionName 函数名
+* @param const int & paramCount 参数个数
+* @param const int & returnCount 返回值个数
+* @return void
+*/
+void SmartContorl::callLuaFunction(const std::string& functionName, const int& paramCount, const int& returnCount)
+{
+	int callBack = getLuaErrorCallBackFunction();
+
+	lua_getglobal(lua_state, functionName.c_str());
+	int erro = lua_pcall(lua_state, paramCount, returnCount, callBack);
+	printLuaError(erro);
+}
+
+/**
 * @brief SmartContorl::chipicWorkFinished chipic计算完成槽
 * @param unsigned long threadID
 * @return void
@@ -280,7 +327,7 @@ void SmartContorl::chipicStartFinished(unsigned long threadID)
 	//生成ui 
 	chipicData->setCreatDataBar(chipic);
 	chipicData->threadID = threadID;
-	chipicDataFinish.push_back(chipicData);
+	//chipicDataFinish.push_back(chipicData);
 
 	emit addDataBar(chipicData->widgetItem, chipicData->dataBar);
 }

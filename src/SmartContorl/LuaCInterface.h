@@ -33,5 +33,11 @@ int getParamSize(lua_State *luaState);
 int addParam(lua_State *luaState);
 //获取优化算法参数
 int getParam(lua_State *luaState);
+//存储当前参数到历史记录
+int saveParamsInHistory(lua_State *luaState);
+//运行时需要看见的信息
+int cppPrint(lua_State *luaState);
+//lua脚本运行出错时的错误处理函数
+int pcallErrorCallBack(lua_State *luaState);
 //注册lua函数
 void registerLuaFunction(lua_State *L);
