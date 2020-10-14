@@ -27,34 +27,13 @@ myHightLighter::myHightLighter(QTextDocument *parent)
             }
          }
     }
-    {       //载入函数
-        QFile file("./codeEditConfig/functioHielighter.txt");
-        if (file.open(QIODevice::ReadOnly | QIODevice::WriteOnly))
-        {
-            QTextStream stream(&file);
-            while (!stream.atEnd()) {
-              QString line = stream.readLine();
-              //functions.append(line);
-              QRegExp regularExpression(line);    //创建正则表达式
-              regularExpression.setCaseSensitivity(Qt::CaseInsensitive);      //匹配时忽略大小写
 
-              QTextCharFormat myClassFormat;
-              myClassFormat.setFontWeight(QFont::Bold);
-              myClassFormat.setForeground(Qt::darkRed);
-
-              HighlightingRule r;
-              r.pattern = regularExpression;
-              r.format = myClassFormat;
-              rule.append(r);
-            }
-         }
-    }
     //载入注释
     {
         QTextCharFormat myClassFormat;
         myClassFormat.setFontWeight(QFont::Bold);
         myClassFormat.setForeground(Qt::darkGreen);
-        QRegExp rex("!.*");    //创建正则表达式
+        QRegExp rex("--.*");    //创建正则表达式
 
         HighlightingRule r;
         r.pattern = rex;

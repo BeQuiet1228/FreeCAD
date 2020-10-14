@@ -147,6 +147,9 @@ SET(SmartContorl_src
 	ChipicRunData.h
 	CInterfaceStack.cpp
 	CInterfaceStack.h
+	LuaEditView.h
+	LuaEditView.cpp
+	SmartContorlConfig.hpp
 	${UI_SRC}
 	${JSON_SRC}
 	${MY_MOC_SRC}
@@ -165,15 +168,15 @@ SET(SmartContorl_src
 #add_library(common SHARED util.cpp) # 生成动态库或共享库
 #add_library(Contorl SHARED ${Contorl_src})
 
-#if(contorl_client_exe)
+if(smart_contorl_exe)
 	add_executable(SmartContorl ${SmartContorl_src}) # 生成可执行文件
 	SET(OUTPUT_BINDIR ${CMAKE_CURRENT_BINARY_DIR}/../../bin) #设置可执行文件输出目录
-	add_definitions( -DMY_DEBUG -DMY_LOG)
-#endif()
-#if(contorl_client_dll)
-#	add_definitions( -DMY_LOG)
-#	add_library(SmartContorl SHARED ${Contorl_src})
-#endif()
+	add_definitions( -DMY_DEBUG -DMY_LOG -D_SMARTCONTORL_)
+endif()
+if(smart_contorl_dll)
+	add_definitions(-DMY_LOG -D_SMARTCONTORL_)
+	add_library(SmartContorl SHARED ${SmartContorl_src})
+endif()
 
 
 #增加包含目录

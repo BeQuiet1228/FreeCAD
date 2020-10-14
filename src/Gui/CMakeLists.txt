@@ -49,6 +49,7 @@ include_directories(
 if(MSVC)
     set(FreeCADGui_LIBS
          FreeCADApp
+		 SmartContorl
          ${COIN3D_LIBRARIES}
          ${OPENGL_gl_LIBRARY}
     )
@@ -60,6 +61,7 @@ if(MSVC)
 else(MSVC)
     set(FreeCADGui_LIBS
         FreeCADApp
+		SmartContorl
         ${COIN3D_LIBRARIES}
         ${Boost_LIBRARIES}
         ${OPENGL_gl_LIBRARY}
@@ -1026,8 +1028,10 @@ SET(Widget_HPP_SRCS
     WidgetFactory.h
     Widgets.h
     Window.h
+	LuaEditView.h
 )
 SET(Widget_SRCS
+	LuaEditView.cpp
     ${Widget_CPP_SRCS}
     ${Widget_HPP_SRCS}
 )

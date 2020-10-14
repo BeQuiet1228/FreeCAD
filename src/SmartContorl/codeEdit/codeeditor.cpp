@@ -7,9 +7,9 @@
 #include <qpainter.h>
 #include <QTextBlock>
 #include "myhightlighter.h"
-
-//![constructor]
-
+#include "QFont"
+#include "matchwordsthrea.h"
+#include "codeEdit/codeeditor.h"
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {
     lineNumberArea = new LineNumberArea1(this);
@@ -29,6 +29,9 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     listWidget->hide();
 
     myHightLighter *highLighter = new myHightLighter(this->document());         //ÉèÖÃ¸ßÁÁÆ÷
+	QFont f("Î¢ÈíÑÅºÚ");
+	f.setPointSize(15);
+	this->setFont(f);
 }
 
 CodeEditor::~CodeEditor()
@@ -36,11 +39,7 @@ CodeEditor::~CodeEditor()
     matchWordThrad->terminate(); //ÖÕÖ¹Ïß³Ì
     matchWordThrad->wait();     //µÈ´ýÏß³ÌÖÕÖ¹
     delete matchWordThrad;
-
 }
-//![constructor]
-
-//![extraAreaWidth]
 
 int CodeEditor::lineNumberAreaWidth()
 {
@@ -56,18 +55,12 @@ int CodeEditor::lineNumberAreaWidth()
     return space;
 }
 
-//![extraAreaWidth]
-
-//![slotUpdateExtraAreaWidth]
 
 void CodeEditor::updateLineNumberAreaWidth(int /* newBlockCount */)
 {
     setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
 }
 
-//![slotUpdateExtraAreaWidth]
-
-//![slotUpdateRequest]
 
 void CodeEditor::updateLineNumberArea(const QRect &rect, int dy)
 {
@@ -80,9 +73,6 @@ void CodeEditor::updateLineNumberArea(const QRect &rect, int dy)
         updateLineNumberAreaWidth(0);
 }
 
-//![slotUpdateRequest]
-
-//![resizeEvent]
 
 void CodeEditor::resizeEvent(QResizeEvent *e)
 {
@@ -92,9 +82,6 @@ void CodeEditor::resizeEvent(QResizeEvent *e)
     lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
 }
 
-//![resizeEvent]
-
-//![cursorPositionChanged]
 
 void CodeEditor::highlightCurrentLine()
 {
@@ -115,25 +102,16 @@ void CodeEditor::highlightCurrentLine()
     setExtraSelections(extraSelections);
 }
 
-//![cursorPositionChanged]
-
-//![extraAreaPaintEvent_0]
-
 void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
     QPainter painter(lineNumberArea);
     painter.fillRect(event->rect(), Qt::lightGray);
 
-//![extraAreaPaintEvent_0]
-
-//![extraAreaPaintEvent_1]
     QTextBlock block = firstVisibleBlock();
     int blockNumber = block.blockNumber();
     int top = (int) blockBoundingGeometry(block).translated(contentOffset()).top();
     int bottom = top + (int) blockBoundingRect(block).height();
-//![extraAreaPaintEvent_1]
 
-//![extraAreaPaintEvent_2]
     while (block.isValid() && top <= event->rect().bottom()) {
         if (block.isVisible() && bottom >= event->rect().top()) {
             QString number = QString::number(blockNumber + 1);

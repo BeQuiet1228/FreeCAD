@@ -16,6 +16,9 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="CodeEditor" name="textEdit">
+     <property name="styleSheet">
+      <string notr="true">font: 9pt &quot;微软雅黑&quot;;</string>
+     </property>
      <property name="plainText">
       <string>require &quot;math&quot;
 --声明一个参数容器
@@ -257,6 +260,11 @@ end</string>
     </widget>
    </item>
   </layout>
+  <action name="actionShowLuaEditor">
+   <property name="text">
+    <string>显示脚本编辑器</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

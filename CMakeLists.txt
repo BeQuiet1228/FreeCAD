@@ -19,6 +19,11 @@ cmake_minimum_required(VERSION 2.8.0 FATAL_ERROR)
 #SET(contorl_client_exe " ")
 #以动态链接库的形式编译客户端
 SET(contorl_client_dll " ")
+#设置优化算法模块以exe生成
+#SET(smart_contorl_exe " ")
+#设置优化算法模块以DLL生成
+SET(smart_contorl_dll " ")
+
 
 if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)

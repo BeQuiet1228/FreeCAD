@@ -118,7 +118,7 @@
 
 #include "qwidgetaction.h"
 #include "Contorl/ContorlInterface.h"
-
+#include "LuaEditView.h"
 #if defined(Q_OS_WIN32)
 #define slots
 //#include <private/qmainwindowlayout_p.h>
@@ -447,7 +447,8 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
 	dateBar = static_cast<QWidget*>(cn->getContorlDataBar());
 	buttonBar = static_cast<QWidget*>(cn->getContorlButtonBar());
 
-
+	auto test = new LuaEditView;
+	addWindow(test);
 }
 
 MainWindow::~MainWindow()
