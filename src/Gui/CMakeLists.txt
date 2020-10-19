@@ -49,7 +49,6 @@ include_directories(
 if(MSVC)
     set(FreeCADGui_LIBS
          FreeCADApp
-		 SmartContorl
          ${COIN3D_LIBRARIES}
          ${OPENGL_gl_LIBRARY}
     )
@@ -58,10 +57,14 @@ if(MSVC)
 		Contorl
 	)
 	endif()
+	if(smart_contorl_dll)
+	list(APPEND FreeCADGui_LIBS
+		SmartContorl
+	)
+	endif()
 else(MSVC)
     set(FreeCADGui_LIBS
         FreeCADApp
-		SmartContorl
         ${COIN3D_LIBRARIES}
         ${Boost_LIBRARIES}
         ${OPENGL_gl_LIBRARY}
@@ -71,6 +74,11 @@ else(MSVC)
 	if(contorl_client_dll)
 	list(APPEND FreeCADGui_LIBS
 		Contorl
+	)
+	endif()
+	if(smart_contorl_dll)
+	list(APPEND FreeCADGui_LIBS
+		SmartContorl
 	)
 	endif()	
 endif(MSVC)

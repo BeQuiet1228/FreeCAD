@@ -8,6 +8,8 @@
 #include <QListWidgetItem>
 #include <Contorl/Chipic.h>
 #include <SmartContorlData.h>
+#include "VariateInputDialog.h"
+#include "VariateItemWidget.h"
 SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	:QWidget(parent), ui(new Ui::SmartContorlUI)
 {
@@ -19,6 +21,8 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	std::string m3dPath = "E:/lingshiwenjianjia/MILO_C/MILO_C.m3d";
 	smartContorl->setM3dPath(m3dPath);
 	connect(smartContorl, SIGNAL(addDataBar(QListWidgetItem*, QWidget*)), this, SLOT(addListWidgetItem(QListWidgetItem*, QWidget*)));
+	//this->ui->textEdit->hide();
+	connect(smartContorl, SIGNAL(smartContorlLog(std::string)), this, SLOT(pringLuaLog(std::string)));
 }
 
 SmartContorlUI::~SmartContorlUI()
@@ -28,24 +32,13 @@ SmartContorlUI::~SmartContorlUI()
 
 void SmartContorlUI::on_pushButton_clicked()
 {
-/*	VariateAnalysis var;
-	auto tt = var.analysisTextToVariate(ui->textEdit->toPlainText());
+	
 
-	auto str = Variate::makeStringForVariates(tt);
-	for (auto i = str.begin(); i != str.end(); i++)
-	{
-		std::cerr << "string:/n" << std::endl;
-		std::cerr << (*i).toStdString() << std::endl;
-	}
-	m3dDatas = fileMaker.makeFile(str);
+	replaceVariate();
+	auto  str = ui->textEdit->toPlainText();
 
-	auto contorl = ContorlInterface::GetInstance();
-	auto chipicManger = contorl->getChipicManager();
-	if (m3dDatas.size() == 0)
-		return;
-	auto data = m3dDatas.front();
-	m3dDatas.pop_front();
-	chipicManger->sendStartChipicMessage(data.m3dPath.toStdString(), 1);*/
+	smartContorl->luaLoadFromString(str.toStdString());
+	smartContorl->luaInit();
 	smartContorl->makeRunData();
 	smartContorl->runChipic();
 }
@@ -75,6 +68,46 @@ void SmartContorlUI::on_pushButton_6_clicked()
 void SmartContorlUI::on_pushButton_7_clicked()
 {
 	smartContorl->luaOptimize();
+}
+
+void SmartContorlUI::on_pushButtonAddVariate_clicked()
+{
+	std::cout << "add" << std::endl;
+	VariateInputDialog d;
+	d.exec();
+
+	if (d.okClicked)
+	{
+		auto data = d.getData();
+		data->count = this->ui->spinBoxCount->value();
+		data->item = new QListWidgetItem();
+		data->widget = new VariateItemWidget();
+		data->widget->setData(data);
+		variateDatas.push_back(data);
+		
+		this->ui->listWidgetVariate->addItem(data->item);
+		auto size = data->widget->size();
+		data->item->setSizeHint(size);
+		this->ui->listWidgetVariate->setItemWidget(data->item, data->widget);
+	}
+}
+
+void SmartContorlUI::on_pushButtonDeleteVariate_clicked()
+{
+	auto items = this->ui->listWidgetVariate->selectedItems();
+	if (items.size() < 1)
+		return;
+	auto item = items.begin();
+
+	for (auto iter = variateDatas.begin(); iter != variateDatas.end(); iter++)
+	{
+		if ((*iter)->item == *item)
+		{
+			(*iter)->deleteUI();
+			variateDatas.erase(iter);
+			return;
+		}
+	}
 }
 
 void SmartContorlUI::chipicStartFinished(unsigned long threadID)
@@ -146,6 +179,54 @@ void SmartContorlUI::addListWidgetItem(QListWidgetItem *item, QWidget *widget)
 {
 	ui->listWidget->addItem(item);
 	ui->listWidget->setItemWidget(item, widget);
+}
+
+void SmartContorlUI::pringLuaLog(std::string str)
+{
+	auto temp = QString::fromStdString(str);
+	auto text = this->ui->plainTextEdit->toPlainText();
+	text += temp;
+	this->ui->plainTextEdit->setPlainText(text);
+}
+
+//暂时全写再这儿 日后再改
+void SmartContorlUI::replaceVariate()
+{
+	//添加参数
+	int count = this->ui->spinBoxCount->value();
+	QString vars = "\n";
+	QString temp = "";
+	for (auto iter = variateDatas.begin(); iter != variateDatas.end(); iter++)
+	{
+		temp = QString("addVar(\"%1\",%2,%3,%4);\n").arg((*iter)->name)
+			.arg((*iter)->max).arg((*iter)->mini).arg(count);
+		vars += temp;
+	}
+	std::cerr << vars.toStdString();
+	auto text = this->ui->textEdit->toPlainText();
+	text += vars;
+
+	//添加配置
+	QString config = "";
+	temp = QString("observeName = \"%1\";\n").arg(this->ui->lineEditName->text());
+	config += temp;
+	temp = QString("maxTime = %1;\n").arg(this->ui->lineEditMaxTime->text().toInt());
+	config += temp;
+	temp = QString("miniTime = %1;\n").arg(this->ui->lineEditMiniTime->text().toInt());
+	config += temp;
+	temp = QString("excpectF = %1;\n").arg(this->ui->lineEditMaxF->text().toInt());
+	config += temp;
+	temp = QString("omiga = %1;\n").arg(this->ui->lineEditOmega->text().toDouble());
+	config += temp;
+	temp = QString("c1 = %1;\n").arg(this->ui->lineEditC1->text().toDouble());
+	config += temp;
+	temp = QString("c2 = %1;\n").arg(this->ui->lineEditC2->text().toDouble());
+	config += temp;
+	text = config + text;
+	std::cerr << config.toStdString();
+	this->ui->textEdit->setPlainText(text);
+
+
 }
 
 #include "moc_SmartContorlUI.cpp"

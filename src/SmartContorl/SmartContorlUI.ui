@@ -13,7 +13,317 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,1,0">
+   <property name="topMargin">
+    <number>4</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="widget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>200</height>
+      </size>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_12">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>参数值个数</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBoxCount">
+            <property name="value">
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QPushButton" name="pushButtonAddVariate">
+            <property name="text">
+             <string>添加变量</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonDeleteVariate">
+            <property name="text">
+             <string>删除变量</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QListWidget" name="listWidgetVariate"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>数据筛选设置</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>观测对象名称:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditName">
+               <property name="text">
+                <string>test</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <item>
+              <widget class="QLabel" name="label_4">
+               <property name="text">
+                <string>筛选数据最小时间:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditMiniTime">
+               <property name="text">
+                <string>1</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item>
+              <widget class="QLabel" name="label_3">
+               <property name="text">
+                <string>筛选数据最大时间:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditMaxTime">
+               <property name="text">
+                <string>15</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <item>
+              <widget class="QLabel" name="label_5">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>F=  </string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="comboBoxF">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <item>
+                <property name="text">
+                 <string>最大值</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>最小值</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>平均值</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>新建项目</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>PavExp(-|Pmax/Pav-2k|)</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <item>
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>F预期值:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditMaxF">
+               <property name="text">
+                <string>800000000</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_2">
+             <property name="title">
+              <string>优化算法参数设置</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_9">
+                <item>
+                 <widget class="QLabel" name="label_7">
+                  <property name="text">
+                   <string>C1</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="lineEditC1">
+                  <property name="text">
+                   <string>1.49</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_10">
+                <item>
+                 <widget class="QLabel" name="label_8">
+                  <property name="text">
+                   <string>C2</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="lineEditC2">
+                  <property name="text">
+                   <string>1.49</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_11">
+                <item>
+                 <widget class="QLabel" name="label_9">
+                  <property name="text">
+                   <string>ω</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="lineEditOmega">
+                  <property name="text">
+                   <string>0.829</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>运行输出</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPlainTextEdit" name="plainTextEdit"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item>
     <widget class="CodeEditor" name="textEdit">
      <property name="styleSheet">
@@ -23,55 +333,55 @@
       <string>require &quot;math&quot;
 --声明一个参数容器
 variates = {};
---一个参数的值的个数
-valueCount = 6;
---一共又多少个参数
-variateCount = 2;
---初始化参数，将参数放入参数容器
---生命一个参数表
-variate1 = {};
---设置参数的值
-variate1.variate = {1.5/1000,2/1000,2.5/1000,3/1000,3.5/1000,4/1000};
---设置参数名称
-variate1.name = &quot;RAAA&quot;;
---设置参数的范围，在优化参数时将会让该参数的值固定在这个范围内
-variate1.max = 5/1000;
-variate1.mini = 1/1000;
---将参数表放入参数容器中
-variates[1] = variate1;
---重复以上操作 放入第二个参数
-variate2 = {};
-variate2.variate = {11/1000,12/1000,14/1000,16/1000,18/1000,20/1000};
-variate2.name = &quot;RBBB&quot;;
-variate2.mini = 10/1000;
-variate2.max = 30/1000;
-variates[2] = variate2;
-
---观测对象在m3d中设置的别名
-observeName = &quot;test&quot;;
---数据筛选时的时间范围
-maxTime = 15;
-miniTime = 1;
---预期功率值 当F达到这个预期值时停止优化
-excpectF = 800000000;
+variateCount = 0;
 pgtF = 0;
-pitF = 0
---优化算法中的参数
-omiga = 0.829;
-c1 = 1.49;
-c2 = 1.49;
+pitF = 0;
+valueCount = 0;
+--添加参数函数
+function addVar(name,max,mini,count)
+    local var = {};
+    local i = 1;
+	local v = {};
+	var.vit = {};
+	var.pgt = 0;
+	var.pit = 0;
+    --随机数只能取整数 所以需要将范围乘上一个足够大的数之后再取小数
+	local bei = 1000000;
+    while(i &lt; count + 1)
+	do
+		--设置参数值
+		v[i] = math.random(mini*bei,max*bei)/bei;
+		--初始化参数的增量
+		var.vit[i] = 0;
+		i = i + 1;
+	end
+    var.variate = v;
+    var.name = name;
+    var.max = max;
+    var.mini = mini;
+    variateCount = variateCount + 1;
+    variates[variateCount] = var;
+    valueCount = count;
+end
 function rand()
 	local n = math.random(10000);
 	return n/10000;
 end
 function init()
- print(&quot;call init&quot;);
+ cppPrint(&quot;call init&quot;);
  local index = 1;
  while(index &lt; variateCount + 1)
  do
-	variates[index].vit = {0,0,0,0,0,0};
-	variates[index].pgt = 0;
-	variates[index].pit = 0;
+	--输出参数值
+	local i = 1;
+	local log = variates[index].name..&quot;= &quot;
+	while(i &lt; valueCount + 1)
+	do
+		log = log..variates[index].variate[i]..&quot;,&quot;;
+		i = i + 1;
+	end
+	cppPrint(log);
+	--往c中添加变量
 	addVariate(variates[index].name,variates[index].variate);
 	index = index + 1;
  end
@@ -82,17 +392,17 @@ function resultDataFilter()
  do
 	if(not openH5File())
 	then
-		print(&quot;open h5file false!&quot;);
+		cppPrint(&quot;open h5file false!&quot;);
 	end
 	if(not findResultData(observeName))
 	then
-		print(&quot;find result false!&quot;);
+		cppPrint(&quot;find result false!&quot;);
 		return;
 	end
  
 	if(not openDataSet())
 	then
-		print(&quot;open data set false!&quot;);
+		cppPrint(&quot;open data set false!&quot;);
 		return;
 	end
 	local valueSize = getDataSetVlaueSize();
@@ -117,8 +427,7 @@ function resultDataFilter()
 	end
 	local av = add/addCount;
 	local f = av*math.exp(-math.abs(max/av - 2));
-	print(&quot;f&quot;);
-	print(f);
+	cppPrint(&quot;f= &quot;..f);
 	addParam(f);
  end
  saveParamsInHistory();
@@ -154,14 +463,11 @@ function resultDataFilter()
     tempIndex = tempIndex + 1;
  end
  pitF = maxF;
- print(&quot;pgtF&quot;);
- print(pgtF);
- print(&quot;pitF&quot;);
- print(pitF);
+ cppPrint(&quot;pgtF= &quot;..pgtF..&quot;,pit= &quot;..pitF);
 end
 
 function resultExpcet()
- print(&quot;call result expcet&quot;);
+ cppPrint(&quot;call result expcet&quot;);
  if(pgtF &gt; excpectF)
  then
 	return true;
@@ -169,13 +475,13 @@ function resultExpcet()
  return false;
 end
 function optimize()
- print(&quot;call optimize&quot;);
+ cppPrint(&quot;call optimize&quot;);
  local variateIndex = 1;
  while(variateIndex &lt; variateCount + 1)
  do
      local index = 1;
      local tempVariate = variates[variateIndex];
-     while(index &lt; valueCount + 1)
+	 while(index &lt; valueCount + 1)
 	 do
         local temp = 0;
         local value = tempVariate.variate[index];
@@ -208,56 +514,67 @@ end</string>
     </widget>
    </item>
    <item>
-    <widget class="QListWidget" name="listWidget"/>
-   </item>
-   <item>
-    <widget class="QPushButton" name="pushButton">
-     <property name="text">
-      <string>开始</string>
+    <widget class="QListWidget" name="listWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButton_2">
-     <property name="text">
-      <string>停止</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="pushButton_3">
-     <property name="text">
-      <string>载入脚本</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="pushButton_4">
-     <property name="text">
-      <string>初始化</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="pushButton_5">
-     <property name="text">
-      <string>数据筛选</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="pushButton_6">
-     <property name="text">
-      <string>预期比对</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="pushButton_7">
-     <property name="text">
-      <string>参数优化</string>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="text">
+        <string>停止</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_3">
+       <property name="text">
+        <string>载入脚本</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_4">
+       <property name="text">
+        <string>初始化</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_5">
+       <property name="text">
+        <string>数据筛选</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_6">
+       <property name="text">
+        <string>预期比对</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_7">
+       <property name="text">
+        <string>参数优化</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>开始</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
   <action name="actionShowLuaEditor">

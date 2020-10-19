@@ -187,7 +187,7 @@ int pcallErrorCallBack(lua_State *luaState)
 		msg << "(" << debug.namewhat << " " << debug.name << ")";
 	}*/
 
-	msg += " [" + err + "]";
+	msg += " [" + err + "]\n";
 	lua_pushstring(luaState, msg.c_str());
 	return 1;
 

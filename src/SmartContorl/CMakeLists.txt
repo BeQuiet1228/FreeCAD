@@ -16,6 +16,8 @@ project(SmartContorl)
 #源文件
 SET(UI_SRC
 	SmartContorlUI.ui
+	VariateItemWidget.ui
+	VariateInputDialog.ui
 )
 SET(QRC_SRC
 
@@ -104,10 +106,14 @@ SET(MY_MOC_HDR
 	codeEdit/codeeditor.h
 	codeEdit/matchwordsthrea.h
 	codeEdit/myhightlighter.h
+	VariateItemWidget.h
+	VariateInputDialog.h
 )
 SET(MY_MOC_SRC
 	SmartContorlUI.cpp
 	SmartContorl.cpp
+	VariateItemWidget.cpp
+	VariateInputDialog.cpp
 )
 SET(NETWORK_SRC
 
