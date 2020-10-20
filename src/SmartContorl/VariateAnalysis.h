@@ -10,7 +10,7 @@ public:
 	//变量名
 	QString name;
 	//变量值
-	std::vector<QString> values;
+	std::vector<double> values;
 	//获取变量所有的值
 	std::vector<QString> getValues();
 	//把变量成对的组合起来
@@ -24,10 +24,10 @@ public:
 
 	//添加值
 	void addValue(const std::string& t){
-		values.push_back(QString::fromLocal8Bit(t.c_str()));
+		values.push_back(std::stod(t));
 	}
 	void addValue(const QString& t){
-		values.push_back(t);
+		values.push_back(t.toDouble());
 	}
 };
 

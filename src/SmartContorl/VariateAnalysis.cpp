@@ -53,7 +53,7 @@ std::vector<QString> Variate::getValues()
 	std::vector<QString> v;
 	for (auto i = this->values.begin(); i != this->values.end(); i++)
 	{
-		QString temp = this->name + " = " + *i + ";\n";
+		QString temp = this->name + " = " + QString::number(*i) + ";\n";
 		v.push_back(temp);
 	}
 
@@ -132,7 +132,7 @@ Variate VariateAnalysis::analysisOneVariate(const QString& str)
 
 	for (auto i = list.begin(); i != list.end(); i++)
 	{
-		variate.values.push_back(*i);
+		variate.values.push_back(i->toDouble());
 	}
 
 	return variate;

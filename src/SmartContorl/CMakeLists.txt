@@ -108,12 +108,14 @@ SET(MY_MOC_HDR
 	codeEdit/myhightlighter.h
 	VariateItemWidget.h
 	VariateInputDialog.h
+	qcustomplot.h
 )
 SET(MY_MOC_SRC
 	SmartContorlUI.cpp
 	SmartContorl.cpp
 	VariateItemWidget.cpp
 	VariateInputDialog.cpp
+	qcustomplot.cpp
 )
 SET(NETWORK_SRC
 

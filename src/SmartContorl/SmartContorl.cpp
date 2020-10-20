@@ -112,7 +112,9 @@ void SmartContorl::makeRunData()
 
 	fileMaker.setM3dPath(m3dPath);
 	this->chipicDataWait = fileMaker.makeFile(m3ds);
-
+	
+	//保存变量信息
+	runData.variates = this->variates;
 	//清空变量组
 	this->variates.clear();
 }
@@ -167,9 +169,9 @@ void SmartContorl::dataOptimize()
 int SmartContorl::getHistoryGroupSize(const int& groupIndex)
 {
 	int size = 0;
-	if (historyData.size() > groupIndex)
+	if (historyDatas.size() > groupIndex)
 	{
-		size = historyData.at(groupIndex).size();
+		size = historyDatas.at(groupIndex).datas.size();
 	}
 
 	return size;
@@ -186,7 +188,7 @@ int SmartContorl::getHistoryGroupParamSize(const int& groupIndex, const int& ind
 	int size = 0;
 	if (getHistoryGroupSize(groupIndex) > index)
 	{
-		auto chipicData = historyData.at(groupIndex).at(index);
+		auto chipicData = historyDatas.at(groupIndex).datas.at(index);
 		size = chipicData->resultData->size();
 	}
 
@@ -206,7 +208,7 @@ float SmartContorl::getHistoryGroupParam(const int& goupIdex, const int& index, 
 	if (getHistoryGroupParamSize(goupIdex, index) <= paramIndex)
 		return param;
 
-	auto chipicData = historyData.at(goupIdex).at(index);
+	auto chipicData = historyDatas.at(goupIdex).datas.at(index);
 	param = chipicData->resultData->getValue(paramIndex);
 
 	return param;
@@ -218,7 +220,7 @@ float SmartContorl::getHistoryGroupParam(const int& goupIdex, const int& index, 
 */
 void SmartContorl::clearFinishData()
 {
-	historyData.push_back(this->chipicDataFinish);
+	runData.datas = this->chipicDataFinish;
 	chipicDataFinish.clear();
 }
 

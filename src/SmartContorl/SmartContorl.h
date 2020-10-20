@@ -32,11 +32,19 @@ private:
 	ChipicRunDatas::iterator iter;
 	ChipicRunDatas result;
 };
+
 class SmartContorl:public QObject{
 	Q_OBJECT
 public:
 	SmartContorl();
 	~SmartContorl();
+public:
+	struct HistoryData{
+		//运行结果
+		ChipicRunDatas datas;
+		//参数设置
+		std::vector<Variate> variates;
+	};
 
 public:
 	//调用lua中的初始化函数
@@ -68,7 +76,7 @@ public:
 	void printLog(const std::string& log);
 	//获取历史运行数据大小
 	int getHistorySize(){
-		return historyData.size();
+		return historyDatas.size();
 	}
 	//添加一个参数组
 	void addVariate(const Variate& v){
@@ -106,13 +114,15 @@ private:
 	//已经运行完的m3d数据
 	ChipicRunDatas chipicDataFinish;
 	//已筛选完数据的历史信息
-	std::vector<ChipicRunDatas> historyData;
+	std::vector<HistoryData> historyDatas;
 	//m3d文件路径
 	QString m3dPath;
 	//参数文件生成器
 	FileMaker fileMaker;
 	//contorl模块中的chipicManager 这个对象由contorl模块管理  不能在外部释放
 	ChipicManager *chipicManager;
+	//运行一次的所有信息
+	HistoryData runData;
 private:
 	//获取错误处理函数再栈中的位置
 	int getLuaErrorCallBackFunction();

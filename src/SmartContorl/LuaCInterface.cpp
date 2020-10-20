@@ -35,7 +35,7 @@ int addVariate(lua_State *L)
 	auto v = variate.values;
 	for (auto i = v.begin(); i != v.end(); i++)
 	{
-		std::cerr << "value: " << i->toStdString() << std::endl;
+		std::cerr << "value: " << *i << std::endl;
 	}
 #endif // MY_DEBUG
 	return 0;
