@@ -180,6 +180,11 @@ if(contorl_client_exe)
 	FreeCADBase
 	)
 endif()
+if(smart_contorl_dll)
+	list(APPEND QT_LIB
+	SmartContorl
+	)
+endif()
 #引入Qt库
 if (BUILD_QT5)
     include_directories(

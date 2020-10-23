@@ -9,6 +9,7 @@
 #include <QListWidgetItem>
 #include <vector>
 #include <memory>
+class VariateChart;
 class VariateItemWidget;
 //变量数据结构
 struct VariateData
@@ -48,6 +49,9 @@ private:
 	SmartContorl *smartContorl;
 	//变量列表
 	std::vector<std::shared_ptr<VariateData>> variateDatas;
+
+	//图表控件
+	VariateChart *chart;
 public Q_SLOTS:
 	void on_pushButton_clicked();
 	void on_pushButton_3_clicked();
@@ -55,6 +59,7 @@ public Q_SLOTS:
 	void on_pushButton_5_clicked();
 	void on_pushButton_6_clicked();
 	void on_pushButton_7_clicked();
+	void on_pushButton_8_clicked();
 	void on_pushButtonAddVariate_clicked();
 	void on_pushButtonDeleteVariate_clicked();
 	void chipicStartFinished(unsigned long threadID);
@@ -62,6 +67,8 @@ public Q_SLOTS:
 	void addListWidgetItem(QListWidgetItem *item,QWidget *widget);
 	//打印lua中输出得log
 	void pringLuaLog(std::string str);
+	//查看变量趋势图
+	void on_pushButtonVariateMax_clicked();
 
 private:
 	//替换变量

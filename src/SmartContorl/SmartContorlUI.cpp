@@ -10,6 +10,9 @@
 #include <SmartContorlData.h>
 #include "VariateInputDialog.h"
 #include "VariateItemWidget.h"
+#include <QVector>
+#include "qcustomplot.h"
+#include "VariateChart.h"
 SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	:QWidget(parent), ui(new Ui::SmartContorlUI)
 {
@@ -23,11 +26,13 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	connect(smartContorl, SIGNAL(addDataBar(QListWidgetItem*, QWidget*)), this, SLOT(addListWidgetItem(QListWidgetItem*, QWidget*)));
 	//this->ui->textEdit->hide();
 	connect(smartContorl, SIGNAL(smartContorlLog(std::string)), this, SLOT(pringLuaLog(std::string)));
+
+	chart = new VariateChart;
 }
 
 SmartContorlUI::~SmartContorlUI()
 {
-
+	delete chart;
 }
 
 void SmartContorlUI::on_pushButton_clicked()
@@ -68,6 +73,11 @@ void SmartContorlUI::on_pushButton_6_clicked()
 void SmartContorlUI::on_pushButton_7_clicked()
 {
 	smartContorl->luaOptimize();
+}
+
+void SmartContorlUI::on_pushButton_8_clicked()
+{
+
 }
 
 void SmartContorlUI::on_pushButtonAddVariate_clicked()
@@ -189,6 +199,45 @@ void SmartContorlUI::pringLuaLog(std::string str)
 	this->ui->plainTextEdit->setPlainText(text);
 }
 
+void SmartContorlUI::on_pushButtonVariateMax_clicked()
+{
+	auto histroy = SmartContorlData::GetInstance()->smartContorl->getHistoryDatas();
+	if (histroy.size() < 1)
+		return;
+	auto variates = histroy.begin()->variates;
+	if (variates.size() < 1)
+		return;
+	auto valueCount = variates.begin()->values.size();
+	
+
+	QVector<QVector<double>> values;
+	QVector<double> keys;
+	int key = 1;
+	for (int i = 0; i < valueCount; i++)
+	{
+		QVector<double> v;
+		values.push_back(v);
+	}
+
+	for (auto historyIter = histroy.begin(); historyIter != histroy.end(); historyIter++)
+	{
+		auto historyValues = (historyIter->variates.begin())->values;
+		auto vIter = values.begin();
+		auto hIter = historyValues.begin();
+		for (; vIter != values.end() && hIter != historyValues.end();
+			vIter++, hIter++)
+		{
+			vIter->push_back(*hIter);
+		}
+		keys.push_back(key);
+		key++;
+	}
+
+	chart->clearGraph();
+	chart->setDatas(keys, values, variates.begin()->name);
+	chart->show();
+}
+
 //暂时全写再这儿 日后再改
 void SmartContorlUI::replaceVariate()
 {
@@ -221,6 +270,8 @@ void SmartContorlUI::replaceVariate()
 	temp = QString("c1 = %1;\n").arg(this->ui->lineEditC1->text().toDouble());
 	config += temp;
 	temp = QString("c2 = %1;\n").arg(this->ui->lineEditC2->text().toDouble());
+	config += temp;
+	temp = QString("fmod = %1;\n").arg(this->ui->comboBoxF->currentIndex());
 	config += temp;
 	text = config + text;
 	std::cerr << config.toStdString();

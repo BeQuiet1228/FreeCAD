@@ -73,6 +73,13 @@
         <item>
          <widget class="QListWidget" name="listWidgetVariate"/>
         </item>
+        <item>
+         <widget class="QPushButton" name="pushButtonVariateMax">
+          <property name="text">
+           <string>查看变量趋势图</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
@@ -113,7 +120,7 @@
              <item>
               <widget class="QLineEdit" name="lineEditMiniTime">
                <property name="text">
-                <string>1</string>
+                <string>4</string>
                </property>
               </widget>
              </item>
@@ -180,11 +187,6 @@
                </item>
                <item>
                 <property name="text">
-                 <string>新建项目</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
                  <string>PavExp(-|Pmax/Pav-2k|)</string>
                 </property>
                </item>
@@ -217,7 +219,7 @@
              <item>
               <widget class="QLineEdit" name="lineEditMaxF">
                <property name="text">
-                <string>800000000</string>
+                <string>500000</string>
                </property>
               </widget>
              </item>
@@ -337,6 +339,34 @@ variateCount = 0;
 pgtF = 0;
 pitF = 0;
 valueCount = 0;
+--获取F得定义
+function getF(minif,maxf,avf)
+	if(fmod == 0)
+	then
+		return maxf;
+	end
+	if(fmod == 1)
+	then
+		return minif
+	end
+	if(fmod == 2)
+	then
+		return avf;
+	end
+	if(fmod == 3)
+	then
+		return avf*math.exp(-math.abs(maxf/avf - 2));
+	end
+end
+--判断两个f哪一个更符合预期
+--如果第一个f更符合预期 则返回true
+function compareF(f1,f2)
+	if(math.abs(f1 - excpectF) &lt; math.abs(f2 - excpectF))
+	then
+		return true;
+	end
+	return false;
+end
 --添加参数函数
 function addVar(name,max,mini,count)
     local var = {};
@@ -344,15 +374,19 @@ function addVar(name,max,mini,count)
 	local v = {};
 	var.vit = {};
 	var.pgt = 0;
-	var.pit = 0;
+	var.pit = {};
+	var.pitF = {};
     --随机数只能取整数 所以需要将范围乘上一个足够大的数之后再取小数
-	local bei = 1000000;
+	local bei = 100000000;
     while(i &lt; count + 1)
 	do
 		--设置参数值
 		v[i] = math.random(mini*bei,max*bei)/bei;
 		--初始化参数的增量
-		var.vit[i] = 0;
+		local vitV = math.abs(mini - max)/2;
+		var.vit[i] = math.random(-vitV*bei,vitV*bei)/bei;
+		var.pitF[i] = 0;
+		var.pit[i] = 0;
 		i = i + 1;
 	end
     var.variate = v;
@@ -364,8 +398,7 @@ function addVar(name,max,mini,count)
     valueCount = count;
 end
 function rand()
-	local n = math.random(10000);
-	return n/10000;
+	return math.random();
 end
 function init()
  cppPrint(&quot;call init&quot;);
@@ -408,6 +441,7 @@ function resultDataFilter()
 	local valueSize = getDataSetVlaueSize();
 	local i = 0;
 	local max = 0;
+	local mini = -999999;
 	local add = 0;
 	local addCount = 0;
 	while(i &lt; valueSize)
@@ -422,11 +456,15 @@ function resultDataFilter()
 			then
 				max = value;
 			end
+			if(value &lt; mini)
+			then
+				mini = value;
+			end
 		end
 		i = i + 2;
 	end
 	local av = add/addCount;
-	local f = av*math.exp(-math.abs(max/av - 2));
+	local f = getF(mini,max,av);
 	cppPrint(&quot;f= &quot;..f);
 	addParam(f);
  end
@@ -438,13 +476,21 @@ function resultDataFilter()
  local maxFIndex = 0;
  while(index &lt; groupSize)
  do
-    local F = getParam(groupIndex,index,0);
-	if(F &gt; maxF)
+	local F = getParam(groupIndex,index,0);
+	local pitF = variates[1].pitF[index + 1];
+	print(&quot;pitf=&quot;..pitF);
+	if(compareF(F,pitF))
 	then
-		maxF = F;
-		maxFIndex = index;
+		local countIndex = 1;
+		while(countIndex &lt; variateCount + 1)
+		do
+			variates[countIndex].pitF[index + 1] = F;
+			print(&quot;pitf2=&quot;..variates[countIndex].pitF[index + 1]);
+			variates[countIndex].pit[index + 1] = variates[countIndex].variate[index + 1];
+			countIndex = countIndex + 1;
+		end
     end
-	if(F &gt; pgtF)
+	if(compareF(F,pgtF))
 	then
 		pgtF = F;
         local tempIndex = 1;
@@ -456,19 +502,11 @@ function resultDataFilter()
     end
 	index = index + 1;
  end
- local tempIndex = 1;
- while(tempIndex &lt; variateCount + 1)
- do
-	variates[tempIndex].pit = variates[tempIndex].variate[maxFIndex + 1];
-    tempIndex = tempIndex + 1;
- end
- pitF = maxF;
- cppPrint(&quot;pgtF= &quot;..pgtF..&quot;,pit= &quot;..pitF);
 end
 
 function resultExpcet()
  cppPrint(&quot;call result expcet&quot;);
- if(pgtF &gt; excpectF)
+ if(math.abs(pgtF - excpectF)&lt;30)
  then
 	return true;
  end
@@ -485,11 +523,14 @@ function optimize()
 	 do
         local temp = 0;
         local value = tempVariate.variate[index];
-        local vit = tempVariate.vit[index];
-        local pit = tempVariate.pit;
+		local vit = tempVariate.vit[index];
+        local pit = tempVariate.pit[index];
         local pgt = tempVariate.pgt;
         local mini = tempVariate.mini;
-        local max = tempVariate.max;
+		local max = tempVariate.max;
+		print(&quot;vi=&quot;..vit);
+		print(&quot;pit=&quot;..pit);
+		print(&quot;pgt=&quot;..pgt);
         temp = omiga*vit + c1*rand()*(pit - value) + c2*rand()*(pgt - value);
 		tempVariate.vit[index] = temp;
         value = value + temp;
@@ -571,6 +612,13 @@ end</string>
       <widget class="QPushButton" name="pushButton">
        <property name="text">
         <string>开始</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_8">
+       <property name="text">
+        <string>停止</string>
        </property>
       </widget>
      </item>

@@ -158,6 +158,8 @@ SET(SmartContorl_src
 	LuaEditView.h
 	LuaEditView.cpp
 	SmartContorlConfig.hpp
+	VariateChart.h
+	VariateChart.cpp
 	${UI_SRC}
 	${JSON_SRC}
 	${MY_MOC_SRC}

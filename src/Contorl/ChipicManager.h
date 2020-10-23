@@ -50,6 +50,8 @@ public Q_SLOTS:
 	//load提示框被关闭
 	void loadDialogClose();
 public:
+	//初始化消息发射器
+	void initMessageSender();
 	//并行按钮被点击
 	void ButtonParalleRunClicked(const std::string& m3dPath);
 	//发送启动消息

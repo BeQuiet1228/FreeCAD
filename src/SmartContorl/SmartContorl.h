@@ -100,6 +100,10 @@ public:
 		ChipicResultGetter result(chipicDataFinish);
 		return result;
 	}
+	//获取运行的历史数据
+	std::vector<HistoryData> getHistoryDatas(){
+		return historyDatas;
+	}
 private:
 	//同时运行chipic的个数
 	unsigned int chipicCount = 6;

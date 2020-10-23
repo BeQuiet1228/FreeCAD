@@ -15,9 +15,9 @@ SmartContorl::SmartContorl()
 	//注册lua函数
 	registerLuaFunction(lua_state);
 	//获取chipicmanager管理对象
-	auto contorl = ContorlInterface::GetInstance();
-	chipicManager = contorl->getChipicManager();
+	chipicManager = new ChipicManager;
 	chipicManager->setRunType(ChipicManager::AUTO);
+	chipicManager->initMessageSender();
 	//链接计算完成槽
 	connect(chipicManager, SIGNAL(finishChipicM3dPath(unsigned long)), this, SLOT(chipicWorkFinished(unsigned long)));
 	connect(chipicManager, SIGNAL(chipicStartFinished(unsigned long)), this, SLOT(chipicStartFinished(unsigned long)));
@@ -32,6 +32,7 @@ SmartContorl::SmartContorl()
 SmartContorl::~SmartContorl()
 {
 	lua_close(lua_state);
+	delete chipicManager;
 }
 
 /**
@@ -221,6 +222,7 @@ float SmartContorl::getHistoryGroupParam(const int& goupIdex, const int& index, 
 void SmartContorl::clearFinishData()
 {
 	runData.datas = this->chipicDataFinish;
+	historyDatas.push_back(runData);
 	chipicDataFinish.clear();
 }
 

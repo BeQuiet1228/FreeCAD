@@ -15,6 +15,7 @@
 #include "openLog.h"
 #include "ContorlDataBar.h"
 #include "ContorlButtonBar.h"
+#include "LocalEimtter.h"
 ChipicManager::ChipicManager()
 {
 	auto getter = JsonMessageGetter::GetInstance();
@@ -163,6 +164,17 @@ void ChipicManager::chipicAnalysisFinished()
 void ChipicManager::loadDialogClose()
 {
 	this->runButtonClicked();
+}
+
+/**
+* @brief ChipicManager::initMessageSender
+* @return void
+*/
+void ChipicManager::initMessageSender()
+{
+	//初始化消息发射器
+	auto sender = MessageSender::GetInstance();
+	sender->setEmitter(new LocalEmitter);
 }
 
 /**

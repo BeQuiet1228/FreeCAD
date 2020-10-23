@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 		customPlot->graph()->setData(x, y);
 		customPlot->graph()->rescaleAxes(true);
 		customPlot->graph()->setPen(pen);
-		//customPlot->graph()->setName(QCPScatterStyle::staticMetaObject.enumerator(QCPScatterStyle::staticMetaObject.indexOfEnumerator("ScatterShape")).valueToKey(shapes.at(i)));
+		customPlot->graph()->setName(QString("test%1").arg(i));
 		customPlot->graph()->setLineStyle(QCPGraph::lsLine);
 		// set scatter style:
 		if (shapes.at(i) != QCPScatterStyle::ssCustom)
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 		{
 			QPainterPath customScatterPath;
 			for (int i = 0; i < 3; ++i)
-				customScatterPath.cubicTo(qCos(2 * M_PI*i / 3.0) * 9, qSin(2 * M_PI*i / 3.0) * 9, qCos(2 * M_PI*(i + 0.9) / 3.0) * 9, qSin(2 * M_PI*(i + 0.9) / 3.0) * 9, 0, 0);
+				customScatterPath.cubicTo(qCos(2 * M_PI*i / 3.0) * 6, qSin(2 * M_PI*i / 3.0) * 9, qCos(2 * M_PI*(i + 0.9) / 3.0) * 9, qSin(2 * M_PI*(i + 0.9) / 3.0) * 9, 0, 0);
 			customPlot->graph()->setScatterStyle(QCPScatterStyle(customScatterPath, QPen(Qt::black, 0), QColor(40, 70, 255, 50), 10));
 		}
 	}
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 	// make top right axes clones of bottom left axes:
 	customPlot->axisRect()->setupFullAxesBox();
 
-	customPlot->show();
+	//customPlot->show();
 
 	return a.exec();
 }
