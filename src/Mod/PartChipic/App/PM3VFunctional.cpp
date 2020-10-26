@@ -654,9 +654,9 @@ bool VFunctional::update_mesh_topology(std::vector<Base::Vector3d> &Points, std:
 				   ++fi;
 			   }
 		   }
-		   cm.clean();
-		   if (name == "bbox")
-			   vcg::tri::Clean<CMeshO>::RemoveUnreferencedVertex(cm);
+		   //cm.clean();
+		   //if (name == "bbox")
+			//   vcg::tri::Clean<CMeshO>::RemoveUnreferencedVertex(cm);
 		   //saveOBJ(PM3::getOutOBJName("d://ori" + name + ".obj"));
 		   //tri::UpdateBounding<CMeshO>::Box(cm);
 		   blist = true;
