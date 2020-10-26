@@ -4588,137 +4588,138 @@ namespace PartChipic {
 					//Base::Console().Log("points\n");
 				}
 
-				//unsigned long minFacets = 0;
-				//std::vector<Mesh::Segment> segments = mesh.getSegmentsFromType
-				//	(Mesh::MeshObject::PLANE, dev, minFacets);
-				//std::list < Part::TopoShape*> faces;
-				////std::vector<unsigned long> remove;
-				//std::vector<unsigned long> all;
-				////std::vector<unsigned long> invalid;
-				//std::string str("Py::Object makeFuncMesh: ");
-				//if (TEST_OUTPUT == 2) {
-				//	_itoa(mesh.countFacets(), s, 10);
-				//	str = str + s;
-				//	str = str + "\n";
-				//	Base::Console().Log(str.c_str());
-				//}
-				//for (std::vector<Mesh::Segment>::iterator it = segments.begin(); it != segments.end(); ++it) {
-				//	const std::vector<unsigned long>& segm = it->getIndices();
-				//	for (int i = 0; i < segm.size(); i++)
-				//		all.push_back(segm[i]);
-				//}
-				//if (TEST_OUTPUT == 2) {
-				//	str = ("Py::Object makeFuncMesh all: ");
-				//	_itoa(all.size(), s, 10);
-				//	str = str + s;
-				//	str = str + "\n";
-				//	Base::Console().Log(str.c_str());
-				//}
-				//int n = 0, sum = 0;
-				//for (std::vector<Mesh::Segment>::iterator it = segments.begin(); it != segments.end(); ++it) {
-				//	const std::vector<unsigned long>& segm = it->getIndices();
-				//	if (segm.size() > 0) {
-				//		std::list<Part::TopoShape *> wires = wireFromSegment(&mesh, segm);
-				//		if (wires.size() > 0) {
-				//			Part::TopoShape *ext = 0;
-				//			int max_length = 0;
-				//			for (list<Part::TopoShape *>::iterator it = wires.begin(); it != wires.end(); ++it){
-				//				Part::TopoShape *sh = *it;
-				//				if (sh->getBoundBox().CalcDiagonalLength() > max_length) {
-				//					max_length = sh->getBoundBox().CalcDiagonalLength();
-				//					ext = *it;
-				//				}
-				//			}
-				//			wires.remove(ext);
-				//			for (list<Part::TopoShape *>::iterator it = wires.begin(); it != wires.end(); ++it){
-				//				Part::TopoShape *sh = *it;
-				//				TopoDS_Shape _sh = sh->getShape();
-				//				_sh.Reverse();
-				//			}
-				//			wires.push_front(ext);
-				//			Part::TopoShape* t = wireToFace(wires);
-				//			//Part::TopoShape* t =  makeFace(wires, "Part::FaceMakerCheese");
-				//			if (TEST_OUTPUT == 2) {
-				//				_itoa(n, s, 10);
-				//				str = "d://segm";
-				//				str = str + s;
-				//				str = str + ".stl";
-				//				//t->write(str.c_str());
-				//			}
-				//			if (t == 0) {
-				//				Mesh::MeshObject* temp = mesh.meshFromSegment(segm);
-				//				Part::TopoShape *shape = new Part::TopoShape();
-				//				Points.clear(), Facets.clear();
-				//				temp->getFaces(Points, Facets, 0, 0);
-				//				shape->setFaces(Points, Facets);
-				//				if (shape->getShape().ShapeType() != TopAbs_FACE)
-				//					getFaces(shape, faces);
-				//				else
-				//					faces.push_back(shape);
-				//				//temp->save("d://segm.stl");
-				//				//for (int i = 0; i < segm.size(); i++)
-				//				//	invalid.push_back(segm[i]);
-				//				delete temp;
-				//			}
-				//			else {
-				//				faces.push_back(t);
-				//				//for (int i = 0; i < segm.size(); i++)
-				//				//	remove.push_back(segm[i]);
-				//			}
-				//		}
-				//	}
-				//	n++;
-				//}
-				////not in seg
-				//if (all.size() < mesh.countFacets()) {
-				//	mesh.deleteFacets(all);
-				//	if (TEST_OUTPUT == 1) {
-				//		str = ("Py::Object makeFuncMesh not in seg: ");
-				//		_itoa(mesh.countFacets(), s, 10);
-				//		str = str + s;
-				//		str = str + "\n";
-				//		//Base::Console().Log(str.c_str());
-				//	}
-				//	std::vector<std::vector<unsigned long> > vvec = mesh.getComponents();
-				//	if (TEST_OUTPUT == 1) {
-				//		_itoa(vvec.size(), s, 10);
-				//		str = "mesh->getComponents(): ";
-				//		str = str + s;
-				//		str = str + "\n";
-				//		//Base::Console().Log(str.c_str());
-				//	}
-				//	for (int i = 0; i < vvec.size(); i++) {
-				//		Part::TopoShape *shape = new Part::TopoShape();
-				//		Mesh::MeshObject* temp = mesh.meshFromSegment(vvec[i]);
-				//		if (TEST_OUTPUT == 1) {
-				//			_itoa(i, s, 10);
-				//			str = "d://seg";
-				//			str = str + s;
-				//			str = str + ".stl";
-				//			//temp->save(str.c_str());
-				//		}
-				//		Points.clear(), Facets.clear();
-				//		temp->getFaces(Points, Facets, 0, 0);
-				//		shape->setFaces(Points, Facets);
-				//		if (shape->getShape().ShapeType() != TopAbs_FACE)
-				//			getFaces(shape, faces);
-				//		else
-				//			faces.push_back(shape);
-				//		delete temp;
-				//	}
-				//}
-				////Part::TopoShape* shell = makeCompound(faces);
-				////TopoDS_Shape shellx = makeShell(shell->getShape());// (faces);
-				////shell->setShape(shellx);
+				unsigned long minFacets = 0;
+				std::vector<Mesh::Segment> segments = mesh.getSegmentsFromType
+					(Mesh::MeshObject::PLANE, 0.01, minFacets);//dev
+				std::list < Part::TopoShape*> faces;
+				//std::vector<unsigned long> remove;
+				std::vector<unsigned long> all;
+				//std::vector<unsigned long> invalid;
+				std::string str("Py::Object makeFuncMesh: ");
+				if (TEST_OUTPUT == 2) {
+					_itoa(mesh.countFacets(), s, 10);
+					str = str + s;
+					str = str + "\n";
+					Base::Console().Log(str.c_str());
+				}
+				for (std::vector<Mesh::Segment>::iterator it = segments.begin(); it != segments.end(); ++it) {
+					const std::vector<unsigned long>& segm = it->getIndices();
+					for (int i = 0; i < segm.size(); i++)
+						all.push_back(segm[i]);
+				}
+				if (TEST_OUTPUT == 2) {
+					str = ("Py::Object makeFuncMesh all: ");
+					_itoa(all.size(), s, 10);
+					str = str + s;
+					str = str + "\n";
+					Base::Console().Log(str.c_str());
+				}
+				int n = 0, sum = 0;
+				for (std::vector<Mesh::Segment>::iterator it = segments.begin(); it != segments.end(); ++it) {
+					const std::vector<unsigned long>& segm = it->getIndices();
+					if (segm.size() > 0) {
+						std::list<Part::TopoShape *> wires = wireFromSegment(&mesh, segm);
+						Part::TopoShape* t = 0;
+						if (wires.size() > 0) {
+							Part::TopoShape *ext = 0;
+							int max_length = 0;
+							for (list<Part::TopoShape *>::iterator it = wires.begin(); it != wires.end(); ++it){
+								Part::TopoShape *sh = *it;
+								if (sh->getBoundBox().CalcDiagonalLength() > max_length) {
+									max_length = sh->getBoundBox().CalcDiagonalLength();
+									ext = *it;
+								}
+							}
+							wires.remove(ext);
+							for (list<Part::TopoShape *>::iterator it = wires.begin(); it != wires.end(); ++it){
+								Part::TopoShape *sh = *it;
+								TopoDS_Shape _sh = sh->getShape();
+								_sh.Reverse();
+							}
+							wires.push_front(ext);
+							t = wireToFace(wires);
+							//Part::TopoShape* t =  makeFace(wires, "Part::FaceMakerCheese");
+							if (TEST_OUTPUT == 2) {
+								_itoa(n, s, 10);
+								str = "d://segm";
+								str = str + s;
+								str = str + ".stl";
+								//t->write(str.c_str());
+							}							
+						}
+						if (t == 0) {
+							Mesh::MeshObject* temp = mesh.meshFromSegment(segm);
+							Part::TopoShape *shape = new Part::TopoShape();
+							Points.clear(), Facets.clear();
+							temp->getFaces(Points, Facets, 0, 0);
+							shape->setFaces(Points, Facets);
+							if (shape->getShape().ShapeType() != TopAbs_FACE)
+								getFaces(shape, faces);
+							else
+								faces.push_back(shape);
+							//temp->save("d://segm.stl");
+							//for (int i = 0; i < segm.size(); i++)
+							//	invalid.push_back(segm[i]);
+							delete temp;
+						}
+						else {
+							faces.push_back(t);
+							//for (int i = 0; i < segm.size(); i++)
+							//	remove.push_back(segm[i]);
+						}
+					}
+					n++;
+				}
+				//not in seg
+				if (all.size() < mesh.countFacets()) {
+					mesh.deleteFacets(all);
+					if (TEST_OUTPUT == 1) {
+						str = ("Py::Object makeFuncMesh not in seg: ");
+						_itoa(mesh.countFacets(), s, 10);
+						str = str + s;
+						str = str + "\n";
+						//Base::Console().Log(str.c_str());
+					}
+					std::vector<std::vector<unsigned long> > vvec = mesh.getComponents();
+					if (TEST_OUTPUT == 1) {
+						_itoa(vvec.size(), s, 10);
+						str = "mesh->getComponents(): ";
+						str = str + s;
+						str = str + "\n";
+						//Base::Console().Log(str.c_str());
+					}
+					for (int i = 0; i < vvec.size(); i++) {
+						Part::TopoShape *shape = new Part::TopoShape();
+						Mesh::MeshObject* temp = mesh.meshFromSegment(vvec[i]);
+						if (TEST_OUTPUT == 1) {
+							_itoa(i, s, 10);
+							str = "d://seg";
+							str = str + s;
+							str = str + ".stl";
+							//temp->save(str.c_str());
+						}
+						Points.clear(), Facets.clear();
+						temp->getFaces(Points, Facets, 0, 0);
+						shape->setFaces(Points, Facets);
+						if (shape->getShape().ShapeType() != TopAbs_FACE)
+							getFaces(shape, faces);
+						else
+							faces.push_back(shape);
+						delete temp;
+					}
+				}
+				//Part::TopoShape* shell = makeCompound(faces);
+				//TopoDS_Shape shellx = makeShell(shell->getShape());// (faces);
+				//shell->setShape(shellx);
 
-				//Part::TopoShape* shell = Shell(faces);，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，，
+				Part::TopoShape* shell = Shell(faces);
 
-				Part::TopoShape* shell = new Part::TopoShape();
+				/*Part::TopoShape* shell = new Part::TopoShape();
 				{
 					Points.clear(), Facets.clear();
 					mesh.getFaces(Points, Facets, 0, 0);
 					shell->setFaces(Points, Facets, 0.000001);
-				}
+				}*/
 
 				/*Part::TopoShape* shell = 0;
 				Part::TopoShape* msh = new Part::TopoShape();
