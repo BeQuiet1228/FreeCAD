@@ -1116,9 +1116,10 @@ void Iso3D::VoxelEvaluation()
 	morph_param += step;
 	if (morph_param == 1) morph_param = 0;
 	if (gsysType != PM3::SYSCARTESIAN && yreso > 0) {
+		yreso = 10. * M_PI / 180.;
 		nb_colon = (End[1] - Start[1]) / yreso + 0.5;
 		if (nb_colon > VSIZE) nb_colon = VSIZE;
-		if (nb_colon < 8) nb_colon = 8;
+		if (nb_colon < 2) nb_colon = 2;
 	}
 	//Can be optimised by considering Three array of 30 values each
 	// Each array contain the 30 value of one axe...
@@ -1369,8 +1370,26 @@ void Iso3D::VoxelEvaluation()
 	if (elocal[0] < End[0]) End[0] = elocal[0];
 	if (elocal[1] < End[1]) End[1] = elocal[1];
 	if (elocal[2] < End[2]) End[2] = elocal[2];
+	vcg::Point3d m = End - Start;
+	double mx = m[0];
+	double my = m[1];
+	double mz = m[2];
+	double mm = max(mx, max(my, mz));
+	double s = 0.01;// mm / 8 + 0.000001;
+	nb_ligne = mx / s + 0.5, nb_colon = my / s + 0.5, nb_depth = mz / s + 0.5;
+	if (gsysType != PM3::SYSCARTESIAN)
+		nb_colon = my / (10. * M_PI / 180.) + 0.5;
+	if (nb_ligne > 8) nb_ligne = 8;
+	if (nb_colon > 8) nb_colon = 8;
+	if (nb_depth > 8) nb_depth = 8;
+	if (nb_ligne < 2) nb_ligne = 2;
+	if (nb_colon < 2) nb_colon = 2;
+	if (nb_depth < 2) nb_depth = 2;
+	nb_ligne += (offset + offset2);
+	nb_colon += (offset + offset2);
+	nb_depth += (offset + offset2);
 	std::string json;
-	/**/if (gsysType != PM3::SYSCARTESIAN)
+	/*if (gsysType != PM3::SYSCARTESIAN)
 	{
 		Step[0] = (elocal[0] - slocal[0]) / (nb_ligne - offset - xoffset);
 		if (Step[0] > slocal[0]) {
@@ -1394,7 +1413,7 @@ void Iso3D::VoxelEvaluation()
 		}
 		json = "if(r=%2%,1,if(r=%3%,1,if(phi=%4%,1,if(phi=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))";
 	}
-	else
+	else*/
 	{
 		Step[0] = (elocal[0] - slocal[0]) / (nb_ligne - offset - offset2);
 		Step[1] = (elocal[1] - slocal[1]) / (nb_colon - offset - offset2);
@@ -1402,15 +1421,15 @@ void Iso3D::VoxelEvaluation()
 
 		for (i = 0; i < nb_ligne; i++)  {
 			XLocal[i] = slocal[0] + (i - offset)*Step[0];
-			if (fabs(XLocal[i]) < 0.000001) XLocal[i] = Step[0] / 100;
+			//if (fabs(XLocal[i]) < 0.000001) XLocal[i] = Step[0] / 100;
 		}
 		for (j = 0; j < nb_colon; j++) {
 			YLocal[j] = slocal[1] + (j - offset)*Step[1];
-			if (fabs(YLocal[j]) < 0.000001) YLocal[j] = Step[1] / 100;
+			//if (fabs(YLocal[j]) < 0.000001) YLocal[j] = Step[1] / 100;
 		}
 		for (k = 0; k < nb_depth; k++) {
 			ZLocal[k] = slocal[2] + (k - offset)*Step[2];
-			if (fabs(ZLocal[k]) < 0.000001) ZLocal[k] = Step[2] / 100;
+			//if (fabs(ZLocal[k]) < 0.000001) ZLocal[k] = Step[2] / 100;
 		}
 		json = "if(x=%2%,1,if(x=%3%,1,if(y=%4%,1,if(y=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))";
 	}
@@ -1451,8 +1470,8 @@ void Iso3D::VoxelEvaluation()
 
 	if (type == 1) {
 		float v = 1;
-		if (gsysType != PM3::SYSCARTESIAN)
-			v = 0;
+		//if (gsysType != PM3::SYSCARTESIAN)
+		//	v = 0;
 		for (i = 0; i == 0; i++) {
 
 			for (j = 0; j < nb_colon; j++) {
@@ -1462,9 +1481,9 @@ void Iso3D::VoxelEvaluation()
 					{
 						//GridVoxel[i][j][k].Value = -GridVoxel[i+1][j][k].Value;//pValParser->Eval(vals);
 						//GridVoxel[i+1][j][k].Value = 0;
-						if (gsysType != PM3::SYSCARTESIAN)
-							GridVoxel[i][j][k].Value = 0;
-						else
+						//if (gsysType != PM3::SYSCARTESIAN)
+						//	GridVoxel[i][j][k].Value = 0;
+						//else
 							GridVoxel[i][j][k].Value = v;
 					}
 				}
