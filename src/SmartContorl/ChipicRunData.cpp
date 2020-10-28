@@ -40,3 +40,4 @@ void ChipicRunData::deleteItemAndBarPtr()
 		delete this->dataBar;
 }
 
+

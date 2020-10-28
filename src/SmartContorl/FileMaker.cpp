@@ -64,7 +64,6 @@ ChipicRunDatas FileMaker::makeFile(std::vector<QString>& variates)
 
 	ChipicRunDatas datas;
 	QDir dir;
-
 	for (auto i = variates.begin(); i != variates.end(); i++)
 	{
 		ChipicRunDataPtr data;
@@ -76,6 +75,7 @@ ChipicRunDatas FileMaker::makeFile(std::vector<QString>& variates)
 		data->m3dPath = path + name;
 		auto h5file = this->fileName + "_" + QString::number(count) + ".h5";
 		data->h5FilePath = path + h5file;
+		data->rank = count;
 		data->variate = *i;
 		//生成m3d文件
 		auto newM3d = *i + m3d;

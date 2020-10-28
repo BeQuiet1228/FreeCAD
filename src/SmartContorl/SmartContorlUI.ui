@@ -226,6 +226,50 @@
             </layout>
            </item>
            <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_13">
+             <item>
+              <widget class="QLabel" name="label_11">
+               <property name="text">
+                <string>预期模式:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="comboBoxExcpcet">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <item>
+                <property name="text">
+                 <string>接近预期</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>大于预期</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
             <widget class="QGroupBox" name="groupBox_2">
              <property name="title">
               <string>优化算法参数设置</string>
@@ -341,6 +385,7 @@ pitF = 0;
 valueCount = 0;
 --获取F得定义
 function getF(minif,maxf,avf)
+	print(&quot;mininf=&quot;..minif..&quot;,maxf=&quot;..maxf..&quot;,avf=&quot;..avf);
 	if(fmod == 0)
 	then
 		return maxf;
@@ -358,14 +403,44 @@ function getF(minif,maxf,avf)
 		return avf*math.exp(-math.abs(maxf/avf - 2));
 	end
 end
+
 --判断两个f哪一个更符合预期
 --如果第一个f更符合预期 则返回true
 function compareF(f1,f2)
+if(excpectMod == 0)
+then
 	if(math.abs(f1 - excpectF) &lt; math.abs(f2 - excpectF))
 	then
 		return true;
 	end
 	return false;
+end
+if(excpectMod == 1)
+then
+	if(f1 &gt; f2)
+	then
+		return true;
+	end
+	return false;
+end
+end
+--保留五位数小数点的随机浮点数
+function randmoFloat(mini,max)
+	local bei = 100000;
+	local i = bei*mini;
+	local a = bei*max;
+	print(i);
+	print(a);
+	local rand = 0
+	if(i &lt; a)
+	then
+		rand = math.random(math.floor(i),math.floor(a));
+	else
+		rand = math.random(math.floor(a),math.floor(i));
+	end
+	
+	print(&quot;rand&quot;..rand);
+	return rand/bei;
 end
 --添加参数函数
 function addVar(name,max,mini,count)
@@ -376,15 +451,14 @@ function addVar(name,max,mini,count)
 	var.pgt = 0;
 	var.pit = {};
 	var.pitF = {};
-    --随机数只能取整数 所以需要将范围乘上一个足够大的数之后再取小数
-	local bei = 100000000;
     while(i &lt; count + 1)
 	do
 		--设置参数值
-		v[i] = math.random(mini*bei,max*bei)/bei;
+		v[i] = randmoFloat(mini,max);
 		--初始化参数的增量
 		local vitV = math.abs(mini - max)/2;
-		var.vit[i] = math.random(-vitV*bei,vitV*bei)/bei;
+		var.vit[i] = randmoFloat(-vitV,vitV);
+		--var.vit[i] = vitV;
 		var.pitF[i] = 0;
 		var.pit[i] = 0;
 		i = i + 1;
@@ -395,7 +469,9 @@ function addVar(name,max,mini,count)
     var.mini = mini;
     variateCount = variateCount + 1;
     variates[variateCount] = var;
-    valueCount = count;
+	valueCount = count;
+	
+	print(&quot;------&quot;);
 end
 function rand()
 	return math.random();
@@ -465,7 +541,6 @@ function resultDataFilter()
 	end
 	local av = add/addCount;
 	local f = getF(mini,max,av);
-	cppPrint(&quot;f= &quot;..f);
 	addParam(f);
  end
  saveParamsInHistory();
@@ -478,15 +553,20 @@ function resultDataFilter()
  do
 	local F = getParam(groupIndex,index,0);
 	local pitF = variates[1].pitF[index + 1];
-	print(&quot;pitf=&quot;..pitF);
+	print(&quot;pitf=&quot;..pitF..&quot;,F=&quot;..F..&quot;,x=&quot;..variates[1].variate[index + 1]);
 	if(compareF(F,pitF))
 	then
 		local countIndex = 1;
 		while(countIndex &lt; variateCount + 1)
 		do
 			variates[countIndex].pitF[index + 1] = F;
-			print(&quot;pitf2=&quot;..variates[countIndex].pitF[index + 1]);
 			variates[countIndex].pit[index + 1] = variates[countIndex].variate[index + 1];
+			--local error = variates[countIndex].pit[index + 1];
+			--if( math.abs(F - 500093) &lt; 1 and math.abs(error - 0.029) &gt; 0.001)
+			--then
+			--	pgtF = 500000;
+			--end
+			--print(&quot;pitf=&quot;..F..&quot;pit=&quot;..variates[countIndex].pit[index + 1]);
 			countIndex = countIndex + 1;
 		end
     end
@@ -497,6 +577,7 @@ function resultDataFilter()
         while(tempIndex &lt; variateCount + 1)
         do
 			variates[tempIndex].pgt = variates[tempIndex].variate[index + 1];
+			print(&quot;pgtF=&quot;..F..&quot;pgt=&quot;..variates[tempIndex].pgt)
 			tempIndex = tempIndex + 1;
 		end
     end
@@ -506,11 +587,23 @@ end
 
 function resultExpcet()
  cppPrint(&quot;call result expcet&quot;);
- if(math.abs(pgtF - excpectF)&lt;30)
- then
+ --判断目标模式
+if(excpectMod == 0)
+then
+	if(math.abs(pgtF - excpectF)&lt;30)
+ 	then
 	return true;
- end
- return false;
+	end
+	return false;
+end
+if(excpectMod == 1)
+then
+   if(pgtF &gt; excpectF)
+	then
+   		return true;
+   	end
+   return false;
+end
 end
 function optimize()
  cppPrint(&quot;call optimize&quot;);
@@ -528,9 +621,6 @@ function optimize()
         local pgt = tempVariate.pgt;
         local mini = tempVariate.mini;
 		local max = tempVariate.max;
-		print(&quot;vi=&quot;..vit);
-		print(&quot;pit=&quot;..pit);
-		print(&quot;pgt=&quot;..pgt);
         temp = omiga*vit + c1*rand()*(pit - value) + c2*rand()*(pgt - value);
 		tempVariate.vit[index] = temp;
         value = value + temp;
@@ -612,13 +702,6 @@ end</string>
       <widget class="QPushButton" name="pushButton">
        <property name="text">
         <string>开始</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_8">
-       <property name="text">
-        <string>停止</string>
        </property>
       </widget>
      </item>

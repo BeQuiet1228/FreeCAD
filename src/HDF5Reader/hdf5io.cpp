@@ -210,6 +210,7 @@ bool Hdf5IO::getValue(const DataSet& dataSet, VectorF& values)
 	//数据大小 行与列的长度
 	hsize_t size[2];
 	dataSpace.getSimpleExtentDims(size, 0);
+	std::cerr << size[0] * size[1] << std::endl;
 	std::shared_ptr<float> value(new float[size[0] * size[1]]);
 
 	dataSet.read(value.get(), PredType::NATIVE_FLOAT);

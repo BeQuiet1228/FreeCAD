@@ -1428,6 +1428,7 @@ PyObject *Application::sGetFigNameInfoListFromH5File(PyObject *self, PyObject *a
 		//std::cerr << figNameInfoList[i].type << "type\n";
 		//std::cerr << figNameInfoList[i].groupName << "groupId\n";
 		PyList_Append(pyParams, StringToPyByWin(figNameInfoList[i].type));
+		std::cerr << figNameInfoList[i].type << std::endl;
 		PyList_Append(pyParams, StringToPyByWin(figNameInfoList[i].groupName));
 		PyObject *pyParams2 = PyList_New(0);//初始化一个列表
 		for (int j = 0; j < figNameInfoList[i].headList.size(); j++)

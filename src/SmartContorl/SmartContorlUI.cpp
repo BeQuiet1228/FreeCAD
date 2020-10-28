@@ -21,7 +21,7 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	auto contorlData = SmartContorlData::GetInstance();
 	smartContorl = contorlData->smartContorl;
 
-	std::string m3dPath = "E:/lingshiwenjianjia/MILO_C/MILO_C.m3d";
+	std::string m3dPath = "E:/test/MILO_C.m3d";
 	smartContorl->setM3dPath(m3dPath);
 	connect(smartContorl, SIGNAL(addDataBar(QListWidgetItem*, QWidget*)), this, SLOT(addListWidgetItem(QListWidgetItem*, QWidget*)));
 	//this->ui->textEdit->hide();
@@ -210,6 +210,7 @@ void SmartContorlUI::on_pushButtonVariateMax_clicked()
 	auto valueCount = variates.begin()->values.size();
 	
 
+
 	QVector<QVector<double>> values;
 	QVector<double> keys;
 	int key = 1;
@@ -272,6 +273,8 @@ void SmartContorlUI::replaceVariate()
 	temp = QString("c2 = %1;\n").arg(this->ui->lineEditC2->text().toDouble());
 	config += temp;
 	temp = QString("fmod = %1;\n").arg(this->ui->comboBoxF->currentIndex());
+	config += temp;
+	temp = QString("excpectMod = %1;\n").arg(this->ui->comboBoxExcpcet->currentIndex());
 	config += temp;
 	text = config + text;
 	std::cerr << config.toStdString();

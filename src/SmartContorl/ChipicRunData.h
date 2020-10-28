@@ -43,6 +43,8 @@ public:
 	unsigned long threadID = 0;
 	//数据筛选之后的结果
 	ResultDataPtr resultData;
+	//变量的顺序
+	unsigned int rank = 0;
 public:
 	void setCreatDataBar(std::shared_ptr<Chipic> chipic);
 	void deleteItemAndBarPtr();

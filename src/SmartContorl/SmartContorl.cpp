@@ -221,7 +221,21 @@ float SmartContorl::getHistoryGroupParam(const int& goupIdex, const int& index, 
 */
 void SmartContorl::clearFinishData()
 {
-	runData.datas = this->chipicDataFinish;
+	/*
+		这里需要将结果数据按变量生成的顺序排序，否则无法与脚本中的参数一一对应。
+	*/
+	unsigned int count = this->chipicDataFinish.size();
+	ChipicRunDatas tempDatas;
+	for (int i = 0; i < count; i++)
+	{
+		tempDatas.push_back(ChipicRunDataPtr());
+	}
+	for (auto iter = chipicDataFinish.begin(); iter != chipicDataFinish.end(); iter++)
+	{
+		tempDatas[(*iter)->rank] = *iter;
+	}
+
+	runData.datas = tempDatas;
 	historyDatas.push_back(runData);
 	chipicDataFinish.clear();
 }
@@ -347,6 +361,13 @@ bool ChipicResultGetter::next(ChipicRunDataPtr& runData)
 {
 	if (this->iter == result.end())
 		return false;
+	int cc = 0;
+	for (auto i = result.begin(); i != result.end(); i++)
+	{
+		if (i == iter)
+			std::cerr << cc << std::endl;
+		cc++;
+	}
 	runData = *iter;
 	iter++;
 	return true;
