@@ -80,6 +80,47 @@ void SmartContorlUI::on_pushButton_8_clicked()
 
 }
 
+void SmartContorlUI::on_pushButtonF_clicked()
+{
+	auto histroy = SmartContorlData::GetInstance()->smartContorl->getHistoryDatas();
+	if (histroy.size() < 1)
+		return;
+	auto variates = histroy.begin()->variates;
+	if (variates.size() < 1)
+		return;
+	auto valueCount = variates.begin()->values.size();
+
+
+
+	QVector<QVector<double>> values;
+	QVector<double> keys;
+	int key = 1;
+	for (int i = 0; i < valueCount; i++)
+	{
+		QVector<double> v;
+		values.push_back(v);
+	}
+
+	for (auto historyIter = histroy.begin(); historyIter != histroy.end(); historyIter++)
+	{
+		auto historyValues = historyIter->datas;
+		auto vIter = values.begin();
+		auto hIter = historyValues.begin();
+		for (; vIter != values.end() && hIter != historyValues.end();
+			vIter++, hIter++)
+		{
+			vIter->push_back((*hIter)->resultData->getValue(0));
+		}
+		keys.push_back(key);
+		key++;
+	}
+
+	chart->clearGraph();
+	chart->setDatas(keys, values, "F");
+	chart->show();
+
+}
+
 void SmartContorlUI::on_pushButtonAddVariate_clicked()
 {
 	std::cout << "add" << std::endl;
@@ -208,7 +249,14 @@ void SmartContorlUI::on_pushButtonVariateMax_clicked()
 	if (variates.size() < 1)
 		return;
 	auto valueCount = variates.begin()->values.size();
-	
+
+	//获取选中项索引
+	int selectIndex = 0;
+	{
+		auto indexs = this->ui->listWidgetVariate->selectionModel()->selectedIndexes();
+		if (indexs.size() != 0)
+			selectIndex = indexs.begin()->row();
+	}
 
 
 	QVector<QVector<double>> values;
@@ -222,7 +270,7 @@ void SmartContorlUI::on_pushButtonVariateMax_clicked()
 
 	for (auto historyIter = histroy.begin(); historyIter != histroy.end(); historyIter++)
 	{
-		auto historyValues = (historyIter->variates.begin())->values;
+		auto historyValues = historyIter->variates.at(selectIndex).values;
 		auto vIter = values.begin();
 		auto hIter = historyValues.begin();
 		for (; vIter != values.end() && hIter != historyValues.end();

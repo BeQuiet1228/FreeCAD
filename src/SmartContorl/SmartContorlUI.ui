@@ -124,6 +124,13 @@
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QLabel" name="label_12">
+               <property name="text">
+                <string>ns</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
            <item>
@@ -139,6 +146,13 @@
               <widget class="QLineEdit" name="lineEditMaxTime">
                <property name="text">
                 <string>15</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_13">
+               <property name="text">
+                <string>ns</string>
                </property>
               </widget>
              </item>
@@ -323,7 +337,7 @@
                 <item>
                  <widget class="QLineEdit" name="lineEditOmega">
                   <property name="text">
-                   <string>0.829</string>
+                   <string>0.729</string>
                   </property>
                  </widget>
                 </item>
@@ -344,6 +358,13 @@
               </size>
              </property>
             </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonF">
+             <property name="text">
+              <string>查看F趋势图</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>

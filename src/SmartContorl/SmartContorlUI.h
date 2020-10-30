@@ -60,6 +60,7 @@ public Q_SLOTS:
 	void on_pushButton_6_clicked();
 	void on_pushButton_7_clicked();
 	void on_pushButton_8_clicked();
+	void on_pushButtonF_clicked();
 	void on_pushButtonAddVariate_clicked();
 	void on_pushButtonDeleteVariate_clicked();
 	void chipicStartFinished(unsigned long threadID);
