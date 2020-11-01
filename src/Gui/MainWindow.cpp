@@ -119,6 +119,7 @@
 #include "qwidgetaction.h"
 #include "Contorl/ContorlInterface.h"
 #include "LuaEditView.h"
+#include "SmartContorl\SmartContorlInterface.h"
 #if defined(Q_OS_WIN32)
 #define slots
 //#include <private/qmainwindowlayout_p.h>
@@ -443,12 +444,17 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
     // accept drops on the window, get handled in dropEvent, dragEnterEvent
     setAcceptDrops(true);
     statusBar()->showMessage(tr("Ready"), 2001);
+
+
 	auto cn = ContorlInterface::GetInstance();
 	dateBar = static_cast<QWidget*>(cn->getContorlDataBar());
 	buttonBar = static_cast<QWidget*>(cn->getContorlButtonBar());
 
 	auto test = new LuaEditView;
 	addWindow(test);
+
+	this->smartContorlInterface = new SmartContorlInterface;
+	this->smartContorlInterface->init();
 }
 
 MainWindow::~MainWindow()
@@ -456,6 +462,7 @@ MainWindow::~MainWindow()
     delete d->status;
     delete d;
     instance = 0;
+	delete smartContorlInterface;
 }
 
 MainWindow* MainWindow::getInstance()

@@ -130,7 +130,7 @@ void ChipicManager::runButtonClicked(const std::string& m3dPath /*= ""*/)
 
 void ChipicManager::closeCurrentChipic()
 {
-
+	
 }
 
 /**
@@ -165,7 +165,13 @@ void ChipicManager::loadDialogClose()
 {
 	this->runButtonClicked();
 }
-
+void ChipicManager::closeChipic(const unsigned long threadID)
+{
+	auto chipic = chipicMap.find(threadID);
+	if (chipic == chipicMap.end())
+		return;
+	chipic->second->closeChipic();
+}
 /**
 * @brief ChipicManager::initMessageSender
 * @return void

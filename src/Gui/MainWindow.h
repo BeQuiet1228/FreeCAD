@@ -35,6 +35,7 @@
 class QMimeData;
 class QUrl;
 class QMdiSubWindow;
+class SmartContorlInterface;
 
 namespace App {
 class Document;
@@ -279,6 +280,7 @@ private:
 	//chnegtong
 public:
 	QWidget *buttonBar, *dateBar;
+	SmartContorlInterface *smartContorlInterface;
 };
 
 inline MainWindow* getMainWindow()

@@ -50,4 +50,6 @@ public:
 	void getChipicRunResult();
 	//添加一个已优化参数
 	void addParam(const float& value);
+	//清理数据
+	void clear();
 };

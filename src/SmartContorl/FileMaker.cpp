@@ -7,6 +7,7 @@
 #include <QTextStream>
 #include <QProcess>
 #include <QDebug>
+#include <qregexp.h>
 FileMaker::FileMaker()
 {
 
@@ -78,7 +79,7 @@ ChipicRunDatas FileMaker::makeFile(std::vector<QString>& variates)
 		data->rank = count;
 		data->variate = *i;
 		//生成m3d文件
-		auto newM3d = *i + m3d;
+		auto newM3d = this->replaceVariate(*i,m3d);
 		QFile newFile(path + name);
 		if (!newFile.open(QIODevice::ReadWrite))
 		{
@@ -87,7 +88,14 @@ ChipicRunDatas FileMaker::makeFile(std::vector<QString>& variates)
 #endif // MY_LOG
 			continue;
 		}
-
+		newFile.remove();
+		if (!newFile.open(QIODevice::ReadWrite))
+		{
+#ifdef MY_LOG
+			std::cerr << "FileMaker::makeFile file is not open! path:" << path.toStdString() << std::endl;
+#endif // MY_LOG
+			continue;
+		}
 		QTextStream stream(&newFile);
 		stream << newM3d;
 		newFile.close();
@@ -142,4 +150,35 @@ bool FileMaker::cutFile(const QString& fileName, const QString& path)
 
 	std::cerr << process->readAll().data() << "23333" <<std::endl;*/
 	return true;
+}
+
+QString FileMaker::replaceVariate(const QString& variate, const QString& m3d)
+{
+	auto lines = variate.split("\n");
+	auto tempM3d = m3d;
+	for (auto i = lines.begin(); i != lines.end(); i++)
+	{
+		if (i->isNull())
+			continue;
+		auto name = i->split("=").at(0);
+		auto r ="[\\s|;]" + name + "\\s*=.*;";
+		std::cerr << r.toStdString() << std::endl;
+		QRegExp rex(r);
+		rex.setMinimal(true);
+		int posStart = 0, posEnd = 0;
+		posStart = rex.indexIn(tempM3d);
+		if (posStart != -1)
+		{
+			/*std::cerr << rex.cap(0).toStdString() << std::endl;
+			posEnd = posStart + rex.matchedLength();
+			std::cerr << tempM3d.size() << "||" <<posStart<<"||"<< posEnd <<std::endl;
+			tempM3d.remove(posStart, posEnd);
+			tempM3d.insert(posStart, *i + "\n");*/
+			tempM3d.replace(rex.cap(0), *i);
+		}else{
+			tempM3d = *i + "\n" + tempM3d;
+		}
+	}
+
+	return tempM3d;
 }

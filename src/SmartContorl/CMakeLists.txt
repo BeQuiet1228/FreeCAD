@@ -109,6 +109,7 @@ SET(MY_MOC_HDR
 	VariateItemWidget.h
 	VariateInputDialog.h
 	qcustomplot.h
+	SmartContorlInterface.h
 )
 SET(MY_MOC_SRC
 	SmartContorlUI.cpp
@@ -116,6 +117,7 @@ SET(MY_MOC_SRC
 	VariateItemWidget.cpp
 	VariateInputDialog.cpp
 	qcustomplot.cpp
+	SmartContorlInterface.cpp
 )
 SET(NETWORK_SRC
 

@@ -39,6 +39,12 @@ void ContorlInterface::senWinMessage(const int& type, const int& wParam, const i
 	}
 }
 
+std::string ContorlInterface::getDocumentPath()
+{
+	contorl->getM3dPathForRunPython();
+	return contorl->m3dPath;
+}
+
 /**
 * @brief ContorlInterface::getChipicManager 返回chipic管理器指针  这个指针由contorl对象管理 
 * @return ChipicManager*

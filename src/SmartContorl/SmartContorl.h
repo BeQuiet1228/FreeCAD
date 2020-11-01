@@ -74,6 +74,10 @@ public:
 	void clearFinishData();
 	//打印出运行信息
 	void printLog(const std::string& log);
+	//停止运行
+	void stop();
+	//启动运行
+	void run(const QString& lua);
 	//获取历史运行数据大小
 	int getHistorySize(){
 		return historyDatas.size();
@@ -127,6 +131,8 @@ private:
 	ChipicManager *chipicManager;
 	//运行一次的所有信息
 	HistoryData runData;
+	//优化算法整个模块的运行状态
+	bool runing = false;
 private:
 	//获取错误处理函数再栈中的位置
 	int getLuaErrorCallBackFunction();

@@ -38,5 +38,6 @@ public:
 	void senWinMessage(const int& type, const int& wParam, const int& lParam);
 	//获取chipicManager
 	ChipicManager* getChipicManager();
-	
+	//获取freecad中的工程路径
+	std::string getDocumentPath();
 };

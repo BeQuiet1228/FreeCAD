@@ -9,6 +9,7 @@
 #include <QListWidgetItem>
 #include <vector>
 #include <memory>
+#include <qdialog.h>
 class VariateChart;
 class VariateItemWidget;
 //变量数据结构
@@ -30,7 +31,7 @@ struct VariateData
 namespace Ui{
 	class SmartContorlUI;
 }
-class SmartContorlUI:public QWidget{
+class SmartContorlUI:public QDialog{
 	Q_OBJECT
 public:
 	SmartContorlUI(QWidget * parent = 0);
@@ -54,6 +55,7 @@ private:
 	VariateChart *chart;
 public Q_SLOTS:
 	void on_pushButton_clicked();
+	void on_pushButton_2_clicked();
 	void on_pushButton_3_clicked();
 	void on_pushButton_4_clicked();
 	void on_pushButton_5_clicked();
@@ -73,5 +75,5 @@ public Q_SLOTS:
 
 private:
 	//替换变量
-	void replaceVariate();
+	QString replaceVariate();
 };

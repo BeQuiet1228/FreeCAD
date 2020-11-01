@@ -14,20 +14,23 @@
 #include "qcustomplot.h"
 #include "VariateChart.h"
 SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
-	:QWidget(parent), ui(new Ui::SmartContorlUI)
+	:QDialog(parent), ui(new Ui::SmartContorlUI)
 {
 	ui->setupUi(this);
 
 	auto contorlData = SmartContorlData::GetInstance();
 	smartContorl = contorlData->smartContorl;
+	auto contorlInterface = ContorlInterface::GetInstance();
 
-	std::string m3dPath = "E:/test/MILO_C.m3d";
-	smartContorl->setM3dPath(m3dPath);
+
+	//std::string m3dPath = "E:/test/MILO_C.m3d";
+	smartContorl->setM3dPath(contorlInterface->getDocumentPath());
 	connect(smartContorl, SIGNAL(addDataBar(QListWidgetItem*, QWidget*)), this, SLOT(addListWidgetItem(QListWidgetItem*, QWidget*)));
 	//this->ui->textEdit->hide();
 	connect(smartContorl, SIGNAL(smartContorlLog(std::string)), this, SLOT(pringLuaLog(std::string)));
 
 	chart = new VariateChart;
+	this->setModal(true);
 }
 
 SmartContorlUI::~SmartContorlUI()
@@ -37,15 +40,15 @@ SmartContorlUI::~SmartContorlUI()
 
 void SmartContorlUI::on_pushButton_clicked()
 {
-	
+	auto str = replaceVariate();
+	smartContorl->run(str);
+}
 
-	replaceVariate();
-	auto  str = ui->textEdit->toPlainText();
-
-	smartContorl->luaLoadFromString(str.toStdString());
-	smartContorl->luaInit();
-	smartContorl->makeRunData();
-	smartContorl->runChipic();
+void SmartContorlUI::on_pushButton_2_clicked()
+{
+	smartContorl->stop();
+	auto data = SmartContorlData::GetInstance();
+	data->clear();
 }
 //载入按钮
 void SmartContorlUI::on_pushButton_3_clicked()
@@ -288,7 +291,7 @@ void SmartContorlUI::on_pushButtonVariateMax_clicked()
 }
 
 //暂时全写再这儿 日后再改
-void SmartContorlUI::replaceVariate()
+QString SmartContorlUI::replaceVariate()
 {
 	//添加参数
 	int count = this->ui->spinBoxCount->value();
@@ -325,10 +328,8 @@ void SmartContorlUI::replaceVariate()
 	temp = QString("excpectMod = %1;\n").arg(this->ui->comboBoxExcpcet->currentIndex());
 	config += temp;
 	text = config + text;
-	std::cerr << config.toStdString();
-	this->ui->textEdit->setPlainText(text);
-
-
+	
+	return text;
 }
 
 #include "moc_SmartContorlUI.cpp"

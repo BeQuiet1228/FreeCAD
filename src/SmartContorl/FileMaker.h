@@ -21,6 +21,9 @@ public:
 
 	// 文件路径 文件名称 生成的文件路径 原始m3d路径
 	QString filePath, fileName, newFilePath, m3dPath;
+
+	//使用变量替换m3d中的文本
+	QString replaceVariate(const QString& variate, const QString& m3d);
 private:
 
 };

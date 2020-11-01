@@ -15,4 +15,12 @@ public:
 	//当前数据
 	VectorF activeValues;
 
+public:
+	//清理数据
+	void clear(){
+		this->activeRunData.reset();
+		Hdf5Data d;
+		this->activeH5Data = d;
+		this->activeValues.clear();
+	}
 };

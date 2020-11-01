@@ -20,7 +20,8 @@ public:
 		PAUSE,		//暂停开始
 		TIMER,		//定时器按钮
 		LOG,			//LOG按钮
-		CONNECTION_WAY  //连接方式被点击
+		CONNECTION_WAY,  //连接方式被点击
+		SMART_CONTORL //优化算法
 	};
 public:
 	ContorlButtonBar (QWidget *parent = 0);

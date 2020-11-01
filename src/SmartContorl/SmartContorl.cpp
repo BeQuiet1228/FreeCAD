@@ -15,9 +15,7 @@ SmartContorl::SmartContorl()
 	//注册lua函数
 	registerLuaFunction(lua_state);
 	//获取chipicmanager管理对象
-	chipicManager = new ChipicManager;
-	chipicManager->setRunType(ChipicManager::AUTO);
-	chipicManager->initMessageSender();
+	chipicManager = ContorlInterface::GetInstance()->getChipicManager();
 	//链接计算完成槽
 	connect(chipicManager, SIGNAL(finishChipicM3dPath(unsigned long)), this, SLOT(chipicWorkFinished(unsigned long)));
 	connect(chipicManager, SIGNAL(chipicStartFinished(unsigned long)), this, SLOT(chipicStartFinished(unsigned long)));
@@ -32,7 +30,6 @@ SmartContorl::SmartContorl()
 SmartContorl::~SmartContorl()
 {
 	lua_close(lua_state);
-	delete chipicManager;
 }
 
 /**
@@ -249,7 +246,50 @@ void SmartContorl::printLog(const std::string& log)
 {
 	emit smartContorlLog(log);
 }
+void SmartContorl::run(const QString& lua)
+{
+	//设置管理器运行模式
+	chipicManager->setRunType(ChipicManager::AUTO);
 
+	runing = true;
+	this->luaLoadFromString(lua.toStdString());
+	this->luaInit();
+	this->makeRunData();
+	this->runChipic();
+}
+void SmartContorl::stop()
+{
+	//设置管理器运行模式
+	chipicManager->setRunType(ChipicManager::MANUAL);
+
+	runing = false;
+
+	variates.clear();
+
+	chipicDataWait.clear();
+	
+	//关闭已经启动完成的chipic，并清理掉 正在启动中的待启动完成之后在行处理
+	std::vector<QString> paths;
+	for (auto i = chipicDataRuning.begin(); i != chipicDataRuning.end(); i++)
+	{
+		if (i->second->threadID != 0)
+		{
+			paths.push_back(i->first);
+			chipicManager->closeChipic(i->second->threadID);
+			i->second->deleteItemAndBarPtr();
+		}
+	}
+	for (auto i = paths.begin(); i != paths.end(); i++)
+	{
+		auto iter = chipicDataRuning.find(*i);
+		if (iter != chipicDataRuning.end())
+			chipicDataRuning.erase(iter);
+	}
+
+	chipicDataFinish.clear();
+
+	historyDatas.clear();
+}
 /**
 * @brief SmartContorl::getLuaErrorCallBackFunction 将错误处理函数放入栈中，并返回再栈中位置
 * @return int
@@ -305,7 +345,8 @@ void SmartContorl::chipicWorkFinished(unsigned long threadID)
 		if (dataIter->second->threadID == threadID)
 			break;
 	}
-
+	if (dataIter == chipicDataRuning.end())
+		return;
 	auto chipicData = dataIter->second;
 	chipicData->deleteItemAndBarPtr();
 
@@ -340,6 +381,14 @@ void SmartContorl::chipicStartFinished(unsigned long threadID)
 	auto dataIter = chipicDataRuning.find(path);
 	if (dataIter == chipicDataRuning.end())
 		return;
+	//判断整个模块的运行状态  如果已经是停止状态则清理掉数据  并清理掉正在运行的程序
+	if (!runing)
+	{
+		chipicDataRuning.erase(dataIter);
+		chipicManager->closeChipic(threadID);
+		return;
+	}
+
 	auto chipicData = dataIter->second;
 
 	//生成ui 

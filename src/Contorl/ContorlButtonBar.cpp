@@ -22,6 +22,7 @@ void ContorlButtonBar::chipicClose()
 	this->ui->toolButtonTimer->setEnabled(false);
 	this->ui->toolButtonParalleRun->setEnabled(true);
 	this->ui->toolButtonConnectionWay->setEnabled(true);
+	this->ui->toolButton->setEnabled(true);
 
 	QIcon icon;
 	icon.addFile(QString::fromUtf8(":/icon/run.svg"), QSize(), QIcon::Normal, QIcon::Off);
@@ -54,7 +55,7 @@ void ContorlButtonBar::updateUI()
 	this->ui->toolButtonTimer->setEnabled(true);
 	this->ui->toolButtonParalleRun->setEnabled(false);
 	this->ui->toolButtonConnectionWay->setShortcutEnabled(false);
-
+	this->ui->toolButton->setEnabled(false);
 	if (chipic->pausState)
 	{
 		QIcon icon5;
@@ -120,7 +121,7 @@ void ContorlButtonBar::on_toolButtonTimer_clicked()
 
 void ContorlButtonBar::on_toolButton_clicked()
 {
-	std::cerr << "mm" << std::endl;
+	emit buttonClicked(SMART_CONTORL);
 }
 
 void ContorlButtonBar::on_toolButtonConnectionWay_clicked()

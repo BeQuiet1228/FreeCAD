@@ -139,3 +139,8 @@ void SmartContorlData::addParam(const float& value)
 {
 	cStack->activeRunData->resultData->addValue(value);
 }
+
+void SmartContorlData::clear()
+{
+	this->cStack->clear();
+}

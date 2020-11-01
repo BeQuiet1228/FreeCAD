@@ -22,13 +22,13 @@ public:
 	ContorlButtonBar *contorlButtonBar;
 	//信息条
 	ContorlDataBar *contorlDataBar;
+	//运行脚本获取m3d路径
+	void getM3dPathForRunPython();
 	//m3d路径
 	std::string m3dPath = "E:/lingshiwenjianjia/MILO_D/MILO_D.m3d";
 private:
 	Ui::ContorlClass ui;
 private:
-	//运行脚本获取m3d路径
-	void getM3dPathForRunPython();
 	//切换连接方式
 	void changeConnectionWay();
 	//打开log文件
