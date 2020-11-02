@@ -200,8 +200,12 @@
 #define M_PI_2  1.57079632679489661923 /* pi/2 */
 #endif
 
+#define GRAD M_PI / 180.0
+
+#define TOL 1E-6
+
 DWORD start, stop;
-#define TEST_OUTPUT 0
+#define TEST_OUTPUT 1
 
 namespace PartChipic {
 	class Module : public Py::ExtensionModule<Module>
@@ -1641,11 +1645,11 @@ namespace PartChipic {
 
 			result.solid = isSolid;
 
-			result.taperAngleFwd = TaperAngle * M_PI / 180.0;
-			if (fabs(result.taperAngleFwd) > M_PI * 0.5 - Precision::Angular())
+			result.taperAngleFwd = TaperAngle * GRAD;
+			if (fabs(result.taperAngleFwd) > GRAD - Precision::Angular())
 				throw Base::ValueError("Magnitude of taper angle matches or exceeds 90 degrees. That is too much.");
-			result.taperAngleRev = TaperAngleRev * M_PI / 180.0;
-			if (fabs(result.taperAngleRev) > M_PI * 0.5 - Precision::Angular())
+			result.taperAngleRev = TaperAngleRev * GRAD;
+			if (fabs(result.taperAngleRev) > GRAD - Precision::Angular())
 				throw Base::ValueError("Magnitude of taper angle matches or exceeds 90 degrees. That is too much.");
 
 			result.faceMakerClass = "";
@@ -1781,7 +1785,7 @@ namespace PartChipic {
 				gp_Ax1 revAx(pnt, dir);
 
 				//read out revolution angle
-				double thisAngle = angle / 180.0f*M_PI;
+				double thisAngle = angle * GRAD;
 				if (fabs(thisAngle) < Precision::Angular())
 					thisAngle = angle_edge;
 
@@ -2425,14 +2429,24 @@ namespace PartChipic {
 		{
 			PM3::DefValue3D point;
 			point.X() = PM3::convertToStringd(x);// +"m";
-			point.Y() = PM3::convertToStringd(y*PI / 180.0);// +"deg";
+			point.Y() = PM3::convertToStringd(y*GRAD);// +"deg";
 			point.Z() = PM3::convertToStringd(z);// +"m";
 
 			return point;
 		}
+		Base::Vector3d transferToDefValue3DBase(double x, double y, double z)
+		{
+			Base::Vector3d point;
+			point.x = x;// +"m";
+			point.y = y*GRAD;// +"deg";
+			point.z = z;// +"m";
+
+			return point;
+		}
+
 		PM3::DefValue3D transferToDefValue3Dd(double x, double y, double z)
 		{
-			vcg::Point3d in(x, y*PI / 180.0, z), out;
+			vcg::Point3d in(x, y*GRAD, z), out;
 			out = PM3::cyl2car(in);
 			x = out[0];
 			y = out[1];
@@ -2495,7 +2509,7 @@ namespace PartChipic {
 				pymin = ymin;//上一个范围角度值
 			int ite = 10;
 			bool isClose = false;
-			if ((int)fabs(ymax - ymin + 0.000001) == 360)
+			if ((int)fabs(ymax - ymin + TOL) == 360)
 				isClose = true;
 			do {
 				if (pymax > 270) pymin = 270;
@@ -2504,12 +2518,14 @@ namespace PartChipic {
 				else if (pymax > 0) pymin = 0;
 				else if (pymax > -90) pymin = -90;
 				else if (pymax > -180) pymin = -180;
-				else //if (ymax > -270)
+				else if (pymax > -270)
 					pymin = -270;
+				else 
+					pymin = -360;
 				;
 				spymin.push_back(pymin);
 				spymax.push_back(pymin + 90);//pymax
-				if (pymin + 90 > ymax)
+				if (pymin + 90 >= ymax)
 					spymaxo.push_back(ymax);
 				else
 					spymaxo.push_back(pymin + 90);
@@ -2831,7 +2847,7 @@ namespace PartChipic {
 				std::string er;
 				PM3::DefValue3D far_ori, near_ori;
 				int nb_ligne = 10, nb_colon = 10, nb_depth = 10;
-				double yreso = (ymax - ymin) * 3.1415926 / 20. / 180;
+				double yreso = (ymax - ymin) * GRAD / 20.;
 				float extVoid = 0.00001;//0.1mm
 				float extVoidAngle = 0.01;//deg度
 
@@ -3015,7 +3031,8 @@ namespace PartChipic {
 					zmaxo = zmax;
 				}
 				float dev = 0.000001;
-				std::vector<PM3::DefValue3D> far_pointV, near_pointV, far_pointVo, near_pointVo, far_pointV_cut, near_pointV_cut;
+				std::vector<PM3::DefValue3D> far_pointV, near_pointV, far_pointV_cut, near_pointV_cut;
+				std::vector<Base::Vector3d> far_pointVo, near_pointVo;
 				std::vector < std::string > funcV;
 				if (std::string(coor) == S_COOR_RECTANGULAR) {
 					float dev = 0;
@@ -3048,13 +3065,13 @@ namespace PartChipic {
 							for (int k = 0; k < spzmin.size(); k++) {
 								far_pointV.push_back(transferToDefValue3DRECTANGULAR(spxmax[i], spymax[j], spzmax[k]));
 								near_pointV.push_back(transferToDefValue3DRECTANGULAR(spxmin[i], spymin[j], spzmin[k]));
-								far_pointVo.push_back(transferToDefValue3DRECTANGULAR(spxmaxo[i], spymaxo[j], spzmaxo[k]));
-								near_pointVo.push_back(transferToDefValue3DRECTANGULAR(spxmino[i], spymino[j], spzmino[k]));
+								far_pointVo.push_back(Base::Vector3d(spxmaxo[i], spymaxo[j], spzmaxo[k]));
+								near_pointVo.push_back(Base::Vector3d(spxmino[i], spymino[j], spzmino[k]));
 							}
 				}
 				else {
 					nb_ligne = 8, nb_colon = 8, nb_depth = 8;
-					yreso = 90 * 3.1415926 / (nb_colon) / 180;
+					yreso = 90 * GRAD / (nb_colon);
 
 					//角度范围 - 360—360deg，且跨度Point_2.Theta - Point_1.Theta <= 360deg、Point_2.Theta > Point_1.Theta。
 					//在python代码添加此限制条件，以提醒用户
@@ -3075,9 +3092,11 @@ namespace PartChipic {
 								for (int k = 0; k < spzmin.size(); k++) {
 									far_pointV.push_back(transferToDefValue3D(spxmax[i], spymax[j], spzmax[k]));
 									near_pointV.push_back(transferToDefValue3D(spxmin[i], spymin[j], spzmin[k]));
-									far_pointVo.push_back(transferToDefValue3D(spxmaxo[i], spymaxo[j], spzmaxo[k]));
-									near_pointVo.push_back(transferToDefValue3D(spxmino[i], spymino[j], spzmino[k]));
+									far_pointVo.push_back(transferToDefValue3DBase(spxmaxo[i], spymaxo[j], spzmaxo[k]));
+									near_pointVo.push_back(transferToDefValue3DBase(spxmino[i], spymino[j], spzmino[k]));
 								}
+						//far_pointV = far_pointVo;
+						//near_pointV = near_pointVo;
 						//double pymax = ymax,
 						//	pymin = ymin;//上一个范围角度值
 
@@ -3152,8 +3171,8 @@ namespace PartChipic {
 						vfunc.iso->nb_ligne = nb_ligne;
 						vfunc.iso->nb_colon = nb_colon;
 						vfunc.iso->nb_depth = nb_depth;
-
-						yreso = (ymax - ymin) * 3.1415926 / (8) / 180;
+						vfunc.iso->isSunk = 1;//稳定
+						yreso = (ymax - ymin) * GRAD / (8);
 						if (std::string(coor) == S_COOR_RECTANGULAR)
 							vfunc.setSystem(PM3::SYSCARTESIAN);
 						else
@@ -3189,103 +3208,167 @@ namespace PartChipic {
 							//if (false) 
 							{
 								try {
-									Part::TopoShape* funcShape = meshToShape(Points, Facets, 0.01, nn);
+									Part::TopoShape* funcShape = meshToShape(Points, Facets, 0, nn);
 									if (funcShape != 0 && type == 1) {
 										vcg::Point3d Start, End;
 										//End = vfunc.iso->End;
 										//Start = vfunc.iso->Start;
 										std::string er;
-										far_pointVo[nn].Parser(&exparser, End, er);
+										_itoa(nn, s, 10);
+										vfunc.name = s;
+										/*far_pointVo[nn].Parser(&exparser, End, er);
 										near_pointVo[nn].Parser(&exparser, Start, er);
+										tempstr = vfunc.name + "max: " + far_pointVo[nn][0] + " " + far_pointVo[nn][1] + " " + far_pointVo[nn][2] + "\n";
+										Base::Console().Error(tempstr.c_str());										
+										tempstr = vfunc.name + "min: " + near_pointVo[nn][0] + " " + near_pointVo[nn][1] + " " + near_pointVo[nn][2] + "\n";
+										Base::Console().Error(tempstr.c_str());
 										Part::TopoShape* com = getShapeOfComformal(coor,
-											Base::Vector3f(Start[0], Start[1], Start[2]),
-											Vector3f(End[0], End[1], End[2]));
-										if (TEST_OUTPUT == 1) {
-											filename = "d://comformal";
+											Base::Vector3d(Start[0], Start[1], Start[2]),
+											Vector3d(End[0], End[1], End[2]));*/
+										
+										//if (std::string(coor) == S_COOR_RECTANGULAR)
+										{
+											std::cout << "#max " << nn << ": " << far_pointVo[nn].x << far_pointVo[nn].y << far_pointVo[nn].z << std::endl;
+											std::cout << "#min " << nn << ": " << near_pointVo[nn].x << near_pointVo[nn].y << near_pointVo[nn].z << std::endl;
+											
+											Part::TopoShape* com = getShapeOfComformal(coor,
+												near_pointVo[nn],
+												far_pointVo[nn]);
+											if (TEST_OUTPUT == 1) {
+												filename = "d://comformal";
+												_itoa(nn, s, 10);
+												filename = filename + s;
+												filename = filename + ".brp";
+												com->write(filename.c_str());
+											}
+											BRepAlgoAPI_Common mkCommon(com->getShape(), funcShape->getShape());
+											if (!mkCommon.IsDone()) {
+												Base::Console().Log("makeFuncMesh - mkCommon not done\n");
+												;// return new App::DocumentObjectExecReturn("DVD::execute - mkCommon not done");
+											}
+											TopExp_Explorer vertex(funcShape->getShape(), TopAbs_VERTEX);
+											if (mkCommon.Shape().IsNull() || !vertex.More()) {
+												tempstr = vfunc.name + ":makeFuncMesh - mkCommon.Shape is Null\n";
+												Base::Console().Error(tempstr.c_str());
+												;// return new App::DocumentObjectExecReturn("DVD::execute - mkCommon.Shape is Null");
+												delete funcShape;
+												funcShape = 0;
+											}
+											else {
+												{
+													funcShape->setShape(mkCommon.Shape());
+													TopoDS_Shape cutShape = funcShape->removeSplitter();
+													funcShape->setShape(cutShape);
+
+													//delete cut;
+													if (TEST_OUTPUT == 1) {
+														filename = "d://common";
+														_itoa(nn, s, 10);
+														filename = filename + s;
+														filename = filename + ".brp";
+														funcShape->write(filename.c_str());
+														Base::Console().Log("topoShapeV.push_back(funcShape)\n");
+													}
+												}
+											}
+											/*{
+											BRepAlgoAPI_Cut mkCut(list[0], funcShape->getShape());
+											TopoDS_Shape cutcut = mkCut.Shape();
+											if (TEST_OUTPUT == 1) {
+											com->setShape(cutcut);
+											filename = "d://cutcut";
 											_itoa(nn, s, 10);
 											filename = filename + s;
 											filename = filename + ".brp";
 											com->write(filename.c_str());
-										}
-										/*std::vector<TopoDS_Shape> list = createCutShape(coor,
-										Base::Vector3f(Start[0], Start[1], Start[2]),
-										Vector3f(End[0], End[1], End[2]));
-										if (TEST_OUTPUT == 1) {
-										com->setShape(list[0]);
-										filename = "d://comformal";
-										_itoa(nn, s, 10);
-										filename = filename + s;
-										filename = filename + ".brp";
-										com->write(filename.c_str());
-										}
-										TopoDS_Shape cutShape = funcShape->cut(list, 0.0001);
-										funcShape->setShape(cutShape);
-										cutShape = funcShape->removeSplitter();
-										funcShape->setShape(cutShape);*/
-										/*far_pointV_cut[nn].Parser(&exparser, End, er);
-										near_pointV_cut[nn].Parser(&exparser, Start, er);//
-										Part::TopoShape* cut = getShapeOfComformal(coor,
-										Base::Vector3f(Start[0], Start[1], Start[2]),
-										Vector3f(End[0], End[1], End[2]));
-										if (TEST_OUTPUT == 1) {
-										filename = "d://cut";
-										_itoa(nn, s, 10);
-										filename = filename + s;
-										filename = filename + ".brp";
-										cut->write(filename.c_str());
-										}
-										BRepAlgoAPI_Cut mkCut(cut->getShape(), com->getShape());
-										TopoDS_Shape cutcut = mkCut.Shape();
-										com->setShape(cutcut);
-										if (TEST_OUTPUT == 1) {
-										filename = "d://cutcut";
-										_itoa(nn, s, 10);
-										filename = filename + s;
-										filename = filename + ".brp";
-										com->write(filename.c_str());
-										}
-										TopoDS_Shape SH = funcShape->cut(com->getShape());
-										funcShape->setShape(SH);
-										BRepAlgoAPI_Cut mkCommon(cutcut,funcShape->getShape());*/
-										BRepAlgoAPI_Common mkCommon(com->getShape(), funcShape->getShape());
-										if (!mkCommon.IsDone()) {
-											Base::Console().Log("makeFuncMesh - mkCommon not done\n");
-											;// return new App::DocumentObjectExecReturn("DVD::execute - mkCommon not done");
-										}
-										if (mkCommon.Shape().IsNull()) {
-											Base::Console().Log("makeFuncMesh - mkCommon.Shape is Null\n");
-											;// return new App::DocumentObjectExecReturn("DVD::execute - mkCommon.Shape is Null");
-										}
+											}
+											funcShape->fuse(cutcut);
 
-										funcShape->setShape(mkCommon.Shape());
-										TopoDS_Shape cutShape = funcShape->removeSplitter();
-										funcShape->setShape(cutShape);
-
-										delete com;
-										//delete cut;
-										if (TEST_OUTPUT == 1) {
-											filename = "d://common";
-											_itoa(nn, s, 10);
-											filename = filename + s;
-											filename = filename + ".brp";
-											funcShape->write(filename.c_str());
-											Base::Console().Log("topoShapeV.push_back(funcShape)\n");
+											}*/
+											delete com;
+											topoShapeV[nn] = funcShape;
 										}
-										/*{
-										BRepAlgoAPI_Cut mkCut(list[0], funcShape->getShape());
-										TopoDS_Shape cutcut = mkCut.Shape();
-										if (TEST_OUTPUT == 1) {
-										com->setShape(cutcut);
-										filename = "d://cutcut";
-										_itoa(nn, s, 10);
-										filename = filename + s;
-										filename = filename + ".brp";
-										com->write(filename.c_str());
-										}
-										funcShape->fuse(cutcut);
+										//else {
+										//	Part::TopoShape* com1 = getShapeOfComformal1(coor,
+										//		near_pointVo[nn],
+										//		far_pointVo[nn]);
+										//	if (TEST_OUTPUT == 1) {
+										//		filename = "d://comformal1";
+										//		_itoa(nn, s, 10);
+										//		filename = filename + s;
+										//		filename = filename + ".brp";
+										//		com1->write(filename.c_str());
+										//	}
+										//	BRepAlgoAPI_Common mkCommon(com1->getShape(), funcShape->getShape());
+										//	if (!mkCommon.IsDone()) {
+										//		Base::Console().Log("makeFuncMesh - mkCommon not done\n");
+										//		;// return new App::DocumentObjectExecReturn("DVD::execute - mkCommon not done");
+										//	}
+										//	TopExp_Explorer vertex(mkCommon.Shape(), TopAbs_VERTEX);
+										//	if (!vertex.More()) {
+										//		tempstr = vfunc.name + ":makeFuncMesh - mkCommon.Shape is Null\n";
+										//		Base::Console().Error(tempstr.c_str());
+										//		;// return new App::DocumentObjectExecReturn("DVD::execute - mkCommon.Shape is Null");
+										//		//delete funcShape;
+										//		//funcShape = 0;
+										//	}
+										//	else {
+										//		TopoDS_Shape cutcut = mkCommon.Shape();
+										//		Part::TopoShape* com3 = getShapeOfComformal3(coor,
+										//			near_pointVo[nn],
+										//			far_pointVo[nn]);
+										//		
+										//		if (com3 != 0) {
+										//			if (TEST_OUTPUT == 1) {
+										//				filename = "d://comformal3";
+										//				_itoa(nn, s, 10);
+										//				filename = filename + s;
+										//				filename = filename + ".brp";
+										//				com3->write(filename.c_str());
+										//			}
+										//			BRepAlgoAPI_Cut mkCut(cutcut, com3->getShape());
+										//			cutcut = mkCut.Shape();
+										//			TopExp_Explorer vertex(cutcut, TopAbs_VERTEX);
+										//			if (!vertex.More()) {
+										//				tempstr = vfunc.name + ":makeFuncMesh - mkCut.Shape is Null\n";
+										//				Base::Console().Error(tempstr.c_str());
+										//				;// return new App::DocumentObjectExecReturn("DVD::execute - mkCommon.Shape is Null");
+										//				//delete funcShape;
+										//				//funcShape = 0;														
+										//			}
+										//			
+										//			delete com3;
+										//		}
+										//		Part::TopoShape* com2 = getShapeOfComformal2(coor,
+										//			near_pointVo[nn],
+										//			far_pointVo[nn]);
+										//		if (com2 != 0) {
+										//			BRepAlgoAPI_Cut mkCut2(cutcut, com2->getShape());
+										//			cutcut = mkCut2.Shape();
+										//			delete com2;
+										//		}
+										//		{
+										//			funcShape->setShape(cutcut);
+										//		}
+										//		TopExp_Explorer vertex(funcShape->getShape(), TopAbs_VERTEX);
+										//		if (vertex.More()) {
+										//			TopoDS_Shape cutShape = funcShape->removeSplitter();
+										//			funcShape->setShape(cutShape);
 
-										}*/
-										topoShapeV[nn] = funcShape;
+										//			//delete cut;
+										//			if (TEST_OUTPUT == 1) {
+										//				filename = "d://common";
+										//				_itoa(nn, s, 10);
+										//				filename = filename + s;
+										//				filename = filename + ".brp";
+										//				funcShape->write(filename.c_str());
+										//				Base::Console().Log("topoShapeV.push_back(funcShape)\n");
+										//			}
+										//		}
+										//	}
+										//	delete com1;											
+										//	topoShapeV[nn] = funcShape;
+										//}
 									}
 									else {
 										topoShapeV[nn] = funcShape;
@@ -3303,18 +3386,26 @@ namespace PartChipic {
 					std::cout << "#pragma: " << (t1 - t0) << std::endl;
 				}
 
-				try{
+				try {
 					Part::TopoShape* funcShape = 0;
 					{
 						int k = 0;
-						for (k = 0; k < far_pointV.size(); k++)
+						for (k = 0; k < far_pointV.size(); k++){
+							
 							if (topoShapeV[k] != 0) {
-								funcShape = topoShapeV[k];
-								break;
+								TopExp_Explorer vertex(topoShapeV[k]->getShape(), TopAbs_VERTEX);
+								if (vertex.More()) {
+									funcShape = topoShapeV[k];
+									break;
+								}
 							}
+						}
 						std::vector<TopoDS_Shape> tmpv;
 						for (k = k + 1; k < far_pointV.size(); k++) {
 							if (topoShapeV[k] == 0)
+								continue;
+							TopExp_Explorer vertex(topoShapeV[k]->getShape(), TopAbs_VERTEX);
+							if (!vertex.More())
 								continue;
 							tmpv.push_back(topoShapeV[k]->getShape());
 							/*funcShape->setShape(funcShape->fuse(topoShapeV[k]->getShape()));
@@ -3349,48 +3440,48 @@ namespace PartChipic {
 		}
 		//#将单个坐标点转化为直角坐标系下的点
 		//def otherToRecOne(coordinateType, point) :
-		Base::Vector3f otherToRecOne(std::string curCoordinateSys, Base::Vector3f point)
+		Base::Vector3d otherToRecOne(std::string curCoordinateSys, Base::Vector3d point)
 		{
-			Base::Vector3f resultPoint = point;
+			Base::Vector3d resultPoint = point;
 			//if (curCoordinateSys == "Rectangular")
 
 			//	#极坐标系下：
 			//	#极坐标系下，R与直角坐标系的X相同；根据R与θ求得直角坐标系下的y；z与直角坐标系z相同
 			if (curCoordinateSys == S_COOR_POLAR || curCoordinateSys == S_COOR_CYLINDICAL) {
-				float radian = point.y;// *PM3::pi() / 180.0;
-				float pointY = point.x*sin(radian);
-				float pointX = point.x*cos(radian);
-				resultPoint = Base::Vector3f(pointX, pointY, point.z);
+				double radian = point.y;// *PM3::pi() / 180.0;
+				double pointY = point.x*sin(radian);
+				double pointX = point.x*cos(radian);
+				resultPoint = Base::Vector3d(pointX, pointY, point.z);
 				//	#圆柱坐标系下的转换
 			}
 			//	#转换完成
 			return resultPoint;
 		}
-		Base::Vector3f otherToRecOneDegree(std::string curCoordinateSys, Base::Vector3f point)
+		Base::Vector3d otherToRecOneDegree(std::string curCoordinateSys, Base::Vector3d point)
 		{
-			Base::Vector3f resultPoint = point;
+			Base::Vector3d resultPoint = point;
 			//if (curCoordinateSys == "Rectangular")
 
 			//	#极坐标系下：
 			//	#极坐标系下，R与直角坐标系的X相同；根据R与θ求得直角坐标系下的y；z与直角坐标系z相同
 			if (curCoordinateSys == S_COOR_POLAR || curCoordinateSys == S_COOR_CYLINDICAL) {
-				float radian = point.y*M_PI / 180.0;
-				float pointY = point.x*sin(radian);
-				float pointX = point.x*cos(radian);
-				resultPoint = Base::Vector3f(pointX, pointY, point.z);
+				double radian = point.y*GRAD;
+				double pointY = point.x*sin(radian);
+				double pointX = point.x*cos(radian);
+				resultPoint = Base::Vector3d(pointX, pointY, point.z);
 				//	#圆柱坐标系下的转换
 			}
 			//	#转换完成
 			return resultPoint;
 		}
-		Part::TopoShape* makeLine(Base::Vector3f tempP1, Base::Vector3f tempP2)
+		Part::TopoShape* makeLine(Base::Vector3d tempP1, Base::Vector3d tempP2)
 		{
 			BRepBuilderAPI_MakeEdge makeEdge(gp_Pnt(tempP1.x, tempP1.y, tempP1.z),
 				gp_Pnt(tempP2.x, tempP2.y, tempP2.z));
 			TopoDS_Edge edge = makeEdge.Edge();
 			return new Part::TopoShape(edge);
 		}
-		Part::TopoShape* makeCircle(double radius, Base::Vector3f pnt, Base::Vector3f vec, double angle1, double angle2)
+		Part::TopoShape* makeCircle(double radius, Base::Vector3d pnt, Base::Vector3d vec, double angle1, double angle2)
 		{
 			try {
 				gp_Pnt loc(0, 0, 0);
@@ -3412,7 +3503,7 @@ namespace PartChipic {
 				throw Py::Exception(Part::PartExceptionOCCError, "creation of circle failed");
 			}
 		}
-		Part::TopoShape* makeSphere(double radius, Base::Vector3f pnt = Base::Vector3f(0, 0, 0), Base::Vector3f vec = Base::Vector3f(0, 0, 1), double angle1 = -90, double angle2 = 90, double angle3 = 360)
+		Part::TopoShape* makeSphere(double radius, Base::Vector3d pnt = Base::Vector3d(0, 0, 0), Base::Vector3d vec = Base::Vector3d(0, 0, 1), double angle1 = -90, double angle2 = 90, double angle3 = 360)
 		{
 			try {
 				gp_Pnt p(0, 0, 0);
@@ -3489,22 +3580,22 @@ namespace PartChipic {
 		}
 		//# 已知两个极坐标点，求两个点形成的薄管形
 		//def getPipeObj(polarPoint1, polarPoint2) :
-		Part::TopoShape* getPipeObj(Base::Vector3f polarPoint1, Base::Vector3f polarPoint2)
+		Part::TopoShape* getPipeObj(Base::Vector3d polarPoint1, Base::Vector3d polarPoint2)
 		{
-			Base::Vector3f tempP1 = otherToRecOne("Polar", polarPoint1);
-			Base::Vector3f tempP2 = otherToRecOne("Polar", Base::Vector3f(polarPoint1.x, polarPoint1.y, polarPoint2.z));
+			Base::Vector3d tempP1 = otherToRecOne(S_COOR_POLAR, polarPoint1);
+			Base::Vector3d tempP2 = otherToRecOne(S_COOR_POLAR, Base::Vector3d(polarPoint1.x, polarPoint1.y, polarPoint2.z));
 			Part::TopoShape* resultShape = 0;
 			float starAngle = polarPoint1.y;
 			float endAngle = polarPoint2.y;
-			Base::Vector3f dir = Base::Vector3f(0, 0, 2);
+			Base::Vector3d dir = Base::Vector3d(0, 0, 2);
 			//#这样设置可以生成面片
 			if (starAngle == endAngle)
 				endAngle = starAngle + 0.01;
 			Part::TopoShape* line = makeLine(tempP1, tempP2);
 			if (tempP1 == tempP2)
-				resultShape = makeCircle(polarPoint1.x, Base::Vector3f(0, 0, tempP1.z), dir, starAngle, endAngle);
+				resultShape = makeCircle(polarPoint1.x, Base::Vector3d(0, 0, tempP1.z), dir, starAngle, endAngle);
 			else {
-				Part::TopoShape* linePath = makeCircle((polarPoint1.x + polarPoint2.x) / 2, Base::Vector3f(0, 0, tempP1.z), dir, starAngle, endAngle);
+				Part::TopoShape* linePath = makeCircle((polarPoint1.x + polarPoint2.x) / 2, Base::Vector3d(0, 0, tempP1.z), dir, starAngle, endAngle);
 				Part::TopoShape* path = Wire(linePath);
 				resultShape = new Part::TopoShape(path->makePipe(line->getShape()));
 			}
@@ -3512,21 +3603,21 @@ namespace PartChipic {
 		}
 		//		#极坐标系下两个点得到扇形
 		//		def getArcObj(polarPoint1, polarPoint2) :
-		Part::TopoShape* getArcObj(Base::Vector3f polarPoint1, Base::Vector3f polarPoint2)
+		Part::TopoShape* getArcObj(Base::Vector3d polarPoint1, Base::Vector3d polarPoint2)
 		{
-			Base::Vector3f tempP1 = otherToRecOne("Polar", polarPoint1);
-			Base::Vector3f tempP2 = otherToRecOne("Polar", Base::Vector3f(polarPoint2.x, polarPoint1.y, polarPoint2.z));
+			Base::Vector3d tempP1 = otherToRecOne(S_COOR_POLAR, polarPoint1);
+			Base::Vector3d tempP2 = otherToRecOne(S_COOR_POLAR, Base::Vector3d(polarPoint2.x, polarPoint1.y, polarPoint2.z));
 			Part::TopoShape* resultShape = 0;
 			double startAngle = polarPoint1.y;
 			double endAngle = polarPoint2.y;
-			Base::Vector3f dir = Base::Vector3f(0, 0, 2);
+			Base::Vector3d dir = Base::Vector3d(0, 0, 2);
 			//#这样设置可以生成面片
 			if (startAngle == endAngle)
 				endAngle = startAngle + 0.01;
 			if (tempP1 == tempP2) {
 				//# 排除polarPoint.x为0
 				if (polarPoint2.x != 0.0)
-					resultShape = makeCircle(fabs((polarPoint2.x)), Base::Vector3f(0, 0, tempP1.z), dir, startAngle, endAngle);
+					resultShape = makeCircle(fabs((polarPoint2.x)), Base::Vector3d(0, 0, tempP1.z), dir, startAngle, endAngle);
 				else
 					resultShape = makeSphere(0.0001, tempP1);
 			}
@@ -3535,11 +3626,11 @@ namespace PartChipic {
 					//wires = []
 					std::vector<Part::TopoShape*> wires;
 					if (polarPoint1.x != 0.0) {
-						Part::TopoShape* arcLine1 = makeCircle(fabs(polarPoint1.x), Base::Vector3f(0, 0, tempP1.z), dir, polarPoint1.y, polarPoint2.y);
+						Part::TopoShape* arcLine1 = makeCircle(fabs(polarPoint1.x), Base::Vector3d(0, 0, tempP1.z), dir, polarPoint1.y, polarPoint2.y);
 						wires.push_back(arcLine1);
 					}
 					if (polarPoint2.x != 0.0) {
-						Part::TopoShape*arcLine2 = makeCircle(fabs(polarPoint2.x), Base::Vector3f(0, 0, tempP2.z), dir, polarPoint1.y, polarPoint2.y);
+						Part::TopoShape*arcLine2 = makeCircle(fabs(polarPoint2.x), Base::Vector3d(0, 0, tempP2.z), dir, polarPoint1.y, polarPoint2.y);
 						wires.push_back(arcLine2);
 					}
 					resultShape = makeFace(wires, "Part::FaceMakerBullseye");
@@ -3547,7 +3638,7 @@ namespace PartChipic {
 				else {
 					Part::TopoShape* line = makeLine(tempP1, tempP2);
 					//#linePath = Part.makeCircle(math.fabs((polarPoint1.x + polarPoint2.x) / 2), FreeCAD.Vector(0, 0, tempP1.z), dir, startAngle, endAngle)
-					Part::TopoShape* linePath = makeCircle(fabs(polarPoint2.x), Base::Vector3f(0, 0, tempP1.z), dir, startAngle, endAngle);
+					Part::TopoShape* linePath = makeCircle(fabs(polarPoint2.x), Base::Vector3d(0, 0, tempP1.z), dir, startAngle, endAngle);
 					Part::TopoShape* path = Wire(linePath);
 					//	resultShape = path.makePipe(line)
 					resultShape = new Part::TopoShape(path->makePipe(line->getShape()));
@@ -3558,26 +3649,65 @@ namespace PartChipic {
 		}
 		/*
 		创建裁剪体
+		/*std::vector<TopoDS_Shape> list = createCutShape(coor,
+		Base::Vector3f(Start[0], Start[1], Start[2]),
+		Vector3f(End[0], End[1], End[2]));
+		if (TEST_OUTPUT == 1) {
+		com->setShape(list[0]);
+		filename = "d://comformal";
+		_itoa(nn, s, 10);
+		filename = filename + s;
+		filename = filename + ".brp";
+		com->write(filename.c_str());
+		}
+		TopoDS_Shape cutShape = funcShape->cut(list, 0.0001);
+		funcShape->setShape(cutShape);
+		cutShape = funcShape->removeSplitter();
+		funcShape->setShape(cutShape);*/
+		/*far_pointV_cut[nn].Parser(&exparser, End, er);
+		near_pointV_cut[nn].Parser(&exparser, Start, er);//
+		Part::TopoShape* cut = getShapeOfComformal(coor,
+		Base::Vector3f(Start[0], Start[1], Start[2]),
+		Vector3f(End[0], End[1], End[2]));
+		if (TEST_OUTPUT == 1) {
+		filename = "d://cut";
+		_itoa(nn, s, 10);
+		filename = filename + s;
+		filename = filename + ".brp";
+		cut->write(filename.c_str());
+		}
+		BRepAlgoAPI_Cut mkCut(cut->getShape(), com->getShape());
+		TopoDS_Shape cutcut = mkCut.Shape();
+		com->setShape(cutcut);
+		if (TEST_OUTPUT == 1) {
+		filename = "d://cutcut";
+		_itoa(nn, s, 10);
+		filename = filename + s;
+		filename = filename + ".brp";
+		com->write(filename.c_str());
+		}
+		TopoDS_Shape SH = funcShape->cut(com->getShape());
+		funcShape->setShape(SH);
+		BRepAlgoAPI_Cut mkCommon(cutcut,funcShape->getShape());
 		*/
-		std::vector<TopoDS_Shape> createCutShape(std::string curCoordinateSys, Base::Vector3f pointmin, Base::Vector3f pointmax)
+		std::vector<TopoDS_Shape> createCutShape(std::string curCoordinateSys, Base::Vector3d pointmin, Base::Vector3d pointmax)
 		{
 			std::vector<TopoDS_Shape> shapes;
 			Part::TopoShape* resultShape = 0;
-			Base::Vector3f Point1 = pointmin;
-			Base::Vector3f Point2 = pointmax;
+			Base::Vector3d Point1 = pointmin;
+			Base::Vector3d Point2 = pointmax;
 			if (curCoordinateSys == "Rectangular") {
 				double length = abs(Point1.x - Point2.x);
 				double width = abs(Point1.y - Point2.y);
 				double height = abs(Point1.z - Point2.z);
 				//扩展长度
-				Base::Vector3f ext = Base::Vector3f(length / 5., width / 5., height / 5.);
-				Base::Vector3f extP1 = Point1 - ext;
-				Base::Vector3f extP2 = Point2 + ext;
-				Base::Vector3f dir = Base::Vector3f(0, 0, 1);
+				Base::Vector3d ext = Base::Vector3d(length / 5., width / 5., height / 5.);
+				Base::Vector3d extP1 = Point1 - ext;
+				Base::Vector3d extP2 = Point2 + ext;
+				Base::Vector3d dir = Base::Vector3d(0, 0, 1);
 				try {
-					float dev = 0.000001;
-					Point1 += Base::Vector3f(dev, dev, dev);
-					Point2 -= Base::Vector3f(dev, dev, dev);
+					Point1 += Base::Vector3d(TOL, TOL, TOL);
+					Point2 -= Base::Vector3d(TOL, TOL, TOL);
 					{//front
 						gp_Pnt p1(extP1.x, extP1.y, extP1.z), p2(extP2.x, Point1.y, extP2.z);
 						BRepPrimAPI_MakeBox mkBox(p1, p2);
@@ -3619,12 +3749,12 @@ namespace PartChipic {
 				}
 			}
 			else {//elif curCoordinateSys == 'Polar' or curCoordinateSys == 'Cylindrical':
-				Base::Vector3f tempP1 = otherToRecOne(curCoordinateSys, Point1);
-				Base::Vector3f tempP11 = otherToRecOne(curCoordinateSys, Point2);
-				Base::Vector3f tempP2 = otherToRecOne(curCoordinateSys, Base::Vector3f(Point2.x, Point1.y, Point1.z));
-				Base::Vector3f tempP3 = otherToRecOne(curCoordinateSys, Base::Vector3f(Point2.x, Point1.y, Point2.z));
-				Base::Vector3f tempP4 = otherToRecOne(curCoordinateSys, Base::Vector3f(Point1.x, Point1.y, Point2.z));
-				Base::Vector3f tempP5 = otherToRecOne(curCoordinateSys, Base::Vector3f(Point2.x, Point2.y, Point1.z));
+				Base::Vector3d tempP1 = otherToRecOne(curCoordinateSys, Point1);
+				Base::Vector3d tempP11 = otherToRecOne(curCoordinateSys, Point2);
+				Base::Vector3d tempP2 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point2.x, Point1.y, Point1.z));
+				Base::Vector3d tempP3 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point2.x, Point1.y, Point2.z));
+				Base::Vector3d tempP4 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point1.x, Point1.y, Point2.z));
+				Base::Vector3d tempP5 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point2.x, Point2.y, Point1.z));
 				//	#只有一个点的情况
 				if (tempP1 == tempP2 && tempP2 == tempP4) {
 					//# Shape = Part.Vertex(FreeCAD.Vector(tempP1.x, tempP1.y, tempP1.z))
@@ -3650,7 +3780,7 @@ namespace PartChipic {
 				else {
 					//# line1 = Part.makeLine(tempP1, tempP2)
 					Part::TopoShape* line2 = makeLine(tempP1, tempP4);
-					Part::TopoShape* shapeCir = getArcObj(Base::Vector3f(Point1.x, Point1.y, Point2.z), Point2);
+					Part::TopoShape* shapeCir = getArcObj(Base::Vector3d(Point1.x, Point1.y, Point2.z), Point2);
 					Part::TopoShape* path = Wire(line2);
 					//resultShape = path.makePipe(shapeCir);
 					resultShape = new Part::TopoShape(path->makePipe(shapeCir->getShape()));
@@ -3660,15 +3790,15 @@ namespace PartChipic {
 				//else
 				//	Base::Console().Log("getShapeOfComformal error!");
 				double r = fabs(pointmax.x);
-				Base::Vector3f temp;
+				Base::Vector3d temp;
 				//left plane
-				Base::Vector3f extP1right = tempP1 + (tempP1 - tempP2).Normalize() * r + (tempP1 - tempP4).Normalize() * r;
-				Base::Vector3f extP2 = tempP2 + (tempP2 - tempP1).Normalize() * r + (tempP2 - tempP3).Normalize() * r;
-				Base::Vector3f extP4right = tempP4 + (tempP4 - tempP3).Normalize() * r + (tempP4 - tempP1).Normalize() * r;
+				Base::Vector3d extP1right = tempP1 + (tempP1 - tempP2).Normalize() * r + (tempP1 - tempP4).Normalize() * r;
+				Base::Vector3d extP2 = tempP2 + (tempP2 - tempP1).Normalize() * r + (tempP2 - tempP3).Normalize() * r;
+				Base::Vector3d extP4right = tempP4 + (tempP4 - tempP3).Normalize() * r + (tempP4 - tempP1).Normalize() * r;
 				//right plane
-				Base::Vector3f extP1left = tempP1 + (tempP1 - tempP5).Normalize() * r + (tempP1 - tempP4).Normalize() * r;
-				Base::Vector3f extP5 = tempP5 + (tempP5 - tempP1).Normalize() * r + (tempP1 - tempP4).Normalize() * r;
-				Base::Vector3f extP4left = tempP4 + (tempP4 - tempP11).Normalize() * r + (tempP4 - tempP1).Normalize() * r;
+				Base::Vector3d extP1left = tempP1 + (tempP1 - tempP5).Normalize() * r + (tempP1 - tempP4).Normalize() * r;
+				Base::Vector3d extP5 = tempP5 + (tempP5 - tempP1).Normalize() * r + (tempP1 - tempP4).Normalize() * r;
+				Base::Vector3d extP4left = tempP4 + (tempP4 - tempP11).Normalize() * r + (tempP4 - tempP1).Normalize() * r;
 				{
 					vcg::Plane3f planeright;//右手坐标系right
 					planeright.Init(vcg::Point3f(extP1right.x, extP1right.y, extP1right.z),
@@ -3709,18 +3839,50 @@ namespace PartChipic {
 
 			return shapes;
 		}
+		Part::TopoShape* makeCylinder(Base::Vector3d ori, Base::Vector3d dir, double radius, double height, double angle)
+		{
+			/*double radius, height, angle = 360;
+			PyObject *pPnt = 0, *pDir = 0;
+			if (!PyArg_ParseTuple(args.ptr(), "dd|O!O!d",
+				&radius, &height,
+				&(Base::VectorPy::Type), &pPnt,
+				&(Base::VectorPy::Type), &pDir,
+				&angle))
+				throw Py::Exception();*/
+
+			try {
+				gp_Pnt p(ori.x, ori.y, ori.z);
+				gp_Dir d(dir.x, dir.y, dir.z);
+				/*if (pPnt) {
+					Base::Vector3d pnt = static_cast<Base::VectorPy*>(pPnt)->value();
+					p.SetCoord(pnt.x, pnt.y, pnt.z);
+				}
+				if (pDir) {
+					Base::Vector3d vec = static_cast<Base::VectorPy*>(pDir)->value();
+					d.SetCoord(vec.x, vec.y, vec.z);
+				}*/
+				BRepPrimAPI_MakeCylinder mkCyl(gp_Ax2(p, d), radius, height, angle);
+				TopoDS_Shape shape = mkCyl.Shape();
+				return new Part::TopoShape(shape);
+			}
+			catch (Standard_DomainError) {
+				//throw Py::Exception(PartExceptionOCCDomainError, "creation of cylinder failed");
+				;
+			}
+			return 0;
+		}
 		//#通过两个点得到一个conformal的shape(借鉴comformal体)
 		//def getShapeOfComformal(curCoordinateSys, pointmin, pointmax) :
-		Part::TopoShape* getShapeOfComformal(std::string curCoordinateSys, Base::Vector3f pointmin, Base::Vector3f pointmax)
+		Part::TopoShape* getShapeOfComformal(std::string curCoordinateSys, Base::Vector3d pointmin, Base::Vector3d pointmax)
 		{
 			Part::TopoShape* resultShape = 0;
-			Base::Vector3f Point1 = pointmin;
-			Base::Vector3f Point2 = pointmax;
+			Base::Vector3d Point1 = pointmin;
+			Base::Vector3d Point2 = pointmax;
 			if (curCoordinateSys == "Rectangular") {
-				double length = abs(Point1.x - Point2.x);
-				double width = abs(Point1.y - Point2.y);
-				double height = abs(Point1.z - Point2.z);
-				Base::Vector3f dir = Base::Vector3f(0, 0, 1);
+				double length = fabs(Point1.x - Point2.x);
+				double width = fabs(Point1.y - Point2.y);
+				double height = fabs(Point1.z - Point2.z);
+				Base::Vector3d dir = Base::Vector3d(0, 0, 1);
 				try {
 					gp_Pnt p(0, 0, 0);
 					gp_Dir d(0, 0, 1);
@@ -3740,14 +3902,15 @@ namespace PartChipic {
 				}
 			}
 			else {//				   elif curCoordinateSys == 'Polar' or curCoordinateSys == 'Cylindrical':
-				Base::Vector3f tempP1 = otherToRecOne(curCoordinateSys, Point1);
-				Base::Vector3f tempP11 = otherToRecOne(curCoordinateSys, Point2);
-				Base::Vector3f tempP2 = otherToRecOne(curCoordinateSys, Base::Vector3f(Point2.x, Point1.y, Point1.z));
-				Base::Vector3f tempP3 = otherToRecOne(curCoordinateSys, Base::Vector3f(Point2.x, Point1.y, Point2.z));
-				Base::Vector3f tempP4 = otherToRecOne(curCoordinateSys, Base::Vector3f(Point1.x, Point1.y, Point2.z));
+				Base::Vector3d tempP1 = otherToRecOne(curCoordinateSys, Point1);
+				Base::Vector3d tempP11 = otherToRecOne(curCoordinateSys, Point2);
+				Base::Vector3d tempP2 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point2.x, Point1.y, Point1.z));
+				Base::Vector3d tempP3 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point2.x, Point1.y, Point2.z));
+				Base::Vector3d tempP4 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point1.x, Point1.y, Point2.z));
 
 				//	#只有一个点的情况
-				if (tempP1 == tempP2 && tempP2 == tempP4) {
+				//if (tempP1 == tempP2 && tempP2 == tempP4) {
+				if (fabs(Point1.x - Point2.x) < TOL && fabs(Point1.z - Point2.z) < TOL) {//半径相等
 					//# Shape = Part.Vertex(FreeCAD.Vector(tempP1.x, tempP1.y, tempP1.z))
 					//# Shape = Part.makeBox(0.001, 0.001, 0.001, tempP1)
 					//# return
@@ -3755,26 +3918,332 @@ namespace PartChipic {
 					resultShape = makeSphere(0.00001, tempP1);
 				}
 				//	#防止两个点重合出现错误的情况
-				else if (tempP1 == tempP2)
+				else if (fabs(Point1.x - Point2.x) < TOL)//tempP1 == tempP2)
 				{
 					//# tempP2 = tempP2.add(FreeCAD.Vector(0.001*math.cos(tempP2.y), 0.001*math.sin(tempP2.y), 0))				
-					if (tempP3 == tempP4){
+					//if (tempP3 == tempP4){
 						resultShape = makeLine(tempP1, tempP3);
-					}
-					else
-						resultShape = getPipeObj(Point1, Point2);
+					//}
+					//else
+					//	resultShape = getPipeObj(Point1, Point2);
 				}
-				else if (tempP1 == tempP4)
+				else if (fabs(Point1.z - Point2.z) < TOL)//tempP1 == tempP4)
 					//# tempP4 = tempP4.add(FreeCAD.Vector(0, 0, 0.01))
 					resultShape = getArcObj(Point1, Point2);
 
 				else {
-					//# line1 = Part.makeLine(tempP1, tempP2)
-					Part::TopoShape* line2 = makeLine(tempP1, tempP4);
-					Part::TopoShape* shapeCir = getArcObj(Base::Vector3f(Point1.x, Point1.y, Point2.z), Point2);
-					Part::TopoShape* path = Wire(line2);
-					//resultShape = path.makePipe(shapeCir);
-					resultShape = new Part::TopoShape(path->makePipe(shapeCir->getShape()));
+					////# line1 = Part.makeLine(tempP1, tempP2)
+					//Part::TopoShape* line2 = makeLine(tempP1, tempP4);
+					//Part::TopoShape* shapeCir = getArcObj(Base::Vector3d(Point1.x, Point1.y, Point2.z), Point2);
+					//Part::TopoShape* path = Wire(line2);
+					////resultShape = path.makePipe(shapeCir);
+					//resultShape = new Part::TopoShape(path->makePipe(shapeCir->getShape()));
+
+					double sangle = pointmin.y, eangle = pointmax.y;
+					if (sangle < 0 || eangle < 0) {
+						sangle = 2 * M_PI + sangle;
+						if (sangle > 2 * M_PI)
+							sangle -= sangle;
+						eangle = 2 * M_PI + eangle;
+						if (eangle > 2 * M_PI)
+							eangle -= eangle;
+					}
+					Base::Vector3d dir(0, 0, 1);
+					Base::Vector3d p(0, 0, pointmin.z);
+					//if (pointmin.z < 0)
+					//	dir.z = -1;
+					resultShape = makeCylinder(p, dir, pointmax.x, fabs(pointmax.z - pointmin.z), eangle);
+					if (pointmin.x > TOL) {
+						Part::TopoShape* t2 = makeCylinder(p,dir, pointmin.x, fabs(pointmax.z - pointmin.z), eangle);
+						TopoDS_Shape sh = resultShape->cut(t2->getShape());
+						resultShape->setShape(sh);
+						delete t2;
+					}
+					if (fabs(sangle - 2 * M_PI) < TOL)
+						sangle = 0;
+						
+					if (fabs(sangle - 0) > TOL) {
+						Part::TopoShape* t3 = makeCylinder(p,dir, pointmax.x, fabs(pointmax.z - pointmin.z), sangle);
+						TopoDS_Shape sh = resultShape->cut(t3->getShape());
+						resultShape->setShape(sh);
+						delete t3;
+					}
+					
+				}
+			}
+			if (resultShape != 0) {
+				Part::TopoShape* solid = Solid(resultShape);
+				TopoDS_Shape cutShape = solid->removeSplitter();
+				solid->setShape(cutShape);
+				delete resultShape;
+				return solid;
+			}
+			else
+				Base::Console().Log("getShapeOfComformal error!");
+			return 0;
+		}
+		Part::TopoShape* getShapeOfComformal1(std::string curCoordinateSys, Base::Vector3d pointmin, Base::Vector3d pointmax)
+		{
+			Part::TopoShape* resultShape = 0;
+			Base::Vector3d Point1 = pointmin;
+			Base::Vector3d Point2 = pointmax;
+			if (curCoordinateSys == "Rectangular") {
+				double length = fabs(Point1.x - Point2.x);
+				double width = fabs(Point1.y - Point2.y);
+				double height = fabs(Point1.z - Point2.z);
+				Base::Vector3d dir = Base::Vector3d(0, 0, 1);
+				try {
+					gp_Pnt p(0, 0, 0);
+					gp_Dir d(0, 0, 1);
+					p.SetCoord(Point1.x, Point1.y, Point1.z);
+					BRepPrimAPI_MakeBox mkBox(gp_Ax2(p, d), length, width, height);
+					TopoDS_Shape ResultShape = mkBox.Shape();
+					//return Py::asObject(new TopoShapeSolidPy(new TopoShape(ResultShape)));
+					resultShape = new Part::TopoShape(ResultShape);// = Part.makeBox(length, width, height, Point1, dir);
+				}
+				catch (Standard_Failure& e){
+					//DocumentTools.printErrorMessage("Redraw Conformal Failed!")
+					//	return
+					//	pass
+					//	# Shape = Part.makeBox(length, width, height, Point1, dir)
+					//	pass
+					;
+				}
+			}
+			else {//				   elif curCoordinateSys == 'Polar' or curCoordinateSys == 'Cylindrical':
+				Base::Vector3d tempP1 = otherToRecOne(curCoordinateSys, Point1);
+				Base::Vector3d tempP11 = otherToRecOne(curCoordinateSys, Point2);
+				Base::Vector3d tempP2 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point2.x, Point1.y, Point1.z));
+				Base::Vector3d tempP3 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point2.x, Point1.y, Point2.z));
+				Base::Vector3d tempP4 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point1.x, Point1.y, Point2.z));
+
+				//	#只有一个点的情况
+				//if (tempP1 == tempP2 && tempP2 == tempP4) {
+				if (fabs(Point1.x - Point2.x) < TOL && fabs(Point1.z - Point2.z) < TOL) {//半径相等
+					//# Shape = Part.Vertex(FreeCAD.Vector(tempP1.x, tempP1.y, tempP1.z))
+					//# Shape = Part.makeBox(0.001, 0.001, 0.001, tempP1)
+					//# return
+					//resultShape = makePoint(tempP1);
+					resultShape = makeSphere(0.00001, tempP1);
+				}
+				//	#防止两个点重合出现错误的情况
+				else if (fabs(Point1.x - Point2.x) < TOL)//tempP1 == tempP2)
+				{
+					//# tempP2 = tempP2.add(FreeCAD.Vector(0.001*math.cos(tempP2.y), 0.001*math.sin(tempP2.y), 0))				
+					//if (tempP3 == tempP4){
+					resultShape = makeLine(tempP1, tempP3);
+					//}
+					//else
+					//	resultShape = getPipeObj(Point1, Point2);
+				}
+				else if (fabs(Point1.z - Point2.z) < TOL)//tempP1 == tempP4)
+					//# tempP4 = tempP4.add(FreeCAD.Vector(0, 0, 0.01))
+					resultShape = getArcObj(Point1, Point2);
+
+				else {
+					////# line1 = Part.makeLine(tempP1, tempP2)
+					//Part::TopoShape* line2 = makeLine(tempP1, tempP4);
+					//Part::TopoShape* shapeCir = getArcObj(Base::Vector3d(Point1.x, Point1.y, Point2.z), Point2);
+					//Part::TopoShape* path = Wire(line2);
+					////resultShape = path.makePipe(shapeCir);
+					//resultShape = new Part::TopoShape(path->makePipe(shapeCir->getShape()));
+
+					double sangle = pointmin.y, eangle = pointmax.y;
+					if (sangle < 0 || eangle < 0) {
+						sangle = 2 * M_PI + sangle;
+						eangle = 2 * M_PI + eangle;
+					}
+					Base::Vector3d dir(0, 0, 1);
+					Base::Vector3d p(0, 0, pointmin.z);
+					//if (pointmin.z < 0)
+					//	dir.z = -1;
+					resultShape = makeCylinder(p, dir, pointmax.x, fabs(pointmax.z - pointmin.z), eangle);
+					
+				}
+			}
+			if (resultShape != 0) {
+				Part::TopoShape* solid = Solid(resultShape);
+				TopoDS_Shape cutShape = solid->removeSplitter();
+				solid->setShape(cutShape);
+				delete resultShape;
+				return solid;
+			}
+			else
+				Base::Console().Log("getShapeOfComformal error!");
+			return 0;
+		}
+		Part::TopoShape* getShapeOfComformal2(std::string curCoordinateSys, Base::Vector3d pointmin, Base::Vector3d pointmax)
+		{
+			Part::TopoShape* resultShape = 0;
+			Base::Vector3d Point1 = pointmin;
+			Base::Vector3d Point2 = pointmax;
+			if (curCoordinateSys == "Rectangular") {
+				double length = fabs(Point1.x - Point2.x);
+				double width = fabs(Point1.y - Point2.y);
+				double height = fabs(Point1.z - Point2.z);
+				Base::Vector3d dir = Base::Vector3d(0, 0, 1);
+				try {
+					gp_Pnt p(0, 0, 0);
+					gp_Dir d(0, 0, 1);
+					p.SetCoord(Point1.x, Point1.y, Point1.z);
+					BRepPrimAPI_MakeBox mkBox(gp_Ax2(p, d), length, width, height);
+					TopoDS_Shape ResultShape = mkBox.Shape();
+					//return Py::asObject(new TopoShapeSolidPy(new TopoShape(ResultShape)));
+					resultShape = new Part::TopoShape(ResultShape);// = Part.makeBox(length, width, height, Point1, dir);
+				}
+				catch (Standard_Failure& e){
+					//DocumentTools.printErrorMessage("Redraw Conformal Failed!")
+					//	return
+					//	pass
+					//	# Shape = Part.makeBox(length, width, height, Point1, dir)
+					//	pass
+					;
+				}
+			}
+			else {//				   elif curCoordinateSys == 'Polar' or curCoordinateSys == 'Cylindrical':
+				Base::Vector3d tempP1 = otherToRecOne(curCoordinateSys, Point1);
+				Base::Vector3d tempP11 = otherToRecOne(curCoordinateSys, Point2);
+				Base::Vector3d tempP2 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point2.x, Point1.y, Point1.z));
+				Base::Vector3d tempP3 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point2.x, Point1.y, Point2.z));
+				Base::Vector3d tempP4 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point1.x, Point1.y, Point2.z));
+
+				//	#只有一个点的情况
+				//if (tempP1 == tempP2 && tempP2 == tempP4) {
+				if (fabs(Point1.x - Point2.x) < TOL && fabs(Point1.z - Point2.z) < TOL) {//半径相等
+					//# Shape = Part.Vertex(FreeCAD.Vector(tempP1.x, tempP1.y, tempP1.z))
+					//# Shape = Part.makeBox(0.001, 0.001, 0.001, tempP1)
+					//# return
+					//resultShape = makePoint(tempP1);
+					resultShape = makeSphere(0.00001, tempP1);
+				}
+				//	#防止两个点重合出现错误的情况
+				else if (fabs(Point1.x - Point2.x) < TOL)//tempP1 == tempP2)
+				{
+					//# tempP2 = tempP2.add(FreeCAD.Vector(0.001*math.cos(tempP2.y), 0.001*math.sin(tempP2.y), 0))				
+					//if (tempP3 == tempP4){
+					resultShape = makeLine(tempP1, tempP3);
+					//}
+					//else
+					//	resultShape = getPipeObj(Point1, Point2);
+				}
+				else if (fabs(Point1.z - Point2.z) < TOL)//tempP1 == tempP4)
+					//# tempP4 = tempP4.add(FreeCAD.Vector(0, 0, 0.01))
+					resultShape = getArcObj(Point1, Point2);
+
+				else {
+					////# line1 = Part.makeLine(tempP1, tempP2)
+					//Part::TopoShape* line2 = makeLine(tempP1, tempP4);
+					//Part::TopoShape* shapeCir = getArcObj(Base::Vector3d(Point1.x, Point1.y, Point2.z), Point2);
+					//Part::TopoShape* path = Wire(line2);
+					////resultShape = path.makePipe(shapeCir);
+					//resultShape = new Part::TopoShape(path->makePipe(shapeCir->getShape()));
+
+					double sangle = pointmin.y, eangle = pointmax.y;
+					if (sangle < 0 || eangle < 0) {
+						sangle = 2 * M_PI + sangle;
+						eangle = 2 * M_PI + eangle;
+					}
+					Base::Vector3d dir(0, 0, 1);
+					Base::Vector3d p(0, 0, pointmin.z);
+					//if (pointmin.z < 0)
+					//	dir.z = -1;
+					if (pointmin.x > TOL) {
+						resultShape = makeCylinder(p, dir, pointmin.x, fabs(pointmax.z - pointmin.z), eangle);
+					}
+				}
+			}
+			if (resultShape != 0) {
+				Part::TopoShape* solid = Solid(resultShape);
+				TopoDS_Shape cutShape = solid->removeSplitter();
+				solid->setShape(cutShape);
+				delete resultShape;
+				return solid;
+			}
+			else
+				Base::Console().Log("getShapeOfComformal error!");
+			return 0;
+		}
+		Part::TopoShape* getShapeOfComformal3(std::string curCoordinateSys, Base::Vector3d pointmin, Base::Vector3d pointmax)
+		{
+			Part::TopoShape* resultShape = 0;
+			Base::Vector3d Point1 = pointmin;
+			Base::Vector3d Point2 = pointmax;
+			if (curCoordinateSys == "Rectangular") {
+				double length = fabs(Point1.x - Point2.x);
+				double width = fabs(Point1.y - Point2.y);
+				double height = fabs(Point1.z - Point2.z);
+				Base::Vector3d dir = Base::Vector3d(0, 0, 1);
+				try {
+					gp_Pnt p(0, 0, 0);
+					gp_Dir d(0, 0, 1);
+					p.SetCoord(Point1.x, Point1.y, Point1.z);
+					BRepPrimAPI_MakeBox mkBox(gp_Ax2(p, d), length, width, height);
+					TopoDS_Shape ResultShape = mkBox.Shape();
+					//return Py::asObject(new TopoShapeSolidPy(new TopoShape(ResultShape)));
+					resultShape = new Part::TopoShape(ResultShape);// = Part.makeBox(length, width, height, Point1, dir);
+				}
+				catch (Standard_Failure& e){
+					//DocumentTools.printErrorMessage("Redraw Conformal Failed!")
+					//	return
+					//	pass
+					//	# Shape = Part.makeBox(length, width, height, Point1, dir)
+					//	pass
+					;
+				}
+			}
+			else {//				   elif curCoordinateSys == 'Polar' or curCoordinateSys == 'Cylindrical':
+				Base::Vector3d tempP1 = otherToRecOne(curCoordinateSys, Point1);
+				Base::Vector3d tempP11 = otherToRecOne(curCoordinateSys, Point2);
+				Base::Vector3d tempP2 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point2.x, Point1.y, Point1.z));
+				Base::Vector3d tempP3 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point2.x, Point1.y, Point2.z));
+				Base::Vector3d tempP4 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point1.x, Point1.y, Point2.z));
+
+				//	#只有一个点的情况
+				//if (tempP1 == tempP2 && tempP2 == tempP4) {
+				if (fabs(Point1.x - Point2.x) < TOL && fabs(Point1.z - Point2.z) < TOL) {//半径相等
+					//# Shape = Part.Vertex(FreeCAD.Vector(tempP1.x, tempP1.y, tempP1.z))
+					//# Shape = Part.makeBox(0.001, 0.001, 0.001, tempP1)
+					//# return
+					//resultShape = makePoint(tempP1);
+					resultShape = makeSphere(0.00001, tempP1);
+				}
+				//	#防止两个点重合出现错误的情况
+				else if (fabs(Point1.x - Point2.x) < TOL)//tempP1 == tempP2)
+				{
+					//# tempP2 = tempP2.add(FreeCAD.Vector(0.001*math.cos(tempP2.y), 0.001*math.sin(tempP2.y), 0))				
+					//if (tempP3 == tempP4){
+					resultShape = makeLine(tempP1, tempP3);
+					//}
+					//else
+					//	resultShape = getPipeObj(Point1, Point2);
+				}
+				else if (fabs(Point1.z - Point2.z) < TOL)//tempP1 == tempP4)
+					//# tempP4 = tempP4.add(FreeCAD.Vector(0, 0, 0.01))
+					resultShape = getArcObj(Point1, Point2);
+
+				else {
+					////# line1 = Part.makeLine(tempP1, tempP2)
+					//Part::TopoShape* line2 = makeLine(tempP1, tempP4);
+					//Part::TopoShape* shapeCir = getArcObj(Base::Vector3d(Point1.x, Point1.y, Point2.z), Point2);
+					//Part::TopoShape* path = Wire(line2);
+					////resultShape = path.makePipe(shapeCir);
+					//resultShape = new Part::TopoShape(path->makePipe(shapeCir->getShape()));
+
+					double sangle = pointmin.y, eangle = pointmax.y;
+					if (sangle < 0 || eangle < 0) {
+						sangle = 2 * M_PI + sangle;
+						eangle = 2 * M_PI + eangle;
+					}
+					Base::Vector3d dir(0, 0, 1);
+					Base::Vector3d p(0, 0, pointmin.z);
+					//if (pointmin.z < 0)
+					//	dir.z = -1;
+					
+
+					if (fabs(sangle - 0) > TOL) {
+						resultShape = makeCylinder(p, dir, pointmax.x, fabs(pointmax.z - pointmin.z), sangle);
+					}
+
 				}
 			}
 			if (resultShape != 0) {
@@ -4240,7 +4709,7 @@ namespace PartChipic {
 				circle.SetRadius(radius);
 
 				Handle(Geom_Circle) hCircle = new Geom_Circle(circle);
-				BRepBuilderAPI_MakeEdge aMakeEdge(hCircle, angle1*(M_PI / 180), angle2*(M_PI / 180));
+				BRepBuilderAPI_MakeEdge aMakeEdge(hCircle, angle1*GRAD, angle2*GRAD);
 				TopoDS_Edge edge = aMakeEdge.Edge();
 				return Py::asObject(new Part::TopoShapeEdgePy(new Part::TopoShape(edge)));
 			}
@@ -4590,7 +5059,7 @@ namespace PartChipic {
 
 				unsigned long minFacets = 0;
 				std::vector<Mesh::Segment> segments = mesh.getSegmentsFromType
-					(Mesh::MeshObject::PLANE, 0.01, minFacets);//dev
+					(Mesh::MeshObject::PLANE, dev, minFacets);
 				std::list < Part::TopoShape*> faces;
 				//std::vector<unsigned long> remove;
 				std::vector<unsigned long> all;
@@ -4718,13 +5187,12 @@ namespace PartChipic {
 				{
 					Points.clear(), Facets.clear();
 					mesh.getFaces(Points, Facets, 0, 0);
-					shell->setFaces(Points, Facets, 0.000001);
+					shell->setFaces(Points, Facets, 0.01);
 				}*/
 
 				/*Part::TopoShape* shell = 0;
 				Part::TopoShape* msh = new Part::TopoShape();
-				msh->
-				setFaces(Points, Facets, dev);
+				msh->setFaces(Points, Facets, dev);
 				{
 				TopoDS_Shape sh = msh->removeSplitter();
 				if (TEST_OUTPUT == 1) {

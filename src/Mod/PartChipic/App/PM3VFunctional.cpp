@@ -482,7 +482,7 @@ bool VFunctional::update_mesh_topology(std::vector<Base::Vector3d> &Points, std:
 
        vcg::Point3f p1, p2;
 
-       convert2MeshO(points,faces);
+//       convert2MeshO(points,faces);
 
    //    if(!pexparser->getUpdate(near_point)||!near_point.Parser(pexparser, p1) ||
    //       !pexparser->getUpdate(far_point)||     !far_point.Parser(pexparser, p2))//error
@@ -494,8 +494,13 @@ bool VFunctional::update_mesh_topology(std::vector<Base::Vector3d> &Points, std:
        DefValue3D p,pp;
        p = far_point;
        pp = near_point;
-       
-       if(gsysType==PM3::SYSMYCC)
+	   iso->pValParser = this->pexparser;
+	   std::transform(f.begin(), f.end(), f.begin(), ::tolower);
+	   //std::string temstr = replace_str(f, "theta", "(atan2(y,x)");
+	   //temstr = replace_str(temstr, "r", "(sqrt(x*x+y*y)");
+	   std::string temstr = replace_str(f, "theta", "phi");
+	   iso->ImplicitFunction = replace_str(temstr, "**", "^");//f.toLower().replace("**", "^");
+	   if (gsysType == PM3::SYSMYCC)
        {
           p.value[0] = far_point.value[1];
           p.value[1] = far_point.value[2];
@@ -510,14 +515,10 @@ bool VFunctional::update_mesh_topology(std::vector<Base::Vector3d> &Points, std:
        }else
        {
             iso->gsysType = gsysType;
+			//iso->ImplicitFunction = replace_str(iso->ImplicitFunction, "r", "(sqrt(x*x + y*y))");
+			//iso->ImplicitFunction = replace_str(iso->ImplicitFunction, "phi", "(atan(y/x))");
        }
-
-       iso->pValParser = this->pexparser;
-	   std::transform(f.begin(), f.end(), f.begin(), ::tolower);
-	   //std::string temstr = replace_str(f, "theta", "(atan2(y,x)");
-	   //temstr = replace_str(temstr, "r", "(sqrt(x*x+y*y)");
-	   std::string temstr = replace_str(f, "theta", "phi");
-	   iso->ImplicitFunction = replace_str(temstr, "**", "^");//f.toLower().replace("**", "^");
+	   
        iso->limitSup = p;//
        iso->limitInf = pp;
 	   std::string res = "0";// getStringFromFloat(pgrid->getresolu());
@@ -533,77 +534,7 @@ bool VFunctional::update_mesh_topology(std::vector<Base::Vector3d> &Points, std:
 	   iso->yreso = this->yreso;
        bool br = iso->ComputeIsoMap();
 	   maxf = -1;
-	  /* std::vector<Vertex> tpoints;
-	   std::vector<Face> tfaces;
-	   tpoints.resize(iso->NbPointIsoMap);
-	   for (i = 0; i < iso->NbPointIsoMap; i++)
-	   {
-		   Vertex v;
-		   double *p = iso->IsoPointMapOriginal[i].V();
-		   v.p = vcg::Point3f(p[0], p[1], p[2]);
-		   p = iso->IsoNormMapOriginal[i].V();
-		   v.n = -vcg::Point3f(p[0], p[1], p[2]);
-		   maxf = fmax(maxf, fmax(fabs(p[0]), fmax(fabs(p[1]), fabs(p[2]))));
-		   tpoints[i]=(v);
-	   }
-	  
-	   std::vector<int> use(iso->NbPointIsoMap);
-	   for (i = 0; i < iso->NbTriangleIsoSurface; i++)
-	   {
-		   if (iso->TypeIsoSurfaceTriangleListeCND[i] != 0) {
-			   vcg::Point3i index(iso->IsoSurfaceTriangleListe[i]);
-			  
-			   use[index.Z()] = 1;
-			   use[index.Y()] = 1;
-			   use[index.X()] = 1;
-		   }
-	   }
-	   int count = 0, index = 0;
-		for (i = 0; i < iso->NbPointIsoMap; i++) count += use[i];
-		std::vector<int> mmp(iso->NbPointIsoMap);
-	   points.resize(count);
-	   for (i = 0; i < iso->NbPointIsoMap; i++) {
-		   if (use[i] == 1) {
-			   points[index] = tpoints[i];
-			   mmp[i] = index;
-			   index++;
-		   }
-	   }
-	   faces.resize(iso->NbTriangleIsoSurface);
-	   for (i = 0; i < iso->NbTriangleIsoSurface; i++)
-	   {
-		   if (iso->TypeIsoSurfaceTriangleListeCND[i] != 0) {
-			   vcg::Point3i index(iso->IsoSurfaceTriangleListe[i]);
-			   Face f(mmp[index.X()], mmp[index.Y()], mmp[index.Z()]);
-			   double *p = iso->NormOriginal[i].V();
-			   f.n = -vcg::Point3f(p[0], p[1], p[2]);
-			   faces[i] = (f);
-		   }
-	   } */
-	   /*points.resize(iso->NbPointIsoMap);
-	   for (i = 0; i < iso->NbPointIsoMap; i++)
-	   {
-		   Vertex v;
-		   double *p = iso->IsoPointMapOriginal[i].V();
-		   v.p = vcg::Point3f(p[0], p[1], p[2]);
-		   //p = iso->IsoNormMapOriginal[i].V();
-		   //v.n = -vcg::Point3f(p[0], p[1], p[2]);
-		   maxf = fmax(maxf, fmax(fabs(p[0]), fmax(fabs(p[1]), fabs(p[2]))));
-		   points[i] = (v);
-	   }
-	   faces.resize(iso->NbTriangleIsoSurface);
-	   for (i = 0; i < iso->NbTriangleIsoSurface; i++)
-	   {
-		   if (iso->TypeIsoSurfaceTriangleListeCND[i] != 0) {
-			   vcg::Point3i index(iso->IsoSurfaceTriangleListe[i]);
-			   Face f(index[0], index[1], index[2]);
-			   //double *p = iso->NormOriginal[i].V();
-			   //f.n = -vcg::Point3f(p[0], p[1], p[2]);
-			   faces[i] = (f);
-		   }
-	   }
-	   convert2MeshO(points, faces);
-*/
+
 	   {
 		   int j;
 		   cm.Clear();
@@ -617,6 +548,14 @@ bool VFunctional::update_mesh_topology(std::vector<Base::Vector3d> &Points, std:
 			   //i[1] = (int64_t(points[j].p[1] / res+0.5))*res;
 			   //i[2] = (int64_t(points[j].p[2] / res+0.5))*res;
 			   double *p = iso->IsoPointMapOriginal[j].V();
+			   if (gsysType == PM3::SYSCYLINDRICAL && yreso > 0)
+			   {
+				   vcg::Point3d in(p), out;
+				   out = PM3::cyl2car(in);
+				   p[0] = out[0];
+				   p[1] = out[1];
+				   p[2] = out[2];
+			   }
 			   (*vi).P()[0] = p[0];// / res;//i[0];//i;
 			   (*vi).P()[1] = p[1];// / res;//i[1];//
 			   (*vi).P()[2] = p[2];// / res;//i[2];//
@@ -654,10 +593,11 @@ bool VFunctional::update_mesh_topology(std::vector<Base::Vector3d> &Points, std:
 				   ++fi;
 			   }
 		   }
-		   //cm.clean();
-		   //if (name == "bbox")
-			//   vcg::tri::Clean<CMeshO>::RemoveUnreferencedVertex(cm);
-		   //saveOBJ(PM3::getOutOBJName("d://ori" + name + ".obj"));
+		   /*if (name == "bbox")
+			   vcg::tri::Clean<CMeshO>::RemoveUnreferencedVertex(cm);
+		   saveOBJ(PM3::getOutOBJName("d://0ori" + name + ".obj"));
+		   cm.clean();		   
+		   saveOBJ(PM3::getOutOBJName("d://ori" + name + ".obj"));*/
 		   //tri::UpdateBounding<CMeshO>::Box(cm);
 		   blist = true;
 	   }
@@ -665,11 +605,6 @@ bool VFunctional::update_mesh_topology(std::vector<Base::Vector3d> &Points, std:
 	   cm.bbox.max;
 	  // saveOBJ(PM3::getOutOBJName("d://ori" + name + ".obj"));
 
-//	   int r1 = tri::Clean<CMeshO>::RemoveUnreferencedVertex(this->cm);//todo
-//	   int r2 = tri::Clean<CMeshO>::RemoveDuplicateVertex(this->cm);
-//	   int r3 = tri::Clean<CMeshO>::RemoveDuplicateFace(this->cm);
-	   //int r4 = tri::Clean<CMeshO>::RemoveFaceFoldByFlip(this->cm);
-	   //int r6 = tri::Clean<CMeshO>::RemoveNonManifoldFace(this->cm);
 	   std::vector<int> VertexId(cm.vert.size());
 	   int numvert = 0;
 	   CMeshO::VertexIterator vi;
@@ -683,6 +618,7 @@ bool VFunctional::update_mesh_topology(std::vector<Base::Vector3d> &Points, std:
            ////p = iso->IsoNormMapOriginal[i].V();
            ////v.n = -vcg::Point3f(p[0],p[1],p[2]);
 		   maxf = fmax(maxf, fmax(fabs((*vi).P()[0]), fmax(fabs((*vi).P()[1]), fabs((*vi).P()[2]))));
+		   
 		   Points.push_back(Base::Vector3d((*vi).P()[0], (*vi).P()[1], (*vi).P()[2]));
 
 		   numvert++;

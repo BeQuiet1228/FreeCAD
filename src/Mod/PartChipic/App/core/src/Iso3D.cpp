@@ -343,7 +343,7 @@ Iso3D::Iso3D(){
 	Oprime[1] = (double)0.0;
 	Oprime[2] = (double)800.0;
 	D = 460;
-
+	isSunk = 0;
 	MatGen.unit();
 	MatRot.unit();
 	MatRotSave.unit();
@@ -1361,7 +1361,7 @@ void Iso3D::VoxelEvaluation()
 			}
 		}
 	}
-	int offset = 1, offset2 = 2, xoffset = 2;
+	int offset = 1, offset2 = 2, xoffset = 1;
 	double slocal[3] = { XLocal[cutIndex[0]], YLocal[cutIndex[2]], ZLocal[cutIndex[4]] };
 	double elocal[3] = { XLocal[cutIndex[1]], YLocal[cutIndex[3]], ZLocal[cutIndex[5]] };
 	if (slocal[0] > Start[0]) Start[0] = slocal[0];
@@ -1371,9 +1371,9 @@ void Iso3D::VoxelEvaluation()
 	if (elocal[1] < End[1]) End[1] = elocal[1];
 	if (elocal[2] < End[2]) End[2] = elocal[2];
 	vcg::Point3d m = End - Start;
-	double mx = m[0];
-	double my = m[1];
-	double mz = m[2];
+	double mx = fabs(m[0]);
+	double my = fabs(m[1]);
+	double mz = fabs(m[2]);
 	double mm = max(mx, max(my, mz));
 	double s = 0.01;// mm / 8 + 0.000001;
 	nb_ligne = mx / s + 0.5, nb_colon = my / s + 0.5, nb_depth = mz / s + 0.5;
@@ -1389,31 +1389,35 @@ void Iso3D::VoxelEvaluation()
 	nb_colon += (offset + offset2);
 	nb_depth += (offset + offset2);
 	std::string json;
-	/*if (gsysType != PM3::SYSCARTESIAN)
+	if (gsysType != PM3::SYSCARTESIAN)
 	{
-		Step[0] = (elocal[0] - slocal[0]) / (nb_ligne - offset - xoffset);
-		if (Step[0] > slocal[0]) {
-			xoffset = 0;
-			Step[0] = (elocal[0] - slocal[0]) / (nb_ligne - offset2 - xoffset);
+		Step[0] = (elocal[0] - slocal[0]) / (nb_ligne - offset2 - xoffset);
+		//POLOR下面的if是在极坐标下稳定的版本
+		if (isSunk != 0) {
+			if (Step[0] > slocal[0]) {
+				xoffset = 0;
+				nb_ligne += (xoffset + offset2);
+				Step[0] = (elocal[0] - slocal[0]) / (nb_ligne - offset2 - xoffset);
+			}
 		}
 		Step[1] = (elocal[1] - slocal[1]) / (nb_colon - offset - offset2);
 		Step[2] = (elocal[2] - slocal[2]) / (nb_depth - offset - offset2);
 
 		for (i = 0; i < nb_ligne; i++) {
-			XLocal[i] = slocal[0] + (i + 0 - xoffset)*Step[0];
+			XLocal[i] = slocal[0] + (i - xoffset)*Step[0];
 			//if (fabs(XLocal[i]) < 0.000001) XLocal[i] = Step[0] / 100;
 		}
 		for (j = 0; j < nb_colon; j++) {
 			YLocal[j] = slocal[1] + (j - offset)*Step[1];
-			if (fabs(YLocal[j]) < 0.000001) YLocal[j] = Step[1] / 100;
+			//if (fabs(YLocal[j]) < 0.000001) YLocal[j] = Step[1] / 100;
 		}
 		for (k = 0; k < nb_depth; k++) {
 			ZLocal[k] = slocal[2] + (k - offset)*Step[2];
-			if (fabs(ZLocal[k]) < 0.000001) ZLocal[k] = Step[2] / 100;
+			//if (fabs(ZLocal[k]) < 0.000001) ZLocal[k] = Step[2] / 100;
 		}
 		json = "if(r=%2%,1,if(r=%3%,1,if(phi=%4%,1,if(phi=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))";
 	}
-	else*/
+	else
 	{
 		Step[0] = (elocal[0] - slocal[0]) / (nb_ligne - offset - offset2);
 		Step[1] = (elocal[1] - slocal[1]) / (nb_colon - offset - offset2);
@@ -1470,41 +1474,47 @@ void Iso3D::VoxelEvaluation()
 
 	if (type == 1) {
 		float v = 1;
-		//if (gsysType != PM3::SYSCARTESIAN)
-		//	v = 0;
-		for (i = 0; i == 0; i++) {
+		//凹陷POLOR下面的if是在极坐标下稳定的版本
+		if (isSunk != 0){
+			if (gsysType != PM3::SYSCARTESIAN)
+				v = 0;
+		}
+		if (gsysType == PM3::SYSCARTESIAN)
+		{
+			for (i = 0; i == 0; i++) {
 
-			for (j = 0; j < nb_colon; j++) {
+				for (j = 0; j < nb_colon; j++) {
 
-				for (k = 0; k < nb_depth; k++) {
-					if (GridVoxel[i][j][k].Value < 0)
-					{
-						//GridVoxel[i][j][k].Value = -GridVoxel[i+1][j][k].Value;//pValParser->Eval(vals);
-						//GridVoxel[i+1][j][k].Value = 0;
-						//if (gsysType != PM3::SYSCARTESIAN)
-						//	GridVoxel[i][j][k].Value = 0;
-						//else
+					for (k = 0; k < nb_depth; k++) {
+						if (GridVoxel[i][j][k].Value < 0)
+						{
+							//GridVoxel[i][j][k].Value = -GridVoxel[i+1][j][k].Value;//pValParser->Eval(vals);
+							//GridVoxel[i+1][j][k].Value = 0;
+							//if (gsysType != PM3::SYSCARTESIAN)
+							//	GridVoxel[i][j][k].Value = 0;
+							//else
 							GridVoxel[i][j][k].Value = v;
+						}
 					}
 				}
 			}
-		}
-		for (i = nb_ligne - 1; i == nb_ligne - 1; i++) {
+			for (i = nb_ligne - 1; i == nb_ligne - 1; i++) {
 
-			for (j = 0; j < nb_colon; j++) {
+				for (j = 0; j < nb_colon; j++) {
 
-				for (k = 0; k < nb_depth; k++) {
-					if (GridVoxel[i][j][k].Value < 0)
-					{
-						//GridVoxel[i][j][k].Value = -GridVoxel[i-1][j][k].Value;//pValParser->Eval(vals);
-						//GridVoxel[i-1][j][k].Value = 0;
-						GridVoxel[i][j][k].Value = v;
+					for (k = 0; k < nb_depth; k++) {
+						if (GridVoxel[i][j][k].Value < 0)
+						{
+							//GridVoxel[i][j][k].Value = -GridVoxel[i-1][j][k].Value;//pValParser->Eval(vals);
+							//GridVoxel[i-1][j][k].Value = 0;
+							GridVoxel[i][j][k].Value = v;
+						}
 					}
 				}
 			}
 		}
 		j = 0;
-		for (i = 1; i < nb_ligne; i++) {
+		for (i = 0; i < nb_ligne; i++) {
 
 			{
 
@@ -1519,7 +1529,7 @@ void Iso3D::VoxelEvaluation()
 			}
 		}
 		j = nb_colon - 1;
-		for (i = 1; i < nb_ligne; i++) {
+		for (i = 0; i < nb_ligne; i++) {
 
 			{
 
