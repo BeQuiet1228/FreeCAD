@@ -10,6 +10,7 @@
 #include <vector>
 #include <memory>
 #include <qdialog.h>
+#include <QCloseEvent>
 class VariateChart;
 class VariateItemWidget;
 //变量数据结构
@@ -76,4 +77,6 @@ public Q_SLOTS:
 private:
 	//替换变量
 	QString replaceVariate();
+protected:
+	void closeEvent(QCloseEvent *event);
 };

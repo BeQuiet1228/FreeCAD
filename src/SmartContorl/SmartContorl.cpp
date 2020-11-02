@@ -8,6 +8,8 @@ extern "C"{
 #include "LuaCInterface.h"
 #include "Contorl/ContorlInterface.h"
 #include "Contorl/Chipic.h"
+#include <QFile>
+#include <QTextIStream>
 SmartContorl::SmartContorl()
 {
 	lua_state = luaL_newstate();
@@ -234,6 +236,7 @@ void SmartContorl::clearFinishData()
 
 	runData.datas = tempDatas;
 	historyDatas.push_back(runData);
+	saveCurrentData();
 	chipicDataFinish.clear();
 }
 
@@ -255,8 +258,53 @@ void SmartContorl::run(const QString& lua)
 	this->luaLoadFromString(lua.toStdString());
 	this->luaInit();
 	this->makeRunData();
+	this->initDataFile();
 	this->runChipic();
 }
+
+/**
+* @brief SmartContorl::initDataFile 初始化用于存运行数据的文件
+* @return void
+*/
+void SmartContorl::initDataFile()
+{
+	auto p = this->fileMaker.m3dPath;
+	p = p.left(p.length() - 4) + ".data";
+	QFile file(p);
+	if (!file.open(QIODevice::ReadWrite))
+	{
+		return;
+	}
+	file.remove();
+	if (!file.open(QIODevice::ReadWrite))
+	{
+		return;
+	}
+	file.close();
+}
+
+void SmartContorl::saveCurrentData()
+{
+	auto p = this->fileMaker.m3dPath;
+	p = p.left(p.length() - 4) + ".data";
+	QFile file(p);
+	if (!file.open(QIODevice::Append))
+	{
+		return;
+	}
+	QTextStream stream(&file);
+
+	stream << "-------------------------------------\n";
+	auto tempDatas = runData.datas;
+	for (auto i = tempDatas.begin(); i != tempDatas.end(); i++)
+	{
+		stream << (*i)->variate << "\n";
+		stream << "F=" <<(*i)->resultData->getValue(0) << "\n";
+	}
+	stream << "-------------------------------------\n";
+
+}
+
 void SmartContorl::stop()
 {
 	//设置管理器运行模式

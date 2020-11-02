@@ -1,8 +1,9 @@
 #pragma once
 #include "qcustomplot.h"
-class VariateChart{
+#include <QDialog>
+class VariateChart:public QDialog{
 public:
-	VariateChart();
+	VariateChart(QWidget* parent = 0);
 	~VariateChart();
 
 public:
@@ -12,14 +13,13 @@ public:
 	void setData(const QVector<double>& key,const QVector<double>& value, const QColor& color, 
 		const QCPScatterStyle::ScatterShape& pointShape,const QString& name = "line");
 	void setDatas(const QVector<double>& key, const QVector<QVector<double>> &values, const QString& name);
-	void show(){
-		plot->show();
-	}
-	void close(){
-		plot->close();
-	}
+
 	void clearGraph(){
 		plot->clearGraphs();
+	}
+
+	void showPlot(){
+		this->show();
 	}
 private:
 	//¿Ø¼þ¶ÔÏó

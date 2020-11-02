@@ -26,11 +26,18 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	//std::string m3dPath = "E:/test/MILO_C.m3d";
 	smartContorl->setM3dPath(contorlInterface->getDocumentPath());
 	connect(smartContorl, SIGNAL(addDataBar(QListWidgetItem*, QWidget*)), this, SLOT(addListWidgetItem(QListWidgetItem*, QWidget*)));
-	//this->ui->textEdit->hide();
 	connect(smartContorl, SIGNAL(smartContorlLog(std::string)), this, SLOT(pringLuaLog(std::string)));
 
 	chart = new VariateChart;
 	this->setModal(true);
+
+	//隐藏测试控件
+	this->ui->pushButton_3->hide();
+	this->ui->pushButton_4->hide();
+	this->ui->pushButton_5->hide();
+	this->ui->pushButton_6->hide();
+	this->ui->pushButton_7->hide();
+	this->ui->textEdit->hide();
 }
 
 SmartContorlUI::~SmartContorlUI()
@@ -120,7 +127,7 @@ void SmartContorlUI::on_pushButtonF_clicked()
 
 	chart->clearGraph();
 	chart->setDatas(keys, values, "F");
-	chart->show();
+	chart->showPlot();
 
 }
 
@@ -284,10 +291,11 @@ void SmartContorlUI::on_pushButtonVariateMax_clicked()
 		keys.push_back(key);
 		key++;
 	}
-
+	auto chart = new VariateChart;
 	chart->clearGraph();
 	chart->setDatas(keys, values, variates.begin()->name);
 	chart->show();
+	chart->setAttribute(Qt::WA_DeleteOnClose);
 }
 
 //暂时全写再这儿 日后再改
@@ -330,6 +338,14 @@ QString SmartContorlUI::replaceVariate()
 	text = config + text;
 	
 	return text;
+}
+
+void SmartContorlUI::closeEvent(QCloseEvent *event)
+{
+	smartContorl->stop();
+	auto data = SmartContorlData::GetInstance();
+	data->clear();
+	QDialog::closeEvent(event);
 }
 
 #include "moc_SmartContorlUI.cpp"

@@ -1,6 +1,8 @@
 #include "VariateChart.h"
 #include <QPen>
-VariateChart::VariateChart()
+#include <QHBoxLayout>
+VariateChart::VariateChart(QWidget* parent)
+	:QDialog(parent)
 {
 	plot = new QCustomPlot;
 	initPointShape();
@@ -9,6 +11,13 @@ VariateChart::VariateChart()
 	plot->yAxis->setTicks(true);
 	plot->xAxis->setTickLabels(true);
 	plot->yAxis->setTickLabels(true);
+	this->setModal(true);
+
+	QBoxLayout *layout = new QHBoxLayout(this);
+	this->setLayout(layout);
+	layout->addWidget(plot);
+	this->setMinimumSize(600, 400);
+
 }
 
 VariateChart::~VariateChart()

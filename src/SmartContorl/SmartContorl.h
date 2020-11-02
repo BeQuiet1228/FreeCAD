@@ -78,6 +78,10 @@ public:
 	void stop();
 	//启动运行
 	void run(const QString& lua);
+	//初始化
+	void initDataFile();
+	//存储当前一次的运行数据
+	void saveCurrentData();
 	//获取历史运行数据大小
 	int getHistorySize(){
 		return historyDatas.size();
