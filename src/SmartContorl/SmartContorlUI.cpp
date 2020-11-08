@@ -28,7 +28,6 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	connect(smartContorl, SIGNAL(addDataBar(QListWidgetItem*, QWidget*)), this, SLOT(addListWidgetItem(QListWidgetItem*, QWidget*)));
 	connect(smartContorl, SIGNAL(smartContorlLog(std::string)), this, SLOT(pringLuaLog(std::string)));
 
-	chart = new VariateChart;
 	this->setModal(true);
 
 	//Òþ²Ø²âÊÔ¿Ø¼þ
@@ -42,7 +41,7 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 
 SmartContorlUI::~SmartContorlUI()
 {
-	delete chart;
+	
 }
 
 void SmartContorlUI::on_pushButton_clicked()
@@ -124,10 +123,11 @@ void SmartContorlUI::on_pushButtonF_clicked()
 		keys.push_back(key);
 		key++;
 	}
-
+	auto chart = new VariateChart;
+	chart->setAttribute(Qt::WA_DeleteOnClose);
 	chart->clearGraph();
 	chart->setDatas(keys, values, "F");
-	chart->showPlot();
+	chart->show();
 
 }
 

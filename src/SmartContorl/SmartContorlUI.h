@@ -52,8 +52,6 @@ private:
 	//变量列表
 	std::vector<std::shared_ptr<VariateData>> variateDatas;
 
-	//图表控件
-	VariateChart *chart;
 public Q_SLOTS:
 	void on_pushButton_clicked();
 	void on_pushButton_2_clicked();
