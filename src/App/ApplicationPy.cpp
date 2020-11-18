@@ -40,6 +40,7 @@
 #include <H5Fpublic.h>
 #include "hdf5io.h"
 #include <windows.h>
+#include <python2.7/object.h>
 
 #include<Gui/Command.h>
 
@@ -1482,7 +1483,7 @@ PyObject *Application::sGetFigDataFromH5File(PyObject *self, PyObject *args, PyO
 	}
 	//设置该列表此位置的值
 	PyTuple_SetItem(data, 0, headPyParams);
-
+	PyObject *testTemp = nullptr;
 	PyObject *dataPyParams = PyList_New(0);//初始化一个列表
 	for (int i = 0; i < figdata.dataSetList.size(); i++)
 	{
@@ -1490,9 +1491,14 @@ PyObject *Application::sGetFigDataFromH5File(PyObject *self, PyObject *args, PyO
 		for (int j = 0; j < figdata.dataSetList[i].size(); j++)
 		{
 			//std::cerr << figdata.dataSetList[i][j] << "data\n";
-			PyList_Append(pyParams, Py_BuildValue("f", figdata.dataSetList[i][j]));
+			auto temp = Py_BuildValue("f", figdata.dataSetList[i][j]);
+			PyList_Append(pyParams,temp);
+			Py_DECREF(temp);
+			testTemp = temp;
+			
 		}
 		PyList_Append(dataPyParams, pyParams);
+		Py_DECREF(pyParams);
 		
 	}
 	//设置该列表此位置的值
@@ -1504,10 +1510,12 @@ PyObject *Application::sGetFigDataFromH5File(PyObject *self, PyObject *args, PyO
 		PyObject *pyParams = PyList_New(0);//初始化一个列表
 		for (int j = 0; j < figdata.dataSizeList[i].size(); j++)
 		{
-			PyList_Append(pyParams, Py_BuildValue("i", figdata.dataSizeList[i][j]));
+			auto temp = Py_BuildValue("i", figdata.dataSizeList[i][j]);
+			PyList_Append(pyParams, temp);
+			Py_DECREF(temp);
 		}
 		PyList_Append(sizePyParams, pyParams);
-
+		Py_DECREF(pyParams);
 	}
 	//设置该列表此位置的值
 	PyTuple_SetItem(data, 2, sizePyParams);
