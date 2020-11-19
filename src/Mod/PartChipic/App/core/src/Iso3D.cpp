@@ -1108,8 +1108,7 @@ vals[2] = out[2];
 }*/
 ///+++++++++++++++++++++++++++++++++++++++++
 void Iso3D::VoxelEvaluation()
-{
-	int cutIndex[6] = { 0, nb_ligne - 1, 0, nb_colon - 1, 0, nb_depth - 1 };
+{	
 	/// this is for the morph effect...
 	//	if (morph_param >= 0.0)  vals[3] = morph_param;
 	//	else  vals[3] = -morph_param;
@@ -1268,7 +1267,7 @@ void Iso3D::VoxelEvaluation()
 			}
 		}
 	}
-
+	int cutIndex[6] = { 0, 0, 0, 0, 0, 0 };
 	{//计算相切
 		for (i = 0; i < nb_ligne; i++) {//xmin
 			for (j = 0; j < nb_colon; j++) {
@@ -1361,42 +1360,47 @@ void Iso3D::VoxelEvaluation()
 			}
 		}
 	}
-	int offset = 1, offset2 = 2, xoffset = 1;
-	double slocal[3] = { XLocal[cutIndex[0]], YLocal[cutIndex[2]], ZLocal[cutIndex[4]] };
-	double elocal[3] = { XLocal[cutIndex[1]], YLocal[cutIndex[3]], ZLocal[cutIndex[5]] };
-	if (slocal[0] > Start[0]) Start[0] = slocal[0];
-	if (slocal[1] > Start[1]) Start[1] = slocal[1];
-	if (slocal[2] > Start[2]) Start[2] = slocal[2];
-	if (elocal[0] < End[0]) End[0] = elocal[0];
-	if (elocal[1] < End[1]) End[1] = elocal[1];
-	if (elocal[2] < End[2]) End[2] = elocal[2];
-	vcg::Point3d m = End - Start;
-	double mx = fabs(m[0]);
-	double my = fabs(m[1]);
-	double mz = fabs(m[2]);
-	double mm = max(mx, max(my, mz));
-	double s = 0.01;// mm / 8 + 0.000001;
-	nb_ligne = mx / s + 0.5, nb_colon = my / s + 0.5, nb_depth = mz / s + 0.5;
-	if (gsysType != PM3::SYSCARTESIAN)
-		nb_colon = my / (10. * M_PI / 180.) + 0.5;
-	if (nb_ligne > 8) nb_ligne = 8;
-	if (nb_colon > 8) nb_colon = 8;
-	if (nb_depth > 8) nb_depth = 8;
-	if (nb_ligne < 2) nb_ligne = 2;
-	if (nb_colon < 2) nb_colon = 2;
-	if (nb_depth < 2) nb_depth = 2;
-	nb_ligne += (offset + offset2);
-	nb_colon += (offset + offset2);
-	nb_depth += (offset + offset2);
+	if ((cutIndex[0] == cutIndex[1]) || (cutIndex[2] == cutIndex[3]) || (cutIndex[4] == cutIndex[5])) {
+		nb_depth = nb_colon = nb_ligne = 0;
+		return;
+	}
 	std::string json;
 	if (gsysType != PM3::SYSCARTESIAN)
 	{
+		int offset = 1, offset2 = 2, xoffset = 0;
+		double slocal[3] = { XLocal[cutIndex[0]], YLocal[cutIndex[2]] - (1. * M_PI / 180.), ZLocal[cutIndex[4]] };//
+		double elocal[3] = { XLocal[cutIndex[1]], YLocal[cutIndex[3]] + (1. * M_PI / 180.), ZLocal[cutIndex[5]] };//
+		if (slocal[0] > Start[0]) Start[0] = slocal[0];
+		if (slocal[1] > Start[1]) Start[1] = slocal[1];
+		if (slocal[2] > Start[2]) Start[2] = slocal[2];
+		if (elocal[0] < End[0]) End[0] = elocal[0];
+		if (elocal[1] < End[1]) End[1] = elocal[1];
+		if (elocal[2] < End[2]) End[2] = elocal[2];
+		vcg::Point3d m = End - Start;
+		double mx = fabs(m[0]);
+		double my = fabs(m[1]);
+		double mz = fabs(m[2]);
+		double mm = max(mx, max(my, mz));
+		double s = 0.01;// mm / 8 + 0.000001;
+		nb_ligne = mx / s + 0.5, nb_colon = my / s + 0.5, nb_depth = mz / s + 0.5;
+		if (gsysType != PM3::SYSCARTESIAN)
+			nb_colon = my / (10. * M_PI / 180.) + 0.5;
+		if (nb_ligne > 8) nb_ligne = 8;
+		if (nb_colon > 8) nb_colon = 8;
+		if (nb_depth > 8) nb_depth = 8;
+		if (nb_ligne < 2) nb_ligne = 2;
+		if (nb_colon < 2) nb_colon = 2;
+		if (nb_depth < 2) nb_depth = 2;
+		nb_ligne += (xoffset + offset2);
+		nb_colon += (offset + offset2);
+		nb_depth += (offset + offset2);
 		Step[0] = (elocal[0] - slocal[0]) / (nb_ligne - offset2 - xoffset);
 		//POLOR下面的if是在极坐标下稳定的版本
 		if (isSunk != 0) {
 			if (Step[0] > slocal[0]) {
+				//nb_ligne -= xoffset;
 				xoffset = 0;
-				nb_ligne += (xoffset + offset2);
+				
 				Step[0] = (elocal[0] - slocal[0]) / (nb_ligne - offset2 - xoffset);
 			}
 		}
@@ -1419,6 +1423,33 @@ void Iso3D::VoxelEvaluation()
 	}
 	else
 	{
+		int offset = 1, offset2 = 2, xoffset = 1;
+		double slocal[3] = { XLocal[cutIndex[0]], YLocal[cutIndex[2]], ZLocal[cutIndex[4]] };
+		double elocal[3] = { XLocal[cutIndex[1]], YLocal[cutIndex[3]], ZLocal[cutIndex[5]] };
+		if (slocal[0] > Start[0]) Start[0] = slocal[0];
+		if (slocal[1] > Start[1]) Start[1] = slocal[1];
+		if (slocal[2] > Start[2]) Start[2] = slocal[2];
+		if (elocal[0] < End[0]) End[0] = elocal[0];
+		if (elocal[1] < End[1]) End[1] = elocal[1];
+		if (elocal[2] < End[2]) End[2] = elocal[2];
+		vcg::Point3d m = End - Start;
+		double mx = fabs(m[0]);
+		double my = fabs(m[1]);
+		double mz = fabs(m[2]);
+		double mm = max(mx, max(my, mz));
+		double s = 0.01;// mm / 8 + 0.000001;
+		nb_ligne = mx / s + 0.5, nb_colon = my / s + 0.5, nb_depth = mz / s + 0.5;
+		if (gsysType != PM3::SYSCARTESIAN)
+			nb_colon = my / (10. * M_PI / 180.) + 0.5;
+		if (nb_ligne > 8) nb_ligne = 8;
+		if (nb_colon > 8) nb_colon = 8;
+		if (nb_depth > 8) nb_depth = 8;
+		if (nb_ligne < 2) nb_ligne = 2;
+		if (nb_colon < 2) nb_colon = 2;
+		if (nb_depth < 2) nb_depth = 2;
+		nb_ligne += (offset + offset2);
+		nb_colon += (offset + offset2);
+		nb_depth += (offset + offset2);
 		Step[0] = (elocal[0] - slocal[0]) / (nb_ligne - offset - offset2);
 		Step[1] = (elocal[1] - slocal[1]) / (nb_colon - offset - offset2);
 		Step[2] = (elocal[2] - slocal[2]) / (nb_depth - offset - offset2);
@@ -1498,6 +1529,7 @@ void Iso3D::VoxelEvaluation()
 					}
 				}
 			}
+		}
 			for (i = nb_ligne - 1; i == nb_ligne - 1; i++) {
 
 				for (j = 0; j < nb_colon; j++) {
@@ -1512,7 +1544,7 @@ void Iso3D::VoxelEvaluation()
 					}
 				}
 			}
-		}
+		
 		j = 0;
 		for (i = 0; i < nb_ligne; i++) {
 
@@ -1544,7 +1576,10 @@ void Iso3D::VoxelEvaluation()
 			}
 		}
 		k = 0;
-		for (i = 1; i < nb_ligne; i++) {
+		if (gsysType == PM3::SYSCARTESIAN)
+			i = 1;
+		else i = 0;
+		for (i = 0; i < nb_ligne; i++) {
 
 			for (j = 0; j < nb_colon; j++) {
 
@@ -1559,7 +1594,7 @@ void Iso3D::VoxelEvaluation()
 			}
 		}
 		k = nb_depth - 1;
-		for (i = 1; i < nb_ligne; i++) {
+		for (i = 0; i < nb_ligne; i++) {
 
 			for (j = 0; j < nb_colon; j++) {
 				{
