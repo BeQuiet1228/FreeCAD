@@ -3041,9 +3041,12 @@ namespace PartChipic {
 					double stepx = 0;// (xmax - xmin) / (16 - 5);
 					double stepy = 0;// (ymax - ymin) / (16 - 5);
 					double stepz = 0;// (zmax - zmin) / (16 - 5);
+					//only 1 volume
 					/*far_pointV.push_back(transferToDefValue3DRECTANGULAR(xmax, ymax, zmax));
 					near_pointV.push_back(transferToDefValue3DRECTANGULAR(xmin, ymin, zmin));
-					far_pointV_cut.push_back(transferToDefValue3DRECTANGULAR(xmaxo + (xmaxo - xmino) / 10, ymaxo + (ymax - ymino) / 10, zmaxo + (zmaxo - zmino) / 10));
+					far_pointVo.push_back(Base::Vector3d(xmax, ymax, zmax));
+					near_pointVo.push_back(Base::Vector3d(xmin, ymin, zmin));*/
+					/*far_pointV_cut.push_back(transferToDefValue3DRECTANGULAR(xmaxo + (xmaxo - xmino) / 10, ymaxo + (ymax - ymino) / 10, zmaxo + (zmaxo - zmino) / 10));
 					near_pointV_cut.push_back(transferToDefValue3DRECTANGULAR(xmino - (xmaxo - xmino) / 10, ymino - (ymax - ymino) / 10, zmino - (zmaxo - zmino) / 10));
 					far_pointVo.push_back(transferToDefValue3DRECTANGULAR(xmaxo + dev * 0, ymaxo + dev * 0, zmaxo + dev * 0));
 					near_pointVo.push_back(transferToDefValue3DRECTANGULAR(xmino - dev * 0, ymino - dev * 0, zmino - dev * 0));
@@ -3052,6 +3055,7 @@ namespace PartChipic {
 					boost::format fmt("if(x=%2%,1,if(x=%3%,1,if(y=%4%,1,if(y=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))");
 					fmt%func% xmin % xmax % ymin %ymax%zmin%zmax;
 					funcV.push_back(fmt.str().c_str());
+					//					
 					//split corrd
 					std::vector<double> spxmin, spxmax, spymin, spymax, spzmin, spzmax, spxmino, spxmaxo, spymino, spymaxo, spzmino, spzmaxo;
 					double mx = splitCorrRange(xmin, xmax, spxmin, spxmax, spxmino, spxmaxo);
@@ -3068,6 +3072,7 @@ namespace PartChipic {
 								far_pointVo.push_back(Base::Vector3d(spxmaxo[i], spymaxo[j], spzmaxo[k]));
 								near_pointVo.push_back(Base::Vector3d(spxmino[i], spymino[j], spzmino[k]));
 							}
+					//
 				}
 				else {
 					nb_ligne = 8, nb_colon = 8, nb_depth = 8;
@@ -3079,22 +3084,47 @@ namespace PartChipic {
 						ymax >= -360 && ymin >= -360 &&
 						(ymax - ymin) <= 360 &&
 						ymax > ymin) {
-						std::vector<double> spxmin, spxmax, spymin, spymax, spzmin, spzmax, spxmino, spxmaxo, spymino, spymaxo, spzmino, spzmaxo;
-						double mx = splitCorrRange(xmin, xmax, spxmin, spxmax, spxmino, spxmaxo);
-						double my = splitCorrRangeAngle(ymin, ymax, spymin, spymax, spymino, spymaxo);
-						double mz = splitCorrRange(zmin, zmax, spzmin, spzmax, spzmino, spzmaxo);
-						double mm = max(mx, mz);
-						double s = 0.01;// mm / 8 + 0.000001;
-						nb_ligne = mx / s + 0.5, nb_colon = my / 10. + 0.5, nb_depth = mz / s + 0.5;
+						//
+						int close = 0;
+						if ((360 - fabs(ymax - ymin)) < 0.000001)
+							close = 1;
+						if (close)
+						{
+							far_pointV.push_back(transferToDefValue3D(xmax, ymin + 180, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+							far_pointVo.push_back(Base::Vector3d(xmax, (ymin + 180)*GRAD, zmax));
+							near_pointVo.push_back(Base::Vector3d(xmin, ymin*GRAD, zmin));
+							far_pointV.push_back(transferToDefValue3D(xmax, ymin + 360, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, ymin + 180, zmin));
+							far_pointVo.push_back(Base::Vector3d(xmax, (ymin + 360)*GRAD, zmax));
+							near_pointVo.push_back(Base::Vector3d(xmin, (ymin + 180)*GRAD, zmin));
+						}
+						else
+						{
+							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+							far_pointVo.push_back(Base::Vector3d(xmax, ymax*GRAD, zmax));
+							near_pointVo.push_back(Base::Vector3d(xmin, ymin*GRAD, zmin));
+						}
+						
+						////split corrd
+						//std::vector<double> spxmin, spxmax, spymin, spymax, spzmin, spzmax, spxmino, spxmaxo, spymino, spymaxo, spzmino, spzmaxo;
+						//double mx = splitCorrRange(xmin, xmax, spxmin, spxmax, spxmino, spxmaxo);
+						//double my = splitCorrRangeAngle(ymin, ymax, spymin, spymax, spymino, spymaxo);
+						//double mz = splitCorrRange(zmin, zmax, spzmin, spzmax, spzmino, spzmaxo);
+						//double mm = max(mx, mz);
+						//double s = 0.01;// mm / 8 + 0.000001;
+						//nb_ligne = mx / s + 0.5, nb_colon = my / 10. + 0.5, nb_depth = mz / s + 0.5;
 
-						for (int i = 0; i < spxmin.size(); i++)
-							for (int j = 0; j < spymin.size(); j++)
-								for (int k = 0; k < spzmin.size(); k++) {
-									far_pointV.push_back(transferToDefValue3D(spxmax[i], spymax[j], spzmax[k]));
-									near_pointV.push_back(transferToDefValue3D(spxmin[i], spymin[j], spzmin[k]));
-									far_pointVo.push_back(transferToDefValue3DBase(spxmaxo[i], spymaxo[j], spzmaxo[k]));
-									near_pointVo.push_back(transferToDefValue3DBase(spxmino[i], spymino[j], spzmino[k]));
-								}
+						//for (int i = 0; i < spxmin.size(); i++)
+						//	for (int j = 0; j < spymin.size(); j++)
+						//		for (int k = 0; k < spzmin.size(); k++) {
+						//			far_pointV.push_back(transferToDefValue3D(spxmax[i], spymax[j], spzmax[k]));
+						//			near_pointV.push_back(transferToDefValue3D(spxmin[i], spymin[j], spzmin[k]));
+						//			far_pointVo.push_back(transferToDefValue3DBase(spxmaxo[i], spymaxo[j], spzmaxo[k]));
+						//			near_pointVo.push_back(transferToDefValue3DBase(spxmino[i], spymino[j], spzmino[k]));
+						//		}
+						/////
 						//far_pointV = far_pointVo;
 						//near_pointV = near_pointVo;
 						//double pymax = ymax,
