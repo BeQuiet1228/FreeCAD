@@ -50,6 +50,8 @@ public Q_SLOTS:
 	//load提示框被关闭
 	void loadDialogClose();
 public:
+	//关闭所有的chipic
+	void closeAllChipic();
 	//关闭一个chipic
 	void closeChipic(const unsigned long threadID);
 	//初始化消息发射器

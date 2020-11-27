@@ -23,7 +23,7 @@ private:
 	ContorlInterface();
 	ContorlInterface(const ContorlInterface&) = delete;
 	ContorlInterface operator =(const ContorlInterface&) = delete;
-public:
+private:
 	Contorl *contorl;
 	static std::shared_ptr<ContorlInterface> _instance;
 
@@ -40,4 +40,8 @@ public:
 	ChipicManager* getChipicManager();
 	//获取freecad中的工程路径
 	std::string getDocumentPath();
+	//关闭所有正在运行的程序
+	void closeAllChipic();
+	//判断是否有chipic正在运行
+	bool hasChipicRuning();
 };

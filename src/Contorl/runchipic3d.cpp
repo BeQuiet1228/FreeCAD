@@ -9,19 +9,11 @@
  * @brief RunChipic3d::RunChipic3d 初始化启动器
  * @param mode 运行模式 x32模式 x64模式
  */
-RunChipic3d::RunChipic3d(const RunChipic3d::RunMode &mode)
+RunChipic3d::RunChipic3d()
 {
     //初始化变量
     mpiProcess = nullptr;
 
-    if(mode == X32)
-    {
-        mpiPath = QDir::currentPath() + q2s("/") + mpiX32Path;
-        chipicPath = QDir::currentPath() + q2s("/") + chipicX32Path;
-    }else if (mode == X64) {
-        mpiPath = QDir::currentPath() + q2s("/") + mpiX64Path;
-        chipicPath = QDir::currentPath() + q2s("/") + chipicX64Path;
-    }
 }
 
 RunChipic3d::~RunChipic3d()
@@ -33,62 +25,67 @@ RunChipic3d::~RunChipic3d()
 }
 
 /**
- * @brief RunChipic3d::runWithLonelinessMode 单机启动CHIPIC3d
- * @param m3dPath m3d文本路径
- */
-void RunChipic3d::runWithLonelinessMode(const QString &m3dPath)
+* @brief RunChipic3d::runWithLonelinessMode 单线程启动chipic
+* @param const QString & m3dPath 文件路径
+* @param const CoreType & coreType 运算程序类型
+* @return void
+*/
+void RunChipic3d::runWithLonelinessMode(const QString &m3dPath, const CoreType &coreType)
 {
 	if (chipicProcess != nullptr)
 		delete chipicProcess;
 
-    chipicProcess = new QProcess;
-    QString cmd =  chipicPath + q2s(" \"") + m3dPath + q2s("\"");
+	QString tempPath = (coreType == M3D)?chipicM3dPath:chipicM2dPath;
+	chipicProcess = new QProcess;
+	QString cmd = tempPath + q2s(" \"") + m3dPath + q2s("\"");
 #ifdef MY_DEBUG
 	std::cerr << "lonelinessMod start cmd:" << cmd.toStdString() << std::endl;
 #endif
 	chipicProcess->start(cmd);
 }
+
 /**
- * @brief RunChipic3d::runWithNotLonelinessMode 并行启动chipic3d
- * @param m3dpath m3d路径
- * @param count 并行个数
- */
-void RunChipic3d::runWithNotLonelinessMode(const QString &m3dpath, const int &count)
+* @brief RunChipic3d::runWithNotLonelinessMode 并行启动chipic
+* @param const QString & m3dpath 路径
+* @param const int & count 并行数量
+* @param const CoreType & coreType 内核类型
+* @return void
+*/
+void RunChipic3d::runWithNotLonelinessMode(const QString &m3dpath, const int &count, const CoreType& coreType)
 {
-    //获取文件路径跟文件名
-    QDir dir(m3dpath);
-    QString m3dName = dir.dirName();
-    QString path = m3dpath;
-    path = path.remove(m3dName);
-    //初始化mpi
-    initMpi();
-    //生成配置文件
-    makeCfgFile(path,m3dName,count);
+	//获取文件路径跟文件名
+	QDir dir(m3dpath);
+	QString m3dName = dir.dirName();
+	QString path = m3dpath;
+	path = path.remove(m3dName);
+	//初始化mpi
+	initMpi();
+	//生成配置文件
+	makeCfgFile(path, m3dName, count);
 
-    //执行并行运算
-    if(mpiProcess != nullptr)
-    {
-        delete  mpiProcess;
-    }
-    mpiProcess = new QProcess;
+	//执行并行运算
+	if (mpiProcess != nullptr)
+	{
+		delete  mpiProcess;
+	}
+	mpiProcess = new QProcess;
 
-    //启动mpi
-    QString cmd = mpiPath + q2s("smpd.exe -d 0");
-    mpiProcess->start(cmd);
+	//启动mpi
+	QString cmd = mpiPath + q2s("smpd.exe -d 0");
+	mpiProcess->start(cmd);
 #ifdef MY_DEBUG
-    std::cerr << "notLonelinessMod init cmd:" << cmd.toStdString() << std::endl;
+	std::cerr << "notLonelinessMod init cmd:" << cmd.toStdString() << std::endl;
 #endif
 
-    //启动chipic3d
+	//启动chipic3d
 	if (chipicProcess != nullptr)
 		delete chipicProcess;
-    chipicProcess = new QProcess;
-    cmd = mpiPath + q2s("mpiexec.exe -configfile ") +path + q2s("cfg.txt -phrase 0");
+	chipicProcess = new QProcess;
+	cmd = mpiPath + q2s("mpiexec.exe -configfile ") + path + q2s("cfg.txt -phrase 0");
 	chipicProcess->start(cmd);
 #ifdef MY_DEBUG
-    std::cerr << "notLonelinessMod start cmd:" << cmd.toStdString() << std::endl;
+	std::cerr << "notLonelinessMod start cmd:" << cmd.toStdString() << std::endl;
 #endif
-
 }
 
 /**
@@ -101,10 +98,13 @@ void RunChipic3d::run(const std::string &m3dpath, const int &count /*= 1*/)
 {
 	
 	QString qstr = QString::fromLocal8Bit(m3dpath.c_str());
+	//根据路径后缀来判断需要调用的运算程序类型
+	qstr = qstr.right(3).toLower();
+	CoreType type = (qstr == "m3d") ? M3D : M2D;
 
 	if (count == 1)
 	{
-		runWithLonelinessMode(QString::fromStdString(m3dpath));
+		runWithLonelinessMode(QString::fromStdString(m3dpath),type);
 	}
 	else if (count > 1)
 	{
@@ -150,7 +150,7 @@ void RunChipic3d::makeCfgFile(const QString &path, const QString &fileName, cons
     {
         out << q2s("-n 1 -wdir") << QLatin1Char(' ')
             << directories[i-1] << QLatin1Char(' ')
-            << chipicPath << QLatin1Char(' ')
+            << chipicM3dPath << QLatin1Char(' ')
             << filenames[i-1] << QLatin1Char('\n');
     }
     cfg.close();

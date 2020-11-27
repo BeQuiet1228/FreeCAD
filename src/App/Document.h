@@ -74,6 +74,8 @@ public:
 
     /** @name Properties */
     //@{
+	//class ID
+	int classID;
     /// holds the long name of the document (utf-8 coded)
     PropertyString Label;
     /// full qualified (with path) file name (utf-8 coded)
@@ -169,9 +171,9 @@ public:
     /// Save the Document under a new Name
     //void saveAs (const char* Name);
     /// Save the document to the file in Property Path
-    bool save (void);
-    bool saveAs(const char* file);
-    bool saveCopy(const char* file);
+    virtual bool save (void);
+    virtual bool saveAs(const char* file);
+    virtual bool saveCopy(const char* file);
     /// Restore the document from the file in Property Path
     void restore (void);
     void exportObjects(const std::vector<App::DocumentObject*>&, std::ostream&);
@@ -316,13 +318,13 @@ public:
     /// Returns a list of the Undo names
     std::vector<std::string> getAvailableUndoNames() const;
     /// Will UNDO one step, returns False if no undo was done (Undos == 0).
-    bool undo();
+    virtual bool undo();
     /// Returns the number of stored Redos. If greater than 0 Redo will be effective.
     int getAvailableRedos() const;
     /// Returns a list of the Redo names.
     std::vector<std::string> getAvailableRedoNames() const;
     /// Will REDO one step, returns False if no redo was done (Redos == 0).
-    bool redo() ;
+    virtual bool redo() ;
     /// returns true if the document is in an Transaction phase, e.g. currently performing a redo/undo or rollback
     bool isPerformingTransaction() const;
     /// \internal remove property from a transactional object with name \a name

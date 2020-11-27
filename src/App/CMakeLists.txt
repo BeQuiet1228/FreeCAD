@@ -165,7 +165,8 @@ SET(Document_CPP_SRCS
     MaterialObject.cpp
     MergeDocuments.cpp
     TextDocument.cpp
-	
+	DocumentM3dText.h 
+	DocumentM3dText.cpp
 )
 
 SET(Document_HPP_SRCS

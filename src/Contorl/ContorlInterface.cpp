@@ -46,6 +46,26 @@ std::string ContorlInterface::getDocumentPath()
 }
 
 /**
+* @brief ContorlInterface::closeAllChipic 关闭所有的chipic程序
+* @return void
+*/
+void ContorlInterface::closeAllChipic()
+{
+	contorl->chipicManager.closeAllChipic();
+}
+
+/**
+* @brief ContorlInterface::hasChipicRuning
+* @return bool
+*/
+bool ContorlInterface::hasChipicRuning()
+{
+	if (contorl->chipicManager.chipicMap.size() != 0)
+		return true;
+	return false;
+}
+
+/**
 * @brief ContorlInterface::getChipicManager 返回chipic管理器指针  这个指针由contorl对象管理 
 * @return ChipicManager*
 */

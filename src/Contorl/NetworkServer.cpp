@@ -554,8 +554,10 @@ bool NetworkServer::disposeH5FileMessage(const std::string& json)
 	bool structBool = (winMessage.Msg == 208 && winMessage.wParam ==100 && winMessage.lParam == 0);
 	//是否为结果图消息
 	bool resultBool = (winMessage.Msg == 209 && winMessage.wParam != -1000 && winMessage.lParam != -1000);
+	//是否为计算完成消息
+	bool finished = (winMessage.Msg == 208 && winMessage.wParam == 200 && winMessage.lParam == 0);
 	//如果不为以上类型 处理失败
-	if (!(structBool || resultBool))
+	if (!(structBool || resultBool || finished))
 		return false;
 
 	//获取对应的socket对象
@@ -566,7 +568,9 @@ bool NetworkServer::disposeH5FileMessage(const std::string& json)
 
 	//拼接路径
 	std::string clientFilePath, serviceFilePath;
-	std::string typeName = "_Temp.h5";
+	std::string typeName;
+	//如果是传输计算结果那么文件名称和临时文件的名称不一样
+	typeName = finished ? ".h5" : "_Temp.h5";
 	if (chipicData.threadCount == 1)
 	{
 		serviceFilePath = chipicData.servicePath + "/" + chipicData.fileName + typeName;

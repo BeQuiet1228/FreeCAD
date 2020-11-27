@@ -1,7 +1,6 @@
 #include "Contorl.h"
 #include <qwidget.h>
 #include "MessageTransition.h"
-#include "LonelinessMode.h"
 #include "ContorlDataBar.h"
 #include "ContorlButtonBar.h"
 #include "ContorlInterface.h"

@@ -268,7 +268,7 @@ void NetworkClient::disposeRegisterMessage(const neb::CJsonObject jsonObject)
 
 
 /**
-* @brief NetworkClient::disposeFileMessage
+* @brief NetworkClient::disposeFileMessage 处理服务器发来的文件消息
 * @param NetworkSocket::SocketMessageBody messageBody
 * @return bool
 */

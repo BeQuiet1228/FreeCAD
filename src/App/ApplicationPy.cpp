@@ -1315,14 +1315,17 @@ int CN2Unicode(char *input, wchar_t *output)
 }
 PyObject* Application::sSetM3dpath(PyObject *self, PyObject *args, PyObject *kwd)
 {
-	char* workpath = 0;
-	wchar_t *unicodeWorkpath = 0;
-	if (!PyArg_ParseTuple(args, "s", &workpath))     // convert args: Python->C
-		return NULL;
-	std::cerr << workpath << std::endl;
-	//CN2Unicode(workpath, unicodeWorkpath);
+
+	std::string path = GetApplication().getActiveDocument()->FileName.getValue();
+	if (GetApplication().getActiveDocument()->classID == 0)
+	{
+		QString temp = QString::fromUtf8(path.c_str());
+		temp = temp.left(temp.length() - 6) + QString::fromLocal8Bit(".m3d");
+		path = temp.toStdString();
+	}
+	std::cerr << path << std::endl;
 	auto contorl = ContorlInterface::GetInstance();
-	contorl->setM3dPath(workpath);
+	contorl->setM3dPath(path);
 	Py_Return;
 }
 

@@ -187,7 +187,7 @@ void RunChipic3dListener::setThreadId(const DWORD& id)
 */
 std::shared_ptr<RunChipic3dListener> RunChipic3dListener::runChipic3d(const std::string &m3dpath, const int &count, const std::string userName /*= "default_userName"*/)
 {
-	std::shared_ptr<RunChipic3d> chipic3d(new RunChipic3d(RunChipic3d::X32));
+	std::shared_ptr<RunChipic3d> chipic3d(new RunChipic3d());
 	chipic3d->run(m3dpath, count);
 
 	std::shared_ptr<RunChipic3dListener> listener(new RunChipic3dListener);

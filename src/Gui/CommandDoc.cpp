@@ -68,7 +68,7 @@
 #include "MergeDocuments.h"
 #include "NavigationStyle.h"
 #include "GraphvizView.h"
-
+#include "OpenFileConfig.h"
 using namespace Gui;
 
 
@@ -114,8 +114,15 @@ void StdCmdOpen::activated(int iMsg)
         formatList += QLatin1String(" *.");
         formatList += QLatin1String(it->c_str());
     }
+	//新增在C++中添加文件格式的方法
+	//不与之前的功能有任何冲突
 
-    formatList += QLatin1String(");;");
+	/*
+		在这里添加上已初始化的自定文件格式
+	*/
+	auto openFileConfig = OpenFileConfig::GetInstance();
+	auto f = openFileConfig->makeFormatString();
+    formatList += f + QLatin1String(");;");
 
     std::map<std::string, std::string> FilterList = App::GetApplication().getImportFilters();
     std::map<std::string, std::string>::iterator jt;
@@ -139,6 +146,12 @@ void StdCmdOpen::activated(int iMsg)
         QObject::tr("Open document"), QString(), formatList, &selectedFilter);
     if (fileList.isEmpty())
         return;
+	/*
+		在这里处理文件路径，并并移除已处理的文件路径
+	*/
+	openFileConfig->callOpen(fileList);
+	if (fileList.isEmpty())
+		return;
 
     // load the files with the associated modules
     SelectModule::Dict dict = SelectModule::importHandler(fileList, selectedFilter);
@@ -460,7 +473,7 @@ void StdCmdSave::activated(int iMsg)
 #endif
     doCommand(Command::Gui,"Gui.SendMsgToActiveView(\"Save\")");
     
-    Base::Interpreter().runString("FreeCADGui.runCommand('M3d_Save')");
+   // Base::Interpreter().runString("FreeCADGui.runCommand('M3d_Save')");
 }
 
 bool StdCmdSave::isActive(void)
@@ -504,7 +517,7 @@ void StdCmdSaveAs::activated(int iMsg)
 #endif
     doCommand(Command::Gui,"Gui.SendMsgToActiveView(\"SaveAs\")");
 
-    Base::Interpreter().runString("FreeCADGui.runCommand('M3d_SaveAs')");
+    //Base::Interpreter().runString("FreeCADGui.runCommand('M3d_SaveAs')");
 }
 
 bool StdCmdSaveAs::isActive(void)
@@ -793,7 +806,7 @@ bool StdCmdIPConfig::isActive(void)
 // Std_Undo
 //===========================================================================
 
-DEF_STD_CMD_AC(StdCmdUndo);
+DEF_STD_CMD_A(StdCmdUndo);
 
 StdCmdUndo::StdCmdUndo()
   :Command("Std_Undo")
@@ -815,15 +828,15 @@ void StdCmdUndo::activated(int iMsg)
     getGuiApplication()->sendMsgToActiveView("Undo");
 	App::Document* pcDoc=App::GetApplication().getActiveDocument();
 	//pcDoc->recompute();
-	pcDoc->flagNeedUpdateBoolean.setValue(0);
-	doCommand(Command::Gui, "DocumentTools.updateBoolean()");
+	//pcDoc->flagNeedUpdateBoolean.setValue(0);
+	//doCommand(Command::Gui, "DocumentTools.updateBoolean()");
 }
 
 bool StdCmdUndo::isActive(void)
 {
   return getGuiApplication()->sendHasMsgToActiveView("Undo");
 }
-
+/*
 Action * StdCmdUndo::createAction(void)
 {
     Action *pcAction;
@@ -836,12 +849,13 @@ Action * StdCmdUndo::createAction(void)
 
     return pcAction;
 }
+*/
 
 //===========================================================================
 // Std_Redo
 //===========================================================================
 
-DEF_STD_CMD_AC(StdCmdRedo );
+DEF_STD_CMD_A(StdCmdRedo );
 
 StdCmdRedo::StdCmdRedo()
   :Command("Std_Redo")
@@ -853,7 +867,7 @@ StdCmdRedo::StdCmdRedo()
   sStatusTip    = QT_TR_NOOP("Redoes a previously undone action");
   sPixmap       = "edit-redo";
   sAccel        = keySequenceToAccel(QKeySequence::Redo);
-  eType         = ForEdit;
+ // eType         = ForEdit;
 }
 
 void StdCmdRedo::activated(int iMsg)
@@ -864,8 +878,8 @@ void StdCmdRedo::activated(int iMsg)
 
 	App::Document* pcDoc = App::GetApplication().getActiveDocument();
 	//pcDoc->recompute();
-	pcDoc->flagNeedUpdateBoolean.setValue(0);
-	doCommand(Command::Gui, "DocumentTools.updateBoolean()");
+	//pcDoc->flagNeedUpdateBoolean.setValue(0);
+	//doCommand(Command::Gui, "DocumentTools.updateBoolean()");
 }
 
 bool StdCmdRedo::isActive(void)
@@ -874,7 +888,7 @@ bool StdCmdRedo::isActive(void)
   App::Document* pcDoc = App::GetApplication().getActiveDocument();
   std::cerr <<"redo flag " <<pcDoc->flagNeedUpdateBoolean.getValue() << std::endl;
 }
-
+/*
 Action * StdCmdRedo::createAction(void)
 {
     Action *pcAction;
@@ -887,7 +901,7 @@ Action * StdCmdRedo::createAction(void)
 
     return pcAction;
 }
-
+*/
 //===========================================================================
 // Std_Cut
 //===========================================================================

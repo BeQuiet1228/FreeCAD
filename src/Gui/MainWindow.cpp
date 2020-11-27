@@ -120,6 +120,7 @@
 #include "Contorl/ContorlInterface.h"
 #include "LuaEditView.h"
 #include "SmartContorl\SmartContorlInterface.h"
+#include <QMessageBox>
 #if defined(Q_OS_WIN32)
 #define slots
 //#include <private/qmainwindowlayout_p.h>
@@ -450,8 +451,6 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
 	dateBar = static_cast<QWidget*>(cn->getContorlDataBar());
 	buttonBar = static_cast<QWidget*>(cn->getContorlButtonBar());
 
-	auto test = new LuaEditView;
-	addWindow(test);
 
 	this->smartContorlInterface = new SmartContorlInterface;
 	this->smartContorlInterface->init();
@@ -1000,6 +999,24 @@ MDIView* MainWindow::activeWindow(void) const
 
 void MainWindow::closeEvent (QCloseEvent * e)
 {
+	if (ContorlInterface::GetInstance()->hasChipicRuning())
+	{
+		QMessageBox msgBox;
+		msgBox.setText(QString::fromLocal8Bit("CHIPIC仿真程序正在运行。"));
+		msgBox.setInformativeText(QString::fromLocal8Bit("你确定要关闭程序吗？QAQ"));
+		msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+		msgBox.setDefaultButton(QMessageBox::Cancel);
+		int ret = msgBox.exec();
+
+		if (ret == QMessageBox::Cancel)
+		{
+			e->ignore();
+			return;
+		}
+		ContorlInterface::GetInstance()->closeAllChipic();
+	}
+
+
 	//判断是否需要关闭内核
 	if (App::GetApplication().m_netServer && App::GetApplication().m_netServer->GetConnectState()
 		== PicNet::NetServer::ConnectState::CONNECTED)

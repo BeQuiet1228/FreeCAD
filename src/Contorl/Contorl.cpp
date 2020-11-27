@@ -45,9 +45,9 @@ void Contorl::getM3dPathForRunPython()
 {
 #ifndef SERVICE
 	Base::InterpreterSingleton python;
-	python.runString("import Control.controlCommand.LonelinessCmd");
-	python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
-	python.runString("lonemod.setM3dPath()");
+	python.runString("FreeCAD.setM3dPath()");
+	python.runString("import Visualization.VisualizationCommand.VisualizationTree as VT");
+	python.runStringArg("VT.showPlotTree(\"%s\")",m3dPath.c_str());
 #endif
 
 }

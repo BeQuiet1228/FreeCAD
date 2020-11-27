@@ -1152,6 +1152,7 @@ void Document::setTransactionMode(int iMode)
 // constructor
 //--------------------------------------------------------------------------
 Document::Document(void)
+	:classID(0)
 {
     // Remark: In a constructor we should never increment a Python object as we cannot be sure
     // if the Python interpreter gets a reference of it. E.g. if we increment but Python don't

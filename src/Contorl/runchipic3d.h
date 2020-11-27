@@ -13,26 +13,26 @@ public:
       X32,
       X64
     };
-    RunChipic3d() = delete ;
-    RunChipic3d(const RunMode &mode = X32);
+	enum CoreType{
+		M2D,
+		M3D
+	};
+    RunChipic3d();
 	~RunChipic3d();
     //单机模式启动
-    void runWithLonelinessMode(const QString &m3dPath);
+    void runWithLonelinessMode(const QString &m3dPath,const CoreType &coreType = M3D);
     //并行模式启动
-    void runWithNotLonelinessMode(const QString &m3dpath,const int &count);
+    void runWithNotLonelinessMode(const QString &m3dpath,const int &count,const CoreType& coreType = M3D);
 	//启动chipic
 	void run(const std::string &m3dpath, const int &count = 1);
 private:
-    //32位chipic路径
-    const QString chipicX32Path = q2s("w32dll/Chipic3d.exe");
-    //64位chipic路径
-    const QString chipicX64Path = q2s("");
-    //32位mpi的路径
-    const QString mpiX32Path = q2s("MPICH2/bin/");
-    //64位mpi路径
-    const QString mpiX64Path = q2s("");
-	//chipic路径 mpi路径
-    QString chipicPath,mpiPath;
+    //m3d运算程序类型
+    const QString chipicM3dPath = q2s("core/m3d/Chipic3d.exe");
+    //mpi的路径
+    const QString mpiPath = q2s("MPICH2/bin/");
+	//m2d的chipic路径
+	const QString chipicM2dPath = q2s("core/m2d/Chipic3d.exe");
+
 
 private:
     //生成配置文件

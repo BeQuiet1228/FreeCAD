@@ -146,6 +146,7 @@ void ChipicManager::chipicWorkFinished()
 		return;
 	emit finishChipicM3dPath(chipic->threadID);
 	showWorkFinishedBox();
+	chipic->closeChipic();
 }
 
 /**
@@ -165,6 +166,20 @@ void ChipicManager::loadDialogClose()
 {
 	this->runButtonClicked();
 }
+
+/**
+* @brief ChipicManager::closeAllChipic
+* @return void
+*/
+void ChipicManager::closeAllChipic()
+{
+	for (auto i = chipicMap.begin(); i != chipicMap.end(); i++)
+	{
+		i->second->closeChipic();
+	}
+	chipicMap.clear();
+}
+
 void ChipicManager::closeChipic(const unsigned long threadID)
 {
 	auto chipic = chipicMap.find(threadID);

@@ -202,9 +202,12 @@ list(APPEND QT_LIB
     debug MSVCPRTD.LIB
     optimized MSVCRT.LIB
     optimized MSVCPRT.LIB
-	Contorl
 	HDF5Reader
 	)
+if(contorl_client_dll)
+list(APPEND QT_LIB
+	Contorl)
+endif()
 #引入Qt库
 if (BUILD_QT5)
     include_directories(
@@ -222,6 +225,7 @@ if (BUILD_QT5)
         ${Qt5OpenGL_LIBRARIES}
         ${Qt5PrintSupport_LIBRARIES}
         ${Qt5Svg_LIBRARIES}
+        ${Qt5Network_LIBRARIES}
         ${Qt5Network_LIBRARIES}
         ${Qt5UiTools_LIBRARIES}
     )

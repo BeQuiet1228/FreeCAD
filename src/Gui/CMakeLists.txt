@@ -418,6 +418,8 @@ SET(Command_CPP_SRCS
     CommandTest.cpp
     CommandView.cpp
     CommandStructure.cpp
+	OpenFileConfig.h
+	OpenFileConfig.cpp
 )
 SET(Command_SRCS
     ${Command_CPP_SRCS}

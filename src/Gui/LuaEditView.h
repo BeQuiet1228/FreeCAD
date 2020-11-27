@@ -2,12 +2,18 @@
 #include "MDIView.h"
 #include <qaction.h>
 #include <QIcon>
+#include "Document.h"
 class CodeEditor;
 class LuaEditView :public Gui::MDIView{
 public:
-	LuaEditView(QWidget* parent = 0);
+	LuaEditView(Gui::Document* doc,QWidget* parent = 0);
 	~LuaEditView(){};
+	
+	void setText(const QString& text);
 
+	//接收窗口消息
+	bool onMsg(const char* pMsg, const char** ppReturn) override;
+	bool onHasMsg(const char* pMsg) const override;
 private:
 	CodeEditor *codeEditor;
 };

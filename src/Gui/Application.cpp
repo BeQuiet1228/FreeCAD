@@ -92,6 +92,7 @@
 #include "DocumentRecovery.h"
 #include "TransactionObject.h"
 #include "FileDialog.h"
+#include "App/DocumentM3dText.h"
 
 #include "SplitView3DInventor.h"
 #include "View3DInventor.h"
@@ -706,7 +707,10 @@ void Application::slotNewDocument(const App::Document& Doc)
 
 
     signalNewDocument(*pDoc);
-    pDoc->createView(View3DInventor::getClassTypeId());
+
+	//判断是否为文本编辑器工程，如果是那么不显示3D视窗
+	if (Doc.classID != 1)
+		pDoc->createView(View3DInventor::getClassTypeId());
     qApp->processEvents(); // make sure to show the window stuff on the right place
 }
 

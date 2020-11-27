@@ -505,8 +505,6 @@ bool Chipic::disposChipicFinished(const Message& msg)
 		return false;
 	if (msg.lParam != 0)
 		return false;
-	this->closeChipic();
-
 	emit workFinished();
 	return true;
 }
@@ -526,6 +524,7 @@ bool Chipic::disposChipicBusy(const Message& msg)
 	box.exec();
 
 
+	//清空树控件中显示的正在接收文件
 #ifndef SERVICE
 	std::string fileName = this->makePath("_Temp.h5");
 	fileName = MessageTransition::utf8StdstringToGbkStdstring(fileName);

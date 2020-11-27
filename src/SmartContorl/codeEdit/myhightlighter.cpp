@@ -33,7 +33,7 @@ myHightLighter::myHightLighter(QTextDocument *parent)
         QTextCharFormat myClassFormat;
         myClassFormat.setFontWeight(QFont::Bold);
         myClassFormat.setForeground(Qt::darkGreen);
-        QRegExp rex("--.*");    //创建正则表达式
+        QRegExp rex("!.*");    //创建正则表达式
 
         HighlightingRule r;
         r.pattern = rex;

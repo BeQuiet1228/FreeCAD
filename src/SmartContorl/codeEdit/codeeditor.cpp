@@ -29,8 +29,8 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     listWidget->hide();
 
     myHightLighter *highLighter = new myHightLighter(this->document());         //ÉèÖÃ¸ßÁÁÆ÷
-	QFont f("Î¢ÈíÑÅºÚ");
-	f.setPointSize(15);
+	QFont f("Microsoft YaHei");
+	f.setPointSize(12);
 	this->setFont(f);
 }
 
@@ -111,13 +111,15 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
     int blockNumber = block.blockNumber();
     int top = (int) blockBoundingGeometry(block).translated(contentOffset()).top();
     int bottom = top + (int) blockBoundingRect(block).height();
-
+	QPen pen(Qt::black);
+	pen.setWidth(2);
+	painter.setPen(pen);
+	QFont f("Microsoft YaHei");
+	f.setPointSize(12);
+	painter.setFont(f);
     while (block.isValid() && top <= event->rect().bottom()) {
         if (block.isVisible() && bottom >= event->rect().top()) {
             QString number = QString::number(blockNumber + 1);
-            QPen pen(Qt::black);
-            pen.setWidth(2);
-            painter.setPen(pen);
             painter.drawText(0, top, lineNumberArea->width(), fontMetrics().height(),
                              Qt::AlignCenter, number);
         }

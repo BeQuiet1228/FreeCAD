@@ -78,6 +78,8 @@ public:
      * the user and stored in the App::Document::Name property.
      */
     App::Document* newDocument(const char * Name=0l, const char * UserName=0l);
+	//新建一个文本编辑器工程
+	App::Document* newDocumentM3dText(const char * Name = 0l, const char * UserName = 0l);
     /// Closes the document \a name and removes it from the application.
     bool closeDocument(const char* name);
     /// find a unique document name
