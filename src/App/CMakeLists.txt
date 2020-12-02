@@ -167,6 +167,10 @@ SET(Document_CPP_SRCS
     TextDocument.cpp
 	DocumentM3dText.h 
 	DocumentM3dText.cpp
+	DocumentM3dMod.h
+	DocumentM3dMod.cpp
+	DocumentM2dMod.h
+	DocumentM2dMod.cpp
 )
 
 SET(Document_HPP_SRCS

@@ -32,6 +32,9 @@ public:
 	ContorlButtonBar * getContorlButtonBar();
 	//获取展示信息widget
 	ContorlDataBar * getContorlDataBar();
+	//设置按钮显示  以及信息显示窗口
+	void setButtonBar(ContorlButtonBar* bar);
+	void setDataBar(ContorlDataBar* bar);
 	//设置运行m3d路径
 	void setM3dPath(const std::string& path);
 	//发送消息win
@@ -44,4 +47,9 @@ public:
 	void closeAllChipic();
 	//判断是否有chipic正在运行
 	bool hasChipicRuning();
+	//按钮点击时调用函数
+	void buttonClicked(const int& buttonID);
+	//获取控制模块的连接方式
+	int getConnectWay();
+
 };

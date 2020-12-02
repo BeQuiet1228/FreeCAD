@@ -14,6 +14,12 @@ public:
 	//接收窗口消息
 	bool onMsg(const char* pMsg, const char** ppReturn) override;
 	bool onHasMsg(const char* pMsg) const override;
+
+	void windowStateChanged(MDIView* mdiVew);
+
+	//响应保存函数
+	bool save();
+	bool saveAs();
 private:
 	CodeEditor *codeEditor;
 };

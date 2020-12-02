@@ -120,6 +120,8 @@
 #include "Contorl/ContorlInterface.h"
 #include "LuaEditView.h"
 #include "SmartContorl\SmartContorlInterface.h"
+#include "Contorl\ContorlButtonBar.h"
+#include "Contorl\ContorlDataBar.h"
 #include <QMessageBox>
 #if defined(Q_OS_WIN32)
 #define slots
@@ -237,6 +239,49 @@ protected:
     }
 };
 #endif
+
+/**
+* @brief Gui::MainWindow::setContorlUI 将主界面上的控制ui设置到控制器中
+* @return void
+*/
+void MainWindow::setContorlUI()
+{
+	auto  contorl = ContorlInterface::GetInstance();
+	contorl->setButtonBar(contorlButtonBar);
+	contorl->setDataBar(contorlDataBar);
+}
+
+void MainWindow::showContorlUI()
+{
+	contorlButtonToolBar->show();
+	contorlDataToolBar->show();
+}
+
+void MainWindow::hideContorlUI()
+{
+	contorlDataToolBar->hide();
+	contorlButtonToolBar->hide();
+}
+
+void MainWindow::inintContorlUI()
+{
+	contorlDataBar = new ContorlDataBar();
+	contorlButtonBar = new ContorlButtonBar();
+
+	contorlButtonToolBar = new QToolBar();
+	contorlDataToolBar = new QToolBar();
+
+	contorlDataToolBar->setFixedSize(contorlDataBar->size());
+	contorlDataToolBar->addWidget(contorlDataBar);
+	contorlButtonToolBar->setFixedSize(QSize(70,contorlButtonBar->size().height()));
+	contorlButtonToolBar->addWidget(contorlButtonBar);
+
+	addToolBarBreak(Qt::TopToolBarArea);
+	addToolBar(contorlButtonToolBar);
+	addToolBar(contorlDataToolBar);
+	contorlButtonToolBar->hide();
+	contorlDataToolBar->hide();
+}
 
 } // namespace Gui
 
@@ -447,10 +492,11 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
     statusBar()->showMessage(tr("Ready"), 2001);
 
 
-	auto cn = ContorlInterface::GetInstance();
-	dateBar = static_cast<QWidget*>(cn->getContorlDataBar());
-	buttonBar = static_cast<QWidget*>(cn->getContorlButtonBar());
-
+	contorlDataBar = nullptr;
+	contorlButtonBar = nullptr;
+	
+	contorlButtonToolBar = nullptr;
+	contorlDataToolBar = nullptr;
 
 	this->smartContorlInterface = new SmartContorlInterface;
 	this->smartContorlInterface->init();

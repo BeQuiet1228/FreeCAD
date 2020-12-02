@@ -5841,6 +5841,10 @@ Be aware the point where you click matters.</source>
       <source>&amp;Open...</source>
       <translation>打开(&amp;O)...</translation>
     </message>
+	<message>
+      <source>&amp;Find...</source>
+      <translation>查找(&amp;O)...</translation>
+    </message>
     <message>
       <source>Open a document or import files</source>
       <translation>打开一个文档或导入文件</translation>

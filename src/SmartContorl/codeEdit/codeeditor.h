@@ -20,6 +20,7 @@ QT_END_NAMESPACE
 
 class LineNumberArea1;
 class MatchWordsThread;
+class FindDialog;
 
 class SMARTCONTORL_EXPORT CodeEditor : public QPlainTextEdit
 {
@@ -32,6 +33,11 @@ public:
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
     CaseWordListWidget *listWidget;
+
+	void showFindDialog();
+	void hideFindDialog();
+	//调整查找框的位置
+	void autoFindDialogPoint();
 protected:
     void resizeEvent(QResizeEvent *event);
     void keyPressEvent(QKeyEvent *event);
@@ -48,6 +54,8 @@ private:
     int caseWordCurrentSize;
     MatchWordsThread *matchWordThrad;
     QWidget *lineNumberArea;
+
+	FindDialog *findDialog;
 };
 
 class SMARTCONTORL_EXPORT LineNumberArea1 : public QWidget

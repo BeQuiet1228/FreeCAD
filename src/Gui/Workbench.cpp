@@ -471,7 +471,7 @@ void StdWorkbench::setupContextMenu(const char* recipient, MenuItem* item) const
         if (Gui::Selection().countObjectsOfType(App::DocumentObject::getClassTypeId()) > 0) {
             *item << "Std_ToggleVisibility" << "Std_ShowSelection" << "Std_HideSelection"
                   << "Std_ToggleSelectability" << "Separator" << "Std_SetAppearance"
-                  << "Std_RandomColor" /* << "Std_Cut" << "Std_Copy" << "Std_Paste" */
+                  << "Std_RandomColor"  << "Std_Cut" << "Std_Copy" << "Std_Paste" 
                   << "Separator" << "Std_Delete";
         }
     }
@@ -501,8 +501,8 @@ MenuItem* StdWorkbench::setupMenuBar() const
     MenuItem* edit = new MenuItem( menuBar );
 	/*@ fubiao 隐藏这里的复制粘贴*/
     edit->setCommand("&Edit");
-    *edit << "Std_Undo" << "Std_Redo" << "Separator" << /*"Std_Cut" << "Std_Copy"
-          << "Std_Paste"<<*/ "Std_DuplicateSelection" << "Separator"
+	*edit << "Std_Undo" << "Std_Redo" << "Separator" << "Std_Cut" << "Std_Copy" << "Std_Findm"
+          << "Std_Paste"<< "Std_DuplicateSelection" << "Separator"
           << "Std_Refresh" << "Std_BoxSelection" << "Std_SelectAll" << "Std_Delete"
           << "Separator" << "Std_Placement" /*<< "Std_TransformManip"*/ << "Std_Alignment"
           << "Std_Edit" << "Separator" << "Std_DlgPreferences";
@@ -608,7 +608,7 @@ ToolBarItem* StdWorkbench::setupToolBars() const
     // Workbench switcher
     ToolBarItem* wb = new ToolBarItem(root);
     wb->setCommand("Workbench");
-    *wb /*<< "Std_Workbench"*/ << "M3D File Editor" << "Modeling 2D" << "Modeling 3D" << "Simulation" << "Post Processing";
+    *wb /*<< "Std_Workbench"*/ << "Modeling 2D" << "Modeling 3D" << "Post Processing";
 
     // File
     ToolBarItem* file = new ToolBarItem( root );
@@ -616,10 +616,10 @@ ToolBarItem* StdWorkbench::setupToolBars() const
     /**file << "Std_New" << "Std_Open" << "Std_Save" << "Std_Print" << "Separator" << "Std_Cut"
           << "Std_Copy" << "Std_Paste" << "Separator" << "Std_Undo" << "Std_Redo" << "Separator"
           << "Std_Refresh" << "Separator" << "Std_WhatsThis";*/
-	*file << "Std_New" << "Std_Open" << "Std_Save" /*<< "Separator"*/ 
-		//<< "Std_Copy" << "Std_Paste" 
+	*file << "Std_New" << "Std_Open" << "Std_Save" << "Separator" << "Std_Cut"
+		<< "Std_Copy" << "Std_Paste" << "Std_Findm"
 		<< "Separator" << "Std_Undo" << "Std_Redo" 
-		<< "Separator" << "Std_Import" << "Std_Export" /*<< "Separator"*/;
+		<< "Separator" << "Std_Run_M3d" << "Std_Paralle_Run" << "Std_Smart_Contrl" << "Std_Connect_Way" << "Std_Open_Log" /*<< "Separator"*/;
 
     // Macro
 	//去掉FreeCAD宏录制工具栏部分的按钮

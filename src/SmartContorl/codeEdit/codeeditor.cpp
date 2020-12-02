@@ -10,7 +10,9 @@
 #include "QFont"
 #include "matchwordsthrea.h"
 #include "codeEdit/codeeditor.h"
+#include "FindDialog.h"
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
+	,findDialog(new FindDialog(this))
 {
     lineNumberArea = new LineNumberArea1(this);
     matchWordThrad = new MatchWordsThread;
@@ -32,6 +34,10 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 	QFont f("Microsoft YaHei");
 	f.setPointSize(12);
 	this->setFont(f);
+
+	//给查找窗口设置文本编辑器
+	findDialog->setTextEidt(this);
+
 }
 
 CodeEditor::~CodeEditor()
@@ -55,6 +61,23 @@ int CodeEditor::lineNumberAreaWidth()
     return space;
 }
 
+
+void CodeEditor::showFindDialog()
+{
+	findDialog->show();
+}
+
+void CodeEditor::hideFindDialog()
+{
+	findDialog->hide();
+}
+
+void CodeEditor::autoFindDialogPoint()
+{
+	auto pos = this->mapToGlobal(this->pos());
+	pos.setX(pos.x() + this->width() - findDialog->width() - 30);
+	findDialog->move(pos);
+}
 
 void CodeEditor::updateLineNumberAreaWidth(int /* newBlockCount */)
 {

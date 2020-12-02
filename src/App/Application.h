@@ -79,7 +79,11 @@ public:
      */
     App::Document* newDocument(const char * Name=0l, const char * UserName=0l);
 	//新建一个文本编辑器工程
+	App::Document* newDocument(Document* doc,const char * Name = 0l, const char * UserName = 0l);
 	App::Document* newDocumentM3dText(const char * Name = 0l, const char * UserName = 0l);
+	App::Document* newDocumentM2dText(const char * Name = 0l, const char * UserName = 0l);
+	App::Document* newDocumentM3dMode(const char * Name = 0l, const char * UserName = 0l);
+	App::Document* newDocumentM2dMod(const char * Name = 0l, const char * UserName = 0l);
     /// Closes the document \a name and removes it from the application.
     bool closeDocument(const char* name);
     /// find a unique document name
@@ -343,6 +347,10 @@ private:
     static PyObject* sSaveDocument      (PyObject *self,PyObject *args,PyObject *kwd);
     static PyObject* sSaveDocumentAs    (PyObject *self,PyObject *args,PyObject *kwd);
     static PyObject* sNewDocument       (PyObject *self,PyObject *args,PyObject *kwd);
+	static PyObject* sNewDocumentM3dMod(PyObject *self, PyObject *args, PyObject *kwd);
+	static PyObject* sNewDocumentM2dMod(PyObject *self, PyObject *args, PyObject *kwd);
+	static PyObject* sNewDocumentM3dText(PyObject *self, PyObject *args, PyObject *kwd);
+	static PyObject* sNewDocumentM2dText(PyObject *self, PyObject *args, PyObject *kwd);
     static PyObject* sCloseDocument     (PyObject *self,PyObject *args,PyObject *kwd);
     static PyObject* sActiveDocument    (PyObject *self,PyObject *args,PyObject *kwd);
     static PyObject* sSetActiveDocument (PyObject *self,PyObject *args,PyObject *kwd);

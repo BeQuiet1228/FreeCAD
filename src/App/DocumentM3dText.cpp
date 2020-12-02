@@ -40,7 +40,7 @@ bool DocumentM3dText::loadfile(const QString& filePath)
 {
 	QFile file(filePath);
 
-	if (!file.open(QIODevice::ReadWrite))
+	if (!file.open(QIODevice::ReadOnly))
 		return false;
 	//设置文件路径
 	this->FileName.setValue(filePath.toUtf8());

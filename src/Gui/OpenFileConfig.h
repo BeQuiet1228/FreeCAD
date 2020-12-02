@@ -7,7 +7,7 @@
 class FileFormat{
 public:
 	FileFormat(){}
-	~FileFormat(){}
+	virtual ~FileFormat(){}
 protected:
 	QString format;
 public:
@@ -23,12 +23,20 @@ public:
 class FileFormatM3DText:public FileFormat{
 public:
 	FileFormatM3DText();
-	~FileFormatM3DText();
+	~FileFormatM3DText() = default;
 
 	void open(const QStringList& fileList) override;
 
 private:
 	void openOnce(const QString& filePath);
+};
+class FileFormatM2DText :public FileFormatM3DText
+{
+public:
+	FileFormatM2DText(){
+		this->format = QString::fromLocal8Bit("m2d");
+	}
+	~FileFormatM2DText() = default;
 };
 /*
 	改变原有的freecad增加新的文件格式框架。

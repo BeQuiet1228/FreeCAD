@@ -623,12 +623,10 @@ void WorkbenchGroup::slotActivateWorkbench(const char* name)
     //根据名字找到Python端写好的Command
     //如果Python端修改了SwitchWorkbench中Command的名字，这里也要做出相应修改！
     CommandManager &cmgr=Application::Instance->commandManager();
-    Command *m3DFileEditorCommand = cmgr.getCommandByName("M3D File Editor");
     Command *modeling2DCommand = cmgr.getCommandByName("Modeling 2D");
     Command *modeling3DCommand = cmgr.getCommandByName("Modeling 3D");
     Command *simulationCommand = cmgr.getCommandByName("Simulation");
     Command *postProcessingCommand = cmgr.getCommandByName("Post Processing");
-    Action *m3DFileEditorAction = m3DFileEditorCommand->getAction();
     Action *modeling2DAction = modeling2DCommand->getAction();
     Action *modeling3DAction = modeling3DCommand->getAction();
     Action *simulationAction = simulationCommand->getAction();
@@ -637,7 +635,6 @@ void WorkbenchGroup::slotActivateWorkbench(const char* name)
     if (!modeling3DAction || !modeling2DAction || !modeling3DAction || !simulationAction || !postProcessingAction)
         return;
 
-    m3DFileEditorAction->setChecked(false);
     modeling2DAction->setChecked(false);
     modeling3DAction->setChecked(false);
     simulationAction->setChecked(false);
@@ -645,9 +642,7 @@ void WorkbenchGroup::slotActivateWorkbench(const char* name)
 
     //通过其它方式切换工作台时，五个工作台切换按钮的状态也会相应改变
     //如果Python端修改了工作台的名字，这里也要做出相应修改！
-    if (strcmp(name, "M3DFileEditorWorkbench") == 0)
-        m3DFileEditorAction->setChecked(true);
-    else if (strcmp(name, "Modeling2DWorkbench") == 0)
+    if (strcmp(name, "Modeling2DWorkbench") == 0)
         modeling2DAction->setChecked(true);
     else if (strcmp(name, "Modeling3DWorkbench") == 0)
         modeling3DAction->setChecked(true);

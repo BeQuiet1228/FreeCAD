@@ -157,14 +157,17 @@
         <file>Geofeaturegroup.svg</file>
         <file>Std_Axis.svg</file>
         <file>Std_Plane.svg</file>
-      
-      <!--公共工具栏导入导出按钮 add by chenjian-->
         <file>Export.svg</file>
         <file>Import.svg</file>
-      
+        <file>document-find.svg</file>
+        <file>run.svg</file>
+        <file>runing.svg</file>
+        <file>openLog.svg</file>
+        <file>paralleRun.svg</file>
+        <file>smartContorl.svg</file>
+        <file>local.svg</file>
+        <file>network.svg</file>
     </qresource>
-    <!-- Alternative directory names for icons that should be loaded from a theme -->
-    <!-- See also http://permalink.gmane.org/gmane.comp.lib.qt.general/26374 -->
     <qresource prefix="/icons/FreeCAD-default">
         <file>index.theme</file>
     </qresource>

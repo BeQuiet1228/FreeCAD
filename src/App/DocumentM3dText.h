@@ -16,6 +16,9 @@ public:
 	bool undo() override{ return true; };
 	bool redo() override{ return true; };
 
+	virtual std::string getFileFormat(){
+		return "m3d";
+	}
 public:
 	//载入文本文件
 	bool loadfile(const QString& filePath);
@@ -35,4 +38,14 @@ public:
 private:
 	QString content;
 
+};
+class AppExport DocumentM2dText:public DocumentM3dText{
+public:
+	DocumentM2dText() = default;
+	~DocumentM2dText() = default;
+
+	std::string getFileFormat() override
+	{
+		return "m2d";
+	}
 };

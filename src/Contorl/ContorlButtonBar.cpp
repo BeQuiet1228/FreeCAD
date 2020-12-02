@@ -7,7 +7,16 @@ ContorlButtonBar::ContorlButtonBar(QWidget *parent /*= 0*/)
 	:ContorlBar(parent), ui(new Ui::ContorlButtonBar)
 {
 	ui->setupUi(this);
-	//ui->toolButtonConnectionWay->hide();
+#ifdef _CONTORL_DLL_
+	ui->toolButtonConnectionWay->hide();
+	ui->toolButton->hide();
+	ui->toolButtonLOG->hide();
+	ui->toolButtonParalleRun->hide();
+	ui->toolButtonRun->hide();
+	ui->toolButtonRefreash->hide();
+#endif // _CONTORL_DLL_
+
+	
 }
 
 ContorlButtonBar::~ContorlButtonBar()

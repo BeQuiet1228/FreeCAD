@@ -23,9 +23,8 @@ Contorl::Contorl(QWidget *parent)
 	contorlButtonBar = new ContorlButtonBar;
 	contorlDataBar = new ContorlDataBar;
 
-	connect(contorlButtonBar, SIGNAL(buttonClicked(int)), this, SLOT(buttonClinked(int)));
 	connect(&chipicManager, SIGNAL(currentChipicStateUpdate()), this, SLOT(chipicStateUpdate()));
-
+	connectButtonBar();
 	//初始化消息发射器
 	auto sender = MessageSender::GetInstance();
 	sender->setEmitter(new LocalEmitter);
@@ -38,7 +37,8 @@ Contorl::Contorl(QWidget *parent)
 
 Contorl::~Contorl()
 {
-
+	//delete contorlButtonBar;
+	//delete contorlDataBar;
 }
 
 void Contorl::getM3dPathForRunPython()
@@ -69,6 +69,16 @@ void Contorl::changeConnectionWay()
 	}
 	sender->setEmitter(emitter);
 	contorlButtonBar->setConnectionWayIcon(sender->getEmitterTypeID());
+}
+
+/**
+* @brief Contorl::getConnectWay 获取控制模块的连接方式
+* @return int 1=本地连接 2=网络连接
+*/
+int Contorl::getConnectWay()
+{
+	auto sender = MessageSender::GetInstance();
+	return sender->getEmitterTypeID();
 }
 
 /**
@@ -135,6 +145,15 @@ void Contorl::buttonClinked(int buttonType)
 	default:
 		break;
 	}
+}
+
+/**
+* @brief Contorl::connectButtonBar 连接按钮条的信号跟槽
+* @return void
+*/
+void Contorl::connectButtonBar()
+{
+	connect(contorlButtonBar, SIGNAL(buttonClicked(int)), this, SLOT(buttonClinked(int)));
 }
 
 #include "moc_Contorl.cpp"

@@ -41,6 +41,10 @@ public Q_SLOTS:
 
 	void buttonClinked(int buttonType);
 
-
+public: 
+	//连接按钮条的信号
+	void connectButtonBar();
+	//获取连接方式
+	int getConnectWay();
 
 };

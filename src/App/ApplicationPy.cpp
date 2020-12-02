@@ -131,6 +131,26 @@ PyMethodDef Application::Methods[] = {
      "Create a new document with a given name.\n"
      "The document name must be unique which\n"
      "is checked automatically."},
+	 { "newDocumentM3dMod", (PyCFunction)Application::sNewDocumentM3dMod, 1,
+	 "newDocumentM3dMod([string]) -> object\n\n"
+	 "Create a new document with a given name.\n"
+	 "The document name must be unique which\n"
+	 "is checked automatically." },
+	 { "newDocumentM2dMod", (PyCFunction)Application::sNewDocumentM2dMod, 1,
+	 "newDocumentM2dMod([string]) -> object\n\n"
+	 "Create a new document with a given name.\n"
+	 "The document name must be unique which\n"
+	 "is checked automatically." },
+	 { "newDocumentM3dText", (PyCFunction)Application::sNewDocumentM3dText, 1,
+	 "newDocumentM3dText([string]) -> object\n\n"
+	 "Create a new document with a given name.\n"
+	 "The document name must be unique which\n"
+	 "is checked automatically." },
+	 { "newDocumentM2dText", (PyCFunction)Application::sNewDocumentM2dText, 1,
+	 "newDocumentM2dText([string]) -> object\n\n"
+	 "Create a new document with a given name.\n"
+	 "The document name must be unique which\n"
+	 "is checked automatically." },
     {"closeDocument",  (PyCFunction) Application::sCloseDocument,  1,
      "closeDocument(string) -> None\n\n"
      "Close the document with a given name."},
@@ -333,7 +353,62 @@ PyObject* Application::sNewDocument(PyObject * /*self*/, PyObject *args,PyObject
         return doc->getPyObject();
     }PY_CATCH;
 }
+PyObject* Application::sNewDocumentM3dMod(PyObject *self, PyObject *args, PyObject *kwd)
+{
+	char *docName = 0;
+	char *usrName = 0;
+	if (!PyArg_ParseTuple(args, "|etet", "utf-8", &docName, "utf-8", &usrName))
+		return NULL;
 
+	PY_TRY{
+		App::Document* doc = GetApplication().newDocumentM3dMode(docName, usrName);
+		PyMem_Free(docName);
+		PyMem_Free(usrName);
+		return doc->getPyObject();
+	}PY_CATCH;
+}
+PyObject* Application::sNewDocumentM2dMod(PyObject *self, PyObject *args, PyObject *kwd)
+{
+	char *docName = 0;
+	char *usrName = 0;
+	if (!PyArg_ParseTuple(args, "|etet", "utf-8", &docName, "utf-8", &usrName))
+		return NULL;
+
+	PY_TRY{
+		App::Document* doc = GetApplication().newDocumentM2dMod(docName, usrName);
+		PyMem_Free(docName);
+		PyMem_Free(usrName);
+		return doc->getPyObject();
+	}PY_CATCH;
+}
+PyObject* Application::sNewDocumentM3dText(PyObject *self, PyObject *args, PyObject *kwd)
+{
+	char *docName = 0;
+	char *usrName = 0;
+	if (!PyArg_ParseTuple(args, "|etet", "utf-8", &docName, "utf-8", &usrName))
+		return NULL;
+
+	PY_TRY{
+		App::Document* doc = GetApplication().newDocumentM3dText(docName, usrName);
+		PyMem_Free(docName);
+		PyMem_Free(usrName);
+		return doc->getPyObject();
+	}PY_CATCH;
+}
+PyObject* Application::sNewDocumentM2dText(PyObject *self, PyObject *args, PyObject *kwd)
+{
+	char *docName = 0;
+	char *usrName = 0;
+	if (!PyArg_ParseTuple(args, "|etet", "utf-8", &docName, "utf-8", &usrName))
+		return NULL;
+
+	PY_TRY{
+		App::Document* doc = GetApplication().newDocumentM2dText(docName, usrName);
+		PyMem_Free(docName);
+		PyMem_Free(usrName);
+		return doc->getPyObject();
+	}PY_CATCH;
+}
 PyObject* Application::sSetActiveDocument(PyObject * /*self*/, PyObject *args,PyObject * /*kwd*/)
 {
     char *pstr = 0;
@@ -1317,7 +1392,7 @@ PyObject* Application::sSetM3dpath(PyObject *self, PyObject *args, PyObject *kwd
 {
 
 	std::string path = GetApplication().getActiveDocument()->FileName.getValue();
-	if (GetApplication().getActiveDocument()->classID == 0)
+	if (GetApplication().getActiveDocument()->classID != 1)
 	{
 		QString temp = QString::fromUtf8(path.c_str());
 		temp = temp.left(temp.length() - 6) + QString::fromLocal8Bit(".m3d");

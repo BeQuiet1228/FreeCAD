@@ -129,6 +129,7 @@
 
 #include <windows.h>
 #include <dbghelp.h>
+#include <LuaEditView.h>
 
 using namespace Gui;
 using namespace Gui::DockWnd;
@@ -709,8 +710,14 @@ void Application::slotNewDocument(const App::Document& Doc)
     signalNewDocument(*pDoc);
 
 	//判断是否为文本编辑器工程，如果是那么不显示3D视窗
-	if (Doc.classID != 1)
+	if (Doc.classID == 1)
+	{
+		LuaEditView *edit = new LuaEditView(pDoc);
+		auto mainWindow = Gui::MainWindow::getInstance();
+		mainWindow->addWindow(edit);
+	}else{
 		pDoc->createView(View3DInventor::getClassTypeId());
+	}
     qApp->processEvents(); // make sure to show the window stuff on the right place
 }
 

@@ -26,6 +26,33 @@ ContorlDataBar * ContorlInterface::getContorlDataBar()
 	return (contorl->contorlDataBar);
 }
 
+/**
+* @brief ContorlInterface::setButtonBar 设置按钮ui对象
+* @param ContorlButtonBar * bar
+* @return void
+*/
+void ContorlInterface::setButtonBar(ContorlButtonBar* bar)
+{
+	if (contorl->contorlButtonBar == bar)
+		return;
+	delete contorl->contorlButtonBar;
+	contorl->contorlButtonBar = bar;
+}
+
+/**
+* @brief ContorlInterface::setDataBar 设置信息展示的ui对象
+* @param ContorlDataBar * bar
+* @return void
+*/
+void ContorlInterface::setDataBar(ContorlDataBar* bar)
+{
+	if (contorl->contorlDataBar == bar)
+		return;
+	delete contorl->contorlDataBar;
+	contorl->contorlDataBar = bar;
+	contorl->connectButtonBar();
+}
+
 void ContorlInterface::setM3dPath(const std::string& path)
 {
 	contorl->m3dPath = path;
@@ -63,6 +90,20 @@ bool ContorlInterface::hasChipicRuning()
 	if (contorl->chipicManager.chipicMap.size() != 0)
 		return true;
 	return false;
+}
+
+void ContorlInterface::buttonClicked(const int& buttonID)
+{
+	contorl->buttonClinked(buttonID);
+}
+
+/**
+* @brief ContorlInterface::getConnectWay 获取控制模块的连接方式
+* @return int 1=本地连接 2=网络连接
+*/
+int ContorlInterface::getConnectWay()
+{
+	return contorl->getConnectWay();
 }
 
 /**

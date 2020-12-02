@@ -271,12 +271,13 @@ void ToolBarManager::setup(ToolBarItem* item, QToolBar* toolbar) const
 	else if (toolbar->objectName() == QString::fromUtf8("ControlPanel"))
 	{
 		auto sp = QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
+		/*
 		auto mainWindow = MainWindow::getInstance();
 		mainWindow->buttonBar->setSizePolicy(sp);
 		toolbar->setFixedSize(mainWindow->buttonBar->size());
 		mainWindow->buttonBar->setParent(toolbar);
 		toolbar->addWidget(mainWindow->buttonBar);
+		*/
 	}
     else{
         setup_multiple_groups(item, toolbar);
@@ -500,12 +501,13 @@ void ToolBarManager::setup_taskMonitorToolBar(ToolBarItem* item, QToolBar* toolb
 
     auto sp = QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     
-	
+	/*
 	auto mainWindow = MainWindow::getInstance();
 	mainWindow->dateBar->setSizePolicy(sp);
 	toolbar->setFixedSize(mainWindow->dateBar->size());
 	mainWindow->dateBar->setParent(toolbar);
 	toolbar->addWidget(mainWindow->dateBar);
+	*/
 
 
 }

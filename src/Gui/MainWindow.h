@@ -32,11 +32,13 @@
 #include <QEvent>
 #include <QMainWindow>
 #include <QMdiArea>
+#include <QToolBar>
 class QMimeData;
 class QUrl;
 class QMdiSubWindow;
 class SmartContorlInterface;
-
+class ContorlButtonBar;
+class ContorlDataBar;
 namespace App {
 class Document;
 }
@@ -279,8 +281,17 @@ private:
 
 	//chnegtong
 public:
-	QWidget *buttonBar, *dateBar;
+	ContorlButtonBar* contorlButtonBar;
+	ContorlDataBar* contorlDataBar;
+	QToolBar *contorlButtonToolBar, *contorlDataToolBar;
 	SmartContorlInterface *smartContorlInterface;
+
+public:
+	void initContorlToolBar();
+	void setContorlUI();
+	void showContorlUI();
+	void hideContorlUI();
+	void inintContorlUI();
 };
 
 inline MainWindow* getMainWindow()

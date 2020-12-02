@@ -381,7 +381,7 @@
    <item>
     <widget class="CodeEditor" name="textEdit">
      <property name="styleSheet">
-      <string notr="true">font: 9pt &quot;微软雅黑&quot;;</string>
+      <string notr="true"/>
      </property>
      <property name="plainText">
       <string>require &quot;math&quot;
@@ -393,7 +393,7 @@ pitF = 0;
 valueCount = 0;
 --获取F得定义
 function getF(minif,maxf,avf)
-	print(&quot;mininf=&quot;..minif..&quot;,maxf=&quot;..maxf..&quot;,avf=&quot;..avf);
+	cppPrint(&quot;mininf=&quot;..minif..&quot;,maxf=&quot;..maxf..&quot;,avf=&quot;..avf);
 	if(fmod == 0)
 	then
 		return maxf;
@@ -550,6 +550,7 @@ function resultDataFilter()
 	local av = add/addCount;
 	local f = getF(mini,max,av);
 	addParam(f);
+	cppPrint(&quot;f= &quot;..f);
  end
  saveParamsInHistory();
  local groupIndex = getHistorySize() - 1;

@@ -18,6 +18,7 @@ SET(UI_SRC
 	SmartContorlUI.ui
 	VariateItemWidget.ui
 	VariateInputDialog.ui
+	codeEdit/FindDialog.ui
 )
 SET(QRC_SRC
 
@@ -31,6 +32,9 @@ SET(CODE_EDIT
 	codeEdit/matchwordsthrea.h
 	codeEdit/myhightlighter.cpp
 	codeEdit/myhightlighter.h
+	codeEdit/FindDialog.ui
+	codeEdit/FindDialog.h
+	codeEdit/FindDialog.cpp
 )
 SET(LUA_SRC
 	lua/lapi.c
@@ -106,10 +110,12 @@ SET(MY_MOC_HDR
 	codeEdit/codeeditor.h
 	codeEdit/matchwordsthrea.h
 	codeEdit/myhightlighter.h
+	codeEdit/FindDialog.h
 	VariateItemWidget.h
 	VariateInputDialog.h
 	qcustomplot.h
 	SmartContorlInterface.h
+	
 )
 SET(MY_MOC_SRC
 	SmartContorlUI.cpp

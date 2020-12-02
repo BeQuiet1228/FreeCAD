@@ -62,6 +62,7 @@ ChipicRunDatas FileMaker::makeFile(std::vector<QString>& variates)
 		std::cerr << "FileMaker::makeFile file is not open! path:" << this->m3dPath.toStdString() << std::endl;
 	}
 	QString m3d = file.readAll();
+	file.close();
 
 	ChipicRunDatas datas;
 	QDir dir;
@@ -80,19 +81,21 @@ ChipicRunDatas FileMaker::makeFile(std::vector<QString>& variates)
 		data->variate = *i;
 		//生成m3d文件
 		auto newM3d = this->replaceVariate(*i,m3d);
+		QString fileName = path + name;
 		QFile newFile(path + name);
 		if (!newFile.open(QIODevice::ReadWrite))
 		{
 #ifdef MY_LOG
-			std::cerr << "FileMaker::makeFile file is not open! path:" << path.toStdString() << std::endl;
+			std::cerr << "FileMaker::makeFile file is not open! path:" << fileName.toStdString() << std::endl;
 #endif // MY_LOG
 			continue;
 		}
 		newFile.remove();
+		newFile.close();
 		if (!newFile.open(QIODevice::ReadWrite))
 		{
 #ifdef MY_LOG
-			std::cerr << "FileMaker::makeFile file is not open! path:" << path.toStdString() << std::endl;
+			std::cerr << "FileMaker::makeFile file is not open! path:" << fileName.toStdString() << std::endl;
 #endif // MY_LOG
 			continue;
 		}
@@ -103,8 +106,6 @@ ChipicRunDatas FileMaker::makeFile(std::vector<QString>& variates)
 
 		count++;
 	}
-
-	file.close();
 
 	return datas;
 }
@@ -161,8 +162,7 @@ QString FileMaker::replaceVariate(const QString& variate, const QString& m3d)
 		if (i->isNull())
 			continue;
 		auto name = i->split("=").at(0);
-		auto r ="[\\s|;]" + name + "\\s*=.*;";
-		std::cerr << r.toStdString() << std::endl;
+		auto r ="\\b" + name + "\\s*=.*;";
 		QRegExp rex(r);
 		rex.setMinimal(true);
 		int posStart = 0, posEnd = 0;

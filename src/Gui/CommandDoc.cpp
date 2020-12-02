@@ -69,6 +69,9 @@
 #include "NavigationStyle.h"
 #include "GraphvizView.h"
 #include "OpenFileConfig.h"
+#include <Contorl/ContorlInterface.h>
+#include <memory>
+#include "SmartContorl/SmartContorlInterface.h"
 using namespace Gui;
 
 
@@ -829,7 +832,7 @@ void StdCmdUndo::activated(int iMsg)
 	App::Document* pcDoc=App::GetApplication().getActiveDocument();
 	//pcDoc->recompute();
 	//pcDoc->flagNeedUpdateBoolean.setValue(0);
-	//doCommand(Command::Gui, "DocumentTools.updateBoolean()");
+	doCommand(Command::Gui, "DocumentTools.updateBoolean()");
 }
 
 bool StdCmdUndo::isActive(void)
@@ -916,8 +919,7 @@ StdCmdCut::StdCmdCut()
     sWhatsThis    = "Std_Cut";
     sStatusTip    = QT_TR_NOOP("Cut out");
     sPixmap       = "edit-cut";
-    //sAccel        = keySequenceToAccel(QKeySequence::Cut);
-	sAccel ="";
+    sAccel        = keySequenceToAccel(QKeySequence::Cut);
 }
 
 void StdCmdCut::activated(int iMsg)
@@ -945,8 +947,7 @@ StdCmdCopy::StdCmdCopy()
     sWhatsThis    = "Std_Copy";
     sStatusTip    = QT_TR_NOOP("Copy operation");
     sPixmap       = "edit-copy";
-    //sAccel        = keySequenceToAccel(QKeySequence::Copy);
-	sAccel = "";
+    sAccel        = keySequenceToAccel(QKeySequence::Copy);
 }
 
 void StdCmdCopy::activated(int iMsg)
@@ -981,7 +982,7 @@ StdCmdPaste::StdCmdPaste()
     sWhatsThis    = "Std_Paste";
     sStatusTip    = QT_TR_NOOP("Paste operation");
     sPixmap       = "edit-paste";
-    //sAccel        = keySequenceToAccel(QKeySequence::Paste);
+    sAccel        = keySequenceToAccel(QKeySequence::Paste);
 }
 
 void StdCmdPaste::activated(int iMsg)
@@ -1544,6 +1545,254 @@ bool StdCmdEdit::isActive(void)
     return (Selection().getCompleteSelection().size() > 0) || (Gui::Control().activeDialog() != 0);
 }
 
+//===========================================================================
+// Std_Open
+//===========================================================================
+
+DEF_STD_CMD_A(StdCmdFindm);
+
+StdCmdFindm::StdCmdFindm()
+	: Command("Std_Findm")
+{
+	// setting the
+	sGroup = QT_TR_NOOP("File");
+	sMenuText = QT_TR_NOOP("&Find...");
+	sToolTipText = QT_TR_NOOP("find text");
+	sWhatsThis = "Std_Findm";
+	sStatusTip = QT_TR_NOOP("find text");
+	sPixmap = "document-find";
+	sAccel = keySequenceToAccel(QKeySequence::Find);
+}
+
+void StdCmdFindm::activated(int iMsg)
+{
+	Q_UNUSED(iMsg);
+	getGuiApplication()->sendMsgToActiveView("Findm");
+}
+bool StdCmdFindm::isActive(void)
+{
+	return getGuiApplication()->sendHasMsgToActiveView("Findm");
+}
+class StdCmdRunM3d : public Gui::Command 
+{
+public:
+	StdCmdRunM3d(const char* name = "Std_Run_M3d");
+	virtual ~StdCmdRunM3d(){}
+	virtual const char* className() const
+		{ return "StdCmdRunM3d"; }
+protected: 
+	virtual void activated(int iMsg); 
+	virtual bool isActive(void); 
+	virtual Action * createAction(void);
+
+protected:
+	Action *action;
+	//刷新action的图标
+	void updataActionIcon();
+	//图标状态
+	bool runState = false;
+};
+
+StdCmdRunM3d::StdCmdRunM3d(const char* name)
+	: Command(name), action(nullptr)
+{
+	// setting the
+	sGroup = QT_TR_NOOP("File");
+	sMenuText = QT_TR_NOOP("&Find...");
+	sToolTipText = QT_TR_NOOP("run m3d text");
+	sWhatsThis = "Std_Findm";
+	sStatusTip = QT_TR_NOOP("run m3d text");
+	sPixmap = "run";
+	sAccel = keySequenceToAccel(Qt::Key_F5);
+}
+
+void StdCmdRunM3d::activated(int iMsg)
+{
+	Q_UNUSED(iMsg);
+	//首次点击、初始化mainwindow上的界面
+	static std::once_flag flag;
+	std::call_once(flag, [&](){
+		auto mw = MainWindow::getInstance();
+		mw->inintContorlUI();
+	});
+	
+	auto contorl = ContorlInterface::GetInstance();
+	if (!runState)
+	{
+		auto mw = Gui::MainWindow::getInstance();
+		mw->setContorlUI();
+	}
+	contorl->buttonClicked(0);
+}
+bool StdCmdRunM3d::isActive(void)
+{
+	auto contorl = ContorlInterface::GetInstance();
+	
+	static bool actionState = false;
+	bool tempState = contorl->hasChipicRuning();
+	if (tempState != actionState)
+	{
+		actionState = tempState;
+		if (actionState)
+		{
+			auto mw = Gui::MainWindow::getInstance();
+			mw->showContorlUI();
+			sPixmap = "runing";
+		}else{
+			auto mw = Gui::MainWindow::getInstance();
+			mw->hideContorlUI();
+			sPixmap = "run";
+		}
+		this->updataActionIcon();
+	}
+
+
+	if (App::GetApplication().getActiveDocument())
+		return true;
+	return false;
+}
+
+Gui::Action * StdCmdRunM3d::createAction(void)
+{
+	action = Command::createAction();
+	return action;
+}
+void StdCmdRunM3d::updataActionIcon()
+{
+	action->setIcon(Gui::BitmapFactory().iconFromTheme(sPixmap));
+}
+
+class StdCmdConnectWay :public StdCmdRunM3d{
+public:
+	StdCmdConnectWay();
+	~StdCmdConnectWay(){};
+	const char* className() const override{
+		return "StdCmdConnectWay";
+	}
+
+protected:
+	virtual void activated(int iMsg);
+	virtual bool isActive(void);
+};
+
+StdCmdConnectWay::StdCmdConnectWay()
+	:StdCmdRunM3d("Std_Connect_Way")
+{
+	sGroup = QT_TR_NOOP("File");
+	sMenuText = QT_TR_NOOP("&ConnectWay...");
+	sToolTipText = QT_TR_NOOP("ConnectWay");
+	sWhatsThis = "Std_Connect_Way";
+	sStatusTip = QT_TR_NOOP("ConnectWay");
+	sPixmap = "local";
+
+}
+
+void StdCmdConnectWay::activated(int iMsg)
+{
+	Q_UNUSED(iMsg);
+	auto contorl = ContorlInterface::GetInstance();
+	contorl->buttonClicked(6);
+	int connectWay = contorl->getConnectWay();
+	if (connectWay == 1)
+	{
+		sPixmap = "local";
+	}
+	else if (connectWay){
+		sPixmap = "network";
+	}
+	updataActionIcon();
+}
+
+bool StdCmdConnectWay::isActive(void)
+{
+	auto contorl = ContorlInterface::GetInstance();
+	if (App::GetApplication().getActiveDocument()&&(!contorl->hasChipicRuning()))
+		return true;
+	return false;
+}
+
+DEF_STD_CMD_A(StdCmdParalleRun);
+
+StdCmdParalleRun::StdCmdParalleRun()
+	: Command("Std_Paralle_Run")
+{
+	// setting the
+	sGroup = QT_TR_NOOP("File");
+	sMenuText = QT_TR_NOOP("&ParalleRun");
+	sToolTipText = QT_TR_NOOP("ParalleRun");
+	sWhatsThis = "Std_Paralle_Run";
+	sStatusTip = QT_TR_NOOP("ParalleRun");
+	sPixmap = "paralleRun";
+}
+
+void StdCmdParalleRun::activated(int iMsg)
+{
+	Q_UNUSED(iMsg);
+	auto contorl = ContorlInterface::GetInstance();
+	contorl->buttonClicked(1);
+}
+bool StdCmdParalleRun::isActive(void)
+{
+	auto contorl = ContorlInterface::GetInstance();
+	if (App::GetApplication().getActiveDocument() && (!contorl->hasChipicRuning()))
+		return true;
+	return false;
+}
+DEF_STD_CMD_A(StdCmdSmartContorl);
+
+StdCmdSmartContorl::StdCmdSmartContorl()
+	: Command("Std_Smart_Contrl")
+{
+	// setting the
+	sGroup = QT_TR_NOOP("File");
+	sMenuText = QT_TR_NOOP("&SmartContorl");
+	sToolTipText = QT_TR_NOOP("SmartContorl");
+	sWhatsThis = "Std_Paralle_Run";
+	sStatusTip = QT_TR_NOOP("SmartContorl");
+	sPixmap = "smartContorl";
+}
+
+void StdCmdSmartContorl::activated(int iMsg)
+{
+	Q_UNUSED(iMsg);
+	SmartContorlInterface smartContorl;
+	smartContorl.buttonClicked(7);
+}
+bool StdCmdSmartContorl::isActive(void)
+{
+	auto contorl = ContorlInterface::GetInstance();
+	if (App::GetApplication().getActiveDocument() && (!contorl->hasChipicRuning()))
+		return true;
+	return false;
+}
+
+DEF_STD_CMD_A(StdCmdOpenLog);
+
+StdCmdOpenLog::StdCmdOpenLog()
+	: Command("Std_Open_Log")
+{
+	// setting the
+	sGroup = QT_TR_NOOP("File");
+	sMenuText = QT_TR_NOOP("&OpenLog");
+	sToolTipText = QT_TR_NOOP("OpenLog");
+	sWhatsThis = "Std_Open_Log";
+	sStatusTip = QT_TR_NOOP("OpenLog");
+	sPixmap = "openLog";
+}
+
+void StdCmdOpenLog::activated(int iMsg)
+{
+	Q_UNUSED(iMsg);
+	auto contorl = ContorlInterface::GetInstance();
+	contorl->buttonClicked(5);
+}
+bool StdCmdOpenLog::isActive(void)
+{
+	if (App::GetApplication().getActiveDocument())
+		return true;
+	return false;
+}
+
 
 namespace Gui {
 
@@ -1557,6 +1806,13 @@ void CreateDocCommands(void)
     rcCmdMgr.addCommand(new StdCmdExport());
     rcCmdMgr.addCommand(new StdCmdMergeProjects());
     rcCmdMgr.addCommand(new StdCmdExportGraphviz());
+
+	rcCmdMgr.addCommand(new StdCmdRunM3d());
+	rcCmdMgr.addCommand(new StdCmdFindm());
+	rcCmdMgr.addCommand(new StdCmdParalleRun());
+	rcCmdMgr.addCommand(new StdCmdSmartContorl());
+	rcCmdMgr.addCommand(new StdCmdOpenLog());
+	rcCmdMgr.addCommand(new StdCmdConnectWay);
 
     rcCmdMgr.addCommand(new StdCmdSave());
     rcCmdMgr.addCommand(new StdCmdSaveAs());

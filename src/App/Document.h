@@ -174,6 +174,7 @@ public:
     virtual bool save (void);
     virtual bool saveAs(const char* file);
     virtual bool saveCopy(const char* file);
+
     /// Restore the document from the file in Property Path
     void restore (void);
     void exportObjects(const std::vector<App::DocumentObject*>&, std::ostream&);

@@ -96,6 +96,7 @@
 #include "PropertyExpressionEngine.h"
 #include "Document.h"
 #include "DocumentM3dText.h"
+#include "DocumentM2dMod.h"
 #include "DocumentObjectGroup.h"
 #include "DocumentObjectFileIncluded.h"
 #include "InventorObject.h"
@@ -114,6 +115,7 @@
 #include "Transactions.h"
 #include <App/MaterialPy.h>
 #include <Base/GeometryPyCXX.h>
+#include "DocumentM3dMod.h"
 
 // If you stumble here, run the target "BuildExtractRevision" on Windows systems
 // or the Python script "SubWCRev.py" on Linux based systems which builds
@@ -363,16 +365,10 @@ void Application::renameDocument(const char *OldName, const char *NewName)
     }
 }
 
-/**
-* @brief App::Application::newDocumentM3dText  往工程管理器里添加一个文本编辑器工程  用于编辑M2d文件  以及 M3d文件 
-* @param const char * Name
-* @param const char * UserName
-* @return App::Document*
-*/
-App::Document* App::Application::newDocumentM3dText(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
+App::Document* App::Application::newDocument(Document* doc, const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
 {
 	/*
-		代码与原有的newDocument函数一致，只是将document类修改为自己定义的类
+	代码与原有的newDocument函数一致，只是将document类修改为自己定义的类
 	*/
 
 	// get a valid name anyway!
@@ -398,8 +394,8 @@ App::Document* App::Application::newDocumentM3dText(const char * Name /*= 0l*/, 
 	}
 
 	// create the FreeCAD document
-	std::unique_ptr<Document> newDoc(new DocumentM3dText());
-	
+	std::unique_ptr<Document> newDoc(doc);
+
 
 	// add the document to the internal list
 	DocMap[name] = newDoc.release(); // now owned by the Application
@@ -433,8 +429,34 @@ App::Document* App::Application::newDocumentM3dText(const char * Name /*= 0l*/, 
 	_pActiveDoc->Label.setValue(userName);
 
 	return _pActiveDoc;
-
 }
+
+/**
+* @brief App::Application::newDocumentM3dText  往工程管理器里添加一个文本编辑器工程  用于编辑M2d文件  以及 M3d文件 
+* @param const char * Name
+* @param const char * UserName
+* @return App::Document*
+*/
+App::Document* App::Application::newDocumentM3dText(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
+{
+	return newDocument(new DocumentM3dText(), Name, UserName);
+}
+
+App::Document* App::Application::newDocumentM2dText(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
+{
+	return newDocument(new DocumentM2dText, Name, UserName);
+}
+
+App::Document* App::Application::newDocumentM3dMode(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
+{
+	return newDocument(new DocumentM3dMod(), Name, UserName);
+}
+
+App::Document* App::Application::newDocumentM2dMod(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
+{
+	return newDocument(new DocumentM2dMod(), Name, UserName);
+}
+
 Document* Application::newDocument(const char * Name, const char * UserName)
 {
     // get a valid name anyway!

@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <FileDialog.h>
 #include <QFile>
+#include <QMdiArea>
 LuaEditView::LuaEditView(Gui::Document* doc, QWidget* parent /*= 0*/)
 	: MDIView(doc, parent, 0)
 {
@@ -15,7 +16,11 @@ LuaEditView::LuaEditView(Gui::Document* doc, QWidget* parent /*= 0*/)
 	auto layout = new QHBoxLayout();
 	codeEditor = new CodeEditor();
 	layout->addWidget(codeEditor);
+	layout->setMargin(0);
 	frame->setLayout(layout);
+	layout->setSpacing(0);
+
+
 	setCentralWidget(frame);
 }
 
@@ -35,27 +40,25 @@ bool LuaEditView::onMsg(const char* pMsg, const char** ppReturn)
 		return true;
 	}
 	else if (strcmp("Save", pMsg) == 0) {
-		auto doc = this->getAppDocument();
-		DocumentM3dText *doct = static_cast<DocumentM3dText*>(doc);
-		if (!doct)
-			return false;
-		doct->setContent(this->codeEditor->toPlainText());
-		doct->save();
-		return true;
+		return save();
 	}
 	else if (strcmp("SaveAs", pMsg) == 0) {
-		auto doc = this->getAppDocument();
-		QString path = QString::fromUtf8(doc->FileName.getValue());
-		auto format = path;
-		format = format.right(3);
-		QString fn = Gui::FileDialog::getSaveFileName(Gui::MainWindow::getInstance(), QObject::tr("Save  Document"),
-			QString(), QString::fromLatin1("M3D (*.%1)").arg(format));
-		doc->FileName.setValue(fn.toLocal8Bit());
-		doc->save();
-		return true;
-	}
-	else if (strcmp("SaveCopy", pMsg) == 0) {
+		return saveAs();
+	}else if (strcmp("SaveCopy", pMsg) == 0) {
 		
+		return true;
+	}else if (strcmp("Copy", pMsg) == 0){
+		this->codeEditor->copy();
+		return true;
+	}else if (strcmp("Cut", pMsg) == 0){
+		this->codeEditor->cut();
+		return true;
+	}else if (strcmp("Paste", pMsg) == 0){
+		this->codeEditor->paste();
+		return true;
+	}else  if (strcmp("Findm", pMsg) == 0){
+		this->codeEditor->autoFindDialogPoint();
+		this->codeEditor->showFindDialog();
 		return true;
 	}
 	return false;
@@ -63,5 +66,66 @@ bool LuaEditView::onMsg(const char* pMsg, const char** ppReturn)
 
 bool LuaEditView::onHasMsg(const char* pMsg) const
 {
+	if (strcmp("Undo", pMsg) == 0) {
+		return true;
+	}
+	else  if (strcmp("Redo", pMsg) == 0) {
+		return true;
+	}else if (strcmp("Save", pMsg) == 0) {
+		return true;
+	}else if (strcmp("SaveAs", pMsg) == 0) {
+		return true;
+	}else if (strcmp("SaveCopy", pMsg) == 0) {
+		return true;
+	}else if (strcmp("Copy", pMsg) == 0){
+		return true;
+	}else if (strcmp("Cut", pMsg) == 0){
+		return true;
+	}else if (strcmp("Paste", pMsg) == 0){
+		return true;
+	}else if (strcmp("Findm", pMsg) == 0){
+		return true;
+	}
+	return false;
+}
+
+void LuaEditView::windowStateChanged(MDIView* mdiVew)
+{
+	
+}
+
+bool LuaEditView::save()
+{
+	auto doc = this->getAppDocument();
+	DocumentM3dText *doct = static_cast<DocumentM3dText*>(doc);
+	if (!doct)
+		return false;
+	doct->setContent(this->codeEditor->toPlainText());
+	if (doct->isSaved())
+	{
+		doct->save();
+	}else{
+		saveAs();
+	}
+	return true;
+}
+
+bool LuaEditView::saveAs()
+{
+	auto doc = this->getAppDocument();
+	QString path = QString::fromUtf8(doc->FileName.getValue());
+	DocumentM3dText *doct = static_cast<DocumentM3dText*>(doc);
+	if (!doct)
+		return false;
+	std::string format = doct->getFileFormat();
+
+	QString fn = Gui::FileDialog::getSaveFileName(Gui::MainWindow::getInstance(), QObject::tr("Save  Document"),
+		QString(), QString::fromLatin1("(*.%1)").arg(QString::fromStdString(format)));
+	Base::FileInfo fi(fn.toStdString());
+	doc->FileName.setValue(fn.toUtf8());
+	doc->Label.setValue(fi.fileNamePure());
+	doc->Uid.touch();
+	setWindowTitle(QString::fromStdString(fi.fileNamePure()));
+	doc->save();
 	return true;
 }

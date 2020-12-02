@@ -144,9 +144,9 @@ void ChipicManager::chipicWorkFinished()
 	auto chipic = dynamic_cast<Chipic *>(sender);
 	if (!chipic)
 		return;
-	emit finishChipicM3dPath(chipic->threadID);
 	showWorkFinishedBox();
 	chipic->closeChipic();
+	emit finishChipicM3dPath(chipic->threadID);
 }
 
 /**
@@ -322,8 +322,8 @@ bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId, const int& 
 		emit currentChipicStateUpdate();
 		loadingDialog->close();
 	}else if (errorCode == 1){
-		showDailLog("提示", "chipic异常退出");
 		chipic->second->closeChipic();
+		showDailLog("提示", "chipic异常退出");
 	}
 
 	return true;

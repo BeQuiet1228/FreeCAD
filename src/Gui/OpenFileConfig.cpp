@@ -7,6 +7,7 @@
 #include "App/DocumentM3dText.h"
 #include "LuaEditView.h"
 #include "MainWindow.h"
+#include <FileDialog.h>
 std::shared_ptr<OpenFileConfig> OpenFileConfig::_instance;
 OpenFileConfig::~OpenFileConfig()
 {
@@ -25,6 +26,11 @@ void OpenFileConfig::init()
 {
 	{
 		auto format = new FileFormatM3DText;
+		formats.push_back(format);
+	}
+
+	{
+		auto format = new FileFormatM2DText;
 		formats.push_back(format);
 	}
 }
@@ -114,12 +120,12 @@ void FileFormatM3DText::openOnce(const QString& filePath)
 		return;
 	docText->loadfile(filePath);
 	auto  guiDoc = Gui::Application::Instance->getDocument(doc);
-	LuaEditView *edit = new LuaEditView(guiDoc);
+	auto view = guiDoc->getActiveView();
+
+	LuaEditView *edit = static_cast<LuaEditView*>(view);
+	if (!edit)
+		return;
 	edit->setWindowTitle(QString::fromLocal8Bit(docText->getName()));
-
-
-	auto mainWindow = Gui::MainWindow::getInstance();
-	mainWindow->addWindow(edit);
 	edit->setText(docText->getContent());
-
+	Gui::FileDialog::setWorkingDirectory(QString(filePath).remove(fileName));
 }
