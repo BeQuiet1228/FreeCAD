@@ -189,7 +189,7 @@ SET(SmartContorl_src
 if(smart_contorl_exe)
 	add_executable(SmartContorl ${SmartContorl_src}) # 生成可执行文件
 	SET(OUTPUT_BINDIR ${CMAKE_CURRENT_BINARY_DIR}/../../bin) #设置可执行文件输出目录
-	add_definitions( -DMY_DEBUG -DMY_LOG -D_SMARTCONTORL_)
+	add_definitions( -DMY_DEBUG -DMY_LOG -D_SMARTCONTORL_ -DSMART_EXE)
 endif()
 if(smart_contorl_dll)
 	add_definitions(-DMY_LOG -D_SMARTCONTORL_)

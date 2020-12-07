@@ -22,13 +22,17 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	smartContorl = contorlData->smartContorl;
 	auto contorlInterface = ContorlInterface::GetInstance();
 
-
-	//std::string m3dPath = "E:/test/MILO_C.m3d";
+#ifdef SMART_EXE
+	std::string m3dPath = "E:/lingshiwenjianjia/test/MILO_C_2.m3d";
+	smartContorl->setM3dPath(m3dPath);
+#else
 	smartContorl->setM3dPath(contorlInterface->getDocumentPath());
+#endif
 	connect(smartContorl, SIGNAL(addDataBar(QListWidgetItem*, QWidget*)), this, SLOT(addListWidgetItem(QListWidgetItem*, QWidget*)));
 	connect(smartContorl, SIGNAL(smartContorlLog(std::string)), this, SLOT(pringLuaLog(std::string)));
 
 	this->setModal(true);
+	setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint);
 
 	//隐藏测试控件
 	this->ui->pushButton_3->hide();
@@ -100,7 +104,7 @@ void SmartContorlUI::on_pushButtonF_clicked()
 	auto valueCount = variates.begin()->values.size();
 
 
-
+ 
 	QVector<QVector<double>> values;
 	QVector<double> keys;
 	int key = 1;
@@ -298,6 +302,15 @@ void SmartContorlUI::on_pushButtonVariateMax_clicked()
 	chart->setAttribute(Qt::WA_DeleteOnClose);
 }
 
+void SmartContorlUI::on_comboBoxExcpcet_currentIndexChanged(int index)
+{
+	if (index == 0)
+		this->ui->widgetAccuracy->show();
+	else{
+		this->ui->widgetAccuracy->hide();
+	}
+}
+
 //暂时全写再这儿 日后再改
 QString SmartContorlUI::replaceVariate()
 {
@@ -335,8 +348,11 @@ QString SmartContorlUI::replaceVariate()
 	config += temp;
 	temp = QString("excpectMod = %1;\n").arg(this->ui->comboBoxExcpcet->currentIndex());
 	config += temp;
+	temp = QString("optimizeMaxCount = %1;\n").arg(this->ui->spinBoxOptimizeCount->value());
+	config += temp;
+	temp = QString("accuracy = %1/100;\n").arg(this->ui->lineEditAccuracy->text());
+	config += temp;
 	text = config + text;
-	
 	return text;
 }
 

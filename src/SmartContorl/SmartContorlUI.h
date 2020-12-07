@@ -71,6 +71,8 @@ public Q_SLOTS:
 	void pringLuaLog(std::string str);
 	//查看变量趋势图
 	void on_pushButtonVariateMax_clicked();
+	//预期模式改变
+	void on_comboBoxExcpcet_currentIndexChanged(int index);
 
 private:
 	//替换变量

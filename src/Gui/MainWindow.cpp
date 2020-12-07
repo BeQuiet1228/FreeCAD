@@ -253,12 +253,17 @@ void MainWindow::setContorlUI()
 
 void MainWindow::showContorlUI()
 {
+	addToolBarBreak(Qt::TopToolBarArea);
+	addToolBar(contorlButtonToolBar);
+	addToolBar(contorlDataToolBar);
 	contorlButtonToolBar->show();
 	contorlDataToolBar->show();
 }
 
 void MainWindow::hideContorlUI()
 {
+	removeToolBar(contorlButtonToolBar);
+	removeToolBar(contorlDataToolBar);
 	contorlDataToolBar->hide();
 	contorlButtonToolBar->hide();
 }
@@ -276,9 +281,6 @@ void MainWindow::inintContorlUI()
 	contorlButtonToolBar->setFixedSize(QSize(70,contorlButtonBar->size().height()));
 	contorlButtonToolBar->addWidget(contorlButtonBar);
 
-	addToolBarBreak(Qt::TopToolBarArea);
-	addToolBar(contorlButtonToolBar);
-	addToolBar(contorlDataToolBar);
 	contorlButtonToolBar->hide();
 	contorlDataToolBar->hide();
 }
