@@ -88,6 +88,7 @@ public :
    vcg::Point3i IsoSurfaceTriangleListe[100000];// Up to 100.000 Triangles
    double XLocal[100], YLocal[100], ZLocal[100]; //Up to 200x200x200 voxels
    Voxel3D GridVoxel[100][100][100];
+   int isSunk;
 
    vcg::Point3d NormOriginal[100000];// Up to 100.000 Triangles
 
