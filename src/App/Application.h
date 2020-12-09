@@ -90,6 +90,8 @@ public:
     std::string getUniqueDocumentName(const char *Name) const;
     /// Open an existing document from a file
     App::Document* openDocument(const char * FileName=0l);
+	App::Document* openDocument3dMod(const char * FileName = 0l);
+	App::Document* openDocument2dMod(const char * FileName = 0l);
     /// Retrieve the active document
     App::Document* getActiveDocument(void) const;
     /// Retrieve a named document

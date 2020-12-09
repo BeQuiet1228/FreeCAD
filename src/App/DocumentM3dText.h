@@ -41,7 +41,9 @@ private:
 };
 class AppExport DocumentM2dText:public DocumentM3dText{
 public:
-	DocumentM2dText() = default;
+	DocumentM2dText(){
+		classID = 4;
+	};
 	~DocumentM2dText() = default;
 
 	std::string getFileFormat() override

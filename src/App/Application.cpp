@@ -457,6 +457,108 @@ App::Document* App::Application::newDocumentM2dMod(const char * Name /*= 0l*/, c
 	return newDocument(new DocumentM2dMod(), Name, UserName);
 }
 
+App::Document* App::Application::openDocument3dMod(const char * FileName /*= 0l*/)
+{
+	FileInfo File(FileName);
+
+	if (!File.exists()) {
+		std::stringstream str;
+		str << "File '" << FileName << "' does not exist!";
+		throw Base::FileSystemError(str.str().c_str());
+	}
+
+	// Before creating a new document we check whether the document is already open
+	std::string filepath = File.filePath();
+	for (std::map<std::string, Document*>::iterator it = DocMap.begin(); it != DocMap.end(); ++it) {
+		// get unique path separators
+		std::string fi = FileInfo(it->second->FileName.getValue()).filePath();
+		if (filepath == fi) {
+			std::stringstream str;
+			str << "The project '" << FileName << "' is already Restore the documentopen!";
+			throw Base::FileSystemError(str.str().c_str());
+		}
+	}
+
+	// Use the same name for the internal and user name.
+	// The file name is UTF-8 encoded which means that the internal name will be modified
+	// to only contain valid ASCII characters but the user name will be kept.
+	Document* newDoc = newDocumentM3dMode(File.fileNamePure().c_str(), File.fileNamePure().c_str());
+
+	newDoc->FileName.setValue(File.filePath());
+
+	try {
+		// read the document
+		newDoc->restore();
+		return newDoc;
+	}
+	// if the project file itself is corrupt then
+	// close the document
+	catch (const Base::FileException&) {
+		closeDocument(newDoc->getName());
+		throw;
+	}
+	catch (const std::ios_base::failure&) {
+		closeDocument(newDoc->getName());
+		throw;
+	}
+	// but for any other exceptions leave it open to give the
+	// user a chance to fix it
+	catch (...) {
+		throw;
+	}
+}
+
+App::Document* App::Application::openDocument2dMod(const char * FileName /*= 0l*/)
+{
+	FileInfo File(FileName);
+
+	if (!File.exists()) {
+		std::stringstream str;
+		str << "File '" << FileName << "' does not exist!";
+		throw Base::FileSystemError(str.str().c_str());
+	}
+
+	// Before creating a new document we check whether the document is already open
+	std::string filepath = File.filePath();
+	for (std::map<std::string, Document*>::iterator it = DocMap.begin(); it != DocMap.end(); ++it) {
+		// get unique path separators
+		std::string fi = FileInfo(it->second->FileName.getValue()).filePath();
+		if (filepath == fi) {
+			std::stringstream str;
+			str << "The project '" << FileName << "' is already Restore the documentopen!";
+			throw Base::FileSystemError(str.str().c_str());
+		}
+	}
+
+	// Use the same name for the internal and user name.
+	// The file name is UTF-8 encoded which means that the internal name will be modified
+	// to only contain valid ASCII characters but the user name will be kept.
+	Document* newDoc = newDocumentM2dMod(File.fileNamePure().c_str(), File.fileNamePure().c_str());
+
+	newDoc->FileName.setValue(File.filePath());
+
+	try {
+		// read the document
+		newDoc->restore();
+		return newDoc;
+	}
+	// if the project file itself is corrupt then
+	// close the document
+	catch (const Base::FileException&) {
+		closeDocument(newDoc->getName());
+		throw;
+	}
+	catch (const std::ios_base::failure&) {
+		closeDocument(newDoc->getName());
+		throw;
+	}
+	// but for any other exceptions leave it open to give the
+	// user a chance to fix it
+	catch (...) {
+		throw;
+	}
+}
+
 Document* Application::newDocument(const char * Name, const char * UserName)
 {
     // get a valid name anyway!

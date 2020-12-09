@@ -660,8 +660,17 @@ bool Document::saveAs(void)
     getMainWindow()->showMessage(QObject::tr("Save document under new filename..."));
 
     QString exe = qApp->applicationName();
+	//根据document类型 设置文件后缀 暂时写在这个地方
+	//----------------------------------------------
+	QString format = QString::fromLocal8Bit("FCStd");
+	auto doc = App::GetApplication().getActiveDocument();
+	if (doc->classID == 3)
+	{
+		format = QString::fromLocal8Bit("FCStd_2D");
+	}
+	//-----------------------------------------------
     QString fn = FileDialog::getSaveFileName(getMainWindow(), QObject::tr("Save %1 Document").arg(exe), 
-        QString(), QString::fromLatin1("%1 %2 (*.FCStd)").arg(exe).arg(QObject::tr("Document")));
+        QString(), QString::fromLatin1("%1 %2 (*.%3)").arg(exe).arg(QObject::tr("Document")).arg(format));
     if (!fn.isEmpty()) {
         QFileInfo fi;
         fi.setFile(fn);

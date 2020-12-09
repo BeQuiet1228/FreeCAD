@@ -299,7 +299,7 @@ PyObject* Application::sOpenDocument(PyObject * /*self*/, PyObject *args,PyObjec
     std::string EncodedName = std::string(Name);
     PyMem_Free(Name);
     try {
-		PyObject* doc = GetApplication().openDocument(EncodedName.c_str())->getPyObject();
+		PyObject* doc = GetApplication().openDocument3dMod(EncodedName.c_str())->getPyObject();
 		//std::string suffix = EncodedName.substr(EncodedName.find_last_of('.'), EncodedName.size());
 		//if (stricmp(suffix.c_str(), ".FCStd") == 0)
 		//{
@@ -1392,10 +1392,14 @@ PyObject* Application::sSetM3dpath(PyObject *self, PyObject *args, PyObject *kwd
 {
 
 	std::string path = GetApplication().getActiveDocument()->FileName.getValue();
-	if (GetApplication().getActiveDocument()->classID != 1)
+	if (GetApplication().getActiveDocument()->classID == 2)
 	{
 		QString temp = QString::fromUtf8(path.c_str());
 		temp = temp.left(temp.length() - 6) + QString::fromLocal8Bit(".m3d");
+		path = temp.toStdString();
+	}else if (GetApplication().getActiveDocument()->classID == 3){
+		QString temp = QString::fromUtf8(path.c_str());
+		temp = temp.left(temp.length() - 9) + QString::fromLocal8Bit(".m2d");
 		path = temp.toStdString();
 	}
 	std::cerr << path << std::endl;
