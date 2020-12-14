@@ -193,11 +193,11 @@
 # include <BRepAlgoAPI_Common.hxx>
 
 #ifndef M_PI
-#define M_PI    3.14159265358979323846 /* pi */
+#define M_PI    3.1415926535897932384626433832795 /* pi */
 #endif
 
 #ifndef M_PI_2
-#define M_PI_2  1.57079632679489661923 /* pi/2 */
+#define M_PI_2  3.1415926535897932384626433832795/2. /* pi/2 */
 #endif
 
 #define GRAD M_PI / 180.0
@@ -2520,7 +2520,7 @@ namespace PartChipic {
 				else if (pymax > -180) pymin = -180;
 				else if (pymax > -270)
 					pymin = -270;
-				else 
+				else
 					pymin = -360;
 				;
 				spymin.push_back(pymin);
@@ -3036,7 +3036,9 @@ namespace PartChipic {
 				std::vector < std::string > funcV;
 				if (std::string(coor) == S_COOR_RECTANGULAR) {
 					float dev = 0;
-					nb_ligne = 8, nb_colon = 8, nb_depth = 8;
+#define DISTANCE_RESOL_MAX 8
+#define DISTANCE_RESOL_MIN 2
+					nb_ligne = DISTANCE_RESOL_MAX, nb_colon = DISTANCE_RESOL_MAX, nb_depth = DISTANCE_RESOL_MAX;
 					yreso = (ymax - ymin) / (8 - 4) / 180;
 					double stepx = 0;// (xmax - xmin) / (16 - 5);
 					double stepy = 0;// (ymax - ymin) / (16 - 5);
@@ -3073,6 +3075,12 @@ namespace PartChipic {
 								near_pointVo.push_back(Base::Vector3d(spxmino[i], spymino[j], spzmino[k]));
 							}
 					//
+					if (nb_ligne > DISTANCE_RESOL_MAX) nb_ligne = DISTANCE_RESOL_MAX;
+					if (nb_colon > DISTANCE_RESOL_MAX) nb_colon = DISTANCE_RESOL_MAX;
+					if (nb_depth > DISTANCE_RESOL_MAX) nb_depth = DISTANCE_RESOL_MAX;
+					if (nb_ligne < DISTANCE_RESOL_MIN) nb_ligne = DISTANCE_RESOL_MIN;
+					if (nb_colon < DISTANCE_RESOL_MIN) nb_colon = DISTANCE_RESOL_MIN;
+					if (nb_depth < DISTANCE_RESOL_MIN) nb_depth = DISTANCE_RESOL_MIN;
 				}
 				else {
 					nb_ligne = 8, nb_colon = 8, nb_depth = 8;
@@ -3084,47 +3092,61 @@ namespace PartChipic {
 						ymax >= -360 && ymin >= -360 &&
 						(ymax - ymin) <= 360 &&
 						ymax > ymin) {
-						//
-						int close = 0;
-						if ((360 - fabs(ymax - ymin)) < 0.000001)
-							close = 1;
-						if (close)
-						{
-							far_pointV.push_back(transferToDefValue3D(xmax, ymin + 180, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
-							far_pointVo.push_back(Base::Vector3d(xmax, (ymin + 180)*GRAD, zmax));
-							near_pointVo.push_back(Base::Vector3d(xmin, ymin*GRAD, zmin));
-							far_pointV.push_back(transferToDefValue3D(xmax, ymin + 360, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, ymin + 180, zmin));
-							far_pointVo.push_back(Base::Vector3d(xmax, (ymin + 360)*GRAD, zmax));
-							near_pointVo.push_back(Base::Vector3d(xmin, (ymin + 180)*GRAD, zmin));
-						}
-						else
-						{
-							far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
-							near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
-							far_pointVo.push_back(Base::Vector3d(xmax, ymax*GRAD, zmax));
-							near_pointVo.push_back(Base::Vector3d(xmin, ymin*GRAD, zmin));
-						}
-						
-						////split corrd
-						//std::vector<double> spxmin, spxmax, spymin, spymax, spzmin, spzmax, spxmino, spxmaxo, spymino, spymaxo, spzmino, spzmaxo;
-						//double mx = splitCorrRange(xmin, xmax, spxmin, spxmax, spxmino, spxmaxo);
-						//double my = splitCorrRangeAngle(ymin, ymax, spymin, spymax, spymino, spymaxo);
-						//double mz = splitCorrRange(zmin, zmax, spzmin, spzmax, spzmino, spzmaxo);
-						//double mm = max(mx, mz);
-						//double s = 0.01;// mm / 8 + 0.000001;
-						//nb_ligne = mx / s + 0.5, nb_colon = my / 10. + 0.5, nb_depth = mz / s + 0.5;
+						////
+						//int close = 0;
+						//if ((360 - fabs(ymax - ymin)) < 0.000001)
+						//	close = 1;
+						//if (close)
+						//{
+						//	far_pointV.push_back(transferToDefValue3D(xmax, ymin + 180, zmax));
+						//	near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+						//	far_pointVo.push_back(Base::Vector3d(xmax, (ymin + 180)*GRAD, zmax));
+						//	near_pointVo.push_back(Base::Vector3d(xmin, ymin*GRAD, zmin));
+						//	far_pointV.push_back(transferToDefValue3D(xmax, ymin + 360, zmax));
+						//	near_pointV.push_back(transferToDefValue3D(xmin, ymin + 180, zmin));
+						//	far_pointVo.push_back(Base::Vector3d(xmax, (ymin + 360)*GRAD, zmax));
+						//	near_pointVo.push_back(Base::Vector3d(xmin, (ymin + 180)*GRAD, zmin));
+						//}
+						//else
+						//{
+						//	if (fabs(ymax - ymin) > 270.)
+						//	{
+						//		float temp = (ymax - ymin)/2;
+						//		far_pointV.push_back(transferToDefValue3D(xmax, ymin + temp, zmax));
+						//		near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+						//		far_pointVo.push_back(Base::Vector3d(xmax, (ymin + temp)*GRAD, zmax));
+						//		near_pointVo.push_back(Base::Vector3d(xmin, ymin*GRAD, zmin));
+						//		far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+						//		near_pointV.push_back(transferToDefValue3D(xmin, ymin + temp, zmin));
+						//		far_pointVo.push_back(Base::Vector3d(xmax, ymax*GRAD, zmax));
+						//		near_pointVo.push_back(Base::Vector3d(xmin, (ymin + temp)*GRAD, zmin));
+						//	}
+						//	else {
+						//		far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+						//		near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+						//		far_pointVo.push_back(Base::Vector3d(xmax, ymax*GRAD, zmax));
+						//		near_pointVo.push_back(Base::Vector3d(xmin, ymin*GRAD, zmin));
+						//	}							
+						//}
 
-						//for (int i = 0; i < spxmin.size(); i++)
-						//	for (int j = 0; j < spymin.size(); j++)
-						//		for (int k = 0; k < spzmin.size(); k++) {
-						//			far_pointV.push_back(transferToDefValue3D(spxmax[i], spymax[j], spzmax[k]));
-						//			near_pointV.push_back(transferToDefValue3D(spxmin[i], spymin[j], spzmin[k]));
-						//			far_pointVo.push_back(transferToDefValue3DBase(spxmaxo[i], spymaxo[j], spzmaxo[k]));
-						//			near_pointVo.push_back(transferToDefValue3DBase(spxmino[i], spymino[j], spzmino[k]));
-						//		}
-						/////
+						//split corrd
+						std::vector<double> spxmin, spxmax, spymin, spymax, spzmin, spzmax, spxmino, spxmaxo, spymino, spymaxo, spzmino, spzmaxo;
+						double mx = splitCorrRange(xmin, xmax, spxmin, spxmax, spxmino, spxmaxo);
+						double my = splitCorrRangeAngle(ymin, ymax, spymin, spymax, spymino, spymaxo);
+						double mz = splitCorrRange(zmin, zmax, spzmin, spzmax, spzmino, spzmaxo);
+						double mm = max(mx, mz);
+						double s = 0.01;// mm / 8 + 0.000001;
+						nb_ligne = mx / s + 0.5, nb_colon = my / 10. + 0.5, nb_depth = mz / s + 0.5;
+
+						for (int i = 0; i < spxmin.size(); i++)
+							for (int j = 0; j < spymin.size(); j++)
+								for (int k = 0; k < spzmin.size(); k++) {
+									far_pointV.push_back(transferToDefValue3D(spxmax[i], spymax[j], spzmax[k]));
+									near_pointV.push_back(transferToDefValue3D(spxmin[i], spymin[j], spzmin[k]));
+									far_pointVo.push_back(transferToDefValue3DBase(spxmaxo[i], spymaxo[j], spzmaxo[k]));
+									near_pointVo.push_back(transferToDefValue3DBase(spxmino[i], spymino[j], spzmino[k]));
+								}
+						///end split
 						//far_pointV = far_pointVo;
 						//near_pointV = near_pointVo;
 						//double pymax = ymax,
@@ -3171,13 +3193,14 @@ namespace PartChipic {
 						//	ite--;
 						//} while (ite >= 0);
 					}
+					if (nb_ligne > 8) nb_ligne = 8;
+					if (nb_colon > 8) nb_colon = 8;
+					if (nb_depth > 8) nb_depth = 8;
+					if (nb_ligne < 2) nb_ligne = 2;
+					if (nb_colon < 2) nb_colon = 2;
+					if (nb_depth < 2) nb_depth = 2;
 				}
-				if (nb_ligne > 8) nb_ligne = 8;
-				if (nb_colon > 8) nb_colon = 8;
-				if (nb_depth > 8) nb_depth = 8;
-				if (nb_ligne < 2) nb_ligne = 2;
-				if (nb_colon < 2) nb_colon = 2;
-				if (nb_depth < 2) nb_depth = 2;
+				
 				Part::TopoShape* topoShapeV[10] = { 0 };
 				if (far_pointV.size() > 0)
 				{
@@ -3249,18 +3272,18 @@ namespace PartChipic {
 										/*far_pointVo[nn].Parser(&exparser, End, er);
 										near_pointVo[nn].Parser(&exparser, Start, er);
 										tempstr = vfunc.name + "max: " + far_pointVo[nn][0] + " " + far_pointVo[nn][1] + " " + far_pointVo[nn][2] + "\n";
-										Base::Console().Error(tempstr.c_str());										
+										Base::Console().Error(tempstr.c_str());
 										tempstr = vfunc.name + "min: " + near_pointVo[nn][0] + " " + near_pointVo[nn][1] + " " + near_pointVo[nn][2] + "\n";
 										Base::Console().Error(tempstr.c_str());
 										Part::TopoShape* com = getShapeOfComformal(coor,
-											Base::Vector3d(Start[0], Start[1], Start[2]),
-											Vector3d(End[0], End[1], End[2]));*/
-										
+										Base::Vector3d(Start[0], Start[1], Start[2]),
+										Vector3d(End[0], End[1], End[2]));*/
+
 										//if (std::string(coor) == S_COOR_RECTANGULAR)
 										{
 											std::cout << "#max " << nn << ": " << far_pointVo[nn].x << far_pointVo[nn].y << far_pointVo[nn].z << std::endl;
 											std::cout << "#min " << nn << ": " << near_pointVo[nn].x << near_pointVo[nn].y << near_pointVo[nn].z << std::endl;
-											
+
 											Part::TopoShape* com = getShapeOfComformal(coor,
 												near_pointVo[nn],
 												far_pointVo[nn]);
@@ -3421,7 +3444,7 @@ namespace PartChipic {
 					{
 						int k = 0;
 						for (k = 0; k < far_pointV.size(); k++){
-							
+
 							if (topoShapeV[k] != 0) {
 								TopExp_Explorer vertex(topoShapeV[k]->getShape(), TopAbs_VERTEX);
 								if (vertex.More()) {
@@ -3874,22 +3897,22 @@ namespace PartChipic {
 			/*double radius, height, angle = 360;
 			PyObject *pPnt = 0, *pDir = 0;
 			if (!PyArg_ParseTuple(args.ptr(), "dd|O!O!d",
-				&radius, &height,
-				&(Base::VectorPy::Type), &pPnt,
-				&(Base::VectorPy::Type), &pDir,
-				&angle))
-				throw Py::Exception();*/
+			&radius, &height,
+			&(Base::VectorPy::Type), &pPnt,
+			&(Base::VectorPy::Type), &pDir,
+			&angle))
+			throw Py::Exception();*/
 
 			try {
 				gp_Pnt p(ori.x, ori.y, ori.z);
 				gp_Dir d(dir.x, dir.y, dir.z);
 				/*if (pPnt) {
-					Base::Vector3d pnt = static_cast<Base::VectorPy*>(pPnt)->value();
-					p.SetCoord(pnt.x, pnt.y, pnt.z);
+				Base::Vector3d pnt = static_cast<Base::VectorPy*>(pPnt)->value();
+				p.SetCoord(pnt.x, pnt.y, pnt.z);
 				}
 				if (pDir) {
-					Base::Vector3d vec = static_cast<Base::VectorPy*>(pDir)->value();
-					d.SetCoord(vec.x, vec.y, vec.z);
+				Base::Vector3d vec = static_cast<Base::VectorPy*>(pDir)->value();
+				d.SetCoord(vec.x, vec.y, vec.z);
 				}*/
 				BRepPrimAPI_MakeCylinder mkCyl(gp_Ax2(p, d), radius, height, angle);
 				TopoDS_Shape shape = mkCyl.Shape();
@@ -3952,7 +3975,7 @@ namespace PartChipic {
 				{
 					//# tempP2 = tempP2.add(FreeCAD.Vector(0.001*math.cos(tempP2.y), 0.001*math.sin(tempP2.y), 0))				
 					//if (tempP3 == tempP4){
-						resultShape = makeLine(tempP1, tempP3);
+					resultShape = makeLine(tempP1, tempP3);
 					//}
 					//else
 					//	resultShape = getPipeObj(Point1, Point2);
@@ -3962,43 +3985,43 @@ namespace PartChipic {
 					resultShape = getArcObj(Point1, Point2);
 
 				else {
-					////# line1 = Part.makeLine(tempP1, tempP2)
-					//Part::TopoShape* line2 = makeLine(tempP1, tempP4);
-					//Part::TopoShape* shapeCir = getArcObj(Base::Vector3d(Point1.x, Point1.y, Point2.z), Point2);
-					//Part::TopoShape* path = Wire(line2);
-					////resultShape = path.makePipe(shapeCir);
-					//resultShape = new Part::TopoShape(path->makePipe(shapeCir->getShape()));
+					//# line1 = Part.makeLine(tempP1, tempP2)
+					Part::TopoShape* line2 = makeLine(tempP1, tempP4);
+					Part::TopoShape* shapeCir = getArcObj(Base::Vector3d(Point1.x, Point1.y, Point2.z), Point2);
+					Part::TopoShape* path = Wire(line2);
+					//resultShape = path.makePipe(shapeCir);
+					resultShape = new Part::TopoShape(path->makePipe(shapeCir->getShape()));
 
-					double sangle = pointmin.y, eangle = pointmax.y;
-					if (sangle < 0 || eangle < 0) {
-						sangle = 2 * M_PI + sangle;
-						if (sangle > 2 * M_PI)
-							sangle -= sangle;
-						eangle = 2 * M_PI + eangle;
-						if (eangle > 2 * M_PI)
-							eangle -= eangle;
-					}
-					Base::Vector3d dir(0, 0, 1);
-					Base::Vector3d p(0, 0, pointmin.z);
-					//if (pointmin.z < 0)
-					//	dir.z = -1;
-					resultShape = makeCylinder(p, dir, pointmax.x, fabs(pointmax.z - pointmin.z), eangle);
-					if (pointmin.x > TOL) {
-						Part::TopoShape* t2 = makeCylinder(p,dir, pointmin.x, fabs(pointmax.z - pointmin.z), eangle);
-						TopoDS_Shape sh = resultShape->cut(t2->getShape());
-						resultShape->setShape(sh);
-						delete t2;
-					}
-					if (fabs(sangle - 2 * M_PI) < TOL)
-						sangle = 0;
-						
-					if (fabs(sangle - 0) > TOL) {
-						Part::TopoShape* t3 = makeCylinder(p,dir, pointmax.x, fabs(pointmax.z - pointmin.z), sangle);
-						TopoDS_Shape sh = resultShape->cut(t3->getShape());
-						resultShape->setShape(sh);
-						delete t3;
-					}
-					
+					//double sangle = pointmin.y, eangle = pointmax.y;
+					//if (sangle < 0 || eangle < 0) {
+					//	sangle = 2 * M_PI + sangle;
+					//	if (sangle > 2 * M_PI)
+					//		sangle -= sangle;
+					//	eangle = 2 * M_PI + eangle;
+					//	if (eangle > 2 * M_PI)
+					//		eangle -= eangle;
+					//}
+					//Base::Vector3d dir(0, 0, 1);
+					//Base::Vector3d p(0, 0, pointmin.z);
+					////if (pointmin.z < 0)
+					////	dir.z = -1;
+					//resultShape = makeCylinder(p, dir, pointmax.x, fabs(pointmax.z - pointmin.z), eangle);
+					//if (pointmin.x > TOL) {
+					//	Part::TopoShape* t2 = makeCylinder(p,dir, pointmin.x, fabs(pointmax.z - pointmin.z), eangle);
+					//	TopoDS_Shape sh = resultShape->cut(t2->getShape());
+					//	resultShape->setShape(sh);
+					//	delete t2;
+					//}
+					//if (fabs(sangle - 2 * M_PI) < TOL)
+					//	sangle = 0;
+					//	
+					//if (fabs(sangle - 0) > TOL) {
+					//	Part::TopoShape* t3 = makeCylinder(p,dir, pointmax.x, fabs(pointmax.z - pointmin.z), sangle);
+					//	TopoDS_Shape sh = resultShape->cut(t3->getShape());
+					//	resultShape->setShape(sh);
+					//	delete t3;
+					//}
+
 				}
 			}
 			if (resultShape != 0) {
@@ -4088,7 +4111,7 @@ namespace PartChipic {
 					//if (pointmin.z < 0)
 					//	dir.z = -1;
 					resultShape = makeCylinder(p, dir, pointmax.x, fabs(pointmax.z - pointmin.z), eangle);
-					
+
 				}
 			}
 			if (resultShape != 0) {
@@ -4268,7 +4291,7 @@ namespace PartChipic {
 					Base::Vector3d p(0, 0, pointmin.z);
 					//if (pointmin.z < 0)
 					//	dir.z = -1;
-					
+
 
 					if (fabs(sangle - 0) > TOL) {
 						resultShape = makeCylinder(p, dir, pointmax.x, fabs(pointmax.z - pointmin.z), sangle);
@@ -5144,7 +5167,7 @@ namespace PartChipic {
 								str = str + s;
 								str = str + ".stl";
 								//t->write(str.c_str());
-							}							
+							}
 						}
 						if (t == 0) {
 							Mesh::MeshObject* temp = mesh.meshFromSegment(segm);
@@ -5215,9 +5238,9 @@ namespace PartChipic {
 
 				/*Part::TopoShape* shell = new Part::TopoShape();
 				{
-					Points.clear(), Facets.clear();
-					mesh.getFaces(Points, Facets, 0, 0);
-					shell->setFaces(Points, Facets, 0.01);
+				Points.clear(), Facets.clear();
+				mesh.getFaces(Points, Facets, 0, 0);
+				shell->setFaces(Points, Facets, 0.01);
 				}*/
 
 				/*Part::TopoShape* shell = 0;
