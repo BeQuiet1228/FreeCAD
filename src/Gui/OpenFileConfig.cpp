@@ -130,6 +130,6 @@ void FileFormatM2dMod::open(const QStringList& fileList)
 	for (auto iter = fileList.begin(); iter != fileList.end(); iter++)
 	{
 		App::GetApplication().openDocument2dMod(iter->toUtf8());
-
+		Base::Interpreter().runString("FreeCADGui.runCommand('InitWhenOpenFcStd2d')");
 	}
 }

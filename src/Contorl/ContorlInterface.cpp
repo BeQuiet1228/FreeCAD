@@ -13,7 +13,7 @@ ContorlInterface::ContorlInterface()
 
 ContorlInterface::~ContorlInterface()
 {
-	delete contorl;
+ 	delete contorl;
 }
 
 ContorlButtonBar * ContorlInterface::getContorlButtonBar()
