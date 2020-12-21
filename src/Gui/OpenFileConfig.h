@@ -38,6 +38,16 @@ public:
 	}
 	~FileFormatM2DText() = default;
 };
+
+class FileFormatM2dMod:public FileFormat{
+public:
+	FileFormatM2dMod(){
+		this->format = QString::fromLocal8Bit("FCStd_2D");
+	};
+	~FileFormatM2dMod() = default;
+
+	void open(const QStringList& fileList) override;
+};
 /*
 	改变原有的freecad增加新的文件格式框架。
 	单例负责为外部调用提供文件格式与触发函数。

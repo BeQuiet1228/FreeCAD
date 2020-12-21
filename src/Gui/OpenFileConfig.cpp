@@ -24,15 +24,10 @@ OpenFileConfig::~OpenFileConfig()
 */
 void OpenFileConfig::init()
 {
-	{
-		auto format = new FileFormatM3DText;
-		formats.push_back(format);
-	}
+	formats.push_back(new FileFormatM3DText);
+	formats.push_back(new FileFormatM2DText);
+	formats.push_back(new FileFormatM2dMod);
 
-	{
-		auto format = new FileFormatM2DText;
-		formats.push_back(format);
-	}
 }
 
 /**
@@ -128,4 +123,13 @@ void FileFormatM3DText::openOnce(const QString& filePath)
 	edit->setWindowTitle(QString::fromLocal8Bit(docText->getName()));
 	edit->setText(docText->getContent());
 	Gui::FileDialog::setWorkingDirectory(QString(filePath).remove(fileName));
+}
+
+void FileFormatM2dMod::open(const QStringList& fileList)
+{
+	for (auto iter = fileList.begin(); iter != fileList.end(); iter++)
+	{
+		App::GetApplication().openDocument2dMod(iter->toUtf8());
+		Base::Interpreter().runString("FreeCADGui.runCommand('InitWhenOpenFcStd2d')");
+	}
 }
