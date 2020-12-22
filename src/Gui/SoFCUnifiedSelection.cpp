@@ -91,6 +91,8 @@
 #include "ViewProviderDocumentObject.h"
 #include "ViewProviderGeometryObject.h"
 
+#include "Command.h"
+
 using namespace Gui;
 
 SoFullPath * Gui::SoFCUnifiedSelection::currenthighlight = NULL;
@@ -482,6 +484,7 @@ SoFCUnifiedSelection::handleEvent(SoHandleEventAction * action)
                 std::string documentName = vpd->getObject()->getDocument()->getName();
                 std::string objectName = vpd->getObject()->getNameInDocument();
                 std::string subElementName = vpd->getElement(pp ? pp->getDetail() : 0);
+#ifdef LZG2D
                 if (event->wasCtrlDown()) {
                     if (Gui::Selection().isSelected(documentName.c_str()
                                          ,objectName.c_str()
@@ -513,6 +516,56 @@ SoFCUnifiedSelection::handleEvent(SoHandleEventAction * action)
                         }
                     }
                 }
+# endif
+				auto tempDoc = App::GetApplication().getActiveDocument();
+				auto res = tempDoc->classID;
+				if (event->wasCtrlDown() && static_cast<bool>(res)){
+					// 此处代码与else代码一致，只是额外调用了显示窗口的命令
+					if (!Gui::Selection().isSelected(documentName.c_str()
+						, objectName.c_str()
+						, subElementName.c_str())) {
+						Gui::Selection().clearSelection(documentName.c_str());
+						bool ok = Gui::Selection().addSelection(documentName.c_str()
+							, objectName.c_str()
+							, subElementName.c_str()
+							, pp->getPoint()[0]
+							, pp->getPoint()[1]
+							, pp->getPoint()[2]);
+						if (ok)
+							type = SoSelectionElementAction::Append;
+					}
+					else {
+						Gui::Selection().clearSelection(documentName.c_str());
+						bool ok = Gui::Selection().addSelection(documentName.c_str()
+							, objectName.c_str()
+							, 0
+							, pp->getPoint()[0]
+							, pp->getPoint()[1]
+							, pp->getPoint()[2]);
+						if (ok)
+							type = SoSelectionElementAction::All;
+					}
+
+					if (mymode == OFF) {
+						snprintf(buf, 512, "Selected: %s.%s.%s (%g, %g, %g)"
+							, documentName.c_str()
+							, objectName.c_str()
+							, subElementName.c_str()
+							, pp->getPoint()[0]
+							, pp->getPoint()[1]
+							, pp->getPoint()[2]);
+
+						getMainWindow()->showMessage(QString::fromLatin1(buf));
+					}
+					// 打开窗口
+					try{
+						// 如果命令不存在，该调用会抛出异常
+						Gui::Command::runCommand(Gui::Command::Gui, "Gui.runCommand(\"ReShowDialog\")");
+					}
+					catch (...){
+						;
+					}
+				}
                 else { // Ctrl
                     if (!Gui::Selection().isSelected(documentName.c_str()
                                          ,objectName.c_str()
