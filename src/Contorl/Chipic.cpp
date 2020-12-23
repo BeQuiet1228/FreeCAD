@@ -371,6 +371,8 @@ bool Chipic::disposeStructMapMessage(const Message& msg)
 		return false;
 	if (msg.wParam != 100 || msg.lParam != 0)
 		return false;
+#ifndef _CONTORL_EXE_
+
 #ifndef SERVICE
 	if (!getIsAuto())
 	{
@@ -386,6 +388,9 @@ bool Chipic::disposeStructMapMessage(const Message& msg)
 	//发送解析完成信号
 	emit analysisFinished();
 #endif
+
+#endif
+
 
 	return false;
 }
@@ -545,6 +550,8 @@ void Chipic::disposJsonMessage(const std::string& json)
 	{
 		emit stateUpdate(this->threadID);
 		setIsUpdate(true);
+	//	if (msg.wParam == 3 || msg.wParam == 8)
+	//		std::cerr << json << std::endl;
 		return;
 	}
 	//处理迭代步数消息
@@ -674,7 +681,12 @@ void Chipic::timerOut()
 		定时发送一个消息出去，然后由消息发送是否成功判断chipic程序是否还在正常运行。
 		该消息没有实际意义。
 	*/
+	/* 2020.12.22 更新
+		加上宏判断，避免在生成exe做调试的时候输出过多的调试信息，影响判断
+	*/
+#ifndef _CONTORL_EXE_
 	this->sendMessage(886, 886, 886, this->threadID);
+#endif
 }
 
 #ifndef MY_QTCMY_DEBUG

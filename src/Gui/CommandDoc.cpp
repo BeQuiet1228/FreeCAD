@@ -1635,8 +1635,7 @@ bool StdCmdRunM3d::isActive(void)
 	auto contorl = ContorlInterface::GetInstance();
 	
 	static bool actionState = false;
-	bool tempState = contorl->hasChipicRuning()
-		&& (contorl->getChipicManager()->getRunType() == ChipicManager::MANUAL);
+	bool tempState = contorl->hasManualChipicRuning();
 	if (tempState != actionState)
 	{
 		actionState = tempState;

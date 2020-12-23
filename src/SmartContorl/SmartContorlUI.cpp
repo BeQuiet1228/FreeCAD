@@ -23,7 +23,7 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	auto contorlInterface = ContorlInterface::GetInstance();
 
 #ifdef SMART_EXE
-	std::string m3dPath = "E:/lingshiwenjianjia/test/MILO_C_2.m3d";
+	std::string m3dPath = "E:/lingshiwenjianjia/test/MILO_P.m3d";
 	smartContorl->setM3dPath(m3dPath);
 #else
 	smartContorl->setM3dPath(contorlInterface->getDocumentPath());

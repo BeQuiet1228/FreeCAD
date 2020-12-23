@@ -439,21 +439,33 @@ App::Document* App::Application::newDocument(Document* doc, const char * Name /*
 */
 App::Document* App::Application::newDocumentM3dText(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
 {
+	//切换到对应的工作台
+	Base::InterpreterSingleton python;
+	python.runString("Gui.activateWorkbench(\"StartWorkbench\")");
 	return newDocument(new DocumentM3dText(), Name, UserName);
 }
 
 App::Document* App::Application::newDocumentM2dText(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
 {
+	//切换到对应的工作台
+	Base::InterpreterSingleton python;
+	python.runString("Gui.activateWorkbench(\"StartWorkbench\")");
 	return newDocument(new DocumentM2dText, Name, UserName);
 }
 
 App::Document* App::Application::newDocumentM3dMode(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
 {
+	//切换到对应的工作台
+	Base::InterpreterSingleton python;
+	python.runString("Gui.activateWorkbench(\"Modeling3DWorkbench\")");
 	return newDocument(new DocumentM3dMod(), Name, UserName);
 }
 
 App::Document* App::Application::newDocumentM2dMod(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
 {
+	//切换到对应的工作台
+	Base::InterpreterSingleton python;
+	python.runString("Gui.activateWorkbench(\"Modeling2DWorkbench\")");
 	return newDocument(new DocumentM2dMod(), Name, UserName);
 }
 

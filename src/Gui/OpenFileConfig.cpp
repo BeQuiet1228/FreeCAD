@@ -93,21 +93,19 @@ FileFormatM3DText::FileFormatM3DText()
 
 void FileFormatM3DText::open(const QStringList& fileList)
 {
-	std::cerr << "this is open m3d text! path :" << std::endl;
-
-
 	for (auto i = fileList.begin(); i != fileList.end(); i++)
 	{
-		openOnce(*i);
+		QDir dir(*i);
+		QString fileName = dir.dirName();
+		App::Document* doc = App::GetApplication().newDocumentM3dText(fileName.toUtf8(), "");
+		openOnce(*i,doc);
+		Gui::FileDialog::setWorkingDirectory(QString(*i).remove(fileName));
 	}
 	
 }
 
-void FileFormatM3DText::openOnce(const QString& filePath)
+void FileFormatM3DText::openOnce(const QString& filePath, App::Document* doc)
 {
-	QDir dir(filePath);
-	QString fileName = dir.dirName();
-	App::Document* doc = App::GetApplication().newDocumentM3dText(fileName.toUtf8(), "");
 	doc->FileName.setValue(filePath.toUtf8());
 	DocumentM3dText *docText = static_cast<DocumentM3dText*>(doc);
 
@@ -122,7 +120,6 @@ void FileFormatM3DText::openOnce(const QString& filePath)
 		return;
 	edit->setWindowTitle(QString::fromLocal8Bit(docText->getName()));
 	edit->setText(docText->getContent());
-	Gui::FileDialog::setWorkingDirectory(QString(filePath).remove(fileName));
 }
 
 void FileFormatM2dMod::open(const QStringList& fileList)
@@ -131,5 +128,17 @@ void FileFormatM2dMod::open(const QStringList& fileList)
 	{
 		App::GetApplication().openDocument2dMod(iter->toUtf8());
 		Base::Interpreter().runString("FreeCADGui.runCommand('InitWhenOpenFcStd2d')");
+	}
+}
+
+void FileFormatM2DText::open(const QStringList& fileList)
+{
+	for (auto i = fileList.begin(); i != fileList.end(); i++)
+	{
+		QDir dir(*i);
+		QString fileName = dir.dirName();
+		App::Document* doc = App::GetApplication().newDocumentM2dText(fileName.toUtf8(), "");
+		openOnce(*i, doc);
+		Gui::FileDialog::setWorkingDirectory(QString(*i).remove(fileName));
 	}
 }

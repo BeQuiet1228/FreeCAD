@@ -113,6 +113,10 @@ void RunChipic3dListener::getMainThreadId(DWORD &_threadId) {
 				}
 			}
 		}
+		//如果线程已即将被关闭，那么不在寻找线程id
+		//解决长时间没有找到chipic应用程序导致界面,导致的this内存释放不掉的bug
+		if (!getWorkThreadFlag())
+			return;
 	}
 }
 
@@ -332,7 +336,7 @@ void RunChipic3dListener::run()
 bool RunChipic3dListener::sendMessage(UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	auto b = (PostThreadMessage(this->mainThreadID, Msg + WM_USER, wParam, lParam));
-#ifdef MY_DEBUG
+#ifdef  MY_DEBUG
 	if (!b)
 	{
         std::cerr << "message send erro,thread ID:" << this->mainThreadID
