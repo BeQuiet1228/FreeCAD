@@ -31,8 +31,11 @@ Contorl::Contorl(QWidget *parent)
 
 	//LoadingDialog *d = new LoadingDialog;
 	//d->show();
+#ifdef _CONTORL_EXE_
+	this->m3dPath = "C:/Users/Administrator/Desktop/m2d/beam(1).m3d";
+#endif // _CONTORL_EXE_
 
-	//this->m3dPath = "E:/lingshiwenjianjia/MILO_D/MILO_D.m3d";
+	
 }
 
 Contorl::~Contorl()
@@ -43,13 +46,16 @@ Contorl::~Contorl()
 
 void Contorl::getM3dPathForRunPython()
 {
-#ifndef SERVICE
+#ifndef _CONTORL_EXE_ //判断是否以exe的形式生成模块
+
+#ifndef SERVICE //判断是否是以服务器模式生成模块
 	Base::InterpreterSingleton python;
 	python.runString("FreeCAD.setM3dPath()");
 	python.runString("import Visualization.VisualizationCommand.VisualizationTree as VT");
-	python.runStringArg("VT.showPlotTree(\"%s\")",m3dPath.c_str());
+	python.runStringArg("VT.showPlotTree(\"%s\")", m3dPath.c_str());
 #endif
 
+#endif
 }
 
 /**

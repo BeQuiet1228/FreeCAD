@@ -65,6 +65,7 @@
 #include "Selection.h"
 #include "WaitCursor.h"
 #include "Thumbnail.h"
+#include "Contorl/ContorlInterface.h"
 
 using namespace Gui;
 
@@ -1157,7 +1158,7 @@ void Document::detachView(Gui::BaseView* pcView, bool bPassiv)
         d->passiveViews.remove(pcView);
     }
     else {
-        if (find(d->baseViews.begin(),d->baseViews.end(),pcView)
+       if (find(d->baseViews.begin(),d->baseViews.end(),pcView)
             != d->baseViews.end())
         d->baseViews.remove(pcView);
 
@@ -1245,6 +1246,23 @@ bool Document::canClose ()
     //        return false;
     //    }
     //}
+	
+	//关闭工程之前，如果有chipic正在运行，那么询问用户是否要结束运行。
+	auto contorl = ContorlInterface::GetInstance();
+	if (contorl->hasManualChipicRuning())
+	{
+		QMessageBox msgBox;
+		msgBox.setText(QObject::tr("CHIPIC"));
+		msgBox.setInformativeText(QObject::tr("你确定要关闭工程并关闭仿真程序吗？QAQ"));
+		msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+		msgBox.setDefaultButton(QMessageBox::Cancel);
+		int ret = msgBox.exec();
+		if (ret == QMessageBox::Cancel)
+		{
+			return false;
+		}
+		contorl->buttonClicked(0);
+	}
 
     bool ok = true;
     if (isModified()) {

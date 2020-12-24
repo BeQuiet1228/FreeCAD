@@ -47,6 +47,8 @@ public:
 	void closeAllChipic();
 	//判断是否有chipic正在运行
 	bool hasChipicRuning();
+	//判断是否有已标准模式运行的chipic
+	bool hasManualChipicRuning();
 	//按钮点击时调用函数
 	void buttonClicked(const int& buttonID);
 	//获取控制模块的连接方式

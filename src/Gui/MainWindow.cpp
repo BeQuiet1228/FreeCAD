@@ -1047,7 +1047,7 @@ MDIView* MainWindow::activeWindow(void) const
 
 void MainWindow::closeEvent (QCloseEvent * e)
 {
-	if (ContorlInterface::GetInstance()->hasChipicRuning())
+	if (ContorlInterface::GetInstance()->hasManualChipicRuning())
 	{
 		QMessageBox msgBox;
 		msgBox.setText(QString::fromLocal8Bit("CHIPIC仿真程序正在运行。"));

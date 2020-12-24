@@ -4,6 +4,9 @@
 #include <vector>
 #include <QStringList>
 #include <QString>
+namespace App{
+	class Document;
+}
 class FileFormat{
 public:
 	FileFormat(){}
@@ -27,8 +30,8 @@ public:
 
 	void open(const QStringList& fileList) override;
 
-private:
-	void openOnce(const QString& filePath);
+protected:
+	void openOnce(const QString& filePath,App::Document* doc);
 };
 class FileFormatM2DText :public FileFormatM3DText
 {
@@ -37,6 +40,7 @@ public:
 		this->format = QString::fromLocal8Bit("m2d");
 	}
 	~FileFormatM2DText() = default;
+	void open(const QStringList& fileList) override;
 };
 
 class FileFormatM2dMod:public FileFormat{

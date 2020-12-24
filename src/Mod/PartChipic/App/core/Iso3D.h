@@ -88,16 +88,15 @@ public :
    vcg::Point3i IsoSurfaceTriangleListe[100000];// Up to 100.000 Triangles
    double XLocal[100], YLocal[100], ZLocal[100]; //Up to 200x200x200 voxels
    Voxel3D GridVoxel[100][100][100];
-
+   int isSunk;
    vcg::Point3d NormOriginal[100000];// Up to 100.000 Triangles
-
+   int type;//1:volume 0:surface
    int NbPointIsoMap; // Init to 0 ; Up to 10.000
    int NbPointIsoMapCND; // Init to 0 ; Up to 10.000
    int NbTriangleIsoSurface;
    int NbTriangleIsoSurfaceCND;
    int i,j,k,l;
    double yreso;
-   int type;//Ãז0Ìו1
    PM3::SYSTEM gsysType;
    PM3::ExpParser //ImplicitFunctionParser,
                 *pValParser;
@@ -148,8 +147,8 @@ unsigned int NbPolygn;
 unsigned int NbPolygnNbVertex[2 * 50];
 int CurrentStep; /// To hold the current step in the Morph process
 public :
-   Iso3D();
-   ~Iso3D();
+	Iso3D();
+	~Iso3D();
    void VoxelEvaluation ();
    void PointEdgeComputation();
    void DrawIsoSurface();

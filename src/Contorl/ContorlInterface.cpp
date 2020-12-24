@@ -92,6 +92,15 @@ bool ContorlInterface::hasChipicRuning()
 	return false;
 }
 
+/**
+* @brief ContorlInterface::hasManualChipicRuning 这个函数主要用与判断是否是有已正常模式启动的chipic在运行，与自动模式区分开来
+* @return bool
+*/
+bool ContorlInterface::hasManualChipicRuning()
+{
+	return hasChipicRuning() && (getChipicManager()->getRunType() == ChipicManager::MANUAL);
+}
+
 void ContorlInterface::buttonClicked(const int& buttonID)
 {
 	contorl->buttonClinked(buttonID);
