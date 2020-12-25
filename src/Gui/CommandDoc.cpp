@@ -1734,6 +1734,8 @@ StdCmdParalleRun::StdCmdParalleRun()
 void StdCmdParalleRun::activated(int iMsg)
 {
 	Q_UNUSED(iMsg);
+	//调用保存
+	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
 	auto contorl = ContorlInterface::GetInstance();
 	contorl->buttonClicked(1);
 }

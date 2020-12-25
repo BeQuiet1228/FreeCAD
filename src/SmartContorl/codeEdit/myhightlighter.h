@@ -25,6 +25,8 @@ private:
     void highlightCaseWord(const QRegExp &rex,const QTextCharFormat &format,const QString &text);
     void highlightFunctio(const QString &function,const QTextCharFormat &format,const QString &text);
     void highlightFunctio(const QString &function,const QString &text); //¸ßÁÁº¯Êý
+	//¸ßÁÁz×¢ÊÍ
+	void higlightAnnotation(const QString& text);
 };
 
 #endif // MYHIGHTLIGHTER_H

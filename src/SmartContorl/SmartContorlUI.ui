@@ -508,7 +508,6 @@ pitF = 0;
 valueCount = 0;
 --获取F得定义
 function getF(minif,maxf,avf)
-	cppPrint(&quot;minif=&quot;..minif..&quot;,maxf=&quot;..maxf..&quot;,avf=&quot;..avf);
 	if(fmod == 0)
 	then
 		return maxf;
