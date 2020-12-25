@@ -66,6 +66,7 @@ void myHightLighter::highlightBlock(const QString &text)
     {
         highlightCaseWord(rule.at(i).pattern,rule.at(i).format,text);
     }
+	higlightAnnotation(text);
 }
 /*
 *高亮一个关键字
@@ -138,4 +139,51 @@ void myHightLighter::highlightFunctio(const QString &function, const QString &te
     myClassFormat.setFontWeight(QFont::Bold);
     myClassFormat.setForeground(Qt::darkRed);
     highlightFunctio(function,myClassFormat,text);
+}
+
+
+/**
+* @brief myHightLighter::higlightAnnotation 对z开头的文本进行注释
+* @param const QString & text
+* @return void
+*/
+void myHightLighter::higlightAnnotation(const QString& text)
+{
+	/*
+		--这个注释以z开始，z的两边必须时单词的边界，才可以，然后以分号结尾
+		--可以跨行，如果在注释所在的一行没有找到分号，那么注释的效果将延续到下一行
+	*/
+
+	//生成注释的正则 --设置为静态时为了节省每次初始化正则表达式的时间（这个时间貌似挺长的）
+	static QRegExp rex("\\b[zZ]\\b");
+	static QRegExp rexf(";");
+	//设置高亮色
+	QTextCharFormat myClassFormat;
+	myClassFormat.setFontWeight(QFont::Bold);
+	myClassFormat.setForeground(Qt::darkGreen);
+
+	int pos = 0;
+	//在这里判断上一行的状态来确定是否直接在该行的开始进行注释高亮
+	if (this->previousBlockState() != 1)
+		pos = rex.indexIn(text, pos);
+	while (pos != -1) {
+		int posf = 0;
+		int len = 0;
+		//查找分号
+		if ((posf = rexf.indexIn(text, pos)) != -1)
+		{
+			len = posf - pos + 1;
+			//设置当前行是否有找到注释的结尾
+			setCurrentBlockState(0);
+		}else{
+			len = text.length() - pos;
+			//设置当前行是否有找到注释的结尾
+			setCurrentBlockState(1);
+		}
+
+		setFormat(pos, len, myClassFormat);
+		pos += len;
+		pos = rex.indexIn(text, pos);
+	}
+
 }
