@@ -606,9 +606,9 @@ ToolBarItem* StdWorkbench::setupToolBars() const
 
     // 将工作台组合框移动到左上角 by pingyue
     // Workbench switcher
-    ToolBarItem* wb = new ToolBarItem(root);
-    wb->setCommand("Workbench");
-    *wb /*<< "Std_Workbench"*/ << "Modeling 2D" << "Modeling 3D" << "Post Processing";
+   // ToolBarItem* wb = new ToolBarItem(root);
+   // wb->setCommand("Workbench");
+   // *wb /*<< "Std_Workbench"*/ << "Modeling 2D" << "Modeling 3D" << "Post Processing";
 
     // File
     ToolBarItem* file = new ToolBarItem( root );

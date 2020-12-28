@@ -2,6 +2,7 @@
 #include <memory>
 #include <QString>
 #include <QStringList>
+#include <QTextCodec>
 Hdf5IO::Hdf5IO(std::string fileName)
 {
 	setFilePath(fileName);
@@ -19,12 +20,16 @@ Hdf5IO::~Hdf5IO()
 }
 
 /**
-* @brief Hdf5IO::setFilePath 设置h5文件路径
+* @brief Hdf5IO::setFilePath 设置h5文件路径 路径中如果有中文 必须是utf8格式的 
 * @param const std::string & path
 * @return void
 */
 void Hdf5IO::setFilePath(const std::string& path)
 {
+	auto gbk = QTextCodec::codecForName("gb2312");
+
+	QString temp = QString::fromUtf8(path.c_str());
+	std::string newPath = gbk->fromUnicode(temp).data();
 	if (Hdf5File != nullptr)
 	{
 		Hdf5File->close();
@@ -32,7 +37,7 @@ void Hdf5IO::setFilePath(const std::string& path)
 		Hdf5File = nullptr;
 		hdf5DataList.clear();
 	}
-	Hdf5File = new H5File(path, H5F_ACC_RDWR);
+	Hdf5File = new H5File(newPath, H5F_ACC_RDWR);
 }
 
 /*

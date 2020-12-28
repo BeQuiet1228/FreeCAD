@@ -22,6 +22,13 @@ MessageSender::~MessageSender()
 */
 void MessageSender::sendJsonMessage(const std::string& json)
 {
+	if (emitter == nullptr)
+	{
+#ifdef MY_LOG
+		std::cerr << "MessageSender::sendJsonMessage emitter is null,send msg is failed!" << std::endl;
+#endif // MY_LOG
+		return;
+	}
 	emitter->sendMessage(json);
 }
 

@@ -1293,12 +1293,16 @@ void StdCmdDelete::activated(int iMsg)
                 }
             }
         }
-        doCommand(Doc,"App.getDocument(\"%s\").recompute()", (*it)->getName());
-		
-		doCommand(Gui::Command::Doc, "DocumentTools.updateBoolean()");
+		if (getDocument()->classID == 2){
+			doCommand(Doc, "App.getDocument(\"%s\").recompute()", (*it)->getName());
+			doCommand(Gui::Command::Doc, "DocumentTools.updateBoolean()");
+			// 防止删除后粘贴
+			Gui::Application::Instance->commandManager().runCommandByName("ClearClipboardCommand");
+		}
+		if (getDocument()->classID == 3){
+			doCommand(Doc,"CreateM2D");
+		}
 
-        // 防止删除后粘贴
-        Gui::Application::Instance->commandManager().runCommandByName("ClearClipboardCommand");
     }
 }
 
@@ -1615,7 +1619,9 @@ void StdCmdRunM3d::activated(int iMsg)
 		auto mw = MainWindow::getInstance();
 		mw->inintContorlUI();
 	});
-	
+	//调用保存
+	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
+
 	auto contorl = ContorlInterface::GetInstance();
 	if (!runState)
 	{
@@ -1629,7 +1635,7 @@ bool StdCmdRunM3d::isActive(void)
 	auto contorl = ContorlInterface::GetInstance();
 	
 	static bool actionState = false;
-	bool tempState = contorl->hasChipicRuning();
+	bool tempState = contorl->hasManualChipicRuning();
 	if (tempState != actionState)
 	{
 		actionState = tempState;
@@ -1728,6 +1734,8 @@ StdCmdParalleRun::StdCmdParalleRun()
 void StdCmdParalleRun::activated(int iMsg)
 {
 	Q_UNUSED(iMsg);
+	//调用保存
+	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
 	auto contorl = ContorlInterface::GetInstance();
 	contorl->buttonClicked(1);
 }

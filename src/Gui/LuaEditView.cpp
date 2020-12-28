@@ -121,6 +121,8 @@ bool LuaEditView::saveAs()
 
 	QString fn = Gui::FileDialog::getSaveFileName(Gui::MainWindow::getInstance(), QObject::tr("Save  Document"),
 		QString(), QString::fromLatin1("(*.%1)").arg(QString::fromStdString(format)));
+	if (fn.isEmpty())
+		return false;
 	Base::FileInfo fi(fn.toStdString());
 	doc->FileName.setValue(fn.toUtf8());
 	doc->Label.setValue(fi.fileNamePure());

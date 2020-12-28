@@ -711,7 +711,7 @@ void Application::slotNewDocument(const App::Document& Doc)
     signalNewDocument(*pDoc);
 
 	//判断是否为文本编辑器工程，如果是那么不显示3D视窗
-	if (Doc.classID == 1)
+	if (Doc.classID == 1 || Doc.classID == 4)
 	{
 		LuaEditView *edit = new LuaEditView(pDoc);
 		auto mainWindow = Gui::MainWindow::getInstance();

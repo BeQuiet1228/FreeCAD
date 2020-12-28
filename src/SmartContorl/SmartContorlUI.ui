@@ -502,15 +502,12 @@
       <string>require &quot;math&quot;
 --声明一个参数容器
 variates = {};
---参数个数
 variateCount = 0;
 pgtF = 0;
 pitF = 0;
---参数的值个数
 valueCount = 0;
 --获取F得定义
 function getF(minif,maxf,avf)
-	cppPrint(&quot;mininf=&quot;..minif..&quot;,maxf=&quot;..maxf..&quot;,avf=&quot;..avf);
 	if(fmod == 0)
 	then
 		return maxf;
@@ -641,8 +638,8 @@ function resultDataFilter()
 	end
 	local valueSize = getDataSetVlaueSize();
 	local i = 0;
-	local max = -9999999;
-	local mini = 9999999;
+	local max = getValue(0);
+	local mini = getValue(0);
 	local add = 0;
 	local addCount = 0;
 	while(i &lt; valueSize)
@@ -712,16 +709,17 @@ function resultDataFilter()
 end
 
 function resultExpcet()
- cppPrint(&quot;call result expcet&quot;..optimizeMaxCount);
- --如果超过最大优化次数 则也停止优化
- if(getHistorySize() &gt; optimizeMaxCount)
+ cppPrint(&quot;call result expcet&quot;);
+  --如果超过最大优化次数 则也停止优化
+ if(getHistorySize() &gt;= optimizeMaxCount)
  then
-	return true;
+    return true;
  end
+
  --判断目标模式
 if(excpectMod == 0)
 then
-	if(math.abs(pgtF - excpectF)&lt; (accuracy * pgtF))
+	if(math.abs(pgtF - excpectF) &lt; (accuracy * pgtF))
  	then
 	return true;
 	end
@@ -752,8 +750,19 @@ function optimize()
         local pgt = tempVariate.pgt;
         local mini = tempVariate.mini;
 		local max = tempVariate.max;
+		vmax=(max-mini)*0.15;
+		vmin = -vmax;
         temp = omiga*vit + c1*rand()*(pit - value) + c2*rand()*(pgt - value);
-		tempVariate.vit[index] = temp;
+		while(temp &lt; vmin  or temp &gt; vmax )
+		do 
+		  if (temp &lt; vmin)
+          then 
+              temp = vmin  + math.abs(temp  - vmin )	
+          else
+			  temp = vmax  - math.abs(vmax  - temp);
+			end		
+        end		
+ 		tempVariate.vit[index] = temp;
         value = value + temp;
 		while(value &lt; mini or value &gt; max)
 		do

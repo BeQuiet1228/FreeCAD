@@ -64,6 +64,9 @@ public:
 	void setRunType(const RunType& runType){
 		this->runType = runType;
 	}
+	RunType getRunType(){
+		return this->runType;
+	}
 	//获取一个chipic的m3d路径
 	QString getM3dpathForThreadID(unsigned long threadID);
 private:

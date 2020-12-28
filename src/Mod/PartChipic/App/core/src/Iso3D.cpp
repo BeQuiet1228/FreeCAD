@@ -74,6 +74,10 @@ using std::vector;
 using std::list;
 #define VSIZE 18
 
+#ifndef DISTANCE_RESOL_MAX
+	#define DISTANCE_RESOL_MAX 8
+	#define DISTANCE_RESOL_MIN 2
+#endif
 int triTable[256][16] = {
 
 	{ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
@@ -1108,7 +1112,7 @@ vals[2] = out[2];
 }*/
 ///+++++++++++++++++++++++++++++++++++++++++
 void Iso3D::VoxelEvaluation()
-{	
+{
 	/// this is for the morph effect...
 	//	if (morph_param >= 0.0)  vals[3] = morph_param;
 	//	else  vals[3] = -morph_param;
@@ -1367,9 +1371,26 @@ void Iso3D::VoxelEvaluation()
 	std::string json;
 	if (gsysType != PM3::SYSCARTESIAN)
 	{
+		double ss = 0.1 * M_PI / 180.;
 		int offset = 1, offset2 = 2, xoffset = 0;
-		double slocal[3] = { XLocal[cutIndex[0]], YLocal[cutIndex[2]] - (1. * M_PI / 180.), ZLocal[cutIndex[4]] };//
-		double elocal[3] = { XLocal[cutIndex[1]], YLocal[cutIndex[3]] + (1. * M_PI / 180.), ZLocal[cutIndex[5]] };//
+		double slocal[3] = { XLocal[cutIndex[0]], YLocal[cutIndex[2]], ZLocal[cutIndex[4]] };// - (0.00001 * M_PI / 180.)
+		double elocal[3] = { XLocal[cutIndex[1]], YLocal[cutIndex[3]], ZLocal[cutIndex[5]] };// + (0.00001 * M_PI / 180.)
+		{
+			double vals[] = { XLocal[cutIndex[1]], YLocal[cutIndex[2]] - (ss), ZLocal[cutIndex[4]] };
+			double temp = pValParser->Eval(vals);
+			if (temp > 0)
+				slocal[1] += (ss);
+			else
+				slocal[1] -= (ss);
+		}
+		{
+			double vals[] = { XLocal[cutIndex[1]], YLocal[cutIndex[3]] + (ss), ZLocal[cutIndex[5]] };
+			double temp = pValParser->Eval(vals);
+			if (temp > 0)
+				elocal[1] -= (ss);
+			else
+				elocal[1] += (ss);
+		}
 		if (slocal[0] > Start[0]) Start[0] = slocal[0];
 		if (slocal[1] > Start[1]) Start[1] = slocal[1];
 		if (slocal[2] > Start[2]) Start[2] = slocal[2];
@@ -1400,7 +1421,7 @@ void Iso3D::VoxelEvaluation()
 			if (Step[0] > slocal[0]) {
 				//nb_ligne -= xoffset;
 				xoffset = 0;
-				
+
 				Step[0] = (elocal[0] - slocal[0]) / (nb_ligne - offset2 - xoffset);
 			}
 		}
@@ -1422,7 +1443,7 @@ void Iso3D::VoxelEvaluation()
 		json = "if(r=%2%,1,if(r=%3%,1,if(phi=%4%,1,if(phi=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))";
 	}
 	else
-	{
+	{		
 		int offset = 1, offset2 = 2, xoffset = 1;
 		double slocal[3] = { XLocal[cutIndex[0]], YLocal[cutIndex[2]], ZLocal[cutIndex[4]] };
 		double elocal[3] = { XLocal[cutIndex[1]], YLocal[cutIndex[3]], ZLocal[cutIndex[5]] };
@@ -1441,12 +1462,12 @@ void Iso3D::VoxelEvaluation()
 		nb_ligne = mx / s + 0.5, nb_colon = my / s + 0.5, nb_depth = mz / s + 0.5;
 		if (gsysType != PM3::SYSCARTESIAN)
 			nb_colon = my / (10. * M_PI / 180.) + 0.5;
-		if (nb_ligne > 8) nb_ligne = 8;
-		if (nb_colon > 8) nb_colon = 8;
-		if (nb_depth > 8) nb_depth = 8;
-		if (nb_ligne < 2) nb_ligne = 2;
-		if (nb_colon < 2) nb_colon = 2;
-		if (nb_depth < 2) nb_depth = 2;
+		if (nb_ligne > DISTANCE_RESOL_MAX) nb_ligne = DISTANCE_RESOL_MAX;
+		if (nb_colon > DISTANCE_RESOL_MAX) nb_colon = DISTANCE_RESOL_MAX;
+		if (nb_depth > DISTANCE_RESOL_MAX) nb_depth = DISTANCE_RESOL_MAX;
+		if (nb_ligne < DISTANCE_RESOL_MIN) nb_ligne = DISTANCE_RESOL_MIN;
+		if (nb_colon < DISTANCE_RESOL_MIN) nb_colon = DISTANCE_RESOL_MIN;
+		if (nb_depth < DISTANCE_RESOL_MIN) nb_depth = DISTANCE_RESOL_MIN;
 		nb_ligne += (offset + offset2);
 		nb_colon += (offset + offset2);
 		nb_depth += (offset + offset2);
@@ -1530,21 +1551,21 @@ void Iso3D::VoxelEvaluation()
 				}
 			}
 		}
-			for (i = nb_ligne - 1; i == nb_ligne - 1; i++) {
+		for (i = nb_ligne - 1; i == nb_ligne - 1; i++) {
 
-				for (j = 0; j < nb_colon; j++) {
+			for (j = 0; j < nb_colon; j++) {
 
-					for (k = 0; k < nb_depth; k++) {
-						if (GridVoxel[i][j][k].Value < 0)
-						{
-							//GridVoxel[i][j][k].Value = -GridVoxel[i-1][j][k].Value;//pValParser->Eval(vals);
-							//GridVoxel[i-1][j][k].Value = 0;
-							GridVoxel[i][j][k].Value = v;
-						}
+				for (k = 0; k < nb_depth; k++) {
+					if (GridVoxel[i][j][k].Value < 0)
+					{
+						//GridVoxel[i][j][k].Value = -GridVoxel[i-1][j][k].Value;//pValParser->Eval(vals);
+						//GridVoxel[i-1][j][k].Value = 0;
+						GridVoxel[i][j][k].Value = v;
 					}
 				}
 			}
-		
+		}
+
 		j = 0;
 		for (i = 0; i < nb_ligne; i++) {
 
