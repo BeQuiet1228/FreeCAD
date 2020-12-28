@@ -1300,7 +1300,8 @@ void StdCmdDelete::activated(int iMsg)
 			Gui::Application::Instance->commandManager().runCommandByName("ClearClipboardCommand");
 		}
 		if (getDocument()->classID == 3){
-			doCommand(Doc,"CreateM2D");
+			Base::InterpreterSingleton python;
+			python.runString("FreeCADGui.runCommand('CreateM2D')");
 		}
 
     }
