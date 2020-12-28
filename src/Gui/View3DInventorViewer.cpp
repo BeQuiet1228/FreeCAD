@@ -2779,6 +2779,13 @@ void View3DInventorViewer::setEditing(SbBool edit)
     this->editCursor = QCursor();
 }
 
+SbBool View3DInventorViewer::isRotate() 
+{ 
+	if (guiDocument) 
+		return guiDocument->classID != 3;
+	return true; 
+}
+
 void View3DInventorViewer::setComponentCursor(const QCursor& cursor)
 {
     this->getWidget()->setCursor(cursor);

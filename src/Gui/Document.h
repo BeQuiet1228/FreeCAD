@@ -92,6 +92,7 @@ public:
     ~Document();
 public:
 	std::map<int, BooleanObjects > booleanObjectMap;
+	int classID;//ZD
 protected:
     /** @name I/O of the document */
     //@{

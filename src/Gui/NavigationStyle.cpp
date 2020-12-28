@@ -1495,34 +1495,36 @@ SbBool NavigationStyle::isPopupMenuEnabled(void) const
 
 void NavigationStyle::openPopupMenu(const SbVec2s& position)
 {
-    Q_UNUSED(position); 
-    // ask workbenches and view provider, ...
-    MenuItem* view = new MenuItem;
-    Gui::Application::Instance->setupContextMenu("View", view);
+	Q_UNUSED(position);
+	// ask workbenches and view provider, ...
+	MenuItem* view = new MenuItem;
+	Gui::Application::Instance->setupContextMenu("View", view);
 
-    QMenu contextMenu(viewer->getGLWidget());
-    QMenu subMenu;
-    QActionGroup subMenuGroup(&subMenu);
-    subMenuGroup.setExclusive(true);
-    subMenu.setTitle(QObject::tr("Navigation styles"));
+	QMenu contextMenu(viewer->getGLWidget());
+	
+		QMenu subMenu;
+		QActionGroup subMenuGroup(&subMenu);
+		subMenuGroup.setExclusive(true);
+		subMenu.setTitle(QObject::tr("Navigation styles"));
 
-    MenuManager::getInstance()->setupContextMenu(view, contextMenu);
-    contextMenu.addMenu(&subMenu);
+		MenuManager::getInstance()->setupContextMenu(view, contextMenu);
+	if (viewer->isRotate()) {
+		contextMenu.addMenu(&subMenu);
 
-    // add submenu at the end to select navigation style
-    std::map<Base::Type, std::string> styles = UserNavigationStyle::getUserFriendlyNames();
-    for (std::map<Base::Type, std::string>::iterator it = styles.begin(); it != styles.end(); ++it) {
-        QByteArray data(it->first.getName());
-        QString name = QApplication::translate(it->first.getName(), it->second.c_str());
+		// add submenu at the end to select navigation style
+		std::map<Base::Type, std::string> styles = UserNavigationStyle::getUserFriendlyNames();
+		for (std::map<Base::Type, std::string>::iterator it = styles.begin(); it != styles.end(); ++it) {
+			QByteArray data(it->first.getName());
+			QString name = QApplication::translate(it->first.getName(), it->second.c_str());
 
-        QAction* item = subMenuGroup.addAction(name);
-        item->setData(data);
-        item->setCheckable(true);
-        if (it->first == this->getTypeId())
-            item->setChecked(true);
-        subMenu.addAction(item);
-    }
-
+			QAction* item = subMenuGroup.addAction(name);
+			item->setData(data);
+			item->setCheckable(true);
+			if (it->first == this->getTypeId())
+				item->setChecked(true);
+			subMenu.addAction(item);
+		}
+	}
     delete view;
     QAction* used = contextMenu.exec(QCursor::pos());
     if (used && subMenuGroup.actions().indexOf(used) >= 0 && used->isChecked()) {

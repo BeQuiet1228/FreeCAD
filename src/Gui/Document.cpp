@@ -117,6 +117,7 @@ int Document::_iDocCount = 0;
 
 Document::Document(App::Document* pcDocument,Application * app)
 {
+	classID = 2;//ZD
     d = new DocumentP;
     d->_iWinCount = 1;
     // new instance

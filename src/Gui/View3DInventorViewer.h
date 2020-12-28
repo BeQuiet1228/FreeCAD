@@ -229,6 +229,7 @@ public:
     //@{
     void setEditing(SbBool edit);
     SbBool isEditing() const { return this->editing; }
+	SbBool isRotate();// const { if (guiDocument) guiDocument->classID != 3; return this->true; }
     void setEditingCursor (const QCursor& cursor);
     void setComponentCursor(const QCursor& cursor);
     void setRedirectToSceneGraph(SbBool redirect) { this->redirected = redirect; }
