@@ -270,19 +270,24 @@ void MainWindow::hideContorlUI()
 
 void MainWindow::inintContorlUI()
 {
-	contorlDataBar = new ContorlDataBar();
-	contorlButtonBar = new ContorlButtonBar();
+	static std::once_flag flag;
+	std::call_once(flag, [&](){
+		contorlDataBar = new ContorlDataBar();
+		contorlButtonBar = new ContorlButtonBar();
 
-	contorlButtonToolBar = new QToolBar();
-	contorlDataToolBar = new QToolBar();
+		contorlButtonToolBar = new QToolBar();
+		contorlDataToolBar = new QToolBar();
 
-	contorlDataToolBar->setFixedSize(contorlDataBar->size());
-	contorlDataToolBar->addWidget(contorlDataBar);
-	contorlButtonToolBar->setFixedSize(QSize(70,contorlButtonBar->size().height()));
-	contorlButtonToolBar->addWidget(contorlButtonBar);
+		contorlDataToolBar->setFixedSize(contorlDataBar->size());
+		contorlDataToolBar->addWidget(contorlDataBar);
+		contorlButtonToolBar->setFixedSize(QSize(70, contorlButtonBar->size().height()));
+		contorlButtonToolBar->addWidget(contorlButtonBar);
 
-	contorlButtonToolBar->hide();
-	contorlDataToolBar->hide();
+		contorlButtonToolBar->hide();
+		contorlDataToolBar->hide();
+	
+	});
+	
 }
 
 } // namespace Gui

@@ -832,7 +832,7 @@ void StdCmdUndo::activated(int iMsg)
 	App::Document* pcDoc=App::GetApplication().getActiveDocument();
 	//pcDoc->recompute();
 	//pcDoc->flagNeedUpdateBoolean.setValue(0);
-	doCommand(Command::Gui, "DocumentTools.updateBoolean()");
+	//doCommand(Command::Gui, "DocumentTools.updateBoolean()");
 }
 
 bool StdCmdUndo::isActive(void)
@@ -1614,11 +1614,9 @@ void StdCmdRunM3d::activated(int iMsg)
 {
 	Q_UNUSED(iMsg);
 	//首次点击、初始化mainwindow上的界面
-	static std::once_flag flag;
-	std::call_once(flag, [&](){
-		auto mw = MainWindow::getInstance();
-		mw->inintContorlUI();
-	});
+	auto mw = MainWindow::getInstance();
+	mw->inintContorlUI();
+
 	//调用保存
 	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
 
@@ -1734,6 +1732,8 @@ StdCmdParalleRun::StdCmdParalleRun()
 void StdCmdParalleRun::activated(int iMsg)
 {
 	Q_UNUSED(iMsg);
+	auto mw = MainWindow::getInstance();
+	mw->inintContorlUI();
 	//调用保存
 	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
 	auto contorl = ContorlInterface::GetInstance();
@@ -1763,6 +1763,7 @@ StdCmdSmartContorl::StdCmdSmartContorl()
 void StdCmdSmartContorl::activated(int iMsg)
 {
 	Q_UNUSED(iMsg);
+	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
 	SmartContorlInterface smartContorl;
 	smartContorl.buttonClicked(7);
 }
