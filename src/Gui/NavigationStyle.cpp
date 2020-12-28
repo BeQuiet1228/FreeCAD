@@ -824,6 +824,8 @@ void NavigationStyle::doZoom(SoCamera* camera, float logfactor, const SbVec2f& p
 
 void NavigationStyle::doRotate(SoCamera * camera, float angle, const SbVec2f& pos)
 {
+	if (!viewer->isRotate())//ZD
+		return;
     SbBool zoomAtCur = this->zoomAtCursor;
     if (zoomAtCur) {
         const SbViewportRegion & vp = viewer->getSoRenderManager()->getViewportRegion();
@@ -856,6 +858,8 @@ void NavigationStyle::doRotate(SoCamera * camera, float angle, const SbVec2f& po
  */
 void NavigationStyle::spin(const SbVec2f & pointerpos)
 {
+	if (!viewer->isRotate())//ZD
+		return;
     if (this->log.historysize < 2) return;
     assert(this->spinprojector != NULL);
 
@@ -936,7 +940,8 @@ void NavigationStyle::spin(const SbVec2f & pointerpos)
  */
 void NavigationStyle::spin_simplified(SoCamera* cam, SbVec2f curpos, SbVec2f prevpos){
     assert(this->spinprojector != NULL);
-
+	if (!viewer->isRotate())//ZD
+		return;
     // 0000333: Turntable camera rotation
     SbMatrix mat;
     viewer->getSoRenderManager()->getCamera()->orientation.getValue().getValue(mat);
@@ -990,6 +995,8 @@ SbBool NavigationStyle::doSpin()
 
 void NavigationStyle::saveCursorPosition(const SoEvent * const ev)
 {
+	if (!viewer->isRotate())//ZD
+		return;
     this->globalPos.setValue(QCursor::pos().x(), QCursor::pos().y());
     this->localPos = ev->getPosition();
 
@@ -1026,6 +1033,8 @@ SbVec2f NavigationStyle::normalizePixelPos(SbVec2f pixpos)
 
 void NavigationStyle::moveCursorPosition()
 {
+	if (!viewer->isRotate())//ZD
+		return;
     if (!isResetCursorPosition())
         return;
 
@@ -1283,12 +1292,12 @@ void NavigationStyle::setViewingMode(const ViewerMode newmode)
     if (newmode == oldmode) { return; }
 
     switch (newmode) {
-    case DRAGGING:
-        // Set up initial projection point for the projector object when
-        // first starting a drag operation.
-        this->spinprojector->project(this->lastmouseposition);
-        this->interactiveCountInc();
-        this->clearLog();
+    case DRAGGING:		
+		// Set up initial projection point for the projector object when
+		// first starting a drag operation.
+		this->spinprojector->project(this->lastmouseposition);
+		this->interactiveCountInc();
+		this->clearLog();
         break;
 
     case SPINNING:
@@ -1502,29 +1511,28 @@ void NavigationStyle::openPopupMenu(const SbVec2s& position)
 
 	QMenu contextMenu(viewer->getGLWidget());
 	
-		QMenu subMenu;
-		QActionGroup subMenuGroup(&subMenu);
-		subMenuGroup.setExclusive(true);
-		subMenu.setTitle(QObject::tr("Navigation styles"));
+	QMenu subMenu;
+	QActionGroup subMenuGroup(&subMenu);
+	subMenuGroup.setExclusive(true);
+	subMenu.setTitle(QObject::tr("Navigation styles"));
 
-		MenuManager::getInstance()->setupContextMenu(view, contextMenu);
-	if (viewer->isRotate()) {
-		contextMenu.addMenu(&subMenu);
+	MenuManager::getInstance()->setupContextMenu(view, contextMenu);
+	contextMenu.addMenu(&subMenu);
 
-		// add submenu at the end to select navigation style
-		std::map<Base::Type, std::string> styles = UserNavigationStyle::getUserFriendlyNames();
-		for (std::map<Base::Type, std::string>::iterator it = styles.begin(); it != styles.end(); ++it) {
-			QByteArray data(it->first.getName());
-			QString name = QApplication::translate(it->first.getName(), it->second.c_str());
+	// add submenu at the end to select navigation style
+	std::map<Base::Type, std::string> styles = UserNavigationStyle::getUserFriendlyNames();
+	for (std::map<Base::Type, std::string>::iterator it = styles.begin(); it != styles.end(); ++it) {
+		QByteArray data(it->first.getName());
+		QString name = QApplication::translate(it->first.getName(), it->second.c_str());
 
-			QAction* item = subMenuGroup.addAction(name);
-			item->setData(data);
-			item->setCheckable(true);
-			if (it->first == this->getTypeId())
-				item->setChecked(true);
-			subMenu.addAction(item);
-		}
+		QAction* item = subMenuGroup.addAction(name);
+		item->setData(data);
+		item->setCheckable(true);
+		if (it->first == this->getTypeId())
+			item->setChecked(true);
+		subMenu.addAction(item);
 	}
+
     delete view;
     QAction* used = contextMenu.exec(QCursor::pos());
     if (used && subMenuGroup.actions().indexOf(used) >= 0 && used->isChecked()) {

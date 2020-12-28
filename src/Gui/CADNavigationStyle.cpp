@@ -264,8 +264,7 @@ SbBool CADNavigationStyle::processSoEvent(const SoEvent * const ev)
                     this->currentmode != NavigationStyle::PANNING &&
                     this->currentmode != NavigationStyle::DRAGGING) {
                     if (this->isPopupMenuEnabled()) {
-						if (!press) // && viewer->isRotate()
-						{ // release right mouse button//ZD
+						if (!press) { // release right mouse button
                             this->openPopupMenu(event->getPosition());
                         }
                     }
@@ -275,8 +274,7 @@ SbBool CADNavigationStyle::processSoEvent(const SoEvent * const ev)
             if (press && (this->currentmode == NavigationStyle::PANNING ||
                           this->currentmode == NavigationStyle::ZOOMING)) {
                 newmode = NavigationStyle::DRAGGING;
-				if (viewer->isRotate())//ZD
-					saveCursorPosition(ev);
+				saveCursorPosition(ev);
                 this->centerTime = ev->getTime();
                 processed = true;
             }
@@ -340,8 +338,7 @@ SbBool CADNavigationStyle::processSoEvent(const SoEvent * const ev)
         }
         else if (this->currentmode == NavigationStyle::DRAGGING) {
             this->addToLog(event->getPosition(), event->getTime());
-			if (viewer->isRotate())//ZD
-				this->spin(posn);
+			this->spin(posn);
             moveCursorPosition();
             processed = true;
         }
