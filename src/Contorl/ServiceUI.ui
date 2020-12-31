@@ -95,7 +95,7 @@ p, li { white-space: pre-wrap; }
          <item>
           <widget class="QLineEdit" name="lineEditPort">
            <property name="text">
-            <string>3200</string>
+            <string>8866</string>
            </property>
           </widget>
          </item>

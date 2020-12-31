@@ -16,6 +16,8 @@
 #include "ContorlDataBar.h"
 #include "ContorlButtonBar.h"
 #include "LocalEimtter.h"
+#include "Contorl.h"
+
 ChipicManager::ChipicManager()
 {
 	auto getter = JsonMessageGetter::GetInstance();
@@ -125,6 +127,7 @@ void ChipicManager::runButtonClicked(const std::string& m3dPath /*= ""*/)
 		sendStartChipicMessage(m3dPath, 1);
 	}else{
 		CurrentChipic->closeChipic();
+		Contorl::closePlot();
 	}
 }
 
@@ -144,8 +147,9 @@ void ChipicManager::chipicWorkFinished()
 	auto chipic = dynamic_cast<Chipic *>(sender);
 	if (!chipic)
 		return;
-	showWorkFinishedBox();
 	chipic->closeChipic();
+	Contorl::closePlot();
+	showWorkFinishedBox();
 	emit finishChipicM3dPath(chipic->threadID);
 }
 
@@ -202,9 +206,9 @@ void ChipicManager::initMessageSender()
 * @brief ChipicManager::ButtonParalleRunClicked
 * @param const std::string & m3dPath
 * @param const int & threadCount
-* @return void
+* @return bool 是否获取线程数量成功
 */
-void ChipicManager::ButtonParalleRunClicked(const std::string& m3dPath)
+bool ChipicManager::ButtonParalleRunClicked(const std::string& m3dPath)
 {
 	if (!CurrentChipic)
 	{
@@ -213,14 +217,14 @@ void ChipicManager::ButtonParalleRunClicked(const std::string& m3dPath)
 		ThreadCountDialog dialog;
 		dialog.exec();
 		if (!dialog.okBuutonClicked)
-			return;
+			return false;
 		threadCount = dialog.threadCount;
-		
 		sendStartChipicMessage(m3dPath, threadCount);
-
 	}else{
 
 	}
+
+	return true;
 }
 
 /**
@@ -324,6 +328,7 @@ bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId, const int& 
 	}else if (errorCode == 1){
 		chipic->second->closeChipic();
 		showDailLog("提示", "chipic异常退出");
+		Contorl::closePlot();
 	}
 
 	return true;

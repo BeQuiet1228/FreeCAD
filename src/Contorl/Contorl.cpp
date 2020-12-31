@@ -97,6 +97,37 @@ void Contorl::openLog()
 	log->openLog();
 }
 
+/**
+* @brief Contorl::showTreeWidget 显示看图的树控件、前提是已经获取了m3d路径
+* @return void
+*/
+void Contorl::showTreeWidget()
+{
+#ifndef _CONTORL_EXE_ //判断是否以exe的形式生成模块
+
+#ifndef SERVICE //判断是否是以服务器模式生成模块
+	Base::InterpreterSingleton python;
+	python.runString("import Visualization.VisualizationCommand.VisualizationTree as VT");
+	python.runStringArg("VT.showPlotTree(\"%s\")", m3dPath.c_str());
+#endif
+
+#endif
+}
+
+/**
+* @brief Contorl::closePlot 关闭绘图窗口
+* @return void
+*/
+void Contorl::closePlot()
+{
+#ifdef _CONTORL_DLL_
+	Base::InterpreterSingleton python;
+	python.runString("import Visualization");
+	python.runString("Visualization.VisualizationCommand.VisualizationPlot.vPlot.closePlot()");
+#endif // _CONTORL_DLL_
+
+}
+
 void Contorl::on_pushButton_clicked()
 {
 	auto messageManager = MessageSender::GetInstance();
@@ -126,12 +157,15 @@ void Contorl::buttonClinked(int buttonType)
 		getM3dPathForRunPython();
 		//运行m3d
 		chipicManager.runButtonClicked(m3dPath);
+		//显示树控件
+		showTreeWidget();
 		break;
 	case ContorlButtonBar::PARALLE_RUN:
 		//获取m3d路径
 		getM3dPathForRunPython();
 		//运行m3d
-		chipicManager.ButtonParalleRunClicked(m3dPath);
+		if(chipicManager.ButtonParalleRunClicked(m3dPath))
+			showTreeWidget();
 		break;
 	case ContorlButtonBar::REFREASH:
 		chipicManager.CurrentChipic->refreshButtonClicked();
