@@ -115,6 +115,11 @@ int ContorlInterface::getConnectWay()
 	return contorl->getConnectWay();
 }
 
+void ContorlInterface::showTreeWidget()
+{
+	contorl->showTreeWidget();
+}
+
 /**
 * @brief ContorlInterface::getChipicManager 返回chipic管理器指针  这个指针由contorl对象管理 
 * @return ChipicManager*
