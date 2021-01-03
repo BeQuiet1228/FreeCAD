@@ -65,32 +65,33 @@ struct  IsoTriangle {
 	int TypeCND; /// Two types : 1 --> Draw like a normal triangle; 2 --> Draw in Red
 };
 
-
+#define MAX_VSIZE 30
 
 class Iso3D
 {
 public :
-   vcg::Point3d IsoPointMapOriginal[60000];//[3*60000]; // Up to 40.000 Pts
-   vcg::Point3d IsoPointMapProjectd[10000]; // Up to 40.000 Pts
-   vcg::Point3d IsoPointMapTransfrm[60000]; // Up to 40.000 Points
+   std::vector<vcg::Point3d> IsoPointMapOriginal;//[3*60000]; // Up to 40.000 Pts[60000]
+   //vcg::Point3d IsoPointMapProjectd[10000]; // Up to 40.000 Pts
+   //vcg::Point3d IsoPointMapTransfrm[60000]; // Up to 40.000 Points
 
 /// Conditional data :
-   int WichPointVeryCond[100000];
-   int TypeIsoSurfaceTriangleListeCND[100000]; // From 1 to 7 Up to 100.000
-   double IsoPointMapOriginalCD[3*10000]; // Up to 10.000 Pts
-   double IsoPointMapProjectdCD[3*10000]; // Up to 10.000 Pts
-   double IsoPointMapTransfrmCD[3*10000]; // Up to 10.000 Points
+   std::vector<int> WichPointVeryCond;//[100000]
+   std::vector<int> TypeIsoSurfaceTriangleListeCND; // From 1 to 7 Up to 100.000[100000]
+   //double IsoPointMapOriginalCD[3*10000]; // Up to 10.000 Pts
+   //double IsoPointMapProjectdCD[3*10000]; // Up to 10.000 Pts
+   //double IsoPointMapTransfrmCD[3*10000]; // Up to 10.000 Points
 
-   vcg::Point3d IsoNormMapOriginal[100000]; // Up to 100.000 Norm
-   double IsoNormMapTransfrm[3*100000]; // Up to 100.000 Norm
+//   std::vector<vcg::Point3d> IsoNormMapOriginal; // Up to 100.000 Norm[100000]
+   //double IsoNormMapTransfrm[3*100000]; // Up to 100.000 Norm
 
 
-   vcg::Point3i IsoSurfaceTriangleListe[100000];// Up to 100.000 Triangles
-   double XLocal[100], YLocal[100], ZLocal[100]; //Up to 200x200x200 voxels
-   Voxel3D GridVoxel[100][100][100];
+   std::vector<vcg::Point3i> IsoSurfaceTriangleListe;// Up to 100.000 Triangles[100000]
+   double local[3][MAX_VSIZE];// XLocal[MAX_VSIZE], YLocal[MAX_VSIZE], ZLocal[MAX_VSIZE]; //Up to 200x200x200 voxels
+   Voxel3D GridVoxel[MAX_VSIZE][MAX_VSIZE][MAX_VSIZE];
    int isSunk;
-   vcg::Point3d NormOriginal[100000];// Up to 100.000 Triangles
+//   std::vector<vcg::Point3d> NormOriginal;// Up to 100.000 Triangles[100000]
    int type;//1:volume 0:surface
+   int ndim;////0x1y2z else volume
    int NbPointIsoMap; // Init to 0 ; Up to 10.000
    int NbPointIsoMapCND; // Init to 0 ; Up to 10.000
    int NbTriangleIsoSurface;
@@ -109,7 +110,7 @@ public :
 
    double newcoeffx, newcoeffy, newcoeffz;
    vcg::Point3d Start, End;
-    int nb_ligne, nb_colon, nb_depth, 
+   int nGrid[3], //0 nb_ligne, 1nb_colon, 2nb_depth,
         clipping, CutLigne, CutColon, CutDepth,
         IsoConditionRequired;
     double D; // Distance observator
@@ -119,8 +120,8 @@ public :
            MAXX,MAXY,MAXZ,MAXW,MAXT,MAXS,
            DIFX,DIFY,DIFZ,DIFW,DIFT,DIFS,
            DIFMAXIMUM, decalage_xo, decalage_yo, decalage_zo,
-           IsoValue, anglex, angley, ancienx, ancieny, ScalCoeff,
-           morph_param, step, axe_size,
+           IsoValue, anglex, angley, ancienx, ancieny, ScalCoeff,//morph_param, 
+           step, axe_size,
            newscalex, newscaley, newscalez;
     int    demi_hauteur, demi_largeur, hauteur_fenetre;
     IsoMatrix3D MatGen, MatRot, MatRotSave, MatSca, MatInv;
@@ -140,8 +141,8 @@ public :
         CNDDraw, BorderDraw, Borderlimite;
 
 int NbPolygonImposedLimit ;
-float NormVertexTab[50*66000];
-unsigned int IndexPolyTab[50*48000];
+//float NormVertexTab[50*66000];
+//unsigned int IndexPolyTab[50*48000];
 int NbVertex;
 unsigned int NbPolygn;
 unsigned int NbPolygnNbVertex[2 * 50];
