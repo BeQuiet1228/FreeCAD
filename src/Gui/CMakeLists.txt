@@ -266,6 +266,7 @@ set(Gui_MOC_HDRS
     ExpressionCompleter.h
     DlgExpressionInput.h
     FileDialog.h
+	MainWindowDef.h
     Flag.h
     GraphicsViewZoom.h
     GraphvizView.h
@@ -387,6 +388,7 @@ SET(Gui_UIC_SRCS
     TextureMapping.ui
     TaskView/TaskAppearance.ui
     TaskView/TaskSelectLinkProperty.ui
+	MainWindowDef.ui
 )
 
 SET(Gui_RES_SRCS
@@ -1014,6 +1016,7 @@ SOURCE_GROUP("View3D\\Inventor" FILES ${Inventor_SRCS})
 # The widget sources
 SET(Widget_CPP_SRCS
     FileDialog.cpp
+	MainWindowDef.cpp
     MainWindow.cpp
     PrefWidgets.cpp
     InputField.cpp
@@ -1027,6 +1030,7 @@ SET(Widget_CPP_SRCS
 )
 SET(Widget_HPP_SRCS
     FileDialog.h
+	MainWindowDef.h
     MainWindow.h
     PrefWidgets.h
     InputField.h
@@ -1042,6 +1046,7 @@ SET(Widget_HPP_SRCS
 )
 SET(Widget_SRCS
 	LuaEditView.cpp
+	MainWindowDef.ui
     ${Widget_CPP_SRCS}
     ${Widget_HPP_SRCS}
 )

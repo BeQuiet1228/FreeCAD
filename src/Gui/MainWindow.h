@@ -39,6 +39,7 @@ class QMdiSubWindow;
 class SmartContorlInterface;
 class ContorlButtonBar;
 class ContorlDataBar;
+class MainWindowDef;
 namespace App {
 class Document;
 }
@@ -285,13 +286,14 @@ public:
 	ContorlDataBar* contorlDataBar;
 	QToolBar *contorlButtonToolBar, *contorlDataToolBar;
 	SmartContorlInterface *smartContorlInterface;
-
+	MainWindowDef* mainWindowDef;
 public:
 	void initContorlToolBar();
 	void setContorlUI();
 	void showContorlUI();
 	void hideContorlUI();
 	void inintContorlUI();
+	void addTitleAction(QAction* action);
 };
 
 inline MainWindow* getMainWindow()

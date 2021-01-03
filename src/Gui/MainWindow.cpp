@@ -123,6 +123,7 @@
 #include "Contorl\ContorlButtonBar.h"
 #include "Contorl\ContorlDataBar.h"
 #include <QMessageBox>
+#include "MainWindowDef.h"
 #if defined(Q_OS_WIN32)
 #define slots
 //#include <private/qmainwindowlayout_p.h>
@@ -290,6 +291,11 @@ void MainWindow::inintContorlUI()
 	
 }
 
+void MainWindow::addTitleAction(QAction* action)
+{
+	mainWindowDef->addTitleShortcutAction(action);
+}
+
 } // namespace Gui
 
 
@@ -307,6 +313,9 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
     // global access 
     instance = this;
 
+	mainWindowDef = new MainWindowDef();
+	mainWindowDef->show();
+	mainWindowDef->addCenterWidget(this);
     // Create the layout containing the workspace and a tab bar
     d->mdiArea = new QMdiArea();
 #if QT_VERSION >= 0x040500

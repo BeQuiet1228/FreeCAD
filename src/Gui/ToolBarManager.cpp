@@ -34,6 +34,7 @@
 #include "Application.h"
 #include "Command.h"
 #include "Widgets.h"
+#include <qaction.h>
 
 #include "qwidgetaction.h"
 
@@ -41,6 +42,7 @@ using namespace Gui;
 
 ToolBarItem::ToolBarItem()
 {
+	
 }
 
 ToolBarItem::ToolBarItem(ToolBarItem* item)
@@ -194,6 +196,7 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
     for (QList<ToolBarItem*>::ConstIterator it = items.begin(); it != items.end(); ++it) {
         // search for the toolbar
         QString name = QString::fromUtf8((*it)->command().c_str());
+		std::cerr << name.toStdString() << std::endl;
         this->toolbarNames << name;
         QToolBar* toolbar = findToolBar(toolbars, name);
         std::string toolbarName = (*it)->command();
@@ -220,8 +223,9 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
         }
 
         // setup the toolbar
+		
         setup(*it, toolbar);
-
+		std::cerr << toolbar->actions().size() << std::endl;
         // 工具条不再根据控件宽度自动自动换行
         if (toolbar_added && toolbar->objectName() == QString::fromUtf8("View")) {
             // if (top_width > 0 && getMainWindow()->toolBarBreak(toolbar))
@@ -261,9 +265,16 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 void ToolBarManager::setup(ToolBarItem* item, QToolBar* toolbar) const
 {
     // 根据工具条的objectName设置工具条的显示方式：单行、分组显示
+	std::cerr << "toobarName:" << toolbar->objectName().toStdString() << std::endl;
     if (toolbar->objectName() == QString::fromUtf8("File")
         /*|| toolbar->objectName() == QString::fromUtf8("Workbench")*/){
         setup_one_line(item, toolbar);
+		auto actions = toolbar->actions();
+		auto mw = MainWindow::getInstance();
+		for (auto i = actions.begin(); i != actions.end(); i++)
+		{
+			mw->addTitleAction(*i);
+		}
     }
     else if (toolbar->objectName() == QString::fromUtf8("Task Monitor")){
         setup_taskMonitorToolBar(item, toolbar);
