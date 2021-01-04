@@ -1,0 +1,35 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/briefcase_1.svg</file>
+        <file>icons/engineering_1.svg</file>
+        <file>icons/information_1.svg</file>
+        <file>icons/monitor_1.svg</file>
+        <file>icons/add_folder_2.svg</file>
+        <file>icons/add_link_2.svg</file>
+        <file>icons/create_new_2.svg</file>
+        <file>icons/file_2.svg</file>
+        <file>icons/live_folder_2.svg</file>
+        <file>icons/save_2.svg</file>
+        <file>icons/打开16.ico</file>
+        <file>icons/打开32.ico</file>
+        <file>icons/新建16.ico</file>
+        <file>icons/新建32.ico</file>
+        <file>icons/add_database_2.svg</file>
+        <file>icons/场及函数定义16.ico</file>
+        <file>icons/场及函数定义32.ico</file>
+        <file>icons/工作区间设置16.ico</file>
+        <file>icons/工作区间设置32.ico</file>
+        <file>icons/模型信息输入16.ico</file>
+        <file>icons/模型信息输入32.ico</file>
+        <file>icons/时域计算设置16.ico</file>
+        <file>icons/时域计算设置32.ico</file>
+        <file>icons/数据导出设定16.ico</file>
+        <file>icons/数据导出设定32.ico</file>
+        <file>icons/新型材料定义16.ico</file>
+        <file>icons/新型材料定义32.ico</file>
+        <file>icons/新型粒子定义16.ico</file>
+        <file>icons/新型粒子定义32.ico</file>
+        <file>icons/运行处理选项16.ico</file>
+        <file>icons/运行处理选项32.ico</file>
+    </qresource>
+</RCC>
