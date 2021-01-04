@@ -96,9 +96,13 @@ QByteArray myEncoderFunc(const QString &fileName)
 //#define new  new(_NORMAL_BLOCK, __FILE__, __LINE__)
 //#endif
 
+#include "Gui/picgui_ribbon/MainWindow.h"
 int main( int argc, char ** argv )
 {
-	
+	QApplication apptest(argc, argv);
+	MainWindow w;
+	w.show();
+	return	 apptest.exec();
 	//ZD:解决中文乱码
 	QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 	QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
