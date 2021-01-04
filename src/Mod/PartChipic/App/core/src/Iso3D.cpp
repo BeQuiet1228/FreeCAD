@@ -558,28 +558,28 @@ void Iso3D::ConstructIsoNormale()
 		}
 	}
 	/*if (NbTriangleIsoSurface > 0)
-		NormOriginal.resize(NbTriangleIsoSurface);
+	NormOriginal.resize(NbTriangleIsoSurface);
 	for (i = 0; i<NbTriangleIsoSurface; ++i)
 	{
-		IndexFirstPoint = IsoSurfaceTriangleListe[i].X();
-		IndexSecondPoint = IsoSurfaceTriangleListe[i].Y();
-		IndexThirdPoint = IsoSurfaceTriangleListe[i].Z();
+	IndexFirstPoint = IsoSurfaceTriangleListe[i].X();
+	IndexSecondPoint = IsoSurfaceTriangleListe[i].Y();
+	IndexThirdPoint = IsoSurfaceTriangleListe[i].Z();
 
-		pt1 = IsoPointMapOriginal[IndexFirstPoint];
-		pt2 = IsoPointMapOriginal[IndexSecondPoint];
-		pt3 = IsoPointMapOriginal[IndexThirdPoint];
+	pt1 = IsoPointMapOriginal[IndexFirstPoint];
+	pt2 = IsoPointMapOriginal[IndexSecondPoint];
+	pt3 = IsoPointMapOriginal[IndexThirdPoint];
 
-		val1 = pt2.Y() - pt1.Y();
-		val2 = pt3.Z() - pt1.Z();
-		val3 = pt2.Z() - pt1.Z();
-		val4 = pt3.Y() - pt1.Y();
-		val5 = pt3.X() - pt1.X();
-		val6 = pt2.X() - pt1.X();
+	val1 = pt2.Y() - pt1.Y();
+	val2 = pt3.Z() - pt1.Z();
+	val3 = pt2.Z() - pt1.Z();
+	val4 = pt3.Y() - pt1.Y();
+	val5 = pt3.X() - pt1.X();
+	val6 = pt2.X() - pt1.X();
 
-		NormOriginal[i] = vcg::Point3d(val1*val2 - val3*val4,
-			val3*val5 - val6*val2,
-			val6*val4 - val1*val5);
-		NormOriginal[i].Normalize();
+	NormOriginal[i] = vcg::Point3d(val1*val2 - val3*val4,
+	val3*val5 - val6*val2,
+	val6*val4 - val1*val5);
+	NormOriginal[i].Normalize();
 	}*/
 };
 
@@ -704,7 +704,7 @@ void Iso3D::ConstructIsoSurface()
 											/// We have to new points to add
 
 											/// Add Aprime
-											IsoPointMapOriginal.push_back( Aprime);
+											IsoPointMapOriginal.push_back(Aprime);
 											IndexAprime = NbPointIsoMap;
 											NbPointIsoMap++;
 
@@ -1122,7 +1122,7 @@ void Iso3D::VoxelEvaluation()
 		if (nGrid[YDIM] > DISTANCE_RESOL_MAX) nGrid[YDIM] = DISTANCE_RESOL_MAX;
 		if (nGrid[YDIM] < DISTANCE_RESOL_MIN) nGrid[YDIM] = DISTANCE_RESOL_MIN;
 	}
-	if (ndim == YDIM) nGrid[ZDIM] = 1;
+	//if (ndim == YDIM) nGrid[YDIM] = 1;
 	//Can be optimised by considering Three array of 30 values each
 	// Each array contain the 30 value of one axe...
 	//        Step[0] = (Start[0] - End[0]) / (nGrid[XDIM] - 1-2);
@@ -1132,31 +1132,32 @@ void Iso3D::VoxelEvaluation()
 	//        for (j = 0; j < nGrid[YDIM]; j++) YLocal[j] = Start[1] - (j-1)*Step[1];
 	//        for (k = 0; k < nGrid[ZDIM]; k++) ZLocal[k] = Start[2] - (k-1)*Step[2];
 
-	/*if (gsysType != PM3::SYSCARTESIAN) {		
-		Step[XDIM] = (End[XDIM] - Start[XDIM]) / (nGrid[XDIM] - 1);
-		Step[YDIM] = (End[YDIM] - Start[YDIM]) / (nGrid[YDIM] - 1);
-		Step[ZDIM] = (End[ZDIM] - Start[ZDIM]) / (nGrid[ZDIM] - 1);
-		for (i = 0; i < nGrid[XDIM]; i++) XLocal[i] = Start[XDIM] + (i - 0)*Step[XDIM];
-		for (j = 0; j < nGrid[YDIM]; j++) YLocal[j] = Start[1] + (j - 0)*Step[1];
-		for (k = 0; k < nGrid[ZDIM]; k++) ZLocal[k] = Start[2] + (k - 0)*Step[2];
+	/*if (gsysType != PM3::SYSCARTESIAN) {
+	Step[XDIM] = (End[XDIM] - Start[XDIM]) / (nGrid[XDIM] - 1);
+	Step[YDIM] = (End[YDIM] - Start[YDIM]) / (nGrid[YDIM] - 1);
+	Step[ZDIM] = (End[ZDIM] - Start[ZDIM]) / (nGrid[ZDIM] - 1);
+	for (i = 0; i < nGrid[XDIM]; i++) XLocal[i] = Start[XDIM] + (i - 0)*Step[XDIM];
+	for (j = 0; j < nGrid[YDIM]; j++) YLocal[j] = Start[1] + (j - 0)*Step[1];
+	for (k = 0; k < nGrid[ZDIM]; k++) ZLocal[k] = Start[2] + (k - 0)*Step[2];
 	}
 	else {
-		Step[XDIM] = (End[XDIM] - Start[XDIM]) / (nGrid[XDIM] - 1);
-		Step[YDIM] = (End[YDIM] - Start[YDIM]) / (nGrid[YDIM] - 0 - 1);
-		Step[2] = (End[2] - Start[2]) / (nGrid[ZDIM] - 1);
+	Step[XDIM] = (End[XDIM] - Start[XDIM]) / (nGrid[XDIM] - 1);
+	Step[YDIM] = (End[YDIM] - Start[YDIM]) / (nGrid[YDIM] - 0 - 1);
+	Step[2] = (End[2] - Start[2]) / (nGrid[ZDIM] - 1);
 
-		for (i = 0; i < nGrid[XDIM]; i++) XLocal[i] = Start[XDIM] + (i - 0)*Step[XDIM];
-		for (j = 0; j < nGrid[YDIM]; j++) YLocal[j] = Start[YDIM] + (j - 0)*Step[YDIM];
-		for (k = 0; k < nGrid[ZDIM]; k++) ZLocal[k] = Start[2] + (k - 0)*Step[2];
+	for (i = 0; i < nGrid[XDIM]; i++) XLocal[i] = Start[XDIM] + (i - 0)*Step[XDIM];
+	for (j = 0; j < nGrid[YDIM]; j++) YLocal[j] = Start[YDIM] + (j - 0)*Step[YDIM];
+	for (k = 0; k < nGrid[ZDIM]; k++) ZLocal[k] = Start[2] + (k - 0)*Step[2];
 	}*/
 	for (int d = 0; d < 3; d++)
 	{
-		if (ndim == d) {
-			nGrid[d] = 1;
-			Step[d] = Start[d];
-			local[d][0] = Start[d];
+		/*if (ndim == d) {
+		nGrid[d] = 1;
+		Step[d] = Start[d];
+		local[d][0] = Start[d];
 		}
-		else {
+		else */
+		{
 			Step[d] = (End[d] - Start[d]) / (nGrid[d] - 1);
 			for (k = 0; k < nGrid[d]; k++) local[d][k] = Start[d] + (k - 0)*Step[d];
 		}
@@ -1369,15 +1370,16 @@ void Iso3D::VoxelEvaluation()
 				}
 			}
 		}
-		
-		for (int d = 0; d < 3; d++) {
-			if (ndim == d) {
-				cutIndex[2*d] = cutIndex[2*d+1] = 0;
-			}
+
+		/*for (int d = 0; d < 3; d++) {
+		if (ndim == d) {
+		cutIndex[2 * d] = cutIndex[2 * d + 1] = 0;
 		}
+		}*/
 	}
 	for (int d = 0; d < 3; d++) {
-		if (ndim != d) {
+		//if (ndim != d) 
+		{
 			if (cutIndex[2 * d] == cutIndex[2 * d + 1]) {
 				nGrid[ZDIM] = nGrid[YDIM] = nGrid[XDIM] = 0;
 				return;
@@ -1392,7 +1394,7 @@ void Iso3D::VoxelEvaluation()
 		int offset = 1, offset2 = 2, xoffset = 0;
 		double slocal[3] = { local[0][cutIndex[0]], local[1][cutIndex[2]], local[2][cutIndex[4]] };// - (0.00001 * M_PI / 180.)
 		double elocal[3] = { local[0][cutIndex[1]], local[1][cutIndex[3]], local[2][cutIndex[5]] };// + (0.00001 * M_PI / 180.)
-		if (ndim != YDIM)
+		//if (ndim != YDIM)
 		{
 			double vals[] = { local[0][cutIndex[1]], local[1][cutIndex[2]] - (ss), local[2][cutIndex[4]] };
 			double temp = pValParser->Eval(vals);
@@ -1400,15 +1402,6 @@ void Iso3D::VoxelEvaluation()
 				slocal[1] += (ss);
 			else
 				slocal[1] -= (ss);
-		}
-		if (ndim != YDIM)
-		{
-			double vals[] = { local[0][cutIndex[1]], local[1][cutIndex[3]] + (ss), local[2][cutIndex[5]] };
-			double temp = pValParser->Eval(vals);
-			if (temp > 0)
-				elocal[1] -= (ss);
-			else
-				elocal[1] += (ss);
 		}
 		if (slocal[0] > Start[0]) Start[0] = slocal[0];
 		if (slocal[1] > Start[1]) Start[1] = slocal[1];
@@ -1431,44 +1424,44 @@ void Iso3D::VoxelEvaluation()
 		//if (nGrid[XDIM] < 2) nGrid[XDIM] = 2;
 		//if (nGrid[YDIM] < 2) nGrid[YDIM] = 2;
 		//if (nGrid[ZDIM] < 2) nGrid[ZDIM] = 2;
-		if (ndim != XDIM)
-			nGrid[XDIM] += (xoffset + offset2);
-		if (ndim != YDIM)
-			nGrid[YDIM] += (offset + offset2);
-		if (ndim != ZDIM)
-			nGrid[ZDIM] += (offset + offset2);
-		if (ndim != XDIM)
-			Step[XDIM] = (elocal[XDIM] - slocal[XDIM]) / (nGrid[XDIM] - offset2 - xoffset);
+		//if (ndim != XDIM)
+		nGrid[XDIM] += (xoffset + offset2);
+		//if (ndim != YDIM)
+		nGrid[YDIM] += (offset + offset2);
+		//if (ndim != ZDIM)
+		nGrid[ZDIM] += (offset + offset2);
+		//if (ndim != XDIM)
+		Step[XDIM] = (elocal[XDIM] - slocal[XDIM]) / (nGrid[XDIM] - offset2 - xoffset);
 		//POLOR下面的if是在极坐标下稳定的版本
 		if (isSunk != 0) {
 			if (Step[0] > slocal[0]) {
 				//nGrid[XDIM] -= xoffset;
 				xoffset = 0;
-				if (ndim != XDIM)
-					Step[XDIM] = (elocal[XDIM] - slocal[XDIM]) / (nGrid[XDIM] - offset2 - xoffset);
+				//if (ndim != XDIM)
+				Step[XDIM] = (elocal[XDIM] - slocal[XDIM]) / (nGrid[XDIM] - offset2 - xoffset);
 			}
 		}
 		for (int d = 1; d < 3; d++) {
-			if (ndim != d)
-				Step[d] = (elocal[d] - slocal[d]) / (nGrid[d] - offset - offset2);
+			//if (ndim != d)
+			Step[d] = (elocal[d] - slocal[d]) / (nGrid[d] - offset - offset2);
 		}
 
-		for (i = 0; ndim != XDIM && i < nGrid[XDIM]; i++) {
+		for (i = 0; i < nGrid[XDIM]; i++) {
 			local[0][i] = slocal[0] + (i - xoffset)*Step[0];
 			//if (fabs(XLocal[i]) < 0.000001) XLocal[i] = Step[0] / 100;
 		}
-		for (j = 0; ndim != YDIM && j < nGrid[YDIM]; j++) {
+		for (j = 0; j < nGrid[YDIM]; j++) {
 			local[1][j] = slocal[1] + (j - offset)*Step[1];
 			//if (fabs(YLocal[j]) < 0.000001) YLocal[j] = Step[1] / 100;
 		}
-		for (k = 0; ndim != ZDIM && k < nGrid[ZDIM]; k++) {
+		for (k = 0; k < nGrid[ZDIM]; k++) {
 			local[2][k] = slocal[2] + (k - offset)*Step[2];
 			//if (fabs(ZLocal[k]) < 0.000001) ZLocal[k] = Step[2] / 100;
 		}
 		json = "if(r=%2%,1,if(r=%3%,1,if(phi=%4%,1,if(phi=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))";
 	}
 	else
-	{		
+	{
 		int offset = 1, offset2 = 2, xoffset = 1;
 		double slocal[3] = { local[0][cutIndex[0]], local[1][cutIndex[2]], local[2][cutIndex[4]] };
 		double elocal[3] = { local[0][cutIndex[1]], local[1][cutIndex[3]], local[2][cutIndex[5]] };
@@ -1494,14 +1487,15 @@ void Iso3D::VoxelEvaluation()
 		//if (nGrid[YDIM] < DISTANCE_RESOL_MIN) nGrid[YDIM] = DISTANCE_RESOL_MIN;
 		//if (nGrid[ZDIM] < DISTANCE_RESOL_MIN) nGrid[ZDIM] = DISTANCE_RESOL_MIN;
 		for (int d = 0; d < 3; d++)
-			if (ndim != d) {
-				nGrid[d] += (offset + offset2);
-				Step[d] = (elocal[d] - slocal[d]) / (nGrid[d] - offset - offset2);
-				for (i = 0; i < nGrid[d]; i++)  {
-					local[d][i] = slocal[d] + (i - offset)*Step[d];
-					//if (fabs(XLocal[i]) < 0.000001) XLocal[i] = Step[0] / 100;
-				}
+			//if (ndim != d) 
+		{
+			nGrid[d] += (offset + offset2);
+			Step[d] = (elocal[d] - slocal[d]) / (nGrid[d] - offset - offset2);
+			for (i = 0; i < nGrid[d]; i++)  {
+				local[d][i] = slocal[d] + (i - offset)*Step[d];
+				//if (fabs(XLocal[i]) < 0.000001) XLocal[i] = Step[0] / 100;
 			}
+		}
 		json = "if(x=%2%,1,if(x=%3%,1,if(y=%4%,1,if(y=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))";
 	}
 	//boost::format fmt(json);
@@ -1759,7 +1753,7 @@ void Iso3D::PointEdgeComputation()
 		/// The code is quite big but this is much more easy to compute
 		/// 1) First case : i =0;
 		i = 0;
-		
+
 		for (j = 0; j < nGrid[YDIM]; j++)
 			for (k = 0; k < nGrid[ZDIM]; k++) {
 
@@ -1847,7 +1841,7 @@ void Iso3D::PointEdgeComputation()
 					}
 				} /// End of ( if ( k != nGrid[ZDIM] -1)....
 			}
-		
+
 		/// 2) Case i = nGrid[XDIM]-1
 		i = nGrid[XDIM] - 1;
 		for (j = 0; j < nGrid[YDIM]; j++)
@@ -2349,11 +2343,11 @@ void Iso3D::PointEdgeComputation()
 
 			}
 	}
-	if (ndim != -1) {
-		for (int i = 0; i < NbPointIsoMap; i++) {
-			IsoPointMapOriginal[i][ndim] = Start[ndim];
-		}
+	/*if (ndim != -1) {
+	for (int i = 0; i < NbPointIsoMap; i++) {
+	IsoPointMapOriginal[i][ndim] = Start[ndim];
 	}
+	}*/
 };
 
 
