@@ -24,6 +24,10 @@ public:
 	ContorlDataBar *contorlDataBar;
 	//运行脚本获取m3d路径
 	void getM3dPathForRunPython();
+	//显示看图的树控件
+	void showTreeWidget();
+	//关闭绘图窗口
+	static void closePlot();
 	//m3d路径
 	std::string m3dPath = "E:/lingshiwenjianjia/MILO_D/MILO_D.m3d";
 private:

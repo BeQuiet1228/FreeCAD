@@ -53,5 +53,7 @@ public:
 	void buttonClicked(const int& buttonID);
 	//获取控制模块的连接方式
 	int getConnectWay();
+	//显示树控件
+	void showTreeWidget();
 
 };

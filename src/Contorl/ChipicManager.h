@@ -57,7 +57,7 @@ public:
 	//初始化消息发射器
 	void initMessageSender();
 	//并行按钮被点击
-	void ButtonParalleRunClicked(const std::string& m3dPath);
+	bool ButtonParalleRunClicked(const std::string& m3dPath);
 	//发送启动消息
 	void sendStartChipicMessage(const std::string& path, const int& threadCount);
 	//设置运行状态
