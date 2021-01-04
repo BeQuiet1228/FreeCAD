@@ -7,6 +7,7 @@
 #include <QToolBar>
 #include <qwidget.h>
 #include <QResizeEvent>
+#include <TabWidgetInterface.hpp>
 class TitleBar: public QWidget{
 	Q_OBJECT
 public:
@@ -56,6 +57,9 @@ private:
 	QToolBar* toolbar;
 	//记录窗口是否已经最大化
 	bool isMax = false;
+public:
+	//选项卡对象
+	TabWidgetInterFace *tabWidgetInterface;
 
 protected:
 	void mouseMoveEvent(QMouseEvent *event) override;
@@ -81,4 +85,8 @@ public:
 	void showMax();
 	//返回最大化之前的状态
 	void showOld();
+	//是否最大化
+	bool windowIsMax(){
+		return isMax;
+	}
 };

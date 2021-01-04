@@ -57,6 +57,9 @@ MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 	//初始化顶部的快捷栏
 	toolbar = new QToolBar();
 	ui->ToolbarWidget->layout()->addWidget(toolbar);
+
+	//测试选项卡接口
+	tabWidgetInterface = new TabTest;
 }
 
 
@@ -198,6 +201,7 @@ void MainWindowDef::showMax()
 	oldPoint = this->pos();
 	resize(QApplication::desktop()->availableGeometry().size());
 	move(0, 0);
+	show();
 	isMax = true;
 }
 
@@ -205,6 +209,7 @@ void MainWindowDef::showOld()
 {
 	resize(oldSize);
 	move(oldPoint);
+	show();
 }
 
 #include "moc_MainWindowDef.cpp"

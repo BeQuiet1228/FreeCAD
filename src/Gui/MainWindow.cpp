@@ -314,7 +314,6 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
     instance = this;
 
 	mainWindowDef = new MainWindowDef();
-	mainWindowDef->show();
 	mainWindowDef->addCenterWidget(this);
     // Create the layout containing the workspace and a tab bar
     d->mdiArea = new QMdiArea();
@@ -1278,15 +1277,22 @@ void MainWindow::loadWindowSettings()
     QPoint pos = config.value(QString::fromLatin1("Position"), this->pos()).toPoint();
     maxWidth -= pos.x();
     maxHeight -= pos.y();
-    this->resize(config.value(QString::fromLatin1("Size"), QSize(maxWidth, maxHeight)).toSize());
+#ifdef _PICGUI_
+	mainWindowDef->resize(config.value(QString::fromLatin1("Size"), QSize(maxWidth, maxHeight)).toSize());
+#else
+	this->resize(config.value(QString::fromLatin1("Size"), QSize(maxWidth, maxHeight)).toSize());
+#endif // _PICGUI_
 
     int x1,x2,y1,y2;
     // make sure that the main window is not totally out of the visible rectangle
     rect.getCoords(&x1, &y1, &x2, &y2);
     pos.setX(qMin(qMax(pos.x(),x1-this->width()+30),x2-30));
     pos.setY(qMin(qMax(pos.y(),y1-10),y2-10));
-    this->move(pos);
-
+#ifdef _PICGUI_
+	mainWindowDef->move(pos);
+#else
+	this->move(pos);
+#endif // _PICGUI_
     // tmp. disable the report window to suppress some bothering warnings
     Base::Console().SetEnabledMsgType("ReportOutput", ConsoleMsgType::MsgType_Wrn, false);
     this->restoreState(config.value(QString::fromLatin1("MainWindowState")).toByteArray());
@@ -1294,7 +1300,11 @@ void MainWindow::loadWindowSettings()
     Base::Console().SetEnabledMsgType("ReportOutput", ConsoleMsgType::MsgType_Wrn, true);
 
     bool max = config.value(QString::fromLatin1("Maximized"), false).toBool();
-    max ? showMaximized() : show();
+#ifdef _PICGUI_
+	max ? mainWindowDef->showMax() : mainWindowDef->show();
+#else
+	max ? showMaximized() : show();
+#endif // _PICGUI_
 
     statusBar()->setVisible(config.value(QString::fromLatin1("StatusBar"), true).toBool());
     config.endGroup();
@@ -1313,9 +1323,15 @@ void MainWindow::saveWindowSettings()
     QSettings config(vendor, application);
 
     config.beginGroup(qtver);
-    config.setValue(QString::fromLatin1("Size"), this->size());
-    config.setValue(QString::fromLatin1("Position"), this->pos());
-    config.setValue(QString::fromLatin1("Maximized"), this->isMaximized());
+#ifdef _PICGUI_
+	config.setValue(QString::fromLatin1("Size"),mainWindowDef->size());
+	config.setValue(QString::fromLatin1("Position"), mainWindowDef->pos());
+	config.setValue(QString::fromLatin1("Maximized"), mainWindowDef->windowIsMax());
+#else
+	config.setValue(QString::fromLatin1("Size"), this->size());
+	config.setValue(QString::fromLatin1("Position"), this->pos());
+	config.setValue(QString::fromLatin1("Maximized"), this->isMaximized());
+#endif // _PICGUI_
     config.setValue(QString::fromLatin1("MainWindowState"), this->saveState());
     config.setValue(QString::fromLatin1("StatusBar"), this->statusBar()->isVisible());
     config.endGroup();

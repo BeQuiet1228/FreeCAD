@@ -24,7 +24,8 @@ SET(contorl_client_dll " ")
 #设置优化算法模块以DLL生成
 SET(smart_contorl_dll " ")
 
-
+#添加一些宏
+add_definitions(-D_PICGUI_) #这个宏用于替换freecad原生代码的时候使用
 if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
     if(POLICY CMP0020)

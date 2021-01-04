@@ -1030,6 +1030,7 @@ SET(Widget_CPP_SRCS
 )
 SET(Widget_HPP_SRCS
     FileDialog.h
+	TabWidgetInterface.hpp
 	MainWindowDef.h
     MainWindow.h
     PrefWidgets.h

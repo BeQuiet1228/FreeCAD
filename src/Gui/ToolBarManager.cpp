@@ -37,6 +37,8 @@
 #include <qaction.h>
 
 #include "qwidgetaction.h"
+#include "MainWindowDef.h"
+#include "TabWidgetInterface.hpp"
 
 using namespace Gui;
 
@@ -264,8 +266,13 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 
 void ToolBarManager::setup(ToolBarItem* item, QToolBar* toolbar) const
 {
+	auto acs = toolbar->actions();
+	for (auto i = acs.begin(); i != acs.end(); i++)
+	{
+		auto mw = MainWindow::getInstance();
+		mw->mainWindowDef->tabWidgetInterface->addAction( QString::fromLocal8Bit(" "), toolbar->objectName(), *i);
+	}
     // 根据工具条的objectName设置工具条的显示方式：单行、分组显示
-	std::cerr << "toobarName:" << toolbar->objectName().toStdString() << std::endl;
     if (toolbar->objectName() == QString::fromUtf8("File")
         /*|| toolbar->objectName() == QString::fromUtf8("Workbench")*/){
         setup_one_line(item, toolbar);
