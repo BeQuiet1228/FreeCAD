@@ -10,18 +10,29 @@ public:
 	TabWidgetInterFace() = default;
 	~TabWidgetInterFace() = default;
 public:
+	//添加一个action
 	virtual void addAction(const QString& tabName,const QString& groupName,QAction* action) = 0;
+	//清理掉所有的action
 	virtual void clearAllAction() = 0;
+	//清理掉一个tab 包括下面的组、和action
 	virtual void clearTab(const QString& tabName) = 0;
+	//清理掉一个组以及下面的action
 	virtual void clearGoup(const QString& groupName) = 0;
-	virtual QList<QString> tabs() = 0;
-	virtual QList<QString> groups() =0;
+	//获取所有tab的名字
+	virtual QList<QString> getTabs() = 0;
+	//获取所有组的名字
+	virtual QList<QString> getGroups() =0;
+	//获取特定tab下组的名字
+	virtual QList<QString> getGroup(const QString& tabName) = 0;
+	//获取所有的action
 	virtual QList<QAction*> getActions() = 0;
+	//获取某个tab下所有的action
 	virtual QList<QAction*> getTabActions(const QString& tabName) = 0;
+	//获取某个group下所有的action
 	virtual QList<QAction*> getGroupActions(const QString& groupName) = 0;
 
 };
-class TabTest:public TabWidgetInterFace{
+class TabTest :public TabWidgetInterFace{
 public:
 	TabTest() = default;
 	~TabTest() = default;
@@ -59,6 +70,21 @@ public:
 		return a;
 	};
 	virtual QList<QString> groups(){
+		QList<QString> a;
+		return a;
+	};
+	//获取所有tab的名字
+	virtual QList<QString> getTabs(){
+		QList<QString> a;
+		return a;
+	};
+	//获取所有组的名字
+	virtual QList<QString> getGroups(){
+		QList<QString> a;
+		return a;
+	};
+	//获取特定tab下组的名字
+	virtual QList<QString> getGroup(const QString& tabName){
 		QList<QString> a;
 		return a;
 	};
