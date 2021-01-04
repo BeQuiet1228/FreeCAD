@@ -2467,9 +2467,17 @@ namespace PartChipic {
 		*/
 		double splitCorrRange(double ymin, double ymax,
 			std::vector<double> &spymin, std::vector<double> &spymax,
-			std::vector<double> &spymino, std::vector<double> &spymaxo)
+			std::vector<double> &spymino, std::vector<double> &spymaxo, int plane)//=1 2d
 		{
-			double v = fabs(ymax - ymin);////防止网格分辨率不一致
+			double v = fabs(ymax - ymin);
+			if (plane)
+			{
+				spymin.push_back(ymin);
+				spymax.push_back(ymax);
+				spymino.push_back(ymin - 0.01);
+				spymaxo.push_back(ymax + 0.01);
+				return 0;
+			}
 			if (ymin >= 0)
 			{
 				spymin.push_back(ymin);
@@ -2503,8 +2511,16 @@ namespace PartChipic {
 		*/
 		double splitCorrRangeAngle(double ymin, double ymax,
 			std::vector<double> &spymin, std::vector<double> &spymax,
-			std::vector<double> &spymino, std::vector<double> &spymaxo)
+			std::vector<double> &spymino, std::vector<double> &spymaxo, int plane)// = 1 2d
 		{
+			if(plane)
+			{
+				spymin.push_back(ymin);
+				spymax.push_back(ymax);
+				spymino.push_back(ymin - 1);
+				spymaxo.push_back(ymax + 1);
+				return 0;
+			}
 			double pymax = ymax,
 				pymin = ymin;//上一个范围角度值
 			int ite = 10;
@@ -2545,12 +2561,13 @@ namespace PartChipic {
 			return std::min(90., fabs(ymax - ymin));
 		}
 		/*
-		type：0面，1体
+		type：1为体，>=10为面：10Z XOY，11Y XOZ，12X YOZ；2D面20
 		func：函数表达式，已经被解析
 		xmax, xmin, ymax, ymin, zmax, zmin：函数体范围，已经被解析，距离单位米m，角度单位度deg
 		coor：坐标系
 		precision：精度
-		attribute：
+		attribute：实体模型有效
+		rx,ry,rz：各方向分辨率，默认1mm,1mm/1deg,1mm，最大象限网格20*20*20，最小2*2*2
 		*/
 		Py::Object makeFuncMesh(const Py::Tuple& args)
 		{
@@ -2558,21 +2575,75 @@ namespace PartChipic {
 			//由面形成实体的精确度 如果函数体的范围是1-10  将精确度设置为0.001（否则会很慢），一般情况下设置为0.01，
 			Standard_Real facePrecision = 0.01;
 			//type=0表示面，1表示体
-			int type = 0;
+			int type = -1, ndim = -1;//0x1y2z else volume
 			double angle = 360;
 			char* func;
-			double xmax, xmin, ymax, ymin, zmax, zmin = 0;
+			double xmax, xmin, ymax, ymin, zmax = 0, zmin = 0;
 			double xmaxo, xmino, ymaxo, ymino, zmaxo, zmino = 0;
+
+			/*int nb_ligne = DISTANCE_RESOL_MAX,
+				nb_colon = DISTANCE_RESOL_MAX,
+				nb_depth = DISTANCE_RESOL_MAX;*/
+			int nGrid[] = { DISTANCE_RESOL_MAX, DISTANCE_RESOL_MAX, DISTANCE_RESOL_MAX };
+			double rx = 0.001, ry = 0.001, rz = 0.001, rxt = -1, ryt = -1, rzt = -1;//分辨率
 			char* coor;
 			//精度
 			char* precision;
 			char* attribute;
 			PyObject *pPnt = 0, *pDir = 0;
-			if (!PyArg_ParseTuple(args.ptr(), "isddddddsss",
-				&type, &func, &xmin, &xmax, &ymin, &ymax, &zmin, &zmax, &coor, &precision, &attribute
+			if (!PyArg_ParseTuple(args.ptr(), "isddddddsss|ddd",
+				&type, &func, &xmin, &xmax, &ymin, &ymax, &zmin, &zmax, &coor, &precision, &attribute, &rxt, &ryt, &rzt
 				))
 				throw Py::Exception();
-
+			if (type == 10 || type == 20) {
+				if (type == 20)
+					zmax = zmin = 0;
+				type = 0;
+				ndim = ZDIM;
+				if (rxt > 0 && ryt > 0){
+					rx = rxt; ry = ryt;
+				}
+				else {
+					if (std::string(coor) != S_COOR_RECTANGULAR)
+						ry = 1;
+				}
+				zmax=zmin;					
+			}
+			else if (type == 11){
+					type = 0;
+					ndim = YDIM;
+					if (rxt > 0 && rzt > 0){
+						rx = rxt; rz = rzt;
+					}
+					else {
+						if (std::string(coor) != S_COOR_RECTANGULAR)
+							ry = 1;
+					}
+					ymax = ymin;
+				}
+			else if (type == 12){
+					type = 0;
+					ndim = XDIM;
+					if (ryt > 0 && rzt > 0){
+						ry = ryt; rz = rzt;
+					}
+					else {
+						if (std::string(coor) != S_COOR_RECTANGULAR)
+							ry = 1;
+					}
+					xmax = xmin;
+				}
+			else {
+				type = 1;
+				ndim = -1;
+				if (rxt > 0 && ryt > 0 && rzt > 0){
+					rx = rxt; ry = ryt; rz = rzt;
+				}
+				else {
+					if (std::string(coor) != S_COOR_RECTANGULAR)
+						ry = 1;
+				}
+			}
 			try {
 
 				/*//t0 = clock();
@@ -2846,8 +2917,8 @@ namespace PartChipic {
 				vcg::Point3d Start, End;
 				std::string er;
 				PM3::DefValue3D far_ori, near_ori;
-				int nb_ligne = 10, nb_colon = 10, nb_depth = 10;
-				double yreso = (ymax - ymin) * GRAD / 20.;
+
+				//double yreso = (ymax - ymin) * GRAD / 20.;
 				float extVoid = 0.00001;//0.1mm
 				float extVoidAngle = 0.01;//deg度
 
@@ -3036,10 +3107,7 @@ namespace PartChipic {
 				std::vector < std::string > funcV;
 				if (std::string(coor) == S_COOR_RECTANGULAR) {
 					float dev = 0;
-#define DISTANCE_RESOL_MAX 8
-#define DISTANCE_RESOL_MIN 2
-					nb_ligne = DISTANCE_RESOL_MAX, nb_colon = DISTANCE_RESOL_MAX, nb_depth = DISTANCE_RESOL_MAX;
-					yreso = (ymax - ymin) / (8 - 4) / 180;
+					//nb_ligne = DISTANCE_RESOL_MAX, nb_colon = DISTANCE_RESOL_MAX, nb_depth = DISTANCE_RESOL_MAX;					
 					double stepx = 0;// (xmax - xmin) / (16 - 5);
 					double stepy = 0;// (ymax - ymin) / (16 - 5);
 					double stepz = 0;// (zmax - zmin) / (16 - 5);
@@ -3060,12 +3128,12 @@ namespace PartChipic {
 					//					
 					//split corrd
 					std::vector<double> spxmin, spxmax, spymin, spymax, spzmin, spzmax, spxmino, spxmaxo, spymino, spymaxo, spzmino, spzmaxo;
-					double mx = splitCorrRange(xmin, xmax, spxmin, spxmax, spxmino, spxmaxo);
-					double my = splitCorrRange(ymin, ymax, spymin, spymax, spymino, spymaxo);
-					double mz = splitCorrRange(zmin, zmax, spzmin, spzmax, spzmino, spzmaxo);
+					double mx = splitCorrRange(xmin, xmax, spxmin, spxmax, spxmino, spxmaxo, ndim == XDIM);
+					double my = splitCorrRange(ymin, ymax, spymin, spymax, spymino, spymaxo, ndim == YDIM);
+					double mz = splitCorrRange(zmin, zmax, spzmin, spzmax, spzmino, spzmaxo, ndim == ZDIM);
 					double mm = max(mx, max(my, mz));
-					double s = 0.01;// mm / 8 + 0.000001;
-					nb_ligne = mx / s + 0.5, nb_colon = my / s + 0.5, nb_depth = mz / s + 0.5;
+
+					nGrid[XDIM] = mx / rx + 0.5, nGrid[YDIM] = my / ry + 0.5, nGrid[ZDIM] = mz / rz + 0.5;
 					for (int i = 0; i < spxmin.size(); i++)
 						for (int j = 0; j < spymin.size(); j++)
 							for (int k = 0; k < spzmin.size(); k++) {
@@ -3073,19 +3141,9 @@ namespace PartChipic {
 								near_pointV.push_back(transferToDefValue3DRECTANGULAR(spxmin[i], spymin[j], spzmin[k]));
 								far_pointVo.push_back(Base::Vector3d(spxmaxo[i], spymaxo[j], spzmaxo[k]));
 								near_pointVo.push_back(Base::Vector3d(spxmino[i], spymino[j], spzmino[k]));
-							}
-					//
-					if (nb_ligne > DISTANCE_RESOL_MAX) nb_ligne = DISTANCE_RESOL_MAX;
-					if (nb_colon > DISTANCE_RESOL_MAX) nb_colon = DISTANCE_RESOL_MAX;
-					if (nb_depth > DISTANCE_RESOL_MAX) nb_depth = DISTANCE_RESOL_MAX;
-					if (nb_ligne < DISTANCE_RESOL_MIN) nb_ligne = DISTANCE_RESOL_MIN;
-					if (nb_colon < DISTANCE_RESOL_MIN) nb_colon = DISTANCE_RESOL_MIN;
-					if (nb_depth < DISTANCE_RESOL_MIN) nb_depth = DISTANCE_RESOL_MIN;
+							}					
 				}
 				else {
-					nb_ligne = 8, nb_colon = 8, nb_depth = 8;
-					yreso = 90 * GRAD / (nb_colon);
-
 					//角度范围 - 360—360deg，且跨度Point_2.Theta - Point_1.Theta <= 360deg、Point_2.Theta > Point_1.Theta。
 					//在python代码添加此限制条件，以提醒用户
 					if (ymax <= 360 && ymin <= 360 &&
@@ -3131,12 +3189,12 @@ namespace PartChipic {
 
 						//split corrd
 						std::vector<double> spxmin, spxmax, spymin, spymax, spzmin, spzmax, spxmino, spxmaxo, spymino, spymaxo, spzmino, spzmaxo;
-						double mx = splitCorrRange(xmin, xmax, spxmin, spxmax, spxmino, spxmaxo);
-						double my = splitCorrRangeAngle(ymin, ymax, spymin, spymax, spymino, spymaxo);
-						double mz = splitCorrRange(zmin, zmax, spzmin, spzmax, spzmino, spzmaxo);
+						double mx = splitCorrRange(xmin, xmax, spxmin, spxmax, spxmino, spxmaxo, ndim == XDIM);
+						double my = splitCorrRangeAngle(ymin, ymax, spymin, spymax, spymino, spymaxo, ndim == YDIM);
+						double mz = splitCorrRange(zmin, zmax, spzmin, spzmax, spzmino, spzmaxo, ndim == ZDIM);
 						double mm = max(mx, mz);
-						double s = 0.01;// mm / 8 + 0.000001;
-						nb_ligne = mx / s + 0.5, nb_colon = my / 10. + 0.5, nb_depth = mz / s + 0.5;
+
+						nGrid[XDIM] = mx / rx + 0.5, nGrid[YDIM] = my / ry + 0.5, nGrid[ZDIM] = mz / rz + 0.5;
 
 						for (int i = 0; i < spxmin.size(); i++)
 							for (int j = 0; j < spymin.size(); j++)
@@ -3193,14 +3251,21 @@ namespace PartChipic {
 						//	ite--;
 						//} while (ite >= 0);
 					}
-					if (nb_ligne > 8) nb_ligne = 8;
-					if (nb_colon > 8) nb_colon = 8;
-					if (nb_depth > 8) nb_depth = 8;
-					if (nb_ligne < 2) nb_ligne = 2;
-					if (nb_colon < 2) nb_colon = 2;
-					if (nb_depth < 2) nb_depth = 2;
 				}
-				
+				//
+				if (nGrid[XDIM] > DISTANCE_RESOL_MAX) nGrid[XDIM] = DISTANCE_RESOL_MAX;
+				if (nGrid[YDIM] > DISTANCE_RESOL_MAX) nGrid[YDIM] = DISTANCE_RESOL_MAX;
+				if (nGrid[ZDIM] > DISTANCE_RESOL_MAX) nGrid[ZDIM] = DISTANCE_RESOL_MAX;
+				if (nGrid[XDIM] < DISTANCE_RESOL_MIN) nGrid[XDIM] = DISTANCE_RESOL_MIN;
+				if (nGrid[YDIM] < DISTANCE_RESOL_MIN) nGrid[YDIM] = DISTANCE_RESOL_MIN;
+				if (nGrid[ZDIM] < DISTANCE_RESOL_MIN) nGrid[ZDIM] = DISTANCE_RESOL_MIN;
+				if (ndim == XDIM)
+					nGrid[XDIM] = 1;
+				else if (ndim == YDIM)
+					nGrid[YDIM] = 1;
+				else if (ndim == ZDIM)
+					nGrid[ZDIM] = 1;
+
 				Part::TopoShape* topoShapeV[10] = { 0 };
 				if (far_pointV.size() > 0)
 				{
@@ -3219,13 +3284,14 @@ namespace PartChipic {
 						double maxf = -1;
 
 						/**/PM3::VFunctional vfunc;
-						vfunc.yreso = yreso;
+						vfunc.yreso = ry;
 						vfunc.iso->type = type;
-						vfunc.iso->nb_ligne = nb_ligne;
-						vfunc.iso->nb_colon = nb_colon;
-						vfunc.iso->nb_depth = nb_depth;
+						vfunc.iso->ndim = ndim;
+						vfunc.iso->nGrid[XDIM] = nGrid[XDIM];
+						vfunc.iso->nGrid[YDIM] = nGrid[YDIM];
+						vfunc.iso->nGrid[ZDIM] = nGrid[ZDIM];
 						vfunc.iso->isSunk = 1;//稳定
-						yreso = (ymax - ymin) * GRAD / (8);
+						
 						if (std::string(coor) == S_COOR_RECTANGULAR)
 							vfunc.setSystem(PM3::SYSCARTESIAN);
 						else
@@ -3261,8 +3327,8 @@ namespace PartChipic {
 							//if (false) 
 							{
 								try {
-									Part::TopoShape* funcShape = meshToShape(Points, Facets, 0, nn);
-									if (funcShape != 0 && type == 1) {
+									Part::TopoShape* funcShape = meshToShape(Points, Facets, 0, nn, type);
+									if (funcShape != 0) {// && type == 1
 										vcg::Point3d Start, End;
 										//End = vfunc.iso->End;
 										//Start = vfunc.iso->Start;
@@ -5028,7 +5094,7 @@ namespace PartChipic {
 		}
 
 
-		Part::TopoShape* meshToShape(std::vector<Base::Vector3d> Points, std::vector<Data::ComplexGeoData::Facet> Facets, const Standard_Real dev, int nn){
+		Part::TopoShape* meshToShape(std::vector<Base::Vector3d> Points, std::vector<Data::ComplexGeoData::Facet> Facets, const Standard_Real dev, int nn, int type = 1){
 
 			Part::TopoShape* funcShape = 0;
 			Mesh::MeshObject mesh;
@@ -5278,6 +5344,8 @@ namespace PartChipic {
 					filename = filename + ".brp";
 					shell->write(filename.c_str());
 				}
+				if (type == 0)
+					return shell;
 				funcShape = Solid(shell);
 				if (funcShape != 0) {
 					TopoDS_Shape sh = funcShape->removeSplitter();

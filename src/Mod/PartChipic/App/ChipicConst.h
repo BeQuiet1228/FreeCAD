@@ -12,4 +12,10 @@
 #define S_ORDER "Order"
 #define S_VACUO "Vacuo"
 #define S_VOID "Void" //S_VACUO ?
+
+#define XDIM 0
+#define YDIM 1
+#define ZDIM 2
+#define DISTANCE_RESOL_MAX 20
+#define DISTANCE_RESOL_MIN 2
 #endif
