@@ -41,7 +41,7 @@ public:
   ///
   /// \param[in] button The button
   void removeButton(QToolButton *button);
-
+  QList<QAction*> get_action_all();
 private:
   Ui::PICRibbonButtonGroup *ui;
   QString m_title; ///< Title of the button group

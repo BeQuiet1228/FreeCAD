@@ -105,3 +105,18 @@ void PICRibbonTabContent::removeButton(const QString &groupName, QToolButton *bu
     }
   }
 }
+
+QList<PICRibbonButtonGroup *> PICRibbonTabContent::get_group_all()
+{
+	QList<PICRibbonButtonGroup *> list;
+	for (int i = 0; i < ui->ribbonHorizontalLayout->count(); i++)
+	{
+		PICRibbonButtonGroup *group = static_cast<PICRibbonButtonGroup*>(ui->ribbonHorizontalLayout->itemAt(i)->widget());
+		list.append(group);
+
+	}
+	return list;
+}
+
+
+

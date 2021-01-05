@@ -58,3 +58,13 @@ void PICRibbonButtonGroup::removeButton(QToolButton *button)
   /// \todo What happens if button is not part of the layout?
   ui->gridLayout_btn->removeWidget(button);
 }
+
+QList<QAction *> PICRibbonButtonGroup::get_action_all()
+{
+	QList<QToolButton*> list_b = this->findChildren<QToolButton*>();
+	QList<QAction*> list;
+	for (int i; i<list_b.count(); i++) {
+		list.append(list_b.at(i)->actions());
+	}
+	return list;
+}

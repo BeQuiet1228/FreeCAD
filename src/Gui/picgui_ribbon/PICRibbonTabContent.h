@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QToolButton>
-
+#include "PICRibbonButtonGroup.h"
 namespace Ui {
 class PICRibbonTabContent;
 }
@@ -44,7 +44,7 @@ public:
   /// \param[in] groupName Name of the group
   /// \param[in] button The button
   void removeButton(const QString &groupName, QToolButton *button);
-
+  QList<PICRibbonButtonGroup *> get_group_all();
 private:
   Ui::PICRibbonTabContent *ui;
 };

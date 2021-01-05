@@ -3,8 +3,9 @@
 
 #include <QTabWidget>
 #include <QToolButton>
+#include "TabWidgetInterface.hpp"
 
-class GuiExport Ribbon : public QTabWidget
+class GuiExport Ribbon : public TabWidgetInterFace
 {
   Q_OBJECT
 public:
@@ -50,6 +51,32 @@ public:
   /// \param[in] groupName Name of the group
   /// \param[in] button The button
   void removeButton(const QString &tabName, const QString &groupName, QToolButton *button);
+
+
+  QList<PICRibbonTabContent *> get_tab_all();
+  PICRibbonTabContent * get_tab_by_name(QString& name);
+
+
+  //添加一个action
+  void addAction(const QString& tabName, const QString& groupName, QAction* action);
+  //清理掉所有的action
+  void clearAllAction();
+  //清理掉一个tab 包括下面的组、和action-+
+  void clearTab(const QString& tabName);
+  //清理掉一个组以及下面的action
+  void clearGoup(const QString& groupName);
+  //获取所有tab的名字
+  QList<QString> getTabs();
+  //获取所有组的名字
+  QList<QString> getGroups();
+  //获取特定tab下组的名字
+  QList<QString> getGroup(const QString& tabName);
+  //获取所有的action
+  QList<QAction*> getActions();
+  //获取某个tab下所有的action
+  QList<QAction*> getTabActions(const QString& tabName);
+  //获取某个group下所有的action
+  QList<QAction*> getGroupActions(const QString& groupName);
 };
 
 #endif // RIBBONTABWIDGET_H

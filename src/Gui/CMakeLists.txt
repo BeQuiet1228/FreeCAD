@@ -1058,7 +1058,7 @@ SET(Widget_HPP_SRCS
     picgui_ribbon/PICRibbon.h
     picgui_ribbon/PICRibbonTabContent.h
     picgui_ribbon/PICRibbonButtonGroup.h
-    picgui_ribbon/MainWindow.)
+    picgui_ribbon/MainWindow.h)
 SET(Widget_SRCS
 	LuaEditView.cpp
 	MainWindowDef.ui
