@@ -178,8 +178,8 @@
 #include <vcg/complex/algorithms/hole.h>
 #include<vcg/complex/algorithms/update/bounding.h>
 
-//#include "tmesh.h"
-//#include "tin.h"
+#include "tmesh.h"
+#include "tin.h"
 using namespace Part;
 
 namespace PM3
@@ -195,7 +195,7 @@ VFunctional::VFunctional(std::string base,VOLUME_TYPE t): Mesh(base,t)
     dim = 3;
     nature.value = 0;
 
-	iso = new myIso3D();
+	iso = new Iso3D();
 
 	yreso = 1.0;//д╛хо1deg
 }

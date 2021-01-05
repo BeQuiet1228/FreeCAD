@@ -17,7 +17,7 @@ public:
     ~VFunctional();
 	std::string f;
     DefValue3D near_point,far_point ;
-	myIso3D *iso;
+	Iso3D *iso;
 	double yreso;
     //PM3::;
 public:
