@@ -318,6 +318,10 @@ set(Gui_MOC_HDRS
     TaskView/TaskView.h
     DAGView/DAGView.h
     DAGView/DAGModel.h
+        picgui_ribbon/PICRibbon.h
+        picgui_ribbon/PICRibbonTabContent.h
+        picgui_ribbon/PICRibbonButtonGroup.h
+        picgui_ribbon/MainWindow.h
 )
 
 fc_wrap_cpp(Gui_MOC_SRCS ${Gui_MOC_HDRS})
@@ -388,7 +392,10 @@ SET(Gui_UIC_SRCS
     TextureMapping.ui
     TaskView/TaskAppearance.ui
     TaskView/TaskSelectLinkProperty.ui
-	MainWindowDef.ui
+    MainWindowDef.ui
+	picgui_ribbon/MainWindow.ui
+        picgui_ribbon/PICRibbonButtonGroup.ui
+        picgui_ribbon/PICRibbonTabContent.ui
 )
 
 SET(Gui_RES_SRCS
@@ -1027,6 +1034,10 @@ SET(Widget_CPP_SRCS
     WidgetFactory.cpp
     Widgets.cpp
     Window.cpp
+        picgui_ribbon/PICRibbon.cpp
+        picgui_ribbon/PICRibbonTabContent.cpp
+        picgui_ribbon/PICRibbonButtonGroup.cpp
+        picgui_ribbon/MainWindow.cpp
 )
 SET(Widget_HPP_SRCS
     FileDialog.h
@@ -1043,8 +1054,11 @@ SET(Widget_HPP_SRCS
     WidgetFactory.h
     Widgets.h
     Window.h
-	LuaEditView.h
-)
+    LuaEditView.h
+    picgui_ribbon/PICRibbon.h
+    picgui_ribbon/PICRibbonTabContent.h
+    picgui_ribbon/PICRibbonButtonGroup.h
+    picgui_ribbon/MainWindow.h)
 SET(Widget_SRCS
 	LuaEditView.cpp
 	MainWindowDef.ui
@@ -1210,6 +1224,13 @@ if(MSVC)
         TaskView/TaskSelectLinkProperty.cpp
         TaskView/TaskEditControl.cpp
         TaskView/TaskView.cpp
+        picgui_ribbon/PICRibbon.cpp
+        picgui_ribbon/PICRibbonTabContent.cpp
+        picgui_ribbon/PICRibbonButtonGroup.cpp
+        picgui_ribbon/MainWindow.cpp
+
+
+
         ${Command_CPP_SRCS}
         ${Dialog_CPP_SRCS}
         ${Dialog_Customize_CPP_SRCS}

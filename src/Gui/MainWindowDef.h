@@ -8,6 +8,7 @@
 #include <qwidget.h>
 #include <QResizeEvent>
 #include <TabWidgetInterface.hpp>
+#include "picgui_ribbon/PICRibbon.h"
 class TitleBar: public QWidget{
 	Q_OBJECT
 public:

@@ -59,7 +59,8 @@ MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 	ui->ToolbarWidget->layout()->addWidget(toolbar);
 
 	//测试选项卡接口
-	tabWidgetInterface = new TabTest;
+	tabWidgetInterface = new Ribbon();
+	tabWidgetInterface->show();
 }
 
 

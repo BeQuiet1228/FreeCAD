@@ -1,11 +1,11 @@
 #pragma once
 #include <QString>
 #include <QAction>
-#include <QTableWidget>
+#include <QTabWidget>
 #include <QList>
 #include <iostream>
 #include <map>
-class TabWidgetInterFace:public QTableWidget{
+class TabWidgetInterFace : virtual public QTabWidget{
 public:
 	TabWidgetInterFace() = default;
 	~TabWidgetInterFace() = default;
@@ -14,7 +14,7 @@ public:
 	virtual void addAction(const QString& tabName,const QString& groupName,QAction* action) = 0;
 	//清理掉所有的action
 	virtual void clearAllAction() = 0;
-	//清理掉一个tab 包括下面的组、和action
+	//清理掉一个tab 包括下面的组、和action-+
 	virtual void clearTab(const QString& tabName) = 0;
 	//清理掉一个组以及下面的action
 	virtual void clearGoup(const QString& groupName) = 0;

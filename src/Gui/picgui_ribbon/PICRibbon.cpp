@@ -1,0 +1,300 @@
+﻿#include "PreCompiled.h"
+#include "PICRibbon.h"
+#include "PICRibbonTabContent.h"
+
+#include <QApplication>
+#include <QStyleOption>
+#include <QPainter>
+#include "picgui_ribbon/moc_PICRibbon.cpp"
+Ribbon::Ribbon(QWidget *parent)
+  : QTabWidget(parent)
+{
+  // Determine default colors
+  QColor bg = qApp->palette().color(QPalette::Background);
+  QColor mid = qApp->palette().color(QPalette::Mid);
+
+  // Note: the order in which the background/palette/stylesheet functions are
+  // called does matter. Should be same as in Qt designer.
+  setAutoFillBackground(true);
+
+
+  // Set background color
+  QPalette pal = palette();
+  QColor qcolor = QColor(7,7,7);
+  pal.setColor(QPalette::Background, qcolor);
+  setPalette(pal);
+}
+
+void Ribbon::addTab(const QString &tabName)
+{
+  // Note: superclass QTabWidget also has a function addTab()
+  PICRibbonTabContent *ribbonTabContent = new PICRibbonTabContent;
+  QTabWidget::addTab(ribbonTabContent, tabName);
+  this->setAttribute(Qt::WA_StyledBackground);
+
+}
+
+void Ribbon::addTab(const QIcon &tabIcon, const QString &tabName)
+{
+  // Note: superclass QTabWidget also has a function addTab()
+  PICRibbonTabContent *ribbonTabContent = new PICRibbonTabContent;
+  QTabWidget::addTab(ribbonTabContent, tabIcon, tabName);
+}
+
+void Ribbon::removeTab(const QString &tabName)
+{
+  // Find ribbon tab
+  for (int i = 0; i < count(); i++)
+  {
+    if (tabText(i).toLower() == tabName.toLower())
+    {
+      // Remove tab
+      QWidget *tab = QTabWidget::widget(i);
+      QTabWidget::removeTab(i);
+      delete tab;
+      break;
+    }
+  }
+}
+
+void Ribbon::addGroup(const QString &tabName, const QString &groupName)
+{
+  // Find ribbon tab
+  QWidget *tab = nullptr;
+  for (int i = 0; i < count(); i++)
+  {
+    if (tabText(i).toLower() == tabName.toLower())
+    {
+      tab = QTabWidget::widget(i);
+      break;
+    }
+  }
+
+  if (tab != nullptr)
+  {
+    // Tab found
+    // Add ribbon group
+    PICRibbonTabContent *ribbonTabContent = static_cast<PICRibbonTabContent*>(tab);
+    ribbonTabContent->addGroup(groupName);
+  }
+  else
+  {
+    // Tab not found
+    // Create tab
+    addTab(tabName);
+
+    // Add ribbon group
+    addGroup(tabName, groupName);
+  }
+}
+
+void Ribbon::addButton(const QString &tabName, const QString &groupName, QToolButton *button)
+{
+  // Find ribbon tab
+  QWidget *tab = nullptr;
+  for (int i = 0; i < count(); i++)
+  {
+    if (tabText(i).toLower() == tabName.toLower())
+    {
+      tab = QTabWidget::widget(i);
+      break;
+    }
+  }
+
+  if (tab != nullptr)
+  {
+    // Tab found
+    // Add ribbon button
+    PICRibbonTabContent *ribbonTabContent = static_cast<PICRibbonTabContent*>(tab);
+    ribbonTabContent->addButton(groupName, button);
+  }
+  else
+  {
+    // Tab not found.
+    // Create tab
+    addTab(tabName);
+
+    // Add ribbon button
+    addButton(tabName, groupName, button);
+  }
+}
+
+void Ribbon::removeButton(const QString &tabName, const QString &groupName, QToolButton *button)
+{
+  // Find ribbon tab
+  QWidget *tab = nullptr;
+  for (int i = 0; i < count(); i++)
+  {
+    if (tabText(i).toLower() == tabName.toLower())
+    {
+      tab = QTabWidget::widget(i);
+      break;
+    }
+  }
+
+  if (tab != nullptr)
+  {
+    // Tab found
+    // Remove ribbon button
+    PICRibbonTabContent *ribbonTabContent = static_cast<PICRibbonTabContent*>(tab);
+    ribbonTabContent->removeButton(groupName, button);
+
+    if (ribbonTabContent->groupCount() == 0)
+    {
+      removeTab(tabName);
+    }
+  }
+}
+
+
+QList<PICRibbonTabContent *> Ribbon::get_tab_all()
+{
+	QList<PICRibbonTabContent *> list;
+	for (int i = 0; i < count(); i++)
+	{
+		QWidget *tab = QTabWidget::widget(i);
+		PICRibbonTabContent *ribbonTabContent = static_cast<PICRibbonTabContent*>(tab);
+		list.append(ribbonTabContent);
+	}
+	return list;
+}
+
+PICRibbonTabContent *Ribbon::get_tab_by_name(QString &name)
+{
+	QWidget *tab = nullptr;
+	for (int i = 0; i < count(); i++)
+	{
+		if (tabText(i) == name)
+		{
+			tab = QTabWidget::widget(i);
+			break;
+		}
+	}
+	PICRibbonTabContent *ribbonTabContent = static_cast<PICRibbonTabContent*>(tab);
+	return ribbonTabContent;
+}
+
+
+
+
+
+
+
+
+
+void Ribbon::addAction(const QString &tabName, const QString &groupName, QAction *action)
+{
+	QToolButton *b = new QToolButton;
+	b->setDefaultAction(action);
+	this->addButton(tabName, groupName, b);
+}
+
+void Ribbon::clearAllAction()
+{
+
+}
+
+void Ribbon::clearTab(const QString &tabName)
+{
+
+}
+
+void Ribbon::clearGoup(const QString &groupName)
+{
+
+}
+
+QList<QString> Ribbon::getTabs()
+{
+	QList<QString> list;
+	for (int i = 0; i < count(); i++)
+	{
+		QString name = tabText(i);
+		list.append(name);
+
+	}
+	return list;
+}
+
+QList<QString> Ribbon::getGroups()
+{
+	QList<PICRibbonTabContent *> list_t = get_tab_all();
+	QList<QString> list;
+	for (int i = 0; i<list_t.count(); i++) {
+		PICRibbonTabContent * t = list_t.at(i);
+		QList<PICRibbonButtonGroup *> list_g = t->get_group_all();
+		for (int j = 0; j<list_g.count(); j++) {
+			QString name = list_g.at(j)->title();
+			list.append(name);
+		}
+	}
+	return list;
+}
+
+QList<QString> Ribbon::getGroup(const QString &tabName)
+{
+	QString name_t = tabName;
+	QList<QString> list;
+	PICRibbonTabContent * t = get_tab_by_name(name_t);
+	QList<PICRibbonButtonGroup *> list_g = t->get_group_all();
+	for (int j = 0; j<list_g.count(); j++) {
+		QString name = list_g.at(j)->title();
+		list.append(name);
+	}
+	return list;
+}
+
+QList<QAction *> Ribbon::getActions()
+{
+	QList<PICRibbonTabContent *> list_t = get_tab_all();
+	QList<QAction*> list;
+	for (int i = 0; i<list_t.count(); i++) {
+		PICRibbonTabContent * t = list_t.at(i);
+		QList<PICRibbonButtonGroup *> list_g = t->get_group_all();
+		for (int j = 0; j<list_g.count(); j++) {
+			list.append(list_g.at(j)->actions());
+		}
+	}
+	return list;
+}
+
+QList<QAction *> Ribbon::getTabActions(const QString &tabName)
+{
+
+	QString name_t = tabName;
+	QList<QAction*> list;
+	PICRibbonTabContent * t = get_tab_by_name(name_t);
+	QList<PICRibbonButtonGroup *> list_g = t->get_group_all();
+	for (int j = 0; j<list_g.count(); j++) {
+		list.append(list_g.at(j)->actions());
+	}
+	return list;
+}
+
+QList<QAction *> Ribbon::getGroupActions(const QString &groupName)
+{
+	PICRibbonButtonGroup * g;
+	QList<PICRibbonTabContent *> list_t = get_tab_all();
+	QList<QAction*> list;
+	for (int i = 0; i<list_t.count(); i++) {
+		PICRibbonTabContent * t = list_t.at(i);
+		QList<PICRibbonButtonGroup *> list_g = t->get_group_all();
+		for (int j = 0; j<list_g.count(); j++) {
+			QString name = list_g.at(j)->title();
+			if (name == groupName){
+				list.append(list_g.at(j)->get_action_all());
+			}
+		}
+	}
+	return list;
+
+}
+
+
+
+
+
+
+
+
+

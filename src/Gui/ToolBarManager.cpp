@@ -188,7 +188,7 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 	if (!toolBarItems)
 		return; // empty menu bar
 	
-#ifdef _PICGUI__
+#ifdef _PICGUI_
 	/*
 	≤‚ ‘ toobaritems
 	*/
