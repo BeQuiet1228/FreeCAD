@@ -1560,3 +1560,8 @@ void CommandManager::updateCommands(const char* sContext, int mode)
         }
     }
 }
+
+Gui::Action* Gui::CommandManager::creatAction(Command *cmd)
+{
+	return cmd->createAction();
+}

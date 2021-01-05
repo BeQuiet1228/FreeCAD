@@ -40,9 +40,9 @@
 #include <H5Fpublic.h>
 #include "hdf5io.h"
 #include <windows.h>
+#include <python2.7/object.h>
 
 #include<Gui/Command.h>
-
 
 // FreeCAD Base header
 #include <Base/Interpreter.h>
@@ -53,12 +53,13 @@
 #include <Base/FileInfo.h>
 #include <Base/UnitsApi.h>
 #include<Base/Tools.h>
-
 #include <ctime>
 #include "Config.hpp"
 #include "NetMsg.hpp"
 
 #include"UserJson.hpp"
+
+#include "Contorl/ContorlInterface.h"
 //using Base::GetConsole;
 using namespace Base;
 using namespace App;
@@ -130,6 +131,26 @@ PyMethodDef Application::Methods[] = {
      "Create a new document with a given name.\n"
      "The document name must be unique which\n"
      "is checked automatically."},
+	 { "newDocumentM3dMod", (PyCFunction)Application::sNewDocumentM3dMod, 1,
+	 "newDocumentM3dMod([string]) -> object\n\n"
+	 "Create a new document with a given name.\n"
+	 "The document name must be unique which\n"
+	 "is checked automatically." },
+	 { "newDocumentM2dMod", (PyCFunction)Application::sNewDocumentM2dMod, 1,
+	 "newDocumentM2dMod([string]) -> object\n\n"
+	 "Create a new document with a given name.\n"
+	 "The document name must be unique which\n"
+	 "is checked automatically." },
+	 { "newDocumentM3dText", (PyCFunction)Application::sNewDocumentM3dText, 1,
+	 "newDocumentM3dText([string]) -> object\n\n"
+	 "Create a new document with a given name.\n"
+	 "The document name must be unique which\n"
+	 "is checked automatically." },
+	 { "newDocumentM2dText", (PyCFunction)Application::sNewDocumentM2dText, 1,
+	 "newDocumentM2dText([string]) -> object\n\n"
+	 "Create a new document with a given name.\n"
+	 "The document name must be unique which\n"
+	 "is checked automatically." },
     {"closeDocument",  (PyCFunction) Application::sCloseDocument,  1,
      "closeDocument(string) -> None\n\n"
      "Close the document with a given name."},
@@ -204,6 +225,8 @@ PyMethodDef Application::Methods[] = {
 	 "clientGetWorkpath() -- client Get Workpath" },
 	 { "clientSetWorkpath", (PyCFunction)Application::sClientSetWorkpath, 1,
 	 "clientSetWorkpath() -- client Set Workpath" },
+	 { "setM3dPath", (PyCFunction)Application::sSetM3dpath, 1,
+	 "setM3dPath() -- g" },
 	 /*用户id和密码*/
 	 { "clientSetUserId", (PyCFunction)Application::sClientSetUserId, 1,
 	 "clientSetUserId(int) -- Connect the server" },
@@ -276,7 +299,7 @@ PyObject* Application::sOpenDocument(PyObject * /*self*/, PyObject *args,PyObjec
     std::string EncodedName = std::string(Name);
     PyMem_Free(Name);
     try {
-		PyObject* doc = GetApplication().openDocument(EncodedName.c_str())->getPyObject();
+		PyObject* doc = GetApplication().openDocument3dMod(EncodedName.c_str())->getPyObject();
 		//std::string suffix = EncodedName.substr(EncodedName.find_last_of('.'), EncodedName.size());
 		//if (stricmp(suffix.c_str(), ".FCStd") == 0)
 		//{
@@ -330,7 +353,62 @@ PyObject* Application::sNewDocument(PyObject * /*self*/, PyObject *args,PyObject
         return doc->getPyObject();
     }PY_CATCH;
 }
+PyObject* Application::sNewDocumentM3dMod(PyObject *self, PyObject *args, PyObject *kwd)
+{
+	char *docName = 0;
+	char *usrName = 0;
+	if (!PyArg_ParseTuple(args, "|etet", "utf-8", &docName, "utf-8", &usrName))
+		return NULL;
 
+	PY_TRY{
+		App::Document* doc = GetApplication().newDocumentM3dMode(docName, usrName);
+		PyMem_Free(docName);
+		PyMem_Free(usrName);
+		return doc->getPyObject();
+	}PY_CATCH;
+}
+PyObject* Application::sNewDocumentM2dMod(PyObject *self, PyObject *args, PyObject *kwd)
+{
+	char *docName = 0;
+	char *usrName = 0;
+	if (!PyArg_ParseTuple(args, "|etet", "utf-8", &docName, "utf-8", &usrName))
+		return NULL;
+
+	PY_TRY{
+		App::Document* doc = GetApplication().newDocumentM2dMod(docName, usrName);
+		PyMem_Free(docName);
+		PyMem_Free(usrName);
+		return doc->getPyObject();
+	}PY_CATCH;
+}
+PyObject* Application::sNewDocumentM3dText(PyObject *self, PyObject *args, PyObject *kwd)
+{
+	char *docName = 0;
+	char *usrName = 0;
+	if (!PyArg_ParseTuple(args, "|etet", "utf-8", &docName, "utf-8", &usrName))
+		return NULL;
+
+	PY_TRY{
+		App::Document* doc = GetApplication().newDocumentM3dText(docName, usrName);
+		PyMem_Free(docName);
+		PyMem_Free(usrName);
+		return doc->getPyObject();
+	}PY_CATCH;
+}
+PyObject* Application::sNewDocumentM2dText(PyObject *self, PyObject *args, PyObject *kwd)
+{
+	char *docName = 0;
+	char *usrName = 0;
+	if (!PyArg_ParseTuple(args, "|etet", "utf-8", &docName, "utf-8", &usrName))
+		return NULL;
+
+	PY_TRY{
+		App::Document* doc = GetApplication().newDocumentM2dText(docName, usrName);
+		PyMem_Free(docName);
+		PyMem_Free(usrName);
+		return doc->getPyObject();
+	}PY_CATCH;
+}
 PyObject* Application::sSetActiveDocument(PyObject * /*self*/, PyObject *args,PyObject * /*kwd*/)
 {
     char *pstr = 0;
@@ -948,6 +1026,8 @@ PyObject *Application::sClientConnect(PyObject *self, PyObject *args, PyObject *
 //返回链接是否可用
 PyObject *Application::sClientIsEnable(PyObject *self, PyObject *args, PyObject *kwd)
 {
+	//新控制部分需要这样返回
+	return Py_BuildValue("O", Py_True);
 	//连接成功
 	if (GetApplication().m_netServer && GetApplication().m_netServer->GetConnectState()
 		== PicNet::NetServer::ConnectState::CONNECTED)
@@ -1110,6 +1190,13 @@ PyObject *Application::sClientSendWinMsg(PyObject *self, PyObject *args, PyObjec
 
 	if (!PyArg_ParseTuple(args, "iii", &id, &wParam,&lParam))
 		return NULL;
+	//新控制部分的看图接口，暂时使用
+	if (id == 109 || id == 107)
+	{
+		auto contor = ContorlInterface::GetInstance();
+		contor->senWinMessage(id, wParam, lParam);
+	}
+	
 
 	if (GetApplication().m_clientController
 		&& GetApplication().m_clientController->SendWinMsg(id,wParam,lParam))
@@ -1301,6 +1388,25 @@ int CN2Unicode(char *input, wchar_t *output)
 
 	return 1;
 }
+PyObject* Application::sSetM3dpath(PyObject *self, PyObject *args, PyObject *kwd)
+{
+
+	std::string path = GetApplication().getActiveDocument()->FileName.getValue();
+	if (GetApplication().getActiveDocument()->classID == 2)
+	{
+		QString temp = QString::fromUtf8(path.c_str());
+		temp = temp.left(temp.length() - 6) + QString::fromLocal8Bit(".m3d");
+		path = temp.toStdString();
+	}else if (GetApplication().getActiveDocument()->classID == 3){
+		QString temp = QString::fromUtf8(path.c_str());
+		temp = temp.left(temp.length() - 9) + QString::fromLocal8Bit(".m2d");
+		path = temp.toStdString();
+	}
+	std::cerr << path << std::endl;
+	auto contorl = ContorlInterface::GetInstance();
+	contorl->setM3dPath(path);
+	Py_Return;
+}
 
 //设置工作路径
 PyObject *Application::sClientSetWorkpath(PyObject *self, PyObject *args, PyObject *kwd)
@@ -1405,6 +1511,7 @@ PyObject *Application::sGetFigNameInfoListFromH5File(PyObject *self, PyObject *a
 		//std::cerr << figNameInfoList[i].type << "type\n";
 		//std::cerr << figNameInfoList[i].groupName << "groupId\n";
 		PyList_Append(pyParams, StringToPyByWin(figNameInfoList[i].type));
+		std::cerr << figNameInfoList[i].type << std::endl;
 		PyList_Append(pyParams, StringToPyByWin(figNameInfoList[i].groupName));
 		PyObject *pyParams2 = PyList_New(0);//初始化一个列表
 		for (int j = 0; j < figNameInfoList[i].headList.size(); j++)
@@ -1458,7 +1565,7 @@ PyObject *Application::sGetFigDataFromH5File(PyObject *self, PyObject *args, PyO
 	}
 	//设置该列表此位置的值
 	PyTuple_SetItem(data, 0, headPyParams);
-
+	PyObject *testTemp = nullptr;
 	PyObject *dataPyParams = PyList_New(0);//初始化一个列表
 	for (int i = 0; i < figdata.dataSetList.size(); i++)
 	{
@@ -1466,9 +1573,14 @@ PyObject *Application::sGetFigDataFromH5File(PyObject *self, PyObject *args, PyO
 		for (int j = 0; j < figdata.dataSetList[i].size(); j++)
 		{
 			//std::cerr << figdata.dataSetList[i][j] << "data\n";
-			PyList_Append(pyParams, Py_BuildValue("f", figdata.dataSetList[i][j]));
+			auto temp = Py_BuildValue("f", figdata.dataSetList[i][j]);
+			PyList_Append(pyParams,temp);
+			Py_DECREF(temp);
+			testTemp = temp;
+			
 		}
 		PyList_Append(dataPyParams, pyParams);
+		Py_DECREF(pyParams);
 		
 	}
 	//设置该列表此位置的值
@@ -1480,10 +1592,12 @@ PyObject *Application::sGetFigDataFromH5File(PyObject *self, PyObject *args, PyO
 		PyObject *pyParams = PyList_New(0);//初始化一个列表
 		for (int j = 0; j < figdata.dataSizeList[i].size(); j++)
 		{
-			PyList_Append(pyParams, Py_BuildValue("i", figdata.dataSizeList[i][j]));
+			auto temp = Py_BuildValue("i", figdata.dataSizeList[i][j]);
+			PyList_Append(pyParams, temp);
+			Py_DECREF(temp);
 		}
 		PyList_Append(sizePyParams, pyParams);
-
+		Py_DECREF(pyParams);
 	}
 	//设置该列表此位置的值
 	PyTuple_SetItem(data, 2, sizePyParams);

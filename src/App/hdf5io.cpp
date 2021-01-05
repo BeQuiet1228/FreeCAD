@@ -83,7 +83,7 @@ QList<float> Hdf5IO::getValue(const Group &group, const std::string &dataName)
 	try
 	{
 		dataset = group.openDataSet(dataName);
-
+		
 	}
 	catch (...)
 	{

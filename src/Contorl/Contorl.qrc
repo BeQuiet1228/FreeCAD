@@ -1,0 +1,18 @@
+<RCC>
+  <qresource>
+    <file>icon/local.svg</file>
+    <file>icon/network .svg</file>
+    <file>image/loading.gif</file>
+    <file>icon/muti-run.svg</file>
+    <file>icon/off.svg</file>
+    <file>icon/on.svg</file>
+    <file>icon/batch.svg</file>
+    <file>icon/check.svg</file>
+    <file>icon/continue.svg</file>
+    <file>icon/finish.svg</file>
+    <file>icon/pause.svg</file>
+    <file>icon/receive.svg</file>
+    <file>icon/refresh.svg</file>
+    <file>icon/run.svg</file>
+  </qresource>
+</RCC>

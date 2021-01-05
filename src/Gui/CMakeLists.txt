@@ -52,6 +52,16 @@ if(MSVC)
          ${COIN3D_LIBRARIES}
          ${OPENGL_gl_LIBRARY}
     )
+	if(contorl_client_dll)
+	list(APPEND FreeCADGui_LIBS
+		Contorl
+	)
+	endif()
+	if(smart_contorl_dll)
+	list(APPEND FreeCADGui_LIBS
+		SmartContorl
+	)
+	endif()
 else(MSVC)
     set(FreeCADGui_LIBS
         FreeCADApp
@@ -60,6 +70,17 @@ else(MSVC)
         ${OPENGL_gl_LIBRARY}
         ${3DCONNEXION_LINKFLAGS}
     )
+	
+	if(contorl_client_dll)
+	list(APPEND FreeCADGui_LIBS
+		Contorl
+	)
+	endif()
+	if(smart_contorl_dll)
+	list(APPEND FreeCADGui_LIBS
+		SmartContorl
+	)
+	endif()	
 endif(MSVC)
 
 if (BUILD_QT5)
@@ -245,6 +266,7 @@ set(Gui_MOC_HDRS
     ExpressionCompleter.h
     DlgExpressionInput.h
     FileDialog.h
+	MainWindowDef.h
     Flag.h
     GraphicsViewZoom.h
     GraphvizView.h
@@ -370,7 +392,8 @@ SET(Gui_UIC_SRCS
     TextureMapping.ui
     TaskView/TaskAppearance.ui
     TaskView/TaskSelectLinkProperty.ui
-        picgui_ribbon/MainWindow.ui
+    MainWindowDef.ui
+	picgui_ribbon/MainWindow.ui
         picgui_ribbon/PICRibbonButtonGroup.ui
         picgui_ribbon/PICRibbonTabContent.ui
 )
@@ -404,6 +427,8 @@ SET(Command_CPP_SRCS
     CommandTest.cpp
     CommandView.cpp
     CommandStructure.cpp
+	OpenFileConfig.h
+	OpenFileConfig.cpp
 )
 SET(Command_SRCS
     ${Command_CPP_SRCS}
@@ -998,6 +1023,7 @@ SOURCE_GROUP("View3D\\Inventor" FILES ${Inventor_SRCS})
 # The widget sources
 SET(Widget_CPP_SRCS
     FileDialog.cpp
+	MainWindowDef.cpp
     MainWindow.cpp
     PrefWidgets.cpp
     InputField.cpp
@@ -1015,6 +1041,8 @@ SET(Widget_CPP_SRCS
 )
 SET(Widget_HPP_SRCS
     FileDialog.h
+	TabWidgetInterface.hpp
+	MainWindowDef.h
     MainWindow.h
     PrefWidgets.h
     InputField.h
@@ -1026,12 +1054,14 @@ SET(Widget_HPP_SRCS
     WidgetFactory.h
     Widgets.h
     Window.h
-        picgui_ribbon/PICRibbon.h
-        picgui_ribbon/PICRibbonTabContent.h
-        picgui_ribbon/PICRibbonButtonGroup.h
-        picgui_ribbon/MainWindow.h
-)
+    LuaEditView.h
+    picgui_ribbon/PICRibbon.h
+    picgui_ribbon/PICRibbonTabContent.h
+    picgui_ribbon/PICRibbonButtonGroup.h
+    picgui_ribbon/MainWindow.)
 SET(Widget_SRCS
+	LuaEditView.cpp
+	MainWindowDef.ui
     ${Widget_CPP_SRCS}
     ${Widget_HPP_SRCS}
 )

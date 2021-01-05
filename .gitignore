@@ -1,5 +1,5 @@
 # file types to ignore
-
+*.rej
 *.pyc
 *.obj
 *.lib
@@ -35,3 +35,4 @@ OpenSCAD_rc.py
 .tags
 tags
 .github/
+/src/Contorl/Contorl

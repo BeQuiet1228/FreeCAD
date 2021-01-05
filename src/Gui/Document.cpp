@@ -65,6 +65,7 @@
 #include "Selection.h"
 #include "WaitCursor.h"
 #include "Thumbnail.h"
+#include "Contorl/ContorlInterface.h"
 
 using namespace Gui;
 
@@ -660,8 +661,17 @@ bool Document::saveAs(void)
     getMainWindow()->showMessage(QObject::tr("Save document under new filename..."));
 
     QString exe = qApp->applicationName();
+	//根据document类型 设置文件后缀 暂时写在这个地方
+	//----------------------------------------------
+	QString format = QString::fromLocal8Bit("FCStd");
+	auto doc = App::GetApplication().getActiveDocument();
+	if (doc->classID == 3)
+	{
+		format = QString::fromLocal8Bit("FCStd_2D");
+	}
+	//-----------------------------------------------
     QString fn = FileDialog::getSaveFileName(getMainWindow(), QObject::tr("Save %1 Document").arg(exe), 
-        QString(), QString::fromLatin1("%1 %2 (*.FCStd)").arg(exe).arg(QObject::tr("Document")));
+        QString(), QString::fromLatin1("%1 %2 (*.%3)").arg(exe).arg(QObject::tr("Document")).arg(format));
     if (!fn.isEmpty()) {
         QFileInfo fi;
         fi.setFile(fn);
@@ -1148,7 +1158,7 @@ void Document::detachView(Gui::BaseView* pcView, bool bPassiv)
         d->passiveViews.remove(pcView);
     }
     else {
-        if (find(d->baseViews.begin(),d->baseViews.end(),pcView)
+       if (find(d->baseViews.begin(),d->baseViews.end(),pcView)
             != d->baseViews.end())
         d->baseViews.remove(pcView);
 
@@ -1236,6 +1246,23 @@ bool Document::canClose ()
     //        return false;
     //    }
     //}
+	
+	//关闭工程之前，如果有chipic正在运行，那么询问用户是否要结束运行。
+	auto contorl = ContorlInterface::GetInstance();
+	if (contorl->hasManualChipicRuning())
+	{
+		QMessageBox msgBox;
+		msgBox.setText(QObject::tr("CHIPIC"));
+		msgBox.setInformativeText(QObject::tr("你确定要关闭工程并关闭仿真程序吗？QAQ"));
+		msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+		msgBox.setDefaultButton(QMessageBox::Cancel);
+		int ret = msgBox.exec();
+		if (ret == QMessageBox::Cancel)
+		{
+			return false;
+		}
+		contorl->buttonClicked(0);
+	}
 
     bool ok = true;
     if (isModified()) {

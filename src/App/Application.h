@@ -78,12 +78,20 @@ public:
      * the user and stored in the App::Document::Name property.
      */
     App::Document* newDocument(const char * Name=0l, const char * UserName=0l);
+	//新建一个文本编辑器工程
+	App::Document* newDocument(Document* doc,const char * Name = 0l, const char * UserName = 0l);
+	App::Document* newDocumentM3dText(const char * Name = 0l, const char * UserName = 0l);
+	App::Document* newDocumentM2dText(const char * Name = 0l, const char * UserName = 0l);
+	App::Document* newDocumentM3dMode(const char * Name = 0l, const char * UserName = 0l);
+	App::Document* newDocumentM2dMod(const char * Name = 0l, const char * UserName = 0l);
     /// Closes the document \a name and removes it from the application.
     bool closeDocument(const char* name);
     /// find a unique document name
     std::string getUniqueDocumentName(const char *Name) const;
     /// Open an existing document from a file
     App::Document* openDocument(const char * FileName=0l);
+	App::Document* openDocument3dMod(const char * FileName = 0l);
+	App::Document* openDocument2dMod(const char * FileName = 0l);
     /// Retrieve the active document
     App::Document* getActiveDocument(void) const;
     /// Retrieve a named document
@@ -341,6 +349,10 @@ private:
     static PyObject* sSaveDocument      (PyObject *self,PyObject *args,PyObject *kwd);
     static PyObject* sSaveDocumentAs    (PyObject *self,PyObject *args,PyObject *kwd);
     static PyObject* sNewDocument       (PyObject *self,PyObject *args,PyObject *kwd);
+	static PyObject* sNewDocumentM3dMod(PyObject *self, PyObject *args, PyObject *kwd);
+	static PyObject* sNewDocumentM2dMod(PyObject *self, PyObject *args, PyObject *kwd);
+	static PyObject* sNewDocumentM3dText(PyObject *self, PyObject *args, PyObject *kwd);
+	static PyObject* sNewDocumentM2dText(PyObject *self, PyObject *args, PyObject *kwd);
     static PyObject* sCloseDocument     (PyObject *self,PyObject *args,PyObject *kwd);
     static PyObject* sActiveDocument    (PyObject *self,PyObject *args,PyObject *kwd);
     static PyObject* sSetActiveDocument (PyObject *self,PyObject *args,PyObject *kwd);
@@ -414,6 +426,9 @@ private:
 	static PyObject* sClientGetWorkpath(PyObject *self, PyObject *args, PyObject *kwd);
 	//设置工作路径
 	static PyObject* sClientSetWorkpath(PyObject *self, PyObject *args, PyObject *kwd);
+	//设置M3d路径
+	static PyObject* sSetM3dpath(PyObject *self, PyObject *args, PyObject *kwd);
+
 
 	//
 	static PyObject* sClientSetUserId(PyObject *self, PyObject *args, PyObject *kwd);

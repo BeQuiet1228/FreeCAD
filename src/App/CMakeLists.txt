@@ -49,7 +49,20 @@ include_directories(
 set(FreeCADApp_LIBS
     FreeCADBase
     ${Boost_LIBRARIES}
+	debug hdf5_D.lib
+	debug hdf5_cpp_D.lib
+	debug zlibd.lib
+	debug zlibstaticd.lib
+	optimized hdf5.lib
+	optimized hdf5_cpp.lib
+	optimized zlib.lib
+	optimized zlibstatic.lib
 )
+if(contorl_client_dll)
+	list(APPEND FreeCADApp_LIBS
+		Contorl
+	)
+endif()
 
 if (BUILD_QT5)
     include_directories(
@@ -152,7 +165,12 @@ SET(Document_CPP_SRCS
     MaterialObject.cpp
     MergeDocuments.cpp
     TextDocument.cpp
-	
+	DocumentM3dText.h 
+	DocumentM3dText.cpp
+	DocumentM3dMod.h
+	DocumentM3dMod.cpp
+	DocumentM2dMod.h
+	DocumentM2dMod.cpp
 )
 
 SET(Document_HPP_SRCS

@@ -95,6 +95,8 @@
 #include "PropertyPythonObject.h"
 #include "PropertyExpressionEngine.h"
 #include "Document.h"
+#include "DocumentM3dText.h"
+#include "DocumentM2dMod.h"
 #include "DocumentObjectGroup.h"
 #include "DocumentObjectFileIncluded.h"
 #include "InventorObject.h"
@@ -113,6 +115,7 @@
 #include "Transactions.h"
 #include <App/MaterialPy.h>
 #include <Base/GeometryPyCXX.h>
+#include "DocumentM3dMod.h"
 
 // If you stumble here, run the target "BuildExtractRevision" on Windows systems
 // or the Python script "SubWCRev.py" on Linux based systems which builds
@@ -181,12 +184,16 @@ private:
 };
 
 
+
+
 //==========================================================================
 // Application
 //==========================================================================
 
 ParameterManager *App::Application::_pcSysParamMngr;
 ParameterManager *App::Application::_pcUserParamMngr;
+
+
 Base::ConsoleObserverStd  *Application::_pConsoleObserverStd =0;
 Base::ConsoleObserverFile *Application::_pConsoleObserverFile =0;
 
@@ -356,6 +363,212 @@ void Application::renameDocument(const char *OldName, const char *NewName)
     else {
         throw Base::RuntimeError("Application::renameDocument(): no document with this name to rename!");
     }
+}
+
+App::Document* App::Application::newDocument(Document* doc, const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
+{
+	/*
+	代码与原有的newDocument函数一致，只是将document类修改为自己定义的类
+	*/
+
+	// get a valid name anyway!
+	if (!Name || Name[0] == '\0')
+		Name = "Unnamed";
+	string name = getUniqueDocumentName(Name);
+
+	std::string userName;
+	if (UserName && UserName[0] != '\0') {
+		userName = UserName;
+	}
+	else {
+		userName = Name;
+		std::vector<std::string> names;
+		names.reserve(DocMap.size());
+		std::map<string, Document*>::const_iterator pos;
+		for (pos = DocMap.begin(); pos != DocMap.end(); ++pos) {
+			names.push_back(pos->second->Label.getValue());
+		}
+
+		if (!names.empty())
+			userName = Base::Tools::getUniqueName(userName, names);
+	}
+
+	// create the FreeCAD document
+	std::unique_ptr<Document> newDoc(doc);
+
+
+	// add the document to the internal list
+	DocMap[name] = newDoc.release(); // now owned by the Application
+	_pActiveDoc = DocMap[name];
+
+
+	// connect the signals to the application for the new document
+	_pActiveDoc->signalNewObject.connect(boost::bind(&App::Application::slotNewObject, this, _1));
+	_pActiveDoc->signalDeletedObject.connect(boost::bind(&App::Application::slotDeletedObject, this, _1));
+	_pActiveDoc->signalChangedObject.connect(boost::bind(&App::Application::slotChangedObject, this, _1, _2));
+	_pActiveDoc->signalRelabelObject.connect(boost::bind(&App::Application::slotRelabelObject, this, _1));
+	_pActiveDoc->signalActivatedObject.connect(boost::bind(&App::Application::slotActivatedObject, this, _1));
+	_pActiveDoc->signalUndo.connect(boost::bind(&App::Application::slotUndoDocument, this, _1));
+	_pActiveDoc->signalRedo.connect(boost::bind(&App::Application::slotRedoDocument, this, _1));
+	/*fubiao*/
+	_pActiveDoc->signalRecomputedObject.connect(boost::bind(&App::Application::slotRecomputedObject, this, _1));
+	/*
+	_pActiveDoc->signalBeforeChangeObject.connect(boost::bind(&App::Application::slotBeforeChangeObject, this, _1, _2));
+	*/
+
+	// make sure that the active document is set in case no GUI is up
+	{
+		Base::PyGILStateLocker lock;
+		Py::Object active(_pActiveDoc->getPyObject(), true);
+		Py::Module("FreeCAD").setAttr(std::string("ActiveDocument"), active);
+	}
+
+	signalNewDocument(*_pActiveDoc);
+
+	// set the UserName after notifying all observers
+	_pActiveDoc->Label.setValue(userName);
+
+	return _pActiveDoc;
+}
+
+/**
+* @brief App::Application::newDocumentM3dText  往工程管理器里添加一个文本编辑器工程  用于编辑M2d文件  以及 M3d文件 
+* @param const char * Name
+* @param const char * UserName
+* @return App::Document*
+*/
+App::Document* App::Application::newDocumentM3dText(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
+{
+	//切换到对应的工作台
+	Base::InterpreterSingleton python;
+	python.runString("Gui.activateWorkbench(\"StartWorkbench\")");
+	return newDocument(new DocumentM3dText(), Name, UserName);
+}
+
+App::Document* App::Application::newDocumentM2dText(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
+{
+	//切换到对应的工作台
+	Base::InterpreterSingleton python;
+	python.runString("Gui.activateWorkbench(\"StartWorkbench\")");
+	return newDocument(new DocumentM2dText, Name, UserName);
+}
+
+App::Document* App::Application::newDocumentM3dMode(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
+{
+	//切换到对应的工作台
+	Base::InterpreterSingleton python;
+	python.runString("Gui.activateWorkbench(\"Modeling3DWorkbench\")");
+	return newDocument(new DocumentM3dMod(), Name, UserName);
+}
+
+App::Document* App::Application::newDocumentM2dMod(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
+{
+	//切换到对应的工作台
+	Base::InterpreterSingleton python;
+	python.runString("Gui.activateWorkbench(\"Modeling2DWorkbench\")");
+	return newDocument(new DocumentM2dMod(), Name, UserName);
+}
+
+App::Document* App::Application::openDocument3dMod(const char * FileName /*= 0l*/)
+{
+	FileInfo File(FileName);
+
+	if (!File.exists()) {
+		std::stringstream str;
+		str << "File '" << FileName << "' does not exist!";
+		throw Base::FileSystemError(str.str().c_str());
+	}
+
+	// Before creating a new document we check whether the document is already open
+	std::string filepath = File.filePath();
+	for (std::map<std::string, Document*>::iterator it = DocMap.begin(); it != DocMap.end(); ++it) {
+		// get unique path separators
+		std::string fi = FileInfo(it->second->FileName.getValue()).filePath();
+		if (filepath == fi) {
+			std::stringstream str;
+			str << "The project '" << FileName << "' is already Restore the documentopen!";
+			throw Base::FileSystemError(str.str().c_str());
+		}
+	}
+
+	// Use the same name for the internal and user name.
+	// The file name is UTF-8 encoded which means that the internal name will be modified
+	// to only contain valid ASCII characters but the user name will be kept.
+	Document* newDoc = newDocumentM3dMode(File.fileNamePure().c_str(), File.fileNamePure().c_str());
+
+	newDoc->FileName.setValue(File.filePath());
+
+	try {
+		// read the document
+		newDoc->restore();
+		return newDoc;
+	}
+	// if the project file itself is corrupt then
+	// close the document
+	catch (const Base::FileException&) {
+		closeDocument(newDoc->getName());
+		throw;
+	}
+	catch (const std::ios_base::failure&) {
+		closeDocument(newDoc->getName());
+		throw;
+	}
+	// but for any other exceptions leave it open to give the
+	// user a chance to fix it
+	catch (...) {
+		throw;
+	}
+}
+
+App::Document* App::Application::openDocument2dMod(const char * FileName /*= 0l*/)
+{
+	FileInfo File(FileName);
+
+	if (!File.exists()) {
+		std::stringstream str;
+		str << "File '" << FileName << "' does not exist!";
+		throw Base::FileSystemError(str.str().c_str());
+	}
+
+	// Before creating a new document we check whether the document is already open
+	std::string filepath = File.filePath();
+	for (std::map<std::string, Document*>::iterator it = DocMap.begin(); it != DocMap.end(); ++it) {
+		// get unique path separators
+		std::string fi = FileInfo(it->second->FileName.getValue()).filePath();
+		if (filepath == fi) {
+			std::stringstream str;
+			str << "The project '" << FileName << "' is already Restore the documentopen!";
+			throw Base::FileSystemError(str.str().c_str());
+		}
+	}
+
+	// Use the same name for the internal and user name.
+	// The file name is UTF-8 encoded which means that the internal name will be modified
+	// to only contain valid ASCII characters but the user name will be kept.
+	Document* newDoc = newDocumentM2dMod(File.fileNamePure().c_str(), File.fileNamePure().c_str());
+
+	newDoc->FileName.setValue(File.filePath());
+
+	try {
+		// read the document
+		newDoc->restore();
+		return newDoc;
+	}
+	// if the project file itself is corrupt then
+	// close the document
+	catch (const Base::FileException&) {
+		closeDocument(newDoc->getName());
+		throw;
+	}
+	catch (const std::ios_base::failure&) {
+		closeDocument(newDoc->getName());
+		throw;
+	}
+	// but for any other exceptions leave it open to give the
+	// user a chance to fix it
+	catch (...) {
+		throw;
+	}
 }
 
 Document* Application::newDocument(const char * Name, const char * UserName)
@@ -528,7 +741,7 @@ Document* Application::openDocument(const char * FileName)
     // Use the same name for the internal and user name.
     // The file name is UTF-8 encoded which means that the internal name will be modified
     // to only contain valid ASCII characters but the user name will be kept.
-    Document* newDoc = newDocument(File.fileNamePure().c_str(), File.fileNamePure().c_str());
+    Document* newDoc = newDocumentM3dMode(File.fileNamePure().c_str(), File.fileNamePure().c_str());
 
     newDoc->FileName.setValue(File.filePath());
 

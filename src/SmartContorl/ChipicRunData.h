@@ -1,0 +1,57 @@
+#pragma once
+#include <QString>
+#include <vector>
+#include <map>
+#include <memory>
+#include <QListWidgetItem>
+class ContorlDataBar;
+class Chipic;
+class ResultData{
+public:
+	ResultData(){};
+	~ResultData(){};
+	//添加数据
+	void addValue(const float& v){
+		data.push_back(v);
+	};
+	//获取大小
+	int size(){
+		return data.size();
+	}
+	//获取数据 如果超出索引范围则返回0
+	float getValue(const int& index){
+		if (data.size() <= index)
+			return 0.0;
+		return data.at(index);
+	}
+private:
+	std::vector<float> data;
+};
+using ResultDataPtr = std::shared_ptr<ResultData>;
+class ChipicRunData{
+public:
+	ChipicRunData();
+	~ChipicRunData();
+public:
+	//m3d文件路径
+	QString m3dPath;
+	//h5文件路径
+	QString h5FilePath;
+	//优化之后的参数
+	QString variate;
+	//启动程序之后的线程id
+	unsigned long threadID = 0;
+	//数据筛选之后的结果
+	ResultDataPtr resultData;
+	//变量的顺序
+	unsigned int rank = 0;
+public:
+	void setCreatDataBar(std::shared_ptr<Chipic> chipic);
+	void deleteItemAndBarPtr();
+public:
+	QListWidgetItem *widgetItem;
+	ContorlDataBar *dataBar;
+};
+using ChipicRunDataPtr = std::shared_ptr<ChipicRunData>;
+using ChipicRunDatas = std::vector<ChipicRunDataPtr>;
+using ChipicRunDataMap = std::map<QString, ChipicRunDataPtr>;
