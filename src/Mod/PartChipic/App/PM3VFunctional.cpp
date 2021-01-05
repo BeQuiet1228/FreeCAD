@@ -1,6 +1,6 @@
 #include "PM3VFunctional.h"
 #include "../core/pm3parser.h"
-#include "../core/myIso3D.h"
+#include "../core/Iso3D.h"
 #include "core/system.h"
 
 #include "PreCompiled.h"
@@ -178,8 +178,8 @@
 #include <vcg/complex/algorithms/hole.h>
 #include<vcg/complex/algorithms/update/bounding.h>
 
-#include "tmesh.h"
-#include "tin.h"
+//#include "tmesh.h"
+//#include "tin.h"
 using namespace Part;
 
 namespace PM3
@@ -756,255 +756,255 @@ bool VFunctional::update_mesh_topology(std::vector<Base::Vector3d> &Points, std:
 }
 
 
-bool VFunctional::update_mesh_topologyFix(std::vector<Base::Vector3d> &Points, std::vector<Data::ComplexGeoData::Facet> &Facets, double &maxf)
-{
-	std::vector<Vertex> points;
-	std::vector<Face> faces;
-
-	vcg::Point3f p1, p2;
-
-	//       convert2MeshO(points,faces);
-
-	//    if(!pexparser->getUpdate(near_point)||!near_point.Parser(pexparser, p1) ||
-	//       !pexparser->getUpdate(far_point)||     !far_point.Parser(pexparser, p2))//error
-	//        return false;
-
-	int i, j;
-	// process the new surface
-	//ProcessNewIsoSurface( );
-	DefValue3D p, pp;
-	p = far_point;
-	pp = near_point;
-	iso->pValParser = this->pexparser;
-	std::transform(f.begin(), f.end(), f.begin(), ::tolower);
-	//std::string temstr = replace_str(f, "theta", "(atan2(y,x)");
-	//temstr = replace_str(temstr, "r", "(sqrt(x*x+y*y)");
-	std::string temstr = replace_str(f, "theta", "phi");
-	iso->ImplicitFunction = replace_str(temstr, "**", "^");//f.toLower().replace("**", "^");
-	if (gsysType == PM3::SYSMYCC)
-	{
-		p.value[0] = far_point.value[1];
-		p.value[1] = far_point.value[2];
-		p.value[2] = far_point.value[0];
-
-		pp.value[0] = near_point.value[1];
-		pp.value[1] = near_point.value[2];
-		pp.value[2] = near_point.value[0];
-
-		iso->gsysType = PM3::SYSCYLINDRICAL;
-
-	}
-	else
-	{
-		iso->gsysType = gsysType;
-		//iso->ImplicitFunction = replace_str(iso->ImplicitFunction, "r", "(sqrt(x*x + y*y))");
-		//iso->ImplicitFunction = replace_str(iso->ImplicitFunction, "phi", "(atan(y/x))");
-	}
-
-	iso->limitSup = p;//
-	iso->limitInf = pp;
-	std::string res = "0";// getStringFromFloat(pgrid->getresolu());
-	if (property == PM3::PRO_EMPTY)
-	{
-		iso->limitSup.setValue(0, p.value[0] + "+" + res);
-		iso->limitSup.setValue(1, p.value[1] + "+" + res);
-		iso->limitSup.setValue(2, p.value[2] + "+" + res);
-		iso->limitInf.setValue(0, pp.value[0] + "-" + res);
-		iso->limitInf.setValue(1, pp.value[1] + "-" + res);
-		iso->limitInf.setValue(2, pp.value[2] + "-" + res);
-	}
-	iso->yreso = this->yreso;
-	bool br = iso->ComputeIsoMap();
-	maxf = -1;
-	{
-		{
-			int j;
-			cm.Clear();
-
-			CMeshO::VertexIterator vi = vcg::tri::Allocator<CMeshO>::AddVertices(cm, iso->NbPointIsoMap);
-			//float i[3];
-			float res = 1.0;// pgrid->getresolu();
-			for (j = 0; j<iso->NbPointIsoMap; ++j)
-			{
-				//i[0] = (int64_t(points[j].p[0] / res+0.5))*res;
-				//i[1] = (int64_t(points[j].p[1] / res+0.5))*res;
-				//i[2] = (int64_t(points[j].p[2] / res+0.5))*res;
-				double *p = iso->IsoPointMapOriginal[j].V();
-				if (gsysType == PM3::SYSCYLINDRICAL && yreso > 0)
-				{
-					vcg::Point3d in(p), out;
-					out = PM3::cyl2car(in);
-					p[0] = out[0];
-					p[1] = out[1];
-					p[2] = out[2];
-				}
-				(*vi).P()[0] = p[0];// / res;//i[0];//i;
-				(*vi).P()[1] = p[1];// / res;//i[1];//
-				(*vi).P()[2] = p[2];// / res;//i[2];//
-				/*(*vi).N()[0] = points[j].n[0];
-				(*vi).N()[1] = points[j].n[1];
-				(*vi).N()[2] = points[j].n[2];
-				(*vi).C()[0] = points[j].c[0];
-				(*vi).C()[1] = points[j].c[1];
-				(*vi).C()[2] = points[j].c[2];
-				(*vi).C()[3] = 255;*/
-				++vi;
-			}
-			std::vector<CMeshO::VertexPointer> index;
-			index.resize(cm.vn);
-			for (j = 0, vi = cm.vert.begin(); j<cm.vn; ++j, ++vi)
-				index[j] = &*vi;
-			int fn = 0;
-			for (j = 0; j < iso->NbTriangleIsoSurface; j++)
-			{
-				if (iso->TypeIsoSurfaceTriangleListeCND[j] != 0) fn += 1;
-			}
-			CMeshO::FaceIterator fi = vcg::tri::Allocator<CMeshO>::AddFaces(cm, fn);
-			int *v = 0;
-			for (j = 0; j < iso->NbTriangleIsoSurface; j++)
-			{
-				if (iso->TypeIsoSurfaceTriangleListeCND[j] != 0) {
-					(*fi).Alloc(3);
-					v = iso->IsoSurfaceTriangleListe[j].V();
-					(*fi).V(0) = index[v[0]];
-					(*fi).V(1) = index[v[1]];
-					(*fi).V(2) = index[v[2]];
-					//for (int k = 0; k<3; ++k)
-					//   (*fi).V(k) = index[faces[j].v[k]];
-					//(*fi).N() = faces[j].n;
-					++fi;
-				}
-			}
-			cm.clean();
-			if (name == "bbox")
-				vcg::tri::Clean<CMeshO>::RemoveUnreferencedVertex(cm);
-			saveOBJ(PM3::getOutOBJName("d://0ori" + name + ".obj"));
-			//tri::UpdateBounding<CMeshO>::Box(cm);
-			blist = true;
-		}
-	}
-	T_MESH::Basic_TMesh tin;
-	{
-		int j;
-
-		float res = 1.0;// pgrid->getresolu();
-		//for (j = 0; j<iso->NbPointIsoMap; ++j)
-		//{
-		//	//i[0] = (int64_t(points[j].p[0] / res+0.5))*res;
-		//	//i[1] = (int64_t(points[j].p[1] / res+0.5))*res;
-		//	//i[2] = (int64_t(points[j].p[2] / res+0.5))*res;
-		//	double *p = iso->IsoPointMapOriginal[j].V();
-		//	if (gsysType == PM3::SYSCYLINDRICAL && yreso > 0)
-		//	{
-		//		vcg::Point3d in(p), out;
-		//		out = PM3::cyl2car(in);
-		//		p[0] = out[0];
-		//		p[1] = out[1];
-		//		p[2] = out[2];
-		//	}
-		//	tin.V.appendTail(tin.newVertex(p[0], p[1], p[2]));
-		//}
-		std::vector<int> VertexId(cm.vert.size());
-		int numvert = 0;
-		CMeshO::VertexIterator vi;
-		for (vi = cm.vert.begin(); vi != cm.vert.end(); ++vi)//for (i = 0; i < iso->NbPointIsoMap; i++)
-			if (!(*vi).IsD())
-			{
-				VertexId[vi - cm.vert.begin()] = numvert;
-				// //Vertex v;
-				//double *p = iso->IsoPointMapOriginal[i].V();
-				////v.p = vcg::Point3f(p[0],p[1],p[2]);
-				////p = iso->IsoNormMapOriginal[i].V();
-				////v.n = -vcg::Point3f(p[0],p[1],p[2]);
-				maxf = fmax(maxf, fmax(fabs((*vi).P()[0]), fmax(fabs((*vi).P()[1]), fabs((*vi).P()[2]))));
-
-				tin.V.appendTail(tin.newVertex((*vi).P()[0], (*vi).P()[1], (*vi).P()[2]));
-
-				numvert++;
-			}		
-		T_MESH::ExtVertex **var = NULL;
-		int nv = tin.V.numels();
-		{T_MESH::Vertex *v;
-		T_MESH::Node *n;
-			
-			var = (T_MESH::ExtVertex **)malloc(sizeof(T_MESH::ExtVertex *)*nv);
-			i = 0;
-			for (n = tin.V.head(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL; n != NULL; n = n->next(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL)
-				var[i++] = new T_MESH::ExtVertex(v);
-			//i = 0; FOREACHVERTEX(v, n) var[i++] = new T_MESH::ExtVertex(v);
-			//face_section = 1;
-			i = 0;
-		}
-		
-		int *v = 0;
-		/*for (j = 0; j < iso->NbTriangleIsoSurface; j++)
-		{
-			if (iso->TypeIsoSurfaceTriangleListeCND[j] != 0) {
-				v = iso->IsoSurfaceTriangleListe[j].V();
-				tin.CreateIndexedTriangle(var, v[0], v[1], v[2]);	
-				i++;
-			}
-		}*/
-		for (CMeshO::FaceIterator fi = cm.face.begin(); fi != cm.face.end(); ++fi)//for (i = 0; i < iso->NbTriangleIsoSurface; i++)
-			if (!(*fi).IsD())
-			{
-				tin.CreateIndexedTriangle(var, VertexId[tri::Index(cm, (*fi).V(0))], VertexId[tri::Index(cm, (*fi).V(1))], VertexId[tri::Index(cm, (*fi).V(2))]);
-				i++;
-			}
-		tin.closeLoadingSession(0, i, var, false);
-
-		tin.saveOBJ(("d://oripre" + name + ".obj").c_str());
-		
-		{
-			// Keep only the largest component (i.e. with most triangles)
-			int sc = tin.removeSmallestComponents();
-			// Fill holes
-			if (tin.boundaries())
-			{
-				tin.fillSmallBoundaries(0, true);
-			}
-
-			// Run geometry correction
-			if (!tin.boundaries());// TMesh::warning("Fixing degeneracies and intersections...\n");
-			if (tin.boundaries() || !tin.meshclean());// TMesh::warning("MeshFix could not fix everything.\n", sc);
-			tin.saveOBJ(("d://ori" + name + ".obj").c_str());
-		}
-	}
-	{
-		int i;
-		char triname[256];
-		T_MESH::Node *n;
-		T_MESH::coord *ocds;
-		T_MESH::Vertex *v;
-
-		
-		//FOREACHVERTEX(v, n) fprintf(fp, "v %f %f %f\n", TMESH_TO_FLOAT(v->x), TMESH_TO_FLOAT(v->y), TMESH_TO_FLOAT(v->z));
-		for (n = tin.V.head(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL; n != NULL; n = n->next(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL)
-			Points.push_back(Base::Vector3d(TMESH_TO_FLOAT(v->x), TMESH_TO_FLOAT(v->y), TMESH_TO_FLOAT(v->z)));
-		ocds = new T_MESH::coord[tin.V.numels()];
-		i = 0; //FOREACHVERTEX(v, n) ocds[i++] = v->x;
-		for (n = tin.V.head(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL; n != NULL; n = n->next(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL)
-			ocds[i++] = v->x;
-		i = 0; //FOREACHVERTEX(v, n) v->x = i++;
-		for (n = tin.V.head(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL; n != NULL; n = n->next(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL)
-			v->x = i++;
-		//FOREACHNODE(T, n) fprintf(fp, "f %d %d %d\n", TVI1(n) + 1, TVI2(n) + 1, TVI3(n) + 1);
-		for ((n) = (tin.T).head(); (n) != NULL; (n) = (n)->next()) {
-			Data::ComplexGeoData::Facet face;
-			face.I1 = ((T_MESH::Triangle *)n->data)->v1()->x;
-			face.I2 = ((T_MESH::Triangle *)n->data)->v2()->x;
-			face.I3 = ((T_MESH::Triangle *)n->data)->v3()->x;
-			Facets.push_back(face);
-		}
-
-		i = 0; //FOREACHVERTEX(v, n) v->x = ocds[i++];
-		for (n = tin.V.head(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL; n != NULL; n = n->next(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL)
-			v->x = ocds[i++];
-		delete[] ocds;
-	}
-	
-	return 1;
-}
+//bool VFunctional::update_mesh_topologyFix(std::vector<Base::Vector3d> &Points, std::vector<Data::ComplexGeoData::Facet> &Facets, double &maxf)
+//{
+//	std::vector<Vertex> points;
+//	std::vector<Face> faces;
+//
+//	vcg::Point3f p1, p2;
+//
+//	//       convert2MeshO(points,faces);
+//
+//	//    if(!pexparser->getUpdate(near_point)||!near_point.Parser(pexparser, p1) ||
+//	//       !pexparser->getUpdate(far_point)||     !far_point.Parser(pexparser, p2))//error
+//	//        return false;
+//
+//	int i, j;
+//	// process the new surface
+//	//ProcessNewIsoSurface( );
+//	DefValue3D p, pp;
+//	p = far_point;
+//	pp = near_point;
+//	iso->pValParser = this->pexparser;
+//	std::transform(f.begin(), f.end(), f.begin(), ::tolower);
+//	//std::string temstr = replace_str(f, "theta", "(atan2(y,x)");
+//	//temstr = replace_str(temstr, "r", "(sqrt(x*x+y*y)");
+//	std::string temstr = replace_str(f, "theta", "phi");
+//	iso->ImplicitFunction = replace_str(temstr, "**", "^");//f.toLower().replace("**", "^");
+//	if (gsysType == PM3::SYSMYCC)
+//	{
+//		p.value[0] = far_point.value[1];
+//		p.value[1] = far_point.value[2];
+//		p.value[2] = far_point.value[0];
+//
+//		pp.value[0] = near_point.value[1];
+//		pp.value[1] = near_point.value[2];
+//		pp.value[2] = near_point.value[0];
+//
+//		iso->gsysType = PM3::SYSCYLINDRICAL;
+//
+//	}
+//	else
+//	{
+//		iso->gsysType = gsysType;
+//		//iso->ImplicitFunction = replace_str(iso->ImplicitFunction, "r", "(sqrt(x*x + y*y))");
+//		//iso->ImplicitFunction = replace_str(iso->ImplicitFunction, "phi", "(atan(y/x))");
+//	}
+//
+//	iso->limitSup = p;//
+//	iso->limitInf = pp;
+//	std::string res = "0";// getStringFromFloat(pgrid->getresolu());
+//	if (property == PM3::PRO_EMPTY)
+//	{
+//		iso->limitSup.setValue(0, p.value[0] + "+" + res);
+//		iso->limitSup.setValue(1, p.value[1] + "+" + res);
+//		iso->limitSup.setValue(2, p.value[2] + "+" + res);
+//		iso->limitInf.setValue(0, pp.value[0] + "-" + res);
+//		iso->limitInf.setValue(1, pp.value[1] + "-" + res);
+//		iso->limitInf.setValue(2, pp.value[2] + "-" + res);
+//	}
+//	iso->yreso = this->yreso;
+//	bool br = iso->ComputeIsoMap();
+//	maxf = -1;
+//	{
+//		{
+//			int j;
+//			cm.Clear();
+//
+//			CMeshO::VertexIterator vi = vcg::tri::Allocator<CMeshO>::AddVertices(cm, iso->NbPointIsoMap);
+//			//float i[3];
+//			float res = 1.0;// pgrid->getresolu();
+//			for (j = 0; j<iso->NbPointIsoMap; ++j)
+//			{
+//				//i[0] = (int64_t(points[j].p[0] / res+0.5))*res;
+//				//i[1] = (int64_t(points[j].p[1] / res+0.5))*res;
+//				//i[2] = (int64_t(points[j].p[2] / res+0.5))*res;
+//				double *p = iso->IsoPointMapOriginal[j].V();
+//				if (gsysType == PM3::SYSCYLINDRICAL && yreso > 0)
+//				{
+//					vcg::Point3d in(p), out;
+//					out = PM3::cyl2car(in);
+//					p[0] = out[0];
+//					p[1] = out[1];
+//					p[2] = out[2];
+//				}
+//				(*vi).P()[0] = p[0];// / res;//i[0];//i;
+//				(*vi).P()[1] = p[1];// / res;//i[1];//
+//				(*vi).P()[2] = p[2];// / res;//i[2];//
+//				/*(*vi).N()[0] = points[j].n[0];
+//				(*vi).N()[1] = points[j].n[1];
+//				(*vi).N()[2] = points[j].n[2];
+//				(*vi).C()[0] = points[j].c[0];
+//				(*vi).C()[1] = points[j].c[1];
+//				(*vi).C()[2] = points[j].c[2];
+//				(*vi).C()[3] = 255;*/
+//				++vi;
+//			}
+//			std::vector<CMeshO::VertexPointer> index;
+//			index.resize(cm.vn);
+//			for (j = 0, vi = cm.vert.begin(); j<cm.vn; ++j, ++vi)
+//				index[j] = &*vi;
+//			int fn = 0;
+//			for (j = 0; j < iso->NbTriangleIsoSurface; j++)
+//			{
+//				if (iso->TypeIsoSurfaceTriangleListeCND[j] != 0) fn += 1;
+//			}
+//			CMeshO::FaceIterator fi = vcg::tri::Allocator<CMeshO>::AddFaces(cm, fn);
+//			int *v = 0;
+//			for (j = 0; j < iso->NbTriangleIsoSurface; j++)
+//			{
+//				if (iso->TypeIsoSurfaceTriangleListeCND[j] != 0) {
+//					(*fi).Alloc(3);
+//					v = iso->IsoSurfaceTriangleListe[j].V();
+//					(*fi).V(0) = index[v[0]];
+//					(*fi).V(1) = index[v[1]];
+//					(*fi).V(2) = index[v[2]];
+//					//for (int k = 0; k<3; ++k)
+//					//   (*fi).V(k) = index[faces[j].v[k]];
+//					//(*fi).N() = faces[j].n;
+//					++fi;
+//				}
+//			}
+//			cm.clean();
+//			if (name == "bbox")
+//				vcg::tri::Clean<CMeshO>::RemoveUnreferencedVertex(cm);
+//			saveOBJ(PM3::getOutOBJName("d://0ori" + name + ".obj"));
+//			//tri::UpdateBounding<CMeshO>::Box(cm);
+//			blist = true;
+//		}
+//	}
+//	T_MESH::Basic_TMesh tin;
+//	{
+//		int j;
+//
+//		float res = 1.0;// pgrid->getresolu();
+//		//for (j = 0; j<iso->NbPointIsoMap; ++j)
+//		//{
+//		//	//i[0] = (int64_t(points[j].p[0] / res+0.5))*res;
+//		//	//i[1] = (int64_t(points[j].p[1] / res+0.5))*res;
+//		//	//i[2] = (int64_t(points[j].p[2] / res+0.5))*res;
+//		//	double *p = iso->IsoPointMapOriginal[j].V();
+//		//	if (gsysType == PM3::SYSCYLINDRICAL && yreso > 0)
+//		//	{
+//		//		vcg::Point3d in(p), out;
+//		//		out = PM3::cyl2car(in);
+//		//		p[0] = out[0];
+//		//		p[1] = out[1];
+//		//		p[2] = out[2];
+//		//	}
+//		//	tin.V.appendTail(tin.newVertex(p[0], p[1], p[2]));
+//		//}
+//		std::vector<int> VertexId(cm.vert.size());
+//		int numvert = 0;
+//		CMeshO::VertexIterator vi;
+//		for (vi = cm.vert.begin(); vi != cm.vert.end(); ++vi)//for (i = 0; i < iso->NbPointIsoMap; i++)
+//			if (!(*vi).IsD())
+//			{
+//				VertexId[vi - cm.vert.begin()] = numvert;
+//				// //Vertex v;
+//				//double *p = iso->IsoPointMapOriginal[i].V();
+//				////v.p = vcg::Point3f(p[0],p[1],p[2]);
+//				////p = iso->IsoNormMapOriginal[i].V();
+//				////v.n = -vcg::Point3f(p[0],p[1],p[2]);
+//				maxf = fmax(maxf, fmax(fabs((*vi).P()[0]), fmax(fabs((*vi).P()[1]), fabs((*vi).P()[2]))));
+//
+//				tin.V.appendTail(tin.newVertex((*vi).P()[0], (*vi).P()[1], (*vi).P()[2]));
+//
+//				numvert++;
+//			}		
+//		T_MESH::ExtVertex **var = NULL;
+//		int nv = tin.V.numels();
+//		{T_MESH::Vertex *v;
+//		T_MESH::Node *n;
+//			
+//			var = (T_MESH::ExtVertex **)malloc(sizeof(T_MESH::ExtVertex *)*nv);
+//			i = 0;
+//			for (n = tin.V.head(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL; n != NULL; n = n->next(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL)
+//				var[i++] = new T_MESH::ExtVertex(v);
+//			//i = 0; FOREACHVERTEX(v, n) var[i++] = new T_MESH::ExtVertex(v);
+//			//face_section = 1;
+//			i = 0;
+//		}
+//		
+//		int *v = 0;
+//		/*for (j = 0; j < iso->NbTriangleIsoSurface; j++)
+//		{
+//			if (iso->TypeIsoSurfaceTriangleListeCND[j] != 0) {
+//				v = iso->IsoSurfaceTriangleListe[j].V();
+//				tin.CreateIndexedTriangle(var, v[0], v[1], v[2]);	
+//				i++;
+//			}
+//		}*/
+//		for (CMeshO::FaceIterator fi = cm.face.begin(); fi != cm.face.end(); ++fi)//for (i = 0; i < iso->NbTriangleIsoSurface; i++)
+//			if (!(*fi).IsD())
+//			{
+//				tin.CreateIndexedTriangle(var, VertexId[tri::Index(cm, (*fi).V(0))], VertexId[tri::Index(cm, (*fi).V(1))], VertexId[tri::Index(cm, (*fi).V(2))]);
+//				i++;
+//			}
+//		tin.closeLoadingSession(0, i, var, false);
+//
+//		tin.saveOBJ(("d://oripre" + name + ".obj").c_str());
+//		
+//		{
+//			// Keep only the largest component (i.e. with most triangles)
+//			int sc = tin.removeSmallestComponents();
+//			// Fill holes
+//			if (tin.boundaries())
+//			{
+//				tin.fillSmallBoundaries(0, true);
+//			}
+//
+//			// Run geometry correction
+//			if (!tin.boundaries());// TMesh::warning("Fixing degeneracies and intersections...\n");
+//			if (tin.boundaries() || !tin.meshclean());// TMesh::warning("MeshFix could not fix everything.\n", sc);
+//			tin.saveOBJ(("d://ori" + name + ".obj").c_str());
+//		}
+//	}
+//	{
+//		int i;
+//		char triname[256];
+//		T_MESH::Node *n;
+//		T_MESH::coord *ocds;
+//		T_MESH::Vertex *v;
+//
+//		
+//		//FOREACHVERTEX(v, n) fprintf(fp, "v %f %f %f\n", TMESH_TO_FLOAT(v->x), TMESH_TO_FLOAT(v->y), TMESH_TO_FLOAT(v->z));
+//		for (n = tin.V.head(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL; n != NULL; n = n->next(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL)
+//			Points.push_back(Base::Vector3d(TMESH_TO_FLOAT(v->x), TMESH_TO_FLOAT(v->y), TMESH_TO_FLOAT(v->z)));
+//		ocds = new T_MESH::coord[tin.V.numels()];
+//		i = 0; //FOREACHVERTEX(v, n) ocds[i++] = v->x;
+//		for (n = tin.V.head(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL; n != NULL; n = n->next(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL)
+//			ocds[i++] = v->x;
+//		i = 0; //FOREACHVERTEX(v, n) v->x = i++;
+//		for (n = tin.V.head(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL; n != NULL; n = n->next(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL)
+//			v->x = i++;
+//		//FOREACHNODE(T, n) fprintf(fp, "f %d %d %d\n", TVI1(n) + 1, TVI2(n) + 1, TVI3(n) + 1);
+//		for ((n) = (tin.T).head(); (n) != NULL; (n) = (n)->next()) {
+//			Data::ComplexGeoData::Facet face;
+//			face.I1 = ((T_MESH::Triangle *)n->data)->v1()->x;
+//			face.I2 = ((T_MESH::Triangle *)n->data)->v2()->x;
+//			face.I3 = ((T_MESH::Triangle *)n->data)->v3()->x;
+//			Facets.push_back(face);
+//		}
+//
+//		i = 0; //FOREACHVERTEX(v, n) v->x = ocds[i++];
+//		for (n = tin.V.head(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL; n != NULL; n = n->next(), v = (n) ? ((T_MESH::Vertex *)n->data) : NULL)
+//			v->x = ocds[i++];
+//		delete[] ocds;
+//	}
+//	
+//	return 1;
+//}
 
 /*bool VFunctional::load(QTextStream &stream)
 {
