@@ -38,8 +38,8 @@ public:
 	~TabTest() = default;
 public:
 	virtual void addAction(const QString& tabName, const QString& groupName, QAction* action){
-		std::cerr << "tabName:" << tabName.toStdString() << "groupName:" << groupName.toStdString()
-			<< "actionName:" << action->text().toStdString() << std::endl;
+		std::cerr << "tabName:" << tabName.toStdString() << ",groupName:" << groupName.toStdString()
+			<< ",actionName:" << action->text().toStdString() << std::endl;
 	};
 	virtual void clearAllAction(){
 		std::cerr << "clear all Action" << std::endl;

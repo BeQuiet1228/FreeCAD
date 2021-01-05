@@ -506,6 +506,8 @@ public:
     ~CommandManager();
     /// Insert a new command into the manager
     void addCommand(Command* pCom);
+	//给一个命令添加一个action
+	Action* creatAction(Command *cmd);
     /// Remove a command from the manager
     void removeCommand(Command* pCom);
 

@@ -39,6 +39,9 @@
 #include "qwidgetaction.h"
 #include "MainWindowDef.h"
 #include "TabWidgetInterface.hpp"
+#include <QToolButton>
+#include "Command.h"
+#include "Action.h"
 
 using namespace Gui;
 
@@ -182,96 +185,122 @@ ToolBarManager::~ToolBarManager()
 
 void ToolBarManager::setup(ToolBarItem* toolBarItems)
 {
-    if (!toolBarItems)
-        return; // empty menu bar
+	if (!toolBarItems)
+		return; // empty menu bar
+	/*
+	测试 toobaritems
+	*/
+	auto its = toolBarItems->getItems();
+	for (auto i = its.begin(); i != its.end(); i++)
+	{
+		std::cerr << "---------" << (*i)->command() << "--------" << std::endl;
+		auto iits = (*i)->getItems();
+		for (auto ii = iits.begin(); ii != iits.end(); ii++)
+		{
+			std::cerr << "++++++++" << (*ii)->command() << "++++++++" << std::endl;
+		}
+	}
+#ifdef _PICGUI_
+	CommandManager& cmdManager = Application::Instance->commandManager();
+	auto mainwindow = MainWindow::getInstance();
+	auto groupItems = toolBarItems->getItems();
+	for(auto group = groupItems.begin();group!= groupItems.end();group++)
+	{
+		auto cmds = (*group)->getItems();
+		for(auto cmdItem = cmds.begin();cmdItem != cmds.end();cmdItem++)
+		{
+			auto cmd = cmdManager.getCommandByName((*cmdItem)->command().c_str());
+			if (!cmd)
+				continue;
+			auto action = cmdManager.creatAction(cmd);
+			auto qAction = action->getQAction();
+			mainwindow->mainWindowDef->tabWidgetInterface->addAction(
+				QString::fromLocal8Bit(""),QString::fromLocal8Bit((*group)->command().c_str()),qAction);
+		}
+	}
+#else
+	saveState();
+	this->toolbarNames.clear();
 
-    saveState();
-    this->toolbarNames.clear();
+	int max_width = getMainWindow()->width();
+	// int top_width = 0;
 
-    int max_width = getMainWindow()->width();
-    // int top_width = 0;
-
-    ParameterGrp::handle hPref = App::GetApplication().GetUserParameter().GetGroup("BaseApp")
-                               ->GetGroup("MainWindow")->GetGroup("Toolbars");
-    QList<ToolBarItem*> items = toolBarItems->getItems();
-    QList<QToolBar*> toolbars = toolBars();
-    for (QList<ToolBarItem*>::ConstIterator it = items.begin(); it != items.end(); ++it) {
-        // search for the toolbar
-        QString name = QString::fromUtf8((*it)->command().c_str());
+	ParameterGrp::handle hPref = App::GetApplication().GetUserParameter().GetGroup("BaseApp")
+		->GetGroup("MainWindow")->GetGroup("Toolbars");
+	QList<ToolBarItem*> items = toolBarItems->getItems();
+	QList<QToolBar*> toolbars = toolBars();
+	for (QList<ToolBarItem*>::ConstIterator it = items.begin(); it != items.end(); ++it) {
+		// search for the toolbar
+		QString name = QString::fromUtf8((*it)->command().c_str());
 		std::cerr << name.toStdString() << std::endl;
-        this->toolbarNames << name;
-        QToolBar* toolbar = findToolBar(toolbars, name);
-        std::string toolbarName = (*it)->command();
-        bool visible = hPref->GetBool(toolbarName.c_str(), true);
-        bool toolbar_added = false;
+		this->toolbarNames << name;
+		QToolBar* toolbar = findToolBar(toolbars, name);
+		std::string toolbarName = (*it)->command();
+		bool visible = hPref->GetBool(toolbarName.c_str(), true);
+		bool toolbar_added = false;
 
-        if (!toolbar) {
-            if (strcmp(toolbarName.c_str(), "Workbench") == 0){
-                toolbar = new WorkbenchToolBar(getMainWindow());//Workbench工具条使用自定义类，方便在QSS中设置样式
-                toolbar->setWindowTitle(QApplication::translate("Workbench", toolbarName.c_str()));
-                getMainWindow()->addToolBar(toolbar);
-            }
-            else
-                toolbar = getMainWindow()->addToolBar(QApplication::translate("Workbench", toolbarName.c_str())); // i18n
-            toolbar->setObjectName(name);
-            toolbar->setVisible(visible);
-            toolbar_added = true;
-        }
-        else {
-            toolbar->setVisible(visible);
-            toolbar->toggleViewAction()->setVisible(true);
-            int index = toolbars.indexOf(toolbar);
-            toolbars.removeAt(index);
-        }
+		if (!toolbar) {
+			if (strcmp(toolbarName.c_str(), "Workbench") == 0){
+				toolbar = new WorkbenchToolBar(getMainWindow());//Workbench工具条使用自定义类，方便在QSS中设置样式
+				toolbar->setWindowTitle(QApplication::translate("Workbench", toolbarName.c_str()));
+				getMainWindow()->addToolBar(toolbar);
+			}
+			else
+				toolbar = getMainWindow()->addToolBar(QApplication::translate("Workbench", toolbarName.c_str())); // i18n
+			toolbar->setObjectName(name);
+			toolbar->setVisible(visible);
+			toolbar_added = true;
+		}
+		else {
+			toolbar->setVisible(visible);
+			toolbar->toggleViewAction()->setVisible(true);
+			int index = toolbars.indexOf(toolbar);
+			toolbars.removeAt(index);
+		}
 
-        // setup the toolbar
-		
-        setup(*it, toolbar);
-		std::cerr << toolbar->actions().size() << std::endl;
-        // 工具条不再根据控件宽度自动自动换行
-        if (toolbar_added && toolbar->objectName() == QString::fromUtf8("View")) {
-            // if (top_width > 0 && getMainWindow()->toolBarBreak(toolbar))
-            //     top_width = 0;
-            // // the width() of a toolbar doesn't return useful results so we estimate
-            // // its size by the number of buttons and the icon size
-            // QList<QToolButton*> btns = toolbar->findChildren<QToolButton*>();
-            // top_width += (btns.size() * toolbar->iconSize().width());
-            // if (top_width > max_width) {
-            //     top_width = 0;
-            getMainWindow()->insertToolBarBreak(toolbar);
-        }
-    }
+		// setup the toolbar
 
-    // hide all unneeded toolbars
-    for (QList<QToolBar*>::Iterator it = toolbars.begin(); it != toolbars.end(); ++it) {
-        // make sure that the main window has the focus when hiding the toolbar with
-        // the combo box inside
-        QWidget *fw = QApplication::focusWidget();
-        while (fw &&  !fw->isWindow()) {
-            if (fw == *it) {
-                getMainWindow()->setFocus();
-                break;
-            }
-            fw = fw->parentWidget();
-        }
-        // ignore toolbars which do not belong to the previously active workbench
-        QByteArray toolbarName = (*it)->objectName().toUtf8();
-        if (!(*it)->toggleViewAction()->isVisible())
-            continue;
-        hPref->SetBool(toolbarName.constData(), (*it)->isVisible());
-        (*it)->hide();
-        (*it)->toggleViewAction()->setVisible(false);
-    }
+		setup(*it, toolbar);
+		// 工具条不再根据控件宽度自动自动换行
+		if (toolbar_added && toolbar->objectName() == QString::fromUtf8("View")) {
+			// if (top_width > 0 && getMainWindow()->toolBarBreak(toolbar))
+			//     top_width = 0;
+			// // the width() of a toolbar doesn't return useful results so we estimate
+			// // its size by the number of buttons and the icon size
+			// QList<QToolButton*> btns = toolbar->findChildren<QToolButton*>();
+			// top_width += (btns.size() * toolbar->iconSize().width());
+			// if (top_width > max_width) {
+			//     top_width = 0;
+			getMainWindow()->insertToolBarBreak(toolbar);
+		}
+	}
+
+	// hide all unneeded toolbars
+	for (QList<QToolBar*>::Iterator it = toolbars.begin(); it != toolbars.end(); ++it) {
+		// make sure that the main window has the focus when hiding the toolbar with
+		// the combo box inside
+		QWidget *fw = QApplication::focusWidget();
+		while (fw &&  !fw->isWindow()) {
+			if (fw == *it) {
+				getMainWindow()->setFocus();
+				break;
+			}
+			fw = fw->parentWidget();
+		}
+		// ignore toolbars which do not belong to the previously active workbench
+		QByteArray toolbarName = (*it)->objectName().toUtf8();
+		if (!(*it)->toggleViewAction()->isVisible())
+			continue;
+		hPref->SetBool(toolbarName.constData(), (*it)->isVisible());
+		(*it)->hide();
+		(*it)->toggleViewAction()->setVisible(false);
+	}
+#endif // _PICGUI_
+    
 }
 
 void ToolBarManager::setup(ToolBarItem* item, QToolBar* toolbar) const
 {
-	auto acs = toolbar->actions();
-	for (auto i = acs.begin(); i != acs.end(); i++)
-	{
-		auto mw = MainWindow::getInstance();
-		mw->mainWindowDef->tabWidgetInterface->addAction( QString::fromLocal8Bit(" "), toolbar->objectName(), *i);
-	}
     // 根据工具条的objectName设置工具条的显示方式：单行、分组显示
     if (toolbar->objectName() == QString::fromUtf8("File")
         /*|| toolbar->objectName() == QString::fromUtf8("Workbench")*/){
