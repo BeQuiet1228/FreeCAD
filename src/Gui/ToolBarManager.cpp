@@ -187,6 +187,8 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 {
 	if (!toolBarItems)
 		return; // empty menu bar
+	
+#ifdef _PICGUI__
 	/*
 	≤‚ ‘ toobaritems
 	*/
@@ -200,7 +202,6 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 			std::cerr << "++++++++" << (*ii)->command() << "++++++++" << std::endl;
 		}
 	}
-#ifdef _PICGUI_
 	CommandManager& cmdManager = Application::Instance->commandManager();
 	auto mainwindow = MainWindow::getInstance();
 	auto groupItems = toolBarItems->getItems();

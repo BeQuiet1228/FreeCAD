@@ -124,6 +124,7 @@
 #include "Contorl\ContorlDataBar.h"
 #include <QMessageBox>
 #include "MainWindowDef.h"
+#include <QVBoxLayout>
 #if defined(Q_OS_WIN32)
 #define slots
 //#include <private/qmainwindowlayout_p.h>
@@ -254,19 +255,26 @@ void MainWindow::setContorlUI()
 
 void MainWindow::showContorlUI()
 {
+	/*
 	addToolBarBreak(Qt::TopToolBarArea);
 	addToolBar(contorlButtonToolBar);
 	addToolBar(contorlDataToolBar);
 	contorlButtonToolBar->show();
 	contorlDataToolBar->show();
+	*/
+	contorlDockWidget->setVisible(true);
+	contorlDockWidget->show();
 }
 
 void MainWindow::hideContorlUI()
 {
+	/*
 	removeToolBar(contorlButtonToolBar);
 	removeToolBar(contorlDataToolBar);
 	contorlDataToolBar->hide();
 	contorlButtonToolBar->hide();
+	*/
+	contorlDockWidget->close();
 }
 
 void MainWindow::inintContorlUI()
@@ -279,14 +287,21 @@ void MainWindow::inintContorlUI()
 		contorlButtonToolBar = new QToolBar();
 		contorlDataToolBar = new QToolBar();
 
-		contorlDataToolBar->setFixedSize(contorlDataBar->size());
+		/*contorlDataToolBar->setFixedSize(contorlDataBar->size());
 		contorlDataToolBar->addWidget(contorlDataBar);
 		contorlButtonToolBar->setFixedSize(QSize(70, contorlButtonBar->size().height()));
 		contorlButtonToolBar->addWidget(contorlButtonBar);
 
 		contorlButtonToolBar->hide();
-		contorlDataToolBar->hide();
-	
+		contorlDataToolBar->hide();*/
+		QVBoxLayout *layout = new QVBoxLayout;
+		QWidget* wd = new QWidget;
+		wd->setLayout(layout);
+		layout->addWidget(contorlButtonBar);
+		layout->addWidget(contorlDataBar);
+		contorlDockWidget = DockWindowManager::instance()->addDockWindow("contorl", wd,Qt::DockWidgetArea::RightDockWidgetArea);
+		//contorlDockWidget->setVisible(true);
+		layout->addStretch();
 	});
 	
 }
@@ -515,6 +530,7 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
 
 	this->smartContorlInterface = new SmartContorlInterface;
 	this->smartContorlInterface->init();
+	inintContorlUI();
 }
 
 MainWindow::~MainWindow()

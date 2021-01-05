@@ -33,6 +33,7 @@
 #include <QMainWindow>
 #include <QMdiArea>
 #include <QToolBar>
+#include <QDockWidget>
 class QMimeData;
 class QUrl;
 class QMdiSubWindow;
@@ -287,6 +288,7 @@ public:
 	QToolBar *contorlButtonToolBar, *contorlDataToolBar;
 	SmartContorlInterface *smartContorlInterface;
 	MainWindowDef* mainWindowDef;
+	QDockWidget* contorlDockWidget;
 public:
 	void initContorlToolBar();
 	void setContorlUI();
