@@ -205,7 +205,7 @@
 #define TOL 1E-6
 
 DWORD start, stop;
-#define TEST_OUTPUT 0
+#define TEST_OUTPUT 1
 
 namespace PartChipic {
 	class Module : public Py::ExtensionModule<Module>
@@ -2585,7 +2585,7 @@ namespace PartChipic {
 			nb_colon = DISTANCE_RESOL_MAX,
 			nb_depth = DISTANCE_RESOL_MAX;*/
 			int nGrid[] = { DISTANCE_RESOL_MAX, DISTANCE_RESOL_MAX, DISTANCE_RESOL_MAX };
-			double rxyz[] = { 0.001, 0.001, 0.001 }, rxt = -1, ryt = -1, rzt = -1;//分辨率
+			double rxyz[] = { 0.01, 0.01, 0.01 }, rxt = -1, ryt = -1, rzt = -1;//分辨率
 			char* coor;
 			//精度
 			char* precision;
@@ -2594,6 +2594,8 @@ namespace PartChipic {
 			if (!PyArg_ParseTuple(args.ptr(), "isddddddsss|ddd",
 				&type, &func, &xmin, &xmax, &ymin, &ymax, &zmin, &zmax, &coor, &precision, &attribute, &rxt, &ryt, &rzt
 				))
+				throw Py::Exception();
+			if (std::string(func) == "")
 				throw Py::Exception();
 			if (type == 10 || type == 20) {
 				if (type == 20)
@@ -3150,7 +3152,7 @@ namespace PartChipic {
 					if (ymax <= 360 && ymin <= 360 &&
 						ymax >= -360 && ymin >= -360 &&
 						(ymax - ymin) <= 360 &&
-						ymax > ymin) {
+						(ymax > ymin || ndim == 1)) {
 						////
 						//int close = 0;
 						//if ((360 - fabs(ymax - ymin)) < 0.000001)

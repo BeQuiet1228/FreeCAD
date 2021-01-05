@@ -1116,12 +1116,12 @@ void Iso3D::VoxelEvaluation()
 	//	else  vals[3] = -morph_param;
 	/*morph_param += step;
 	if (morph_param == 1) morph_param = 0;*/
-	if (gsysType != PM3::SYSCARTESIAN && yreso > 0) {
-		yreso = 10. * M_PI / 180.;
-		nGrid[YDIM] = (End[YDIM] - Start[YDIM]) / yreso + 0.5;
-		if (nGrid[YDIM] > DISTANCE_RESOL_MAX) nGrid[YDIM] = DISTANCE_RESOL_MAX;
-		if (nGrid[YDIM] < DISTANCE_RESOL_MIN) nGrid[YDIM] = DISTANCE_RESOL_MIN;
-	}
+	/*if (gsysType != PM3::SYSCARTESIAN && yreso > 0) {
+	yreso = 10. * M_PI / 180.;
+	nGrid[YDIM] = (End[YDIM] - Start[YDIM]) / yreso + 0.5;
+	if (nGrid[YDIM] > DISTANCE_RESOL_MAX) nGrid[YDIM] = DISTANCE_RESOL_MAX;
+	if (nGrid[YDIM] < DISTANCE_RESOL_MIN) nGrid[YDIM] = DISTANCE_RESOL_MIN;
+	}*/
 	//if (ndim == YDIM) nGrid[YDIM] = 1;
 	//Can be optimised by considering Three array of 30 values each
 	// Each array contain the 30 value of one axe...
