@@ -204,6 +204,7 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 	}
 	CommandManager& cmdManager = Application::Instance->commandManager();
 	auto mainwindow = MainWindow::getInstance();
+	mainwindow->mainWindowDef->tabWidgetInterface->clearAllAction();
 	auto groupItems = toolBarItems->getItems();
 	for(auto group = groupItems.begin();group!= groupItems.end();group++)
 	{
