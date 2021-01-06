@@ -4,7 +4,7 @@
 #include <QTabWidget>
 #include <QToolButton>
 #include "TabWidgetInterface.hpp"
-
+#include "PICRibbonTabContent.h"
 class GuiExport Ribbon : public TabWidgetInterFace
 {
   Q_OBJECT

@@ -63,7 +63,7 @@ QList<QAction *> PICRibbonButtonGroup::get_action_all()
 {
 	QList<QToolButton*> list_b = this->findChildren<QToolButton*>();
 	QList<QAction*> list;
-	for (int i; i<list_b.count(); i++) {
+	for (int i = 0; i<list_b.count(); i++) {
 		list.append(list_b.at(i)->actions());
 	}
 	return list;

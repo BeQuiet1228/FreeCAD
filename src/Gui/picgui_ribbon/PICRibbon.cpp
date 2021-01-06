@@ -191,17 +191,49 @@ void Ribbon::addAction(const QString &tabName, const QString &groupName, QAction
 
 void Ribbon::clearAllAction()
 {
-
+	for (int i = 0; i < count(); i++)
+	{
+		QWidget *tab = QTabWidget::widget(i);
+		QTabWidget::removeTab(i);
+		delete tab;
+	}
 }
 
 void Ribbon::clearTab(const QString &tabName)
 {
+	QString name_t = tabName;
+	PICRibbonTabContent * t = get_tab_by_name(name_t);
+	QList<QString> list_g_name = this->getGroup(name_t);
+	for (int i = 0; i<list_g_name.count(); i++) {
+		t->removeGroup(list_g_name.at(i));
+	}
 
 }
 
 void Ribbon::clearGoup(const QString &groupName)
 {
+	PICRibbonButtonGroup * g = nullptr;
+	QList<PICRibbonTabContent *> list_t = get_tab_all();
+	QList<QAction*> list;
+	for (int i = 0; i<list_t.count(); i++) {
+		PICRibbonTabContent * t = list_t.at(i);
 
+		QList<PICRibbonButtonGroup *> list_g = t->get_group_all();
+		for (int j = 0; j<list_g.count(); j++) {
+			QString name = list_g.at(j)->title();
+			if (name == groupName){
+				t->removeGroup(name);
+				break;
+			}
+		}
+	}
+	//    QList<QToolButton*> list_b= this->findChildren<QToolButton*>();
+	//    QToolButton* b=nullptr;
+	//    for (int i;i<list_b.count();i++) {
+	//        b=list_b.at(i);
+	//        g->removeButton(b);
+	//        delete b;
+	//    }
 }
 
 QList<QString> Ribbon::getTabs()
@@ -252,7 +284,7 @@ QList<QAction *> Ribbon::getActions()
 		PICRibbonTabContent * t = list_t.at(i);
 		QList<PICRibbonButtonGroup *> list_g = t->get_group_all();
 		for (int j = 0; j<list_g.count(); j++) {
-			list.append(list_g.at(j)->actions());
+			list.append(list_g.at(j)->get_action_all());
 		}
 	}
 	return list;
@@ -266,7 +298,7 @@ QList<QAction *> Ribbon::getTabActions(const QString &tabName)
 	PICRibbonTabContent * t = get_tab_by_name(name_t);
 	QList<PICRibbonButtonGroup *> list_g = t->get_group_all();
 	for (int j = 0; j<list_g.count(); j++) {
-		list.append(list_g.at(j)->actions());
+		list.append(list_g.at(j)->get_action_all());
 	}
 	return list;
 }
@@ -289,7 +321,6 @@ QList<QAction *> Ribbon::getGroupActions(const QString &groupName)
 	return list;
 
 }
-
 
 
 
