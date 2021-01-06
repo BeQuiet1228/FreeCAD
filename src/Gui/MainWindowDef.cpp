@@ -60,7 +60,8 @@ MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 
 	//测试选项卡接口
 	tabWidgetInterface = new Ribbon();
-	tabWidgetInterface->show();
+	ui->widgetTab->layout()->addWidget(tabWidgetInterface);
+	//tabWidgetInterface->show();
 }
 
 

@@ -215,8 +215,23 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 				continue;
 			auto action = cmdManager.creatAction(cmd);
 			auto qAction = action->getQAction();
+			QString tabName = QString::fromLocal8Bit("其他");
+			if ((*group)->command() == "File")
+			{
+				tabName = QString::fromLocal8Bit("开始");
+				mainwindow->mainWindowDef->addTitleShortcutAction(qAction);
+			}
+			else if ((*group)->command() == "_2d"
+				|| ((*group)->command() == "_3dCommon")
+				|| ((*group)->command() == "_3dSpecil") || ((*group)->command() == "_3dComplex")){
+				tabName = QString::fromLocal8Bit("建模");
+			}
+			else if ((*group)->command() == "comboundary" || (*group)->command() == "emit"
+					|| (*group)->command() == "observe"){
+				tabName = QString::fromLocal8Bit("物理设置");
+			}
 			mainwindow->mainWindowDef->tabWidgetInterface->addAction(
-				QString::fromLocal8Bit(""),QString::fromLocal8Bit((*group)->command().c_str()),qAction);
+				tabName, QString::fromLocal8Bit((*group)->command().c_str()), qAction);	
 		}
 	}
 #else
