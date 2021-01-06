@@ -77,6 +77,14 @@ public:
   QList<QAction*> getTabActions(const QString& tabName);
   //获取某个group下所有的action
   QList<QAction*> getGroupActions(const QString& groupName);
+  /*
+  改变tab位置，如果older超出最大范围将tab放置到最后。
+  如果tab不存在，不做操作。
+  */
+  virtual void  setTabOlder(const QString& tabName, const int older);
+  //判断是否已有该action
+  virtual bool hasAction(const QAction* action);
+
 };
 
 #endif // RIBBONTABWIDGET_H
