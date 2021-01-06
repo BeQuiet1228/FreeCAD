@@ -30,6 +30,13 @@ public:
 	virtual QList<QAction*> getTabActions(const QString& tabName) = 0;
 	//获取某个group下所有的action
 	virtual QList<QAction*> getGroupActions(const QString& groupName) = 0;
+	/*
+		改变tab位置，如果older超出最大范围将tab放置到最后。
+		如果tab不存在，不做操作。
+	*/
+	virtual void  setTabOlder(const QString& tabName, const int older){};
+	//判断是否已有该action
+	virtual bool hasAction(const QAction* action){ return true; };
 
 };
 class TabTest :public TabWidgetInterFace{
