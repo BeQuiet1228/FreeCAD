@@ -336,7 +336,7 @@ QString SmartContorlUI::replaceVariate()
 	config += temp;
 	temp = QString("miniTime = %1;\n").arg(this->ui->lineEditMiniTime->text().toInt());
 	config += temp;
-	temp = QString("excpectF = %1;\n").arg(this->ui->lineEditMaxF->text().toInt());
+	temp = QString("excpectF = %1;\n").arg(this->ui->lineEditMaxF->text().toLongLong());
 	config += temp;
 	temp = QString("omiga = %1;\n").arg(this->ui->lineEditOmega->text().toDouble());
 	config += temp;
