@@ -205,7 +205,7 @@
 #define TOL 1E-6
 
 DWORD start, stop;
-#define TEST_OUTPUT 0
+#define TEST_OUTPUT 1
 
 namespace PartChipic {
 	class Module : public Py::ExtensionModule<Module>
@@ -2467,9 +2467,17 @@ namespace PartChipic {
 		*/
 		double splitCorrRange(double ymin, double ymax,
 			std::vector<double> &spymin, std::vector<double> &spymax,
-			std::vector<double> &spymino, std::vector<double> &spymaxo)
+			std::vector<double> &spymino, std::vector<double> &spymaxo, int plane, double s)//=1 2d
 		{
-			double v = fabs(ymax - ymin);////防止网格分辨率不一致
+			double v = fabs(ymax - ymin);
+			if (plane)
+			{
+				spymin.push_back(ymin - s);
+				spymax.push_back(ymax + s);
+				spymino.push_back(ymin);
+				spymaxo.push_back(ymax);
+				return 2 * s;
+			}
 			if (ymin >= 0)
 			{
 				spymin.push_back(ymin);
@@ -2503,8 +2511,16 @@ namespace PartChipic {
 		*/
 		double splitCorrRangeAngle(double ymin, double ymax,
 			std::vector<double> &spymin, std::vector<double> &spymax,
-			std::vector<double> &spymino, std::vector<double> &spymaxo)
+			std::vector<double> &spymino, std::vector<double> &spymaxo, int plane, double s)// = 1 2d
 		{
+			if (plane)
+			{
+				spymin.push_back(ymin - s);
+				spymax.push_back(ymax + s);
+				spymino.push_back(ymin);
+				spymaxo.push_back(ymax);
+				return 2 * s;
+			}
 			double pymax = ymax,
 				pymin = ymin;//上一个范围角度值
 			int ite = 10;
@@ -2545,12 +2561,13 @@ namespace PartChipic {
 			return std::min(90., fabs(ymax - ymin));
 		}
 		/*
-		type：0面，1体
+		type：1为体，>=10为面：10Z XOY，11Y XOZ，12X YOZ；2D面20
 		func：函数表达式，已经被解析
 		xmax, xmin, ymax, ymin, zmax, zmin：函数体范围，已经被解析，距离单位米m，角度单位度deg
 		coor：坐标系
 		precision：精度
-		attribute：
+		attribute：实体模型有效
+		rx,ry,rz：各方向分辨率，默认1mm,1mm/1deg,1mm，最大象限网格20*20*20，最小2*2*2
 		*/
 		Py::Object makeFuncMesh(const Py::Tuple& args)
 		{
@@ -2558,20 +2575,77 @@ namespace PartChipic {
 			//由面形成实体的精确度 如果函数体的范围是1-10  将精确度设置为0.001（否则会很慢），一般情况下设置为0.01，
 			Standard_Real facePrecision = 0.01;
 			//type=0表示面，1表示体
-			int type = 0;
+			int type = -1, ndim = -1;//0x1y2z else volume
 			double angle = 360;
 			char* func;
-			double xmax, xmin, ymax, ymin, zmax, zmin = 0;
+			double xmax, xmin, ymax, ymin, zmax = 0, zmin = 0;
 			double xmaxo, xmino, ymaxo, ymino, zmaxo, zmino = 0;
+
+			/*int nb_ligne = DISTANCE_RESOL_MAX,
+			nb_colon = DISTANCE_RESOL_MAX,
+			nb_depth = DISTANCE_RESOL_MAX;*/
+			int nGrid[] = { DISTANCE_RESOL_MAX, DISTANCE_RESOL_MAX, DISTANCE_RESOL_MAX };
+			double rxyz[] = { 0.01, 0.01, 0.01 }, rxt = -1, ryt = -1, rzt = -1;//分辨率
 			char* coor;
 			//精度
 			char* precision;
 			char* attribute;
 			PyObject *pPnt = 0, *pDir = 0;
-			if (!PyArg_ParseTuple(args.ptr(), "isddddddsss",
-				&type, &func, &xmin, &xmax, &ymin, &ymax, &zmin, &zmax, &coor, &precision, &attribute
+			if (!PyArg_ParseTuple(args.ptr(), "isddddddsss|ddd",
+				&type, &func, &xmin, &xmax, &ymin, &ymax, &zmin, &zmax, &coor, &precision, &attribute, &rxt, &ryt, &rzt
 				))
 				throw Py::Exception();
+			if (std::string(func) == "")
+				throw Py::Exception();
+			if (type == 10 || type == 20) {
+				if (type == 20)
+					zmax = zmin = 0;
+				type = 0;
+				ndim = ZDIM;
+				if (rxt > 0 && ryt > 0){
+					rxyz[0] = rxt; rxyz[1] = ryt;
+				}
+				else {
+					if (std::string(coor) != S_COOR_RECTANGULAR)
+						rxyz[1] = 1;
+				}
+				zmax = zmin;
+			}
+			else if (type == 11){
+				type = 0;
+				ndim = YDIM;
+				if (rxt > 0 && rzt > 0){
+					rxyz[0] = rxt; rxyz[2] = rzt;
+				}
+				else {
+					if (std::string(coor) != S_COOR_RECTANGULAR)
+						rxyz[1] = 1;
+				}
+				ymax = ymin;
+			}
+			else if (type == 12){
+				type = 0;
+				ndim = XDIM;
+				if (ryt > 0 && rzt > 0){
+					rxyz[1] = ryt; rxyz[2] = rzt;
+				}
+				else {
+					if (std::string(coor) != S_COOR_RECTANGULAR)
+						rxyz[1] = 1;
+				}
+				xmax = xmin;
+			}
+			else {
+				type = 1;
+				ndim = -1;
+				if (rxt > 0 && ryt > 0 && rzt > 0){
+					rxyz[0] = rxt; rxyz[1] = ryt; rxyz[2] = rzt;
+				}
+				else {
+					if (std::string(coor) != S_COOR_RECTANGULAR)
+						rxyz[1] = 1;
+				}
+			}
 
 			try {
 
@@ -2846,8 +2920,8 @@ namespace PartChipic {
 				vcg::Point3d Start, End;
 				std::string er;
 				PM3::DefValue3D far_ori, near_ori;
-				int nb_ligne = 10, nb_colon = 10, nb_depth = 10;
-				double yreso = (ymax - ymin) * GRAD / 20.;
+
+				//double yreso = (ymax - ymin) * GRAD / 20.;
 				float extVoid = 0.00001;//0.1mm
 				float extVoidAngle = 0.01;//deg度
 
@@ -3036,10 +3110,7 @@ namespace PartChipic {
 				std::vector < std::string > funcV;
 				if (std::string(coor) == S_COOR_RECTANGULAR) {
 					float dev = 0;
-#define DISTANCE_RESOL_MAX 8
-#define DISTANCE_RESOL_MIN 2
-					nb_ligne = DISTANCE_RESOL_MAX, nb_colon = DISTANCE_RESOL_MAX, nb_depth = DISTANCE_RESOL_MAX;
-					yreso = (ymax - ymin) / (8 - 4) / 180;
+					//nb_ligne = DISTANCE_RESOL_MAX, nb_colon = DISTANCE_RESOL_MAX, nb_depth = DISTANCE_RESOL_MAX;					
 					double stepx = 0;// (xmax - xmin) / (16 - 5);
 					double stepy = 0;// (ymax - ymin) / (16 - 5);
 					double stepz = 0;// (zmax - zmin) / (16 - 5);
@@ -3060,12 +3131,12 @@ namespace PartChipic {
 					//					
 					//split corrd
 					std::vector<double> spxmin, spxmax, spymin, spymax, spzmin, spzmax, spxmino, spxmaxo, spymino, spymaxo, spzmino, spzmaxo;
-					double mx = splitCorrRange(xmin, xmax, spxmin, spxmax, spxmino, spxmaxo);
-					double my = splitCorrRange(ymin, ymax, spymin, spymax, spymino, spymaxo);
-					double mz = splitCorrRange(zmin, zmax, spzmin, spzmax, spzmino, spzmaxo);
+					double mx = splitCorrRange(xmin, xmax, spxmin, spxmax, spxmino, spxmaxo, ndim == XDIM, rxyz[XDIM]);
+					double my = splitCorrRange(ymin, ymax, spymin, spymax, spymino, spymaxo, ndim == YDIM, rxyz[YDIM]);
+					double mz = splitCorrRange(zmin, zmax, spzmin, spzmax, spzmino, spzmaxo, ndim == ZDIM, rxyz[ZDIM]);
 					double mm = max(mx, max(my, mz));
-					double s = 0.01;// mm / 8 + 0.000001;
-					nb_ligne = mx / s + 0.5, nb_colon = my / s + 0.5, nb_depth = mz / s + 0.5;
+
+					nGrid[XDIM] = mx / rxyz[0] + 0.5, nGrid[YDIM] = my / rxyz[1] + 0.5, nGrid[ZDIM] = mz / rxyz[2] + 0.5;
 					for (int i = 0; i < spxmin.size(); i++)
 						for (int j = 0; j < spymin.size(); j++)
 							for (int k = 0; k < spzmin.size(); k++) {
@@ -3074,24 +3145,14 @@ namespace PartChipic {
 								far_pointVo.push_back(Base::Vector3d(spxmaxo[i], spymaxo[j], spzmaxo[k]));
 								near_pointVo.push_back(Base::Vector3d(spxmino[i], spymino[j], spzmino[k]));
 							}
-					//
-					if (nb_ligne > DISTANCE_RESOL_MAX) nb_ligne = DISTANCE_RESOL_MAX;
-					if (nb_colon > DISTANCE_RESOL_MAX) nb_colon = DISTANCE_RESOL_MAX;
-					if (nb_depth > DISTANCE_RESOL_MAX) nb_depth = DISTANCE_RESOL_MAX;
-					if (nb_ligne < DISTANCE_RESOL_MIN) nb_ligne = DISTANCE_RESOL_MIN;
-					if (nb_colon < DISTANCE_RESOL_MIN) nb_colon = DISTANCE_RESOL_MIN;
-					if (nb_depth < DISTANCE_RESOL_MIN) nb_depth = DISTANCE_RESOL_MIN;
 				}
 				else {
-					nb_ligne = 8, nb_colon = 8, nb_depth = 8;
-					yreso = 90 * GRAD / (nb_colon);
-
 					//角度范围 - 360—360deg，且跨度Point_2.Theta - Point_1.Theta <= 360deg、Point_2.Theta > Point_1.Theta。
 					//在python代码添加此限制条件，以提醒用户
 					if (ymax <= 360 && ymin <= 360 &&
 						ymax >= -360 && ymin >= -360 &&
 						(ymax - ymin) <= 360 &&
-						ymax > ymin) {
+						(ymax > ymin || ndim == 1)) {
 						////
 						//int close = 0;
 						//if ((360 - fabs(ymax - ymin)) < 0.000001)
@@ -3131,12 +3192,12 @@ namespace PartChipic {
 
 						//split corrd
 						std::vector<double> spxmin, spxmax, spymin, spymax, spzmin, spzmax, spxmino, spxmaxo, spymino, spymaxo, spzmino, spzmaxo;
-						double mx = splitCorrRange(xmin, xmax, spxmin, spxmax, spxmino, spxmaxo);
-						double my = splitCorrRangeAngle(ymin, ymax, spymin, spymax, spymino, spymaxo);
-						double mz = splitCorrRange(zmin, zmax, spzmin, spzmax, spzmino, spzmaxo);
+						double mx = splitCorrRange(xmin, xmax, spxmin, spxmax, spxmino, spxmaxo, ndim == XDIM, rxyz[XDIM]);
+						double my = splitCorrRangeAngle(ymin, ymax, spymin, spymax, spymino, spymaxo, ndim == YDIM, rxyz[YDIM]);
+						double mz = splitCorrRange(zmin, zmax, spzmin, spzmax, spzmino, spzmaxo, ndim == ZDIM, rxyz[ZDIM]);
 						double mm = max(mx, mz);
-						double s = 0.01;// mm / 8 + 0.000001;
-						nb_ligne = mx / s + 0.5, nb_colon = my / 10. + 0.5, nb_depth = mz / s + 0.5;
+
+						nGrid[XDIM] = mx / rxyz[0] + 0.5, nGrid[YDIM] = my / rxyz[1] + 0.5, nGrid[ZDIM] = mz / rxyz[2] + 0.5;
 
 						for (int i = 0; i < spxmin.size(); i++)
 							for (int j = 0; j < spymin.size(); j++)
@@ -3193,14 +3254,21 @@ namespace PartChipic {
 						//	ite--;
 						//} while (ite >= 0);
 					}
-					if (nb_ligne > 8) nb_ligne = 8;
-					if (nb_colon > 8) nb_colon = 8;
-					if (nb_depth > 8) nb_depth = 8;
-					if (nb_ligne < 2) nb_ligne = 2;
-					if (nb_colon < 2) nb_colon = 2;
-					if (nb_depth < 2) nb_depth = 2;
 				}
-				
+				//
+				if (nGrid[XDIM] > DISTANCE_RESOL_MAX) nGrid[XDIM] = DISTANCE_RESOL_MAX;
+				if (nGrid[YDIM] > DISTANCE_RESOL_MAX) nGrid[YDIM] = DISTANCE_RESOL_MAX;
+				if (nGrid[ZDIM] > DISTANCE_RESOL_MAX) nGrid[ZDIM] = DISTANCE_RESOL_MAX;
+				if (nGrid[XDIM] < DISTANCE_RESOL_MIN) nGrid[XDIM] = DISTANCE_RESOL_MIN;
+				if (nGrid[YDIM] < DISTANCE_RESOL_MIN) nGrid[YDIM] = DISTANCE_RESOL_MIN;
+				if (nGrid[ZDIM] < DISTANCE_RESOL_MIN) nGrid[ZDIM] = DISTANCE_RESOL_MIN;
+				//if (ndim == XDIM)
+				//	nGrid[XDIM] = 1;
+				//else if (ndim == YDIM)
+				//	nGrid[YDIM] = 1;
+				//else if (ndim == ZDIM)
+				//	nGrid[ZDIM] = 1;
+
 				Part::TopoShape* topoShapeV[10] = { 0 };
 				if (far_pointV.size() > 0)
 				{
@@ -3219,13 +3287,14 @@ namespace PartChipic {
 						double maxf = -1;
 
 						/**/PM3::VFunctional vfunc;
-						vfunc.yreso = yreso;
-						vfunc.iso->type = type;
-						vfunc.iso->nb_ligne = nb_ligne;
-						vfunc.iso->nb_colon = nb_colon;
-						vfunc.iso->nb_depth = nb_depth;
+						vfunc.yreso = rxyz[1];
+						vfunc.iso->type = 1;
+						vfunc.iso->ndim = ndim;
+						vfunc.iso->nGrid[XDIM] = nGrid[XDIM];
+						vfunc.iso->nGrid[YDIM] = nGrid[YDIM];
+						vfunc.iso->nGrid[ZDIM] = nGrid[ZDIM];
 						vfunc.iso->isSunk = 1;//稳定
-						yreso = (ymax - ymin) * GRAD / (8);
+
 						if (std::string(coor) == S_COOR_RECTANGULAR)
 							vfunc.setSystem(PM3::SYSCARTESIAN);
 						else
@@ -3261,8 +3330,8 @@ namespace PartChipic {
 							//if (false) 
 							{
 								try {
-									Part::TopoShape* funcShape = meshToShape(Points, Facets, 0, nn);
-									if (funcShape != 0 && type == 1) {
+									Part::TopoShape* funcShape = meshToShape(Points, Facets, 0, nn, 1);
+									if (funcShape != 0) {// && type == 1
 										vcg::Point3d Start, End;
 										//End = vfunc.iso->End;
 										//Start = vfunc.iso->Start;
@@ -3286,7 +3355,7 @@ namespace PartChipic {
 
 											Part::TopoShape* com = getShapeOfComformal(coor,
 												near_pointVo[nn],
-												far_pointVo[nn]);
+												far_pointVo[nn], type, ndim);
 											if (TEST_OUTPUT == 1) {
 												filename = "d://comformal";
 												_itoa(nn, s, 10);
@@ -3675,7 +3744,7 @@ namespace PartChipic {
 					resultShape = makeSphere(0.0001, tempP1);
 			}
 			else {
-				if (fabs(startAngle - endAngle) == 2 * M_PI){
+				if (fabs(fabs(startAngle - endAngle) - 2 * M_PI) < TOL){
 					//wires = []
 					std::vector<Part::TopoShape*> wires;
 					if (polarPoint1.x != 0.0) {
@@ -3926,7 +3995,7 @@ namespace PartChipic {
 		}
 		//#通过两个点得到一个conformal的shape(借鉴comformal体)
 		//def getShapeOfComformal(curCoordinateSys, pointmin, pointmax) :
-		Part::TopoShape* getShapeOfComformal(std::string curCoordinateSys, Base::Vector3d pointmin, Base::Vector3d pointmax)
+		Part::TopoShape* getShapeOfComformal(std::string curCoordinateSys, Base::Vector3d pointmin, Base::Vector3d pointmax, int type = 1, int ndim = 0)
 		{
 			Part::TopoShape* resultShape = 0;
 			Base::Vector3d Point1 = pointmin;
@@ -3936,22 +4005,87 @@ namespace PartChipic {
 				double width = fabs(Point1.y - Point2.y);
 				double height = fabs(Point1.z - Point2.z);
 				Base::Vector3d dir = Base::Vector3d(0, 0, 1);
-				try {
-					gp_Pnt p(0, 0, 0);
-					gp_Dir d(0, 0, 1);
-					p.SetCoord(Point1.x, Point1.y, Point1.z);
-					BRepPrimAPI_MakeBox mkBox(gp_Ax2(p, d), length, width, height);
-					TopoDS_Shape ResultShape = mkBox.Shape();
-					//return Py::asObject(new TopoShapeSolidPy(new TopoShape(ResultShape)));
-					resultShape = new Part::TopoShape(ResultShape);// = Part.makeBox(length, width, height, Point1, dir);
+				if (type == 1) {
+					try {
+						gp_Pnt p(0, 0, 0);
+						gp_Dir d(0, 0, 1);
+						p.SetCoord(Point1.x, Point1.y, Point1.z);
+						BRepPrimAPI_MakeBox mkBox(gp_Ax2(p, d), length, width, height);
+						TopoDS_Shape ResultShape = mkBox.Shape();
+						//return Py::asObject(new TopoShapeSolidPy(new TopoShape(ResultShape)));
+						resultShape = new Part::TopoShape(ResultShape);// = Part.makeBox(length, width, height, Point1, dir);
+					}
+					catch (Standard_Failure& e){
+						//DocumentTools.printErrorMessage("Redraw Conformal Failed!")
+						//	return
+						//	pass
+						//	# Shape = Part.makeBox(length, width, height, Point1, dir)
+						//	pass
+						;
+					}
 				}
-				catch (Standard_Failure& e){
-					//DocumentTools.printErrorMessage("Redraw Conformal Failed!")
-					//	return
-					//	pass
-					//	# Shape = Part.makeBox(length, width, height, Point1, dir)
-					//	pass
-					;
+				else {//type == 0
+					if (ndim == 0) {
+						dir = Base::Vector3d(1, 0, 0);
+						length = width;
+						width = height;
+					}
+					else if (ndim == 1) {
+						dir = Base::Vector3d(0, 1, 0);
+						width = length;
+						length = height;
+					}
+					else if (ndim == 2) {
+						dir = Base::Vector3d(0, 0, 1);
+						/*PyObject *pPnt = 0, *pDirZ = 0, *pDirX = 0;
+						if (!PyArg_ParseTuple(args.ptr(), "dd|O!O!O!", &length, &width,
+						&(Base::VectorPy::Type), &pPnt,
+						&(Base::VectorPy::Type), &pDirZ,
+						&(Base::VectorPy::Type), &pDirX))
+						throw Py::Exception();
+
+						if (length < Precision::Confusion()) {
+						throw Py::ValueError("length of plane too small");
+						}
+						if (width < Precision::Confusion()) {
+						throw Py::ValueError("width of plane too small");
+						}*/
+
+
+					}
+					try {
+						gp_Pnt p(0, 0, 0);
+						gp_Dir d(0, 0, 1);
+						p.SetCoord(Point1.x, Point1.y, Point1.z);
+						d.SetCoord(dir.x, dir.y, dir.z);
+						Handle(Geom_Plane) aPlane = new Geom_Plane(p, d);
+						/*if (pDirX) {
+						Base::Vector3d vec = static_cast<Base::VectorPy*>(pDirX)->value();
+						gp_Dir dx;
+						dx.SetCoord(vec.x, vec.y, vec.z);
+						aPlane = new Geom_Plane(gp_Ax3(p, d, dx));
+						}
+						else {
+						aPlane = new Geom_Plane(p, d);
+						}*/
+
+						BRepBuilderAPI_MakeFace Face(aPlane, 0.0, length, 0.0, width
+#if OCC_VERSION_HEX >= 0x060502
+							, Precision::Confusion()
+#endif
+							);
+						resultShape = new Part::TopoShape((Face.Face()));
+						Part::TopoShape *shell = new Part::TopoShape(resultShape->removeSplitter());
+						delete resultShape;
+						return shell;
+						//return Py::asObject(new TopoShapeFacePy(new TopoShape((Face.Face()))));
+					}
+					catch (Standard_DomainError) {
+						Base::Console().Log("getShapeOfComformal error!");;
+					}
+					catch (Standard_Failure) {
+						Base::Console().Log("getShapeOfComformal error!");;
+					}
 				}
 			}
 			else {//				   elif curCoordinateSys == 'Polar' or curCoordinateSys == 'Cylindrical':
@@ -3960,68 +4094,175 @@ namespace PartChipic {
 				Base::Vector3d tempP2 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point2.x, Point1.y, Point1.z));
 				Base::Vector3d tempP3 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point2.x, Point1.y, Point2.z));
 				Base::Vector3d tempP4 = otherToRecOne(curCoordinateSys, Base::Vector3d(Point1.x, Point1.y, Point2.z));
+				if (type == 1) {
+					//	#只有一个点的情况
+					//if (tempP1 == tempP2 && tempP2 == tempP4) {
+					if (fabs(Point1.x - Point2.x) < TOL && fabs(Point1.z - Point2.z) < TOL) {//半径相等
+						//# Shape = Part.Vertex(FreeCAD.Vector(tempP1.x, tempP1.y, tempP1.z))
+						//# Shape = Part.makeBox(0.001, 0.001, 0.001, tempP1)
+						//# return
+						//resultShape = makePoint(tempP1);
+						resultShape = makeSphere(0.00001, tempP1);
+					}
+					//	#防止两个点重合出现错误的情况
+					else if (fabs(Point1.x - Point2.x) < TOL)//tempP1 == tempP2)
+					{
+						//# tempP2 = tempP2.add(FreeCAD.Vector(0.001*math.cos(tempP2.y), 0.001*math.sin(tempP2.y), 0))				
+						//if (tempP3 == tempP4){
+						resultShape = makeLine(tempP1, tempP3);
+						//}
+						//else
+						//	resultShape = getPipeObj(Point1, Point2);
+					}
+					else if (fabs(Point1.z - Point2.z) < TOL)//tempP1 == tempP4)
+						//# tempP4 = tempP4.add(FreeCAD.Vector(0, 0, 0.01))
+						resultShape = getArcObj(Point1, Point2);
 
-				//	#只有一个点的情况
-				//if (tempP1 == tempP2 && tempP2 == tempP4) {
-				if (fabs(Point1.x - Point2.x) < TOL && fabs(Point1.z - Point2.z) < TOL) {//半径相等
-					//# Shape = Part.Vertex(FreeCAD.Vector(tempP1.x, tempP1.y, tempP1.z))
-					//# Shape = Part.makeBox(0.001, 0.001, 0.001, tempP1)
-					//# return
-					//resultShape = makePoint(tempP1);
-					resultShape = makeSphere(0.00001, tempP1);
-				}
-				//	#防止两个点重合出现错误的情况
-				else if (fabs(Point1.x - Point2.x) < TOL)//tempP1 == tempP2)
-				{
-					//# tempP2 = tempP2.add(FreeCAD.Vector(0.001*math.cos(tempP2.y), 0.001*math.sin(tempP2.y), 0))				
-					//if (tempP3 == tempP4){
-					resultShape = makeLine(tempP1, tempP3);
-					//}
-					//else
-					//	resultShape = getPipeObj(Point1, Point2);
-				}
-				else if (fabs(Point1.z - Point2.z) < TOL)//tempP1 == tempP4)
-					//# tempP4 = tempP4.add(FreeCAD.Vector(0, 0, 0.01))
-					resultShape = getArcObj(Point1, Point2);
+					else {
+						//# line1 = Part.makeLine(tempP1, tempP2)
+						Part::TopoShape* line2 = makeLine(tempP1, tempP4);
+						Part::TopoShape* shapeCir = getArcObj(Base::Vector3d(Point1.x, Point1.y, Point2.z), Point2);
+						Part::TopoShape* path = Wire(line2);
+						//resultShape = path.makePipe(shapeCir);
+						resultShape = new Part::TopoShape(path->makePipe(shapeCir->getShape()));
 
+						//double sangle = pointmin.y, eangle = pointmax.y;
+						//if (sangle < 0 || eangle < 0) {
+						//	sangle = 2 * M_PI + sangle;
+						//	if (sangle > 2 * M_PI)
+						//		sangle -= sangle;
+						//	eangle = 2 * M_PI + eangle;
+						//	if (eangle > 2 * M_PI)
+						//		eangle -= eangle;
+						//}
+						//Base::Vector3d dir(0, 0, 1);
+						//Base::Vector3d p(0, 0, pointmin.z);
+						////if (pointmin.z < 0)
+						////	dir.z = -1;
+						//resultShape = makeCylinder(p, dir, pointmax.x, fabs(pointmax.z - pointmin.z), eangle);
+						//if (pointmin.x > TOL) {
+						//	Part::TopoShape* t2 = makeCylinder(p,dir, pointmin.x, fabs(pointmax.z - pointmin.z), eangle);
+						//	TopoDS_Shape sh = resultShape->cut(t2->getShape());
+						//	resultShape->setShape(sh);
+						//	delete t2;
+						//}
+						//if (fabs(sangle - 2 * M_PI) < TOL)
+						//	sangle = 0;
+						//	
+						//if (fabs(sangle - 0) > TOL) {
+						//	Part::TopoShape* t3 = makeCylinder(p,dir, pointmax.x, fabs(pointmax.z - pointmin.z), sangle);
+						//	TopoDS_Shape sh = resultShape->cut(t3->getShape());
+						//	resultShape->setShape(sh);
+						//	delete t3;
+						//}
+
+					}
+				}
 				else {
-					//# line1 = Part.makeLine(tempP1, tempP2)
-					Part::TopoShape* line2 = makeLine(tempP1, tempP4);
-					Part::TopoShape* shapeCir = getArcObj(Base::Vector3d(Point1.x, Point1.y, Point2.z), Point2);
-					Part::TopoShape* path = Wire(line2);
-					//resultShape = path.makePipe(shapeCir);
-					resultShape = new Part::TopoShape(path->makePipe(shapeCir->getShape()));
-
-					//double sangle = pointmin.y, eangle = pointmax.y;
-					//if (sangle < 0 || eangle < 0) {
-					//	sangle = 2 * M_PI + sangle;
-					//	if (sangle > 2 * M_PI)
-					//		sangle -= sangle;
-					//	eangle = 2 * M_PI + eangle;
-					//	if (eangle > 2 * M_PI)
-					//		eangle -= eangle;
-					//}
-					//Base::Vector3d dir(0, 0, 1);
-					//Base::Vector3d p(0, 0, pointmin.z);
-					////if (pointmin.z < 0)
-					////	dir.z = -1;
-					//resultShape = makeCylinder(p, dir, pointmax.x, fabs(pointmax.z - pointmin.z), eangle);
-					//if (pointmin.x > TOL) {
-					//	Part::TopoShape* t2 = makeCylinder(p,dir, pointmin.x, fabs(pointmax.z - pointmin.z), eangle);
-					//	TopoDS_Shape sh = resultShape->cut(t2->getShape());
-					//	resultShape->setShape(sh);
-					//	delete t2;
-					//}
-					//if (fabs(sangle - 2 * M_PI) < TOL)
-					//	sangle = 0;
-					//	
-					//if (fabs(sangle - 0) > TOL) {
-					//	Part::TopoShape* t3 = makeCylinder(p,dir, pointmax.x, fabs(pointmax.z - pointmin.z), sangle);
-					//	TopoDS_Shape sh = resultShape->cut(t3->getShape());
-					//	resultShape->setShape(sh);
-					//	delete t3;
-					//}
-
+					Base::Vector3d polarPoint1;
+					Base::Vector3d polarPoint2;
+					if (ndim == 0)//Part::TopoShape* getArcObj(Base::Vector3d polarPoint1, Base::Vector3d polarPoint2)
+					{
+						polarPoint1 = Base::Vector3d(Point2.x, Point1.y, Point1.z);
+						polarPoint2 = Point2;
+						{
+							Base::Vector3d tempP1 = otherToRecOne(S_COOR_POLAR, polarPoint1);
+							Base::Vector3d tempP2 = otherToRecOne(S_COOR_POLAR, Base::Vector3d(polarPoint2.x, polarPoint1.y, polarPoint2.z));
+							double startAngle = polarPoint1.y;
+							double endAngle = polarPoint2.y;
+							Base::Vector3d dir = Base::Vector3d(0, 0, 1);
+							//#这样设置可以生成面片
+							if (fabs(startAngle - endAngle) < TOL)
+								endAngle = startAngle + 0.01;
+							if (tempP1 == tempP2) {
+								resultShape = makeCircle(fabs((polarPoint2.x)), Base::Vector3d(0, 0, tempP1.z), dir, startAngle, endAngle);
+							}
+							else {
+								if (fabs(fabs(startAngle - endAngle) - 2 * M_PI) < TOL){
+									//wires = []
+									std::vector<Part::TopoShape*> wires;
+									if (polarPoint1.x != 0.0) {
+										Part::TopoShape* arcLine1 = makeCircle(fabs(polarPoint1.x), Base::Vector3d(0, 0, tempP1.z), dir, polarPoint1.y, polarPoint2.y);
+										wires.push_back(arcLine1);
+									}
+									if (polarPoint2.x != 0.0) {
+										Part::TopoShape*arcLine2 = makeCircle(fabs(polarPoint2.x), Base::Vector3d(0, 0, tempP2.z), dir, polarPoint1.y, polarPoint2.y);
+										wires.push_back(arcLine2);
+									}
+									resultShape = makeFace(wires, "Part::FaceMakerBullseye");
+								}
+								else {
+									Part::TopoShape* line = makeLine(tempP1, tempP2);
+									//#linePath = Part.makeCircle(math.fabs((polarPoint1.x + polarPoint2.x) / 2), FreeCAD.Vector(0, 0, tempP1.z), dir, startAngle, endAngle)
+									//Part::TopoShape* makeCircle(double radius, Base::Vector3d pnt, Base::Vector3d vec, double angle1, double angle2)
+									Part::TopoShape* linePath = makeCircle(fabs(polarPoint2.x), Base::Vector3d(0, 0, tempP1.z), dir, startAngle, endAngle);
+									Part::TopoShape* path = Wire(linePath);
+									//	resultShape = path.makePipe(line)
+									resultShape = new Part::TopoShape(path->makePipe(line->getShape()));
+								}
+							}
+						}
+					}
+					else if (ndim == 1)//Part::TopoShape* getArcObj(Base::Vector3d polarPoint1, Base::Vector3d polarPoint2)
+					{
+						//#这样设置可以生成面片
+						{
+							Part::TopoShape* line = makeLine(tempP2, tempP3);
+							//#linePath = Part.makeCircle(math.fabs((polarPoint1.x + polarPoint2.x) / 2), FreeCAD.Vector(0, 0, tempP1.z), dir, startAngle, endAngle)
+							//Part::TopoShape* makeCircle(double radius, Base::Vector3d pnt, Base::Vector3d vec, double angle1, double angle2)
+							Part::TopoShape* linePath = makeLine(tempP4, tempP3);
+							Part::TopoShape* path = Wire(linePath);
+							//	resultShape = path.makePipe(line)
+							resultShape = new Part::TopoShape(path->makePipe(line->getShape()));
+						}
+					}
+					else if (ndim == 2)//Part::TopoShape* getArcObj(Base::Vector3d polarPoint1, Base::Vector3d polarPoint2)
+					{
+						polarPoint1 = Base::Vector3d(Point1.x, Point1.y, Point2.z);
+						polarPoint2 = Point2;
+						{
+							Base::Vector3d tempP1 = otherToRecOne(S_COOR_POLAR, polarPoint1);
+							Base::Vector3d tempP2 = otherToRecOne(S_COOR_POLAR, Base::Vector3d(polarPoint2.x, polarPoint1.y, polarPoint2.z));
+							double startAngle = polarPoint1.y;
+							double endAngle = polarPoint2.y;
+							Base::Vector3d dir = Base::Vector3d(0, 0, 1);
+							//#这样设置可以生成面片
+							if (fabs(startAngle - endAngle) < TOL)
+								endAngle = startAngle + 0.01;
+							if (tempP1 == tempP2) {
+								resultShape = makeCircle(fabs((polarPoint2.x)), Base::Vector3d(0, 0, tempP1.z), dir, startAngle, endAngle);
+							}
+							else {
+								if (fabs(fabs(startAngle - endAngle) - 2 * M_PI) < TOL){
+									//wires = []
+									std::vector<Part::TopoShape*> wires;
+									if (polarPoint1.x != 0.0) {
+										Part::TopoShape* arcLine1 = makeCircle(fabs(polarPoint1.x), Base::Vector3d(0, 0, tempP1.z), dir, polarPoint1.y, polarPoint2.y);
+										wires.push_back(arcLine1);
+									}
+									if (polarPoint2.x != 0.0) {
+										Part::TopoShape*arcLine2 = makeCircle(fabs(polarPoint2.x), Base::Vector3d(0, 0, tempP2.z), dir, polarPoint1.y, polarPoint2.y);
+										wires.push_back(arcLine2);
+									}
+									resultShape = makeFace(wires, "Part::FaceMakerBullseye");
+								}
+								else {
+									Part::TopoShape* line = makeLine(tempP1, tempP2);
+									//#linePath = Part.makeCircle(math.fabs((polarPoint1.x + polarPoint2.x) / 2), FreeCAD.Vector(0, 0, tempP1.z), dir, startAngle, endAngle)
+									//Part::TopoShape* makeCircle(double radius, Base::Vector3d pnt, Base::Vector3d vec, double angle1, double angle2)
+									Part::TopoShape* linePath = makeCircle(fabs(polarPoint2.x), Base::Vector3d(0, 0, tempP1.z), dir, startAngle, endAngle);
+									Part::TopoShape* path = Wire(linePath);
+									//	resultShape = path.makePipe(line)
+									resultShape = new Part::TopoShape(path->makePipe(line->getShape()));
+								}
+							}
+						}
+					}
+					if (resultShape != 0) {
+						Part::TopoShape *shell = new Part::TopoShape(resultShape->removeSplitter());
+						delete resultShape;
+						return shell;
+					}
 				}
 			}
 			if (resultShape != 0) {
@@ -5028,7 +5269,7 @@ namespace PartChipic {
 		}
 
 
-		Part::TopoShape* meshToShape(std::vector<Base::Vector3d> Points, std::vector<Data::ComplexGeoData::Facet> Facets, const Standard_Real dev, int nn){
+		Part::TopoShape* meshToShape(std::vector<Base::Vector3d> Points, std::vector<Data::ComplexGeoData::Facet> Facets, const Standard_Real dev, int nn, int type = 1){
 
 			Part::TopoShape* funcShape = 0;
 			Mesh::MeshObject mesh;
@@ -5278,6 +5519,8 @@ namespace PartChipic {
 					filename = filename + ".brp";
 					shell->write(filename.c_str());
 				}
+				if (type == 0)
+					return shell;
 				funcShape = Solid(shell);
 				if (funcShape != 0) {
 					TopoDS_Shape sh = funcShape->removeSplitter();

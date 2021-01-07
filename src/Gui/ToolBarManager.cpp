@@ -204,7 +204,8 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 	}
 	CommandManager& cmdManager = Application::Instance->commandManager();
 	auto mainwindow = MainWindow::getInstance();
-	mainwindow->mainWindowDef->tabWidgetInterface->clearAllAction();
+	auto tabWidget = mainwindow->mainWindowDef->tabWidgetInterface;
+	tabWidget->clearAllAction();
 	auto groupItems = toolBarItems->getItems();
 	for(auto group = groupItems.begin();group!= groupItems.end();group++)
 	{
@@ -231,7 +232,9 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 					|| (*group)->command() == "observe"){
 				tabName = QString::fromLocal8Bit("ÎïÀíÉèÖÃ");
 			}
-			mainwindow->mainWindowDef->tabWidgetInterface->addAction(
+			if (tabWidget->hasAction(qAction))
+				continue;
+			tabWidget->addAction(
 				tabName, QString::fromLocal8Bit((*group)->command().c_str()), qAction);	
 		}
 	}

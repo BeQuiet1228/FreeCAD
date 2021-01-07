@@ -23,6 +23,7 @@ public:
 public:
 	TopoDS_Shape update_mesh_topology(double &maxf);
 	bool update_mesh_topology(std::vector<Base::Vector3d> &Points, std::vector<Data::ComplexGeoData::Facet> &Facets, double &maxf);
+	//bool update_mesh_topologyFix(std::vector<Base::Vector3d> &Points, std::vector<Data::ComplexGeoData::Facet> &Facets, double &maxf);
 	std::string text();
 	std::string getPAP();
     //bool load(QTextStream &stream);

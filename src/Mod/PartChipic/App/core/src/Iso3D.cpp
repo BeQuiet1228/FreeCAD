@@ -24,6 +24,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
+#include "../../ChipicConst.h"
 /*
 
 
@@ -72,12 +73,7 @@
 
 using std::vector;
 using std::list;
-#define VSIZE 18
 
-#ifndef DISTANCE_RESOL_MAX
-	#define DISTANCE_RESOL_MAX 8
-	#define DISTANCE_RESOL_MIN 2
-#endif
 int triTable[256][16] = {
 
 	{ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
@@ -352,10 +348,11 @@ Iso3D::Iso3D(){
 	MatRot.unit();
 	MatRotSave.unit();
 	type = 1;//volume
+	ndim = -1;
 	NbPointIsoMap = 0;
 	NbTriangleIsoSurface = 0;
 
-	morph_param = 1;
+	//morph_param = 1;
 	step = 0.05;
 	yreso = 1.0;
 	ImplicitFunction = "1-((1/2)^2*(x^2 + y^2 + z^2) )-6- ((1/2)^8 *((x^8 + y^8 + z^8) )^6)";
@@ -374,7 +371,7 @@ Iso3D::Iso3D(){
 	Start = vcg::Point3d(-4, -4, -4);
 	End = vcg::Point3d(4, 4, 4);
 
-	nb_ligne = nb_colon = nb_depth = VSIZE;
+	nGrid[XDIM] = nGrid[YDIM] = nGrid[ZDIM] = DISTANCE_RESOL_MAX;
 	IsoValue = 0;
 
 	backsurfr = 249;
@@ -560,29 +557,30 @@ void Iso3D::ConstructIsoNormale()
 			p[2] = out[2];
 		}
 	}
-
+	/*if (NbTriangleIsoSurface > 0)
+	NormOriginal.resize(NbTriangleIsoSurface);
 	for (i = 0; i<NbTriangleIsoSurface; ++i)
 	{
-		IndexFirstPoint = IsoSurfaceTriangleListe[i].X();
-		IndexSecondPoint = IsoSurfaceTriangleListe[i].Y();
-		IndexThirdPoint = IsoSurfaceTriangleListe[i].Z();
+	IndexFirstPoint = IsoSurfaceTriangleListe[i].X();
+	IndexSecondPoint = IsoSurfaceTriangleListe[i].Y();
+	IndexThirdPoint = IsoSurfaceTriangleListe[i].Z();
 
-		pt1 = IsoPointMapOriginal[IndexFirstPoint];
-		pt2 = IsoPointMapOriginal[IndexSecondPoint];
-		pt3 = IsoPointMapOriginal[IndexThirdPoint];
+	pt1 = IsoPointMapOriginal[IndexFirstPoint];
+	pt2 = IsoPointMapOriginal[IndexSecondPoint];
+	pt3 = IsoPointMapOriginal[IndexThirdPoint];
 
-		val1 = pt2.Y() - pt1.Y();
-		val2 = pt3.Z() - pt1.Z();
-		val3 = pt2.Z() - pt1.Z();
-		val4 = pt3.Y() - pt1.Y();
-		val5 = pt3.X() - pt1.X();
-		val6 = pt2.X() - pt1.X();
+	val1 = pt2.Y() - pt1.Y();
+	val2 = pt3.Z() - pt1.Z();
+	val3 = pt2.Z() - pt1.Z();
+	val4 = pt3.Y() - pt1.Y();
+	val5 = pt3.X() - pt1.X();
+	val6 = pt2.X() - pt1.X();
 
-		NormOriginal[i] = vcg::Point3d(val1*val2 - val3*val4,
-			val3*val5 - val6*val2,
-			val6*val4 - val1*val5);
-		NormOriginal[i].Normalize();
-	}
+	NormOriginal[i] = vcg::Point3d(val1*val2 - val3*val4,
+	val3*val5 - val6*val2,
+	val6*val4 - val1*val5);
+	NormOriginal[i].Normalize();
+	}*/
 };
 
 
@@ -612,17 +610,17 @@ void Iso3D::ConstructIsoSurface()
 
 	if (true)//IsoConditionRequired == -1)
 	{
-		for (i = 0; i < nb_ligne; i++)
-			for (j = 0; j < nb_colon; j++)
-				for (k = 0; k < nb_depth; k++)
-					//for (i = 0; i < nb_ligne - 1 - CutLigne; i++)
-					//for (k = 0; k < nb_depth - 1 - CutDepth; k++)
-					//for (j = 0; j < nb_colon - 1 - CutColon; j++)
+		for (i = 0; i < nGrid[XDIM]; i++)
+			for (j = 0; j < nGrid[YDIM]; j++)
+				for (k = 0; k < nGrid[ZDIM]; k++)
+					//for (i = 0; i < nGrid[XDIM] - 1 - CutLigne; i++)
+					//for (k = 0; k < nGrid[ZDIM] - 1 - CutDepth; k++)
+					//for (j = 0; j < nGrid[YDIM] - 1 - CutColon; j++)
 				{
 					Index = GridVoxel[i][j][k].Signature;
 					for (l = 0; triTable[Index][l] != -1 && NbTriangleIsoSurface < NbPolygonImposedLimit; l += 3)
 					{
-						//                if(i==0 || i==nb_ligne-1)
+						//                if(i==0 || i==nGrid[XDIM]-1)
 						//                {
 						//                    IndexFirstPoint = GridVoxel[i][j][k].Edge_Points[triTable[Index][l]];
 						//                    IndexThirdPoint = GridVoxel[i][j][k].Edge_Points[triTable[Index][l + 1]];
@@ -636,10 +634,10 @@ void Iso3D::ConstructIsoSurface()
 						}
 						if (IndexFirstPoint != -20 && IndexSeconPoint != -20 && IndexThirdPoint != -20)
 						{
-							IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexFirstPoint,
+							IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexFirstPoint,
 								IndexSeconPoint,
-								IndexThirdPoint);
-							TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 1; /// Normals Triangles
+								IndexThirdPoint));
+							TypeIsoSurfaceTriangleListeCND.push_back(1); /// Normals Triangles
 							NbTriangleIsoSurface++;
 						}
 					}
@@ -647,9 +645,9 @@ void Iso3D::ConstructIsoSurface()
 	}
 	//    /// Here we have to compute some missing points...
 	else
-		for (i = 0; i < nb_ligne - 1 - CutLigne; i++)
-			for (k = 0; k < nb_depth - 1 - CutDepth; k++)
-				for (j = 0; j < nb_colon - 1 - CutColon; j++)
+		for (i = 0; i < nGrid[XDIM] - 1 - CutLigne; i++)
+			for (k = 0; k < nGrid[ZDIM] - 1 - CutDepth; k++)
+				for (j = 0; j < nGrid[YDIM] - 1 - CutColon; j++)
 				{
 					Index = GridVoxel[i][j][k].Signature;
 					for (l = 0; triTable[Index][l] != -1 && NbTriangleIsoSurface < NbPolygonImposedLimit; l += 3) {
@@ -660,10 +658,10 @@ void Iso3D::ConstructIsoSurface()
 							///++++++++++++++++First Case +++++++++++++++++++++++++++++++++++++++++++///
 							/// All points verifient the condition
 							if (WichPointVeryCond[IndexFirstPoint] * WichPointVeryCond[IndexSeconPoint] * WichPointVeryCond[IndexThirdPoint] != 0) {
-								IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexFirstPoint, IndexSeconPoint, IndexThirdPoint);
+								IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexFirstPoint, IndexSeconPoint, IndexThirdPoint));
 								///All points in this triangle verify the condition. Type = 1
 								/// There is no new Isopoints to Add.
-								TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 1;
+								TypeIsoSurfaceTriangleListeCND.push_back(1);
 								NbTriangleIsoSurface++;
 							}/// End if(WichPointVeryCond[IndexFirstPoint]...
 							///+++++++++++++++++ Second Case ++++++++++++++++++++++++++++++++++++++++++///
@@ -671,10 +669,10 @@ void Iso3D::ConstructIsoSurface()
 							else if (WichPointVeryCond[IndexFirstPoint] == 0 &&
 								WichPointVeryCond[IndexSeconPoint] == 0 &&
 								WichPointVeryCond[IndexThirdPoint] == 0) {
-								IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexFirstPoint, IndexSeconPoint, IndexThirdPoint);
+								IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexFirstPoint, IndexSeconPoint, IndexThirdPoint));
 								///All points in this triangle verify the condition. Type = 0
 								/// There is no new Isopoints to Add.
-								TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 0;
+								TypeIsoSurfaceTriangleListeCND.push_back(0);
 								NbTriangleIsoSurface++;
 							}
 							///++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++///
@@ -706,34 +704,34 @@ void Iso3D::ConstructIsoSurface()
 											/// We have to new points to add
 
 											/// Add Aprime
-											IsoPointMapOriginal[NbPointIsoMap] = Aprime;
+											IsoPointMapOriginal.push_back(Aprime);
 											IndexAprime = NbPointIsoMap;
 											NbPointIsoMap++;
 
 											/// Add Bprime
-											IsoPointMapOriginal[NbPointIsoMap] = Bprime;
+											IsoPointMapOriginal.push_back(Bprime);
 											IndexBprime = NbPointIsoMap;
 											NbPointIsoMap++;
 
 											/// Add two new triangles :
 											///(Aprime, Bprime,C)
-											IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexAprime, IndexBprime, IndexThirdPoint);
-											TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 1;
+											IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexAprime, IndexBprime, IndexThirdPoint));
+											TypeIsoSurfaceTriangleListeCND.push_back(1);
 											NbTriangleIsoSurface++;
 
 											///(A, B, Bprime)
-											IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexFirstPoint, IndexSeconPoint, IndexBprime);
-											TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 0;
+											IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexFirstPoint, IndexSeconPoint, IndexBprime));
+											TypeIsoSurfaceTriangleListeCND.push_back(0);
 											NbTriangleIsoSurface++;
 
 											///(A, Bprime, Aprime)
-											IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexFirstPoint, IndexBprime, IndexAprime);
-											TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 0;
+											IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexFirstPoint, IndexBprime, IndexAprime));
+											TypeIsoSurfaceTriangleListeCND.push_back(0);
 											NbTriangleIsoSurface++;
 
 											///(Aprime, Bprime)
-											IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexAprime, IndexBprime, IndexBprime);
-											TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 4;
+											IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexAprime, IndexBprime, IndexBprime));
+											TypeIsoSurfaceTriangleListeCND.push_back(4);
 											NbTriangleIsoSurface++;
 											///+++++++++++++++++++++++++///
 										} /// End of if(WichPointVeryCond[IndexThirdPoint] != 0)...
@@ -764,11 +762,11 @@ void Iso3D::ConstructIsoSurface()
 											/// Save theses points  and the triangle here
 
 											/// Add Aprime
-											IsoPointMapOriginal[NbPointIsoMap] = Aprime;
+											IsoPointMapOriginal.push_back(Aprime);
 											NbPointIsoMap++;
 
 											/// Add Cprime
-											IsoPointMapOriginal[NbPointIsoMap] = Cprime;
+											IsoPointMapOriginal.push_back(Cprime);
 											NbPointIsoMap++;
 
 											/// Add Three new triangles :
@@ -776,23 +774,23 @@ void Iso3D::ConstructIsoSurface()
 											IndexCprime = (NbPointIsoMap - 1);
 
 											///(Aprime, B, Cprime)
-											IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexAprime, IndexSeconPoint, IndexCprime);
-											TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 1;
+											IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexAprime, IndexSeconPoint, IndexCprime));
+											TypeIsoSurfaceTriangleListeCND.push_back(1);
 											NbTriangleIsoSurface++;
 
 											/// (A , Aprime, Cprime)
-											IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexFirstPoint, IndexAprime, IndexCprime);
-											TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 0;
+											IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexFirstPoint, IndexAprime, IndexCprime));
+											TypeIsoSurfaceTriangleListeCND.push_back(0);
 											NbTriangleIsoSurface++;
 
 											/// (A, Cprime, C)
-											IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexFirstPoint, IndexCprime, IndexThirdPoint);
-											TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 0;
+											IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexFirstPoint, IndexCprime, IndexThirdPoint));
+											TypeIsoSurfaceTriangleListeCND.push_back(0);
 											NbTriangleIsoSurface++;
 
 											/// (Aprime, Cprime) --> The border
-											IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexAprime, IndexCprime, IndexCprime);
-											TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 4;
+											IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexAprime, IndexCprime, IndexCprime));
+											TypeIsoSurfaceTriangleListeCND.push_back(4);
 											NbTriangleIsoSurface++;
 											///+++++++++++++++++++++++++///
 										}
@@ -819,11 +817,11 @@ void Iso3D::ConstructIsoSurface()
 											///+++++++++++++++++++++++++///
 											/// Save theses points  and the triangle here
 											/// Add Bprime
-											IsoPointMapOriginal[NbPointIsoMap] = Bprime;
+											IsoPointMapOriginal.push_back(Bprime);
 											NbPointIsoMap++;
 
 											/// Add Cprime
-											IsoPointMapOriginal[NbPointIsoMap] = Cprime;
+											IsoPointMapOriginal.push_back(Cprime);
 											NbPointIsoMap++;
 
 											/// Add Three new triangles :
@@ -831,23 +829,23 @@ void Iso3D::ConstructIsoSurface()
 											IndexCprime = (NbPointIsoMap - 1);
 
 											/// (A, Bprime, Cprime)
-											IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexFirstPoint, IndexBprime, IndexCprime);
-											TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 0;
+											IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexFirstPoint, IndexBprime, IndexCprime));
+											TypeIsoSurfaceTriangleListeCND.push_back(0);
 											NbTriangleIsoSurface++;
 
 											/// (Bprime, B, C)
-											IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexBprime, IndexSeconPoint, IndexThirdPoint);
-											TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 1;
+											IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexBprime, IndexSeconPoint, IndexThirdPoint));
+											TypeIsoSurfaceTriangleListeCND.push_back(1);
 											NbTriangleIsoSurface++;
 
 											/// (Bprime, C, Cprime)
-											IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexBprime, IndexThirdPoint, IndexCprime);
-											TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 1;
+											IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexBprime, IndexThirdPoint, IndexCprime));
+											TypeIsoSurfaceTriangleListeCND.push_back(1);
 											NbTriangleIsoSurface++;
 
 											/// (Bprime, Cprime)
-											IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexBprime, IndexCprime, IndexCprime);
-											TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 4;
+											IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexBprime, IndexCprime, IndexCprime));
+											TypeIsoSurfaceTriangleListeCND.push_back(4);
 											NbTriangleIsoSurface++;
 
 											///+++++++++++++++++++++++++///
@@ -878,11 +876,11 @@ void Iso3D::ConstructIsoSurface()
 										///+++++++++++++++++++++++++///
 										/// Save theses points  and the triangle here
 										/// Add Bprime
-										IsoPointMapOriginal[NbPointIsoMap] = Bprime;
+										IsoPointMapOriginal.push_back(Bprime);
 										NbPointIsoMap++;
 
 										/// Add Cprime
-										IsoPointMapOriginal[NbPointIsoMap] = Cprime;
+										IsoPointMapOriginal.push_back(Cprime);
 										NbPointIsoMap++;
 
 
@@ -891,23 +889,23 @@ void Iso3D::ConstructIsoSurface()
 										IndexCprime = (NbPointIsoMap - 1);
 
 										/// (A, Bprime, Cprime)
-										IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexFirstPoint, IndexBprime, IndexCprime);
-										TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 1;
+										IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexFirstPoint, IndexBprime, IndexCprime));
+										TypeIsoSurfaceTriangleListeCND.push_back(1);
 										NbTriangleIsoSurface++;
 
 										/// (Bprime, B, C)
-										IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexBprime, IndexSeconPoint, IndexThirdPoint);
-										TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 0;
+										IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexBprime, IndexSeconPoint, IndexThirdPoint));
+										TypeIsoSurfaceTriangleListeCND.push_back(0);
 										NbTriangleIsoSurface++;
 
 										/// (Bprime, C, Cprime)
-										IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexBprime, IndexThirdPoint, IndexCprime);
-										TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 0;
+										IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexBprime, IndexThirdPoint, IndexCprime));
+										TypeIsoSurfaceTriangleListeCND.push_back(0);
 										NbTriangleIsoSurface++;
 
 										/// (Bprime, Cprime) --> the border
-										IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexBprime, IndexCprime, IndexCprime);
-										TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 4; /// Type = 4-->Border
+										IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexBprime, IndexCprime, IndexCprime));
+										TypeIsoSurfaceTriangleListeCND.push_back(4); /// Type = 4-->Border
 										NbTriangleIsoSurface++;
 										///+++++++++++++++++++++++++///
 									}
@@ -935,11 +933,11 @@ void Iso3D::ConstructIsoSurface()
 										/// Save theses points  and the triangle here
 										/// Save theses points  and the triangle here
 										/// Add Aprime
-										IsoPointMapOriginal[NbPointIsoMap] = Aprime;
+										IsoPointMapOriginal.push_back(Aprime);
 										NbPointIsoMap++;
 
 										/// Add Cprime
-										IsoPointMapOriginal[NbPointIsoMap] = Cprime;
+										IsoPointMapOriginal.push_back(Cprime);
 										NbPointIsoMap++;
 
 
@@ -949,26 +947,26 @@ void Iso3D::ConstructIsoSurface()
 
 										/// (B, Cprime, Aprime)
 										IndexNbTriangle = NbTriangleIsoSurface * 3;
-										IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexSeconPoint, IndexCprime, IndexAprime);
-										TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 0;
+										IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexSeconPoint, IndexCprime, IndexAprime));
+										TypeIsoSurfaceTriangleListeCND.push_back(0);
 										NbTriangleIsoSurface++;
 
 										/// (Aprime, Cprime, C)
 										IndexNbTriangle = NbTriangleIsoSurface * 3;
-										IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexAprime, IndexCprime, IndexThirdPoint);
-										TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 1;
+										IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexAprime, IndexCprime, IndexThirdPoint));
+										TypeIsoSurfaceTriangleListeCND.push_back(1);
 										NbTriangleIsoSurface++;
 
 										/// (Aprime, C, A)
 										IndexNbTriangle = NbTriangleIsoSurface * 3;
-										IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexAprime, IndexThirdPoint, IndexFirstPoint);
-										TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 1;
+										IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexAprime, IndexThirdPoint, IndexFirstPoint));
+										TypeIsoSurfaceTriangleListeCND.push_back(1);
 										NbTriangleIsoSurface++;
 
 										/// (Aprime, Cprime)
 										IndexNbTriangle = NbTriangleIsoSurface * 3;
-										IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexAprime, IndexCprime, IndexCprime);
-										TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 4;
+										IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexAprime, IndexCprime, IndexCprime));
+										TypeIsoSurfaceTriangleListeCND.push_back(4);
 										NbTriangleIsoSurface++;
 
 										///+++++++++++++++++++++++++///
@@ -996,11 +994,11 @@ void Iso3D::ConstructIsoSurface()
 										///+++++++++++++++++++++++++///
 										/// Save theses points  and the triangle here
 										/// Add Aprime
-										IsoPointMapOriginal[NbPointIsoMap] = Aprime;
+										IsoPointMapOriginal.push_back(Aprime);
 										NbPointIsoMap++;
 
 										/// Add Bprime
-										IsoPointMapOriginal[NbPointIsoMap] = Bprime;
+										IsoPointMapOriginal.push_back(Bprime);
 										NbPointIsoMap++;
 										/// Add Three new triangles :
 										IndexAprime = (NbPointIsoMap - 2);
@@ -1008,23 +1006,23 @@ void Iso3D::ConstructIsoSurface()
 
 										/// (Aprime, Bprime, C)
 										IndexNbTriangle = NbTriangleIsoSurface * 3;
-										IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexAprime, IndexBprime, IndexThirdPoint);
-										TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 0;
+										IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexAprime, IndexBprime, IndexThirdPoint));
+										TypeIsoSurfaceTriangleListeCND.push_back(0);
 										NbTriangleIsoSurface++;
 
 										/// (A, B, Bprime)
-										IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexFirstPoint, IndexSeconPoint, IndexBprime);
-										TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 1;
+										IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexFirstPoint, IndexSeconPoint, IndexBprime));
+										TypeIsoSurfaceTriangleListeCND.push_back(1);
 										NbTriangleIsoSurface++;
 
 										/// (A, Bprime, Aprime)
-										IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexFirstPoint, IndexBprime, IndexAprime);
-										TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 1;
+										IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexFirstPoint, IndexBprime, IndexAprime));
+										TypeIsoSurfaceTriangleListeCND.push_back(1);
 										NbTriangleIsoSurface++;
 
 										/// (Aprime, Bprime)
-										IsoSurfaceTriangleListe[NbTriangleIsoSurface] = vcg::Point3i(IndexAprime, IndexBprime, IndexBprime);
-										TypeIsoSurfaceTriangleListeCND[NbTriangleIsoSurface] = 4;
+										IsoSurfaceTriangleListe.push_back(vcg::Point3i(IndexAprime, IndexBprime, IndexBprime));
+										TypeIsoSurfaceTriangleListeCND.push_back(4);
 										NbTriangleIsoSurface++;
 										///+++++++++++++++++++++++++///
 									}
@@ -1037,17 +1035,17 @@ void Iso3D::ConstructIsoSurface()
 
 
 /*if (gsysType != PM3::SYSCARTESIAN)
-Step[0] = (End[0] - Start[0]) / (nb_ligne - 2);
+Step[0] = (End[0] - Start[0]) / (nGrid[XDIM] - 2);
 else
-Step[0] = (End[0] - Start[0]) / (nb_ligne - 2 - 1);
-Step[1] = (End[1] - Start[1]) / (nb_colon - 2 - 1);
-Step[2] = (End[2] - Start[2]) / (nb_depth - 2 - 1);
+Step[0] = (End[0] - Start[0]) / (nGrid[XDIM] - 2 - 1);
+Step[1] = (End[1] - Start[1]) / (nGrid[YDIM] - 2 - 1);
+Step[2] = (End[2] - Start[2]) / (nGrid[ZDIM] - 2 - 1);
 if (gsysType != PM3::SYSCARTESIAN)
-for (i = 0; i < nb_ligne; i++) XLocal[i] = Start[0] + (i - 0)*Step[0];
+for (i = 0; i < nGrid[XDIM]; i++) XLocal[i] = Start[0] + (i - 0)*Step[0];
 else
-for (i = 0; i < nb_ligne; i++) XLocal[i] = Start[0] + (i - 1)*Step[0];
-for (j = 0; j < nb_colon; j++) YLocal[j] = Start[1] + (j - 1)*Step[1];
-for (k = 0; k < nb_depth; k++) ZLocal[k] = Start[2] + (k - 1)*Step[2];*/
+for (i = 0; i < nGrid[XDIM]; i++) XLocal[i] = Start[0] + (i - 1)*Step[0];
+for (j = 0; j < nGrid[YDIM]; j++) YLocal[j] = Start[1] + (j - 1)*Step[1];
+for (k = 0; k < nGrid[ZDIM]; k++) ZLocal[k] = Start[2] + (k - 1)*Step[2];*/
 /*std::string json =
 "{\n"
 "    \"MathModels\": [\n"
@@ -1088,7 +1086,7 @@ for (k = 0; k < nb_depth; k++) ZLocal[k] = Start[2] + (k - 1)*Step[2];*/
 "    ]\n"
 "}\n";
 boost::format fmt(json);
-fmt%ImplicitFunction% XLocal[0] % XLocal[nb_ligne - 1] % YLocal[1] % YLocal[nb_colon - 1] % ZLocal[1] % ZLocal[nb_depth-1];
+fmt%ImplicitFunction% XLocal[0] % XLocal[nGrid[XDIM] - 1] % YLocal[1] % YLocal[nGrid[YDIM] - 1] % ZLocal[1] % ZLocal[nGrid[ZDIM]-1];
 //fmt%ImplicitFunction% Start[0] % End[0] % Start[1] % End[1] % Start[2] % End[2];
 ImplicitFunction = fmt.str();
 std::string er;
@@ -1100,7 +1098,7 @@ iso = "x > %1% & x < %2% & y > %3% & y < %4% & z > %5% & z < %6%";
 else
 iso = "r > %1% & r < %2% & phi > %3% & phi < %4% & z > %5% & z < %6%";
 boost::format fmt(iso);
-fmt% XLocal[0] % XLocal[nb_ligne - 1] % YLocal[1] % YLocal[nb_colon - 1] % ZLocal[1] % ZLocal[nb_depth - 1];
+fmt% XLocal[0] % XLocal[nGrid[XDIM] - 1] % YLocal[1] % YLocal[nGrid[YDIM] - 1] % ZLocal[1] % ZLocal[nGrid[ZDIM] - 1];
 IsoCondition = fmt.str();*/
 /*if (gsysType == PM3::SYSCYLINDRICAL && yreso > 0)
 {
@@ -1116,51 +1114,62 @@ void Iso3D::VoxelEvaluation()
 	/// this is for the morph effect...
 	//	if (morph_param >= 0.0)  vals[3] = morph_param;
 	//	else  vals[3] = -morph_param;
-	morph_param += step;
-	if (morph_param == 1) morph_param = 0;
-	if (gsysType != PM3::SYSCARTESIAN && yreso > 0) {
-		yreso = 10. * M_PI / 180.;
-		nb_colon = (End[1] - Start[1]) / yreso + 0.5;
-		if (nb_colon > VSIZE) nb_colon = VSIZE;
-		if (nb_colon < 2) nb_colon = 2;
-	}
+	/*morph_param += step;
+	if (morph_param == 1) morph_param = 0;*/
+	/*if (gsysType != PM3::SYSCARTESIAN && yreso > 0) {
+	yreso = 10. * M_PI / 180.;
+	nGrid[YDIM] = (End[YDIM] - Start[YDIM]) / yreso + 0.5;
+	if (nGrid[YDIM] > DISTANCE_RESOL_MAX) nGrid[YDIM] = DISTANCE_RESOL_MAX;
+	if (nGrid[YDIM] < DISTANCE_RESOL_MIN) nGrid[YDIM] = DISTANCE_RESOL_MIN;
+	}*/
+	//if (ndim == YDIM) nGrid[YDIM] = 1;
 	//Can be optimised by considering Three array of 30 values each
 	// Each array contain the 30 value of one axe...
-	//        Step[0] = (Start[0] - End[0]) / (nb_ligne - 1-2);
-	//        Step[1] = (Start[1] - End[1]) / (nb_colon - 1-2);
-	//        Step[2] = (Start[2] - End[2]) / (nb_depth - 1-2);
-	//        for (i = 0; i < nb_ligne; i++) XLocal[i] = Start[0] - (i-1)*Step[0];
-	//        for (j = 0; j < nb_colon; j++) YLocal[j] = Start[1] - (j-1)*Step[1];
-	//        for (k = 0; k < nb_depth; k++) ZLocal[k] = Start[2] - (k-1)*Step[2];
+	//        Step[0] = (Start[0] - End[0]) / (nGrid[XDIM] - 1-2);
+	//        Step[1] = (Start[1] - End[1]) / (nGrid[YDIM] - 1-2);
+	//        Step[2] = (Start[2] - End[2]) / (nGrid[ZDIM] - 1-2);
+	//        for (i = 0; i < nGrid[XDIM]; i++) XLocal[i] = Start[0] - (i-1)*Step[0];
+	//        for (j = 0; j < nGrid[YDIM]; j++) YLocal[j] = Start[1] - (j-1)*Step[1];
+	//        for (k = 0; k < nGrid[ZDIM]; k++) ZLocal[k] = Start[2] - (k-1)*Step[2];
 
-	if (gsysType != PM3::SYSCARTESIAN) {
-		Step[0] = (End[0] - Start[0]) / (nb_ligne - 1);
-		Step[1] = (End[1] - Start[1]) / (nb_colon - 0 - 1);
-		Step[2] = (End[2] - Start[2]) / (nb_depth - 1);
-
-		for (i = 0; i < nb_ligne; i++) XLocal[i] = Start[0] + (i - 0)*Step[0];
-		for (j = 0; j < nb_colon; j++) YLocal[j] = Start[1] + (j - 0)*Step[1];
-		for (k = 0; k < nb_depth; k++) ZLocal[k] = Start[2] + (k - 0)*Step[2];
+	/*if (gsysType != PM3::SYSCARTESIAN) {
+	Step[XDIM] = (End[XDIM] - Start[XDIM]) / (nGrid[XDIM] - 1);
+	Step[YDIM] = (End[YDIM] - Start[YDIM]) / (nGrid[YDIM] - 1);
+	Step[ZDIM] = (End[ZDIM] - Start[ZDIM]) / (nGrid[ZDIM] - 1);
+	for (i = 0; i < nGrid[XDIM]; i++) XLocal[i] = Start[XDIM] + (i - 0)*Step[XDIM];
+	for (j = 0; j < nGrid[YDIM]; j++) YLocal[j] = Start[1] + (j - 0)*Step[1];
+	for (k = 0; k < nGrid[ZDIM]; k++) ZLocal[k] = Start[2] + (k - 0)*Step[2];
 	}
 	else {
-		Step[0] = (End[0] - Start[0]) / (nb_ligne - 1);
-		Step[1] = (End[1] - Start[1]) / (nb_colon - 0 - 1);
-		Step[2] = (End[2] - Start[2]) / (nb_depth - 1);
+	Step[XDIM] = (End[XDIM] - Start[XDIM]) / (nGrid[XDIM] - 1);
+	Step[YDIM] = (End[YDIM] - Start[YDIM]) / (nGrid[YDIM] - 0 - 1);
+	Step[2] = (End[2] - Start[2]) / (nGrid[ZDIM] - 1);
 
-		for (i = 0; i < nb_ligne; i++) XLocal[i] = Start[0] + (i - 0)*Step[0];
-		for (j = 0; j < nb_colon; j++) YLocal[j] = Start[1] + (j - 0)*Step[1];
-		for (k = 0; k < nb_depth; k++) ZLocal[k] = Start[2] + (k - 0)*Step[2];
+	for (i = 0; i < nGrid[XDIM]; i++) XLocal[i] = Start[XDIM] + (i - 0)*Step[XDIM];
+	for (j = 0; j < nGrid[YDIM]; j++) YLocal[j] = Start[YDIM] + (j - 0)*Step[YDIM];
+	for (k = 0; k < nGrid[ZDIM]; k++) ZLocal[k] = Start[2] + (k - 0)*Step[2];
+	}*/
+	for (int d = 0; d < 3; d++)
+	{
+		/*if (ndim == d) {
+		nGrid[d] = 1;
+		Step[d] = Start[d];
+		local[d][0] = Start[d];
+		}
+		else */
+		{
+			Step[d] = (End[d] - Start[d]) / (nGrid[d] - 1);
+			for (k = 0; k < nGrid[d]; k++) local[d][k] = Start[d] + (k - 0)*Step[d];
+		}
 	}
-
 	//#pragma omp parallel for
-	for (int i = 0; i<nb_ligne; i++) {
+	for (int i = 0; i<nGrid[XDIM]; i++) {
 		double vals[] = { 0, 0, 0, 0 };
-		for (j = 0; j<nb_colon; j++) {
-
-			for (k = 0; k<nb_depth; k++) {
-				vals[0] = XLocal[i];
-				vals[1] = YLocal[j];
-				vals[2] = ZLocal[k];
+		for (j = 0; j<nGrid[YDIM]; j++) {
+			for (k = 0; k<nGrid[ZDIM]; k++) {
+				vals[0] = local[0][i];
+				vals[1] = local[1][j];
+				vals[2] = local[2][k];
 				GridVoxel[i][j][k].Value = pValParser->Eval(vals);
 				if (!isfinite(GridVoxel[i][j][k].Value)) {
 					GridVoxel[i][j][k].Value = 0;
@@ -1174,8 +1183,6 @@ void Iso3D::VoxelEvaluation()
 				for (l = 0; l<12; l++)
 					GridVoxel[i][j][k].Edge_Points[l] = -20; /// just for verification
 
-
-
 				GridVoxel[i][j][k].PositionX = vals[0];
 				GridVoxel[i][j][k].PositionY = vals[1];
 				GridVoxel[i][j][k].PositionZ = vals[2];
@@ -1185,9 +1192,9 @@ void Iso3D::VoxelEvaluation()
 	if (type == 12) {
 		for (i = 0; i == 0; i++) {
 
-			for (j = 0; j < nb_colon; j++) {
+			for (j = 0; j < nGrid[YDIM]; j++) {
 
-				for (k = 0; k < nb_depth; k++) {
+				for (k = 0; k < nGrid[ZDIM]; k++) {
 					if (GridVoxel[i][j][k].Value < 0)
 					{
 						//GridVoxel[i][j][k].Value = -GridVoxel[i+1][j][k].Value;//pValParser->Eval(vals);
@@ -1197,11 +1204,11 @@ void Iso3D::VoxelEvaluation()
 				}
 			}
 		}
-		for (i = nb_ligne - 1; i == nb_ligne - 1; i++) {
+		for (i = nGrid[XDIM] - 1; i == nGrid[XDIM] - 1; i++) {
 
-			for (j = 0; j < nb_colon; j++) {
+			for (j = 0; j < nGrid[YDIM]; j++) {
 
-				for (k = 0; k < nb_depth; k++) {
+				for (k = 0; k < nGrid[ZDIM]; k++) {
 					if (GridVoxel[i][j][k].Value < 0)
 					{
 						//GridVoxel[i][j][k].Value = -GridVoxel[i-1][j][k].Value;//pValParser->Eval(vals);
@@ -1212,11 +1219,11 @@ void Iso3D::VoxelEvaluation()
 			}
 		}
 		j = 0;
-		for (i = 0; i < nb_ligne; i++) {
+		for (i = 0; i < nGrid[XDIM]; i++) {
 
 			{
 
-				for (k = 0; k < nb_depth; k++) {
+				for (k = 0; k < nGrid[ZDIM]; k++) {
 					if (GridVoxel[i][j][k].Value < 0)
 					{
 						//GridVoxel[i][j][k].Value = -GridVoxel[i][j+1][k].Value;//pValParser->Eval(vals);
@@ -1226,12 +1233,12 @@ void Iso3D::VoxelEvaluation()
 				}
 			}
 		}
-		j = nb_colon - 1;
-		for (i = 0; i < nb_ligne; i++) {
+		j = nGrid[YDIM] - 1;
+		for (i = 0; i < nGrid[XDIM]; i++) {
 
 			{
 
-				for (k = 0; k < nb_depth; k++) {
+				for (k = 0; k < nGrid[ZDIM]; k++) {
 					if (GridVoxel[i][j][k].Value < 0)
 					{
 						//GridVoxel[i][j][k].Value = -GridVoxel[i][j-1][k].Value;//pValParser->Eval(vals);
@@ -1242,9 +1249,9 @@ void Iso3D::VoxelEvaluation()
 			}
 		}
 		k = 0;
-		for (i = 0; i < nb_ligne; i++) {
+		for (i = 0; i < nGrid[XDIM]; i++) {
 
-			for (j = 0; j < nb_colon; j++) {
+			for (j = 0; j < nGrid[YDIM]; j++) {
 
 				{
 					if (GridVoxel[i][j][k].Value < 0)
@@ -1256,10 +1263,10 @@ void Iso3D::VoxelEvaluation()
 				}
 			}
 		}
-		k = nb_depth - 1;
-		for (i = 0; i < nb_ligne; i++) {
+		k = nGrid[ZDIM] - 1;
+		for (i = 0; i < nGrid[XDIM]; i++) {
 
-			for (j = 0; j < nb_colon; j++) {
+			for (j = 0; j < nGrid[YDIM]; j++) {
 				{
 					if (GridVoxel[i][j][k].Value < 0)
 					{
@@ -1273,237 +1280,239 @@ void Iso3D::VoxelEvaluation()
 	}
 	int cutIndex[6] = { 0, 0, 0, 0, 0, 0 };
 	{//计算相切
-		for (i = 0; i < nb_ligne; i++) {//xmin
-			for (j = 0; j < nb_colon; j++) {
-				for (k = 0; k < nb_depth; k++) {
+		for (i = 0; i < nGrid[XDIM]; i++) {//xmin
+			for (j = 0; j < nGrid[YDIM]; j++) {
+				for (k = 0; k < nGrid[ZDIM]; k++) {
 					if (GridVoxel[i][j][k].Value < 0)
 					{
 						cutIndex[0] = i;
 						if (i > 0) cutIndex[0] = i - 1;
-						i = nb_ligne;
-						j = nb_colon;
-						k = nb_depth;
+						i = nGrid[XDIM];
+						j = nGrid[YDIM];
+						k = nGrid[ZDIM];
 						break;
 					}
 				}
 			}
 		}
-		for (i = nb_ligne - 1; i >= 0; i--) {//xmax
-			for (j = 0; j < nb_colon; j++) {
-				for (k = 0; k < nb_depth; k++) {
+		for (i = nGrid[XDIM] - 1; i >= 0; i--) {//xmax
+			for (j = 0; j < nGrid[YDIM]; j++) {
+				for (k = 0; k < nGrid[ZDIM]; k++) {
 					if (GridVoxel[i][j][k].Value < 0)
 					{
 						cutIndex[1] = i;
-						if (i < nb_ligne - 1) cutIndex[1] = i + 1;
+						if (i < nGrid[XDIM] - 1) cutIndex[1] = i + 1;
 						i = -1;
-						j = nb_colon;
-						k = nb_depth;
+						j = nGrid[YDIM];
+						k = nGrid[ZDIM];
 						break;
 					}
 				}
 			}
 		}
-		for (j = 0; j < nb_colon; j++) {////ymin
-			for (i = 0; i < nb_ligne; i++) {
-				for (k = 0; k < nb_depth; k++) {
+		for (j = 0; j < nGrid[YDIM]; j++) {////ymin
+			for (i = 0; i < nGrid[XDIM]; i++) {
+				for (k = 0; k < nGrid[ZDIM]; k++) {
 					if (GridVoxel[i][j][k].Value < 0)
 					{
 						cutIndex[2] = j;
 						if (j > 0) cutIndex[2] = j - 1;
-						i = nb_ligne;
-						j = nb_colon;
-						k = nb_depth;
+						i = nGrid[XDIM];
+						j = nGrid[YDIM];
+						k = nGrid[ZDIM];
 						break;
 					}
 				}
 			}
 		}
-		for (j = nb_colon - 1; j >= 0; j--) {////ymax
-			for (i = 0; i < nb_ligne; i++) {
-				for (k = 0; k < nb_depth; k++) {
+		for (j = nGrid[YDIM] - 1; j >= 0; j--) {////ymax
+			for (i = 0; i < nGrid[XDIM]; i++) {
+				for (k = 0; k < nGrid[ZDIM]; k++) {
 					if (GridVoxel[i][j][k].Value < 0)
 					{
 						cutIndex[3] = j;
-						if (j < nb_colon - 1) cutIndex[3] = j + 1;
-						i = nb_ligne;
+						if (j < nGrid[YDIM] - 1) cutIndex[3] = j + 1;
+						i = nGrid[XDIM];
 						j = -1;
-						k = nb_depth;
+						k = nGrid[ZDIM];
 						break;
 					}
 				}
 			}
 		}
-		for (k = 0; k < nb_depth; k++) {////zmin
-			for (i = 0; i < nb_ligne; i++) {
-				for (j = 0; j < nb_colon; j++) {
+		for (k = 0; k < nGrid[ZDIM]; k++) {////zmin
+			for (i = 0; i < nGrid[XDIM]; i++) {
+				for (j = 0; j < nGrid[YDIM]; j++) {
 					if (GridVoxel[i][j][k].Value < 0)
 					{
 						cutIndex[4] = k;
 						if (k > 0) cutIndex[4] = k - 1;
-						i = nb_ligne;
-						j = nb_colon;
-						k = nb_depth;
+						i = nGrid[XDIM];
+						j = nGrid[YDIM];
+						k = nGrid[ZDIM];
 						break;
 					}
 				}
 			}
 		}
-		for (k = nb_depth - 1; k >= 0; k--) {////zmax
-			for (i = 0; i < nb_ligne; i++) {
-				for (j = 0; j < nb_colon; j++) {
+		for (k = nGrid[ZDIM] - 1; k >= 0; k--) {////zmax
+			for (i = 0; i < nGrid[XDIM]; i++) {
+				for (j = 0; j < nGrid[YDIM]; j++) {
 					if (GridVoxel[i][j][k].Value < 0)
 					{
 						cutIndex[5] = k;
-						if (k < nb_depth - 1) cutIndex[5] = k + 1;
-						i = nb_ligne;
-						j = nb_colon;
+						if (k < nGrid[ZDIM] - 1) cutIndex[5] = k + 1;
+						i = nGrid[XDIM];
+						j = nGrid[YDIM];
 						k = -1;
 						break;
 					}
 				}
 			}
 		}
+
+		/*for (int d = 0; d < 3; d++) {
+		if (ndim == d) {
+		cutIndex[2 * d] = cutIndex[2 * d + 1] = 0;
+		}
+		}*/
 	}
-	if ((cutIndex[0] == cutIndex[1]) || (cutIndex[2] == cutIndex[3]) || (cutIndex[4] == cutIndex[5])) {
-		nb_depth = nb_colon = nb_ligne = 0;
-		return;
+	for (int d = 0; d < 3; d++) {
+		//if (ndim != d) 
+		{
+			if (cutIndex[2 * d] == cutIndex[2 * d + 1]) {
+				nGrid[ZDIM] = nGrid[YDIM] = nGrid[XDIM] = 0;
+				return;
+			}
+		}
 	}
+
 	std::string json;
 	if (gsysType != PM3::SYSCARTESIAN)
 	{
 		double ss = 0.1 * M_PI / 180.;
 		int offset = 1, offset2 = 2, xoffset = 0;
-		double slocal[3] = { XLocal[cutIndex[0]], YLocal[cutIndex[2]], ZLocal[cutIndex[4]] };// - (0.00001 * M_PI / 180.)
-		double elocal[3] = { XLocal[cutIndex[1]], YLocal[cutIndex[3]], ZLocal[cutIndex[5]] };// + (0.00001 * M_PI / 180.)
+		double slocal[3] = { local[0][cutIndex[0]], local[1][cutIndex[2]], local[2][cutIndex[4]] };// - (0.00001 * M_PI / 180.)
+		double elocal[3] = { local[0][cutIndex[1]], local[1][cutIndex[3]], local[2][cutIndex[5]] };// + (0.00001 * M_PI / 180.)
+		//if (ndim != YDIM)
 		{
-			double vals[] = { XLocal[cutIndex[1]], YLocal[cutIndex[2]] - (ss), ZLocal[cutIndex[4]] };
+			double vals[] = { local[0][cutIndex[1]], local[1][cutIndex[2]] - (ss), local[2][cutIndex[4]] };
 			double temp = pValParser->Eval(vals);
 			if (temp > 0)
 				slocal[1] += (ss);
 			else
 				slocal[1] -= (ss);
 		}
-		{
-			double vals[] = { XLocal[cutIndex[1]], YLocal[cutIndex[3]] + (ss), ZLocal[cutIndex[5]] };
-			double temp = pValParser->Eval(vals);
-			if (temp > 0)
-				elocal[1] -= (ss);
-			else
-				elocal[1] += (ss);
-		}
 		if (slocal[0] > Start[0]) Start[0] = slocal[0];
 		if (slocal[1] > Start[1]) Start[1] = slocal[1];
 		if (slocal[2] > Start[2]) Start[2] = slocal[2];
 		if (elocal[0] < End[0]) End[0] = elocal[0];
 		if (elocal[1] < End[1]) End[1] = elocal[1];
 		if (elocal[2] < End[2]) End[2] = elocal[2];
-		vcg::Point3d m = End - Start;
-		double mx = fabs(m[0]);
-		double my = fabs(m[1]);
-		double mz = fabs(m[2]);
-		double mm = max(mx, max(my, mz));
-		double s = 0.01;// mm / 8 + 0.000001;
-		nb_ligne = mx / s + 0.5, nb_colon = my / s + 0.5, nb_depth = mz / s + 0.5;
-		if (gsysType != PM3::SYSCARTESIAN)
-			nb_colon = my / (10. * M_PI / 180.) + 0.5;
-		if (nb_ligne > 8) nb_ligne = 8;
-		if (nb_colon > 8) nb_colon = 8;
-		if (nb_depth > 8) nb_depth = 8;
-		if (nb_ligne < 2) nb_ligne = 2;
-		if (nb_colon < 2) nb_colon = 2;
-		if (nb_depth < 2) nb_depth = 2;
-		nb_ligne += (xoffset + offset2);
-		nb_colon += (offset + offset2);
-		nb_depth += (offset + offset2);
-		Step[0] = (elocal[0] - slocal[0]) / (nb_ligne - offset2 - xoffset);
+		//vcg::Point3d m = End - Start;
+		//double mx = fabs(m[0]);
+		//double my = fabs(m[1]);
+		//double mz = fabs(m[2]);
+		//double mm = max(mx, max(my, mz));
+		//double s = 0.01;// mm / 8 + 0.000001;
+		//nGrid[XDIM] = mx / s + 0.5, nGrid[YDIM] = my / s + 0.5, nGrid[ZDIM] = mz / s + 0.5;
+		//if (gsysType != PM3::SYSCARTESIAN)
+		//	nGrid[YDIM] = my / (10. * M_PI / 180.) + 0.5;
+		//if (nGrid[XDIM] > 8) nGrid[XDIM] = 8;
+		//if (nGrid[YDIM] > 8) nGrid[YDIM] = 8;
+		//if (nGrid[ZDIM] > 8) nGrid[ZDIM] = 8;
+		//if (nGrid[XDIM] < 2) nGrid[XDIM] = 2;
+		//if (nGrid[YDIM] < 2) nGrid[YDIM] = 2;
+		//if (nGrid[ZDIM] < 2) nGrid[ZDIM] = 2;
+		//if (ndim != XDIM)
+		nGrid[XDIM] += (xoffset + offset2);
+		//if (ndim != YDIM)
+		nGrid[YDIM] += (offset + offset2);
+		//if (ndim != ZDIM)
+		nGrid[ZDIM] += (offset + offset2);
+		//if (ndim != XDIM)
+		Step[XDIM] = (elocal[XDIM] - slocal[XDIM]) / (nGrid[XDIM] - offset2 - xoffset);
 		//POLOR下面的if是在极坐标下稳定的版本
 		if (isSunk != 0) {
 			if (Step[0] > slocal[0]) {
-				//nb_ligne -= xoffset;
+				//nGrid[XDIM] -= xoffset;
 				xoffset = 0;
-
-				Step[0] = (elocal[0] - slocal[0]) / (nb_ligne - offset2 - xoffset);
+				//if (ndim != XDIM)
+				Step[XDIM] = (elocal[XDIM] - slocal[XDIM]) / (nGrid[XDIM] - offset2 - xoffset);
 			}
 		}
-		Step[1] = (elocal[1] - slocal[1]) / (nb_colon - offset - offset2);
-		Step[2] = (elocal[2] - slocal[2]) / (nb_depth - offset - offset2);
+		for (int d = 1; d < 3; d++) {
+			//if (ndim != d)
+			Step[d] = (elocal[d] - slocal[d]) / (nGrid[d] - offset - offset2);
+		}
 
-		for (i = 0; i < nb_ligne; i++) {
-			XLocal[i] = slocal[0] + (i - xoffset)*Step[0];
+		for (i = 0; i < nGrid[XDIM]; i++) {
+			local[0][i] = slocal[0] + (i - xoffset)*Step[0];
 			//if (fabs(XLocal[i]) < 0.000001) XLocal[i] = Step[0] / 100;
 		}
-		for (j = 0; j < nb_colon; j++) {
-			YLocal[j] = slocal[1] + (j - offset)*Step[1];
+		for (j = 0; j < nGrid[YDIM]; j++) {
+			local[1][j] = slocal[1] + (j - offset)*Step[1];
 			//if (fabs(YLocal[j]) < 0.000001) YLocal[j] = Step[1] / 100;
 		}
-		for (k = 0; k < nb_depth; k++) {
-			ZLocal[k] = slocal[2] + (k - offset)*Step[2];
+		for (k = 0; k < nGrid[ZDIM]; k++) {
+			local[2][k] = slocal[2] + (k - offset)*Step[2];
 			//if (fabs(ZLocal[k]) < 0.000001) ZLocal[k] = Step[2] / 100;
 		}
 		json = "if(r=%2%,1,if(r=%3%,1,if(phi=%4%,1,if(phi=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))";
 	}
 	else
-	{		
+	{
 		int offset = 1, offset2 = 2, xoffset = 1;
-		double slocal[3] = { XLocal[cutIndex[0]], YLocal[cutIndex[2]], ZLocal[cutIndex[4]] };
-		double elocal[3] = { XLocal[cutIndex[1]], YLocal[cutIndex[3]], ZLocal[cutIndex[5]] };
+		double slocal[3] = { local[0][cutIndex[0]], local[1][cutIndex[2]], local[2][cutIndex[4]] };
+		double elocal[3] = { local[0][cutIndex[1]], local[1][cutIndex[3]], local[2][cutIndex[5]] };
 		if (slocal[0] > Start[0]) Start[0] = slocal[0];
 		if (slocal[1] > Start[1]) Start[1] = slocal[1];
 		if (slocal[2] > Start[2]) Start[2] = slocal[2];
 		if (elocal[0] < End[0]) End[0] = elocal[0];
 		if (elocal[1] < End[1]) End[1] = elocal[1];
 		if (elocal[2] < End[2]) End[2] = elocal[2];
-		vcg::Point3d m = End - Start;
-		double mx = fabs(m[0]);
-		double my = fabs(m[1]);
-		double mz = fabs(m[2]);
-		double mm = max(mx, max(my, mz));
-		double s = 0.01;// mm / 8 + 0.000001;
-		nb_ligne = mx / s + 0.5, nb_colon = my / s + 0.5, nb_depth = mz / s + 0.5;
-		if (gsysType != PM3::SYSCARTESIAN)
-			nb_colon = my / (10. * M_PI / 180.) + 0.5;
-		if (nb_ligne > DISTANCE_RESOL_MAX) nb_ligne = DISTANCE_RESOL_MAX;
-		if (nb_colon > DISTANCE_RESOL_MAX) nb_colon = DISTANCE_RESOL_MAX;
-		if (nb_depth > DISTANCE_RESOL_MAX) nb_depth = DISTANCE_RESOL_MAX;
-		if (nb_ligne < DISTANCE_RESOL_MIN) nb_ligne = DISTANCE_RESOL_MIN;
-		if (nb_colon < DISTANCE_RESOL_MIN) nb_colon = DISTANCE_RESOL_MIN;
-		if (nb_depth < DISTANCE_RESOL_MIN) nb_depth = DISTANCE_RESOL_MIN;
-		nb_ligne += (offset + offset2);
-		nb_colon += (offset + offset2);
-		nb_depth += (offset + offset2);
-		Step[0] = (elocal[0] - slocal[0]) / (nb_ligne - offset - offset2);
-		Step[1] = (elocal[1] - slocal[1]) / (nb_colon - offset - offset2);
-		Step[2] = (elocal[2] - slocal[2]) / (nb_depth - offset - offset2);
-
-		for (i = 0; i < nb_ligne; i++)  {
-			XLocal[i] = slocal[0] + (i - offset)*Step[0];
-			//if (fabs(XLocal[i]) < 0.000001) XLocal[i] = Step[0] / 100;
-		}
-		for (j = 0; j < nb_colon; j++) {
-			YLocal[j] = slocal[1] + (j - offset)*Step[1];
-			//if (fabs(YLocal[j]) < 0.000001) YLocal[j] = Step[1] / 100;
-		}
-		for (k = 0; k < nb_depth; k++) {
-			ZLocal[k] = slocal[2] + (k - offset)*Step[2];
-			//if (fabs(ZLocal[k]) < 0.000001) ZLocal[k] = Step[2] / 100;
+		//vcg::Point3d m = End - Start;
+		//double mx = fabs(m[0]);
+		//double my = fabs(m[1]);
+		//double mz = fabs(m[2]);
+		//double mm = max(mx, max(my, mz));
+		//double s = 0.01;// mm / 8 + 0.000001;
+		//nGrid[XDIM] = mx / s + 0.5, nGrid[YDIM] = my / s + 0.5, nGrid[ZDIM] = mz / s + 0.5;
+		//if (gsysType != PM3::SYSCARTESIAN)
+		//	nGrid[YDIM] = my / (10. * M_PI / 180.) + 0.5;
+		//if (nGrid[XDIM] > DISTANCE_RESOL_MAX) nGrid[XDIM] = DISTANCE_RESOL_MAX;
+		//if (nGrid[YDIM] > DISTANCE_RESOL_MAX) nGrid[YDIM] = DISTANCE_RESOL_MAX;
+		//if (nGrid[ZDIM] > DISTANCE_RESOL_MAX) nGrid[ZDIM] = DISTANCE_RESOL_MAX;
+		//if (nGrid[XDIM] < DISTANCE_RESOL_MIN) nGrid[XDIM] = DISTANCE_RESOL_MIN;
+		//if (nGrid[YDIM] < DISTANCE_RESOL_MIN) nGrid[YDIM] = DISTANCE_RESOL_MIN;
+		//if (nGrid[ZDIM] < DISTANCE_RESOL_MIN) nGrid[ZDIM] = DISTANCE_RESOL_MIN;
+		for (int d = 0; d < 3; d++)
+			//if (ndim != d) 
+		{
+			nGrid[d] += (offset + offset2);
+			Step[d] = (elocal[d] - slocal[d]) / (nGrid[d] - offset - offset2);
+			for (i = 0; i < nGrid[d]; i++)  {
+				local[d][i] = slocal[d] + (i - offset)*Step[d];
+				//if (fabs(XLocal[i]) < 0.000001) XLocal[i] = Step[0] / 100;
+			}
 		}
 		json = "if(x=%2%,1,if(x=%3%,1,if(y=%4%,1,if(y=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))";
 	}
 	//boost::format fmt(json);
-	//fmt%ImplicitFunction% XLocal[0] % XLocal[nb_ligne - 1] % YLocal[0] % YLocal[nb_colon - 1] % ZLocal[0] % ZLocal[nb_depth - 1];
+	//fmt%ImplicitFunction% XLocal[0] % XLocal[nGrid[XDIM] - 1] % YLocal[0] % YLocal[nGrid[YDIM] - 1] % ZLocal[0] % ZLocal[nGrid[ZDIM] - 1];
 	//fmt%ImplicitFunction% Start[0] % End[0] % Start[1] % End[1] % Start[2] % End[2];
 	//ImplicitFunction = fmt.str();
 	//std::string er;
 	//if ((pValParser->ParseExp(ImplicitFunction, er, gsysType == PM3::SYSCARTESIAN ? "x,y,z" : "r,phi,z") != -1))
 	//	return;
 	//#pragma omp parallel for
-	for (int i = 0; i<nb_ligne; i++) {
+	for (int i = 0; i<nGrid[XDIM]; i++) {
 		double vals[] = { 0, 0, 0, 0 };
-		for (j = 0; j<nb_colon; j++) {
-			for (k = 0; k<nb_depth; k++) {
-				vals[0] = XLocal[i];
-				vals[1] = YLocal[j];
-				vals[2] = ZLocal[k];
+		for (j = 0; j<nGrid[YDIM]; j++) {
+			for (k = 0; k<nGrid[ZDIM]; k++) {
+				vals[0] = local[0][i];
+				vals[1] = local[1][j];
+				vals[2] = local[2][k];
 				GridVoxel[i][j][k].Value = pValParser->Eval(vals);
 				if (!isfinite(GridVoxel[i][j][k].Value)) {
 					GridVoxel[i][j][k].Value = 0;
@@ -1535,9 +1544,9 @@ void Iso3D::VoxelEvaluation()
 		{
 			for (i = 0; i == 0; i++) {
 
-				for (j = 0; j < nb_colon; j++) {
+				for (j = 0; j < nGrid[YDIM]; j++) {
 
-					for (k = 0; k < nb_depth; k++) {
+					for (k = 0; k < nGrid[ZDIM]; k++) {
 						if (GridVoxel[i][j][k].Value < 0)
 						{
 							//GridVoxel[i][j][k].Value = -GridVoxel[i+1][j][k].Value;//pValParser->Eval(vals);
@@ -1551,11 +1560,11 @@ void Iso3D::VoxelEvaluation()
 				}
 			}
 		}
-		for (i = nb_ligne - 1; i == nb_ligne - 1; i++) {
+		for (i = nGrid[XDIM] - 1; i == nGrid[XDIM] - 1; i++) {
 
-			for (j = 0; j < nb_colon; j++) {
+			for (j = 0; j < nGrid[YDIM]; j++) {
 
-				for (k = 0; k < nb_depth; k++) {
+				for (k = 0; k < nGrid[ZDIM]; k++) {
 					if (GridVoxel[i][j][k].Value < 0)
 					{
 						//GridVoxel[i][j][k].Value = -GridVoxel[i-1][j][k].Value;//pValParser->Eval(vals);
@@ -1567,11 +1576,11 @@ void Iso3D::VoxelEvaluation()
 		}
 
 		j = 0;
-		for (i = 0; i < nb_ligne; i++) {
+		for (i = 0; i < nGrid[XDIM]; i++) {
 
 			{
 
-				for (k = 0; k < nb_depth; k++) {
+				for (k = 0; k < nGrid[ZDIM]; k++) {
 					if (GridVoxel[i][j][k].Value < 0)
 					{
 						//GridVoxel[i][j][k].Value = -GridVoxel[i][j+1][k].Value;//pValParser->Eval(vals);
@@ -1581,12 +1590,12 @@ void Iso3D::VoxelEvaluation()
 				}
 			}
 		}
-		j = nb_colon - 1;
-		for (i = 0; i < nb_ligne; i++) {
+		j = nGrid[YDIM] - 1;
+		for (i = 0; i < nGrid[XDIM]; i++) {
 
 			{
 
-				for (k = 0; k < nb_depth; k++) {
+				for (k = 0; k < nGrid[ZDIM]; k++) {
 					if (GridVoxel[i][j][k].Value < 0)
 					{
 						//GridVoxel[i][j][k].Value = -GridVoxel[i][j-1][k].Value;//pValParser->Eval(vals);
@@ -1600,9 +1609,9 @@ void Iso3D::VoxelEvaluation()
 		if (gsysType == PM3::SYSCARTESIAN)
 			i = 1;
 		else i = 0;
-		for (i = 0; i < nb_ligne; i++) {
+		for (i = 0; i < nGrid[XDIM]; i++) {
 
-			for (j = 0; j < nb_colon; j++) {
+			for (j = 0; j < nGrid[YDIM]; j++) {
 
 				{
 					if (GridVoxel[i][j][k].Value < 0)
@@ -1614,10 +1623,10 @@ void Iso3D::VoxelEvaluation()
 				}
 			}
 		}
-		k = nb_depth - 1;
-		for (i = 0; i < nb_ligne; i++) {
+		k = nGrid[ZDIM] - 1;
+		for (i = 0; i < nGrid[XDIM]; i++) {
 
-			for (j = 0; j < nb_colon; j++) {
+			for (j = 0; j < nGrid[YDIM]; j++) {
 				{
 					if (GridVoxel[i][j][k].Value < 0)
 					{
@@ -1645,9 +1654,9 @@ void Iso3D::PointEdgeComputation()
 	j_Start = 1;
 	k_Start = 1;
 
-	i_End = nb_ligne - 1;
-	j_End = nb_colon - 1;
-	k_End = nb_depth - 1;
+	i_End = nGrid[XDIM] - 1;
+	j_End = nGrid[YDIM] - 1;
+	k_End = nGrid[ZDIM] - 1;
 	/// The code is doubled to eliminate conditions tests
 #define SEL <=
 
@@ -1671,7 +1680,7 @@ void Iso3D::PointEdgeComputation()
 					vals[1] = GridVoxel[i][j][k].PositionY + factor * (GridVoxel[i + 1][j][k].PositionY - GridVoxel[i][j][k].PositionY);
 					vals[2] = GridVoxel[i][j][k].PositionZ + factor * (GridVoxel[i + 1][j][k].PositionZ - GridVoxel[i][j][k].PositionZ);
 					///===========================================================///
-					IsoPointMapOriginal[NbPointIsoMap] = vcg::Point3d(vals[0], vals[1], vals[2]);
+					IsoPointMapOriginal.push_back(vcg::Point3d(vals[0], vals[1], vals[2]));
 					// save The reference to this point
 					GridVoxel[i][j][k].Edge_Points[0] = NbPointIsoMap;
 					GridVoxel[i][j][k].NbEdgePoint += 1;
@@ -1682,8 +1691,8 @@ void Iso3D::PointEdgeComputation()
 					GridVoxel[i][j][k - 1].NbEdgePoint += 1;
 					GridVoxel[i][j - 1][k - 1].Edge_Points[6] = NbPointIsoMap;
 					GridVoxel[i][j - 1][k - 1].NbEdgePoint += 1;
-					if (IsoConditionRequired != 1) WichPointVeryCond[NbPointIsoMap] = 1;
-					else (pValParser->Eval(vals)>0) ? WichPointVeryCond[NbPointIsoMap] = 1 : WichPointVeryCond[NbPointIsoMap] = 0;
+					if (IsoConditionRequired != 1) WichPointVeryCond.push_back(1);
+					else (pValParser->Eval(vals)>0) ? WichPointVeryCond.push_back(1) : WichPointVeryCond.push_back(0);
 
 					NbPointIsoMap++;
 				}
@@ -1697,7 +1706,7 @@ void Iso3D::PointEdgeComputation()
 					vals[0] = GridVoxel[i][j][k].PositionX + factor * (GridVoxel[i][j + 1][k].PositionX - GridVoxel[i][j][k].PositionX);
 					vals[1] = GridVoxel[i][j][k].PositionY + factor * (GridVoxel[i][j + 1][k].PositionY - GridVoxel[i][j][k].PositionY);
 					vals[2] = GridVoxel[i][j][k].PositionZ + factor * (GridVoxel[i][j + 1][k].PositionZ - GridVoxel[i][j][k].PositionZ);
-					IsoPointMapOriginal[NbPointIsoMap] = vcg::Point3d(vals[0], vals[1], vals[2]);
+					IsoPointMapOriginal.push_back(vcg::Point3d(vals[0], vals[1], vals[2]));
 					// save The reference to this point
 					GridVoxel[i][j][k].Edge_Points[8] = NbPointIsoMap;
 					GridVoxel[i][j][k].NbEdgePoint += 1;
@@ -1708,8 +1717,8 @@ void Iso3D::PointEdgeComputation()
 					GridVoxel[i][j][k - 1].NbEdgePoint += 1;
 					GridVoxel[i - 1][j][k - 1].Edge_Points[10] = NbPointIsoMap;
 					GridVoxel[i - 1][j][k - 1].NbEdgePoint += 1;
-					if (IsoConditionRequired != 1) WichPointVeryCond[NbPointIsoMap] = 1;
-					else (pValParser->Eval(vals)>0) ? WichPointVeryCond[NbPointIsoMap] = 1 : WichPointVeryCond[NbPointIsoMap] = 0;
+					if (IsoConditionRequired != 1) WichPointVeryCond.push_back(1);
+					else (pValParser->Eval(vals)>0) ? WichPointVeryCond.push_back(1) : WichPointVeryCond.push_back(0);
 					NbPointIsoMap++;
 				}
 
@@ -1722,7 +1731,7 @@ void Iso3D::PointEdgeComputation()
 					vals[0] = GridVoxel[i][j][k].PositionX + factor * (GridVoxel[i][j][k + 1].PositionX - GridVoxel[i][j][k].PositionX);
 					vals[1] = GridVoxel[i][j][k].PositionY + factor * (GridVoxel[i][j][k + 1].PositionY - GridVoxel[i][j][k].PositionY);
 					vals[2] = GridVoxel[i][j][k].PositionZ + factor * (GridVoxel[i][j][k + 1].PositionZ - GridVoxel[i][j][k].PositionZ);
-					IsoPointMapOriginal[NbPointIsoMap] = vcg::Point3d(vals[0], vals[1], vals[2]);
+					IsoPointMapOriginal.push_back(vcg::Point3d(vals[0], vals[1], vals[2]));
 					// save The reference to this point
 					GridVoxel[i][j][k].Edge_Points[3] = NbPointIsoMap;
 					GridVoxel[i][j][k].NbEdgePoint += 1;
@@ -1733,8 +1742,8 @@ void Iso3D::PointEdgeComputation()
 					GridVoxel[i][j - 1][k].NbEdgePoint += 1;
 					GridVoxel[i - 1][j - 1][k].Edge_Points[5] = NbPointIsoMap;
 					GridVoxel[i - 1][j - 1][k].NbEdgePoint += 1;
-					if (IsoConditionRequired != 1) WichPointVeryCond[NbPointIsoMap] = 1;
-					else (pValParser->Eval(vals)>0) ? WichPointVeryCond[NbPointIsoMap] = 1 : WichPointVeryCond[NbPointIsoMap] = 0;
+					if (IsoConditionRequired != 1) WichPointVeryCond.push_back(1);
+					else (pValParser->Eval(vals)>0) ? WichPointVeryCond.push_back(1) : WichPointVeryCond.push_back(0);
 					NbPointIsoMap++;
 				}
 			}
@@ -1744,8 +1753,9 @@ void Iso3D::PointEdgeComputation()
 		/// The code is quite big but this is much more easy to compute
 		/// 1) First case : i =0;
 		i = 0;
-		for (j = 0; j < nb_colon; j++)
-			for (k = 0; k < nb_depth; k++) {
+
+		for (j = 0; j < nGrid[YDIM]; j++)
+			for (k = 0; k < nGrid[ZDIM]; k++) {
 
 				IsoValue_1 = GridVoxel[0][j][k].Value;
 				// First Case P(1)(j)(k)
@@ -1757,7 +1767,7 @@ void Iso3D::PointEdgeComputation()
 					vals[0] = GridVoxel[0][j][k].PositionX + factor * (GridVoxel[1][j][k].PositionX - GridVoxel[0][j][k].PositionX);
 					vals[1] = GridVoxel[0][j][k].PositionY + factor * (GridVoxel[1][j][k].PositionY - GridVoxel[0][j][k].PositionY);
 					vals[2] = GridVoxel[0][j][k].PositionZ + factor * (GridVoxel[1][j][k].PositionZ - GridVoxel[0][j][k].PositionZ);
-					IsoPointMapOriginal[NbPointIsoMap] = vcg::Point3d(vals[0], vals[1], vals[2]);
+					IsoPointMapOriginal.push_back(vcg::Point3d(vals[0], vals[1], vals[2]));
 					// save The reference to this point
 					GridVoxel[0][j][k].Edge_Points[0] = NbPointIsoMap;
 					GridVoxel[0][j][k].NbEdgePoint += 1;
@@ -1774,13 +1784,13 @@ void Iso3D::PointEdgeComputation()
 						GridVoxel[0][j - 1][k - 1].Edge_Points[6] = NbPointIsoMap;
 						GridVoxel[0][j - 1][k - 1].NbEdgePoint += 1;
 					}
-					if (IsoConditionRequired != 1) WichPointVeryCond[NbPointIsoMap] = 1;
-					else (pValParser->Eval(vals) > 0) ? WichPointVeryCond[NbPointIsoMap] = 1 : WichPointVeryCond[NbPointIsoMap] = 0;
+					if (IsoConditionRequired != 1) WichPointVeryCond.push_back(1);
+					else (pValParser->Eval(vals) > 0) ? WichPointVeryCond.push_back(1) : WichPointVeryCond.push_back(0);
 
 					NbPointIsoMap++;
 				}
 				// Second Case P(0)(j+1)(k)
-				if (j != (nb_colon - 1)){
+				if (j != (nGrid[YDIM] - 1)){
 					IsoValue_2 = GridVoxel[0][j + 1][k].Value;
 					// Edge Point computation and  save in IsoPointMap
 					if (IsoConditionRequired == 1 ? EXPP1 : EXPP) {
@@ -1789,7 +1799,7 @@ void Iso3D::PointEdgeComputation()
 						vals[0] = GridVoxel[0][j][k].PositionX + factor * (GridVoxel[0][j + 1][k].PositionX - GridVoxel[0][j][k].PositionX);
 						vals[1] = GridVoxel[0][j][k].PositionY + factor * (GridVoxel[0][j + 1][k].PositionY - GridVoxel[0][j][k].PositionY);
 						vals[2] = GridVoxel[0][j][k].PositionZ + factor * (GridVoxel[0][j + 1][k].PositionZ - GridVoxel[0][j][k].PositionZ);
-						IsoPointMapOriginal[NbPointIsoMap] = vcg::Point3d(vals[0], vals[1], vals[2]);
+						IsoPointMapOriginal.push_back(vcg::Point3d(vals[0], vals[1], vals[2]));
 						// save The reference to this point
 						GridVoxel[0][j][k].Edge_Points[8] = NbPointIsoMap;
 						GridVoxel[0][j][k].NbEdgePoint += 1;
@@ -1798,15 +1808,15 @@ void Iso3D::PointEdgeComputation()
 							GridVoxel[0][j][k - 1].Edge_Points[11] = NbPointIsoMap;
 							GridVoxel[0][j][k - 1].NbEdgePoint += 1;
 						}
-						if (IsoConditionRequired != 1) WichPointVeryCond[NbPointIsoMap] = 1;
-						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond[NbPointIsoMap] = 1 : WichPointVeryCond[NbPointIsoMap] = 0;
+						if (IsoConditionRequired != 1) WichPointVeryCond.push_back(1);
+						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond.push_back(1) : WichPointVeryCond.push_back(0);
 
 						NbPointIsoMap++;
 					}
-				} /// If ( j != nb_colon -1) ...
+				} /// If ( j != nGrid[YDIM] -1) ...
 
 				// Third Case P(0)(j)(k+1)
-				if (k != (nb_depth - 1)){
+				if (k != (nGrid[ZDIM] - 1)){
 					IsoValue_2 = GridVoxel[0][j][k + 1].Value;
 					// Edge Point computation and  save in IsoPointMap
 					if (IsoConditionRequired == 1 ? EXPP1 : EXPP) {
@@ -1815,7 +1825,7 @@ void Iso3D::PointEdgeComputation()
 						vals[0] = GridVoxel[0][j][k].PositionX + factor * (GridVoxel[0][j][k + 1].PositionX - GridVoxel[0][j][k].PositionX);
 						vals[1] = GridVoxel[0][j][k].PositionY + factor * (GridVoxel[0][j][k + 1].PositionY - GridVoxel[0][j][k].PositionY);
 						vals[2] = GridVoxel[0][j][k].PositionZ + factor * (GridVoxel[0][j][k + 1].PositionZ - GridVoxel[0][j][k].PositionZ);
-						IsoPointMapOriginal[NbPointIsoMap] = vcg::Point3d(vals[0], vals[1], vals[2]);
+						IsoPointMapOriginal.push_back(vcg::Point3d(vals[0], vals[1], vals[2]));
 						// save The reference to this point
 						GridVoxel[0][j][k].Edge_Points[3] = NbPointIsoMap;
 						GridVoxel[0][j][k].NbEdgePoint += 1;
@@ -1824,21 +1834,22 @@ void Iso3D::PointEdgeComputation()
 							GridVoxel[0][j - 1][k].Edge_Points[7] = NbPointIsoMap;
 							GridVoxel[0][j - 1][k].NbEdgePoint += 1;
 						}
-						if (IsoConditionRequired != 1) WichPointVeryCond[NbPointIsoMap] = 1;
-						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond[NbPointIsoMap] = 1 : WichPointVeryCond[NbPointIsoMap] = 0;
+						if (IsoConditionRequired != 1) WichPointVeryCond.push_back(1);
+						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond.push_back(1) : WichPointVeryCond.push_back(0);
 
 						NbPointIsoMap++;
 					}
-				} /// End of ( if ( k != nb_depth -1)....
+				} /// End of ( if ( k != nGrid[ZDIM] -1)....
 			}
-		/// 2) Case i = nb_ligne-1
-		i = nb_ligne - 1;
-		for (j = 0; j < nb_colon; j++)
-			for (k = 0; k < nb_depth; k++)
+
+		/// 2) Case i = nGrid[XDIM]-1
+		i = nGrid[XDIM] - 1;
+		for (j = 0; j < nGrid[YDIM]; j++)
+			for (k = 0; k < nGrid[ZDIM]; k++)
 			{
 				IsoValue_1 = GridVoxel[i][j][k].Value;
 				// Second Case P(i)(j+1)(k)
-				if (j != (nb_colon - 1)){
+				if (j != (nGrid[YDIM] - 1)){
 					IsoValue_2 = GridVoxel[i][j + 1][k].Value;
 					// Edge Point computation and  save in IsoPointMap
 					if (IsoConditionRequired == 1 ? EXPP1 : EXPP) {
@@ -1847,7 +1858,7 @@ void Iso3D::PointEdgeComputation()
 						vals[0] = GridVoxel[i][j][k].PositionX + factor * (GridVoxel[i][j + 1][k].PositionX - GridVoxel[i][j][k].PositionX);
 						vals[1] = GridVoxel[i][j][k].PositionY + factor * (GridVoxel[i][j + 1][k].PositionY - GridVoxel[i][j][k].PositionY);
 						vals[2] = GridVoxel[i][j][k].PositionZ + factor * (GridVoxel[i][j + 1][k].PositionZ - GridVoxel[i][j][k].PositionZ);
-						IsoPointMapOriginal[NbPointIsoMap] = vcg::Point3d(vals[0], vals[1], vals[2]);
+						IsoPointMapOriginal.push_back(vcg::Point3d(vals[0], vals[1], vals[2]));
 						// save The reference to this point
 						GridVoxel[i][j][k].Edge_Points[8] = NbPointIsoMap;
 						GridVoxel[i][j][k].NbEdgePoint += 1;
@@ -1865,16 +1876,16 @@ void Iso3D::PointEdgeComputation()
 							GridVoxel[i - 1][j][k - 1].NbEdgePoint += 1;
 						}
 
-						if (IsoConditionRequired != 1) WichPointVeryCond[NbPointIsoMap] = 1;
-						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond[NbPointIsoMap] = 1 : WichPointVeryCond[NbPointIsoMap] = 0;
+						if (IsoConditionRequired != 1) WichPointVeryCond.push_back(1);
+						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond.push_back(1) : WichPointVeryCond.push_back(0);
 
 						NbPointIsoMap++;
 
 					}
-				} /// End of if (j != nb_colon -1)...
+				} /// End of if (j != nGrid[YDIM] -1)...
 
 				// Third Case P(i)(j)(k+1)
-				if (k != (nb_depth - 1)){
+				if (k != (nGrid[ZDIM] - 1)){
 					IsoValue_2 = GridVoxel[i][j][k + 1].Value;
 					// Edge Point computation and  save in IsoPointMap
 					if (IsoConditionRequired == 1 ? EXPP1 : EXPP) {
@@ -1888,7 +1899,7 @@ void Iso3D::PointEdgeComputation()
 						vals[2] = GridVoxel[i][j][k].PositionZ + factor * (GridVoxel[i][j][k + 1].PositionZ - GridVoxel[i][j][k].PositionZ);
 
 
-						IsoPointMapOriginal[NbPointIsoMap] = vcg::Point3d(vals[0], vals[1], vals[2]);
+						IsoPointMapOriginal.push_back(vcg::Point3d(vals[0], vals[1], vals[2]));
 
 						// save The reference to this point
 						GridVoxel[i][j][k].Edge_Points[3] = NbPointIsoMap;
@@ -1908,22 +1919,22 @@ void Iso3D::PointEdgeComputation()
 							GridVoxel[i - 1][j - 1][k].NbEdgePoint += 1;
 						}
 
-						if (IsoConditionRequired != 1) WichPointVeryCond[NbPointIsoMap] = 1;
-						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond[NbPointIsoMap] = 1 : WichPointVeryCond[NbPointIsoMap] = 0;
+						if (IsoConditionRequired != 1) WichPointVeryCond.push_back(1);
+						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond.push_back(1) : WichPointVeryCond.push_back(0);
 
 						NbPointIsoMap++;
 
 					}
-				} /// End of if ( k != nb_depth -1)...
+				} /// End of if ( k != nGrid[ZDIM] -1)...
 			}
 		/// 3) Case j = 0
 		j = 0;
-		for (i = 0; i < nb_ligne; i++)
-			for (k = 0; k < nb_depth; k++)
+		for (i = 0; i < nGrid[XDIM]; i++)
+			for (k = 0; k < nGrid[ZDIM]; k++)
 			{
 				IsoValue_1 = GridVoxel[i][0][k].Value;
 				// First Case P(i+1)(j)(k)
-				if (i != (nb_ligne - 1)){
+				if (i != (nGrid[XDIM] - 1)){
 					IsoValue_2 = GridVoxel[i + 1][0][k].Value;
 					if (IsoConditionRequired == 1 ? EXPP1 : EXPP) {
 
@@ -1938,7 +1949,7 @@ void Iso3D::PointEdgeComputation()
 						vals[2] = GridVoxel[i][0][k].PositionZ + factor * (GridVoxel[i + 1][0][k].PositionZ - GridVoxel[i][0][k].PositionZ);
 
 
-						IsoPointMapOriginal[NbPointIsoMap] = vcg::Point3d(vals[0], vals[1], vals[2]);
+						IsoPointMapOriginal.push_back(vcg::Point3d(vals[0], vals[1], vals[2]));
 
 						// save The reference to this point
 						GridVoxel[i][0][k].Edge_Points[0] = NbPointIsoMap;
@@ -1951,12 +1962,12 @@ void Iso3D::PointEdgeComputation()
 						}
 
 
-						if (IsoConditionRequired != 1) WichPointVeryCond[NbPointIsoMap] = 1;
-						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond[NbPointIsoMap] = 1 : WichPointVeryCond[NbPointIsoMap] = 0;
+						if (IsoConditionRequired != 1) WichPointVeryCond.push_back(1);
+						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond.push_back(1) : WichPointVeryCond.push_back(0);
 
 						NbPointIsoMap++;
 					}
-				} /// End of if ( i != nb_ligne -1)...
+				} /// End of if ( i != nGrid[XDIM] -1)...
 				// Second Case P(i)(j+1)(k)
 				IsoValue_2 = GridVoxel[i][1][k].Value;
 				// Edge Point computation and  save in IsoPointMap
@@ -1966,7 +1977,7 @@ void Iso3D::PointEdgeComputation()
 					vals[0] = GridVoxel[i][0][k].PositionX + factor * (GridVoxel[i][1][k].PositionX - GridVoxel[i][0][k].PositionX);
 					vals[1] = GridVoxel[i][0][k].PositionY + factor * (GridVoxel[i][1][k].PositionY - GridVoxel[i][0][k].PositionY);
 					vals[2] = GridVoxel[i][0][k].PositionZ + factor * (GridVoxel[i][1][k].PositionZ - GridVoxel[i][0][k].PositionZ);
-					IsoPointMapOriginal[NbPointIsoMap] = vcg::Point3d(vals[0], vals[1], vals[2]);
+					IsoPointMapOriginal.push_back(vcg::Point3d(vals[0], vals[1], vals[2]));
 					// save The reference to this point
 					GridVoxel[i][0][k].Edge_Points[8] = NbPointIsoMap;
 					GridVoxel[i][0][k].NbEdgePoint += 1;
@@ -1984,14 +1995,14 @@ void Iso3D::PointEdgeComputation()
 						GridVoxel[i - 1][0][k - 1].NbEdgePoint += 1;
 					}
 
-					if (IsoConditionRequired != 1) WichPointVeryCond[NbPointIsoMap] = 1;
-					else (pValParser->Eval(vals) > 0) ? WichPointVeryCond[NbPointIsoMap] = 1 : WichPointVeryCond[NbPointIsoMap] = 0;
+					if (IsoConditionRequired != 1) WichPointVeryCond.push_back(1);
+					else (pValParser->Eval(vals) > 0) ? WichPointVeryCond.push_back(1) : WichPointVeryCond.push_back(0);
 
 					NbPointIsoMap++;
 
 				}
 				// Third Case P(i)(j)(k+1)
-				if (k != (nb_depth - 1)){
+				if (k != (nGrid[ZDIM] - 1)){
 					IsoValue_2 = GridVoxel[i][0][k + 1].Value;
 					// Edge Point computation and  save in IsoPointMap
 					if (IsoConditionRequired == 1 ? EXPP1 : EXPP) {
@@ -2005,7 +2016,7 @@ void Iso3D::PointEdgeComputation()
 						vals[2] = GridVoxel[i][0][k].PositionZ + factor * (GridVoxel[i][0][k + 1].PositionZ - GridVoxel[i][0][k].PositionZ);
 
 
-						IsoPointMapOriginal[NbPointIsoMap] = vcg::Point3d(vals[0], vals[1], vals[2]);
+						IsoPointMapOriginal.push_back(vcg::Point3d(vals[0], vals[1], vals[2]));
 						// save The reference to this point
 						GridVoxel[i][0][k].Edge_Points[3] = NbPointIsoMap;
 						GridVoxel[i][0][k].NbEdgePoint += 1;
@@ -2016,23 +2027,23 @@ void Iso3D::PointEdgeComputation()
 							GridVoxel[i - 1][0][k].NbEdgePoint += 1;
 						}
 
-						if (IsoConditionRequired != 1) WichPointVeryCond[NbPointIsoMap] = 1;
-						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond[NbPointIsoMap] = 1 : WichPointVeryCond[NbPointIsoMap] = 0;
+						if (IsoConditionRequired != 1) WichPointVeryCond.push_back(1);
+						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond.push_back(1) : WichPointVeryCond.push_back(0);
 
 						NbPointIsoMap++;
 
 					}
-				} /// End of if(k != (nb_depth -1))...
+				} /// End of if(k != (nGrid[ZDIM] -1))...
 			}
 
-		/// 4) Case j = nb_colon -1
-		j = nb_colon - 1;
-		for (i = 0; i < nb_ligne; i++)
-			for (k = 0; k < nb_depth; k++)
+		/// 4) Case j = nGrid[YDIM] -1
+		j = nGrid[YDIM] - 1;
+		for (i = 0; i < nGrid[XDIM]; i++)
+			for (k = 0; k < nGrid[ZDIM]; k++)
 			{
 				IsoValue_1 = GridVoxel[i][j][k].Value;
 				// First Case P(i+1)(j)(k)
-				if (i != (nb_ligne - 1)) {
+				if (i != (nGrid[XDIM] - 1)) {
 					IsoValue_2 = GridVoxel[i + 1][j][k].Value;
 					if (IsoConditionRequired == 1 ? EXPP1 : EXPP) {
 
@@ -2047,7 +2058,7 @@ void Iso3D::PointEdgeComputation()
 						vals[2] = GridVoxel[i][j][k].PositionZ + factor * (GridVoxel[i + 1][j][k].PositionZ - GridVoxel[i][j][k].PositionZ);
 
 
-						IsoPointMapOriginal[NbPointIsoMap] = vcg::Point3d(vals[0], vals[1], vals[2]);
+						IsoPointMapOriginal.push_back(vcg::Point3d(vals[0], vals[1], vals[2]));
 						// save The reference to this point
 						GridVoxel[i][j][k].Edge_Points[0] = NbPointIsoMap;
 						GridVoxel[i][j][k].NbEdgePoint += 1;
@@ -2066,17 +2077,17 @@ void Iso3D::PointEdgeComputation()
 							GridVoxel[i][j - 1][k - 1].NbEdgePoint += 1;
 						}
 
-						if (IsoConditionRequired != 1) WichPointVeryCond[NbPointIsoMap] = 1;
-						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond[NbPointIsoMap] = 1 : WichPointVeryCond[NbPointIsoMap] = 0;
+						if (IsoConditionRequired != 1) WichPointVeryCond.push_back(1);
+						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond.push_back(1) : WichPointVeryCond.push_back(0);
 
 						NbPointIsoMap++;
 
 
 					}
-				} /// End of if( i != (nb_ligne-1))...
+				} /// End of if( i != (nGrid[XDIM]-1))...
 
 				// Third Case P(i)(j)(k+1)
-				if (k != (nb_depth - 1)){
+				if (k != (nGrid[ZDIM] - 1)){
 					IsoValue_2 = GridVoxel[i][j][k + 1].Value;
 					// Edge Point computation and  save in IsoPointMap
 					if (IsoConditionRequired == 1 ? EXPP1 : EXPP) {
@@ -2091,7 +2102,7 @@ void Iso3D::PointEdgeComputation()
 
 
 
-						IsoPointMapOriginal[NbPointIsoMap] = vcg::Point3d(vals[0], vals[1], vals[2]);
+						IsoPointMapOriginal.push_back(vcg::Point3d(vals[0], vals[1], vals[2]));
 
 						// save The reference to this point
 						GridVoxel[i][j][k].Edge_Points[3] = NbPointIsoMap;
@@ -2111,12 +2122,12 @@ void Iso3D::PointEdgeComputation()
 							GridVoxel[i - 1][j - 1][k].NbEdgePoint += 1;
 						}
 
-						if (IsoConditionRequired != 1) WichPointVeryCond[NbPointIsoMap] = 1;
-						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond[NbPointIsoMap] = 1 : WichPointVeryCond[NbPointIsoMap] = 0;
+						if (IsoConditionRequired != 1) WichPointVeryCond.push_back(1);
+						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond.push_back(1) : WichPointVeryCond.push_back(0);
 						NbPointIsoMap++;
 
 					}
-				} /// End of if (k != nb_depth)...
+				} /// End of if (k != nGrid[ZDIM])...
 			}
 
 
@@ -2125,13 +2136,13 @@ void Iso3D::PointEdgeComputation()
 
 		/// 5) Case k = 0
 		k = 0;
-		for (i = 0; i < nb_ligne; i++)
-			for (j = 0; j < nb_colon; j++)
+		for (i = 0; i < nGrid[XDIM]; i++)
+			for (j = 0; j < nGrid[YDIM]; j++)
 			{
 
 				IsoValue_1 = GridVoxel[i][j][0].Value;
 				// First Case P(i+1)(j)(k)
-				if (i != (nb_ligne - 1)){
+				if (i != (nGrid[XDIM] - 1)){
 					IsoValue_2 = GridVoxel[i + 1][j][0].Value;
 					if (IsoConditionRequired == 1 ? EXPP1 : EXPP) {
 
@@ -2146,7 +2157,7 @@ void Iso3D::PointEdgeComputation()
 						vals[2] = GridVoxel[i][j][0].PositionZ + factor * (GridVoxel[i + 1][j][0].PositionZ - GridVoxel[i][j][0].PositionZ);
 
 
-						IsoPointMapOriginal[NbPointIsoMap] = vcg::Point3d(vals[0], vals[1], vals[2]);
+						IsoPointMapOriginal.push_back(vcg::Point3d(vals[0], vals[1], vals[2]));
 						// save The reference to this point
 						GridVoxel[i][j][0].Edge_Points[0] = NbPointIsoMap;
 						GridVoxel[i][j][0].NbEdgePoint += 1;
@@ -2157,16 +2168,16 @@ void Iso3D::PointEdgeComputation()
 							GridVoxel[i][j - 1][0].NbEdgePoint += 1;
 						}
 
-						if (IsoConditionRequired != 1) WichPointVeryCond[NbPointIsoMap] = 1;
-						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond[NbPointIsoMap] = 1 : WichPointVeryCond[NbPointIsoMap] = 0;
+						if (IsoConditionRequired != 1) WichPointVeryCond.push_back(1);
+						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond.push_back(1) : WichPointVeryCond.push_back(0);
 						NbPointIsoMap++;
 
 
 					}
-				} /// End of if(i != (nb_ligne -1))
+				} /// End of if(i != (nGrid[XDIM] -1))
 
 				// Second Case P(i)(j+1)(k)
-				if (j != nb_colon - 1) {
+				if (j != nGrid[YDIM] - 1) {
 					IsoValue_2 = GridVoxel[i][j + 1][0].Value;
 					// Edge Point computation and  save in IsoPointMap
 					if (IsoConditionRequired == 1 ? EXPP1 : EXPP) {
@@ -2180,7 +2191,7 @@ void Iso3D::PointEdgeComputation()
 						vals[2] = GridVoxel[i][j][0].PositionZ + factor * (GridVoxel[i][j + 1][0].PositionZ - GridVoxel[i][j][0].PositionZ);
 
 
-						IsoPointMapOriginal[NbPointIsoMap] = vcg::Point3d(vals[0], vals[1], vals[2]);
+						IsoPointMapOriginal.push_back(vcg::Point3d(vals[0], vals[1], vals[2]));
 
 						// save The reference to this point
 						GridVoxel[i][j][0].Edge_Points[8] = NbPointIsoMap;
@@ -2192,62 +2203,59 @@ void Iso3D::PointEdgeComputation()
 							GridVoxel[i - 1][j][0].NbEdgePoint += 1;
 						}
 
-						if (IsoConditionRequired != 1) WichPointVeryCond[NbPointIsoMap] = 1;
-						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond[NbPointIsoMap] = 1 : WichPointVeryCond[NbPointIsoMap] = 0;
+						if (IsoConditionRequired != 1) WichPointVeryCond.push_back(1);
+						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond.push_back(1) : WichPointVeryCond.push_back(0);
 						NbPointIsoMap++;
 
 					}
-				}/// End of if(j != nb_colon -1)...
+				}/// End of if(j != nGrid[YDIM] -1)...
 
 				// Third Case P(i)(j)(k+1)
+				{
+					IsoValue_2 = GridVoxel[i][j][1].Value;
+					// Edge Point computation and  save in IsoPointMap
+					if (IsoConditionRequired == 1 ? EXPP1 : EXPP) {
+						factor = (IsoValue - IsoValue_1) / rapport;
+						index = NbPointIsoMap * 3;
 
-				IsoValue_2 = GridVoxel[i][j][1].Value;
-				// Edge Point computation and  save in IsoPointMap
-				if (IsoConditionRequired == 1 ? EXPP1 : EXPP) {
-					factor = (IsoValue - IsoValue_1) / rapport;
-					index = NbPointIsoMap * 3;
+						vals[0] = GridVoxel[i][j][0].PositionX + factor * (GridVoxel[i][j][1].PositionX - GridVoxel[i][j][0].PositionX);
+						vals[1] = GridVoxel[i][j][0].PositionY + factor * (GridVoxel[i][j][1].PositionY - GridVoxel[i][j][0].PositionY);
+						vals[2] = GridVoxel[i][j][0].PositionZ + factor * (GridVoxel[i][j][1].PositionZ - GridVoxel[i][j][0].PositionZ);
 
-					vals[0] = GridVoxel[i][j][0].PositionX + factor * (GridVoxel[i][j][1].PositionX - GridVoxel[i][j][0].PositionX);
+						IsoPointMapOriginal.push_back(vcg::Point3d(vals[0], vals[1], vals[2]));
+						// save The reference to this point
+						GridVoxel[i][j][0].Edge_Points[3] = NbPointIsoMap;
+						GridVoxel[i][j][0].NbEdgePoint += 1;
 
-					vals[1] = GridVoxel[i][j][0].PositionY + factor * (GridVoxel[i][j][1].PositionY - GridVoxel[i][j][0].PositionY);
+						// The same Point is used in three other Voxels
+						if (i != 0) {
+							GridVoxel[i - 1][j][0].Edge_Points[1] = NbPointIsoMap;
+							GridVoxel[i - 1][j][0].NbEdgePoint += 1;
+						}
+						if (j != 0) {
+							GridVoxel[i][j - 1][0].Edge_Points[7] = NbPointIsoMap;
+							GridVoxel[i][j - 1][0].NbEdgePoint += 1;
+						}
+						if (i != 0 && j != 0) {
+							GridVoxel[i - 1][j - 1][0].Edge_Points[5] = NbPointIsoMap;
+							GridVoxel[i - 1][j - 1][0].NbEdgePoint += 1;
+						}
 
-					vals[2] = GridVoxel[i][j][0].PositionZ + factor * (GridVoxel[i][j][1].PositionZ - GridVoxel[i][j][0].PositionZ);
-
-
-					IsoPointMapOriginal[NbPointIsoMap] = vcg::Point3d(vals[0], vals[1], vals[2]);
-					// save The reference to this point
-					GridVoxel[i][j][0].Edge_Points[3] = NbPointIsoMap;
-					GridVoxel[i][j][0].NbEdgePoint += 1;
-
-					// The same Point is used in three other Voxels
-					if (i != 0) {
-						GridVoxel[i - 1][j][0].Edge_Points[1] = NbPointIsoMap;
-						GridVoxel[i - 1][j][0].NbEdgePoint += 1;
+						if (IsoConditionRequired != 1) WichPointVeryCond.push_back(1);
+						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond.push_back(1) : WichPointVeryCond.push_back(0);
+						NbPointIsoMap++;
 					}
-					if (j != 0) {
-						GridVoxel[i][j - 1][0].Edge_Points[7] = NbPointIsoMap;
-						GridVoxel[i][j - 1][0].NbEdgePoint += 1;
-					}
-					if (i != 0 && j != 0) {
-						GridVoxel[i - 1][j - 1][0].Edge_Points[5] = NbPointIsoMap;
-						GridVoxel[i - 1][j - 1][0].NbEdgePoint += 1;
-					}
-
-					if (IsoConditionRequired != 1) WichPointVeryCond[NbPointIsoMap] = 1;
-					else (pValParser->Eval(vals) > 0) ? WichPointVeryCond[NbPointIsoMap] = 1 : WichPointVeryCond[NbPointIsoMap] = 0;
-					NbPointIsoMap++;
-
 				}
 			}
 
-		/// 6) Case k = nb_depth -1
-		k = nb_depth - 1;
-		for (i = 0; i < nb_ligne; i++)
-			for (j = 0; j < nb_colon; j++)
+		/// 6) Case k = nGrid[ZDIM] -1
+		k = nGrid[ZDIM] - 1;
+		for (i = 0; i < nGrid[XDIM]; i++)
+			for (j = 0; j < nGrid[YDIM]; j++)
 			{
 				IsoValue_1 = GridVoxel[i][j][k].Value;
 				// First Case P(i+1)(j)(k)
-				if (i != (nb_ligne - 1)){
+				if (i != (nGrid[XDIM] - 1)){
 					IsoValue_2 = GridVoxel[i + 1][j][k].Value;
 					if (IsoConditionRequired == 1 ? EXPP1 : EXPP) {
 
@@ -2262,7 +2270,7 @@ void Iso3D::PointEdgeComputation()
 						vals[2] = GridVoxel[i][j][k].PositionZ + factor * (GridVoxel[i + 1][j][k].PositionZ - GridVoxel[i][j][k].PositionZ);
 
 
-						IsoPointMapOriginal[NbPointIsoMap] = vcg::Point3d(vals[0], vals[1], vals[2]);
+						IsoPointMapOriginal.push_back(vcg::Point3d(vals[0], vals[1], vals[2]));
 
 						// save The reference to this point
 						GridVoxel[i][j][k].Edge_Points[0] = NbPointIsoMap;
@@ -2282,16 +2290,16 @@ void Iso3D::PointEdgeComputation()
 							GridVoxel[i][j - 1][k - 1].NbEdgePoint += 1;
 						}
 
-						if (IsoConditionRequired != 1) WichPointVeryCond[NbPointIsoMap] = 1;
-						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond[NbPointIsoMap] = 1 : WichPointVeryCond[NbPointIsoMap] = 0;
+						if (IsoConditionRequired != 1) WichPointVeryCond.push_back(1);
+						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond.push_back(1) : WichPointVeryCond.push_back(0);
 						NbPointIsoMap++;
 
 
 					}
-				} /// End of if(i != nb_ligne-1)...
+				} /// End of if(i != nGrid[XDIM]-1)...
 
 				// Second Case P(i)(j+1)(k)
-				if (j != (nb_colon - 1)){
+				if (j != (nGrid[YDIM] - 1)){
 					IsoValue_2 = GridVoxel[i][j + 1][k].Value;
 					// Edge Point computation and  save in IsoPointMap
 					if (IsoConditionRequired == 1 ? EXPP1 : EXPP) {
@@ -2305,7 +2313,7 @@ void Iso3D::PointEdgeComputation()
 						vals[2] = GridVoxel[i][j][k].PositionZ + factor * (GridVoxel[i][j + 1][k].PositionZ - GridVoxel[i][j][k].PositionZ);
 						///
 
-						IsoPointMapOriginal[NbPointIsoMap] = vcg::Point3d(vals[0], vals[1], vals[2]);
+						IsoPointMapOriginal.push_back(vcg::Point3d(vals[0], vals[1], vals[2]));
 						// save The reference to this point
 						GridVoxel[i][j][k].Edge_Points[8] = NbPointIsoMap;
 						GridVoxel[i][j][k].NbEdgePoint += 1;
@@ -2324,130 +2332,136 @@ void Iso3D::PointEdgeComputation()
 							GridVoxel[i - 1][j][k - 1].NbEdgePoint += 1;
 						}
 
-						if (IsoConditionRequired != 1) WichPointVeryCond[NbPointIsoMap] = 1;
-						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond[NbPointIsoMap] = 1 : WichPointVeryCond[NbPointIsoMap] = 0;
+						if (IsoConditionRequired != 1) WichPointVeryCond.push_back(1);
+						else (pValParser->Eval(vals) > 0) ? WichPointVeryCond.push_back(1) : WichPointVeryCond.push_back(0);
 						NbPointIsoMap++;
 
 					}
-				} /// End of if( j != (nb_colon -1) )...
+				} /// End of if( j != (nGrid[YDIM] -1) )...
 
 
 
 			}
 	}
+	/*if (ndim != -1) {
+	for (int i = 0; i < NbPointIsoMap; i++) {
+	IsoPointMapOriginal[i][ndim] = Start[ndim];
+	}
+	}*/
 };
 
 
 ///+++++++++++++++++++++++++++++++++++++++++++++++++++++///
 void Iso3D::SignatureComputation(){
 
-	for (i = 0; i < nb_ligne; i++)
-		for (j = 0; j < nb_colon; j++)
-			for (k = 0; k < nb_depth; k++)
+	for (i = 0; i < nGrid[XDIM]; i++)
+		for (j = 0; j < nGrid[YDIM]; j++)
+			for (k = 0; k < nGrid[ZDIM]; k++)
 				/*if (GridVoxel[i][j][k].NbEdgePoint != 0)*/{
 					///GridVoxel[i][j][k].Signature =0; /// Done now in
 					if (GridVoxel[i][j][k].Value < 0) GridVoxel[i][j][k].Signature += 1;
 
-					if (i != (nb_ligne - 1))
+					if (i != (nGrid[XDIM] - 1))
 						if (GridVoxel[i + 1][j][k].Value < 0) GridVoxel[i][j][k].Signature += 2;
 
-					if (i != (nb_ligne - 1) && k != (nb_depth - 1))
+					if (i != (nGrid[XDIM] - 1) && k != (nGrid[ZDIM] - 1))
 						if (GridVoxel[i + 1][j][k + 1].Value < 0) GridVoxel[i][j][k].Signature += 4;
 
-					if (k != (nb_depth - 1))
+					if (k != (nGrid[ZDIM] - 1))
 						if (GridVoxel[i][j][k + 1].Value < 0) GridVoxel[i][j][k].Signature += 8;
 
-					if (j != (nb_colon - 1))
+					if (j != (nGrid[YDIM] - 1))
 						if (GridVoxel[i][j + 1][k].Value < 0) GridVoxel[i][j][k].Signature += 16;
 
-					if (i != (nb_ligne - 1) && j != (nb_colon - 1))
+					if (i != (nGrid[XDIM] - 1) && j != (nGrid[YDIM] - 1))
 						if (GridVoxel[i + 1][j + 1][k].Value < 0) GridVoxel[i][j][k].Signature += 32;
 
-					if (i != (nb_ligne - 1) && j != (nb_colon - 1) && k != (nb_depth - 1))
+					if (i != (nGrid[XDIM] - 1) && j != (nGrid[YDIM] - 1) && k != (nGrid[ZDIM] - 1))
 						if (GridVoxel[i + 1][j + 1][k + 1].Value < 0) GridVoxel[i][j][k].Signature += 64;
 
-					if (j != (nb_colon - 1) && k != (nb_depth - 1))
+					if (j != (nGrid[YDIM] - 1) && k != (nGrid[ZDIM] - 1))
 						if (GridVoxel[i][j + 1][k + 1].Value < 0) GridVoxel[i][j][k].Signature += 128;
 			} // End if(Grid...
 }
 
 
 void Iso3D::SaveIsoMapUnifColor() {
-	int ThreeTimesI;
-	double pt1_x, pt1_y, pt1_z,
-		pt2_x, pt2_y, pt2_z,
-		XStep, YStep, ZStep,
-		tp1, tp2, tp3,
-		X_Val, Y_Val, Z_Val, ray;
-	vcg::Point3d temp, vals;
+	//int ThreeTimesI;
+	//double pt1_x, pt1_y, pt1_z,
+	//	pt2_x, pt2_y, pt2_z,
+	//	XStep, YStep, ZStep,
+	//	tp1, tp2, tp3,
+	//	X_Val, Y_Val, Z_Val, ray;
+	//vcg::Point3d temp, vals;
 
 
-	XStep = fabs((Start[0] - End[0]) / (100 * (nb_ligne - 1)));
-	YStep = fabs((Start[1] - End[1]) / (100 * (nb_colon - 1)));
-	ZStep = fabs((Start[2] - End[2]) / (100 * (nb_depth - 1)));
+	//XStep = fabs((Start[0] - End[0]) / (100 * (nGrid[XDIM] - 1)));
+	//YStep = fabs((Start[1] - End[1]) / (100 * (nGrid[YDIM] - 1)));
+	//ZStep = fabs((Start[2] - End[2]) / (100 * (nGrid[ZDIM] - 1)));
 
+	//if (NbPointIsoMap > 0)
+	//	IsoNormMapOriginal.resize(NbPointIsoMap);
+	//for (i = 0; i < NbPointIsoMap; i++)
+	//{
+	//	ThreeTimesI = 3 * i;
 
-	for (i = 0; i < NbPointIsoMap; i++)
-	{
-		ThreeTimesI = 3 * i;
+	//	/// Normal at this Point :
 
-		/// Normal at this Point :
+	//	X_Val = IsoPointMapOriginal[i].X();
+	//	Y_Val = IsoPointMapOriginal[i].Y();
+	//	Z_Val = IsoPointMapOriginal[i].Z();
 
-		X_Val = IsoPointMapOriginal[i].X();
-		Y_Val = IsoPointMapOriginal[i].Y();
-		Z_Val = IsoPointMapOriginal[i].Z();
+	//	vals[0] = X_Val + XStep;
+	//	vals[1] = Y_Val;
+	//	vals[2] = Z_Val;
+	//	//        if(gsysType == PM3::SYSCYLINDRICAL) {
+	//	//            temp = PM3::car2cyl(vals);
+	//	//            vals = temp;
+	//	//        }
+	//	pt1_x = pValParser->Eval(vals.V());
+	//	vals[0] = X_Val - XStep;
+	//	vals[1] = Y_Val;
+	//	vals[2] = Z_Val;
+	//	//        if(gsysType == PM3::SYSCYLINDRICAL) {
+	//	//            temp = PM3::car2cyl(vals);
+	//	//            vals = temp;
+	//	//        }
+	//	pt2_x = pValParser->Eval(vals.V());
+	//	IsoNormMapOriginal[i].X() = pt1_x - pt2_x;
 
-		vals[0] = X_Val + XStep;
-		vals[1] = Y_Val;
-		vals[2] = Z_Val;
-		//        if(gsysType == PM3::SYSCYLINDRICAL) {
-		//            temp = PM3::car2cyl(vals);
-		//            vals = temp;
-		//        }
-		pt1_x = pValParser->Eval(vals.V());
-		vals[0] = X_Val - XStep;
-		vals[1] = Y_Val;
-		vals[2] = Z_Val;
-		//        if(gsysType == PM3::SYSCYLINDRICAL) {
-		//            temp = PM3::car2cyl(vals);
-		//            vals = temp;
-		//        }
-		pt2_x = pValParser->Eval(vals.V());
-		IsoNormMapOriginal[i].X() = pt1_x - pt2_x;
+	//	vals[0] = X_Val;
+	//	vals[1] = Y_Val + YStep;
+	//	vals[2] = Z_Val;
+	//	//        if(gsysType == PM3::SYSCYLINDRICAL) {
+	//	//            temp = PM3::car2cyl(vals);
+	//	//            vals = temp;
+	//	//        }
+	//	pt1_y = pValParser->Eval(vals.V());
+	//	vals[0] = X_Val;
+	//	vals[1] = Y_Val - YStep;
+	//	vals[2] = Z_Val;
+	//	pt2_y = pValParser->Eval(vals.V());
+	//	IsoNormMapOriginal[i].Y() = pt1_y - pt2_y;
 
-		vals[0] = X_Val;
-		vals[1] = Y_Val + YStep;
-		vals[2] = Z_Val;
-		//        if(gsysType == PM3::SYSCYLINDRICAL) {
-		//            temp = PM3::car2cyl(vals);
-		//            vals = temp;
-		//        }
-		pt1_y = pValParser->Eval(vals.V());
-		vals[0] = X_Val;
-		vals[1] = Y_Val - YStep;
-		vals[2] = Z_Val;
-		pt2_y = pValParser->Eval(vals.V());
-		IsoNormMapOriginal[i].Y() = pt1_y - pt2_y;
+	//	vals[0] = X_Val;
+	//	vals[1] = Y_Val;
+	//	vals[2] = Z_Val + ZStep;
+	//	//        if(gsysType == PM3::SYSCYLINDRICAL) {
+	//	//            temp = PM3::car2cyl(vals);
+	//	//            vals = temp;
+	//	//        }
+	//	pt1_z = pValParser->Eval(vals.V());
+	//	vals[0] = X_Val;
+	//	vals[1] = Y_Val;
+	//	vals[2] = Z_Val - ZStep;
+	//	//        if(gsysType == PM3::SYSCYLINDRICAL) {
+	//	//            temp = PM3::car2cyl(vals);
+	//	//            vals = temp;
+	//	//        }
+	//	pt2_z = pValParser->Eval(vals.V());
+	//	IsoNormMapOriginal[i].Z() = pt1_z - pt2_z;
 
-		vals[0] = X_Val;
-		vals[1] = Y_Val;
-		vals[2] = Z_Val + ZStep;
-		//        if(gsysType == PM3::SYSCYLINDRICAL) {
-		//            temp = PM3::car2cyl(vals);
-		//            vals = temp;
-		//        }
-		pt1_z = pValParser->Eval(vals.V());
-		vals[0] = X_Val;
-		vals[1] = Y_Val;
-		vals[2] = Z_Val - ZStep;
-		//        if(gsysType == PM3::SYSCYLINDRICAL) {
-		//            temp = PM3::car2cyl(vals);
-		//            vals = temp;
-		//        }
-		pt2_z = pValParser->Eval(vals.V());
-		IsoNormMapOriginal[i].Z() = pt1_z - pt2_z;
-
-		IsoNormMapOriginal[i].Normalize();
-	}
+	//	IsoNormMapOriginal[i].Normalize();
+	//}
 }
 

@@ -697,6 +697,7 @@ void Application::slotNewDocument(const App::Document& Doc)
     assert(it==d->documents.end());
 #endif
     Gui::Document* pDoc = new Gui::Document(const_cast<App::Document*>(&Doc),this);
+	pDoc->classID = Doc.classID;//ZD
     d->documents[&Doc] = pDoc;
 
     // connect the signals to the application for the new document

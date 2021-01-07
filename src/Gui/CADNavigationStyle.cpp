@@ -264,7 +264,7 @@ SbBool CADNavigationStyle::processSoEvent(const SoEvent * const ev)
                     this->currentmode != NavigationStyle::PANNING &&
                     this->currentmode != NavigationStyle::DRAGGING) {
                     if (this->isPopupMenuEnabled()) {
-                        if (!press) { // release right mouse button
+						if (!press) { // release right mouse button
                             this->openPopupMenu(event->getPosition());
                         }
                     }
@@ -274,7 +274,7 @@ SbBool CADNavigationStyle::processSoEvent(const SoEvent * const ev)
             if (press && (this->currentmode == NavigationStyle::PANNING ||
                           this->currentmode == NavigationStyle::ZOOMING)) {
                 newmode = NavigationStyle::DRAGGING;
-                saveCursorPosition(ev);
+				saveCursorPosition(ev);
                 this->centerTime = ev->getTime();
                 processed = true;
             }
@@ -338,7 +338,7 @@ SbBool CADNavigationStyle::processSoEvent(const SoEvent * const ev)
         }
         else if (this->currentmode == NavigationStyle::DRAGGING) {
             this->addToLog(event->getPosition(), event->getTime());
-            this->spin(posn);
+			this->spin(posn);
             moveCursorPosition();
             processed = true;
         }
@@ -450,7 +450,7 @@ SbBool CADNavigationStyle::processSoEvent(const SoEvent * const ev)
     // into selection mode.
     if (this->button1down && this->button3down)
         this->lockButton1 = true;
-
+	
     // If not handled in this class, pass on upwards in the inheritance
     // hierarchy.
     if (/*(curmode == NavigationStyle::SELECTION || viewer->isEditing()) && */!processed)
