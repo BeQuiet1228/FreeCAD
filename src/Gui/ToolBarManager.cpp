@@ -223,13 +223,13 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 				tabName = QString::fromLocal8Bit("开始");
 				mainwindow->mainWindowDef->addTitleShortcutAction(qAction);
 			}
-			else if ((*group)->command() == "_2d"
-				|| ((*group)->command() == "_3dCommon")
-				|| ((*group)->command() == "_3dSpecil") || ((*group)->command() == "_3dComplex")){
+			else if ((*group)->command() == "二维"
+				|| ((*group)->command() == "常用体")
+				|| ((*group)->command() == "特殊体") || ((*group)->command() == "复杂体")){
 				tabName = QString::fromLocal8Bit("建模");
 			}
-			else if ((*group)->command() == "comboundary" || (*group)->command() == "emit"
-					|| (*group)->command() == "observe"){
+			else if ((*group)->command() == "边界设置" || (*group)->command() == "发射设置"
+					|| (*group)->command() == "观测设置"){
 				tabName = QString::fromLocal8Bit("物理设置");
 			}
 			if (tabWidget->hasAction(qAction))
@@ -238,6 +238,10 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 				tabName, QString::fromLocal8Bit((*group)->command().c_str()), qAction);	
 		}
 	}
+	tabWidget->setTabOlder(QString::fromLocal8Bit("开始"),0);
+	tabWidget->setTabOlder(QString::fromLocal8Bit("建模"),1);
+	tabWidget->setTabOlder(QString::fromLocal8Bit("物理设置"),2);
+	tabWidget->setTabOlder(QString::fromLocal8Bit("其他"),3);
 #else
 	saveState();
 	this->toolbarNames.clear();

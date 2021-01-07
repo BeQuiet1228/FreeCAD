@@ -194,6 +194,12 @@ void MainWindowDef::addCenterWidget(QWidget *widget)
 
 void MainWindowDef::addTitleShortcutAction(QAction* action)
 {
+	auto  actions = toolbar->actions();
+	for (auto i = actions.begin(); i != actions.end(); i++)
+	{
+		if ((*i)->text() == action->text())
+			return;
+	}
 	toolbar->addAction(action);
 }
 

@@ -925,7 +925,11 @@ StdCmdCut::StdCmdCut()
 void StdCmdCut::activated(int iMsg)
 {
     Q_UNUSED(iMsg); 
-    getGuiApplication()->sendMsgToActiveView("Cut");
+    bool temp = getGuiApplication()->sendMsgToActiveView("Cut");
+	if (!temp && getDocument()->classID == 2){
+		Base::InterpreterSingleton python;
+		python.runString("FreeCADGui.runCommand('CutCommand')");
+	}
 }
 
 bool StdCmdCut::isActive(void)
@@ -955,6 +959,13 @@ void StdCmdCopy::activated(int iMsg)
     Q_UNUSED(iMsg); 
     bool done = getGuiApplication()->sendMsgToActiveView("Copy");
     if (!done) {
+		//暂时兼容3d的复制
+		if (getDocument()->classID == 2)
+		{
+			Base::InterpreterSingleton python;
+			python.runString("FreeCADGui.runCommand('CopyCommand')");
+			return;
+		}
         QMimeData * mimeData = getMainWindow()->createMimeDataFromSelection();
         QClipboard* cb = QApplication::clipboard();
         cb->setMimeData(mimeData);
@@ -990,6 +1001,13 @@ void StdCmdPaste::activated(int iMsg)
     Q_UNUSED(iMsg); 
     bool done = getGuiApplication()->sendMsgToActiveView("Paste");
     if (!done) {
+		//暂时兼容3d的粘贴
+		if (getDocument()->classID == 2)
+		{
+			Base::InterpreterSingleton python;
+			python.runString("FreeCADGui.runCommand('CopyCommand')");
+			return;
+		}
         QClipboard* cb = QApplication::clipboard();
         const QMimeData* mimeData = cb->mimeData();
         if (mimeData) {
@@ -1603,7 +1621,7 @@ StdCmdRunM3d::StdCmdRunM3d(const char* name)
 {
 	// setting the
 	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("&Find...");
+	sMenuText = QT_TR_NOOP("&RunM3d");
 	sToolTipText = QT_TR_NOOP("run m3d text");
 	sWhatsThis = "Std_Findm";
 	sStatusTip = QT_TR_NOOP("run m3d text");

@@ -334,7 +334,7 @@ bool Ribbon::hasAction(const QAction *action)
 {
 	QList<QAction*> list = this->getActions();
 	for (int i = 0; i<list.count(); i++) {
-		if (list.at(i) == action){
+		if (list.at(i)->text() == action->text()){
 			return true;
 		}
 	}
