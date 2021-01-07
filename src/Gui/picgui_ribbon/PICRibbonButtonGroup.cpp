@@ -68,3 +68,4 @@ QList<QAction *> PICRibbonButtonGroup::get_action_all()
 	}
 	return list;
 }
+

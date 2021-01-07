@@ -323,6 +323,23 @@ QList<QAction *> Ribbon::getGroupActions(const QString &groupName)
 }
 
 
+void Ribbon::setTabOlder(const QString &tabName, const int older)
+{
+	QString name_t = tabName;
+	PICRibbonTabContent * t = get_tab_by_name(name_t);
+	QTabWidget::insertTab(older, t, name_t);
+}
+
+bool Ribbon::hasAction(const QAction *action)
+{
+	QList<QAction*> list = this->getActions();
+	for (int i = 0; i<list.count(); i++) {
+		if (list.at(i) == action){
+			return true;
+		}
+	}
+	return false;
+}
 
 
 
