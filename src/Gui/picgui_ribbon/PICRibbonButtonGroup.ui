@@ -6,12 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>150</width>
-    <height>37</height>
+    <width>507</width>
+    <height>218</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
@@ -57,20 +60,7 @@
       </layout>
      </item>
      <item>
-      <widget class="Line" name="horizontalLine">
-       <property name="styleSheet">
-        <string notr="true">color: #c0c0c0;</string>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="labelGroupName">
        <property name="text">
         <string>ToolBar</string>
        </property>
@@ -80,19 +70,6 @@
       </widget>
      </item>
     </layout>
-   </item>
-   <item row="0" column="1">
-    <widget class="Line" name="verticalLine">
-     <property name="styleSheet">
-      <string notr="true">color: #c0c0c0;</string>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>

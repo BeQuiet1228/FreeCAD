@@ -9,20 +9,7 @@
 Ribbon::Ribbon(QWidget *parent)
   : QTabWidget(parent)
 {
-  // Determine default colors
-  QColor bg = qApp->palette().color(QPalette::Background);
-  QColor mid = qApp->palette().color(QPalette::Mid);
 
-  // Note: the order in which the background/palette/stylesheet functions are
-  // called does matter. Should be same as in Qt designer.
-  setAutoFillBackground(true);
-
-
-  // Set background color
-  QPalette pal = palette();
-  QColor qcolor = QColor(7,7,7);
-  pal.setColor(QPalette::Background, qcolor);
-  setPalette(pal);
 }
 
 void Ribbon::addTab(const QString &tabName)

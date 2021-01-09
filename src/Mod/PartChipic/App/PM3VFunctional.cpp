@@ -178,8 +178,6 @@
 #include <vcg/complex/algorithms/hole.h>
 #include<vcg/complex/algorithms/update/bounding.h>
 
-#include "tmesh.h"
-#include "tin.h"
 using namespace Part;
 
 namespace PM3

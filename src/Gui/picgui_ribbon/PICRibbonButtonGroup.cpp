@@ -21,7 +21,7 @@ PICRibbonButtonGroup::~PICRibbonButtonGroup()
 void PICRibbonButtonGroup::setTitle(const QString &title)
 {
   m_title = title;
-  ui->label->setText(m_title);
+  ui->labelGroupName->setText(m_title);
 }
 
 QString PICRibbonButtonGroup::title() const
@@ -43,8 +43,8 @@ void PICRibbonButtonGroup::addButton(QToolButton *button)
   button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   int btnCount = buttonCount();
 
-  int xPos = btnCount % 2;
-  int yPos = btnCount / 2;
+  int xPos = btnCount % 3;
+  int yPos = btnCount / 3;
 
 //  qDebug()<<btnCount;
 //  qDebug()<<xPos;

@@ -1563,5 +1563,10 @@ void CommandManager::updateCommands(const char* sContext, int mode)
 
 Gui::Action* Gui::CommandManager::creatAction(Command *cmd)
 {
-	return cmd->createAction();
+	auto action = cmd->getAction();
+	if (action)
+		return action;
+	action = cmd->createAction();
+	cmd->_pcAction = action;
+	return cmd->getAction();
 }
