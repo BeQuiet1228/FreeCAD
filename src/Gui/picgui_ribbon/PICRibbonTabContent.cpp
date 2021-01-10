@@ -3,6 +3,7 @@
 #include "ui_PICRibbonTabContent.h"
 #include "PICRibbonButtonGroup.h"
 #include "picgui_ribbon/moc_PICRibbonTabContent.cpp"
+#include <iostream>
 PICRibbonTabContent::PICRibbonTabContent(QWidget *parent)
   : QWidget(parent)
   , ui(new Ui::PICRibbonTabContent)
@@ -19,19 +20,18 @@ void PICRibbonTabContent::addGroup(const QString &groupName)
 {
   PICRibbonButtonGroup *ribbonButtonGroup = new PICRibbonButtonGroup;
   ribbonButtonGroup->setTitle(groupName);
-
-  ui->ribbonHorizontalLayout->addWidget(ribbonButtonGroup);
+  ui->contentLayout->addWidget(ribbonButtonGroup);
 }
 
 void PICRibbonTabContent::removeGroup(const QString &groupName)
 {
   // Find ribbon group
-  for (int i = 0; i < ui->ribbonHorizontalLayout->count(); i++)
+	for (int i = 0; i < ui->contentLayout->count(); i++)
   {
-    PICRibbonButtonGroup *group = static_cast<PICRibbonButtonGroup*>(ui->ribbonHorizontalLayout->itemAt(i)->widget());
+		PICRibbonButtonGroup *group = static_cast<PICRibbonButtonGroup*>(ui->contentLayout->itemAt(i)->widget());
     if (group->title().toLower() == groupName.toLower())
     {
-      ui->ribbonHorizontalLayout->removeWidget(group); /// \todo :( No effect
+		ui->contentLayout->removeWidget(group); /// \todo :( No effect
       delete group;
       break;
     }
@@ -43,16 +43,16 @@ void PICRibbonTabContent::removeGroup(const QString &groupName)
 
 int PICRibbonTabContent::groupCount() const
 {
-  return ui->ribbonHorizontalLayout->count();
+	return ui->contentLayout->count();
 }
 
 void PICRibbonTabContent::addButton(const QString &groupName, QToolButton *button)
 {
   // Find ribbon group
   PICRibbonButtonGroup *ribbonButtonGroup = nullptr;
-  for (int i = 0; i < ui->ribbonHorizontalLayout->count(); i++)
+  for (int i = 0; i < ui->contentLayout->count(); i++)
   {
-    PICRibbonButtonGroup *group = static_cast<PICRibbonButtonGroup*>(ui->ribbonHorizontalLayout->itemAt(i)->widget());
+	  PICRibbonButtonGroup *group = static_cast<PICRibbonButtonGroup*>(ui->contentLayout->itemAt(i)->widget());
     if (group->title().toLower() == groupName.toLower())
     {
       ribbonButtonGroup = group;
@@ -81,9 +81,9 @@ void PICRibbonTabContent::removeButton(const QString &groupName, QToolButton *bu
 {
   // Find ribbon group
   PICRibbonButtonGroup *ribbonButtonGroup = nullptr;
-  for (int i = 0; i < ui->ribbonHorizontalLayout->count(); i++)
+  for (int i = 0; i < ui->contentLayout->count(); i++)
   {
-    PICRibbonButtonGroup *group = static_cast<PICRibbonButtonGroup*>(ui->ribbonHorizontalLayout->itemAt(i)->widget());
+	  PICRibbonButtonGroup *group = static_cast<PICRibbonButtonGroup*>(ui->contentLayout->itemAt(i)->widget());
     if (group->title().toLower() == groupName.toLower())
     {
       ribbonButtonGroup = group;
@@ -109,14 +109,24 @@ void PICRibbonTabContent::removeButton(const QString &groupName, QToolButton *bu
 QList<PICRibbonButtonGroup *> PICRibbonTabContent::get_group_all()
 {
 	QList<PICRibbonButtonGroup *> list;
-	for (int i = 0; i < ui->ribbonHorizontalLayout->count(); i++)
+	for (int i = 0; i < ui->contentLayout->count(); i++)
 	{
-		PICRibbonButtonGroup *group = static_cast<PICRibbonButtonGroup*>(ui->ribbonHorizontalLayout->itemAt(i)->widget());
+		PICRibbonButtonGroup *group = static_cast<PICRibbonButtonGroup*>(ui->contentLayout->itemAt(i)->widget());
 		list.append(group);
 
 	}
 	return list;
 }
 
+void PICRibbonTabContent::paintEvent(QPaintEvent *event)
+{
+	QWidget::paintEvent(event);
+	QStyleOption opt;
+
+	opt.init(this);
+	QPainter p(this);
+
+	style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
+}
 
 

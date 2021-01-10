@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QToolButton>
 #include "PICRibbonButtonGroup.h"
+#include <QPaintEvent>
 namespace Ui {
 class PICRibbonTabContent;
 }
@@ -45,6 +46,8 @@ public:
   /// \param[in] button The button
   void removeButton(const QString &groupName, QToolButton *button);
   QList<PICRibbonButtonGroup *> get_group_all();
+protected:
+	void paintEvent(QPaintEvent *event);
 private:
   Ui::PICRibbonTabContent *ui;
 };

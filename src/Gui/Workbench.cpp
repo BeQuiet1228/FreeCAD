@@ -616,11 +616,24 @@ ToolBarItem* StdWorkbench::setupToolBars() const
     /**file << "Std_New" << "Std_Open" << "Std_Save" << "Std_Print" << "Separator" << "Std_Cut"
           << "Std_Copy" << "Std_Paste" << "Separator" << "Std_Undo" << "Std_Redo" << "Separator"
           << "Std_Refresh" << "Separator" << "Std_WhatsThis";*/
-	*file << "Std_New" << "Std_Open" << "Std_Save" << "Separator" << "Std_Cut"
-		<< "Std_Copy" << "Std_Paste" << "Std_Findm"
-		<< "Separator" << "Std_Undo" << "Std_Redo" 
-		<< "Separator" << "Std_Run_M3d" << "Std_Paralle_Run" << "Std_Smart_Contrl" << "Std_Connect_Way" << "Std_Open_Log" /*<< "Separator"*/;
+	*file << "Std_New" << "Std_Open" << "Std_Save";
 
+	ToolBarItem* edit = new ToolBarItem(root);
+	edit->setCommand("edit");
+	*edit << "Std_Cut"<< "Std_Copy" << "Std_Paste" << "Std_Findm" << "Std_Undo" << "Std_Redo";
+
+	ToolBarItem* run = new ToolBarItem(root);
+	run->setCommand("run");
+	*run << "Std_Run_M3d" << "Std_Paralle_Run" << "Std_Smart_Contrl" << "Std_Connect_Way" << "Std_Open_Log";
+
+	ToolBarItem* titleBar = new ToolBarItem(root);
+	titleBar->setCommand("titleBar");
+	*titleBar << "Std_Save" << "Std_Cut" << "Std_Copy" << "Std_Paste" << "Std_Findm" << "Std_Undo" << "Std_Redo"
+		 << "Std_Run_M3d" << "Std_Paralle_Run" << "Std_Smart_Contrl" << "Std_Connect_Way" << "Std_Open_Log";
+/*	ToolBarItem* projectSetting = new ToolBarItem(root);
+	projectSetting->setCommand("projectSetting ");
+	*projectSetting << "ModelingInfo" << "WorkSpaceSettings" << "NewMaterical" << "FiledSetting" << "TimeDomainComputingMenu"
+		<< "DataProcessingSetting" << "RunOptions" << "Species";
     // Macro
 	//去掉FreeCAD宏录制工具栏部分的按钮
     /*ToolBarItem* macro = new ToolBarItem( root );

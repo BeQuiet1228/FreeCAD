@@ -26,7 +26,7 @@ Q_SIGNALS:
 };
 
 namespace Ui {
-	class Window;
+	class WindowDef;
 }
 class MainWindowDef:public QWidget{
 	Q_OBJECT
@@ -42,7 +42,7 @@ public:
 	~MainWindowDef();
 
 private:
-	Ui::Window* ui;
+	Ui::WindowDef* ui;
 	//响应鼠标边框悬停的范围
 	int boundaryWidth;
 	//鼠标左键按下是记录的位置

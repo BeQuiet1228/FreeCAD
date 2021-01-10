@@ -1579,7 +1579,7 @@ StdCmdFindm::StdCmdFindm()
 {
 	// setting the
 	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("&Find...");
+	sMenuText = QT_TR_NOOP("find");
 	sToolTipText = QT_TR_NOOP("find text");
 	sWhatsThis = "Std_Findm";
 	sStatusTip = QT_TR_NOOP("find text");
@@ -1621,7 +1621,7 @@ StdCmdRunM3d::StdCmdRunM3d(const char* name)
 {
 	// setting the
 	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("&RunM3d");
+	sMenuText = QT_TR_NOOP("RunM3d");
 	sToolTipText = QT_TR_NOOP("run m3d text");
 	sWhatsThis = "Std_Findm";
 	sStatusTip = QT_TR_NOOP("run m3d text");
@@ -1660,10 +1660,12 @@ bool StdCmdRunM3d::isActive(void)
 		{
 			auto mw = Gui::MainWindow::getInstance();
 			mw->showContorlUI();
+			sMenuText = QT_TR_NOOP("RunM3d");
 			sPixmap = "runing";
 		}else{
 			auto mw = Gui::MainWindow::getInstance();
 			mw->hideContorlUI();
+			sMenuText = QT_TR_NOOP("StopM3d");
 			sPixmap = "run";
 		}
 		this->updataActionIcon();
@@ -1702,7 +1704,7 @@ StdCmdConnectWay::StdCmdConnectWay()
 	:StdCmdRunM3d("Std_Connect_Way")
 {
 	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("&ConnectWay...");
+	sMenuText = QT_TR_NOOP("ConnectWay");
 	sToolTipText = QT_TR_NOOP("ConnectWay");
 	sWhatsThis = "Std_Connect_Way";
 	sStatusTip = QT_TR_NOOP("ConnectWay");
@@ -1741,7 +1743,7 @@ StdCmdParalleRun::StdCmdParalleRun()
 {
 	// setting the
 	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("&ParalleRun");
+	sMenuText = QT_TR_NOOP("ParalleRun");
 	sToolTipText = QT_TR_NOOP("ParalleRun");
 	sWhatsThis = "Std_Paralle_Run";
 	sStatusTip = QT_TR_NOOP("ParalleRun");
@@ -1773,7 +1775,7 @@ StdCmdSmartContorl::StdCmdSmartContorl()
 {
 	// setting the
 	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("&SmartContorl");
+	sMenuText = QT_TR_NOOP("SmartContorl");
 	sToolTipText = QT_TR_NOOP("SmartContorl");
 	sWhatsThis = "Std_Paralle_Run";
 	sStatusTip = QT_TR_NOOP("SmartContorl");
@@ -1802,7 +1804,7 @@ StdCmdOpenLog::StdCmdOpenLog()
 {
 	// setting the
 	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("&OpenLog");
+	sMenuText = QT_TR_NOOP("Log");
 	sToolTipText = QT_TR_NOOP("OpenLog");
 	sWhatsThis = "Std_Open_Log";
 	sStatusTip = QT_TR_NOOP("OpenLog");

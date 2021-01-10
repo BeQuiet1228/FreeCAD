@@ -39,7 +39,7 @@ void PICRibbonButtonGroup::addButton(QToolButton *button)
   button->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
   button->setMinimumSize(24, 24);
   button->setAutoRaise(true);
-  button->setIconSize(QSize(16,16));
+  button->setIconSize(QSize(20,20));
   button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   int btnCount = buttonCount();
 
@@ -67,5 +67,16 @@ QList<QAction *> PICRibbonButtonGroup::get_action_all()
 		list.append(list_b.at(i)->actions());
 	}
 	return list;
+}
+
+void PICRibbonButtonGroup::paintEvent(QPaintEvent *event)
+{
+	QWidget::paintEvent(event);
+	QStyleOption opt;
+
+	opt.init(this);
+	QPainter p(this);
+
+	style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }
 

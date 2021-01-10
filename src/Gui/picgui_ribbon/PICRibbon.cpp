@@ -6,6 +6,7 @@
 #include <QStyleOption>
 #include <QPainter>
 #include "picgui_ribbon/moc_PICRibbon.cpp"
+#include <iostream>
 Ribbon::Ribbon(QWidget *parent)
   : QTabWidget(parent)
 {
@@ -178,12 +179,7 @@ void Ribbon::addAction(const QString &tabName, const QString &groupName, QAction
 
 void Ribbon::clearAllAction()
 {
-	for (int i = 0; i < count(); i++)
-	{
-		QWidget *tab = QTabWidget::widget(i);
-		QTabWidget::removeTab(i);
-		delete tab;
-	}
+	this->clear();
 }
 
 void Ribbon::clearTab(const QString &tabName)

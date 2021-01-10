@@ -7,7 +7,7 @@
 TitleBar::TitleBar(QWidget* parent /*= 0*/)
 	:QWidget(parent)
 {
-
+	setObjectName(QString::fromLocal8Bit("titleBar"));
 }
 
 void TitleBar::mouseMoveEvent(QMouseEvent *event)
@@ -37,7 +37,7 @@ void TitleBar::mouseReleaseEvent(QMouseEvent *event)
 }
 
 MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
-:QWidget(parent), ui(new Ui::Window())
+:QWidget(parent), ui(new Ui::WindowDef())
 {
 	ui->setupUi(this);
 	this->setWindowFlags(Qt::FramelessWindowHint);
@@ -46,7 +46,7 @@ MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 	connect(ui->btClose, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));
 	connect(ui->btMaxShow, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));
 
-	boundaryWidth = 5;
+	boundaryWidth = 2;
 	/*
 		设置鼠标移动事件追踪。
 		如果不设置此选项，那么仅当鼠标按下时才会触发moveEvent
@@ -132,6 +132,15 @@ void MainWindowDef::changeCursor(const QPoint& pos)
 {
 	//防止已经在拖拽状态的时候改变光标的状态
 	if (leftButtonIsPress)
+		return;
+	//如果已经最大化 则不允许拖拽
+	if (isMax)
+	{
+		setCursor(Qt::ArrowCursor);
+		cursorState = NONE;
+		return;
+	}
+	if (this->width() < 100 || this->height() < 100)
 		return;
 	auto rpos = this->pos() - pos;
 	bool bright , bbottom ;

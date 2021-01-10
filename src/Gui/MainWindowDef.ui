@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Window</class>
- <widget class="QWidget" name="Window">
+ <class>WindowDef</class>
+ <widget class="QWidget" name="WindowDef">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>947</width>
-    <height>717</height>
+    <height>821</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -121,12 +121,20 @@
         <property name="text">
          <string>最小化</string>
         </property>
+        <property name="icon">
+         <iconset resource="Icons/resource.qrc">
+          <normaloff>:/icons/window_mini.svg</normaloff>:/icons/window_mini.svg</iconset>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QToolButton" name="btMaxShow">
         <property name="text">
          <string>最大化</string>
+        </property>
+        <property name="icon">
+         <iconset resource="Icons/resource.qrc">
+          <normaloff>:/icons/window_max.svg</normaloff>:/icons/window_max.svg</iconset>
         </property>
        </widget>
       </item>
@@ -135,6 +143,10 @@
         <property name="text">
          <string>关闭</string>
         </property>
+        <property name="icon">
+         <iconset resource="Icons/resource.qrc">
+          <normaloff>:/icons/window_close.svg</normaloff>:/icons/window_close.svg</iconset>
+        </property>
        </widget>
       </item>
      </layout>
@@ -142,6 +154,12 @@
    </item>
    <item>
     <widget class="QFrame" name="widgetTab">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -179,6 +197,9 @@
       <property name="spacing">
        <number>0</number>
       </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
       <property name="topMargin">
        <number>0</number>
       </property>
@@ -203,6 +224,7 @@
  </customwidgets>
  <resources>
   <include location="Icons/resource.qrc"/>
+  <include location="C:/Users/Administrator/.designer/backup/Icons/resource.qrc"/>
  </resources>
  <connections/>
 </ui>

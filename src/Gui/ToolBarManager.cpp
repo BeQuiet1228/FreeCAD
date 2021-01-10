@@ -217,13 +217,25 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 				continue;
 			auto action = cmdManager.creatAction(cmd);
 			auto qAction = action->getQAction();
+			QString groupName = QString::fromLocal8Bit((*group)->command().c_str());
 			QString tabName = QString::fromLocal8Bit("其他");
 			if ((*group)->command() == "File")
 			{
 				tabName = QString::fromLocal8Bit("开始");
-				mainwindow->mainWindowDef->addTitleShortcutAction(qAction);
+				groupName = QString::fromLocal8Bit("文件");
+			}else if ((*group)->command() == "edit"){
+				tabName = QString::fromLocal8Bit("开始");
+				groupName = QString::fromLocal8Bit("编辑");
+			}else if ((*group)->command() == "run"){
+				tabName = QString::fromLocal8Bit("开始");
+				groupName = QString::fromLocal8Bit("运行");
 			}
-			else if ((*group)->command() == "二维"
+			else if ((*group)->command() == "工程设置"){
+				tabName = QString::fromLocal8Bit("开始");
+			}else if ((*group)->command() == "titleBar"){
+				mainwindow->mainWindowDef->addTitleShortcutAction(qAction);
+				continue;
+			}else if ((*group)->command() == "二维"
 				|| ((*group)->command() == "常用体")
 				|| ((*group)->command() == "特殊体") || ((*group)->command() == "复杂体")){
 				tabName = QString::fromLocal8Bit("建模");
@@ -234,14 +246,14 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 			}
 			if (tabWidget->hasAction(qAction))
 				continue;
-			tabWidget->addAction(
-				tabName, QString::fromLocal8Bit((*group)->command().c_str()), qAction);	
+			tabWidget->addAction(tabName,groupName, qAction);	
 		}
 	}
 	tabWidget->setTabOlder(QString::fromLocal8Bit("开始"),0);
 	tabWidget->setTabOlder(QString::fromLocal8Bit("建模"),1);
 	tabWidget->setTabOlder(QString::fromLocal8Bit("物理设置"),2);
 	tabWidget->setTabOlder(QString::fromLocal8Bit("其他"),3);
+	tabWidget->setCurrentWidget(tabWidget->widget(0));
 #else
 	saveState();
 	this->toolbarNames.clear();

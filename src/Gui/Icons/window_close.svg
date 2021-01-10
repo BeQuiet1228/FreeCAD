@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>打开log文件 copy 4</title>
+    <defs>
+        <linearGradient x1="7.00896249%" y1="7.43150212%" x2="94.7971922%" y2="92.8541995%" id="linearGradient-1">
+            <stop stop-color="#DBDBDB" offset="0%"></stop>
+            <stop stop-color="#C4C4C4" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="图标输出" transform="translate(-433.000000, -122.000000)">
+            <g id="打开log文件-copy-4" transform="translate(433.000000, 122.000000)">
+                <g id="Group"></g>
+                <path d="M11.5355339,3.05025253 L12.9497475,4.46446609 L9.41425253,8.00025253 L12.9497475,11.5355339 L11.5355339,12.9497475 L8.00025253,9.41425253 L4.46446609,12.9497475 L3.05025253,11.5355339 L6.58625253,8.00025253 L3.05025253,4.46446609 L4.46446609,3.05025253 L8.00025253,6.58625253 L11.5355339,3.05025253 Z" id="Combined-Shape" stroke="#191919" stroke-width="0.5" fill="url(#linearGradient-1)"></path>
+            </g>
+        </g>
+    </g>
+</svg>

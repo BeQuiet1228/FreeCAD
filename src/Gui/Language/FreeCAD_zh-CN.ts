@@ -5842,6 +5842,30 @@ Be aware the point where you click matters.</source>
       <translation>打开(&amp;O)...</translation>
     </message>
 	<message>
+      <source>find</source>
+      <translation>查找(&amp;O)...</translation>
+    </message>
+	<message>
+      <source>RunM3d</source>
+      <translation>运行</translation>
+    </message>
+	<message>
+      <source>ConnectWay</source>
+      <translation>连接方式</translation>
+    </message>
+	<message>
+      <source>ParalleRun</source>
+      <translation>并行运行</translation>
+    </message>
+	<message>
+      <source>SmartContorl</source>
+      <translation>优化算法</translation>
+    </message>
+	<message>
+      <source>StopM3d</source>
+      <translation>停止</translation>
+    </message>
+	<message>
       <source>&amp;Find...</source>
       <translation>查找(&amp;O)...</translation>
     </message>
