@@ -330,7 +330,7 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
 
 	mainWindowDef = new MainWindowDef();
 	mainWindowDef->addCenterWidget(this);
-	//this->menuBar()->setVisible(false);
+	this->menuBar()->setVisible(false);
     // Create the layout containing the workspace and a tab bar
     d->mdiArea = new QMdiArea();
 #if QT_VERSION >= 0x040500
