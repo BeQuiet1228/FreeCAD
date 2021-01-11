@@ -114,8 +114,12 @@ void MainWindowDef::toolButtonClicked(bool b)
 {
 	if (sender() == ui->btMini){
 		this->showMinimized();
-	}
-	else if (sender() == ui->btClose){
+	}else if (sender() == ui->btClose){
+		/*
+			这里不能直接关闭本窗口，关闭本窗口会释放掉其子窗口。
+			而再释放mainwndow之前应该触发其关闭事件，里面有一些很重要的调用。
+			否则会有异常抛出。
+		*/
 		auto mw = Gui::MainWindow::getInstance();
 		//mw->setParent(0);
 		mw->close();

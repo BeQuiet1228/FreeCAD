@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="43px" height="58px" viewBox="0 0 43 58" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <title>剪切</title>
     <defs>
         <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
@@ -14,7 +14,7 @@
             <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.198645105 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
         </filter>
     </defs>
-    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="图标输出" transform="translate(-431.000000, -78.000000)">
             <g id="剪切" transform="translate(431.000000, 78.000000)">
                 <g id="撤销" fill="#000000" fill-rule="nonzero" opacity="0">
@@ -29,7 +29,6 @@
                 <circle id="Oval-Copy-2" stroke="#3F6FFF" stroke-width="0.5" fill="#1A1A1A" cx="3.5" cy="8.5" r="1.5"></circle>
                 <circle id="Oval-Copy-2备份" stroke="#3F6FFF" stroke-width="0.5" fill="#1A1A1A" cx="7.5" cy="13.5" r="1.5"></circle>
                 <circle id="椭圆形" fill="#1A1A1A" cx="9" cy="7.5" r="1"></circle>
-                <path d="" id="路径-16" stroke="#979797"></path>
             </g>
         </g>
     </g>
