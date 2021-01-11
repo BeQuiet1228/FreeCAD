@@ -1988,11 +1988,13 @@ void Application::runApplication(void)
     mdi->setProperty("showImage", hGrp->GetBool("TiledBackground", false));
 
     std::string style = hGrp->GetASCII("StyleSheet");
+	style = (App::Application::getResourceDir() + "Gui/Stylesheets/New_UI.qss").c_str();
+	hGrp->SetASCII("StyleSheet", style.c_str());
     //ÐÞ¸ÄÄ¬ÈÏStyleSheetÎªLight-blue @pingyue
-    if (style.empty()){
+  /*  if (style.empty()){
         style = (App::Application::getResourceDir() + "Gui/Stylesheets/Light-blue.qss").c_str();
         hGrp->SetASCII("StyleSheet", style.c_str());
-    }
+    }*/
     if (!style.empty()) {
         QFile f(QLatin1String(style.c_str()));
         if (f.open(QFile::ReadOnly)) {

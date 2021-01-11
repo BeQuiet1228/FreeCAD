@@ -1005,7 +1005,7 @@ void StdCmdPaste::activated(int iMsg)
 		if (getDocument()->classID == 2)
 		{
 			Base::InterpreterSingleton python;
-			python.runString("FreeCADGui.runCommand('CopyCommand')");
+			python.runString("FreeCADGui.runCommand('PasteCommand')");
 			return;
 		}
         QClipboard* cb = QApplication::clipboard();
@@ -1019,6 +1019,8 @@ void StdCmdPaste::activated(int iMsg)
 
 bool StdCmdPaste::isActive(void)
 {
+	if (getDocument() && getDocument()->classID == 2)
+		return true;
     if (getGuiApplication()->sendHasMsgToActiveView("Paste"))
         return true;
     QClipboard* cb = QApplication::clipboard();

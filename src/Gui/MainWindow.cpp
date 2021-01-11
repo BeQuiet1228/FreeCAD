@@ -1140,7 +1140,9 @@ void MainWindow::closeEvent (QCloseEvent * e)
 
         /*emit*/ mainWindowClosed();
         qApp->quit(); // stop the event loop
+		mainWindowDef->close();
     }
+	
 }
 
 void MainWindow::showEvent(QShowEvent  * /*e*/)

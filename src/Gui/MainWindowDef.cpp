@@ -4,6 +4,7 @@
 #include <QToolBar>
 #include <QAction>
 #include <QApplication>
+#include "MainWindow.h"
 TitleBar::TitleBar(QWidget* parent /*= 0*/)
 	:QWidget(parent)
 {
@@ -115,7 +116,9 @@ void MainWindowDef::toolButtonClicked(bool b)
 		this->showMinimized();
 	}
 	else if (sender() == ui->btClose){
-		this->close();
+		auto mw = Gui::MainWindow::getInstance();
+		//mw->setParent(0);
+		mw->close();
 	}else if (sender() == ui->btMaxShow)
 	{
 		if (!isMax)
