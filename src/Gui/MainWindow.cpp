@@ -1494,7 +1494,8 @@ QMimeData * MainWindow::createMimeDataFromSelection () const
         //        sel = all;
         //    }
         //}
-		sel = all;
+		// 注释下面这句话之后，复制粘贴不会再多复制param @lzg
+		//sel = all;
     }
 
     unsigned int memsize=1000; // ~ for the meta-information
