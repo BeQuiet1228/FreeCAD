@@ -170,6 +170,7 @@
         <file>window_close.svg</file>
         <file>window_max.svg</file>
         <file>window_mini.svg</file>
+        <file>document-close.svg</file>
     </qresource>
     <qresource prefix="/icons/FreeCAD-default">
         <file>index.theme</file>

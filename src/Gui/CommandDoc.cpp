@@ -1662,12 +1662,12 @@ bool StdCmdRunM3d::isActive(void)
 		{
 			auto mw = Gui::MainWindow::getInstance();
 			mw->showContorlUI();
-			sMenuText = QT_TR_NOOP("RunM3d");
+			sMenuText = QT_TR_NOOP("StopM3d");
 			sPixmap = "runing";
 		}else{
 			auto mw = Gui::MainWindow::getInstance();
 			mw->hideContorlUI();
-			sMenuText = QT_TR_NOOP("StopM3d");
+			sMenuText = QT_TR_NOOP("RunM3d");
 			sPixmap = "run";
 		}
 		this->updataActionIcon();
@@ -1687,6 +1687,10 @@ Gui::Action * StdCmdRunM3d::createAction(void)
 void StdCmdRunM3d::updataActionIcon()
 {
 	action->setIcon(Gui::BitmapFactory().iconFromTheme(sPixmap));
+
+	QString exe = qApp->applicationName();
+	action->setText(QCoreApplication::translate(
+		this->className(), sMenuText).arg(exe));
 }
 
 class StdCmdConnectWay :public StdCmdRunM3d{
@@ -1706,12 +1710,11 @@ StdCmdConnectWay::StdCmdConnectWay()
 	:StdCmdRunM3d("Std_Connect_Way")
 {
 	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("ConnectWay");
+	sMenuText = QT_TR_NOOP("local");
 	sToolTipText = QT_TR_NOOP("ConnectWay");
 	sWhatsThis = "Std_Connect_Way";
 	sStatusTip = QT_TR_NOOP("ConnectWay");
 	sPixmap = "local";
-
 }
 
 void StdCmdConnectWay::activated(int iMsg)
@@ -1723,9 +1726,11 @@ void StdCmdConnectWay::activated(int iMsg)
 	if (connectWay == 1)
 	{
 		sPixmap = "local";
+		sMenuText = QT_TR_NOOP("local");
 	}
 	else if (connectWay){
 		sPixmap = "network";
+		sMenuText = QT_TR_NOOP("network");
 	}
 	updataActionIcon();
 }

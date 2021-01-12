@@ -169,6 +169,7 @@ StdCmdCloseAllWindows::StdCmdCloseAllWindows()
     sToolTipText  = QT_TR_NOOP("Close all windows");
     sWhatsThis    = "Std_CloseAllWindows";
     sStatusTip    = QT_TR_NOOP("Close all windows");
+	sPixmap = "document-close";
     eType         = 0;
 }
 
