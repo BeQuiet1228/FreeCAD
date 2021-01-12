@@ -94,7 +94,7 @@ void CombiView::showDialog(Gui::TaskView::TaskDialog *dlg)
     oldTabIndex = tabs->currentIndex();
 	// 猜测此处原有代码为 tabs->setCurrentIndex(1); 该代码负责ComboView选项卡的切换
 	// lzg 2020-12-16
-    tabs->setCurrentIndex(3);
+    tabs->setCurrentIndex(tabs->count() - 1);
     // set the dialog
     taskPanel->showDialog(dlg);
 }
@@ -122,7 +122,7 @@ void CombiView::showTaskView()
     // switch to the task view
 	// 猜测此处原有代码为 tabs->setCurrentIndex(1); 该代码负责ComboView选项卡的切换
 	// lzg 2020-12-16
-    tabs->setCurrentIndex(3);
+	tabs->setCurrentIndex(tabs->count() - 1);
 }
 
 void CombiView::changeEvent(QEvent *e)

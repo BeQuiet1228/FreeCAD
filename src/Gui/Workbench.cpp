@@ -616,7 +616,7 @@ ToolBarItem* StdWorkbench::setupToolBars() const
     /**file << "Std_New" << "Std_Open" << "Std_Save" << "Std_Print" << "Separator" << "Std_Cut"
           << "Std_Copy" << "Std_Paste" << "Separator" << "Std_Undo" << "Std_Redo" << "Separator"
           << "Std_Refresh" << "Separator" << "Std_WhatsThis";*/
-	*file << "Std_New" << "Std_Open" << "Std_Save";
+	*file << "Std_New" << "Std_Open" << "Std_Save" << "Std_SaveAs" << "Std_CloseAllWindows";
 
 	ToolBarItem* edit = new ToolBarItem(root);
 	edit->setCommand("edit");
@@ -642,13 +642,6 @@ ToolBarItem* StdWorkbench::setupToolBars() const
            << "Std_DlgMacroExecuteDirect";*/
 
     // View
-    ToolBarItem* view = new ToolBarItem( root );
-    view->setCommand("View");
-    /**view << "Std_ViewFitAll" << "Std_ViewFitSelection" << "Std_DrawStyle" << "Separator" << "Std_ViewAxo" << "Separator" << "Std_ViewFront"
-          << "Std_ViewTop" << "Std_ViewRight" << "Separator" << "Std_ViewRear" << "Std_ViewBottom"
-          << "Std_ViewLeft" << "Separator" << "Std_MeasureDistance" ;*/
-	*view << "Std_ViewAxo" << "Separator" << "Std_ViewFront" << "Std_ViewTop" << "Std_ViewRight" << "Separator" << "Std_ViewRear" << "Std_ViewBottom" << "Std_ViewLeft" << "Separator" << "Std_MeasureDistance" ;
-    
     // Structure
     //ToolBarItem* structure = new ToolBarItem( root );
     //structure->setCommand("Structure");

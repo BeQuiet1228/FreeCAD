@@ -47,7 +47,7 @@ MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 	connect(ui->btClose, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));
 	connect(ui->btMaxShow, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));
 
-	boundaryWidth = 2;
+	boundaryWidth = 5;
 	/*
 		设置鼠标移动事件追踪。
 		如果不设置此选项，那么仅当鼠标按下时才会触发moveEvent
@@ -64,6 +64,10 @@ MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 	tabWidgetInterface->setObjectName(QString::fromLocal8Bit("ribbonTabWidget"));
 	ui->widgetTab->layout()->addWidget(tabWidgetInterface);
 	//tabWidgetInterface->show();
+
+	//初始化
+	auto size = QApplication::desktop()->availableGeometry().size();
+	this->resize(size.width()*0.7, size.height()*0.7);
 }
 
 
@@ -103,6 +107,12 @@ void MainWindowDef::resizeEvent(QResizeEvent *event)
 	QWidget::resizeEvent(event);
 	if (isMax)
 		isMax = false;
+}
+
+void MainWindowDef::moveEvent(QMoveEvent *event)
+{
+	QWidget::moveEvent(event);
+	isMax = false;
 }
 
 void MainWindowDef::titleBarMove(QPoint pos)

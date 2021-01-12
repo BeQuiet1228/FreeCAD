@@ -9,6 +9,7 @@
 #include <QResizeEvent>
 #include <TabWidgetInterface.hpp>
 #include "picgui_ribbon/PICRibbon.h"
+#include <QMoveEvent>
 class TitleBar: public QWidget{
 	Q_OBJECT
 public:
@@ -67,6 +68,7 @@ protected:
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseReleaseEvent(QMouseEvent *event) override;
 	void resizeEvent(QResizeEvent *event) override;
+	void moveEvent(QMoveEvent *event);
 public Q_SLOTS:
 	void titleBarMove(QPoint pos);
 	void toolButtonClicked(bool b);

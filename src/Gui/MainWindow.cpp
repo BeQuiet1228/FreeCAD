@@ -1538,7 +1538,8 @@ QMimeData * MainWindow::createMimeDataFromSelection () const
         //        sel = all;
         //    }
         //}
-		sel = all;
+		//取消复制时的强依赖关系 @lzg
+		//sel = all;
     }
 
     unsigned int memsize=1000; // ~ for the meta-information
