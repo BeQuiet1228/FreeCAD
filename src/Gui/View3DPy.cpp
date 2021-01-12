@@ -94,7 +94,8 @@ void View3DInventorPy::init_type()
     add_varargs_method("viewRotateRight",&View3DInventorPy::viewRotateRight,"viewRotateRight()");
     add_varargs_method("zoomIn",&View3DInventorPy::zoomIn,"zoomIn()");
     add_varargs_method("zoomOut",&View3DInventorPy::zoomOut,"zoomOut()");
-    add_varargs_method("viewPosition",&View3DInventorPy::viewPosition,"viewPosition()");
+	add_varargs_method("viewPosition", &View3DInventorPy::viewPosition, "viewPosition()"); 
+	add_varargs_method("setGridSpace", &View3DInventorPy::setGridSpace, "setGridSpace()");
     add_varargs_method("startAnimating",&View3DInventorPy::startAnimating,"startAnimating()");
     add_varargs_method("stopAnimating",&View3DInventorPy::stopAnimating,"stopAnimating()");
     add_varargs_method("setAnimationEnabled",&View3DInventorPy::setAnimationEnabled,"setAnimationEnabled()");
@@ -627,6 +628,27 @@ Py::Object View3DInventorPy::getCameraOrientation(const Py::Tuple& args)
     float q0,q1,q2,q3;
     rot.getValue(q0,q1,q2,q3);
     return Py::Rotation(Base::Rotation(q0,q1,q2,q3));
+}
+
+Py::Object View3DInventorPy::setGridSpace(const Py::Tuple& args)//ZD
+{
+	PyObject* p = 0;
+	double x = 0.01, y = 0.01;
+	if (!PyArg_ParseTuple(args.ptr(), "dd", &x, &y))
+		throw Py::Exception();
+
+	double a = x / y;
+	int m = _view->getViewer()->getSoRenderManager()->getCamera()->viewportMapping.getValue();
+	if (abs(a - 1) <= 0.000001) {
+		_view->getViewer()->getSoRenderManager()->getCamera()->viewportMapping = SoCamera::ADJUST_CAMERA;
+		_view->getViewer()->getSoRenderManager()->getCamera()->aspectRatio = 1.0;
+	}
+	else {
+		_view->getViewer()->getSoRenderManager()->getCamera()->viewportMapping = SoCamera::LEAVE_ALONE;
+		_view->getViewer()->getSoRenderManager()->getCamera()->aspectRatio = a;
+	}
+	_view->getViewer()->viewAll();
+	return Py::None();
 }
 
 Py::Object View3DInventorPy::viewPosition(const Py::Tuple& args)
