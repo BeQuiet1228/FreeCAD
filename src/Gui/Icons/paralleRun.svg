@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>并行运行</title>
+    <title>并行运行@4x</title>
     <defs>
-        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
-            <stop stop-color="#EEEEEE" offset="0%"></stop>
-            <stop stop-color="#D8D8D8" offset="97.4767736%"></stop>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="97.4767736%" id="linearGradient-1">
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#EEEEEE" offset="100%"></stop>
         </linearGradient>
         <rect id="path-2" x="0" y="0" width="10" height="6" rx="1"></rect>
         <filter x="-5.0%" y="-8.3%" width="110.0%" height="116.7%" filterUnits="objectBoundingBox" id="filter-3">
@@ -40,7 +40,7 @@
                     <g id="矩形">
                         <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
                         <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
-                        <rect stroke="#1A1A1A" stroke-width="0.5" stroke-linejoin="square" x="0.25" y="0.25" width="9.5" height="5.5" rx="1"></rect>
+                        <rect stroke="#999999" stroke-width="0.5" stroke-linejoin="square" x="0.25" y="0.25" width="9.5" height="5.5" rx="1"></rect>
                     </g>
                     <g id="箭头" transform="translate(1.000000, 1.000000)">
                         <rect id="矩形" fill="#000000" fill-rule="nonzero" opacity="0" x="0" y="0" width="4" height="3"></rect>
@@ -52,7 +52,7 @@
                     <g id="矩形">
                         <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-4"></use>
                         <use fill="black" fill-opacity="1" filter="url(#filter-5)" xlink:href="#path-4"></use>
-                        <rect stroke="#1A1A1A" stroke-width="0.5" stroke-linejoin="square" x="0.25" y="0.25" width="9.5" height="5.5" rx="1"></rect>
+                        <rect stroke="#999999" stroke-width="0.5" stroke-linejoin="square" x="0.25" y="0.25" width="9.5" height="5.5" rx="1"></rect>
                     </g>
                     <g id="箭头" transform="translate(1.000000, 1.000000)">
                         <rect id="矩形" fill="#000000" fill-rule="nonzero" opacity="0" x="0" y="0" width="4" height="3"></rect>

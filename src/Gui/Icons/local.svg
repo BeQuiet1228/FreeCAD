@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>本地连接</title>
+<svg width="17px" height="17px" viewBox="0 0 17 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>本地连接@4x</title>
     <defs>
         <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="linearGradient-1">
-            <stop stop-color="#EAEAEA" offset="0%"></stop>
-            <stop stop-color="#ADADAD" offset="100%"></stop>
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#EEEEEE" offset="99.5829814%"></stop>
             <stop stop-color="#ABABAB" offset="100%"></stop>
         </linearGradient>
         <path d="M4,3 L8.38995924,3 C8.76789107,3 9.11353635,3.21306377 9.28334072,3.55070106 L10.0122214,5 L10.0122214,5 L13,5 C13.5522847,5 14,5.44771525 14,6 L14,13 C14,13.5522847 13.5522847,14 13,14 L4,14 C3.44771525,14 3,13.5522847 3,13 L3,4 C3,3.44771525 3.44771525,3 4,3 Z" id="path-2"></path>
@@ -31,11 +31,11 @@
                 <g id="Rectangle">
                     <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
                     <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
-                    <use stroke="#1A1A1A" stroke-width="0.5" xlink:href="#path-2"></use>
+                    <use stroke="#999999" stroke-width="0.5" xlink:href="#path-2"></use>
                 </g>
-                <g id="Group-2" transform="translate(7.500000, 7.500000)" stroke="#1A1A1A" stroke-width="0.5">
-                    <circle id="Oval" fill="#FFFFFF" cx="4" cy="4" r="4"></circle>
-                    <g id="连接" transform="translate(1.500000, 1.500000)">
+                <g id="Group-2" transform="translate(7.500000, 7.500000)" stroke-width="0.5">
+                    <circle id="Oval" stroke="#999999" fill="#FFFFFF" cx="4" cy="4" r="4"></circle>
+                    <g id="连接" transform="translate(1.500000, 1.500000)" stroke="#1A1A1A">
                         <rect id="矩形" fill="url(#linearGradient-4)" x="2.05" y="0.25" width="1.3" height="1.3"></rect>
                         <rect id="矩形备份-2" fill="url(#linearGradient-4)" x="0.25" y="2.95" width="1.3" height="1.3"></rect>
                         <rect id="矩形备份-3" fill="url(#linearGradient-4)" x="3.85" y="2.95" width="1.3" height="1.3"></rect>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="17px" height="16px" viewBox="0 0 17 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>打开log文件</title>
+    <title>打开log文件@4x</title>
     <defs>
         <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="linearGradient-1">
             <stop stop-color="#EAEAEA" offset="0%"></stop>
@@ -21,8 +21,8 @@
             </feMerge>
         </filter>
         <linearGradient x1="13.2653061%" y1="0%" x2="86.7346939%" y2="100%" id="linearGradient-4">
-            <stop stop-color="#EEEEEE" offset="0.0409746503%"></stop>
-            <stop stop-color="#C2C2C2" offset="100%"></stop>
+            <stop stop-color="#FFFFFF" offset="0.0409746503%"></stop>
+            <stop stop-color="#EEEEEE" offset="100%"></stop>
         </linearGradient>
         <path d="M6,2.92217384 L6,6.41666667 C6,6.73883277 5.73137085,7 5.4,7 L0.6,7 C0.26862915,7 0,6.73883277 0,6.41666667 L0,0.583333333 C0,0.261167229 0.26862915,0 0.6,0 L3.00685737,0 L3.00685737,0" id="path-5"></path>
         <filter x="-12.5%" y="-10.7%" width="125.0%" height="121.4%" filterUnits="objectBoundingBox" id="filter-6">
@@ -50,8 +50,8 @@
             <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.4 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
         </filter>
         <linearGradient x1="0%" y1="39.3491124%" x2="100%" y2="60.6508876%" id="linearGradient-10">
-            <stop stop-color="#EAEAEA" offset="0%"></stop>
-            <stop stop-color="#ADADAD" offset="100%"></stop>
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#EEEEEE" offset="100%"></stop>
             <stop stop-color="#ABABAB" offset="100%"></stop>
         </linearGradient>
         <path d="M4.72075922,8 L13.6125741,8 C14.1648589,8 14.6125741,8.44771525 14.6125741,9 C14.6125741,9.1074821 14.5952462,9.2142613 14.5612574,9.31622777 L13.2279241,13.3162278 C13.09181,13.7245699 12.7096712,14 12.2792408,14 L3.38742589,14 C2.83514114,14 2.38742589,13.5522847 2.38742589,13 C2.38742589,12.8925179 2.40475377,12.7857387 2.43874259,12.6837722 L3.77207592,8.68377223 C3.90818997,8.27543009 4.29032881,8 4.72075922,8 Z" id="path-11"></path>
@@ -87,13 +87,13 @@
                 <g id="Rectangle">
                     <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
                     <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
-                    <use stroke="#1A1A1A" stroke-width="0.5" xlink:href="#path-2"></use>
+                    <use stroke="#999999" stroke-width="0.5" xlink:href="#path-2"></use>
                 </g>
                 <g id="Group-Copy" transform="translate(5.000000, 2.000000)">
                     <g id="Path">
                         <use fill="url(#linearGradient-4)" fill-rule="evenodd" xlink:href="#path-5"></use>
                         <use fill="black" fill-opacity="1" filter="url(#filter-6)" xlink:href="#path-5"></use>
-                        <use stroke="#1A1A1A" stroke-width="0.5" xlink:href="#path-5"></use>
+                        <use stroke="#999999" stroke-width="0.5" xlink:href="#path-5"></use>
                     </g>
                     <g id="Rectangle" stroke-linejoin="round">
                         <use fill="black" fill-opacity="1" filter="url(#filter-9)" xlink:href="#path-8"></use>
@@ -104,7 +104,7 @@
                     <use fill="black" fill-opacity="1" filter="url(#filter-12)" xlink:href="#path-11"></use>
                     <use fill="url(#linearGradient-10)" fill-rule="evenodd" xlink:href="#path-11"></use>
                     <use fill="black" fill-opacity="1" filter="url(#filter-13)" xlink:href="#path-11"></use>
-                    <use stroke="#1A1A1A" stroke-width="0.5" xlink:href="#path-11"></use>
+                    <use stroke="#999999" stroke-width="0.5" xlink:href="#path-11"></use>
                 </g>
             </g>
         </g>
