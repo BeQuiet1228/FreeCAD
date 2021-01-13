@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>991</width>
-    <height>787</height>
+    <width>1045</width>
+    <height>794</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -791,6 +791,12 @@ end</string>
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAsNeeded</enum>
+     </property>
+     <property name="flow">
+      <enum>QListView::LeftToRight</enum>
      </property>
     </widget>
    </item>

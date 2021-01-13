@@ -235,7 +235,7 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 			}else if ((*group)->command() == "titleBar"){
 				mainwindow->mainWindowDef->addTitleShortcutAction(qAction);
 				continue;
-			}else if ((*group)->command() == "二维"
+			}else if ((*group)->command() == "点线面"
 				|| ((*group)->command() == "常用体")
 				|| ((*group)->command() == "特殊体") || ((*group)->command() == "复杂体")
 				|| ((*group)->command() == "约束工具") || ((*group)->command() == "工具")
@@ -243,7 +243,8 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 				tabName = QString::fromLocal8Bit("建模");
 			}
 			else if ((*group)->command() == "边界设置" || (*group)->command() == "发射设置"
-				|| (*group)->command() == "观测设置" || (*group)->command() == "其他设置"){
+				|| (*group)->command() == "观测设置" || (*group)->command() == "其他设置"
+				|| (*group)->command() == "定时器设置"){
 				tabName = QString::fromLocal8Bit("物理设置");
 			}
 			if (tabWidget->hasAction(qAction))
