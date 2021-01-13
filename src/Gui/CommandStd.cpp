@@ -193,6 +193,7 @@ StdCmdAbout::StdCmdAbout()
     sToolTipText  = QT_TR_NOOP("About CHIPIC");
     sWhatsThis    = "Std_About";
     sStatusTip    = QT_TR_NOOP("About CHIPIC");
+	sPixmap = "document-user-book";
     eType         = 0;
 }
 
@@ -209,7 +210,7 @@ Action * StdCmdAbout::createAction(void)
     pcAction->setStatusTip(QCoreApplication::translate(
         this->className(), sStatusTip).arg(exe));
     pcAction->setWhatsThis(QLatin1String(sWhatsThis));
-    pcAction->setIcon(QApplication::windowIcon());
+	pcAction->setIcon(Gui::BitmapFactory().iconFromTheme(sPixmap));
     pcAction->setShortcut(QString::fromLatin1(sAccel));
 #if QT_VERSION > 0x050000
     // Needs to have AboutRole set to avoid duplicates if adding the about action more than once on macOS
@@ -286,6 +287,7 @@ StdCmdExample::StdCmdExample()
 	sToolTipText = QT_TR_NOOP("Example");
 	sWhatsThis = "Std_Example";
 	sStatusTip = QT_TR_NOOP("Example");
+	sPixmap = "document-user-book";
 	eType = 0;
 }
 

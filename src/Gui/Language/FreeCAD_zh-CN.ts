@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="zh-CN" sourcelanguage="en">
+<TS version="2.1" language="zh_CN" sourcelanguage="en">
 <context>
     <name>Angle</name>
     <message>
@@ -5232,11 +5232,11 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>&amp;About CHIPIC</source>
-        <translation type="unfinished"></translation>
+        <translation>关于</translation>
     </message>
     <message>
         <source>About CHIPIC</source>
-        <translation type="unfinished"></translation>
+        <translation>关于</translation>
     </message>
 </context>
 <context>
@@ -5389,19 +5389,19 @@ Be aware the point where you click matters.</source>
     <name>StdCmdConnectWay</name>
     <message>
         <source>File</source>
-        <translation type="unfinished">文件</translation>
+        <translation>文件</translation>
     </message>
     <message>
         <source>local</source>
-        <translation type="unfinished"></translation>
+        <translation>本地连接</translation>
     </message>
     <message>
         <source>ConnectWay</source>
-        <translation type="unfinished">连接方式</translation>
+        <translation>连接方式</translation>
     </message>
     <message>
         <source>network</source>
-        <translation type="unfinished"></translation>
+        <translation>网络连接</translation>
     </message>
 </context>
 <context>
@@ -5618,11 +5618,11 @@ Be aware the point where you click matters.</source>
     <name>StdCmdExample</name>
     <message>
         <source>Help</source>
-        <translation type="unfinished">帮助</translation>
+        <translation>帮助</translation>
     </message>
     <message>
         <source>Example</source>
-        <translation type="unfinished"></translation>
+        <translation>示例</translation>
     </message>
     <message>
         <source>Supported formats</source>
@@ -5690,15 +5690,15 @@ Be aware the point where you click matters.</source>
     <name>StdCmdFindm</name>
     <message>
         <source>File</source>
-        <translation type="unfinished">文件</translation>
+        <translation>文件</translation>
     </message>
     <message>
         <source>find</source>
-        <translation type="unfinished">查找(&amp;O)...</translation>
+        <translation>查找</translation>
     </message>
     <message>
         <source>find text</source>
-        <translation type="unfinished"></translation>
+        <translation>查找文本</translation>
     </message>
 </context>
 <context>
@@ -5852,15 +5852,15 @@ Be aware the point where you click matters.</source>
     <name>StdCmdIPConfig</name>
     <message>
         <source>File</source>
-        <translation type="unfinished">文件</translation>
+        <translation>文件</translation>
     </message>
     <message>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Set  Configure </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -6107,29 +6107,67 @@ Be aware the point where you click matters.</source>
     </message>
 </context>
 <context>
+    <name>StdCmdOpenCommandBook</name>
+    <message>
+        <source>Help</source>
+        <translation>帮助</translation>
+    </message>
+    <message>
+        <source>command book</source>
+        <translation>命令手册</translation>
+    </message>
+    <message>
+        <source>open command book</source>
+        <translation>打开命令手册</translation>
+    </message>
+    <message>
+        <source>Std_Open_Command_book</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
     <name>StdCmdOpenLog</name>
     <message>
         <source>File</source>
-        <translation type="unfinished">文件</translation>
+        <translation>文件</translation>
     </message>
     <message>
         <source>Log</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>OpenLog</source>
+        <translation>打开log文件</translation>
+    </message>
+</context>
+<context>
+    <name>StdCmdOpenUserBook</name>
+    <message>
+        <source>Help</source>
+        <translation>帮助</translation>
+    </message>
+    <message>
+        <source>open user book</source>
+        <translation>打开用户手册</translation>
+    </message>
+    <message>
+        <source>Std_Open_User_book</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>user book</source>
+        <translation>用户手册</translation>
     </message>
 </context>
 <context>
     <name>StdCmdParalleRun</name>
     <message>
         <source>File</source>
-        <translation type="unfinished">文件</translation>
+        <translation>文件</translation>
     </message>
     <message>
         <source>ParalleRun</source>
-        <translation type="unfinished">并行运行</translation>
+        <translation>并行运行</translation>
     </message>
 </context>
 <context>
@@ -6361,19 +6399,19 @@ Be aware the point where you click matters.</source>
     <name>StdCmdRunM3d</name>
     <message>
         <source>File</source>
-        <translation type="unfinished">文件</translation>
+        <translation>文件</translation>
     </message>
     <message>
         <source>RunM3d</source>
-        <translation type="unfinished">运行</translation>
+        <translation>运行</translation>
     </message>
     <message>
         <source>run m3d text</source>
-        <translation type="unfinished"></translation>
+        <translation>运行/停止CHIPIC仿真程序</translation>
     </message>
     <message>
         <source>StopM3d</source>
-        <translation type="unfinished">停止</translation>
+        <translation>停止</translation>
     </message>
 </context>
 <context>
@@ -6515,11 +6553,11 @@ Be aware the point where you click matters.</source>
     <name>StdCmdSmartContorl</name>
     <message>
         <source>File</source>
-        <translation type="unfinished">文件</translation>
+        <translation>文件</translation>
     </message>
     <message>
         <source>SmartContorl</source>
-        <translation type="unfinished">优化算法</translation>
+        <translation>优化算法</translation>
     </message>
 </context>
 <context>
@@ -7044,7 +7082,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>Rotate the view by 90° counter-clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>旋转 90 ° 逆时针旋转视图</translation>
     </message>
 </context>
 <context>
@@ -7426,23 +7464,23 @@ Do you want to duplicate them, too?</source>
     <name>WindowDef</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished">窗体</translation>
+        <translation>窗体</translation>
     </message>
     <message>
         <source>PICGUI</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>最小化</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>最大化</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>关闭</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>

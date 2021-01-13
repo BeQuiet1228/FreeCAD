@@ -1831,6 +1831,55 @@ bool StdCmdOpenLog::isActive(void)
 	return false;
 }
 
+DEF_STD_CMD_A(StdCmdOpenUserBook);
+
+StdCmdOpenUserBook::StdCmdOpenUserBook()
+	: Command("Std_Open_User_book")
+{
+	// setting the
+	sGroup = QT_TR_NOOP("Help");
+	sMenuText = QT_TR_NOOP("user book");
+	sToolTipText = QT_TR_NOOP("open user book");
+	sWhatsThis = "Std_Open_User_book";
+	sStatusTip = QT_TR_NOOP("Std_Open_User_book");
+	sPixmap = "document-user-book";
+}
+
+void StdCmdOpenUserBook::activated(int iMsg)
+{
+	Q_UNUSED(iMsg);
+	std::string helpFilePath = "file:///" + App::Application::getHelpDir() + "UserBook.chm";
+	Gui::getMainWindow()->showDocumentation(QString::fromStdString(helpFilePath));
+}
+bool StdCmdOpenUserBook::isActive(void)
+{
+	return true;
+}
+
+DEF_STD_CMD_A(StdCmdOpenCommandBook);
+
+StdCmdOpenCommandBook::StdCmdOpenCommandBook()
+	: Command("Std_Open_Command_book")
+{
+	// setting the
+	sGroup = QT_TR_NOOP("Help");
+	sMenuText = QT_TR_NOOP("command book");
+	sToolTipText = QT_TR_NOOP("open command book");
+	sWhatsThis = "Std_Open_Command_book";
+	sStatusTip = QT_TR_NOOP("Std_Open_Command_book");
+	sPixmap = "document-user-book";
+}
+
+void StdCmdOpenCommandBook::activated(int iMsg)
+{
+	Q_UNUSED(iMsg);
+	std::string helpFilePath = "file:///" + App::Application::getHelpDir() + "CommandBook.chm";
+	Gui::getMainWindow()->showDocumentation(QString::fromStdString(helpFilePath));
+}
+bool StdCmdOpenCommandBook::isActive(void)
+{
+	return true;
+}
 
 namespace Gui {
 
@@ -1851,6 +1900,8 @@ void CreateDocCommands(void)
 	rcCmdMgr.addCommand(new StdCmdSmartContorl());
 	rcCmdMgr.addCommand(new StdCmdOpenLog());
 	rcCmdMgr.addCommand(new StdCmdConnectWay);
+	rcCmdMgr.addCommand(new StdCmdOpenCommandBook);
+	rcCmdMgr.addCommand(new StdCmdOpenUserBook);
 
     rcCmdMgr.addCommand(new StdCmdSave());
     rcCmdMgr.addCommand(new StdCmdSaveAs());

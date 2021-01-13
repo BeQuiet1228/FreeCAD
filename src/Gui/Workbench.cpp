@@ -630,6 +630,12 @@ ToolBarItem* StdWorkbench::setupToolBars() const
 	titleBar->setCommand("titleBar");
 	*titleBar << "Std_Save" << "Std_Cut" << "Std_Copy" << "Std_Paste" << "Std_Findm" << "Std_Undo" << "Std_Redo"
 		 << "Std_Run_M3d" << "Std_Paralle_Run" << "Std_Smart_Contrl" << "Std_Connect_Way" << "Std_Open_Log";
+
+	ToolBarItem* help = new ToolBarItem(root);
+	help->setCommand("about");
+	*help << "Std_Example" <<"Std_Open_User_book" << "Std_Open_Command_book" << "Std_About";
+
+
 /*	ToolBarItem* projectSetting = new ToolBarItem(root);
 	projectSetting->setCommand("projectSetting ");
 	*projectSetting << "ModelingInfo" << "WorkSpaceSettings" << "NewMaterical" << "FiledSetting" << "TimeDomainComputingMenu"

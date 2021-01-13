@@ -219,7 +219,10 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 			auto qAction = action->getQAction();
 			QString groupName = QString::fromLocal8Bit((*group)->command().c_str());
 			QString tabName = QString::fromLocal8Bit("其他");
-			if ((*group)->command() == "File")
+			if ((*group)->command() == "about"){
+				tabName = QString::fromLocal8Bit("开始");
+				groupName = QString::fromLocal8Bit("帮助");
+			}else if ((*group)->command() == "File")
 			{
 				tabName = QString::fromLocal8Bit("开始");
 				groupName = QString::fromLocal8Bit("文件");
