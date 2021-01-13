@@ -120,7 +120,7 @@
 #include <Quarter/eventhandlers/EventFilter.h>
 #include <Quarter/devices/InputDevice.h>
 #include "View3DViewerPy.h"
-
+#include <Inventor/SoEventManager.h>
 #include <Inventor/draggers/SoCenterballDragger.h>
 #include <Inventor/annex/Profiler/SoProfiler.h>
 #include <Inventor/elements/SoOverrideElement.h>
@@ -335,7 +335,7 @@ public:
 View3DInventorViewer::View3DInventorViewer(QWidget* parent, const QtGLWidget* sharewidget)
     : Quarter::SoQTQuarterAdaptor(parent, sharewidget), editViewProvider(0), navigation(0),
       renderType(Native), framebuffer(0), axisCross(0), axisGroup(0), editing(false), redirected(false),
-      allowredir(false), overrideMode("As Is"), _viewerPy(0)
+	  allowredir(false), overrideMode("As Is"), _viewerPy(0)
 {
     init();
 }
@@ -1897,12 +1897,14 @@ SbVec3f View3DInventorViewer::getPointOnScreen(const SbVec2s& pnt) const
 
     // now calculate the real points respecting aspect ratio information
     //
-    if (fRatio > 1.0f) {
-        pX = (pX - 0.5f*dX) * fRatio + 0.5f*dX;
-    }
-    else if (fRatio < 1.0f) {
-        pY = (pY - 0.5f*dY) / fRatio + 0.5f*dY;
-    }
+	if (this->getSoRenderManager()->getCamera()->viewportMapping.getValue() != SoCamera::LEAVE_ALONE) {//ZD
+		if (fRatio > 1.0f) {
+			pX = (pX - 0.5f*dX) * fRatio + 0.5f*dX;
+		}
+		else if (fRatio < 1.0f) {
+			pY = (pY - 0.5f*dY) / fRatio + 0.5f*dY;
+		}
+	}
 
     SoCamera* pCam = this->getSoRenderManager()->getCamera();
 

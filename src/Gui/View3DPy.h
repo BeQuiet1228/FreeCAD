@@ -78,6 +78,7 @@ public:
     Py::Object setCamera(const Py::Tuple&);
     Py::Object setCameraOrientation(const Py::Tuple&);
     Py::Object getCameraOrientation(const Py::Tuple&);
+	Py::Object setGridSpace(const Py::Tuple& args);
     Py::Object getCameraType(const Py::Tuple&);
     Py::Object setCameraType(const Py::Tuple&);
     Py::Object getCameraNode(const Py::Tuple&);
