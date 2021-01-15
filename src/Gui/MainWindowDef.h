@@ -19,11 +19,13 @@ protected:
 	void mouseMoveEvent(QMouseEvent *event);
 	void mousePressEvent(QMouseEvent *event);
 	void mouseReleaseEvent(QMouseEvent *event);
+	void mouseDoubleClickEvent(QMouseEvent *event);
 private:
 	bool mouseIsPress = false;
 	QPoint mouseStartPoint;
 Q_SIGNALS:
 	void toMove(QPoint pos);
+	void doubleClick();
 };
 
 namespace Ui {
@@ -72,6 +74,8 @@ protected:
 public Q_SLOTS:
 	void titleBarMove(QPoint pos);
 	void toolButtonClicked(bool b);
+	void titleBarDoubleClicked();
+
 
 private:
 	//改变光标样式

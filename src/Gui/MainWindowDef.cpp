@@ -37,6 +37,11 @@ void TitleBar::mouseReleaseEvent(QMouseEvent *event)
 	}
 }
 
+void TitleBar::mouseDoubleClickEvent(QMouseEvent *event)
+{
+	Q_EMIT doubleClick();
+}
+
 MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 :QWidget(parent), ui(new Ui::WindowDef())
 {
@@ -46,6 +51,7 @@ MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 	connect(ui->btMini, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));
 	connect(ui->btClose, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));
 	connect(ui->btMaxShow, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));
+	connect(ui->titleBar, SIGNAL(doubleClick()), this, SLOT(titleBarDoubleClicked()));
 
 	boundaryWidth = 5;
 	/*
@@ -66,8 +72,11 @@ MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 	//tabWidgetInterface->show();
 
 	//³õÊ¼»¯
-	auto size = QApplication::desktop()->availableGeometry().size();
-	this->resize(size.width()*0.7, size.height()*0.7);
+	//auto size = QApplication::desktop()->availableGeometry().size();
+	//this->resize(size.width()*0.7, size.height()*0.7);
+	//this->show();
+	//this->hide();
+	this->resize(1000, 500);
 }
 
 
@@ -117,6 +126,11 @@ void MainWindowDef::moveEvent(QMoveEvent *event)
 
 void MainWindowDef::titleBarMove(QPoint pos)
 {
+	if (isMax)
+	{
+		resize(this->width()*0.7, this->height()*0.7);
+	}
+		
 	this->move(this->pos() + pos);
 }
 
@@ -142,6 +156,17 @@ void MainWindowDef::toolButtonClicked(bool b)
 			showOld();
 		}
 		
+	}
+}
+
+void MainWindowDef::titleBarDoubleClicked()
+{
+	if (!isMax)
+	{
+		showMax();
+	}
+	else{
+		showOld();
 	}
 }
 

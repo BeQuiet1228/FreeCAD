@@ -7,6 +7,7 @@ LoadingDialog::LoadingDialog(QWidget *parent /*= 0*/)
 {
 	ui->setupUi(this);
 	QMovie *movie = new QMovie(":/image/loading.gif");
+	movie->setScaledSize(QSize(500, 500));
 	movie->start();
 	ui->label_2->setMovie(movie);
 

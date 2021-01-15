@@ -1880,7 +1880,30 @@ bool StdCmdOpenCommandBook::isActive(void)
 {
 	return true;
 }
+DEF_STD_CMD_A(StdCmdRunSuperTube);
 
+StdCmdRunSuperTube::StdCmdRunSuperTube()
+	: Command("Std_Run_Super_Tube")
+{
+	// setting the
+	sGroup = QT_TR_NOOP("open");
+	sMenuText = QT_TR_NOOP("SuperTube");
+	sToolTipText = QT_TR_NOOP("open SuperTube");
+	sWhatsThis = "Std_Open_Command_book";
+	sStatusTip = QT_TR_NOOP("Std_Run_Super_Tube");
+	sPixmap = "document-user-book";
+}
+
+void StdCmdRunSuperTube::activated(int iMsg)
+{
+	Q_UNUSED(iMsg);
+	std::string helpFilePath = "C:/SuperTube/SuperTube.exe";
+	Gui::getMainWindow()->showDocumentation(QString::fromStdString(helpFilePath));
+}
+bool StdCmdRunSuperTube::isActive(void)
+{
+	return true;
+}
 namespace Gui {
 
 void CreateDocCommands(void)
@@ -1902,6 +1925,7 @@ void CreateDocCommands(void)
 	rcCmdMgr.addCommand(new StdCmdConnectWay);
 	rcCmdMgr.addCommand(new StdCmdOpenCommandBook);
 	rcCmdMgr.addCommand(new StdCmdOpenUserBook);
+	rcCmdMgr.addCommand(new StdCmdRunSuperTube);
 
     rcCmdMgr.addCommand(new StdCmdSave());
     rcCmdMgr.addCommand(new StdCmdSaveAs());
