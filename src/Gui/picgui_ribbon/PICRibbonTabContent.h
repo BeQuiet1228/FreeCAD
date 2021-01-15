@@ -46,6 +46,15 @@ public:
   /// \param[in] button The button
   void removeButton(const QString &groupName, QToolButton *button);
   QList<PICRibbonButtonGroup *> get_group_all();
+
+  //1.15WDT_QL新增函数
+
+  //新增分组
+  void addGroup(PICRibbonButtonGroup *group);
+
+  //清除TabContent下的所有分组
+  void clearGroups();
+
 protected:
 	void paintEvent(QPaintEvent *event);
 private:

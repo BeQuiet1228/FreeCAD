@@ -86,6 +86,10 @@ public:
   //判断是否已有该action
   virtual bool hasAction(const QAction* action);
 
+  //1.15 WDT_QL新增接口
+  //改变一个分组位置,sequence参数为新的位置,最小为0
+  void setGroupSequence(const QString &tabName, const QString &groupName, int sequence);
+
 };
 
 #endif // RIBBONTABWIDGET_H

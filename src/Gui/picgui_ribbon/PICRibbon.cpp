@@ -324,7 +324,58 @@ bool Ribbon::hasAction(const QAction *action)
 	return false;
 }
 
+//1.15 WDT_QL新增接口
+//改变一个分组位置,sequence参数为新的位置,最小为0
+void Ribbon::setGroupSequence(const QString &tabName, const QString &groupName, int sequence)
+{
+	//新序号必须大于等于0
+	if (sequence >= 0)
+	{
+		QString name_t = tabName;
+		PICRibbonTabContent * t = get_tab_by_name(name_t);
+		QList<PICRibbonButtonGroup *> groupList = t->get_group_all();
+		int originalSequence = -1;
+		PICRibbonButtonGroup * originalGroup = nullptr;
+		for (int i = 0; i < groupList.count(); i++)
+		{
+			if (groupName == groupList.at(i)->title())
+			{
+				originalSequence = i;
+				originalGroup = groupList.at(i);
+				groupList.removeAt(i);
+				i--;
+				break;
+			}
+		}
 
+		if (originalSequence >= 0)
+		{
+			QList<PICRibbonButtonGroup *> newGroupList;
+			bool flag = false;
+			for (int i = 0; i < groupList.count(); i++)
+			{
+				if (i == sequence)
+				{
+					if (!flag)
+					{
+						newGroupList.append(originalGroup);
+						i--;
+						flag = true;
+						continue;
+					}
+				}
+				newGroupList.append(groupList.at(i));
+			}
+
+			t->clearGroups();
+			for (int i = 0; i < newGroupList.count(); i++)
+			{
+				t->addGroup(newGroupList.at(i));
+			}
+
+		}
+	}
+}
 
 
 
