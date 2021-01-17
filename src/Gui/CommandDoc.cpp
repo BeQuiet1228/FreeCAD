@@ -1842,7 +1842,7 @@ StdCmdOpenUserBook::StdCmdOpenUserBook()
 	sToolTipText = QT_TR_NOOP("open user book");
 	sWhatsThis = "Std_Open_User_book";
 	sStatusTip = QT_TR_NOOP("Std_Open_User_book");
-	sPixmap = "document-user-book";
+	sPixmap = "help-user-book";
 }
 
 void StdCmdOpenUserBook::activated(int iMsg)
@@ -1867,7 +1867,7 @@ StdCmdOpenCommandBook::StdCmdOpenCommandBook()
 	sToolTipText = QT_TR_NOOP("open command book");
 	sWhatsThis = "Std_Open_Command_book";
 	sStatusTip = QT_TR_NOOP("Std_Open_Command_book");
-	sPixmap = "document-user-book";
+	sPixmap = "help-command-book";
 }
 
 void StdCmdOpenCommandBook::activated(int iMsg)
