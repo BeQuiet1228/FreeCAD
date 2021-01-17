@@ -129,4 +129,21 @@ void PICRibbonTabContent::paintEvent(QPaintEvent *event)
 	style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }
 
+//1.15WDT_QL新增函数
+//新增分组
+void PICRibbonTabContent::addGroup(PICRibbonButtonGroup * group)
+{
+	ui->contentLayout->addWidget(group);
+}
+
+//清除tabContent下所有分组
+void PICRibbonTabContent::clearGroups()
+{
+	for (int i = 0; i<ui->contentLayout->count(); i++)
+	{
+		PICRibbonButtonGroup *group = static_cast<PICRibbonButtonGroup*>(ui->contentLayout->itemAt(i)->widget());
+		ui->contentLayout->removeWidget(group);
+		i--;
+	}
+}
 
