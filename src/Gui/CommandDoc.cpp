@@ -1891,7 +1891,7 @@ StdCmdRunSuperTube::StdCmdRunSuperTube()
 	sToolTipText = QT_TR_NOOP("open SuperTube");
 	sWhatsThis = "Std_Open_Command_book";
 	sStatusTip = QT_TR_NOOP("Std_Run_Super_Tube");
-	sPixmap = "document-user-book";
+	sPixmap = "help-supertube";
 }
 
 void StdCmdRunSuperTube::activated(int iMsg)

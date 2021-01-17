@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>帮助@4x</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#EEEEEE" offset="0%"></stop>
+            <stop stop-color="#D8D8D8" offset="100%"></stop>
+        </linearGradient>
+        <circle id="path-2" cx="8" cy="8" r="6"></circle>
+        <filter x="-4.2%" y="-4.2%" width="108.3%" height="108.3%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="1" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 1 0" type="matrix" in="shadowInnerInner1" result="shadowMatrixInner1"></feColorMatrix>
+            <feOffset dx="-1" dy="-1" in="SourceAlpha" result="shadowOffsetInner2"></feOffset>
+            <feComposite in="shadowOffsetInner2" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner2"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.3 0" type="matrix" in="shadowInnerInner2" result="shadowMatrixInner2"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner2"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="新增图标备份" transform="translate(-388.000000, -78.000000)">
+            <g id="帮助" transform="translate(388.000000, 78.000000)">
+                <g id="椭圆形">
+                    <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
+                    <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                    <circle stroke="#1A1A1A" stroke-width="0.5" stroke-linejoin="square" cx="8" cy="8" r="5.75"></circle>
+                </g>
+                <circle id="Oval" stroke="#1A1A1A" stroke-width="0.5" fill="#FFFFFF" cx="8.249992" cy="12" r="1"></circle>
+                <path d="M8,4 C9.6252545,4 10.9999887,5.17626766 10.9999887,6.71125741 C10.9999887,7.89015571 10.4148034,8.76991879 9.37772644,9.2604895 L9.28299152,9.30157563 L9.2767725,9.5736877 L9.27286535,9.94911736 L9.27237144,10.1614647 L7.27237144,10.1614647 L7.27456952,9.71988875 L7.28629292,9.17849438 L7.29989735,8.89660917 C7.31082802,8.72498831 7.32534091,8.58826956 7.34752423,8.47217057 C7.36709102,8.3697655 7.3925096,8.27766706 7.43713751,8.17756764 C7.5616092,7.89838034 7.76113637,7.66245792 8.11485915,7.58589728 L8.18499152,7.57357563 L8.27287166,7.55039436 C8.77570849,7.39791768 8.96765808,7.18639821 8.99615775,6.8162228 L8.99998869,6.71125741 C8.99998869,6.35604592 8.58386869,6 8,6 C7.46103481,6 7.06501127,6.30337598 7.00727372,6.62943306 L7,6.71125741 L5,6.71125741 C5,5.17626516 6.37473664,4 8,4 Z" id="Path" stroke="#1A1A1A" stroke-width="0.5" fill="#FFFFFF" fill-rule="nonzero"></path>
+            </g>
+        </g>
+    </g>
+</svg>

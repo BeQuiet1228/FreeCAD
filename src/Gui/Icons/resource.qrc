@@ -172,6 +172,12 @@
         <file>window_mini.svg</file>
         <file>document-close.svg</file>
         <file>document-user-book.svg</file>
+        <file>help-about.svg</file>
+        <file>help-command-book.svg</file>
+        <file>help-example.svg</file>
+        <file>help-help.svg</file>
+        <file>help-supertube.svg</file>
+        <file>help-user-book.svg</file>
     </qresource>
     <qresource prefix="/icons/FreeCAD-default">
         <file>index.theme</file>

@@ -193,7 +193,7 @@ StdCmdAbout::StdCmdAbout()
     sToolTipText  = QT_TR_NOOP("About CHIPIC");
     sWhatsThis    = "Std_About";
     sStatusTip    = QT_TR_NOOP("About CHIPIC");
-	sPixmap = "document-user-book";
+	sPixmap = "help-help";
     eType         = 0;
 }
 
@@ -287,7 +287,7 @@ StdCmdExample::StdCmdExample()
 	sToolTipText = QT_TR_NOOP("Example");
 	sWhatsThis = "Std_Example";
 	sStatusTip = QT_TR_NOOP("Example");
-	sPixmap = "document-user-book";
+	sPixmap = "help-example";
 	eType = 0;
 }
 

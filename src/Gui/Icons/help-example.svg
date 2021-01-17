@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="19px" height="19px" viewBox="0 0 19 19" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>示例@4x</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#EEEEEE" offset="0%"></stop>
+            <stop stop-color="#D8D8D8" offset="100%"></stop>
+        </linearGradient>
+        <polygon id="path-2" points="9.42285156 2.8203125 15.4228516 15.8203125 9.48581251 13.8331196 3.42285156 15.8203125"></polygon>
+        <filter x="-4.2%" y="-3.8%" width="108.3%" height="107.7%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="1" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 1 0" type="matrix" in="shadowInnerInner1" result="shadowMatrixInner1"></feColorMatrix>
+            <feOffset dx="0" dy="-1" in="SourceAlpha" result="shadowOffsetInner2"></feOffset>
+            <feComposite in="shadowOffsetInner2" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner2"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.3 0" type="matrix" in="shadowInnerInner2" result="shadowMatrixInner2"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner2"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="新增图标备份" transform="translate(-193.000000, -75.000000)">
+            <g id="示例" transform="translate(193.000000, 75.000000)">
+                <g id="三角形" transform="translate(9.422852, 9.320312) rotate(35.000000) translate(-9.422852, -9.320312) ">
+                    <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
+                    <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                    <path stroke="#1A1A1A" stroke-width="0.5" d="M9.42285156,3.41688838 L3.89033665,15.404004 L9.48663738,13.5697634 L14.9532942,15.3995142 L9.42285156,3.41688838 Z" stroke-linejoin="square"></path>
+                </g>
+                <line x1="12.7662354" y1="4.61846924" x2="9.01324463" y2="9.99310303" id="路径-47" stroke="#1A1A1A" stroke-width="0.5" stroke-linecap="round"></line>
+                <line x1="8.13006592" y1="11.0899658" x2="7.04785156" y2="12.690918" id="路径-48" stroke="#1A1A1A" stroke-width="0.5" stroke-linecap="round"></line>
+            </g>
+        </g>
+    </g>
+</svg>

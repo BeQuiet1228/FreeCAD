@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>supertube@4x</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#EEEEEE" offset="0%"></stop>
+            <stop stop-color="#D8D8D8" offset="100%"></stop>
+        </linearGradient>
+        <circle id="path-2" cx="8" cy="8" r="6"></circle>
+        <filter x="-4.2%" y="-4.2%" width="108.3%" height="108.3%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="1" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 1 0" type="matrix" in="shadowInnerInner1" result="shadowMatrixInner1"></feColorMatrix>
+            <feOffset dx="-1" dy="-1" in="SourceAlpha" result="shadowOffsetInner2"></feOffset>
+            <feComposite in="shadowOffsetInner2" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner2"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.3 0" type="matrix" in="shadowInnerInner2" result="shadowMatrixInner2"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner2"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="新增图标备份" transform="translate(-431.000000, -78.000000)">
+            <g id="supertube" transform="translate(431.000000, 78.000000)">
+                <g id="椭圆形">
+                    <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
+                    <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                    <circle stroke="#1A1A1A" stroke-width="0.5" stroke-linejoin="square" cx="8" cy="8" r="5.75"></circle>
+                </g>
+                <polygon id="路径-74" fill="#1A1A1A" fill-rule="nonzero" points="5.26940918 6.01867676 5.26940918 9.96704102 4.76693726 9.6529541 4.7677002 6.35180664"></polygon>
+                <polygon id="路径-74备份" fill="#1A1A1A" fill-rule="nonzero" points="6.90247192 4.5 6.90247192 11.5 6.4 10.9431597 6.40076294 5.09060133"></polygon>
+                <polygon id="路径-74备份-2" fill="#1A1A1A" fill-rule="nonzero" points="8.00247192 3.5 8.00247192 12 7.5 11.3238368 7.50076294 4.21715876"></polygon>
+                <polygon id="路径-76" fill="#1A1A1A" fill-rule="nonzero" transform="translate(9.149445, 6.786652) rotate(7.000000) translate(-9.149445, -6.786652) " points="10.5221039 5.22237673 10.5255502 5.91989136 8.12868219 8.3509265 7.77333984 7.99917116"></polygon>
+                <line x1="5.01940918" y1="8" x2="6.45056152" y2="8" id="路径-75" stroke="#1A1A1A" stroke-width="0.5"></line>
+                <path d="M10.7252502,6.37445068 C10.8308411,6.42150879 10.96757,6.4877828 11.135437,6.57327271 L11.1552915,10.046031 L10.6554012,10.0565081 L10.6236735,8.586 L10.0600705,10.5027008 C9.92085945,10.5621084 9.76287365,10.6258477 9.58611307,10.6939188 L8.8026735,9.188 L8.79315186,11.3235474 L8.30770874,11.9812622 L8.30524902,8.16832969 C8.41887592,8.06270169 8.5318824,7.95968628 8.64426847,7.85928345 L9.7376735,9.901 L10.7252502,6.37445068 Z" id="路径-78" fill="#1A1A1A" fill-rule="nonzero"></path>
+                <path d="M8.16941701,6.41403198 C8.43944815,6.50367972 8.66321992,6.64600201 8.81046564,6.82082104 L8.00164795,7.31816453 Z" id="形状结合" fill="#1A1A1A" transform="translate(8.501648, 6.914032) rotate(-7.000000) translate(-8.501648, -6.914032) "></path>
+                <path d="M8.14080811,4.20086658 C9.1256307,4.20109045 9.89138794,4.5718689 10.4380798,5.3132019" id="路径-81" stroke="#1A1A1A" stroke-width="0.8"></path>
+                <path d="M8.21523571,5.13124197 C8.78351656,5.14285713 9.26163522,5.35644607 9.6250151,5.76108658 L9.74185843,5.90302775 L9.10347848,6.38518025 C8.90534867,6.12285225 8.65832714,5.97799343 8.339829,5.94056672 L8.19888783,5.93107492 L8.21523571,5.13124197 Z" id="路径-80" fill="#1A1A1A" fill-rule="nonzero"></path>
+            </g>
+        </g>
+    </g>
+</svg>
