@@ -81,6 +81,9 @@ bool NetworkSocket::sendMessage(const std::string& json, const QByteArray& byteA
 */
 bool NetworkSocket::sendJsonMessage(const std::string& json)
 {
+#ifdef  MY_DEBUG
+	std::cerr << "NetworkSocket::sendJsonMessage" << json << std::endl;
+#endif
 	sendMessage(json, "  ");
 	return true;
 }
@@ -146,11 +149,11 @@ void NetworkSocket::addMessageBodyData(const QByteArray& data)
 */
 void NetworkSocket::receiveOneMessageFinished(const SocketMessageBody& msgBody)
 {
-	emit receiveMessageFinished(msgBody);
 #ifdef MY_DEBUG
 	std::cerr << "NetworkServer::receiveMessageFinished,json:" << msgBody.json.data()
 		<< ",dataSizi:" << msgBody.data.size() << std::endl;
 #endif // MY_DEBUG
+	emit receiveMessageFinished(msgBody);
 }
 
 /**

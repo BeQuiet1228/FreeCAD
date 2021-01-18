@@ -685,7 +685,7 @@ void Chipic::timerOut()
 		加上宏判断，避免在生成exe做调试的时候输出过多的调试信息，影响判断
 	*/
 #ifndef _CONTORL_EXE_
-	this->sendMessage(886, 886, 886, this->threadID);
+	//this->sendMessage(886, 886, 886, this->threadID);
 #endif
 }
 

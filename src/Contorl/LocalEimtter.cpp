@@ -32,8 +32,7 @@ void LocalEmitter::sendMessage(const std::string& json)
 			disposeCloseChipicJsonMessage(json);
 		}
 	}
-	else
-	{
+	else{
 		sendWinMessage(json);
 	}
 

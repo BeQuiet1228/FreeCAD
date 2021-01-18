@@ -76,6 +76,8 @@ private:
 	bool disposeM3dFileMessage(NetworkSocket::SocketMessageBody& messageBody);
 	//处理本地图形文件消息
 	bool disposeH5FileMessage(const std::string& json);
+	//处理chipic关闭消息
+	bool diposeChipicClose(const std::string& json);
 	//通过threadId找到对应的socket对象
 	std::shared_ptr<NetworkSocket> findSocketObjectForThreadID(const unsigned long& threadID);
 	//发送chipic启动完成消息

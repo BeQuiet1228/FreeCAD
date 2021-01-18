@@ -497,6 +497,8 @@ bool NetworkServer::disposeM3dFileMessage(NetworkSocket::SocketMessageBody& mess
 		return false;
 	if (cmd != "m3dFile")
 		return false;
+	int index;
+	MessageTransition::getIndex(jsonObjcet, index);
 	
 	//获取文件名
 	std::string fileName;
@@ -528,6 +530,11 @@ bool NetworkServer::disposeM3dFileMessage(NetworkSocket::SocketMessageBody& mess
 
 	//写入文件
 	File file;
+	//如果文件索引为0 则将原来存在的文件删掉、新建一个文件
+	if (index == 0)
+	{
+		
+	}
 	if (!file.openForAppend(filePath + "/" + fileName))
 	{
 #ifdef MY_LOG
@@ -601,6 +608,42 @@ bool NetworkServer::disposeH5FileMessage(const std::string& json)
 	return true;
 }
 
+
+/**
+* @brief NetworkServer::diposeChipicClose chipic关闭事件
+* @param const std::string & json 消息 
+* @return bool true 处理成功
+*/
+bool NetworkServer::diposeChipicClose(const std::string& json)
+{
+	/*
+		服务器需要在listener被释放的时候
+		将userData中的对应数据也释放掉。
+		否则重新连接时，会将无效的user数据传输到客户端，导致第二次使用时出错。
+	*/
+	std::string cmd;
+	MessageTransition::getCmd(json,cmd);
+	if (cmd != "CloseChipic")
+		return false;
+	std::string temp;
+	MessageTransition::getThreadID(json, temp);
+	unsigned long threadID = std::stoul(temp);
+
+	auto socket = findSocketObjectForThreadID(threadID);
+	if (!socket)
+		return false;
+	socket->sendJsonMessage(json);
+
+
+	for (auto i = userMap.begin(); i != userMap.end(); i++)
+	{
+		if (i->second->findThreadId(threadID))
+		{
+			i->second->removeThreadId(threadID);
+			break;
+		}
+	}
+}
 
 /**
 * @brief NetworkServer::findSocketObjectForThreadID 通过线程id寻找可用的socket对象
@@ -730,6 +773,8 @@ void NetworkServer::hasLocalMessage()
 		return;
 	//处理hdf5文件消息
 	if (disposeH5FileMessage(json))
+		return;
+	if (diposeChipicClose(json))
 		return;
 	if (disposeLocalMessage(json))
 		return;
