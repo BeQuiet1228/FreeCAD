@@ -24,6 +24,8 @@ public:
 	bool readNextData(QByteArray& bytes, const int& maxLength = 2*1024*1024);
 	//写入数据
 	bool writeData(const QByteArray& bytes);
+	//删除一个文件
+	void removeFile(const std::string& path);
 private:
 	//路径
 	QString path;

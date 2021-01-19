@@ -82,6 +82,8 @@ private:
 	std::shared_ptr<NetworkSocket> findSocketObjectForThreadID(const unsigned long& threadID);
 	//发送chipic启动完成消息
 	void sendFile(const std::string& targetPath, const std::string& filePath,std::shared_ptr<NetworkSocket> socket);
+	//关闭一个chipic
+	void closeChipic(const unsigned long& ID);
 
 private:
 	//std::list<ConnectSocket> listConnectSocket;

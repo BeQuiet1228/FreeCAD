@@ -107,3 +107,19 @@ bool File::writeData(const QByteArray& bytes)
 
 }
 
+/**
+* @brief File::removeFile 移除一个文件
+* @param const std::string & path 文件路径
+* @return void
+*/
+void File::removeFile(const std::string& path)
+{
+	this->setPath(path);
+	if (file.isOpen())
+		file.close();
+	file.setFileName(this->path);
+	file.open(QIODevice::ReadWrite);
+	file.remove();
+	file.close();
+}
+

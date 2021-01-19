@@ -533,7 +533,8 @@ bool NetworkServer::disposeM3dFileMessage(NetworkSocket::SocketMessageBody& mess
 	//如果文件索引为0 则将原来存在的文件删掉、新建一个文件
 	if (index == 0)
 	{
-		
+		File f;
+		f.removeFile(filePath + "/" + fileName);
 	}
 	if (!file.openForAppend(filePath + "/" + fileName))
 	{
@@ -601,6 +602,13 @@ bool NetworkServer::disposeH5FileMessage(const std::string& json)
 
 	//发送文件
 	this->sendFile(clientFilePath, serviceFilePath, socket);
+
+	//如果为计算完成消息，则关闭chipic
+	if (finished)
+	{
+		closeChipic(winMessage.threadId);
+		return true;
+	}
 
 	//发送看图消息
 	socket->sendJsonMessage(json);
@@ -710,6 +718,22 @@ void NetworkServer::sendFile(const std::string& targetPath, const std::string& f
 		socket->sendMessage(jsonObject.ToString(), bytes);
 		blockIndex++;
 	}
+}
+
+
+/**
+* @brief NetworkServer::closeChipic 关闭一个chipic
+* @param const unsigned long & ID 
+* @return void
+*/
+void NetworkServer::closeChipic(const unsigned long& ID)
+{
+
+	//创建一个关闭消息
+	auto json = MessageTransition::creatCloseChipicJsonMessage(ID);
+	//关闭正在运行的
+	auto sender = MessageSender::GetInstance();
+	sender->sendJsonMessage(json);
 }
 
 /**
