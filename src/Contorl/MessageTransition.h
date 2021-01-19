@@ -41,6 +41,12 @@ public:
 	static bool getThreadID(const neb::CJsonObject& json, std::string& threadId){
 		return json.Get("threadID", threadId);
 	};
+	static bool getThreadID(const neb::CJsonObject& json, unsigned long& id){
+		std::string temp;
+		bool ok = getThreadID(json, temp);
+		id = std::stoul(temp);
+		return ok;
+	};
 	//向json中添加一个threadid
 	static bool addThreadID(neb::CJsonObject& json, const std::string& threadId){
 		return json.Add("threadID", threadId);

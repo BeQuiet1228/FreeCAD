@@ -73,6 +73,10 @@ public:
 	void setDeleteSocket(const bool& d){
 		deleteSocket = d;
 	}
+	//等待发送完成
+	void waitForWrite();
+protected:
+	void timerEvent(QTimerEvent *event);
 private:
 	//
 	void socketWriteIsSuccess(const int& ok);

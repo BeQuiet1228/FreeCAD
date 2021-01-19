@@ -497,9 +497,6 @@ bool NetworkServer::disposeM3dFileMessage(NetworkSocket::SocketMessageBody& mess
 		return false;
 	if (cmd != "m3dFile")
 		return false;
-	int index;
-	MessageTransition::getIndex(jsonObjcet, index);
-	
 	//获取文件名
 	std::string fileName;
 	if (!MessageTransition::getFileName(jsonObjcet, fileName))
@@ -531,6 +528,9 @@ bool NetworkServer::disposeM3dFileMessage(NetworkSocket::SocketMessageBody& mess
 	//写入文件
 	File file;
 	//如果文件索引为0 则将原来存在的文件删掉、新建一个文件
+	int index = 1;
+	auto ttt = jsonObjcet.ToString();
+	MessageTransition::getIndex(jsonObjcet, index);
 	if (index == 0)
 	{
 		File f;
@@ -604,11 +604,11 @@ bool NetworkServer::disposeH5FileMessage(const std::string& json)
 	this->sendFile(clientFilePath, serviceFilePath, socket);
 
 	//如果为计算完成消息，则关闭chipic
-	if (finished)
+/*	if (finished)
 	{
 		closeChipic(winMessage.threadId);
 		return true;
-	}
+	}*/
 
 	//发送看图消息
 	socket->sendJsonMessage(json);
@@ -640,8 +640,9 @@ bool NetworkServer::diposeChipicClose(const std::string& json)
 	auto socket = findSocketObjectForThreadID(threadID);
 	if (!socket)
 		return false;
+	socket->waitForWrite();
 	socket->sendJsonMessage(json);
-
+	
 
 	for (auto i = userMap.begin(); i != userMap.end(); i++)
 	{
@@ -749,6 +750,16 @@ void NetworkServer::serverNewConnection()
 	//设置当networksocket被释放的时候不释放socketzhizhen
 	networkSocket->setDeleteSocket(false);
 	networkSocket->setSocket(socket);
+	
+	/*
+		这里增加一个定时器，定时发送空白包。
+		原因是因为遇到一个解决不了的问题。
+		即在某些情况下，调用socket.write()不会立即将消息发送出去。可能会等上好几分钟再发出去，或者
+		干脆一直不发出去，直到调用第二次write，跟随第二条消息一起发出去。
+		所以这里发送空白包，如果前面有未发送出去的包，将之一起发送出去。
+	*/
+	networkSocket->startTimer(2000);
+
 	socketList.push_back(networkSocket);
 	//链接接受消息槽
 	connect(networkSocket.get(), SIGNAL(receiveMessageFinished(NetworkSocket::SocketMessageBody)), this, SLOT(receiveMessageFinished(NetworkSocket::SocketMessageBody)));
@@ -796,7 +807,7 @@ void NetworkServer::hasLocalMessage()
 	if (startFinishedCmd(json))
 		return;
 	//处理hdf5文件消息
-	if (disposeH5FileMessage(json))
+	if(disposeH5FileMessage(json))
 		return;
 	if (diposeChipicClose(json))
 		return;

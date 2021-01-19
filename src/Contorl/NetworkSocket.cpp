@@ -61,7 +61,12 @@ void NetworkSocket::setSocket(QTcpSocket * tcpSocket)
 bool NetworkSocket::sendMessage(const std::string& json, const QByteArray& byteArray)
 {
 	if (socket == nullptr)
+	{
+#ifdef MY_LOG
+		std::cerr << "NetworkSocket::sendMessage socket is nullptr!" << std::endl;
+#endif
 		return false;
+	}	
 	//发送包头
 	socketWriteIsSuccess(socket->write(BLOCK_HEADE));
 	//发送json消息
@@ -72,6 +77,8 @@ bool NetworkSocket::sendMessage(const std::string& json, const QByteArray& byteA
 	socketWriteIsSuccess(socket->write(byteArray));
 	//发送包尾
 	socketWriteIsSuccess(socket->write(BLOCK_END));
+
+	socket->flush();
 }
 
 /**
@@ -180,6 +187,25 @@ bool NetworkSocket::socketConnect(const QString& ip, const QString& port)
 	return socktetIsConnect;
 }
 
+
+/**
+* @brief NetworkSocket::waitForWrite 等待设备发送完成
+* @return void
+*/
+void NetworkSocket::waitForWrite()
+{
+	socket->waitForBytesWritten(30000);
+}
+
+/**
+* @brief NetworkSocket::timerEvent 为了解决服务端这边用write不会立即发送消息，使用定时发送的空包将前一条消息顶出去。
+* @param QTimerEvent * event
+* @return void
+*/
+void NetworkSocket::timerEvent(QTimerEvent *event)
+{
+	sendJsonMessage("  ");
+}
 
 /**
 * @brief NetworkSocket::socketWriteIsSuccess 判断ok的值 然后打印写入结果

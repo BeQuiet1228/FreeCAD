@@ -408,10 +408,11 @@ void ChipicManager::showWorkFinishedBox()
 	//判断是否显示提示框
 	if (runType == AUTO)
 		return;
-	QMessageBox box;
-	box.setWindowTitle(MessageTransition::gbkStdstringToQstring("提示框"));
-	box.setText(MessageTransition::gbkStdstringToQstring("计算程序已完成计算，自动退出！"));
-	box.exec();
+	QMessageBox *box = new QMessageBox();
+	box->setWindowTitle(MessageTransition::gbkStdstringToQstring("提示框"));
+	box->setText(MessageTransition::gbkStdstringToQstring("计算程序已完成计算，自动退出！"));
+	box->->setAttribute(Qt::WA_DeleteOnClose);
+	box->show();
 }
 
 /**

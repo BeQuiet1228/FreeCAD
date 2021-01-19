@@ -369,9 +369,13 @@ void NetworkClient::sendM3dFile(const std::string& path)
 	File file;
 	file.openForReadonly(path);
 	QByteArray bytes;
+	int index = 0;
+	MessageTransition::addIndex(jsonObject, index);
 	while (file.readNextData(bytes))
 	{
+		MessageTransition::setIndex(jsonObject, index);
 		socket->sendMessage(jsonObject.ToString(), bytes);
+		index++;
 	}
 }
 
