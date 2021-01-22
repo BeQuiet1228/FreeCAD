@@ -637,7 +637,8 @@ Py::Object View3DInventorPy::setGridSpace(const Py::Tuple& args)//ZD
 	if (!PyArg_ParseTuple(args.ptr(), "dd", &x, &y))
 		throw Py::Exception();
 
-	double a = x / y;
+	_view->getViewer()->setGridSpace(x, y);
+	/*double a = x / y;
 	int m = _view->getViewer()->getSoRenderManager()->getCamera()->viewportMapping.getValue();
 	if (abs(a - 1) <= 0.000001) {
 		_view->getViewer()->getSoRenderManager()->getCamera()->viewportMapping = SoCamera::ADJUST_CAMERA;
@@ -647,7 +648,7 @@ Py::Object View3DInventorPy::setGridSpace(const Py::Tuple& args)//ZD
 		_view->getViewer()->getSoRenderManager()->getCamera()->viewportMapping = SoCamera::LEAVE_ALONE;
 		_view->getViewer()->getSoRenderManager()->getCamera()->aspectRatio = a;
 	}
-	_view->getViewer()->viewAll();
+	_view->getViewer()->viewAll();*/
 	return Py::None();
 }
 
