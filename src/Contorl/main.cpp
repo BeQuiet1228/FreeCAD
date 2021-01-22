@@ -10,6 +10,9 @@
 #include "MessageSender.h"
 #include "NetworkClientLoginDailog.h"
 #include "ServiceUI.h"
+#include <QTimer>
+#include <string>
+#include <sstream>
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
@@ -18,11 +21,14 @@ int main(int argc, char *argv[])
 	ServiceUI qw;
 	qw.show();
 
-
 	auto sender = MessageSender::GetInstance();
 	LocalEmitter *emiter = new LocalEmitter;
 	sender->setEmitter(emiter);
 
+	std::ostringstream sstream;
+	std::cerr.rdbuf(sstream.rdbuf());
+	qw.setStream(&sstream);
+	qw.startTimer(1000);
 #else
 
 	Contorl w;

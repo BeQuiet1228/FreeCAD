@@ -13,6 +13,7 @@
 #include "NetworkServer.h"
 #include <iostream>
 #include "MessageTransition.h"
+#include <QByteArray>
 ServiceUI::ServiceUI(QWidget *parent) :
 QMainWindow(parent),
 ui(new Ui::MainWindow)
@@ -46,7 +47,7 @@ ServiceUI::~ServiceUI()
 void ServiceUI::on_pushButtonPath_clicked()
 {
 	QString Path = QFileDialog::getExistingDirectory(
-		this, "配置工作路径",
+		this, QString::fromLocal8Bit("配置工作路径"),
 		"/");
 	ui->lineEditPath->setText(Path + "/");
 }
@@ -55,17 +56,17 @@ void ServiceUI::on_pushButtonStart_clicked()
 {
 
 	if (ui->lineEditIP->text().isEmpty()){
-		errorMessageBox("IP地址不能为空！");
+		errorMessageBox(("IP地址不能为空！"));
 		return;
 	}
 	if (ui->lineEditPort->text().isEmpty())
 	{
-		errorMessageBox("端口地址不能为空！");
+		errorMessageBox(("端口地址不能为空！"));
 		return;
 	}
 	if (ui->lineEditPath->text().isEmpty())
 	{
-		errorMessageBox("工作路径不能为空！");
+		errorMessageBox(("工作路径不能为空！"));
 		return;
 	}
 	
@@ -74,7 +75,7 @@ void ServiceUI::on_pushButtonStart_clicked()
 	service->setWorkPath(ui->lineEditPath->text());
 	service->startListene();
 
-	this->inputText(tr("\n<---开始运行服务端--->\n"));
+	this->inputText(QString::fromLocal8Bit("\n<---开始运行服务端--->\n"));
 
 	ui->lineEditCHIPICPath->setEnabled(false);
 	ui->lineEditIP->setEnabled(false);
@@ -98,14 +99,14 @@ void ServiceUI::on_pushButtonStop_clicked()
 	ui->pushButtonStart->setEnabled(true);
 	ui->pushButtonStop->setEnabled(false);
 
-	this->inputText("\n<---服务端已停止运行--->\n");
+	this->inputText(QString::fromLocal8Bit("\n<---服务端已停止运行--->\n"));
 	auto service = NetworkServer::GetInstance();
 	service->killService();
 }
 
 void ServiceUI::on_pushButtonCHIPICPath_clicked()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, tr("配置CHIPIC路径"),
+	QString fileName = QFileDialog::getOpenFileName(this, QString::fromLocal8Bit("配置CHIPIC路径"),
 		"/home",
 		tr("Images (*.exe)"));
 	ui->lineEditCHIPICPath->setText(fileName);
@@ -133,4 +134,14 @@ void ServiceUI::inputText(QString str)
 	cursor.insertText(str);
 	ui->textEdit->setTextCursor(cursor);
 }
+
+void ServiceUI::timerEvent(QTimerEvent *event)
+{
+	inputText(QString::fromLocal8Bit(sstream->str().c_str()));
+	sstream->str("");
+
+	//std::string str = sstream->get();
+	//inputText(QString::fromStdString(str));
+}
+
 #include "moc_ServiceUI.cpp"

@@ -34,6 +34,8 @@ public:
 	void appendContent(const QString& c){
 		content += c;
 	}
+	bool isGbk(const char* str);
+
 
 private:
 	QString content;

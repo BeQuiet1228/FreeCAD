@@ -7,6 +7,8 @@
 #include <QSystemTrayIcon>
 #include <qmenu.h>
 #include <QAction>
+#include <QTimerEvent>
+#include <sstream>
 namespace Ui {
 	class MainWindow;
 }
@@ -32,11 +34,19 @@ public Q_SLOTS:
 
 	void inputText(QString str);
 
+protected:
+	void timerEvent(QTimerEvent *event);
 
 private:
 	Ui::MainWindow *ui;
 	void errorMessageBox(const std::string &error);
 	bool closeB;
+	std::ostringstream *sstream;
+
+public:
+	void setStream(std::ostringstream* ssm){
+		this->sstream = ssm;
+	}
 
 };
 

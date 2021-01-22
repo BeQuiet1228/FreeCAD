@@ -136,7 +136,7 @@ SET(Contorl_src
 #add_library(Contorl SHARED ${Contorl_src})
 
 if(contorl_service)
-	add_definitions(-D_CONTORL_ -DMY_DEBUG -DMY_LOG -DSERVICE)
+	add_definitions(-D_CONTORL_ -DMY_LOG -DSERVICE)
 	add_executable(Contorl ${Contorl_src}) # 生成可执行文件
 	SET(OUTPUT_BINDIR ${CMAKE_CURRENT_BINARY_DIR}/../../bin) #设置可执行文件输出目录
 endif()

@@ -73,7 +73,7 @@ ChipicRunDatas FileMaker::makeFile(std::vector<QString>& variates)
 		auto path = this->newFilePath + "/" + QString::number(count) + "/";
 		if (!dir.exists(path))
 			dir.mkdir(path);
-		auto name =this->fileName + "_" + QString::number(count) + ".m3d";
+		auto name =this->fileName + "_" + QString::number(count) + m3dPath.right(4);
 		data->m3dPath = path + name;
 		auto h5file = this->fileName + "_" + QString::number(count) + ".h5";
 		data->h5FilePath = path + h5file;

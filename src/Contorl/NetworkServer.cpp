@@ -764,7 +764,7 @@ void NetworkServer::serverNewConnection()
 	//链接接受消息槽
 	connect(networkSocket.get(), SIGNAL(receiveMessageFinished(NetworkSocket::SocketMessageBody)), this, SLOT(receiveMessageFinished(NetworkSocket::SocketMessageBody)));
 	connect(networkSocket.get(), SIGNAL(disconnect()), this, SLOT(socketDisconnect()));
-#ifdef MY_DEBUG
+#ifdef MY_LOG
 	std::cerr << "NetworkServer::serverNewConnection()，address:"
 		<< socket->peerAddress().toString().toStdString()
 		<< ",port:" << socket->peerPort() << std::endl;
