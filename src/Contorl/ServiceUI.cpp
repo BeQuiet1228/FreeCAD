@@ -74,7 +74,7 @@ void ServiceUI::on_pushButtonStart_clicked()
 	service->setWorkPath(ui->lineEditPath->text());
 	service->startListene();
 
-	this->inputText("\n<---开始运行服务端--->\n");
+	this->inputText(tr("\n<---开始运行服务端--->\n"));
 
 	ui->lineEditCHIPICPath->setEnabled(false);
 	ui->lineEditIP->setEnabled(false);

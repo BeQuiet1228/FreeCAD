@@ -1161,7 +1161,7 @@ StdCmdDelete::StdCmdDelete()
 void StdCmdDelete::activated(int iMsg)
 {
 	Q_UNUSED(iMsg);
-
+	if (getDocument()->classID == 2){
 	// go through all documents
 	const SelectionSingleton& rSel = Selection();
 	const std::vector<App::Document*> docs = App::GetApplication().getDocuments();
@@ -1313,18 +1313,108 @@ void StdCmdDelete::activated(int iMsg)
                 }
             }
         }
-		if (getDocument()->classID == 2){
-			doCommand(Doc, "App.getDocument(\"%s\").recompute()", (*it)->getName());
-			doCommand(Gui::Command::Doc, "DocumentTools.updateBoolean()");
-			// 防止删除后粘贴
-			Gui::Application::Instance->commandManager().runCommandByName("ClearClipboardCommand");
-		}
-		if (getDocument()->classID == 3){
-			Base::InterpreterSingleton python;
-			python.runString("FreeCADGui.runCommand('CreateM2D')");
-		}
+		doCommand(Doc, "App.getDocument(\"%s\").recompute()", (*it)->getName());
+		doCommand(Gui::Command::Doc, "DocumentTools.updateBoolean()");
+		// 防止删除后粘贴
+		Gui::Application::Instance->commandManager().runCommandByName("ClearClipboardCommand");
 
     }
+
+	
+		
+	}else if (getDocument()->classID == 3){
+		// go through all documents
+		const SelectionSingleton& rSel = Selection();
+		const std::vector<App::Document*> docs = App::GetApplication().getDocuments();
+		for (std::vector<App::Document*>::const_iterator it = docs.begin(); it != docs.end(); ++it) {
+			Gui::Document* pGuiDoc = Gui::Application::Instance->getDocument(*it);
+			std::vector<Gui::SelectionObject> sel = rSel.getSelectionEx((*it)->getName());
+			if (!sel.empty()) {
+				bool autoDeletion = true;
+
+				// if an object is in edit mode handle only this object even if unselected (#0001838)
+				Gui::ViewProvider* vpedit = pGuiDoc->getInEdit();
+				if (vpedit) {
+					// check if the edited view provider is selected
+					for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
+						Gui::ViewProvider* vp = pGuiDoc->getViewProvider(ft->getObject());
+						if (vp == vpedit) {
+							if (!ft->getSubNames().empty()) {
+								// handle the view provider
+								Gui::getMainWindow()->setUpdatesEnabled(false);
+
+								(*it)->openTransaction("Delete");
+								vpedit->onDelete(ft->getSubNames());
+								(*it)->commitTransaction();
+
+								Gui::getMainWindow()->setUpdatesEnabled(true);
+								Gui::getMainWindow()->update();
+							}
+							break;
+						}
+					}
+				}
+				else {
+					// check if we can delete the object
+					std::set<QString> affectedLabels;
+					for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
+						App::DocumentObject* obj = ft->getObject();
+						std::vector<App::DocumentObject*> links = obj->getInList();
+						if (!links.empty()) {
+							// check if the referenced objects are groups or are selected too
+							for (std::vector<App::DocumentObject*>::iterator lt = links.begin(); lt != links.end(); ++lt) {
+								if (!rSel.isSelected(*lt)) {
+									ViewProvider* vp = pGuiDoc->getViewProvider(*lt);
+									if (!vp->canDelete(obj)) {
+										autoDeletion = false;
+										affectedLabels.insert(QString::fromUtf8((*lt)->Label.getValue()));
+									}
+								}
+							}
+						}
+					}
+
+					if (!autoDeletion) {
+						QString bodyMessage;
+						QTextStream bodyMessageStream(&bodyMessage);
+						bodyMessageStream << qApp->translate("Std_Delete",
+							"The following, referencing objects might break.\n\n"
+							"Are you sure you want to continue?\n\n");
+						for (const auto &currentLabel : affectedLabels)
+							bodyMessageStream << currentLabel << '\n';
+
+						int ret = QMessageBox::question(Gui::getMainWindow(),
+							qApp->translate("Std_Delete", "Object dependencies"), bodyMessage,
+							QMessageBox::Yes, QMessageBox::No);
+						if (ret == QMessageBox::Yes)
+							autoDeletion = true;
+					}
+					if (autoDeletion) {
+						Gui::getMainWindow()->setUpdatesEnabled(false);
+						(*it)->openTransaction("Delete");
+						for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
+							Gui::ViewProvider* vp = pGuiDoc->getViewProvider(ft->getObject());
+							if (vp) {
+								// ask the ViewProvider if it wants to do some clean up
+								if (vp->onDelete(ft->getSubNames())) {
+									doCommand(Doc, "App.getDocument(\"%s\").removeObject(\"%s\")"
+										, (*it)->getName(), ft->getFeatName());
+								}
+							}
+						}
+						(*it)->commitTransaction();
+
+						Gui::getMainWindow()->setUpdatesEnabled(true);
+						Gui::getMainWindow()->update();
+					}
+				}
+			}
+			doCommand(Doc, "App.getDocument(\"%s\").recompute()", (*it)->getName());
+		}
+
+		Base::InterpreterSingleton python;
+		python.runString("FreeCADGui.runCommand('CreateM2D')");
+	}
 }
 
 bool StdCmdDelete::isActive(void)

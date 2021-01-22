@@ -146,7 +146,7 @@ if(contorl_client_exe)
 	add_definitions(-D_CONTORL_ -DMY_DEBUG -DMY_LOG -D_CONTORL_EXE_)
 endif()
 if(contorl_client_dll)
-	add_definitions(-D_CONTORL_ -DMY_LOG -D_CONTORL_DLL_ -DMY_DEBUG)
+	add_definitions(-D_CONTORL_ -DMY_LOG -D_CONTORL_DLL_)
 	add_library(Contorl SHARED ${Contorl_src})
 endif()
 

@@ -337,7 +337,7 @@ QPixmap BitmapFactoryInst::pixmapFromSvg(const QByteArray& contents, const QSize
 #ifdef QTWEBKIT
     // There is a crash when using the Webkit engine in debug mode
     // for a couple of SVG files. Thus, use the qsvg plugin.
-#if QT_VERSION < 0x040800 || !defined(_DEBUG)
+#if QT_VERSION < 0x040800 || !defined(_DEBUG) && 0
     QWebView webView;
     QPalette pal = webView.palette();
     pal.setColor(QPalette::Background, Qt::transparent);
