@@ -36,7 +36,7 @@
           <item>
            <widget class="QLabel" name="label">
             <property name="text">
-             <string>参数值个数</string>
+             <string>种群个数</string>
             </property>
            </widget>
           </item>

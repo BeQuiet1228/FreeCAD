@@ -5,6 +5,9 @@ VariateItemWidget::VariateItemWidget(QWidget *parent /*= 0*/)
 	:QWidget(parent), ui(new Ui::VariateIteamWidget_UI)
 {
 	ui->setupUi(this);
+	//不显示值个数
+	ui->label_3->hide();
+	ui->labelCount->hide();
 }
 
 VariateItemWidget::~VariateItemWidget()
