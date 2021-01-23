@@ -354,6 +354,7 @@ public:
 
     virtual PyObject *getPyObject(void);
 
+	void setGridSpace(double sx, double sy);
 protected:
     void renderScene();
     void renderFramebuffer();

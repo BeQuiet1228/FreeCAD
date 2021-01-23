@@ -821,6 +821,22 @@ bool View3DInventorViewer::isEnabledVBO() const
     return vboEnabled;
 }
 
+void View3DInventorViewer::setGridSpace(double x, double y) //ZD
+{
+	double a = x / y;
+	int m = this->getSoRenderManager()->getCamera()->viewportMapping.getValue();
+	if (abs(a - 1) <= 0.000001) {
+		this->getSoRenderManager()->getCamera()->viewportMapping = SoCamera::ADJUST_CAMERA;
+		this->getSoRenderManager()->getCamera()->aspectRatio = 1.0;
+	}
+	else {
+		this->getSoRenderManager()->getCamera()->viewportMapping = SoCamera::LEAVE_ALONE;
+		this->getSoRenderManager()->getCamera()->aspectRatio = a;
+	}
+	if (hasAxisCross())
+		setAxisCross(true);
+	this->viewAll();
+}
 void View3DInventorViewer::setAxisCross(bool on)
 {
     SoNode* scene = getSceneGraph();
@@ -834,7 +850,7 @@ void View3DInventorViewer::setAxisCross(bool on)
             axisKit->set("yAxis.appearance.drawStyle", "lineWidth 2");
             axisKit->set("zAxis.appearance.drawStyle", "lineWidth 2");
             axisCross->setPart("shape", axisKit);
-            axisCross->scaleFactor = 1.0f;
+			axisCross->scaleFactor = 1.0/this->getSoRenderManager()->getCamera()->aspectRatio.getValue(); // 1.0f;
             axisGroup = new SoSkipBoundingGroup;
             axisGroup->addChild(axisCross);
 
