@@ -82,7 +82,7 @@ void RunChipic3dListener::getMainThreadId(DWORD &_threadId) {
 		Sleep(1000);
 		threads.clear();
 		//通过进程名查找线程Id
-		int ret = GetMainThreadIdFromName("Chipic3d.exe", threads);
+		int ret = GetMainThreadIdFromName("Chipic.exe", threads);
 #ifdef MY_DEBUG
 		if (ret == 0)
 		{
