@@ -3544,6 +3544,12 @@ namespace PartChipic {
 					if (funcShape != 0) {
 						TopoDS_Shape sh = funcShape->removeSplitter();
 						funcShape->setShape(sh);
+						if (TEST_OUTPUT == 1) {
+							std::string filename = "d://000";
+							filename = filename + ".brp";
+							funcShape->write(filename.c_str());
+							Base::Console().Log("save funcShape\n");
+						}
 						return Py::asObject(new Part::TopoShapePy(funcShape));
 					}
 					else
