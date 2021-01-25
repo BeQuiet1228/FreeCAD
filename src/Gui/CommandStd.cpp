@@ -354,7 +354,7 @@ void StdCmdExample::activated(int iMsg)
 
 	QString selectedFilter;
 	QStringList fileList = FileDialog::getOpenFileNames(getMainWindow(),
-		QObject::tr("Open document"), QString::fromStdString(exampleStr), formatList, &selectedFilter);
+		QObject::tr("Open document"), QString::fromStdString(exampleStr),QString::fromLocal8Bit("*.fcstd *.fcstd_2d"), &selectedFilter);
 	if (fileList.isEmpty())
 		return;
 
