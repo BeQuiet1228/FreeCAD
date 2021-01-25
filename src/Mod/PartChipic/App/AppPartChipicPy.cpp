@@ -3509,7 +3509,7 @@ namespace PartChipic {
 				}
 
 				try {
-					Part::TopoShape* funcShape = 0;
+					/*Part::TopoShape* funcShape = 0;
 					{
 						int k = 0;
 						for (k = 0; k < far_pointV.size(); k++){
@@ -3530,13 +3530,7 @@ namespace PartChipic {
 							if (!vertex.More())
 								continue;
 							tmpv.push_back(topoShapeV[k]->getShape());
-							/*funcShape->setShape(funcShape->fuse(topoShapeV[k]->getShape()));
-							std::string filename = "d://fuse";
-							char s[256];
-							_itoa(k, s, 10);
-							filename = filename + s;
-							filename = filename + ".stl";
-							//funcShape->write(filename.c_str());*/
+							
 						}
 						if (funcShape != 0 && tmpv.size() > 0)
 							funcShape->setShape(funcShape->fuse(tmpv));
@@ -3553,8 +3547,24 @@ namespace PartChipic {
 						return Py::asObject(new Part::TopoShapePy(funcShape));
 					}
 					else
-						return Py::asObject(new Part::TopoShapePy(new Part::TopoShape()));
-
+						return Py::asObject(new Part::TopoShapePy(new Part::TopoShape()));*/
+					Part::TopoShape* funcShape = new Part::TopoShape();
+					BRep_Builder builder;
+					TopoDS_Compound comp;
+					builder.MakeCompound(comp);
+					for (int i = 0; i < far_pointV.size(); i++){
+						if (topoShapeV[i] != 0) {
+							TopExp_Explorer vertex(topoShapeV[i]->getShape(), TopAbs_VERTEX);
+							if (vertex.More()) {
+								builder.Add(comp, topoShapeV[i]->getShape());
+							}
+						}
+					}
+					if (comp.IsNull())
+						std::cerr << "TopoDS_Shape:" << 0 << std::endl;
+					else
+						funcShape->setShape(comp);// static_cast<Part::Feature*>(funcShape)->Shape.setValue(comp);
+					return Py::asObject(new Part::TopoShapePy(funcShape));
 					//3
 					//return Py::asObject(new Mesh::MeshPy(mesh));
 				}
