@@ -61,6 +61,7 @@
 #include "Workbench.h"
 #include "Selection.h"
 #include "DlgUnitsCalculatorImp.h"
+#include "OpenFileConfig.h"
 
 using Base::Console;
 using Base::Sequencer;
@@ -295,43 +296,6 @@ void StdCmdExample::activated(int iMsg)
 {
 	Q_UNUSED(iMsg);
 	// fill the list of registered endings
-	QString formatList;
-	const char* supported = QT_TR_NOOP("Supported formats");
-	const char* allFiles = QT_TR_NOOP("All files (*.*)");
-	formatList = QObject::tr(supported);
-	formatList += QLatin1String(" (");
-
-	std::vector<std::string> filetypes = App::GetApplication().getImportTypes();
-	std::vector<std::string>::iterator it;
-	// Make sure FCStd is the very first fileformat
-	it = std::find(filetypes.begin(), filetypes.end(), "FCStd");
-	if (it != filetypes.end()) {
-		filetypes.erase(it);
-		filetypes.insert(filetypes.begin(), "FCStd");
-	}
-	for (it = filetypes.begin(); it != filetypes.end(); ++it) {
-		formatList += QLatin1String(" *.");
-		formatList += QLatin1String(it->c_str());
-	}
-
-	formatList += QLatin1String(");;");
-
-	std::map<std::string, std::string> FilterList = App::GetApplication().getImportFilters();
-	std::map<std::string, std::string>::iterator jt;
-	// Make sure the format name for FCStd is the very first in the list
-	for (jt = FilterList.begin(); jt != FilterList.end(); ++jt) {
-		if (jt->first.find("*.FCStd") != std::string::npos) {
-			formatList += QLatin1String(jt->first.c_str());
-			formatList += QLatin1String(";;");
-			FilterList.erase(jt);
-			break;
-		}
-	}
-	for (jt = FilterList.begin(); jt != FilterList.end(); ++jt) {
-		formatList += QLatin1String(jt->first.c_str());
-		formatList += QLatin1String(";;");
-	}
-	formatList += QObject::tr(allFiles);
 
 	//找到example的路径
 	//获得当前程序的路径
@@ -352,9 +316,62 @@ void StdCmdExample::activated(int iMsg)
 	}
 	std::string exampleStr = strPath + "../Example/";
 
+
+	// fill the list of registered endings
+	QString formatList;
+	const char* supported = QT_TR_NOOP("Supported formats");
+	const char* allFiles = QT_TR_NOOP("All files (*.*)");
+	formatList = QObject::tr(supported);
+	formatList += QLatin1String(" (");
+
+	std::vector<std::string> filetypes = App::GetApplication().getImportTypes();
+	std::vector<std::string>::iterator it;
+	// Make sure FCStd is the very first fileformat
+	it = std::find(filetypes.begin(), filetypes.end(), "FCStd");
+	if (it != filetypes.end()) {
+		filetypes.erase(it);
+		filetypes.insert(filetypes.begin(), "FCStd");
+	}
+	for (it = filetypes.begin(); it != filetypes.end(); ++it) {
+		formatList += QLatin1String(" *.");
+		formatList += QLatin1String(it->c_str());
+	}
+	//新增在C++中添加文件格式的方法
+	//不与之前的功能有任何冲突
+
+	/*
+	在这里添加上已初始化的自定文件格式
+	*/
+	auto openFileConfig = OpenFileConfig::GetInstance();
+	auto f = openFileConfig->makeFormatString();
+	formatList += f + QLatin1String(");;");
+
+	std::map<std::string, std::string> FilterList = App::GetApplication().getImportFilters();
+	std::map<std::string, std::string>::iterator jt;
+	// Make sure the format name for FCStd is the very first in the list
+	for (jt = FilterList.begin(); jt != FilterList.end(); ++jt) {
+		if (jt->first.find("*.FCStd") != std::string::npos) {
+			formatList += QLatin1String(jt->first.c_str());
+			formatList += QLatin1String(";;");
+			FilterList.erase(jt);
+			break;
+		}
+	}
+	for (jt = FilterList.begin(); jt != FilterList.end(); ++jt) {
+		formatList += QLatin1String(jt->first.c_str());
+		formatList += QLatin1String(";;");
+	}
+	formatList += QObject::tr(allFiles);
+
 	QString selectedFilter;
 	QStringList fileList = FileDialog::getOpenFileNames(getMainWindow(),
-		QObject::tr("Open document"), QString::fromStdString(exampleStr),QString::fromLocal8Bit("*.fcstd *.fcstd_2d"), &selectedFilter);
+		QObject::tr("Open document"), QString::fromStdString(exampleStr), formatList, &selectedFilter);
+	if (fileList.isEmpty())
+		return;
+	/*
+	在这里处理文件路径，并并移除已处理的文件路径
+	*/
+	openFileConfig->callOpen(fileList);
 	if (fileList.isEmpty())
 		return;
 
@@ -366,15 +383,8 @@ void StdCmdExample::activated(int iMsg)
 			qApp->translate("StdCmdOpen", "Loading the file %1 is not supported").arg(fileList.front()));
 	}
 	else {
-		//关闭当前
-		//close all
-		getMainWindow()->closeAllWindows();
-		doCommand(Command::Gui, "import Modeling\nModeling.Common.Tools.DocumentTools.closeAll()");
-
 		for (SelectModule::Dict::iterator it = dict.begin(); it != dict.end(); ++it) {
 			getGuiApplication()->open(it.key().toUtf8(), it.value().toLatin1());
-			//只打开一个
-			break;
 		}
 	}
 
