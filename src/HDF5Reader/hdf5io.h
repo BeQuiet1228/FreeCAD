@@ -34,6 +34,9 @@ public:
 	//获取数据库中的值
 	bool getValue(const Group& group, const std::string& datasetName,VectorF &values);
 	bool getValue(const DataSet& dataSet,VectorF& values);
+
+	//释放h5文件
+	void deleteH5File();
 private:
     H5File *Hdf5File;
 	//获取一个数据组
@@ -64,7 +67,6 @@ private:
 
 	//使用headlist获取观测的名称
 	std::string getNameFromHeadList(const std::vector<std::string>& headList);
-	//释放h5文件
-	void deleteH5File();
+
 
 };

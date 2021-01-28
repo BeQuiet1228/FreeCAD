@@ -1079,19 +1079,33 @@ void MainWindow::closeEvent (QCloseEvent * e)
 {
 	if (ContorlInterface::GetInstance()->hasManualChipicRuning())
 	{
-		QMessageBox msgBox;
-		msgBox.setText(QString::fromLocal8Bit("CHIPIC仿真程序正在运行。"));
-		msgBox.setInformativeText(QString::fromLocal8Bit("你确定要关闭程序吗？QAQ"));
-		msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-		msgBox.setDefaultButton(QMessageBox::Cancel);
-		int ret = msgBox.exec();
-
-		if (ret == QMessageBox::Cancel)
+		if (ContorlInterface::GetInstance()->getConnectWay() == 2)
 		{
-			e->ignore();
-			return;
+			QMessageBox msgBox;
+			msgBox.setText(QString::fromLocal8Bit("CHIPIC仿真程序正在服务端运行"));
+			msgBox.setInformativeText(QString::fromLocal8Bit("是否同时关闭服务端端仿真程序？？QAQ"));
+			msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+			msgBox.setDefaultButton(QMessageBox::Cancel);
+			int ret = msgBox.exec();
+			if (ret == QMessageBox::Ok)
+			{
+				ContorlInterface::GetInstance()->closeAllChipic();
+			}
+		}else{
+			QMessageBox msgBox;
+			msgBox.setText(QString::fromLocal8Bit("CHIPIC仿真程序正在运行。"));
+			msgBox.setInformativeText(QString::fromLocal8Bit("你确定要关闭程序吗？QAQ"));
+			msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+			msgBox.setDefaultButton(QMessageBox::Cancel);
+			int ret = msgBox.exec();
+
+			if (ret == QMessageBox::Cancel)
+			{
+				e->ignore();
+				return;
+			}
+			ContorlInterface::GetInstance()->closeAllChipic();
 		}
-		ContorlInterface::GetInstance()->closeAllChipic();
 	}
 
 

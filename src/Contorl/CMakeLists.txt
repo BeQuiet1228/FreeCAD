@@ -149,6 +149,10 @@ if(contorl_client_dll)
 	add_definitions(-D_CONTORL_ -DMY_LOG -D_CONTORL_DLL_)
 	add_library(Contorl SHARED ${Contorl_src})
 endif()
+#判断是否以优化算法exe生成项目 是则家伙是那个宏
+if(smart_contorl_exe)
+	add_definitions(-D_SMART_CONTORL_)
+endif()
 
 
 #增加包含目录

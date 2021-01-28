@@ -10,6 +10,7 @@ extern "C"{
 #include "Contorl/Chipic.h"
 #include <QFile>
 #include <QTextIStream>
+#include "SmartContorlData.h"
 SmartContorl::SmartContorl()
 {
 	lua_state = luaL_newstate();
@@ -149,6 +150,8 @@ void SmartContorl::dataOptimize()
 {
 	//运算结果数据筛选
 	this->luaResultDataFilter();
+	//清理h5对象 这个暂时放在这里，后续应当写到lua脚本中
+	SmartContorlData::GetInstance()->clearH5Object();
 	//清空完成运算数据
 	//this->clearFinishData();
 	//判断数据是否符合预期，符合则结束运行
