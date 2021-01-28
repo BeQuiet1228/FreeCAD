@@ -1077,38 +1077,6 @@ MDIView* MainWindow::activeWindow(void) const
 
 void MainWindow::closeEvent (QCloseEvent * e)
 {
-	if (ContorlInterface::GetInstance()->hasManualChipicRuning())
-	{
-		if (ContorlInterface::GetInstance()->getConnectWay() == 2)
-		{
-			QMessageBox msgBox;
-			msgBox.setText(QString::fromLocal8Bit("CHIPIC仿真程序正在服务端运行"));
-			msgBox.setInformativeText(QString::fromLocal8Bit("是否同时关闭服务端端仿真程序？？QAQ"));
-			msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-			msgBox.setDefaultButton(QMessageBox::Cancel);
-			int ret = msgBox.exec();
-			if (ret == QMessageBox::Ok)
-			{
-				ContorlInterface::GetInstance()->closeAllChipic();
-			}
-		}else{
-			QMessageBox msgBox;
-			msgBox.setText(QString::fromLocal8Bit("CHIPIC仿真程序正在运行。"));
-			msgBox.setInformativeText(QString::fromLocal8Bit("你确定要关闭程序吗？QAQ"));
-			msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-			msgBox.setDefaultButton(QMessageBox::Cancel);
-			int ret = msgBox.exec();
-
-			if (ret == QMessageBox::Cancel)
-			{
-				e->ignore();
-				return;
-			}
-			ContorlInterface::GetInstance()->closeAllChipic();
-		}
-	}
-
-
 	//判断是否需要关闭内核
 	if (App::GetApplication().m_netServer && App::GetApplication().m_netServer->GetConnectState()
 		== PicNet::NetServer::ConnectState::CONNECTED)

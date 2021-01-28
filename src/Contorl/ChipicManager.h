@@ -69,6 +69,8 @@ public:
 	}
 	//获取一个chipic的m3d路径
 	QString getM3dpathForThreadID(unsigned long threadID);
+	//清理掉所有chipic数据，但是不关闭内核
+	void clearChipicData();
 private:
 	//检测路径是否存在
 	bool detectionFilePathUTF8(const std::string& path);

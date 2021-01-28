@@ -481,6 +481,11 @@ QString ChipicManager::getM3dpathForThreadID(unsigned long threadID)
 	return result;
 }
 
+void ChipicManager::clearChipicData()
+{
+	disposeCloseChipicMessage(0);
+}
+
 #ifndef MY_QTCMY_DEBUG
 #include "moc_ChipicManager.cpp"
 #endif
