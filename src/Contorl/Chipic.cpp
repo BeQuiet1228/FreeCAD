@@ -117,9 +117,7 @@ void Chipic::sendMessage(const UINT& type, const WPARAM& wParam, const LPARAM& l
 	if (thradId == 0)
 	{
 		msg.threadId = this->threadID;
-	}
-	else
-	{
+	}else{
 		msg.threadId = threadID;
 	}
 	msg.Msg = type;

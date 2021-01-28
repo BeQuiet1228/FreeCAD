@@ -84,6 +84,8 @@ private:
 	void sendFile(const std::string& targetPath, const std::string& filePath,std::shared_ptr<NetworkSocket> socket);
 	//关闭一个chipic
 	void closeChipic(const unsigned long& ID);
+	//处理chipic发来的暂停消息
+	bool disposChipicPuse(const std::string& json);
 
 private:
 	//std::list<ConnectSocket> listConnectSocket;
@@ -98,4 +100,6 @@ public slots:
 	void hasLocalMessage();
 	//socket已断开
 	void socketDisconnect();
+	//发送一个关闭chipic消息
+	void sendCloseChipicMessage(const unsigned long& threaID);
 };
