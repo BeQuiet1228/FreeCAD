@@ -424,7 +424,12 @@ void SmartContorl::chipicStartFinished(unsigned long threadID)
 	//获取chipic对象
 	auto chipicIter = chipicManager->chipicMap.find(threadID);
 	if (chipicIter == chipicManager->chipicMap.end())
+	{
+#if MY_LOG
+		std::cerr << "SmartContorl::chipicStartFinished find chipic object faild" << std::endl;
+#endif
 		return;
+	}
 	auto chipic = chipicIter->second;
 
 	//判断这个chipic对象是否是由this启动的

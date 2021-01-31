@@ -112,9 +112,10 @@ public:
 	std::vector<HistoryData> getHistoryDatas(){
 		return historyDatas;
 	}
-private:
+public:
 	//同时运行chipic的个数
 	unsigned int chipicCount = 6;
+private:
 	//lua虚拟机
 	lua_State *lua_state;
 	//参数组

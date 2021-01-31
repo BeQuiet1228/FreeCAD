@@ -51,6 +51,7 @@ SmartContorlUI::~SmartContorlUI()
 void SmartContorlUI::on_pushButton_clicked()
 {
 	auto str = replaceVariate();
+	smartContorl->chipicCount = this->ui->spinBoxRunCount->value();
 	smartContorl->run(str);
 }
 
