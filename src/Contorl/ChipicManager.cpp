@@ -254,6 +254,9 @@ bool ChipicManager::detectionFilePathUTF8(const std::string& path)
 */
 bool ChipicManager::disposeMessage(const std::string& json)
 {
+	if (disposAnalysisFinished(json))
+		return true;
+
 	neb::CJsonObject jsonObject(json);
 	std::string cmd = "";
 	if (jsonObject.Get("cmd", cmd))
@@ -423,12 +426,24 @@ void ChipicManager::showWorkFinishedBox()
 */
 void ChipicManager::showDailLog(const std::string& title, const std::string& content)
 {
+	std::cerr << "yichangtuichu" << std::endl;
 	if (runType == AUTO)
 		return;
 	QMessageBox box;
 	box.setWindowTitle(MessageTransition::gbkStdstringToQstring(title));
 	box.setText(MessageTransition::gbkStdstringToQstring(content));
 	box.exec();
+}
+
+bool ChipicManager::disposAnalysisFinished(const std::string& json)
+{
+	auto msg = MessageTransition::jsonToWinMessage(json);
+	if (msg.Msg == 210 && msg.wParam == 0 && msg.lParam == 0)
+	{
+		emit chipicAnalysisFinished(msg.threadId);
+		return true;
+	}
+	return false;
 }
 
 /**

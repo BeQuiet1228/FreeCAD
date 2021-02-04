@@ -35,6 +35,8 @@ Q_SIGNALS:
 	void finishChipicM3dPath(unsigned long);
 	//chipic成功启动信号
 	void chipicStartFinished(unsigned long);
+	//解析完成消息
+	void chipicAnalysisFinished(unsigned long);
 public Q_SLOTS:
 	void hasNewMessage();
 	//更新ui状态
@@ -86,4 +88,6 @@ private:
 	void showWorkFinishedBox();
 	//弹出一个提示框
 	void showDailLog(const std::string& title, const std::string& content);
+	//处理内核解析完成消息
+	bool disposAnalysisFinished(const std::string& json);
 };

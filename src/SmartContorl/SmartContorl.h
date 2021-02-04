@@ -148,6 +148,8 @@ private:
 public Q_SLOTS:
 	void chipicWorkFinished(unsigned long threadID);
 	void chipicStartFinished(unsigned long threadID);
+	//chipic解析完成槽
+	void chipicAnalysisFinished(unsigned long threadID);
 
 Q_SIGNALS:
 	//chipic启动成功之后的ui

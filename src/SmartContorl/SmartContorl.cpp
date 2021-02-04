@@ -22,7 +22,7 @@ SmartContorl::SmartContorl()
 	//链接计算完成槽
 	connect(chipicManager, SIGNAL(finishChipicM3dPath(unsigned long)), this, SLOT(chipicWorkFinished(unsigned long)));
 	connect(chipicManager, SIGNAL(chipicStartFinished(unsigned long)), this, SLOT(chipicStartFinished(unsigned long)));
-
+	connect(chipicManager, SIGNAL(chipicAnalysisFinished(unsigned long)), this, SLOT(chipicAnalysisFinished(unsigned long)));
 	//测试使用代码
 	/*ChipicRunDataPtr data;
 	data.reset(new ChipicRunData);
@@ -126,6 +126,27 @@ void SmartContorl::makeRunData()
 */
 void SmartContorl::runChipic()
 {
+	/*
+		日期：2021-2-4
+		对启动顺序做修改，之前是在最大限制个数中，一次尽可能多的启动。
+		现在修改为每次只启动一个。然后再解析完成槽中不停的触发这个函数，这样可以解决解析时消息过多，
+		超过windows消息栈大小的问题。
+	*/
+#if 1
+	//如果等待区为空则退出
+	if (chipicDataWait.size() <= 0)
+		return;
+	auto iter = this->chipicDataWait.begin();
+	//已有足够多的chipic在运行则不操作
+	if (chipicDataRuning.size() >= chipicCount)
+		return;
+
+	//启动chipic
+	chipicManager->sendStartChipicMessage((*iter)->m3dPath.toStdString(), 1);
+	chipicDataRuning.insert(ChipicRunDataMap::value_type((*iter)->m3dPath, *iter));
+	chipicDataWait.erase(iter);
+	
+#else
 	auto iter = this->chipicDataWait.begin();
 	while (iter != this->chipicDataWait.end())
 	{
@@ -140,6 +161,8 @@ void SmartContorl::runChipic()
 
 		iter = chipicDataWait.begin();
 	}
+#endif
+	
 }
 
 /**
@@ -361,7 +384,7 @@ void SmartContorl::printLuaError(const int& error)
 		if (t != 4)
 			return;
 		std::string str = lua_tostring(lua_state, -1);
-		std::cerr << str;
+		std::cerr << str << std::endl;
 		lua_pop(lua_state, -1);
 	}
 }
@@ -455,11 +478,15 @@ void SmartContorl::chipicStartFinished(unsigned long threadID)
 	emit addDataBar(chipicData->widgetItem, chipicData->dataBar);
 }
 
-#include "moc_SmartContorl.cpp"
+void SmartContorl::chipicAnalysisFinished(unsigned long threadID)
+{
+	std::cerr << "SmartContorl::chipicAnalysisFinished" << std::endl;
+	this->runChipic();
+}
 
 /**
 * @brief ChipicResultGetter::next 获取一个结果
-* @param ChipicRunDataPtr & runData 
+* @param ChipicRunDataPtr & runData
 * @return bool false代表获取失败
 */
 bool ChipicResultGetter::next(ChipicRunDataPtr& runData)
@@ -477,3 +504,5 @@ bool ChipicResultGetter::next(ChipicRunDataPtr& runData)
 	iter++;
 	return true;
 }
+
+#include "moc_SmartContorl.cpp"
