@@ -99,6 +99,9 @@ public:
 		this->m3dPath = s;
 		fileMaker.setM3dPath(s);
 	}
+	QString getM3dPath(){
+		return m3dPath;
+	}
 	void setM3dPath(const std::string s){
 		this->m3dPath = QString::fromStdString(s);
 		fileMaker.setM3dPath(m3dPath);

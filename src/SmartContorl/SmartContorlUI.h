@@ -77,6 +77,9 @@ public Q_SLOTS:
 private:
 	//替换变量
 	QString replaceVariate();
+	//保存xml文件
+	void saveParameterXml();
+	void loadParameterXml();
 protected:
 	void closeEvent(QCloseEvent *event);
 };
