@@ -72,9 +72,6 @@ std::vector<QString> Variate::combinationStringForVariates(std::vector<Variate>&
 	{
 		combinationVariates(m3d,*iter);
 	}
-
-	for (auto i = m3d.begin(); i != m3d.end(); i++)
-		std::cerr << i->toStdString();
 	return m3d;
 }
 

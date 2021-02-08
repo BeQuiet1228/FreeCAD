@@ -329,7 +329,13 @@ bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId, const int& 
 		emit currentChipicStateUpdate();
 		loadingDialog->close();
 	}else if (errorCode == 1){
+
+		/*这里增加一个判断，如果chipic的状态已经为false了，则不在处理异常退出消息*/
+	//	if (!chipic->second->runState)
+	//		return true;
+		unsigned long id = chipic->second->threadID;
 		chipic->second->closeChipic();
+		emit chipicErrorClose(id);
 		showDailLog("提示", "chipic异常退出");
 		Contorl::closePlot();
 	}
@@ -426,7 +432,6 @@ void ChipicManager::showWorkFinishedBox()
 */
 void ChipicManager::showDailLog(const std::string& title, const std::string& content)
 {
-	std::cerr << "yichangtuichu" << std::endl;
 	if (runType == AUTO)
 		return;
 	QMessageBox box;

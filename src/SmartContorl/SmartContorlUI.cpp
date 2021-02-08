@@ -25,7 +25,7 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	auto contorlInterface = ContorlInterface::GetInstance();
 
 #ifdef SMART_EXE
-	std::string m3dPath = "E:/test/MILO_P.m3d";
+	std::string m3dPath = "E:/test/test.m3d";
 	smartContorl->setM3dPath(m3dPath);
 #else
 	smartContorl->setM3dPath(contorlInterface->getDocumentPath());
@@ -332,7 +332,6 @@ QString SmartContorlUI::replaceVariate()
 			.arg((*iter)->max).arg((*iter)->mini).arg(count);
 		vars += temp;
 	}
-	std::cerr << vars.toStdString();
 	auto text = this->ui->textEdit->toPlainText();
 	text += vars;
 
@@ -370,7 +369,8 @@ void SmartContorlUI::saveParameterXml()
 	auto parNode = doc.append_child("Parameter");
 	auto configNode = doc.append_child("Config");
 	configNode.append_attribute("OptimizeCount") = ui->spinBoxOptimizeCount->value();
-	configNode.append_attribute("RunCount") = ui->spinBoxRunCount->value();
+	configNode.append_attribute("RunCount") = ui->spinBoxCount->value();
+	configNode.append_attribute("RunMaxCount") = ui->spinBoxRunCount->value();
 	configNode.append_attribute("ObserveName") = ui->lineEditName->text().toStdString().c_str();
 	configNode.append_attribute("MaxTime") = ui->lineEditMaxTime->text().toInt();
 	configNode.append_attribute("MiniTime") = ui->lineEditMiniTime->text().toInt();
@@ -405,7 +405,6 @@ void SmartContorlUI::loadParameterXml()
 	pugi::xml_document document;
 	auto path = smartContorl->getM3dPath();
 	path = path.left(path.length() - 4) + ".cc";
-	std::cerr << path.toStdString() << std::endl;
 	auto gbk = QTextCodec::codecForName("gb2312");
 
 	std::string ret = gbk->fromUnicode(path).data();
@@ -417,7 +416,8 @@ void SmartContorlUI::loadParameterXml()
 
 
 	ui->spinBoxOptimizeCount->setValue(configNode.attribute("OptimizeCount").as_int());
-	ui->spinBoxRunCount->setValue(configNode.attribute("RunCount").as_int());
+	ui->spinBoxRunCount->setValue(configNode.attribute("RunMaxCount").as_int());
+	ui->spinBoxCount->setValue(configNode.attribute("RunCount").as_int());
 	ui->lineEditName->setText(QString::fromStdString(configNode.attribute("ObserveName").as_string()));
 	ui->lineEditMaxTime->setText(QString::number(configNode.attribute("MaxTime").as_int()));
 	ui->lineEditMiniTime->setText(QString::number(configNode.attribute("MiniTime").as_int()));

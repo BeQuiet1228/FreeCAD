@@ -141,6 +141,8 @@ private:
 	HistoryData runData;
 	//优化算法整个模块的运行状态
 	bool runing = false;
+	//暂时写一个参数来确定是否要响应已经完成的chipic启动新的chipic。这里为了保证优化时每次都一个一个的启动
+	bool finishedIsVasible = false;
 private:
 	//获取错误处理函数再栈中的位置
 	int getLuaErrorCallBackFunction();
@@ -153,6 +155,8 @@ public Q_SLOTS:
 	void chipicStartFinished(unsigned long threadID);
 	//chipic解析完成槽
 	void chipicAnalysisFinished(unsigned long threadID);
+	//chipic异常退出槽
+	void chipicErrorClose(unsigned long threadID);
 
 Q_SIGNALS:
 	//chipic启动成功之后的ui

@@ -27,7 +27,7 @@ public:
 private:
 	std::vector<float> data;
 };
-using ResultDataPtr = std::shared_ptr<ResultData>;
+using ResultDataPtr = std::shared_ptr<ResultData>   ;
 class ChipicRunData{
 public:
 	ChipicRunData();

@@ -64,6 +64,13 @@ int openH5File(lua_State *luaState)
 	return 1;
 }
 
+int closeH5File(lua_State *luaState)
+{
+	/*auto contorlData = SmartContorlData::GetInstance();
+	bool b = contorlData->openActiveH5File();*/
+	return 1;
+}
+
 int findResultData(lua_State *luaState)
 {
 	auto contorlData = SmartContorlData::GetInstance();

@@ -38,6 +38,8 @@ void ChipicRunData::deleteItemAndBarPtr()
 		delete this->widgetItem;
 	if (this->dataBar != nullptr)
 		delete this->dataBar;
+	this->widgetItem = nullptr;
+	this->dataBar = nullptr;
 }
 
 

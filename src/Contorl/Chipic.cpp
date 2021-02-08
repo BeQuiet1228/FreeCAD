@@ -502,12 +502,16 @@ bool Chipic::disposChipicSendMessagePauseMessage(const Message& msg)
 */
 bool Chipic::disposChipicFinished(const Message& msg)
 {
-	if (msg.Msg != 208)
+	if (msg.Msg != 300)
 		return false;
 	if (msg.wParam != 200)
 		return false;
 	if (msg.lParam != 0)
 		return false;
+	if (timer != nullptr)
+		timer->stop();
+	//完成的时候就将状态设置为未运行，这里主要可以避免关闭时和异常退出检测发生冲突
+	this->runState = false;
 	emit workFinished();
 	return true;
 }

@@ -37,6 +37,8 @@ Q_SIGNALS:
 	void chipicStartFinished(unsigned long);
 	//解析完成消息
 	void chipicAnalysisFinished(unsigned long);
+	//chipic异常退出
+	void chipicErrorClose(unsigned long);
 public Q_SLOTS:
 	void hasNewMessage();
 	//更新ui状态

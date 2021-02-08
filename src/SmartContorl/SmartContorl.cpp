@@ -23,6 +23,7 @@ SmartContorl::SmartContorl()
 	connect(chipicManager, SIGNAL(finishChipicM3dPath(unsigned long)), this, SLOT(chipicWorkFinished(unsigned long)));
 	connect(chipicManager, SIGNAL(chipicStartFinished(unsigned long)), this, SLOT(chipicStartFinished(unsigned long)));
 	connect(chipicManager, SIGNAL(chipicAnalysisFinished(unsigned long)), this, SLOT(chipicAnalysisFinished(unsigned long)));
+	connect(chipicManager, SIGNAL(chipicErrorClose(unsigned long)), this, SLOT(chipicErrorClose(unsigned long)));
 	//测试使用代码
 	/*ChipicRunDataPtr data;
 	data.reset(new ChipicRunData);
@@ -140,7 +141,6 @@ void SmartContorl::runChipic()
 	//已有足够多的chipic在运行则不操作
 	if (chipicDataRuning.size() >= chipicCount)
 		return;
-
 	//启动chipic
 	chipicManager->sendStartChipicMessage((*iter)->m3dPath.toStdString(), 1);
 	chipicDataRuning.insert(ChipicRunDataMap::value_type((*iter)->m3dPath, *iter));
@@ -427,7 +427,13 @@ void SmartContorl::chipicWorkFinished(unsigned long threadID)
 	chipicDataFinish.push_back(chipicData);
 	chipicDataRuning.erase(dataIter);
 
-	this->runChipic();
+	//暂时这样保证chipic是一个个启动的
+	if (finishedIsVasible)
+	{
+		this->runChipic();
+		finishedIsVasible = false;
+	}
+		
 
 	//如果等待区和运行区没有任务了 则直接调用lua脚本优化参数
 	if (this->chipicDataWait.size() == 0
@@ -480,8 +486,43 @@ void SmartContorl::chipicStartFinished(unsigned long threadID)
 
 void SmartContorl::chipicAnalysisFinished(unsigned long threadID)
 {
-	std::cerr << "SmartContorl::chipicAnalysisFinished" << std::endl;
+	if (chipicDataRuning.size() == chipicCount)
+		finishedIsVasible = true;
+	else
+		finishedIsVasible = false;
 	this->runChipic();
+}
+
+void SmartContorl::chipicErrorClose(unsigned long threadID)
+{
+	std::cerr << "Error exit!" << std::endl;
+	//找到chipicdata对象
+	auto dataIter = chipicDataRuning.begin();
+	for (; dataIter != chipicDataRuning.end(); dataIter++)
+	{
+		if (dataIter->second->threadID == threadID)
+			break;
+	}
+	if (dataIter == chipicDataRuning.end())
+		return;
+	auto chipicData = dataIter->second;
+	chipicData->deleteItemAndBarPtr();
+	
+	std::cerr << chipicData->m3dPath.toStdString() << std::endl;
+	/*
+		判断等待区是否还有未运行的，如果还有则说明还有未解析完成的内核。
+		则不调用启动函数。
+	*/
+
+	bool hasWait = false;
+	if (chipicDataWait.size() > 0)
+		hasWait = true;
+	chipicDataWait.push_back(chipicData);
+	chipicDataRuning.erase(dataIter);
+
+	if (!hasWait)
+		runChipic();
+
 }
 
 /**
@@ -492,13 +533,8 @@ void SmartContorl::chipicAnalysisFinished(unsigned long threadID)
 bool ChipicResultGetter::next(ChipicRunDataPtr& runData)
 {
 	if (this->iter == result.end())
-		return false;
-	int cc = 0;
-	for (auto i = result.begin(); i != result.end(); i++)
 	{
-		if (i == iter)
-			std::cerr << cc << std::endl;
-		cc++;
+		return false;
 	}
 	runData = *iter;
 	iter++;
