@@ -11,6 +11,7 @@ extern "C"{
 #include <QFile>
 #include <QTextIStream>
 #include "SmartContorlData.h"
+#include <QMessageBox>
 SmartContorl::SmartContorl()
 {
 	lua_state = luaL_newstate();
@@ -507,6 +508,20 @@ void SmartContorl::chipicErrorClose(unsigned long threadID)
 		return;
 	auto chipicData = dataIter->second;
 	chipicData->deleteItemAndBarPtr();
+
+	/*
+		判断错误重启的次数，如果超过三次，则判定这个文本有问题。给出提示并停止优化
+	*/
+	if (chipicData->errorExitCount == 3)
+	{
+		QMessageBox msgBox;
+		msgBox.setWindowTitle(QString::fromLocal8Bit("提示"));
+		msgBox.setText(QString::fromLocal8Bit("m3d文本出错，导致优化算法停止运行，文本路径:%1").arg(m3dPath));
+		msgBox.exec();
+		this->stop();
+		return;
+	}
+	chipicData->errorExitCount++;
 	
 	std::cerr << chipicData->m3dPath.toStdString() << std::endl;
 	/*
