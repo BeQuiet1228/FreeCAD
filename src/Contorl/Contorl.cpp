@@ -120,6 +120,9 @@ void Contorl::showTreeWidget()
 */
 void Contorl::closePlot()
 {
+#ifdef _SMART_CONTORL_
+	return;
+#endif
 #ifdef _CONTORL_DLL_
 	Base::InterpreterSingleton python;
 	python.runString("import Visualization");

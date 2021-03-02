@@ -635,6 +635,10 @@ ToolBarItem* StdWorkbench::setupToolBars() const
 	help->setCommand("about");
 	*help << "Std_Example" <<"Std_Open_User_book" << "Std_Open_Command_book" << "Std_About" << "Std_Run_Super_Tube";
 
+	ToolBarItem* dispos = new ToolBarItem(root);
+	dispos->setCommand("Dispos");
+	*dispos << "Vis_Grid" << "Vis_Labels" << "Vis_Series" << "Vis_Point" << "Vis_Axes" << "Vis_Geometric_Ratio" << "Vis_Struct_grid";
+
 
 /*	ToolBarItem* projectSetting = new ToolBarItem(root);
 	projectSetting->setCommand("projectSetting ");

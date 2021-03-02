@@ -144,3 +144,8 @@ void SmartContorlData::clear()
 {
 	this->cStack->clear();
 }
+
+void SmartContorlData::clearH5Object()
+{
+	hdf5IO.deleteH5File();
+}

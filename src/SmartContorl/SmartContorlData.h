@@ -52,4 +52,6 @@ public:
 	void addParam(const float& value);
 	//清理数据
 	void clear();
+	//清理h5对象
+	void clearH5Object();
 };
