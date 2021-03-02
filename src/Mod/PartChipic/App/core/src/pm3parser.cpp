@@ -81,7 +81,7 @@ namespace
 #ifndef DISABLE_EVAL
         cEval,
 #endif
-        cExp, cFloor, cIf, cInt, cLog, cLog10, cMax, cMin,
+        cExp, cFloor, cIf, cInt, cLog, cLog10, cMax, cMin,cStep,
         cSec, cSin, cSinh, cSqrt, cTan, cTanh,
 
 // These do not need any ordering:
@@ -157,6 +157,7 @@ namespace
         { "log10", 5, cLog10, 1 },
         { "max", 3, cMax, 2 },
         { "min", 3, cMin, 2 },
+		{ "step", 3, cStep, 2 },
         { "sec", 3, cSec, 1 },
         { "sin", 3, cSin, 1 },
         { "sinh", 4, cSinh, 1 },
@@ -780,7 +781,18 @@ namespace
         while(F[Ind] && isspace(F[Ind])) ++Ind;
     }
 };
-
+bool ExpParser::isHasVarible(std::string v)
+{
+	/*Data::VarMap_t::const_iterator vIter =
+		FindVariable(v.c_str(), data->Variables);
+	if (vIter == data->Variables.end())
+		return false;
+	return true;*/
+	for (int i = 0; i < data->VariablesUse.size(); i++)
+		if (data->VariablesUse[i] == v)
+			return true;
+	return false;
+}
 // Returns an iterator to the variable with the same name as 'F', or to
 // Variables.end() if no such variable exists:
 inline ExpParser::Data::VarMap_t::const_iterator
@@ -793,6 +805,7 @@ ExpParser::FindVariable(const char* F, const Data::VarMap_t& vars) const
         if(ind)
         {
             string name(F, ind);
+			data->VariablesUse.push_back(name);
             return vars.find(name);
         }
     }
@@ -1769,6 +1782,15 @@ double ExpParser::Eval(const double* Vars)
                        --SP; break;
           case   cMin: Stack[SP-1] = Min(Stack[SP-1], Stack[SP]);
                        --SP; break;
+		  case cStep: {
+						  double e2 = fabs(Stack[SP - 1] - Stack[SP]);
+						  if (e2 < 0.000001) Stack[SP - 1] = 0.5;
+						  else {
+							  if (Stack[SP - 1] > Stack[SP]) Stack[SP - 1] = 1;
+							  else Stack[SP - 1] = 0;
+						  }
+						  --SP; break;
+		  }
           case   cSec:
               {
                   double c = cos(Stack[SP]);
@@ -1781,6 +1803,7 @@ double ExpParser::Eval(const double* Vars)
                        Stack[SP] = sqrt(Stack[SP]); break;
           case   cTan: Stack[SP] = tan(Stack[SP]); break;
           case  cTanh: Stack[SP] = tanh(Stack[SP]); break;
+		   
 
 
 // Misc:

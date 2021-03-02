@@ -17,5 +17,5 @@
 #define YDIM 1
 #define ZDIM 2
 #define DISTANCE_RESOL_MAX 20
-#define DISTANCE_RESOL_MIN 2
+#define DISTANCE_RESOL_MIN 6
 #endif
