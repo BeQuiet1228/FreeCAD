@@ -15,6 +15,8 @@ int getAllResult(lua_State *L);
 int nextResult(lua_State *luaState);
 //打开结果文件
 int openH5File(lua_State *luaState);
+//关闭h5文件
+int closeH5File(lua_State *luaState);
 //查找结果图
 int findResultData(lua_State *luaState);
 //打开一个数据库

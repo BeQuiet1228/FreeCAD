@@ -254,6 +254,9 @@ bool ChipicManager::detectionFilePathUTF8(const std::string& path)
 */
 bool ChipicManager::disposeMessage(const std::string& json)
 {
+	if (disposAnalysisFinished(json))
+		return true;
+
 	neb::CJsonObject jsonObject(json);
 	std::string cmd = "";
 	if (jsonObject.Get("cmd", cmd))
@@ -326,7 +329,13 @@ bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId, const int& 
 		emit currentChipicStateUpdate();
 		loadingDialog->close();
 	}else if (errorCode == 1){
+
+		/*这里增加一个判断，如果chipic的状态已经为false了，则不在处理异常退出消息*/
+	//	if (!chipic->second->runState)
+	//		return true;
+		unsigned long id = chipic->second->threadID;
 		chipic->second->closeChipic();
+		emit chipicErrorClose(id);
 		showDailLog("提示", "chipic异常退出");
 		Contorl::closePlot();
 	}
@@ -431,6 +440,17 @@ void ChipicManager::showDailLog(const std::string& title, const std::string& con
 	box.exec();
 }
 
+bool ChipicManager::disposAnalysisFinished(const std::string& json)
+{
+	auto msg = MessageTransition::jsonToWinMessage(json);
+	if (msg.Msg == 210 && msg.wParam == 0 && msg.lParam == 0)
+	{
+		emit chipicAnalysisFinished(msg.threadId);
+		return true;
+	}
+	return false;
+}
+
 /**
 * @brief ChipicManager::sendStartChipicMessage 发送chipic启动消息
 * @param const std::string & path
@@ -479,6 +499,11 @@ QString ChipicManager::getM3dpathForThreadID(unsigned long threadID)
 	
 	QString result = QString::fromStdString(temp);
 	return result;
+}
+
+void ChipicManager::clearChipicData()
+{
+	disposeCloseChipicMessage(0);
 }
 
 #ifndef MY_QTCMY_DEBUG

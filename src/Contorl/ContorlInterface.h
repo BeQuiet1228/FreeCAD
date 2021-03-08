@@ -55,5 +55,7 @@ public:
 	int getConnectWay();
 	//显示树控件
 	void showTreeWidget();
+	//清理chipicmanager的数据对象
+	void clearChipicManager();
 
 };

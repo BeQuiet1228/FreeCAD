@@ -27,7 +27,7 @@ public:
 private:
 	std::vector<float> data;
 };
-using ResultDataPtr = std::shared_ptr<ResultData>;
+using ResultDataPtr = std::shared_ptr<ResultData>   ;
 class ChipicRunData{
 public:
 	ChipicRunData();
@@ -45,6 +45,8 @@ public:
 	ResultDataPtr resultData;
 	//变量的顺序
 	unsigned int rank = 0;
+	//错误退出次数
+	unsigned int  errorExitCount = 0;
 public:
 	void setCreatDataBar(std::shared_ptr<Chipic> chipic);
 	void deleteItemAndBarPtr();

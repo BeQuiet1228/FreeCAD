@@ -11,6 +11,7 @@ extern "C"{
 #include <QFile>
 #include <QTextIStream>
 #include "SmartContorlData.h"
+#include <QMessageBox>
 SmartContorl::SmartContorl()
 {
 	lua_state = luaL_newstate();
@@ -22,7 +23,8 @@ SmartContorl::SmartContorl()
 	//链接计算完成槽
 	connect(chipicManager, SIGNAL(finishChipicM3dPath(unsigned long)), this, SLOT(chipicWorkFinished(unsigned long)));
 	connect(chipicManager, SIGNAL(chipicStartFinished(unsigned long)), this, SLOT(chipicStartFinished(unsigned long)));
-
+	connect(chipicManager, SIGNAL(chipicAnalysisFinished(unsigned long)), this, SLOT(chipicAnalysisFinished(unsigned long)));
+	connect(chipicManager, SIGNAL(chipicErrorClose(unsigned long)), this, SLOT(chipicErrorClose(unsigned long)));
 	//测试使用代码
 	/*ChipicRunDataPtr data;
 	data.reset(new ChipicRunData);
@@ -126,6 +128,26 @@ void SmartContorl::makeRunData()
 */
 void SmartContorl::runChipic()
 {
+	/*
+		日期：2021-2-4
+		对启动顺序做修改，之前是在最大限制个数中，一次尽可能多的启动。
+		现在修改为每次只启动一个。然后再解析完成槽中不停的触发这个函数，这样可以解决解析时消息过多，
+		超过windows消息栈大小的问题。
+	*/
+#if 1
+	//如果等待区为空则退出
+	if (chipicDataWait.size() <= 0)
+		return;
+	auto iter = this->chipicDataWait.begin();
+	//已有足够多的chipic在运行则不操作
+	if (chipicDataRuning.size() >= chipicCount)
+		return;
+	//启动chipic
+	chipicManager->sendStartChipicMessage((*iter)->m3dPath.toStdString(), 1);
+	chipicDataRuning.insert(ChipicRunDataMap::value_type((*iter)->m3dPath, *iter));
+	chipicDataWait.erase(iter);
+	
+#else
 	auto iter = this->chipicDataWait.begin();
 	while (iter != this->chipicDataWait.end())
 	{
@@ -140,6 +162,8 @@ void SmartContorl::runChipic()
 
 		iter = chipicDataWait.begin();
 	}
+#endif
+	
 }
 
 /**
@@ -361,7 +385,7 @@ void SmartContorl::printLuaError(const int& error)
 		if (t != 4)
 			return;
 		std::string str = lua_tostring(lua_state, -1);
-		std::cerr << str;
+		std::cerr << str << std::endl;
 		lua_pop(lua_state, -1);
 	}
 }
@@ -404,7 +428,13 @@ void SmartContorl::chipicWorkFinished(unsigned long threadID)
 	chipicDataFinish.push_back(chipicData);
 	chipicDataRuning.erase(dataIter);
 
-	this->runChipic();
+	//暂时这样保证chipic是一个个启动的
+	if (finishedIsVasible)
+	{
+		this->runChipic();
+		finishedIsVasible = false;
+	}
+		
 
 	//如果等待区和运行区没有任务了 则直接调用lua脚本优化参数
 	if (this->chipicDataWait.size() == 0
@@ -424,7 +454,12 @@ void SmartContorl::chipicStartFinished(unsigned long threadID)
 	//获取chipic对象
 	auto chipicIter = chipicManager->chipicMap.find(threadID);
 	if (chipicIter == chipicManager->chipicMap.end())
+	{
+#if MY_LOG
+		std::cerr << "SmartContorl::chipicStartFinished find chipic object faild" << std::endl;
+#endif
 		return;
+	}
 	auto chipic = chipicIter->second;
 
 	//判断这个chipic对象是否是由this启动的
@@ -450,25 +485,75 @@ void SmartContorl::chipicStartFinished(unsigned long threadID)
 	emit addDataBar(chipicData->widgetItem, chipicData->dataBar);
 }
 
-#include "moc_SmartContorl.cpp"
+void SmartContorl::chipicAnalysisFinished(unsigned long threadID)
+{
+	if (chipicDataRuning.size() == chipicCount)
+		finishedIsVasible = true;
+	else
+		finishedIsVasible = false;
+	this->runChipic();
+}
+
+void SmartContorl::chipicErrorClose(unsigned long threadID)
+{
+	std::cerr << "Error exit!" << std::endl;
+	//找到chipicdata对象
+	auto dataIter = chipicDataRuning.begin();
+	for (; dataIter != chipicDataRuning.end(); dataIter++)
+	{
+		if (dataIter->second->threadID == threadID)
+			break;
+	}
+	if (dataIter == chipicDataRuning.end())
+		return;
+	auto chipicData = dataIter->second;
+	chipicData->deleteItemAndBarPtr();
+
+	/*
+		判断错误重启的次数，如果超过三次，则判定这个文本有问题。给出提示并停止优化
+	*/
+	if (chipicData->errorExitCount == 3)
+	{
+		QMessageBox msgBox;
+		msgBox.setWindowTitle(QString::fromLocal8Bit("提示"));
+		msgBox.setText(QString::fromLocal8Bit("m3d文本出错，导致优化算法停止运行，文本路径:%1").arg(m3dPath));
+		msgBox.exec();
+		this->stop();
+		return;
+	}
+	chipicData->errorExitCount++;
+	
+	std::cerr << chipicData->m3dPath.toStdString() << std::endl;
+	/*
+		判断等待区是否还有未运行的，如果还有则说明还有未解析完成的内核。
+		则不调用启动函数。
+	*/
+
+	bool hasWait = false;
+	if (chipicDataWait.size() > 0)
+		hasWait = true;
+	chipicDataWait.push_back(chipicData);
+	chipicDataRuning.erase(dataIter);
+
+	if (!hasWait)
+		runChipic();
+
+}
 
 /**
 * @brief ChipicResultGetter::next 获取一个结果
-* @param ChipicRunDataPtr & runData 
+* @param ChipicRunDataPtr & runData
 * @return bool false代表获取失败
 */
 bool ChipicResultGetter::next(ChipicRunDataPtr& runData)
 {
 	if (this->iter == result.end())
-		return false;
-	int cc = 0;
-	for (auto i = result.begin(); i != result.end(); i++)
 	{
-		if (i == iter)
-			std::cerr << cc << std::endl;
-		cc++;
+		return false;
 	}
 	runData = *iter;
 	iter++;
 	return true;
 }
+
+#include "moc_SmartContorl.cpp"

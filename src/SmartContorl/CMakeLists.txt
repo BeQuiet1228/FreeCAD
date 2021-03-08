@@ -100,6 +100,11 @@ SET(LUA_SRC
 	lua/lzio.c
 	lua/lzio.h
 )
+SET(XML_SRC
+	xml/pugiconfig.hpp
+	xml/pugixml.cpp
+	xml/pugixml.hpp
+)
 SET(JSON_SRC
 
 )
@@ -176,6 +181,7 @@ SET(SmartContorl_src
 	${NETWORK_SRC}
 	${LUA_SRC}
 	${CODE_EDIT}
+	${XML_SRC}
 )
 #设置编译生成文件类型
 #add_executable(Contorl ${Contorl_src}) # 生成可执行文件
@@ -257,3 +263,4 @@ SOURCE_GROUP("Uic" FILES ${Gui_UIC_HDRS})
 SOURCE_GROUP("Network" FILES ${NETWORK_SRC})
 SOURCE_GROUP("lua" FILES ${LUA_SRC})
 SOURCE_GROUP("codeEdit" FILES ${CODE_EDIT})
+SOURCE_GROUP("xml" FILES ${XML_SRC})

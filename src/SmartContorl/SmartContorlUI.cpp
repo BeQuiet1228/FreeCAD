@@ -13,6 +13,8 @@
 #include <QVector>
 #include "qcustomplot.h"
 #include "VariateChart.h"
+#include "xml/pugixml.hpp"
+#include <QTextCodec>
 SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	:QDialog(parent), ui(new Ui::SmartContorlUI)
 {
@@ -23,7 +25,7 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	auto contorlInterface = ContorlInterface::GetInstance();
 
 #ifdef SMART_EXE
-	std::string m3dPath = "E:/test/MILO_P.m3d";
+	std::string m3dPath = "E:/test/test.m3d";
 	smartContorl->setM3dPath(m3dPath);
 #else
 	smartContorl->setM3dPath(contorlInterface->getDocumentPath());
@@ -41,6 +43,9 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	this->ui->pushButton_6->hide();
 	this->ui->pushButton_7->hide();
 	this->ui->textEdit->hide();
+
+	//ÔØÈë¹¤³ÌÅäÖÃ
+	loadParameterXml();
 }
 
 SmartContorlUI::~SmartContorlUI()
@@ -51,7 +56,10 @@ SmartContorlUI::~SmartContorlUI()
 void SmartContorlUI::on_pushButton_clicked()
 {
 	auto str = replaceVariate();
+	smartContorl->chipicCount = this->ui->spinBoxRunCount->value();
 	smartContorl->run(str);
+
+	saveParameterXml();
 }
 
 void SmartContorlUI::on_pushButton_2_clicked()
@@ -324,7 +332,6 @@ QString SmartContorlUI::replaceVariate()
 			.arg((*iter)->max).arg((*iter)->mini).arg(count);
 		vars += temp;
 	}
-	std::cerr << vars.toStdString();
 	auto text = this->ui->textEdit->toPlainText();
 	text += vars;
 
@@ -354,6 +361,92 @@ QString SmartContorlUI::replaceVariate()
 	config += temp;
 	text = config + text;
 	return text;
+}
+
+void SmartContorlUI::saveParameterXml()
+{
+	pugi::xml_document doc;
+	auto parNode = doc.append_child("Parameter");
+	auto configNode = doc.append_child("Config");
+	configNode.append_attribute("OptimizeCount") = ui->spinBoxOptimizeCount->value();
+	configNode.append_attribute("RunCount") = ui->spinBoxCount->value();
+	configNode.append_attribute("RunMaxCount") = ui->spinBoxRunCount->value();
+	configNode.append_attribute("ObserveName") = ui->lineEditName->text().toStdString().c_str();
+	configNode.append_attribute("MaxTime") = ui->lineEditMaxTime->text().toInt();
+	configNode.append_attribute("MiniTime") = ui->lineEditMiniTime->text().toInt();
+	configNode.append_attribute("FModIndex") = ui->comboBoxF->currentIndex();
+	configNode.append_attribute("F") = ui->lineEditMaxF->text().toLongLong();
+	configNode.append_attribute("ExcpectMod") = ui->comboBoxExcpcet->currentIndex();
+	configNode.append_attribute("Accuracy") = ui->lineEditAccuracy->text().toStdString().c_str();
+	configNode.append_attribute("C1") = ui->lineEditC1->text().toStdString().c_str();
+	configNode.append_attribute("C2") = ui->lineEditC2->text().toStdString().c_str();
+	configNode.append_attribute("Omega") = ui->lineEditOmega->text().toStdString().c_str();
+
+	for (auto i = variateDatas.begin(); i != variateDatas.end(); i++)
+	{
+		auto node = parNode.append_child((*i)->name.toStdString().c_str());
+		std::string max = QString::number((*i)->max).toStdString();
+		std::string mini = QString::number((*i)->mini).toStdString();
+		node.append_attribute("Max") = max.c_str();
+		node.append_attribute("Mini") = mini.c_str();
+	}
+	auto path = smartContorl->getM3dPath();
+	path = path.left(path.length() - 4) + ".cc";
+	auto gbk = QTextCodec::codecForName("gb2312");
+
+	std::string ret = gbk->fromUnicode(path).data();
+	doc.save_file(ret.c_str());
+
+	
+}
+
+void SmartContorlUI::loadParameterXml()
+{
+	pugi::xml_document document;
+	auto path = smartContorl->getM3dPath();
+	path = path.left(path.length() - 4) + ".cc";
+	auto gbk = QTextCodec::codecForName("gb2312");
+
+	std::string ret = gbk->fromUnicode(path).data();
+	auto result = document.load_file(ret.c_str());
+	if (!result)
+		return;
+	auto parNode = document.child("Parameter");
+	auto configNode = document.child("Config");
+
+
+	ui->spinBoxOptimizeCount->setValue(configNode.attribute("OptimizeCount").as_int());
+	ui->spinBoxRunCount->setValue(configNode.attribute("RunMaxCount").as_int());
+	ui->spinBoxCount->setValue(configNode.attribute("RunCount").as_int());
+	ui->lineEditName->setText(QString::fromStdString(configNode.attribute("ObserveName").as_string()));
+	ui->lineEditMaxTime->setText(QString::number(configNode.attribute("MaxTime").as_int()));
+	ui->lineEditMiniTime->setText(QString::number(configNode.attribute("MiniTime").as_int()));
+	ui->comboBoxF->setCurrentIndex(configNode.attribute("FModIndex").as_int());
+	ui->lineEditMaxF->setText(QString::number(configNode.attribute("F").as_llong()));
+	ui->comboBoxExcpcet->setCurrentIndex(configNode.attribute("ExcpectMod").as_int());
+	ui->lineEditAccuracy->setText(QString::number(configNode.attribute("Accuracy").as_double()));
+	ui->lineEditC1->setText(QString::number(configNode.attribute("C1").as_double()));
+	ui->lineEditC2->setText(QString::number(configNode.attribute("C2").as_double()));
+	ui->lineEditOmega->setText(QString::number(configNode.attribute("Omega").as_double()));
+
+	for (auto iter = parNode.begin(); iter != parNode.end(); iter++)
+	{
+		std::shared_ptr<VariateData> data;
+		data.reset(new VariateData);
+		data->count = this->ui->spinBoxCount->value();
+		data->name = QString::fromStdString(iter->name());
+		data->max = iter->attribute("Max").as_double();
+		data->mini = iter->attribute("Mini").as_double();
+		data->item = new QListWidgetItem();
+		data->widget = new VariateItemWidget();
+		data->widget->setData(data);
+		variateDatas.push_back(data);
+
+		this->ui->listWidgetVariate->addItem(data->item);
+		auto size = data->widget->size();
+		data->item->setSizeHint(size);
+		this->ui->listWidgetVariate->setItemWidget(data->item, data->widget);
+	}
 }
 
 void SmartContorlUI::closeEvent(QCloseEvent *event)

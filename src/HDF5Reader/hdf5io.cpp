@@ -30,13 +30,7 @@ void Hdf5IO::setFilePath(const std::string& path)
 
 	QString temp = QString::fromUtf8(path.c_str());
 	std::string newPath = gbk->fromUnicode(temp).data();
-	if (Hdf5File != nullptr)
-	{
-		Hdf5File->close();
-		delete Hdf5File;
-		Hdf5File = nullptr;
-		hdf5DataList.clear();
-	}
+	deleteH5File();
 	Hdf5File = new H5File(newPath, H5F_ACC_RDWR);
 }
 
@@ -215,7 +209,6 @@ bool Hdf5IO::getValue(const DataSet& dataSet, VectorF& values)
 	//数据大小 行与列的长度
 	hsize_t size[2];
 	dataSpace.getSimpleExtentDims(size, 0);
-	std::cerr << size[0] * size[1] << std::endl;
 	std::shared_ptr<float> value(new float[size[0] * size[1]]);
 
 	dataSet.read(value.get(), PredType::NATIVE_FLOAT);
@@ -438,7 +431,13 @@ std::string Hdf5IO::getNameFromHeadList(const std::vector<std::string>& headList
 */
 void Hdf5IO::deleteH5File()
 {
-	
+	if (Hdf5File != nullptr)
+	{
+		hdf5DataList.clear();
+		Hdf5File->close();
+		delete Hdf5File;
+		Hdf5File = nullptr;	
+	}
 }
 
 /**

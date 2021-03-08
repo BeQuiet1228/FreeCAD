@@ -122,9 +122,6 @@ bool FileMaker::cutFile(const QString& fileName, const QString& path)
 
 	auto newFileName = path +"/"+ fileInfo.fileName();
 
-	std::cerr << newFileName.toStdString() << std::endl;
-	std::cerr << fileName.toStdString() << std::endl;
-
 	QFile::remove(newFileName);
 	{
 		QFile file(fileName);

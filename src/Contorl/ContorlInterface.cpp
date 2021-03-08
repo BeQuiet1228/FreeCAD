@@ -121,6 +121,16 @@ void ContorlInterface::showTreeWidget()
 }
 
 /**
+* @brief ContorlInterface::clearChipicManager 这个函数主要是在需要清空chipic数据 但是不想关闭内核程序的时候调用
+* @return void
+*/
+void ContorlInterface::clearChipicManager()
+{
+	auto manager = getChipicManager();
+	manager->clearChipicData();
+}
+
+/**
 * @brief ContorlInterface::getChipicManager 返回chipic管理器指针  这个指针由contorl对象管理 
 * @return ChipicManager*
 */

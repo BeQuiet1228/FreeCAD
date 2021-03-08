@@ -148,6 +148,8 @@ void LocalEmitter::sendWinMessage(const std::string& json)
 #if MY_DEBUG
 			std::cerr << "LocalEmitter::sendWinMessage get RunChipic3dListener failde" << std::endl;
 #endif // MY_DEBUG
+			auto closer = MessageTransition::creatCloseChipicJsonMessage(threadId);
+			JsonMessageGetter::GetInstance()->addJsonMessage(closer);
 
 	}
 	else
@@ -157,4 +159,5 @@ void LocalEmitter::sendWinMessage(const std::string& json)
 #endif // MY_DEBUG
 
 	}
+
 }

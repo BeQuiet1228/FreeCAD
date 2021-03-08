@@ -99,6 +99,9 @@ public:
 		this->m3dPath = s;
 		fileMaker.setM3dPath(s);
 	}
+	QString getM3dPath(){
+		return m3dPath;
+	}
 	void setM3dPath(const std::string s){
 		this->m3dPath = QString::fromStdString(s);
 		fileMaker.setM3dPath(m3dPath);
@@ -112,9 +115,10 @@ public:
 	std::vector<HistoryData> getHistoryDatas(){
 		return historyDatas;
 	}
-private:
+public:
 	//同时运行chipic的个数
 	unsigned int chipicCount = 6;
+private:
 	//lua虚拟机
 	lua_State *lua_state;
 	//参数组
@@ -137,6 +141,8 @@ private:
 	HistoryData runData;
 	//优化算法整个模块的运行状态
 	bool runing = false;
+	//暂时写一个参数来确定是否要响应已经完成的chipic启动新的chipic。这里为了保证优化时每次都一个一个的启动
+	bool finishedIsVasible = false;
 private:
 	//获取错误处理函数再栈中的位置
 	int getLuaErrorCallBackFunction();
@@ -147,6 +153,10 @@ private:
 public Q_SLOTS:
 	void chipicWorkFinished(unsigned long threadID);
 	void chipicStartFinished(unsigned long threadID);
+	//chipic解析完成槽
+	void chipicAnalysisFinished(unsigned long threadID);
+	//chipic异常退出槽
+	void chipicErrorClose(unsigned long threadID);
 
 Q_SIGNALS:
 	//chipic启动成功之后的ui

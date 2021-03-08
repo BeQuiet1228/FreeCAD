@@ -11,6 +11,7 @@
 #include "File.h"
 #include <QDir>
 #include <QFileInfo>
+#include "RunChipic3dListener.h"
 std::shared_ptr<NetworkServer> NetworkServer::_instance;
 
 NetworkServer::~NetworkServer()
@@ -98,8 +99,11 @@ void NetworkServer::killService()
 			sender->sendJsonMessage(msg);
 		}
 	}
-	this->socketList.clear();
-
+	for (auto i = socketList.begin(); i != socketList.end(); i++)
+	{
+		(*i)->setDeleteSocket(true);
+	}
+	socketList.clear();
 	server->close();
 }
 
@@ -140,7 +144,7 @@ QString NetworkServer::getWorkPath()
 {
 	QSettings setting("PICGUI", "NetworkServerConfig");
 
-	return setting.value("workPath", "C:/chipicServiceWorkPath").toString();
+	return setting.value("workPath", "C:/chipicServiceWorkPath/").toString();
 }
 
 /**
@@ -416,6 +420,10 @@ bool NetworkServer::disposeRunchipicMessage(const neb::CJsonObject& json, const 
 {
 	if (cmd != "RunChipic")
 		return false;
+#if MY_LOG
+	std::cerr << "NetworkServer::disposeRunchipicMessage ,"
+		<< json.ToString() << std::endl;
+#endif
 
 	//获取带文件名的路径
 	std::string filePath;
@@ -517,6 +525,12 @@ bool NetworkServer::disposeM3dFileMessage(NetworkSocket::SocketMessageBody& mess
 		return false;
 	}
 
+
+#ifdef MY_LOG
+	std::cerr << "NetworkServer::disposeM3dFileMessage ," <<
+		jsonObjcet.ToString() << std::endl;
+#endif
+
 	//拼接路径
 	std::string filePath = workPath + sender->user->userName;
 	
@@ -579,6 +593,11 @@ bool NetworkServer::disposeH5FileMessage(const std::string& json)
 	std::string typeName;
 	//如果是传输计算结果那么文件名称和临时文件的名称不一样
 	typeName = finished ? ".h5" : "_Temp.h5";
+#ifdef MY_LOG
+	std::cerr << "NetworkServer::disposeH5FileMessage ,"
+		<< json << std::endl;
+#endif
+
 	if (chipicData.threadCount == 1)
 	{
 		serviceFilePath = chipicData.servicePath + "/" + chipicData.fileName + typeName;
@@ -604,11 +623,11 @@ bool NetworkServer::disposeH5FileMessage(const std::string& json)
 	this->sendFile(clientFilePath, serviceFilePath, socket);
 
 	//如果为计算完成消息，则关闭chipic
-/*	if (finished)
+	if (finished)
 	{
 		closeChipic(winMessage.threadId);
 		return true;
-	}*/
+	}
 
 	//发送看图消息
 	socket->sendJsonMessage(json);
@@ -633,6 +652,11 @@ bool NetworkServer::diposeChipicClose(const std::string& json)
 	MessageTransition::getCmd(json,cmd);
 	if (cmd != "CloseChipic")
 		return false;
+#ifdef MY_LOG
+	std::cerr << "NetworkServer::diposeChipicClose ," << json << std::endl;
+
+#endif
+
 	std::string temp;
 	MessageTransition::getThreadID(json, temp);
 	unsigned long threadID = std::stoul(temp);
@@ -652,6 +676,7 @@ bool NetworkServer::diposeChipicClose(const std::string& json)
 			break;
 		}
 	}
+	return true;
 }
 
 /**
@@ -736,6 +761,25 @@ void NetworkServer::closeChipic(const unsigned long& ID)
 	auto sender = MessageSender::GetInstance();
 	sender->sendJsonMessage(json);
 }
+/**
+* 这个消息主要是为了防止消息队列溢出，这种类型的消息在服务端就处理了
+*/
+bool NetworkServer::disposChipicPuse(const std::string& json)
+{
+	auto msg = MessageTransition::jsonToWinMessage(json);
+	if (msg.Msg != 250 || msg.wParam != 1)
+		return false;
+	
+	Message m;
+	m.threadId = msg.threadId;
+	m.Msg = 150;
+	m.wParam = 0;
+	m.lParam = 0;
+	auto j = MessageTransition::winMessageTojson(m);
+	MessageSender::GetInstance()->sendJsonMessage(j);
+
+	return true;
+}
 
 /**
 * @brief NetworkServer::serverNewConnection tcp服务器有新的链接槽
@@ -806,6 +850,8 @@ void NetworkServer::hasLocalMessage()
 	//处理启动完成消息
 	if (startFinishedCmd(json))
 		return;
+	if (disposChipicPuse(json))
+		return;
 	//处理hdf5文件消息
 	if(disposeH5FileMessage(json))
 		return;
@@ -838,6 +884,12 @@ void NetworkServer::socketDisconnect()
 		}
 	}
 
+}
+
+void NetworkServer::sendCloseChipicMessage(const unsigned long& threaID)
+{
+	auto j = MessageTransition::creatCloseChipicJsonMessage(threaID);
+	JsonMessageGetter::GetInstance()->addJsonMessage(j);
 }
 
 #include "moc_NetworkServer.cpp"
