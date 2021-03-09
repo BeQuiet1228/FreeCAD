@@ -1,0 +1,87 @@
+#设置项目名称
+project(DataVisualization)
+#引入头文件
+include_directories(
+    ${CMAKE_BINARY_DIR}/src
+    ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${Boost_INCLUDE_DIRS}
+    ${PYTHON_INCLUDE_DIRS}
+    ${XercesC_INCLUDE_DIRS}
+    ${ZLIB_INCLUDE_DIR}
+    ${PYCXX_INCLUDE_DIR}
+)
+SET(QRC_SRC "")
+SET(UI_SRC "")
+SET(SRC main.cpp
+	Data.h
+	Data.cpp
+	TimeData.h
+	TimeData.cpp)
+
+#处理ui和qrc文件
+if (BUILD_QT5)
+    QT5_ADD_RESOURCES(Gui_QRC_SRCS ${QRC_SRC})
+    QT5_WRAP_UI(Gui_UIC_HDRS ${UI_SRC})
+else()
+    QT4_ADD_RESOURCES(Gui_QRC_SRCS ${QRC_SRC})
+    QT4_WRAP_UI(Gui_UIC_HDRS ${UI_SRC})
+endif()
+SET(DataVisualization_src
+	${SRC}
+	${UI_SRC}
+)
+#设置编译生成文件类型
+add_executable(DataVisualization ${DataVisualization_src}) # 生成可执行文件
+#设置执行文件的输出目录
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ./bin)    
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ./bin) 
+
+#添加目录分类
+SOURCE_GROUP("src" FILES ${SRC})
+
+#增加包含目录
+include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}
+	
+)
+#增加外部库
+list(APPEND QT_LIB
+    debug MSVCRTD.LIB
+    debug MSVCPRTD.LIB
+    optimized MSVCRT.LIB
+    optimized MSVCPRT.LIB
+	HDF5Reader
+	)
+if (BUILD_QT5)
+    include_directories(
+        ${Qt5Core_INCLUDE_DIRS}
+        ${Qt5Widgets_INCLUDE_DIRS}
+        ${Qt5OpenGL_INCLUDE_DIRS}
+        ${Qt5PrintSupport_INCLUDE_DIRS}
+        ${Qt5Svg_INCLUDE_DIRS}
+        ${Qt5Network_INCLUDE_DIRS}
+        ${Qt5UiTools_INCLUDE_DIRS}
+    )
+    list(APPEND QT_LIB
+        ${Qt5Core_LIBRARIES}
+        ${Qt5Widgets_LIBRARIES}
+        ${Qt5OpenGL_LIBRARIES}
+        ${Qt5PrintSupport_LIBRARIES}
+        ${Qt5Svg_LIBRARIES}
+        ${Qt5Network_LIBRARIES}
+        ${Qt5UiTools_LIBRARIES}
+    )
+else()
+    include_directories(
+        ${QT_INCLUDE_DIR}
+    )
+    list(APPEND QT_LIB
+        ${QT_LIBRARIES}
+        ${QT_QTUITOOLS_LIBRARY}
+    )
+endif()
+#生成moc文件
+fc_wrap_cpp(MY_MOC_SRCS ${MY_MOC_HDR})
+target_link_libraries(DataVisualization ${QT_LIB})

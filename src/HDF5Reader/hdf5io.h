@@ -9,6 +9,8 @@
 #include "H5Cpp.h"
 #include <iostream>
 #include <vector>
+#include <list>
+#include <memory>
 using namespace  H5;
 class Hdf5IO;
 using VectorF = std::vector<float>;
@@ -34,6 +36,7 @@ public:
 	//获取数据库中的值
 	bool getValue(const Group& group, const std::string& datasetName,VectorF &values);
 	bool getValue(const DataSet& dataSet,VectorF& values);
+	bool getValue(const std::vector<DataSet>& dataSets, std::list<std::shared_ptr<VectorF>>& listVales);
 
 	//释放h5文件
 	void deleteH5File();

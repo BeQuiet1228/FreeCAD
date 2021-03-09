@@ -222,6 +222,28 @@ bool Hdf5IO::getValue(const DataSet& dataSet, VectorF& values)
 	return true;
 }
 
+/**
+* @brief Hdf5IO::getValue 获取一组数据集中所有的值
+* @param const std::vector<DataSet> & dataSets  一组数据集
+* @param list<std::shared_ptr<VectorF>> & listVales 获取到的值
+* @return bool 是否获取成功
+*/
+bool Hdf5IO::getValue(const std::vector<DataSet>& dataSets, std::list<std::shared_ptr<VectorF>>& listVales)
+{
+	listVales.clear();
+
+	bool ok = true;
+
+	for (auto dataSetIter = dataSets.begin(); dataSetIter != dataSets.end(); dataSetIter++)
+	{
+		std::shared_ptr<VectorF> values(new VectorF);
+		ok = ok && getValue(*dataSetIter, *(values.get()));
+		listVales.push_back(values);
+	}
+
+	return ok;
+}
+
 /*
  * 打开一个h5文件，从中获取一个数据组
  */
