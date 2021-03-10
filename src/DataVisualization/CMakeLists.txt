@@ -18,7 +18,13 @@ SET(SRC main.cpp
 	Data.h
 	Data.cpp
 	TimeData.h
-	TimeData.cpp)
+	TimeData.cpp
+	TimeRenderer.cpp
+	TimeRenderer.h
+	Renderer.cpp
+	Renderer.h
+	Plot.cpp
+	Plot.h)
 
 #处理ui和qrc文件
 if (BUILD_QT5)
@@ -35,8 +41,8 @@ SET(DataVisualization_src
 #设置编译生成文件类型
 add_executable(DataVisualization ${DataVisualization_src}) # 生成可执行文件
 #设置执行文件的输出目录
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ./bin)    
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ./bin) 
+set(DEBUG_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+set(RELEASE_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 #添加目录分类
 SOURCE_GROUP("src" FILES ${SRC})

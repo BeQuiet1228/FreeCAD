@@ -682,7 +682,6 @@ function resultDataFilter()
 	local av = add/addCount;
 	local f = getF(mini,max,av);
 	addParam(f);
-	cppPrint(&quot;f= &quot;..f);
  end
  saveParamsInHistory();
  local groupIndex = getHistorySize() - 1;
@@ -693,6 +692,7 @@ function resultDataFilter()
  while(index &lt; groupSize)
  do
 	local F = getParam(groupIndex,index,0);
+	cppPrint(&quot;f= &quot;..F);
 	local pitF = variates[1].pitF[index + 1];
 	print(&quot;pitf=&quot;..pitF..&quot;,F=&quot;..F..&quot;,x=&quot;..variates[1].variate[index + 1]);
 	if(compareF(F,pitF))

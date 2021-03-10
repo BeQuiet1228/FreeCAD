@@ -4,8 +4,10 @@
 #include <list>
 #include <mutex>
 #include <memory>
+#include <QPoint>
 
 class Data{
+
 
 public:
 	using Values = std::vector<float>;
@@ -13,8 +15,6 @@ public:
 	using ListValues = std::list< ValuesPtr >;
 	using ListValuesPtr = std::shared_ptr<ListValues>;
 	using MutexPtr = std::shared_ptr<std::mutex>;
-
-
 	//×Ô¶¯Ëø
 	class AutoMutx{
 	public:
@@ -27,6 +27,11 @@ public:
 		}
 	private:
 		MutexPtr mutex;
+	};
+	struct Rang{
+		Rang() :max(0), min(0){};
+		float max;
+		float min;
 	};
 public:
 	enum RunMod{

@@ -36,13 +36,13 @@ bool TimeData::loadPoint()
 }/**
 * @brief TimeData::getPoint 根据索引给出一个点
 * @param const int & index
-* @return Point
+* @return QPointF
 */
-TimeData::Point TimeData::getPoint(const int& index)
+QPointF TimeData::getPoint(const int& index)
 {
 	if (index >= pointSize)
 	{
-		Point p;
+		QPointF p;
 		return p;
 	}
 	return getPointHard(index);
@@ -51,13 +51,13 @@ TimeData::Point TimeData::getPoint(const int& index)
 /**
 * @brief TimeData::getPointHard 根据索引给出一个点，这个函数不会判断容器边界，谨慎使用。
 * @param const int & index
-* @return Point
+* @return QPointF
 */
-TimeData::Point TimeData::getPointHard(const int& index)
+QPointF TimeData::getPointHard(const int& index)
 {
-	Point point;
-	point.x = points->at(index * 2);
-	point.y = points->at(index * 2 + 1);
+	QPointF point;
+	point.setX(points->at(index * 2));
+	point.setY(points->at(index * 2 + 1));
 	return point;
 }
 
@@ -80,7 +80,7 @@ int TimeData::findIndexFromXValueL(const float& x)
 */
 int TimeData::findIndexFromXValueR(const float& x)
 {
-	return findIndexFromXValueR(x) + 1;
+	return findIndexFromXValueL(x) + 1;
 }
 
 /**

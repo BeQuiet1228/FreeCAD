@@ -41,7 +41,7 @@ public:
 	//释放h5文件
 	void deleteH5File();
 private:
-    H5File *Hdf5File;
+    H5File *Hdf5File = nullptr;
 	//获取一个数据组
 	bool getGroup(const Group& fatherGroup, const std::string groupName, Group& group);
 	bool getGroup(const std::string groupName, Group& group);

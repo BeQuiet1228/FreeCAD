@@ -3,17 +3,6 @@
 #include <vector>
 class TimeData :public Data{
 public:
-	struct Point{
-		Point() :x(0), y(0){};
-		float x;
-		float y;
-	};
-	struct Rang{
-		Rang() :max(0), min(0){};
-		float max;
-		float min;
-	};
-public:
 	TimeData(Hdf5Data& h5Data, const RunMod& mod = SINGLE_THREAD);
 	~TimeData();
 
@@ -28,8 +17,8 @@ public:
 		return pointSize;
 	};
 	//获取一个点
-	Point getPoint(const int& index);
-	Point getPointHard(const int& index);
+	QPointF getPoint(const int& index);
+	QPointF getPointHard(const int& index);
 	//根据值寻找一个索引
 	int findIndexFromXValueL(const float& x);
 	int findIndexFromXValueR(const float& x);
