@@ -24,7 +24,11 @@ SET(SRC main.cpp
 	Renderer.cpp
 	Renderer.h
 	Plot.cpp
-	Plot.h)
+	Plot.h
+	Canvas.cpp
+	Canvas.h
+	Axis.cpp
+	Axis.h)
 
 #处理ui和qrc文件
 if (BUILD_QT5)
