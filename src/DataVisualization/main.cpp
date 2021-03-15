@@ -5,6 +5,7 @@
 #include <memory>
 #include "TimeData.h"
 #include "TimeRenderer.h"
+#include <Canvas.h>
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
@@ -25,7 +26,9 @@ int main(int argc, char *argv[])
 	timeRenderer.drawPixmap();
 
 	Plot p;
-	p.pixmap = timeRenderer.getPixmap();
+	CanvasItem item;
+	item.setPixmap(timeRenderer.getPixmap(),QPoint(0,0));
+	p.addCanvasItem(item);
 	p.show();
 
 	return a.exec();
