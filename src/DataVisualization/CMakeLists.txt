@@ -14,6 +14,9 @@ include_directories(
 )
 SET(QRC_SRC "")
 SET(UI_SRC "")
+SET(MY_MOC_HDR RenderThread.h
+	RenderThreadManager.h
+	Plot.h)
 SET(SRC main.cpp
 	Data.h
 	Data.cpp
@@ -28,7 +31,13 @@ SET(SRC main.cpp
 	Canvas.cpp
 	Canvas.h
 	Axis.cpp
-	Axis.h)
+	Axis.h
+	RenderTask.cpp
+	RenderTask.h
+	RenderThreadManager.cpp
+	RenderThreadManager.h
+	RenderThread.cpp
+	RenderThread.h)
 
 #处理ui和qrc文件
 if (BUILD_QT5)

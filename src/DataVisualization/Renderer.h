@@ -20,6 +20,8 @@ public:
 	void setSize(const QSize& size);
 	void setSize(const int& width, const int& hegiht);
 	QSize getSize();
+	//设置取点的位置
+	void setFindPosition(const QPointF& pos);
 
 private:
 	//渲染图
@@ -28,10 +30,14 @@ private:
 	//渲染大小
 	QSize pixmapSize;
 	std::mutex pixmapSizeMutex;
+	//点的位置
+	QPointF findPosition;
+	std::mutex findPositionMutex;
 protected:
 	//数据类
 	std::shared_ptr<Data> data;
 public:
 	virtual bool drawPixmap() = 0;
 	virtual bool addListRang(std::list<Data::Rang> listRang);
+	virtual bool drawPointPixmap() = 0;
 };

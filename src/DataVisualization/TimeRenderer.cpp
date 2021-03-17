@@ -3,6 +3,7 @@
 #include <iostream>
 #include <qpen.h>
 #include <QPointF>
+#include <QImage>
 TimeRenderer::TimeRenderer(std::shared_ptr<TimeData> data)
 	:Renderer(std::dynamic_pointer_cast<Data>(data))
 {
@@ -40,9 +41,11 @@ bool TimeRenderer::drawPixmap()
 	endIndex = d->findIndexFromXValueR(xr.max);
 
 	//ÐÂ½¨»­²¼ »­±Ê
-	QPixmap pixmap(getSize());
+	QPixmap *pixmap = new QPixmap(getSize());
+	QImage imag;
+ 	pixmap->fill(Qt::transparent);
 	QPen pen(Qt::black);
-	QPainter painter(&pixmap);
+	QPainter painter(&imag);
 	painter.setPen(pen);
 	
 	QPointF starPoint, endPoint;
@@ -57,7 +60,7 @@ bool TimeRenderer::drawPixmap()
 		starPoint = endPoint;
 	}
 
-	setPixmap(pixmap);
+	setPixmap(*pixmap);
 	return true;
 }
 

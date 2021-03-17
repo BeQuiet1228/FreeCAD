@@ -29,3 +29,5 @@ Plot::~Plot()
 	delete AxisL;
 }
 
+
+#include "moc_Plot.cpp"

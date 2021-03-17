@@ -66,6 +66,17 @@ QSize Renderer::getSize()
 }
 
 
+/**
+* @brief Renderer::setFindPosition 设置查找点的位置
+* @param const QPointF & pos
+* @return void
+*/
+void Renderer::setFindPosition(const QPointF& pos)
+{
+	AutoMutex am(findPositionMutex);
+	findPosition = pos;
+}
+
 bool Renderer::addListRang(std::list<Data::Rang> listRang)
 {
 	std::cerr << "Renderer::addListRang it can't be called here!" << std::endl;

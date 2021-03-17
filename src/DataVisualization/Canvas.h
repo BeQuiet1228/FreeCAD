@@ -10,20 +10,34 @@ class Canvas;
 class CanvasItem{
 	friend class Canvas;
 public:
-	CanvasItem():pixmap(nullptr){}
-	~CanvasItem(){}
+	CanvasItem();
+	~CanvasItem() = default;
 private:
 	std::shared_ptr<QPixmap> pixmap;
 	QPoint pos;
 	QPen pen;
 public:
-	void setPixmap(const QPixmap& pixmap,const QPoint& point){
+	void setPixmap(const QPixmap& pixmap,const QPoint& point = QPoint(0,0)){
 		this->pixmap.reset(new QPixmap(pixmap));
 		this->pos = point;
 	}
 	void setPen(const QPen& pen){
 		this->pen = pen;
 	}
+	void setPos(const QPoint& pos){
+		this->pos = pos;
+	}
+	QPoint getPos(){
+		return this->pos;
+	}
+public:
+	static void registerMetaTye();
+	bool operator < (const CanvasItem& item);
+	bool operator > (const CanvasItem& item);
+	bool operator == (const CanvasItem& item);
+public:
+	//²ã¼¶
+	unsigned int rank;
 };
 class Canvas :public QWidget{
 public:

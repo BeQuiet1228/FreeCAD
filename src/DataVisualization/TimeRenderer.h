@@ -13,6 +13,7 @@ public:
 	//äÖÈ¾
 	virtual bool drawPixmap() override;
 	virtual bool addListRang(std::list<Data::Rang> listRang) override;
+	virtual bool drawPointPixmap() override{ return true; };
 
 public:
 	//²Ù×÷·¶Î§

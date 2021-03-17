@@ -6,6 +6,7 @@
 #include "Canvas.h"
 class Axis;
 class Plot:public QWidget{
+	Q_OBJECT
 public:
 	Plot(QWidget* parent = 0);
 	~Plot();
