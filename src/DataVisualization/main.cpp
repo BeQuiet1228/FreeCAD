@@ -27,11 +27,11 @@ int main(int argc, char *argv[])
 	timeRenderer->setSize(500, 500);
 	timeRenderer->setXRang(timeData->getXRang());
 	timeRenderer->setYRang(timeData->getYRang());
-	timeRenderer->drawPixmap();
+	timeRenderer->drawImage();
 
 	Plot p;
 	CanvasItem item;
-	item.setPixmap(timeRenderer->getPixmap(),QPoint(0,0));
+	item.setImage(timeRenderer->getImage(),QPoint(0,0));
 	p.addCanvasItem(item);
 	p.show();
 

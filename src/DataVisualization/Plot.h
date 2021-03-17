@@ -1,7 +1,7 @@
 #pragma once
 #include <QWidget>
 #include <QPaintEvent>
-#include <QPixmap>
+#include <QImage>
 #include <QGridLayout>
 #include "Canvas.h"
 class Axis;

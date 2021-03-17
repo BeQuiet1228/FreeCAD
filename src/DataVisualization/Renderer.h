@@ -1,10 +1,11 @@
 #pragma once
-#include <QPixmap>
+#include <QImage>
 #include <mutex>
 #include <QSize>
 #include "Data.h"
 #include <memory>
 #include <list>
+#include <QImage>
 class Renderer{
 public:
 	using AutoMutex = std::lock_guard<std::mutex>;
@@ -14,8 +15,8 @@ public:
 
 public:
 	//操作渲染图
-	void setPixmap(const QPixmap& map);
-	QPixmap getPixmap();
+	void setImage(const QImage& map);
+	QImage getImage();
 	//设置渲染大小
 	void setSize(const QSize& size);
 	void setSize(const int& width, const int& hegiht);
@@ -25,11 +26,11 @@ public:
 
 private:
 	//渲染图
-	QPixmap pixmap;
-	std::mutex pixmapMutex;
+	QImage image;
+	std::mutex imageMutex;
 	//渲染大小
-	QSize pixmapSize;
-	std::mutex pixmapSizeMutex;
+	QSize imageSize;
+	std::mutex imageSizeMutex;
 	//点的位置
 	QPointF findPosition;
 	std::mutex findPositionMutex;
@@ -37,7 +38,7 @@ protected:
 	//数据类
 	std::shared_ptr<Data> data;
 public:
-	virtual bool drawPixmap() = 0;
+	virtual bool drawImage() = 0;
 	virtual bool addListRang(std::list<Data::Rang> listRang);
-	virtual bool drawPointPixmap() = 0;
+	virtual bool drawPointImage() = 0;
 };

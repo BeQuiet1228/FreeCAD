@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include <QPixmap>
+#include <QImage>
 #include <list>
 #include <memory>
 #include <QPaintEvent>
@@ -13,12 +13,12 @@ public:
 	CanvasItem();
 	~CanvasItem() = default;
 private:
-	std::shared_ptr<QPixmap> pixmap;
+	std::shared_ptr<QImage> image;
 	QPoint pos;
 	QPen pen;
 public:
-	void setPixmap(const QPixmap& pixmap,const QPoint& point = QPoint(0,0)){
-		this->pixmap.reset(new QPixmap(pixmap));
+	void setImage(const QImage& image,const QPoint& point = QPoint(0,0)){
+		this->image.reset(new QImage(image));
 		this->pos = point;
 	}
 	void setPen(const QPen& pen){

@@ -18,8 +18,7 @@ void Canvas::paintEvent(QPaintEvent *event)
 	for (auto item = items.begin(); item != items.end(); item++)
 	{
 		painter.setPen(item->pen);
-		painter.drawPixmap(item->pos.x(), item->pos.y(), item->pixmap->width()
-			, item->pixmap->height(), *(item->pixmap.get()));
+		painter.drawImage(item->pos, *(item->image.get()));
 	}
 	painter.drawRect(0, 0, this->width()-2, this->height()-2);
 }
@@ -53,7 +52,7 @@ bool CanvasItem::operator<(const CanvasItem& item)
 }
 
 CanvasItem::CanvasItem()
-	:pixmap(nullptr), rank(0), pos(0, 0)
+	:image(nullptr), rank(0), pos(0, 0)
 {
 
 }

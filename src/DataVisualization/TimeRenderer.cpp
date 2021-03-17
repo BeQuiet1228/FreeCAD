@@ -4,6 +4,7 @@
 #include <qpen.h>
 #include <QPointF>
 #include <QImage>
+#include <QRgb>
 TimeRenderer::TimeRenderer(std::shared_ptr<TimeData> data)
 	:Renderer(std::dynamic_pointer_cast<Data>(data))
 {
@@ -15,7 +16,7 @@ TimeRenderer::~TimeRenderer()
 
 }
 
-bool TimeRenderer::drawPixmap()
+bool TimeRenderer::drawImage()
 {
 	//获取坐标缩放比例
 	float yScale(0.0), xScale(0.0);
@@ -26,7 +27,7 @@ bool TimeRenderer::drawPixmap()
 	if (!d)
 	{
 #if LOG
-		std::cerr << "TimeRenderer::drawPixmap() data dynamic cast failed!" << std::endl;
+		std::cerr << "TimeRenderer::drawImage() data dynamic cast failed!" << std::endl;
 #endif
 		return false;
 	}
@@ -41,11 +42,10 @@ bool TimeRenderer::drawPixmap()
 	endIndex = d->findIndexFromXValueR(xr.max);
 
 	//新建画布 画笔
-	QPixmap *pixmap = new QPixmap(getSize());
-	QImage imag;
- 	pixmap->fill(Qt::transparent);
+	QImage img(getSize(), QImage::Format_ARGB32);
+	img.fill(qRgba(0, 0, 0, 0));
 	QPen pen(Qt::black);
-	QPainter painter(&imag);
+	QPainter painter(&img);
 	painter.setPen(pen);
 	
 	QPointF starPoint, endPoint;
@@ -60,7 +60,7 @@ bool TimeRenderer::drawPixmap()
 		starPoint = endPoint;
 	}
 
-	setPixmap(*pixmap);
+	setImage(img);
 	return true;
 }
 

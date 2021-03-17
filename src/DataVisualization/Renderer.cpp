@@ -11,24 +11,24 @@ Renderer::~Renderer()
 }
 
 /**
-* @brief Renderer::setPixmap
-* @param const QPixmap & map
+* @brief Renderer::setImage
+* @param const QImage & map
 * @return void
 */
-void Renderer::setPixmap(const QPixmap& map)
+void Renderer::setImage(const QImage& map)
 {
-	AutoMutex am(pixmapMutex);
-	this->pixmap = map;
+	AutoMutex am(imageMutex);
+	this->image = map;
 }
 
 /**
-* @brief Renderer::getPixmap
-* @return QT_NAMESPACE::QPixmap
+* @brief Renderer::getImage
+* @return QT_NAMESPACE::QImage
 */
-QPixmap Renderer::getPixmap()
+QImage Renderer::getImage()
 {
-	AutoMutex am(pixmapMutex);
-	return this->pixmap;
+	AutoMutex am(imageMutex);
+	return this->image;
 }
 
 /**
@@ -38,8 +38,8 @@ QPixmap Renderer::getPixmap()
 */
 void Renderer::setSize(const QSize& size)
 {
-	AutoMutex am(pixmapSizeMutex);
-	pixmapSize = size;
+	AutoMutex am(imageSizeMutex);
+	imageSize = size;
 }
 
 /**
@@ -50,9 +50,9 @@ void Renderer::setSize(const QSize& size)
 */
 void Renderer::setSize(const int& width, const int& hegiht)
 {
-	AutoMutex am(pixmapSizeMutex);
-	pixmapSize.setWidth(width);
-	pixmapSize.setHeight(hegiht);
+	AutoMutex am(imageSizeMutex);
+	imageSize.setWidth(width);
+	imageSize.setHeight(hegiht);
 }
 
 /**
@@ -61,8 +61,8 @@ void Renderer::setSize(const int& width, const int& hegiht)
 */
 QSize Renderer::getSize()
 {
-	AutoMutex am(pixmapSizeMutex);
-	return pixmapSize;
+	AutoMutex am(imageSizeMutex);
+	return imageSize;
 }
 
 

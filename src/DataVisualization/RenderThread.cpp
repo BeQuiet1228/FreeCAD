@@ -34,10 +34,10 @@ void RenderThread::renderMap(RenderTask& task)
 {
 	auto renderer = task.getRenderer();
 
-	renderer->drawPixmap();
+	renderer->drawImage();
 	CanvasItem item;
 	item.rank = task.rank;
-	item.setPixmap(renderer->getPixmap());
+	item.setImage(renderer->getImage());
 
 	Q_EMIT renderFinished(item);
 }
@@ -51,10 +51,10 @@ void RenderThread::findPoint(RenderTask& task)
 {
 	auto renderer = task.getRenderer();
 
-	renderer->drawPointPixmap();
+	renderer->drawPointImage();
 	CanvasItem item;
 	item.rank = task.rank;
-	item.setPixmap(renderer->getPixmap());
+	item.setImage(renderer->getImage());
 
 	Q_EMIT renderFinished(item);
 }
