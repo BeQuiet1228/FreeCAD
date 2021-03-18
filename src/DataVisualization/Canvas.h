@@ -6,6 +6,7 @@
 #include <QPaintEvent>
 #include <QPen>
 #include <QPainter>
+#include <map>
 class Canvas;
 class CanvasItem{
 	friend class Canvas;
@@ -36,7 +37,7 @@ public:
 	bool operator > (const CanvasItem& item);
 	bool operator == (const CanvasItem& item);
 public:
-	//层级
+	//层级 同一个canvas中层级不能重复 不然会被覆盖掉
 	unsigned int rank;
 };
 class Canvas :public QWidget{
@@ -44,11 +45,9 @@ public:
 	Canvas(QWidget* parent = 0);
 	~Canvas();
 private:
-	std::list<CanvasItem> items;
+	std::map<unsigned int,CanvasItem> items;
 public:
-	void addIteam(const CanvasItem& iteam){
-		this->items.push_back(iteam);
-	}
+	void addIteam(const CanvasItem& iteam);
 	void clearIteam(){
 		items.clear();
 	};

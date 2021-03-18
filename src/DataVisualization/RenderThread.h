@@ -31,7 +31,7 @@ private:
 	//设置完成标值
 	void setFinishedFlag(const bool& flag){
 		std::lock_guard<std::mutex> am(finishedFlagMutex);
-		this->finishedFlag = false;
+		this->finishedFlag = flag;
 	}
 private:
 	//是否运行完成

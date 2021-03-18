@@ -22,6 +22,7 @@ public:
 	void setYRang(const Data::Rang& rang);
 	Data::Rang getYRang();
 
+
 private:
 	//将数据坐标转换为图片上的坐标
 	float transitionX(const float& x,const float& xScale,const Data::Rang& xr);

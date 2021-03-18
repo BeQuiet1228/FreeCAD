@@ -30,22 +30,9 @@ int main(int argc, char *argv[])
 	timeRenderer->drawImage();
 
 	Plot p;
-	CanvasItem item;
-	item.setImage(timeRenderer->getImage(),QPoint(0,0));
-	p.addCanvasItem(item);
+	std::shared_ptr<Renderer> rd(timeRenderer);
+	p.setMainRenderer(rd);
 	p.show();
-
-	//²âÊÔµ¥Ïß³ÌäÖÈ¾
-	std::shared_ptr<Renderer> re(timeRenderer);
-	RenderTask task(re);
-	
-	RenderThreadManager ma;
-	ma.addTask(task);
-	task.rank = 3;
-	ma.addTask(task);
-	task.rank = 2;
-	ma.addTask(task);
-	ma.start();
 
 	return a.exec();
 }

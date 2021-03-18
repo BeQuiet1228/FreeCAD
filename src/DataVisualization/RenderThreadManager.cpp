@@ -18,6 +18,8 @@ RenderThreadManager::~RenderThreadManager()
 */
 void RenderThreadManager::start()
 {
+	if (tasks.size() == 0)
+		return;
 	stop();
 	//暂时实现一个线程渲染
 	if (runMode != THREAD_ONCE)
@@ -39,6 +41,8 @@ void RenderThreadManager::stop()
 		disconnect(i->get(), SIGNAL(renderFinished(CanvasItem)), this, SLOT(renderFinished(CanvasItem)));
 		disconnect(i->get(), SIGNAL(threadFinished()), this, SLOT(threadWorkFinished()));
 		i = threads.erase(i);
+		if (i == threads.end())
+			break;
 	}
 }
 
@@ -67,6 +71,8 @@ void RenderThreadManager::clearFinishedThread()
 		disconnect(i->get(),SIGNAL(renderFinished(CanvasItem)), this, SLOT(renderFinished(CanvasItem)));
 		disconnect(i->get(), SIGNAL(finished()), this, SLOT(threadWorkFinished()));
 		i = threads.erase(i);
+		if (i == threads.end())
+			break;
 	}
 }
 
@@ -82,11 +88,8 @@ void RenderThreadManager::renderFinished(CanvasItem item)
 void RenderThreadManager::threadWorkFinished()
 {
 	clearFinishedThread();
-	auto re = takeResut();
-	for (auto i = re.begin(); i != re.end(); i++)
-	{
-		std::cerr << i->rank << std::endl;
-	}
+	if (threads.size() == 0)
+		Q_EMIT allWorkFinished();
 }
 
 #include "moc_RenderThreadManager.cpp"

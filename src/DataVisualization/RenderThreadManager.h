@@ -52,4 +52,7 @@ public Q_SLOTS:
 	void renderFinished(CanvasItem item);
 	//完成运行槽
 	void threadWorkFinished();
+Q_SIGNALS:
+	//渲染全部完成信号
+	void allWorkFinished();
 };

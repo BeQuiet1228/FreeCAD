@@ -11,7 +11,7 @@ public:
 	using AutoMutex = std::lock_guard<std::mutex>;
 public: 
 	Renderer(std::shared_ptr<Data> data);
-	~Renderer();
+	virtual ~Renderer();
 
 public:
 	//²Ù×÷äÖÈ¾Í¼
