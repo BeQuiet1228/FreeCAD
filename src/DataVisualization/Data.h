@@ -30,6 +30,9 @@ public:
 	};
 	struct Rang{
 		Rang() :max(0), min(0){};
+		float length(){
+			return max - min;
+		}
 		float max;
 		float min;
 	};

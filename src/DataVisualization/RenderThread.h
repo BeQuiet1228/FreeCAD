@@ -45,4 +45,5 @@ protected:
 Q_SIGNALS:
 	void renderFinished(CanvasItem item);
 	void threadFinished();
+
 };

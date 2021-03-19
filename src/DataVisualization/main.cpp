@@ -17,18 +17,13 @@ int main(int argc, char *argv[])
 	Hdf5IO io(path);
 	
 	io.initHdf5Data();
-	auto data = io.hdf5DataList.end();
-	data--;
+	auto data = io.hdf5DataList.begin();
+	data +=22;
 	Hdf5Data d = *data;
 	std::shared_ptr<TimeData> timeData(new TimeData(d));
 	TimeRenderer *timeRenderer = new TimeRenderer(timeData);
-	timeData->loadSourceData();
-	timeData->loadPoint();
-	timeRenderer->setSize(500, 500);
-	timeRenderer->setXRang(timeData->getXRang());
-	timeRenderer->setYRang(timeData->getYRang());
-	timeRenderer->drawImage();
-
+	timeRenderer->dataInit();
+	timeRenderer->setDefaultRang();
 	Plot p;
 	std::shared_ptr<Renderer> rd(timeRenderer);
 	p.setMainRenderer(rd);

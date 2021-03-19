@@ -18,13 +18,16 @@ RenderThreadManager::~RenderThreadManager()
 */
 void RenderThreadManager::start()
 {
+#ifdef MY_DEBUG
+	std::cerr << "RenderThreadManager::start()" << std::endl;
+#endif
 	if (tasks.size() == 0)
 		return;
 	stop();
 	//暂时实现一个线程渲染
 	if (runMode != THREAD_ONCE)
 		return;
-	
+
 	std::shared_ptr<RenderThread> th(new RenderThread);
 	threads.push_back(th);
 	th->addTask(this->tasks);

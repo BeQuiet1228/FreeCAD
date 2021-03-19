@@ -53,10 +53,15 @@ private:
 	void initGUI();
 	//初始化数据
 	void initData();
-
+	//点渲染
+	void findPointRender(const float& x, const float& y);
 public Q_SLOTS:
 	//渲染完成
 	void renderFinished();
+	//画布框选
+	void canvasSelectRect(QRect rect);
+	//画布取点
+	void canvasSelectPoint(QPoint point);
 
 protected:
 	void resizeEvent(QResizeEvent *event) override;

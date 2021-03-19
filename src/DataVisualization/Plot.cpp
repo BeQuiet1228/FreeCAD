@@ -29,6 +29,7 @@ void Plot::reRender()
 {
 	if (mainRenderer)
 	{
+		std::cerr << "reRender" << std::endl;
 		mainRenderer->setSize(canvas->size());
 		RenderTask task(mainRenderer);
 		renderManager->addTask(task);
@@ -64,7 +65,11 @@ void Plot::initGUI()
 {
 	gridLayout = new QGridLayout;
 	this->setLayout(gridLayout);
+
 	canvas = new Canvas();
+	connect(canvas, SIGNAL(emitSelectRect(QRect)), this, SLOT(canvasSelectRect(QRect)));
+	connect(canvas, SIGNAL(emitSelectPoint(QPoint)), this, SLOT(canvasSelectPoint(QPoint)));
+
 	AxisL = new Axis();
 	AxisB = new Axis();
 
@@ -76,12 +81,29 @@ void Plot::initGUI()
 	gridLayout->setRowStretch(1, 1);
 	gridLayout->setColumnStretch(0, 1);
 	gridLayout->setColumnStretch(1, 9);
+	
+	
 }
 
 void Plot::initData()
 {
 	renderManager.reset(new RenderThreadManager);
 	connect(renderManager.get(), SIGNAL(allWorkFinished()), this, SLOT(renderFinished()));
+}
+
+/**
+* @brief Plot::findPointRender 开始取点渲染
+* @param const float & x
+* @param const float & y
+* @return void
+*/
+void Plot::findPointRender(const float& x, const float& y)
+{
+	mainRenderer->setSize(canvas->size());
+	mainRenderer->setFindPosition(QPointF(x, y));
+	RenderTask task(mainRenderer,RenderTask::FIND_POINT,1);
+	renderManager->addTask(task);
+	renderManager->start();
 }
 
 /**
@@ -94,6 +116,61 @@ void Plot::renderFinished()
 	for (auto i = result.begin(); i != result.end(); i++)
 		canvas->addIteam(*i);
 	canvas->update();
+}
+
+/**
+* @brief Plot::canvasSelectRect 处理画布框选时的放大缩小
+* @param QRect rect
+* @return void
+*/
+void Plot::canvasSelectRect(QRect rect)
+{
+	auto xr = mainRenderer->getXRang();
+	auto yr = mainRenderer->getYRang();
+	auto size = mainRenderer->getSize();
+
+	//将矩形框转换为范围
+	float xMax, xMin, yMax, yMin;
+	xMax = rect.width() > 0 ? rect.x() + rect.width() : rect.x();
+	xMin = xMax - rect.width();
+	yMax = rect.height() > 0 ? rect.y() + rect.height() : rect.y();
+	yMin = yMax - rect.height();
+	//因为屏幕坐标系的原点在左上角，而实际坐标系的远点在左下角。所以这里的y范围需要做一下翻转
+	float tempYMax = size.height() - yMin;
+	yMin = size.height() - yMax;
+	yMax = tempYMax;
+	//获取数据到坐标的缩放比例
+	float xScale, yScale;
+	xScale = xr.length() / size.width();
+	yScale = yr.length() / size.height();
+
+	//获得数据范围
+	xr.max = xMax*xScale;
+	xr.min = xMin*xScale;
+	yr.max = yMax*yScale;
+	yr.min = yMin*yScale;
+
+	mainRenderer->setXRang(xr);
+	mainRenderer->setYRang(yr);
+	//设置其他渲染器的范围
+	for (auto iter = subRenderers.begin(); iter != subRenderers.end(); iter++)
+	{
+		(*iter)->setYRang(yr);
+		(*iter)->setXRang(xr);
+	}
+	//重绘
+	reRender(); 
+}
+
+void Plot::canvasSelectPoint(QPoint point)
+{
+	float x, y;
+	x = point.x();
+	//因为屏幕坐标系的原点在左上角，而实际坐标系的远点在左下角。所以这里的y范围需要做一下翻转
+	auto size = mainRenderer->getSize();
+	y = size.height() - point.y();
+
+	findPointRender(x, y);
 }
 
 void Plot::resizeEvent(QResizeEvent *event)

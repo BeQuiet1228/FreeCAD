@@ -13,15 +13,9 @@ public:
 	//渲染
 	virtual bool drawImage() override;
 	virtual bool addListRang(std::list<Data::Rang> listRang) override;
-	virtual bool drawPointImage() override{ return true; };
-
-public:
-	//操作范围
-	void setXRang(const Data::Rang& rang);
-	Data::Rang getXRang();
-	void setYRang(const Data::Rang& rang);
-	Data::Rang getYRang();
-
+	virtual bool drawPointImage() override;
+	virtual bool setDefaultRang() override;
+	virtual void dataInit() override;
 
 private:
 	//将数据坐标转换为图片上的坐标

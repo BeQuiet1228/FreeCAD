@@ -89,30 +89,32 @@ int TimeData::findIndexFromXValueR(const float& x)
 */
 bool TimeData::initXYRang()
 {
-	if (pointSize <= 0)
+	if (pointSize < 2)
 		return false;
 
 	//获取x轴的范围
 	//由于数据是均匀分布的，直接取头尾即可
+	Rang xr, yr;
 	auto iter = points->begin();
-	xRang.min = *iter;
+	xr.min = *iter;
 	iter = points->end();
 	iter-=2;
-	xRang.max = *iter;
+	xr.max = *iter;
 
 	//y轴范围只会一个一个比 QAQ
 	int index = 1;
-	yRang.max = yRang.min = points->at(index);
+	yr.max = yr.min = points->at(index);
 	float temp = 0;
 	for (; index <= points->size(); index += 2)
 	{
 		temp = points->at(index);
-		if (yRang.max < temp)
-			yRang.max = temp;
-		if (yRang.min > temp)
-			yRang.min = temp;
+		if (yr.max < temp)
+			yr.max = temp;
+		if (yr.min > temp)
+			yr.min = temp;
 	}
-
+	setXRang(xr);
+	setYRang(yr);
 	return true;
 
 }
