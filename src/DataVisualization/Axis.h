@@ -17,6 +17,10 @@ enum Axisstyle
     AxisTop,
     AxisBottom
 };
+typedef struct{
+    QString valsize;
+    QPointF postion;
+}AXISVAL;
 class Axis : public QWidget
 {
     Q_OBJECT
@@ -32,16 +36,27 @@ public:
     void SetAxisNumber(int);
     void _update();
     void setAxixStyle(Axisstyle);
+    void AxisCanvans(QSizeF);
+    void AxisResize(bool,QSize _size=QSize(0,0));
+private:
+    QVector<QLineF> Getlines(Axisstyle,QRectF);
+    QVector<AXISVAL> getAxisVal(Axisstyle,QRectF);
+    AXISVAL GetAxisUnit(Axisstyle _Axisstyle,QRectF _rect);
 public:
     void paintEvent(QPaintEvent* event);
 private:
     bool isstart;
     unsigned int Axisnumber;//大刻度个数
-    QString Axisunit;//单位
+    QString mAxisunit;//单位
     int Axisunitfontsize;//单位字体大小
     valrange axisvalrange;//刻度数值区间
     QRectF AxisRect;
     Axisstyle mAxisstyle;
+private:
+    QVector<QLineF> lines;
+    QVector<AXISVAL> m_axisval;
+    AXISVAL Axisunit;
+    QSizeF* CanvasSize;
 };
 
 #endif // AXIS_H

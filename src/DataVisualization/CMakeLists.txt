@@ -16,7 +16,8 @@ SET(QRC_SRC "")
 SET(UI_SRC "")
 SET(MY_MOC_HDR RenderThread.h
 	RenderThreadManager.h
-	Plot.h)
+	Plot.h
+	Axis.h)
 SET(SRC main.cpp
 	Data.h
 	Data.cpp
