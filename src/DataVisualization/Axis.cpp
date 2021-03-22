@@ -7,7 +7,11 @@ QWidget(parent)/*,horizontalAxis(0),verticalAxis(0),isstart(false)*/, CanvasWidg
 {
 	lines.clear();
 	m_axisval.clear();
-	CanvasSize = new QSizeF(0, 0);
+	CanvasSize = new QSizeF(this->width(), this->height());
+	Axisnumber = 7;
+	mAxisunit = "X(x)";
+	Axisunitfontsize = 20;
+	mAxisstyle = AxisBottom;
 }
 Axis::~Axis()
 {
@@ -21,7 +25,7 @@ Axis::~Axis()
 void Axis::paintEvent(QPaintEvent* event)
 {
 	//获取窗口的大小
-	QSize clientsize = this->size();
+	//QSize clientsize = this->size();
 	//获取客户区的长宽
 	QPainter mPainter(this);
 	if (!lines.empty())
@@ -73,7 +77,6 @@ void Axis::paintEvent(QPaintEvent* event)
 void Axis::_update()
 {
 	//是否需要调整大小
-
 	lines = Getlines(mAxisstyle, AxisRect);
 	getAxisVal(mAxisstyle, AxisRect);
 	GetAxisUnit(mAxisstyle, AxisRect);
@@ -116,18 +119,6 @@ void Axis::setAxisRange(double min, double max){
 void Axis::SetAxisNumber(int _Axisnumber){
 	Axisnumber = _Axisnumber;
 }
-//
-//摘要：
-//		获取需要绘制的线段的队列
-//参数：
-//		_Axisstyle:
-//					刻度的方向的枚举
-//		_rect:
-//				包含刻度的矩形空间
-//返回结果：
-//			线段队列
-//
-
 /**
 * @brief Axis::Getlines 获取需要绘制的线段的队列
 * @param Axisstyle _Axisstyle 刻度方向的枚举
@@ -203,17 +194,6 @@ QVector<QLineF> Axis::Getlines(Axisstyle _Axisstyle, QRectF _rect){
 	}
 	return lines;
 }
-//
-//摘要：
-//		获取需要绘制的刻度的数值
-//参数：
-//		_Axisstyle:
-//					刻度的方向枚举
-//		_rect:
-//				包含整个刻度的矩形空间
-//返回结果：
-//			包含所有的需要绘制的刻度数值和位置信息队列
-
 /**
 * @brief Axis::getAxisVal 获取需要绘制的刻度的数值
 * @param Axisstyle _Axisstyle 刻度的方向枚举
@@ -374,14 +354,15 @@ void Axis::AxisResize(bool ada, QSize _size)
 		case Axisleft:
 		case AxisRight:
 		{
-			this->resize(Axisunitfontsize + 50, CanvasSize->height());
+			//            this->resize(Axisunitfontsize + 50, CanvasSize->height());
 
 		}
 			break;
 		case AxisTop:
 		case AxisBottom:
 		{
-			this->resize(CanvasSize->width(), Axisunitfontsize + 50); }
+			//            this->resize(CanvasSize->width(), Axisunitfontsize + 50);
+		}
 			break;
 		}
 
@@ -418,12 +399,10 @@ void Axis::SetCanvas(QWidget* mCanvas)
 
 void Axis::resizeEvent(QResizeEvent* event)
 {
-	if (nullptr != CanvasWidget)
-	{
-		CanvasSize->setWidth(CanvasWidget->width());
-		CanvasSize->setHeight(CanvasWidget->height());
-		AxisResize(true);
-		_update();
-	}
+
+	CanvasSize->setWidth(this->width());
+	CanvasSize->setHeight(this->height());
+	AxisResize(true);
+	_update();
 }
 #include "moc_Axis.cpp"

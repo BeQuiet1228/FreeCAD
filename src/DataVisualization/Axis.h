@@ -26,7 +26,7 @@ public:
 private:
 public:
 	//添加功能函数
-	void setAxisText(QString, int fontsize);
+	void setAxisText(QString, int fontsize=20);
 	void setAxisRange(double min, double max);
 	//设置大刻度个数
 	void SetAxisNumber(int);
