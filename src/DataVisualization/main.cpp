@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 	//刻度组件测试
 	Axis w;
 	//以下都为省却，有初始化参数
-	m.setAxixStyle(Axisleft);
+	w.setAxixStyle(Axisleft);
 	//m.setAxisRange(20, 700);
 	//m.SetAxisNumber(10);
 	//m.setAxisText("XX(s)", 20);
