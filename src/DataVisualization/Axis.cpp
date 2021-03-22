@@ -3,404 +3,427 @@
 #include<QSize>
 #include<QPainter>
 Axis::Axis(QWidget *parent) :
-    QWidget(parent)/*,horizontalAxis(0),verticalAxis(0),isstart(false)*/
+QWidget(parent)/*,horizontalAxis(0),verticalAxis(0),isstart(false)*/, CanvasWidget(nullptr)
 {
-    lines.clear();
-    m_axisval.clear();
-    CanvasSize=new QSizeF(0,0);
+	lines.clear();
+	m_axisval.clear();
+	CanvasSize = new QSizeF(0, 0);
 }
 Axis::~Axis()
 {
 
 }
+/**
+* @brief Axis::painEvent ÖØ»æº¯Êı
+* @param QPainEvent* event  ÖØ»æÊÂ¼şÖ¸Õë
+* @return void
+*/
 void Axis::paintEvent(QPaintEvent* event)
 {
-    //è·å–çª—å£çš„å¤§å°
-    QSize clientsize=this->size();
-    //è·å–å®¢æˆ·åŒºçš„é•¿å®½
-    QPainter mPainter(this);
-    if(!lines.empty())
-    mPainter.drawLines(lines);
-    //ç”»åˆ»åº¦æ•°å€¼
-    foreach (AXISVAL i,m_axisval)
-        mPainter.drawText(i.postion,i.valsize);
-    //ç”»å•ä½
-    QFont mfont=mPainter.font();
-    mfont.setPixelSize(Axisunitfontsize);
-    mPainter.setFont(mfont);
-    switch(mAxisstyle)
-    {
-    case Axisleft:
-    {
-        mPainter.save();
-        mPainter.translate(Axisunit.postion);
-        mPainter.rotate(90);
-        mPainter.drawText(QPointF(0,0),Axisunit.valsize);
-        mPainter.restore();
-        }
-        break;
-    case AxisRight:
-    {
-        mPainter.save();
-        mPainter.translate(Axisunit.postion);
-        mPainter.rotate(-90);
-        mPainter.drawText(QPointF(0,0),Axisunit.valsize);
-        mPainter.restore();
-    }
-        break;
-    case AxisTop:
-    {
-        mPainter.drawText(Axisunit.postion,Axisunit.valsize);
-    }
-        break;
-    case AxisBottom:
-    {
-        mPainter.drawText(Axisunit.postion,Axisunit.valsize);
-    }
-        break;
-    }
+	//»ñÈ¡´°¿ÚµÄ´óĞ¡
+	QSize clientsize = this->size();
+	//»ñÈ¡¿Í»§ÇøµÄ³¤¿í
+	QPainter mPainter(this);
+	if (!lines.empty())
+		mPainter.drawLines(lines);
+	//»­¿Ì¶ÈÊıÖµ
+	foreach(AXISVAL i, m_axisval)
+		mPainter.drawText(i.postion, i.valsize);
+	//»­µ¥Î»
+	QFont mfont = mPainter.font();
+	mfont.setPixelSize(Axisunitfontsize);
+	mPainter.setFont(mfont);
+	switch (mAxisstyle)
+	{
+	case Axisleft:
+	{
+		mPainter.save();
+		mPainter.translate(Axisunit.postion);
+		mPainter.rotate(90);
+		mPainter.drawText(QPointF(0, 0), Axisunit.valsize);
+		mPainter.restore();
+	}
+		break;
+	case AxisRight:
+	{
+		mPainter.save();
+		mPainter.translate(Axisunit.postion);
+		mPainter.rotate(-90);
+		mPainter.drawText(QPointF(0, 0), Axisunit.valsize);
+		mPainter.restore();
+	}
+		break;
+	case AxisTop:
+	{
+		mPainter.drawText(Axisunit.postion, Axisunit.valsize);
+	}
+		break;
+	case AxisBottom:
+	{
+		mPainter.drawText(Axisunit.postion, Axisunit.valsize);
+	}
+		break;
+	}
 }
-//
-//æ‘˜è¦ï¼š
-//		æ›´æ–°é‡ç»˜æ‰€éœ€çš„ç›¸å…³å‚æ•°
-//å‚æ•°ï¼š
-//		æ— 
-//è¿”å›ç»“æœï¼š
-//			æ— 
+
+/**
+* @brief Axis::_update Ë¢ĞÂº¯Êı
+* @return void
+*/
 void Axis::_update()
 {
-    //æ˜¯å¦éœ€è¦è°ƒæ•´å¤§å°
+	//ÊÇ·ñĞèÒªµ÷Õû´óĞ¡
 
-    lines=Getlines(mAxisstyle,AxisRect);
-    getAxisVal(mAxisstyle,AxisRect);
-    GetAxisUnit(mAxisstyle,AxisRect);
-    update();
+	lines = Getlines(mAxisstyle, AxisRect);
+	getAxisVal(mAxisstyle, AxisRect);
+	GetAxisUnit(mAxisstyle, AxisRect);
+	update();
 }
-//
-//æ‘˜è¦ï¼š
-//		è®¾ç½®åˆ»åº¦ç§ç±»
-//
-//å‚æ•°ï¼š
-//		_Axisstyle:
-//					åˆ»åº¦çš„ç§ç±»ï¼ˆAxisLeft,AxisRightï¼ŒAxisTop,Axisbottomï¼‰
+/**
+* @brief Axis::setAxixStyle ÉèÖÃ¿Ì¶ÈÖÖÀà
+* @param Axisstyle _Axisstyle ¿Ì¶È·½ÏòÃ¶¾Ù
+* @return void
+*/
 void Axis::setAxixStyle(Axisstyle _Axisstyle)
 {
-    mAxisstyle=_Axisstyle;
+	mAxisstyle = _Axisstyle;
 }
-//
-//æ‘˜è¦ï¼š
-//		è®¾ç½®åˆ»åº¦çš„å•ä½ç¬¦å·
-//å‚æ•°ï¼š
-//		AxisUnitText:
-//						åŒ…å«åˆ»åº¦çš„å•ä½çš„å­—ç¬¦ä¸²
-//		fontsize:
-//					å•ä½å­—ä½“å¤§å°çš„æ•´æ•°
-void Axis::setAxisText(QString AxisUnitText,int fontsize){
-    mAxisunit=AxisUnitText;//å•ä½
-    Axisunitfontsize=fontsize;//å­—ä½“å¤§å°
+/**
+* @brief Axis::setAxisText ÉèÖÃ¿Ì¶Èµ¥Î»·ûºÅ
+* @param QString AxisUnitTest °üº¬¿Ì¶ÈµÄµ¥Î»µÄ×Ö·û´®
+* @param int fontsize µ¥Î»µÄ×ÖÌå´óĞ¡
+* @return void
+*/
+void Axis::setAxisText(QString AxisUnitText, int fontsize){
+	mAxisunit = AxisUnitText;//µ¥Î»
+	Axisunitfontsize = fontsize;//×ÖÌå´óĞ¡
 }
-//
-//æ‘˜è¦ï¼š
-//		è®¾ç½®åˆ»åº¦çš„æ•°å€¼åŒºé—´
-//å‚æ•°ï¼š
-//		min:
-//			æ•°å€¼åŒºé—´çš„æœ€å°å€¼ï¼ˆåŒç²¾åº¦ï¼‰
-//		max:
-//			æ•°å€¼åŒºé—´çš„æœ€å¤§å€¼ï¼ˆåŒç²¾åº¦ï¼‰
-void Axis::setAxisRange(double min,double max){
-    axisvalrange.min=min;
-    axisvalrange.max=max;
+/**
+* @brief Axis::setAxisRange ÉèÖÃ¿Ì¶ÈµÄÊıÖµÇø¼ä
+* @param double min ÊıÖµÇø¼äµÄ×îĞ¡Öµ
+* @param double max ÊıÖµÇø¼äµÄ×î´óÖµ
+* @return void
+*/
+void Axis::setAxisRange(double min, double max){
+	axisvalrange.min = min;
+	axisvalrange.max = max;
 }
-//
-//æ‘˜è¦ï¼š
-//		è®¾ç½®å¤§åˆ»åº¦ä¸ªæ•°
-//å‚æ•°ï¼š
-//		_Axisnumber:
-//					å¤§åˆ»åº¦ä¸ªæ•°çš„æ•´æ•°
+/**
+* @brief Axis::SetAxisNumber ÉèÖÃ´ó¿Ì¶È¸öÊı
+* @param int _Axisnumber ´ó¿Ì¶È¸öÊı
+* @return void
+*/
 void Axis::SetAxisNumber(int _Axisnumber){
-    Axisnumber=_Axisnumber;
+	Axisnumber = _Axisnumber;
 }
 //
-//æ‘˜è¦ï¼š
-//		è·å–éœ€è¦ç»˜åˆ¶çš„çº¿æ®µçš„é˜Ÿåˆ—
-//å‚æ•°ï¼š
+//ÕªÒª£º
+//		»ñÈ¡ĞèÒª»æÖÆµÄÏß¶ÎµÄ¶ÓÁĞ
+//²ÎÊı£º
 //		_Axisstyle:
-//					åˆ»åº¦çš„æ–¹å‘çš„æšä¸¾
+//					¿Ì¶ÈµÄ·½ÏòµÄÃ¶¾Ù
 //		_rect:
-//				åŒ…å«åˆ»åº¦çš„çŸ©å½¢ç©ºé—´
-//è¿”å›ç»“æœï¼š
-//			çº¿æ®µé˜Ÿåˆ—
+//				°üº¬¿Ì¶ÈµÄ¾ØĞÎ¿Õ¼ä
+//·µ»Ø½á¹û£º
+//			Ïß¶Î¶ÓÁĞ
 //
-QVector<QLineF> Axis::Getlines(Axisstyle _Axisstyle,QRectF _rect){
-    lines.clear();
-    //è·å–çº¿æ®µé—´éš”
-    switch (_Axisstyle) {
-    case Axisleft:
-    {
-        //è·å–é—´è·
-        qreal interval=(_rect.height()-2)/(Axisnumber*5);
-        QPointF startpoint=QPointF(_rect.right()-1,_rect.bottom()-1);
-        QPointF nextpoint=startpoint;
-        for(auto i=0;i<=Axisnumber*5;i++)
-        {
-            QLineF line;
-            nextpoint.setY(startpoint.y()-i*interval);
-            (i%5==0)?(line=QLineF(nextpoint.x(),nextpoint.y(),nextpoint.x()-10,nextpoint.y())):(line=QLineF(nextpoint.x(),nextpoint.y(),nextpoint.x()-6,nextpoint.y()));
-            lines.push_back(line);
-        }
-        lines.push_back(QLineF(_rect.right()-1,_rect.top()+1,_rect.right()-1,_rect.bottom()-1));
-    }
-        break;
-    case AxisRight:
-    {
-        //è·å–é—´è·
-        qreal interval=(_rect.height()-2)/(Axisnumber*5);
-        QPointF startpoint=QPointF(_rect.left()+1,_rect.bottom()-1);
-        QPointF nextpoint=startpoint;
-        for(auto i=0;i<=Axisnumber*5;i++)
-        {
-            QLineF line;
-            nextpoint.setY(startpoint.y()-interval*i);
-            (i%5==0)?(line=QLineF(nextpoint.x(),nextpoint.y(),nextpoint.x()+10,nextpoint.y())):(line=QLineF(nextpoint.x(),nextpoint.y(),nextpoint.x()+6,nextpoint.y()));
-            lines.push_back(line);
-        }
-        lines.push_back(QLineF(_rect.left()+1,_rect.top()+1,_rect.left()+1,_rect.bottom()-1));
-    }
-        break;
 
-    case AxisTop:
-    {
-        qreal interval=(_rect.width()-2)/(Axisnumber*5);
-        QPointF startpoint=QPointF(_rect.left()+1,_rect.bottom()-1);
-        QPointF nextpoint=startpoint;
-        for(auto i=0;i<=Axisnumber*5;i++)
-        {
-            nextpoint.setX(startpoint.x()+i*interval);
-            QLineF line;
-            (i%5==0)?(line=QLineF(nextpoint.x(),nextpoint.y(),nextpoint.x(),nextpoint.y()-10)):(line=QLineF(nextpoint.x(),nextpoint.y(),nextpoint.x(),nextpoint.y()-6));
-            lines.push_back(line);
-        }
-        lines.push_back(QLineF(_rect.left()+1,_rect.bottom()-1,_rect.right()-1,_rect.bottom()-1));
-    }
-        break;
-     case AxisBottom:
-    {
-        qreal interval=(_rect.width()-2)/(Axisnumber*5);
-        QPointF startpoint=QPointF(_rect.left()+1,_rect.top()+1);
-        QPointF nextpoint=startpoint;
-        for(auto i=0;i<=Axisnumber*5;i++)
-        {
-            nextpoint.setX(startpoint.x()+i*interval);
-            QLineF line;
-            (i%5==0)?(line=QLineF(nextpoint.x(),nextpoint.y(),nextpoint.x(),nextpoint.y()+10)):(line=QLineF(nextpoint.x(),nextpoint.y(),nextpoint.x(),nextpoint.y()+6));
-            lines.push_back(line);
-        }
-        lines.push_back(QLineF(_rect.left()+1,_rect.top()+1,_rect.right()-1,_rect.top()+1));
-    }
-        break;
-    }
-    return lines;
+/**
+* @brief Axis::Getlines »ñÈ¡ĞèÒª»æÖÆµÄÏß¶ÎµÄ¶ÓÁĞ
+* @param Axisstyle _Axisstyle ¿Ì¶È·½ÏòµÄÃ¶¾Ù
+* @return void
+*/
+QVector<QLineF> Axis::Getlines(Axisstyle _Axisstyle, QRectF _rect){
+	lines.clear();
+	//»ñÈ¡Ïß¶Î¼ä¸ô
+	switch (_Axisstyle) {
+	case Axisleft:
+	{
+		//»ñÈ¡¼ä¾à
+		qreal interval = (_rect.height() - 2) / (Axisnumber * 5);
+		QPointF startpoint = QPointF(_rect.right() - 1, _rect.bottom() - 1);
+		QPointF nextpoint = startpoint;
+		for (auto i = 0; i <= Axisnumber * 5; i++)
+		{
+			QLineF line;
+			nextpoint.setY(startpoint.y() - i*interval);
+			(i % 5 == 0) ? (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x() - 10, nextpoint.y())) : (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x() - 6, nextpoint.y()));
+			lines.push_back(line);
+		}
+		lines.push_back(QLineF(_rect.right() - 1, _rect.top() + 1, _rect.right() - 1, _rect.bottom() - 1));
+	}
+		break;
+	case AxisRight:
+	{
+		//»ñÈ¡¼ä¾à
+		qreal interval = (_rect.height() - 2) / (Axisnumber * 5);
+		QPointF startpoint = QPointF(_rect.left() + 1, _rect.bottom() - 1);
+		QPointF nextpoint = startpoint;
+		for (auto i = 0; i <= Axisnumber * 5; i++)
+		{
+			QLineF line;
+			nextpoint.setY(startpoint.y() - interval*i);
+			(i % 5 == 0) ? (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x() + 10, nextpoint.y())) : (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x() + 6, nextpoint.y()));
+			lines.push_back(line);
+		}
+		lines.push_back(QLineF(_rect.left() + 1, _rect.top() + 1, _rect.left() + 1, _rect.bottom() - 1));
+	}
+		break;
+
+	case AxisTop:
+	{
+		qreal interval = (_rect.width() - 2) / (Axisnumber * 5);
+		QPointF startpoint = QPointF(_rect.left() + 1, _rect.bottom() - 1);
+		QPointF nextpoint = startpoint;
+		for (auto i = 0; i <= Axisnumber * 5; i++)
+		{
+			nextpoint.setX(startpoint.x() + i*interval);
+			QLineF line;
+			(i % 5 == 0) ? (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x(), nextpoint.y() - 10)) : (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x(), nextpoint.y() - 6));
+			lines.push_back(line);
+		}
+		lines.push_back(QLineF(_rect.left() + 1, _rect.bottom() - 1, _rect.right() - 1, _rect.bottom() - 1));
+	}
+		break;
+	case AxisBottom:
+	{
+		qreal interval = (_rect.width() - 2) / (Axisnumber * 5);
+		QPointF startpoint = QPointF(_rect.left() + 1, _rect.top() + 1);
+		QPointF nextpoint = startpoint;
+		for (auto i = 0; i <= Axisnumber * 5; i++)
+		{
+			nextpoint.setX(startpoint.x() + i*interval);
+			QLineF line;
+			(i % 5 == 0) ? (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x(), nextpoint.y() + 10)) : (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x(), nextpoint.y() + 6));
+			lines.push_back(line);
+		}
+		lines.push_back(QLineF(_rect.left() + 1, _rect.top() + 1, _rect.right() - 1, _rect.top() + 1));
+	}
+		break;
+	}
+	return lines;
 }
 //
-//æ‘˜è¦ï¼š
-//		è·å–éœ€è¦ç»˜åˆ¶çš„åˆ»åº¦çš„æ•°å€¼
-//å‚æ•°ï¼š
+//ÕªÒª£º
+//		»ñÈ¡ĞèÒª»æÖÆµÄ¿Ì¶ÈµÄÊıÖµ
+//²ÎÊı£º
 //		_Axisstyle:
-//					åˆ»åº¦çš„æ–¹å‘æšä¸¾
+//					¿Ì¶ÈµÄ·½ÏòÃ¶¾Ù
 //		_rect:
-//				åŒ…å«æ•´ä¸ªåˆ»åº¦çš„çŸ©å½¢ç©ºé—´
-//è¿”å›ç»“æœï¼š
-//			åŒ…å«æ‰€æœ‰çš„éœ€è¦ç»˜åˆ¶çš„åˆ»åº¦æ•°å€¼å’Œä½ç½®ä¿¡æ¯é˜Ÿåˆ—
-QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle,QRectF _rect)
+//				°üº¬Õû¸ö¿Ì¶ÈµÄ¾ØĞÎ¿Õ¼ä
+//·µ»Ø½á¹û£º
+//			°üº¬ËùÓĞµÄĞèÒª»æÖÆµÄ¿Ì¶ÈÊıÖµºÍÎ»ÖÃĞÅÏ¢¶ÓÁĞ
+
+/**
+* @brief Axis::getAxisVal »ñÈ¡ĞèÒª»æÖÆµÄ¿Ì¶ÈµÄÊıÖµ
+* @param Axisstyle _Axisstyle ¿Ì¶ÈµÄ·½ÏòÃ¶¾Ù
+* @param QRecF _rect °üº¬Õû¸ö¿Ì¶ÈµÄ¾ØĞÎ¿Õ¼ä
+* @return QVector<AXISVAL> °üº¬ËùÓĞµÄĞèÒª»æÖÆµÄ¿Ì¶ÈÊıÖµºÍÎ»ÖÃĞÅÏ¢¶ÓÁĞ
+*/
+QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 {
-    m_axisval.clear();
-    qreal interval=(axisvalrange.max-axisvalrange.min)/(Axisnumber);
-    qreal Axisinterval;
-    switch(_Axisstyle)
-    {
-    case Axisleft:
-    {
-        Axisinterval=(_rect.height()-2)/(Axisnumber);
-        qreal startval=axisvalrange.min;
-        qreal nextval =startval;
-        QPointF startposition=QPointF(_rect.right()-11,_rect.bottom()+4);
-        QPointF nextPosition=startposition;
-        auto func=[&](int number)->void{
-            AXISVAL mmaxisval;
-            mmaxisval.valsize=QString("%1").arg(startval+number*interval);
-            mmaxisval.postion=QPointF(startposition.x()-mmaxisval.valsize.length()*5-5,startposition.y()-number*Axisinterval);
-            m_axisval.push_back(mmaxisval);
-        };
-        for(auto i=0;i<=Axisnumber;i++)
-            func(i);
-    }
-        break;
-    case AxisRight:
-    {
-        Axisinterval=(_rect.height()-2)/(Axisnumber);
-        qreal startval=axisvalrange.min;
-        qreal nextval =startval;
-        QPointF startposition=QPointF(_rect.left()+11,_rect.bottom()+4);
-        QPointF nextPosition=startposition;
-        auto func=[&](int number)->void{
-            AXISVAL mmaxisval;
-            mmaxisval.valsize=QString("%1").arg(startval+number*interval);
-            mmaxisval.postion=QPointF(startposition.x(),startposition.y()-number*Axisinterval);
-            m_axisval.push_back(mmaxisval);
-        };
-        for(auto i=0;i<=Axisnumber;i++)
-            func(i);
-    }
-        break;
-    case AxisTop:
-    {
-        Axisinterval=(_rect.width()-2)/(Axisnumber);
-        qreal startval=axisvalrange.min;
-        QPointF startposition=QPointF(_rect.left()+1,_rect.bottom()-10);
-        QPointF nextPosition=startposition;
-        auto func=[&](int number)->void{
-            nextPosition.setX(startposition.x()+number*Axisinterval);
-            AXISVAL mmaxisval;
-            mmaxisval.valsize=QString("%1").arg(startval+number*interval);
-            mmaxisval.postion=QPointF(nextPosition.x()-mmaxisval.valsize.length()*10/4,startposition.y());
-            m_axisval.push_back(mmaxisval);
-        };
-        for(auto i=0;i<=Axisnumber;i++)
-            func(i);
-    }
-        break;
-    case AxisBottom:
-    {
-        Axisinterval=(_rect.width()-2)/(Axisnumber);
-        qreal startval=axisvalrange.min;
-        QPointF startposition=QPointF(_rect.left()+1,_rect.top()+20);
-        QPointF nextPosition=startposition;
-        auto func=[&](int number)->void{
-            nextPosition.setX(startposition.x()+number*Axisinterval);
-            AXISVAL mmaxisval;
-            mmaxisval.valsize=QString("%1").arg(startval+number*interval);
-            mmaxisval.postion=QPointF(nextPosition.x()-mmaxisval.valsize.length()*10/4,startposition.y());
-            m_axisval.push_back(mmaxisval);
-        };
-        for(auto i=0;i<=Axisnumber;i++)
-            func(i);
-    }
-        break;
-    }
-    return m_axisval;
+	m_axisval.clear();
+	qreal interval = (axisvalrange.max - axisvalrange.min) / (Axisnumber);
+	qreal Axisinterval;
+	switch (_Axisstyle)
+	{
+	case Axisleft:
+	{
+		Axisinterval = (_rect.height() - 2) / (Axisnumber);
+		qreal startval = axisvalrange.min;
+		qreal nextval = startval;
+		QPointF startposition = QPointF(_rect.right() - 11, _rect.bottom() + 4);
+		QPointF nextPosition = startposition;
+		auto func = [&](int number)->void{
+			AXISVAL mmaxisval;
+			mmaxisval.valsize = QString("%1").arg(startval + number*interval);
+			mmaxisval.postion = QPointF(startposition.x() - mmaxisval.valsize.length() * 5 - 5, startposition.y() - number*Axisinterval);
+			m_axisval.push_back(mmaxisval);
+		};
+		for (auto i = 0; i <= Axisnumber; i++)
+			func(i);
+	}
+		break;
+	case AxisRight:
+	{
+		Axisinterval = (_rect.height() - 2) / (Axisnumber);
+		qreal startval = axisvalrange.min;
+		qreal nextval = startval;
+		QPointF startposition = QPointF(_rect.left() + 11, _rect.bottom() + 4);
+		QPointF nextPosition = startposition;
+		auto func = [&](int number)->void{
+			AXISVAL mmaxisval;
+			mmaxisval.valsize = QString("%1").arg(startval + number*interval);
+			mmaxisval.postion = QPointF(startposition.x(), startposition.y() - number*Axisinterval);
+			m_axisval.push_back(mmaxisval);
+		};
+		for (auto i = 0; i <= Axisnumber; i++)
+			func(i);
+	}
+		break;
+	case AxisTop:
+	{
+		Axisinterval = (_rect.width() - 2) / (Axisnumber);
+		qreal startval = axisvalrange.min;
+		QPointF startposition = QPointF(_rect.left() + 1, _rect.bottom() - 10);
+		QPointF nextPosition = startposition;
+		auto func = [&](int number)->void{
+			nextPosition.setX(startposition.x() + number*Axisinterval);
+			AXISVAL mmaxisval;
+			mmaxisval.valsize = QString("%1").arg(startval + number*interval);
+			mmaxisval.postion = QPointF(nextPosition.x() - mmaxisval.valsize.length() * 10 / 4, startposition.y());
+			m_axisval.push_back(mmaxisval);
+		};
+		for (auto i = 0; i <= Axisnumber; i++)
+			func(i);
+	}
+		break;
+	case AxisBottom:
+	{
+		Axisinterval = (_rect.width() - 2) / (Axisnumber);
+		qreal startval = axisvalrange.min;
+		QPointF startposition = QPointF(_rect.left() + 1, _rect.top() + 20);
+		QPointF nextPosition = startposition;
+		auto func = [&](int number)->void{
+			nextPosition.setX(startposition.x() + number*Axisinterval);
+			AXISVAL mmaxisval;
+			mmaxisval.valsize = QString("%1").arg(startval + number*interval);
+			mmaxisval.postion = QPointF(nextPosition.x() - mmaxisval.valsize.length() * 10 / 4, startposition.y());
+			m_axisval.push_back(mmaxisval);
+		};
+		for (auto i = 0; i <= Axisnumber; i++)
+			func(i);
+	}
+		break;
+	}
+	return m_axisval;
 }
-//
-//æ‘˜è¦ï¼š
-//		è·å–é‡ç»˜åˆ»åº¦å•ä½çš„ç›¸å…³ä¿¡æ¯
-//å‚æ•°ï¼š
-//		_Axisstyle:		
-//					åˆ»åº¦çš„æ–¹å‘æšä¸¾
-//		_rect:
-//				åŒ…å«æ•´ä¸ªåˆ»åº¦çš„çŸ©å½¢ç©ºé—´
-//è¿”å›ç»“æœï¼š
-//			è¿”å›é‡ç»˜åˆ»åº¦å•ä½çš„ç›¸å…³ä¿¡æ¯
-AXISVAL Axis::GetAxisUnit(Axisstyle _Axisstyle,QRectF _rect){
-    QRectF __rect;
-    switch(_Axisstyle)
-    {
-    case Axisleft:
-    {
-       __rect.setLeft(_rect.left()+Axisunitfontsize);
-       __rect.setRight(__rect.left()+Axisunitfontsize*mAxisunit.length()/2);
-       __rect.setBottom((_rect.top()+_rect.height()/2)+Axisunitfontsize*mAxisunit.length()/4);
-       __rect.setTop(__rect.bottom()-Axisunitfontsize);
-       AXISVAL mmaxisval;
-       mmaxisval.valsize=mAxisunit;
-       mmaxisval.postion=QPointF(__rect.left(),__rect.bottom());
-       Axisunit=mmaxisval;
-    }
-        break;
-    case AxisRight:
-    {
-        __rect.setRight(_rect.right()-Axisunitfontsize);
-        __rect.setLeft(__rect.right()-Axisunitfontsize*mAxisunit.length()/2);
-        __rect.setBottom((_rect.top()+_rect.height()/2)+Axisunitfontsize*mAxisunit.length()/4);
-        __rect.setTop(__rect.bottom()-Axisunitfontsize);
-        AXISVAL mmaxisval;
-        mmaxisval.valsize=mAxisunit;
-        mmaxisval.postion=QPointF(__rect.right(),__rect.bottom());
-        Axisunit=mmaxisval;
-    }
-        break;
-    case AxisTop:
-    {
-        __rect.setTop(_rect.top());
-        __rect.setBottom(__rect.top()+Axisunitfontsize);
-        __rect.setLeft((_rect.left()+_rect.width()/2)-Axisunitfontsize*mAxisunit.length()/4);
-        __rect.setRight(__rect.left()+Axisunitfontsize*mAxisunit.length()/2);
-        AXISVAL mmaxisval;
-        mmaxisval.valsize=mAxisunit;
-        mmaxisval.postion=QPointF(__rect.left(),__rect.bottom());
-        Axisunit=mmaxisval;
-    }
-        break;
-    case AxisBottom:
-    {
-        __rect.setBottom(_rect.bottom());
-        __rect.setTop(__rect.bottom()-Axisunitfontsize);
-        __rect.setLeft((_rect.left()+_rect.width()/2)-Axisunitfontsize*mAxisunit.length()/4);
-        __rect.setRight(__rect.left()+Axisunitfontsize*mAxisunit.length()/2);
-        AXISVAL mmaxisval;
-        mmaxisval.valsize=mAxisunit;
-        mmaxisval.postion=QPointF(__rect.left(),__rect.bottom());
-        Axisunit=mmaxisval;
-    }
-        break;
-    }
-    return Axisunit;
+/**
+* @brief Axis::GetAxisUnit »ñÈ¡ÖØ»æ¿Ì¶Èµ¥Î»µÄÏà¹ØĞÅÏ¢
+* @param Axisstyle _Axisstyle ¿Ì¶ÈµÄ·½ÏòÃ¶¾Ù
+* @param QRectF _rect °üº¬Õû¸ö¿Ì¶ÈµÄ¾ØĞÎ¿Õ¼ä
+* @return AXISVAL ·µ»ØÖØ»æ¿Ì¶Èµ¥Î»µÄÏà¹ØĞÅÏ¢
+*/
+AXISVAL Axis::GetAxisUnit(Axisstyle _Axisstyle, QRectF _rect){
+	QRectF __rect;
+	switch (_Axisstyle)
+	{
+	case Axisleft:
+	{
+		__rect.setLeft(_rect.left() + Axisunitfontsize);
+		__rect.setRight(__rect.left() + Axisunitfontsize*mAxisunit.length() / 2);
+		__rect.setBottom((_rect.top() + _rect.height() / 2) + Axisunitfontsize*mAxisunit.length() / 4);
+		__rect.setTop(__rect.bottom() - Axisunitfontsize);
+		AXISVAL mmaxisval;
+		mmaxisval.valsize = mAxisunit;
+		mmaxisval.postion = QPointF(__rect.left(), __rect.bottom());
+		Axisunit = mmaxisval;
+	}
+		break;
+	case AxisRight:
+	{
+		__rect.setRight(_rect.right() - Axisunitfontsize);
+		__rect.setLeft(__rect.right() - Axisunitfontsize*mAxisunit.length() / 2);
+		__rect.setBottom((_rect.top() + _rect.height() / 2) + Axisunitfontsize*mAxisunit.length() / 4);
+		__rect.setTop(__rect.bottom() - Axisunitfontsize);
+		AXISVAL mmaxisval;
+		mmaxisval.valsize = mAxisunit;
+		mmaxisval.postion = QPointF(__rect.right(), __rect.bottom());
+		Axisunit = mmaxisval;
+	}
+		break;
+	case AxisTop:
+	{
+		__rect.setTop(_rect.top());
+		__rect.setBottom(__rect.top() + Axisunitfontsize);
+		__rect.setLeft((_rect.left() + _rect.width() / 2) - Axisunitfontsize*mAxisunit.length() / 4);
+		__rect.setRight(__rect.left() + Axisunitfontsize*mAxisunit.length() / 2);
+		AXISVAL mmaxisval;
+		mmaxisval.valsize = mAxisunit;
+		mmaxisval.postion = QPointF(__rect.left(), __rect.bottom());
+		Axisunit = mmaxisval;
+	}
+		break;
+	case AxisBottom:
+	{
+		__rect.setBottom(_rect.bottom());
+		__rect.setTop(__rect.bottom() - Axisunitfontsize);
+		__rect.setLeft((_rect.left() + _rect.width() / 2) - Axisunitfontsize*mAxisunit.length() / 4);
+		__rect.setRight(__rect.left() + Axisunitfontsize*mAxisunit.length() / 2);
+		AXISVAL mmaxisval;
+		mmaxisval.valsize = mAxisunit;
+		mmaxisval.postion = QPointF(__rect.left(), __rect.bottom());
+		Axisunit = mmaxisval;
+	}
+		break;
+	}
+	return Axisunit;
 }
-//
-//æ‘˜è¦ï¼š
-//		åˆ»åº¦ç»„ä»¶çš„å¤§å°è°ƒæ•´
-//å‚æ•°ï¼š
-//		ada:
-//			æ˜¯å¦è‡ªé€‚åº”ï¼ˆéœ€è¦çŸ¥é“ç”»å¸ƒçš„å¤§å°ï¼‰
-//		_size:
-//			åˆ»åº¦ç»„ä»¶çš„å¤§å°å‚æ•°ï¼Œé»˜è®¤ä¸ºï¼ˆw=0ï¼Œh=0ï¼‰,adaä¸ºtrueè‡ªé€‚åº”æ—¶ä¸éœ€è¦å¡«å†™
-void Axis::AxisResize(bool ada,QSize _size)
+/**
+* @brief Axis::AxisResize ¿Ì¶È×é¼şµÄ´óĞ¡µ÷Õû
+* @param bool ada ÊÇ·ñ×ÔÊÊÓ¦£¨ĞèÒªÖªµÀ»­²¼µÄ´óĞ¡£©
+* @param QSize _size ¿Ì¶ÈµÄ´óĞ¡²ÎÊı£¬Ä¬ÈÏÎª£¨w=0,h=0£©,adaÎª×ÔÊÊÓ¦Ê±²»ĞèÒªÌîĞ´
+* @return void
+*/
+void Axis::AxisResize(bool ada, QSize _size)
 {
-    if(CanvasSize!=nullptr&& ada)
-    {
-        switch(mAxisstyle)
-        {
-        case Axisleft:
-        case AxisRight:
-           {
-            this->resize(Axisunitfontsize+50,CanvasSize->height());
+	if (CanvasSize != nullptr&& ada)
+	{
+		switch (mAxisstyle)
+		{
+		case Axisleft:
+		case AxisRight:
+		{
+			this->resize(Axisunitfontsize + 50, CanvasSize->height());
 
-        }
-            break;
-        case AxisTop:
-        case AxisBottom:
-            {
-            this->resize(CanvasSize->width(),Axisunitfontsize+50);}
-            break;
-        }
+		}
+			break;
+		case AxisTop:
+		case AxisBottom:
+		{
+			this->resize(CanvasSize->width(), Axisunitfontsize + 50); }
+			break;
+		}
 
-    }
-    else
-        this->resize(_size);
+	}
+	else
+		this->resize(_size);
 
-    AxisRect.setLeft(0);
-    AxisRect.setTop(0);
-    AxisRect.setRight(this->size().width());
-    AxisRect.setBottom(this->size().height());
-//    AxisRect.setTopLeft(QPointF(0,0));
-//    AxisRect.setBottomRight(QPointF(this->size().width(),this->size().height()));
+	AxisRect.setLeft(0);
+	AxisRect.setTop(0);
+	AxisRect.setRight(this->size().width());
+	AxisRect.setBottom(this->size().height());
+	//    AxisRect.setTopLeft(QPointF(0,0));
+	//    AxisRect.setBottomRight(QPointF(this->size().width(),this->size().height()));
 }
-//
-//æ‘˜è¦ï¼š
-//		ä¼ å…¥ç”»å¸ƒçš„å¤§å°
-//å‚æ•°ï¼š
-//		_QSizeF:
-//				ç”»å¸ƒçš„å¤§å°ä¿¡æ¯
+/**
+* @brief Axis::AxisCanvas ´«Èë»­²¼µÄ´óĞ¡
+* @param QSizeF _QSizeF »­²¼µÄ´óĞ¡ĞÅÏ¢
+* return void
+*/
 void Axis::AxisCanvans(QSizeF _QSizeF)
 {
-    CanvasSize->setWidth(_QSizeF.width());
-    CanvasSize->setHeight(_QSizeF.height());
+	CanvasSize->setWidth(_QSizeF.width());
+	CanvasSize->setHeight(_QSizeF.height());
 }
+/**
+* @brief Axis::SetCanvas ´«Èë»­²¼µÄ¿Ø¼şÖ¸Õë
+* @param QWidget* mCanvas »­²¼×é¼ş
+* @return void
+*/
+void Axis::SetCanvas(QWidget* mCanvas)
+{
+	CanvasWidget = mCanvas;
+}
+
+void Axis::resizeEvent(QResizeEvent* event)
+{
+	if (nullptr != CanvasWidget)
+	{
+		CanvasSize->setWidth(CanvasWidget->width());
+		CanvasSize->setHeight(CanvasWidget->height());
+		AxisResize(true);
+		_update();
+	}
+}
+#include "moc_Axis.cpp"

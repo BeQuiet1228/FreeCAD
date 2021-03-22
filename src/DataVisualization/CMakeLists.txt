@@ -17,6 +17,7 @@ SET(UI_SRC "")
 SET(MY_MOC_HDR RenderThread.h
 	RenderThreadManager.h
 	Plot.h
+	Canvas.h
 	Axis.h)
 SET(SRC main.cpp
 	Data.h
@@ -52,6 +53,7 @@ SET(DataVisualization_src
 	${SRC}
 	${UI_SRC}
 )
+add_definitions(-DMY_DEBUG)
 #设置编译生成文件类型
 add_executable(DataVisualization ${DataVisualization_src}) # 生成可执行文件
 #设置执行文件的输出目录

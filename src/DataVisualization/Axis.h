@@ -1,62 +1,60 @@
-#pragma once
-
-#ifndef AXIS_H
-#define AXIS_H
-
+#pragma  once
 #include <QWidget>
 #include<QVector>
-typedef struct
-{
-    double min;
-    double max;
-}valrange;
 enum Axisstyle
 {
-    Axisleft,
-    AxisRight,
-    AxisTop,
-    AxisBottom
+	Axisleft,
+	AxisRight,
+	AxisTop,
+	AxisBottom
 };
 typedef struct{
-    QString valsize;
-    QPointF postion;
+	QString valsize;
+	QPointF postion;
 }AXISVAL;
+typedef struct{
+	double min;
+	double max;
+}valrange;
+
 class Axis : public QWidget
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    explicit Axis(QWidget *parent = nullptr);
-    ~Axis();
+	explicit Axis(QWidget *parent = nullptr);
+	~Axis();
 private:
 public:
-    //æ·»åŠ åŠŸèƒ½å‡½æ•°
-    void setAxisText(QString,int fontsize);
-    void setAxisRange(double min,double max);
-    //è®¾ç½®å¤§åˆ»åº¦ä¸ªæ•°
-    void SetAxisNumber(int);
-    void _update();
-    void setAxixStyle(Axisstyle);
-    void AxisCanvans(QSizeF);
-    void AxisResize(bool,QSize _size=QSize(0,0));
+	//Ìí¼Ó¹¦ÄÜº¯Êı
+	void setAxisText(QString, int fontsize);
+	void setAxisRange(double min, double max);
+	//ÉèÖÃ´ó¿Ì¶È¸öÊı
+	void SetAxisNumber(int);
+	void _update();
+	void setAxixStyle(Axisstyle);
+	void AxisCanvans(QSizeF);
+	void SetCanvas(QWidget* mCanvas);
+	void AxisResize(bool, QSize _size = QSize(0, 0));
 private:
-    QVector<QLineF> Getlines(Axisstyle,QRectF);
-    QVector<AXISVAL> getAxisVal(Axisstyle,QRectF);
-    AXISVAL GetAxisUnit(Axisstyle _Axisstyle,QRectF _rect);
+	QVector<QLineF> Getlines(Axisstyle, QRectF);
+	QVector<AXISVAL> getAxisVal(Axisstyle, QRectF);
+	AXISVAL GetAxisUnit(Axisstyle _Axisstyle, QRectF _rect);
 public:
-    void paintEvent(QPaintEvent* event);
+	void paintEvent(QPaintEvent* event);
+protected:
+	virtual void resizeEvent(QResizeEvent* event)override;
 private:
-    bool isstart;
-    unsigned int Axisnumber;//å¤§åˆ»åº¦ä¸ªæ•°
-    QString mAxisunit;//å•ä½
-    int Axisunitfontsize;//å•ä½å­—ä½“å¤§å°
-    valrange axisvalrange;//åˆ»åº¦æ•°å€¼åŒºé—´
-    QRectF AxisRect;
-    Axisstyle mAxisstyle;
+	bool isstart;
+	unsigned int Axisnumber;//´ó¿Ì¶È¸öÊı
+	QString mAxisunit;//µ¥Î»
+	int Axisunitfontsize;//µ¥Î»×ÖÌå´óĞ¡
+	valrange axisvalrange;//¿Ì¶ÈÊıÖµÇø¼ä
+	QRectF AxisRect;
+	Axisstyle mAxisstyle;
 private:
-    QVector<QLineF> lines;
-    QVector<AXISVAL> m_axisval;
-    AXISVAL Axisunit;
-    QSizeF* CanvasSize;
+	QVector<QLineF> lines;
+	QVector<AXISVAL> m_axisval;
+	AXISVAL Axisunit;
+	QSizeF* CanvasSize;
+	QWidget* CanvasWidget;
 };
-
-#endif // AXIS_H
