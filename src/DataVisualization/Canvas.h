@@ -6,6 +6,9 @@
 #include <QPaintEvent>
 #include <QPen>
 #include <QPainter>
+#include <map>
+#include <QMouseEvent>
+#include <QRect>
 class Canvas;
 class CanvasItem{
 	friend class Canvas;
@@ -36,22 +39,47 @@ public:
 	bool operator > (const CanvasItem& item);
 	bool operator == (const CanvasItem& item);
 public:
-	//层级
+	//层级 同一个canvas中层级不能重复 不然会被覆盖掉
 	unsigned int rank;
 };
 class Canvas :public QWidget{
+	Q_OBJECT
+public:
+	enum MouseLeftMode{
+		FIND_POINT = 0,
+		SELECT_RECT
+	};
 public:
 	Canvas(QWidget* parent = 0);
 	~Canvas();
 private:
-	std::list<CanvasItem> items;
+	//绘制对象
+	std::map<unsigned int,CanvasItem> items;
+	//鼠标左键按下
+	bool mouseLeftPress;
+	//鼠标拖拽时的矩形框
+	QRect selectRect;
+	//鼠标左键功能绑定
+	MouseLeftMode mouseLeftMode;
+
 public:
-	void addIteam(const CanvasItem& iteam){
-		this->items.push_back(iteam);
-	}
+	//添加显示项
+	void addIteam(const CanvasItem& iteam);
+	//移除显示项
+	void removeItem(const unsigned int& rank);
 	void clearIteam(){
 		items.clear();
 	};
 protected:
-	void paintEvent(QPaintEvent *event);
+	void paintEvent(QPaintEvent *event) override;
+	void mouseMoveEvent(QMouseEvent *event) override;
+	void mousePressEvent(QMouseEvent *event) override;
+	void mouseReleaseEvent(QMouseEvent *event) override;
+
+private:
+	void initData();
+
+Q_SIGNALS:
+	void emitSelectRect(QRect);
+	void emitSelectPoint(QPoint);
 };

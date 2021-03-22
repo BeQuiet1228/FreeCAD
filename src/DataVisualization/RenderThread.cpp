@@ -10,6 +10,9 @@ RenderThread::~RenderThread()
 {
 	QThread::quit();
 	QThread::wait();
+#ifdef MY_DEBUG
+	std::cerr << "Thread release!" << std::endl;
+#endif
 }
 
 /**
@@ -61,6 +64,9 @@ void RenderThread::findPoint(RenderTask& task)
 
 void RenderThread::run()
 {
+#ifdef MY_DEBUG
+	std::cerr << "Thread start successd,threadID:" << currentThreadId() << std::endl;
+#endif
 	setFinishedFlag(false);
 
 	for (auto taskIter = tasks.begin(); taskIter != tasks.end(); taskIter++){

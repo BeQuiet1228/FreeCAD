@@ -30,6 +30,9 @@ public:
 	};
 	struct Rang{
 		Rang() :max(0), min(0){};
+		float length(){
+			return max - min;
+		}
 		float max;
 		float min;
 	};
@@ -40,7 +43,7 @@ public:
 	};
 public:
 	Data(Hdf5Data& h5Data ,const RunMod& mod = SINGLE_THREAD);
-	~Data();
+	virtual ~Data();
 
 
 private:

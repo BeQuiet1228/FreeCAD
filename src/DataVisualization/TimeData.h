@@ -1,6 +1,7 @@
 #pragma once
 #include "Data.h"
 #include <vector>
+#include <mutex>
 class TimeData :public Data{
 public:
 	TimeData(Hdf5Data& h5Data, const RunMod& mod = SINGLE_THREAD);
@@ -24,11 +25,21 @@ public:
 	int findIndexFromXValueR(const float& x);
 	//获取范围
 	Rang getXRang(){
+		std::lock_guard<std::mutex> am(xRangMutex);
 		return xRang;
 	};
+	void setXRang(const Rang& rg){
+		std::lock_guard<std::mutex> am(xRangMutex);
+		xRang = rg;
+	}
 	Rang getYRang(){
+		std::lock_guard<std::mutex> am(yRangMutex);
 		return yRang;
 	};
+	void setYRang(const Rang& rg){
+		std::lock_guard<std::mutex> am(yRangMutex);
+		yRang = rg;
+	}
 private:
 	//初始化xy的范围
 	bool initXYRang();
@@ -39,4 +50,5 @@ private:
 	int pointSize;
 	//xy的范围
 	Rang xRang, yRang;
+	std::mutex xRangMutex, yRangMutex;
 };
