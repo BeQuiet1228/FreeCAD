@@ -3,7 +3,7 @@
 #include "hdf5io.h"
 using namespace H5;
 int main(){
-	std::string path = "E:/lingshiwenjianjia/MILO_D/MILO_D.h5";
+	std::string path = "D:/wandaotongProject/MILO_C_Temp.h5";
 	Hdf5IO io(path);
 
 	io.initHdf5Data();
