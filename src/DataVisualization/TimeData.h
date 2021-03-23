@@ -14,15 +14,15 @@ public:
 	//载入点数据
 	bool loadPoint();
 	//获取point数量
-	int getPointSize(){
+	unsigned int getPointSize(){
 		return pointSize;
 	};
 	//获取一个点
-	QPointF getPoint(const int& index);
-	QPointF getPointHard(const int& index);
+	QPointF getPoint(const unsigned int& index);
+	QPointF getPointHard(const unsigned int& index);
 	//根据值寻找一个索引
-	int findIndexFromXValueL(const float& x);
-	int findIndexFromXValueR(const float& x);
+	unsigned int findIndexFromXValueL(const float& x);
+	unsigned int findIndexFromXValueR(const float& x);
 	//获取范围
 	Rang getXRang(){
 		std::lock_guard<std::mutex> am(xRangMutex);

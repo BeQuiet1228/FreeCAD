@@ -21,7 +21,10 @@ private:
 	//将数据坐标转换为图片上的坐标
 	float transitionX(const float& x,const float& xScale,const Data::Rang& xr);
 	float transitionY(const float& y,const float& yScale,const Data::Rang& yr);
+	void transitionPoint(QPointF& point);
 	void transitionPoint(QPointF& point, const float& xScale, const Data::Rang& xr, const float& yScale, Data::Rang& yr);
 	//初始化数据与图片坐标的缩放比例
 	bool getTransitionScale(float& xScale,float& yScale);
+	//在原始数据中寻找点
+	QPointF findPoint(const QPointF& point);
 };

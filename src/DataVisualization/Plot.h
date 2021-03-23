@@ -7,6 +7,7 @@
 #include <memory>
 #include <list>
 #include <QResizeEvent>
+#include <QKeyEvent>
 class Renderer;
 class RenderThreadManager;
 class Axis;
@@ -40,9 +41,7 @@ public:
 	//添加从渲染器
 	void addSubRenderer(const std::shared_ptr<Renderer>& rd);
 	//设置主渲染器
-	void setMainRenderer(const std::shared_ptr<Renderer>& rd){
-		this->mainRenderer = rd;
-	};
+	void setMainRenderer(const std::shared_ptr<Renderer>& rd);
 
 	//清理从渲染器
 	void cleraSubRenderer(){
@@ -65,4 +64,6 @@ public Q_SLOTS:
 
 protected:
 	void resizeEvent(QResizeEvent *event) override;
+protected:
+	void keyReleaseEvent(QKeyEvent *event);
 };
