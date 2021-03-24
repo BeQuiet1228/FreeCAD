@@ -58,6 +58,20 @@ void Plot::addSubRenderer(const std::shared_ptr<Renderer>& rd)
 }
 
 /**
+* @brief Plot::setMainRenderer
+* @param const std::shared_ptr<Renderer> & rd
+* @return void
+*/
+void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
+{
+	this->mainRenderer = rd;
+	auto xr = mainRenderer->getXRang();
+	auto yr = mainRenderer->getYRang();
+	AxisL->setAxisRange(yr.min, yr.max);
+	AxisB->setAxisRange(xr.min, xr.max);
+}
+
+/**
 * @brief Plot::initGUI 初始化布局
 * @return void
 */
@@ -71,7 +85,12 @@ void Plot::initGUI()
 	connect(canvas, SIGNAL(emitSelectPoint(QPoint)), this, SLOT(canvasSelectPoint(QPoint)));
 
 	AxisL = new Axis();
+	AxisL->setAxixStyle(Axisleft);
+	AxisL->SetAxisNumber(6);
 	AxisB = new Axis();
+	AxisB->setAxixStyle(AxisBottom);
+	AxisB->SetAxisNumber(6);
+
 
 	gridLayout->addWidget(canvas, 0, 1, 1, 1);
 	gridLayout->addWidget(AxisL, 0, 0, 1, 1);
@@ -125,6 +144,11 @@ void Plot::renderFinished()
 */
 void Plot::canvasSelectRect(QRect rect)
 {
+	//如果选取框太小  不给予放大缩小操作
+	if (rect.width() < 10 || rect.height() < 10)
+		return;
+
+
 	auto xr = mainRenderer->getXRang();
 	auto yr = mainRenderer->getYRang();
 	auto size = mainRenderer->getSize();
@@ -145,13 +169,18 @@ void Plot::canvasSelectRect(QRect rect)
 	yScale = yr.length() / size.height();
 
 	//获得数据范围
-	xr.max = xMax*xScale;
-	xr.min = xMin*xScale;
-	yr.max = yMax*yScale;
-	yr.min = yMin*yScale;
+	//框选的起始刻度可能不是0，所以得加上起点的刻度才是渲染刻度
+	xr.max = xMax*xScale + xr.min;
+	xr.min = xMin*xScale + xr.min;
+	yr.max = yMax*yScale + yr.min;
+	yr.min = yMin*yScale + yr.min;
 
 	mainRenderer->setXRang(xr);
 	mainRenderer->setYRang(yr);
+	AxisL->setAxisRange(yr.min, yr.max);
+	AxisL->_update();
+	AxisB->setAxisRange(xr.min, xr.max);
+	AxisB->_update();
 	//设置其他渲染器的范围
 	for (auto iter = subRenderers.begin(); iter != subRenderers.end(); iter++)
 	{
@@ -177,6 +206,33 @@ void Plot::resizeEvent(QResizeEvent *event)
 {
 	QWidget::resizeEvent(event);
 	reRender();
+}
+
+/**
+* @brief Plot::keyReleaseEvent 
+* @param QKeyEvent * event
+* @return void
+*/
+void Plot::keyReleaseEvent(QKeyEvent *event)
+{
+	//暂时使用空格回到主页  方便测试
+	QWidget::keyReleaseEvent(event);
+	if (event->key() == Qt::Key_Space)
+	{
+		if (!mainRenderer)
+			return;
+		mainRenderer->setDefaultRang();
+		auto xr = mainRenderer->getXRang();
+		auto yr = mainRenderer->getYRang();
+
+		for (auto i = subRenderers.begin(); i != subRenderers.end(); i++)
+		{
+			(*i)->setXRang(xr);
+			(*i)->setYRang(yr);
+		}
+		reRender();
+	}
+	
 }
 
 #include "moc_Plot.cpp"

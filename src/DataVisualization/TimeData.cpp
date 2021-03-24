@@ -38,7 +38,7 @@ bool TimeData::loadPoint()
 * @param const int & index
 * @return QPointF
 */
-QPointF TimeData::getPoint(const int& index)
+QPointF TimeData::getPoint(const unsigned int& index)
 {
 	if (index >= pointSize)
 	{
@@ -50,10 +50,10 @@ QPointF TimeData::getPoint(const int& index)
 
 /**
 * @brief TimeData::getPointHard 根据索引给出一个点，这个函数不会判断容器边界，谨慎使用。
-* @param const int & index
+* @param const unsigned int & index
 * @return QPointF
 */
-QPointF TimeData::getPointHard(const int& index)
+QPointF TimeData::getPointHard(const unsigned int& index)
 {
 	QPointF point;
 	point.setX(points->at(index * 2));
@@ -64,9 +64,9 @@ QPointF TimeData::getPointHard(const int& index)
 /**
 * @brief TimeData::findIndexFromXValueL 通过x轴的值查找最近的索引，靠近左边
 * @param const float & x
-* @return int
+* @return unsigned int
 */
-int TimeData::findIndexFromXValueL(const float& x)
+unsigned int TimeData::findIndexFromXValueL(const float& x)
 {
 	float step = (xRang.max - yRang.min) / pointSize;
 	int index = x / step;
@@ -76,9 +76,9 @@ int TimeData::findIndexFromXValueL(const float& x)
 /**
 * @brief TimeData::findIndexFromXValueR 通过x轴的值查找最近的索引，靠近右边
 * @param const float & x
-* @return int
+* @return unsigned int
 */
-int TimeData::findIndexFromXValueR(const float& x)
+unsigned int TimeData::findIndexFromXValueR(const float& x)
 {
 	return findIndexFromXValueL(x) + 1;
 }
