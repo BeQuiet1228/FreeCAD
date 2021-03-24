@@ -9,26 +9,35 @@
 #include "RenderTask.h"
 #include "RenderThreadManager.h"
 #include"Axis.h"
+#include "ParticleData.h"
+#include <ParticleRenderer.h>
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 	CanvasItem::registerMetaTye();
 
-	std::string path = "E:/lingshiwenjianjia/MILO_C/MILO_C.h5";
+	//std::string path = "E:/lingshiwenjianjia/MILO_C/MILO_C.h5";
+	std::string path = "D:\MILO_C.h5";
 	Hdf5IO io(path);
 	
 	io.initHdf5Data();
 	auto data = io.hdf5DataList.begin();
-	data +=6;
 	Hdf5Data d = *data;
-	std::shared_ptr<TimeData> timeData(new TimeData(d));
-	TimeRenderer *timeRenderer = new TimeRenderer(timeData);
+
+
+
+	std::shared_ptr<ParticleData> particleData(new ParticleData(d));
+
+
+	ParticleRenderer *timeRenderer = new ParticleRenderer(particleData);
 	timeRenderer->dataInit();
 	timeRenderer->setDefaultRang();
 	Plot p;
 	std::shared_ptr<Renderer> rd(timeRenderer);
 	p.setMainRenderer(rd);
 	p.show();
+
+
 
 	////≤‚ ‘µ•œﬂ≥Ã‰÷»æ
 	//std::shared_ptr<Renderer> re(timeRenderer);

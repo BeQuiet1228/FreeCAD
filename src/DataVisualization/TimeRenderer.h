@@ -7,9 +7,6 @@ public:
 	TimeRenderer(std::shared_ptr<TimeData> data);
 	~TimeRenderer();
 
-private:
-	Data::Rang xRang, yRang;
-	std::mutex xRangMutex, yRangMutex;
 public:
 	//渲染
 	virtual bool drawImage() override;
@@ -24,8 +21,6 @@ private:
 	float transitionY(const float& y,const float& yScale,const Data::Rang& yr);
 	void transitionPoint(QPointF& point);
 	void transitionPoint(QPointF& point, const float& xScale, const Data::Rang& xr, const float& yScale, Data::Rang& yr);
-	//初始化数据与图片坐标的缩放比例
-	bool getTransitionScale(float& xScale,float& yScale);
 	//在原始数据中寻找点
 	QPointF findPoint(const QPointF& point);
 	//绘制显示信息

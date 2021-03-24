@@ -63,7 +63,7 @@ bool TimeRenderer::drawImage()
 	//获取点 并绘制线
 	for (int index = startIndex + 1 ; index < endIndex; index++)
 	{
-		endPoint = d->getPoint(index);
+		endPoint = d->getPointHard(index);
 		transitionPoint(endPoint, xScale, xr, yScale, yr);
 		painter.drawLine(starPoint,endPoint);
 		starPoint = endPoint;
@@ -223,41 +223,6 @@ void TimeRenderer::transitionPoint(QPointF& point)
 	getTransitionScale(xScale, yScale);
 	transitionPoint(point, xScale, getXRang(), yScale, getYRang());
 	
-}
-
-/**
-* @brief TimeRenderer::getTransitionScale 初始化数据与图片坐标的缩放比例
-* @param float & xScale
-* @param float & yScale
-* @return bool
-*/
-bool TimeRenderer::getTransitionScale(float& xScale, float& yScale)
-{
-	auto size = getSize();
-	auto xr = getXRang();
-	auto yr = getYRang();
-
-	float xLength = xr.max - xr.min;
-	float yLength = yr.max - yr.min;
-
-	if (xLength < 0 || yLength < 0)
-	{
-#if MY_DEBUG
-		std::cerr << "TimeRenderer::getTransitionScale length < 0" << std::endl;
-#endif
-		return false;
-	}
-
-	if (size.width() <= 0 || size.height() <= 0)
-	{
-#if MY_DEBUG
-		std::cerr << "TimeRenderer::getTransitionScale size <= 0" << std::endl;
-#endif
-		return false;
-	}
-	xScale = size.width() / xLength;
-	yScale = size.height() / yLength;
-	return true;
 }
 
 /**

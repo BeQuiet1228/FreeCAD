@@ -497,11 +497,11 @@ void Hdf5IO::initHdf5Data()
      }
     //获取所有grd的数据组
     {
-		getGrdData();
+	//	getGrdData();
     }
     //获取par的数据组
     {
-		//getParData();
+		getParData();
     }
     //获取二维等位图数据
     {

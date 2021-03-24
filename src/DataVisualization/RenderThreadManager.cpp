@@ -20,6 +20,7 @@ void RenderThreadManager::start()
 {
 #ifdef MY_DEBUG
 	std::cerr << "RenderThreadManager::start()" << std::endl;
+	d_time = QDateTime::currentDateTime().toMSecsSinceEpoch();
 #endif
 	if (tasks.size() == 0)
 		return;
@@ -92,7 +93,14 @@ void RenderThreadManager::threadWorkFinished()
 {
 	clearFinishedThread();
 	if (threads.size() == 0)
+	{
+#ifdef MY_DEBUG
+		qint64 t = QDateTime::currentDateTime().toMSecsSinceEpoch() - d_time;
+		std::cerr << "render time:" << t << "ms" <<std::endl;
+#endif
 		Q_EMIT allWorkFinished();
+	}
+		
 }
 
 #include "moc_RenderThreadManager.cpp"

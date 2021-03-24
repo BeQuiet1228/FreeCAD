@@ -1,7 +1,7 @@
 #include "TimeData.h"
 
 TimeData::TimeData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
-	:Data(h5Data, mod), pointSize(0)
+	:XYData(h5Data, mod)
 {
 
 }
@@ -25,10 +25,10 @@ bool TimeData::loadPoint()
 	Data::ListValuesPtr listValues;
 	bool ok = autoModGetSourceData(listValues);
 
-	if (!ok && !listValues && listValues->size() == 0)
+	if (!ok || !listValues || listValues->size() == 0)
 		return false;
 	points = *(listValues->begin());
-	pointSize = points->size()/2;
+	setPointSize(points->size()/2);
 	//初始化范围
 	initXYRang();
 
@@ -40,7 +40,7 @@ bool TimeData::loadPoint()
 */
 QPointF TimeData::getPoint(const unsigned int& index)
 {
-	if (index >= pointSize)
+	if (index >= getPointSize())
 	{
 		QPointF p;
 		return p;
@@ -68,19 +68,12 @@ QPointF TimeData::getPointHard(const unsigned int& index)
 */
 unsigned int TimeData::findIndexFromXValueL(const float& x)
 {
-	double step = (xRang.max - xRang.min) / pointSize;
-	int index = x / step;
+	double step = (getXRang().max - getXRang().min) / getPointSize();
+	unsigned int index = x / step;
+	//如果索引超出范围则返回0
+	if (index > getPointSize())
+		return 0;
 	return index;
-}
-
-/**
-* @brief TimeData::findIndexFromXValueR 通过x轴的值查找最近的索引，靠近右边
-* @param const float & x
-* @return unsigned int
-*/
-unsigned int TimeData::findIndexFromXValueR(const float& x)
-{
-	return findIndexFromXValueL(x) + 1;
 }
 
 /**
@@ -89,7 +82,7 @@ unsigned int TimeData::findIndexFromXValueR(const float& x)
 */
 bool TimeData::initXYRang()
 {
-	if (pointSize < 2)
+	if (getPointSize() < 2)
 		return false;
 
 	//获取x轴的范围
@@ -110,7 +103,7 @@ bool TimeData::initXYRang()
 		temp = points->at(index);
 		if (yr.max < temp)
 			yr.max = temp;
-		if (yr.min > temp)
+		else if (yr.min > temp)
 			yr.min = temp;
 	}
 	setXRang(xr);

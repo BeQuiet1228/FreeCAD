@@ -124,3 +124,21 @@ bool Data::autoModGetSourceData(ListValuesPtr& listValues)
 	return ok;
 }
 
+XYData::XYData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
+	:Data(h5Data, mod), pointSize(0)
+{
+
+}
+
+/**
+* @brief XYData::findIndexFromXValueR 通过x轴的值查找最近的索引，靠近右边
+* @param const float & x
+* @return unsigned int
+*/
+unsigned int XYData::findIndexFromXValueR(const float& x)
+{
+	unsigned int index = findIndexFromXValueL(x) + 1;
+	if (index > getPointSize())
+		return getPointSize() - 1;
+	return index;
+}
