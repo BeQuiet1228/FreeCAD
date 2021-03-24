@@ -480,10 +480,10 @@ void Hdf5IO::getGrdData()
 	datasetNames.push_back("datasetGrd");
 	getAllSubGroupAndDataSet(ObserveGroup, datasetNames);
 
-	Group rangeGroup;
-	if (!getGroup(grdGroup, "2D_rangers", rangeGroup))
-		return;
-	getAllSubGroupAndDataSet(rangeGroup, datasetNames);
+	//Group rangeGroup;
+	//if (!getGroup(grdGroup, "2D_rangers", rangeGroup))
+	//	return;
+	//getAllSubGroupAndDataSet(rangeGroup, datasetNames);
 }
 /*
  * 初始化所有的图的数据组、数据库、头部信息

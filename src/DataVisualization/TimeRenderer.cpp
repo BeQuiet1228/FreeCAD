@@ -7,6 +7,8 @@
 #include <QRgb>
 #include <list>
 #include <math.h>
+#include <QRectF>
+#include <QBrush>
 TimeRenderer::TimeRenderer(std::shared_ptr<TimeData> data)
 	:Renderer(std::dynamic_pointer_cast<Data>(data))
 {
@@ -53,10 +55,12 @@ bool TimeRenderer::drawImage()
 	painter.setRenderHint(QPainter::Antialiasing, true);;
 	painter.setPen(pen);
 	
+	//获取边界索引
 	QPointF starPoint, endPoint;
 	starPoint = d->getPoint(startIndex);
 	transitionPoint(starPoint, xScale, xr, yScale, yr);
 	startIndex++;
+	//获取点 并绘制线
 	for (int index = startIndex + 1 ; index < endIndex; index++)
 	{
 		endPoint = d->getPoint(index);
@@ -64,6 +68,7 @@ bool TimeRenderer::drawImage()
 		painter.drawLine(starPoint,endPoint);
 		starPoint = endPoint;
 	}
+	//因为qpainter的屏幕坐标系原点在左上角，所以需要翻转图片才能得到我们想要的结果
 	auto nImg = img.mirrored(false, true);
 	setImage(nImg);
 	return true;
@@ -92,8 +97,10 @@ bool TimeRenderer::addListRang(std::list<Data::Rang> listRang)
 */
 bool TimeRenderer::drawPointImage()
 {
-	//测试
+	//获取接近点
 	QPointF point = findPoint(getFindPosition());
+	//屏幕坐标
+	QPointF tPoint = point;
 	//新建画布 画笔
 	QImage img(getSize(), QImage::Format_ARGB32);
 	img.fill(qRgba(0, 0, 0, 0));
@@ -102,11 +109,18 @@ bool TimeRenderer::drawPointImage()
 	pen.setWidth(5);
 	QPainter painter(&img);
 	painter.setPen(pen);
-	transitionPoint(point);
-	painter.drawPoint(point);
-	
-	auto nImg = img.mirrored(false, true);
-	setImage(nImg);
+
+	//将数据坐标转换为屏幕坐标
+	transitionPoint(tPoint);
+	//坐标翻转（因为坐标系原点不一致的关系）
+	tPoint.setY(getSize().height() - tPoint.y());
+	//绘制点
+	painter.drawPoint(tPoint);
+
+	//绘制信息显示
+	drawDisplayPoint(painter, tPoint, point);
+
+	setImage(img);
 	return true;
 }
 
@@ -126,12 +140,12 @@ bool TimeRenderer::setDefaultRang()
 	auto yr = timeData->getYRang();
 	if (yr.min < 0)
 	{
-		float j = (yr.max - yr.min) / 4;    //总长度除以8,得到平均值（上方多留一格所以除以8）
+		float j = (yr.max - yr.min) / 5;    //总长度除以8,得到平均值（上方多留一格所以除以8）
 		int m = yr.max / j;       //获得正值需要多少格
 		if ((m * j) > yr.max)    //解决浮点数精度问题（8.9999/3.0=3的问题）
 			m--;
-		int n = -(4 - m - 1); //获得负值需要的格数
-		yr.max = j * (m + 2);   //获得最大值
+		int n = -(5 - m - 1); //获得负值需要的格数
+		yr.max = j * (m + 1);   //获得最大值
 		yr.min = j * (n - 1);  //获得最小值
 
 	}else{                  //没有负值，留出上方空间即可
@@ -323,6 +337,54 @@ QPointF TimeRenderer::findPoint(const QPointF& point)
 		}
 	}
 	return temp;
+
+}
+
+/**
+* @brief TimeRenderer::drawDisplayPoint 在画布中显示点的信息
+* @param QPainter & painter 绘制器
+* @param const QPointF & position 点在屏幕上的位置
+* @param const QPointF & d 点的数据
+* @return void
+*/
+void TimeRenderer::drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d)
+{
+	//设置画笔的颜色
+	QPen pen;
+	pen.setColor(QColor(102, 205, 170));
+	pen.setWidth(2);
+	painter.setPen(pen);
+	painter.setBrush(QBrush(QColor(255, 250, 240)));
+	//建立话画框
+	QRectF displayRect;
+	displayRect.setX(position.x() + 10);
+	displayRect.setY(position.y() - 5);
+	//如果这个点在边界上  那么调整话框的位置
+	auto size = getSize();
+	if (displayRect.y() > (size.height() - 60))
+	{
+		displayRect.setY(displayRect.y() - 70);
+	}
+	if (displayRect.x() > (size.width() - 130))
+	{
+		displayRect.setX(displayRect.x() - 150);
+	}
+
+	displayRect.setWidth(110);
+	displayRect.setHeight(50);
+	painter.drawRect(displayRect);
+	//绘制显示信息
+	QFont f;
+	f.setPixelSize(17);
+	painter.setFont(f);
+	painter.drawText(displayRect.x() + 10,
+		displayRect.y() + 20,
+		QString("X:%1").arg(d.x(), 0, 'E', 2)
+		);
+	painter.drawText(displayRect.x() + 10,
+		displayRect.y() + 40,
+		QString("Y:%1").arg(d.y(), 0, 'E', 2)
+		);
 
 }
 

@@ -68,7 +68,7 @@ QPointF TimeData::getPointHard(const unsigned int& index)
 */
 unsigned int TimeData::findIndexFromXValueL(const float& x)
 {
-	float step = (xRang.max - yRang.min) / pointSize;
+	double step = (xRang.max - xRang.min) / pointSize;
 	int index = x / step;
 	return index;
 }

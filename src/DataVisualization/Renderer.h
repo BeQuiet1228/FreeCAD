@@ -36,7 +36,7 @@ private:
 	QImage image;
 	std::mutex imageMutex;
 	//渲染大小
-	QSize imageSize;
+	QSize imageSize; 
 	std::mutex imageSizeMutex;
 	//点的位置
 	QPointF findPosition;

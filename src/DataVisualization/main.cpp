@@ -14,12 +14,12 @@ int main(int argc, char *argv[])
 	QApplication a(argc, argv);
 	CanvasItem::registerMetaTye();
 
-	std::string path = "E:/lingshiwenjianjia/MILO_C_2.h5";
+	std::string path = "E:/lingshiwenjianjia/MILO_C/MILO_C.h5";
 	Hdf5IO io(path);
 	
 	io.initHdf5Data();
 	auto data = io.hdf5DataList.begin();
-	data +=22;
+	data +=6;
 	Hdf5Data d = *data;
 	std::shared_ptr<TimeData> timeData(new TimeData(d));
 	TimeRenderer *timeRenderer = new TimeRenderer(timeData);

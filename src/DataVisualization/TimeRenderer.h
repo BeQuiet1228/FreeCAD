@@ -1,6 +1,7 @@
 #pragma once
 #include <Renderer.h>
 #include "TimeData.h"
+#include <QPainter>
 class TimeRenderer:public Renderer{
 public:
 	TimeRenderer(std::shared_ptr<TimeData> data);
@@ -27,4 +28,6 @@ private:
 	bool getTransitionScale(float& xScale,float& yScale);
 	//在原始数据中寻找点
 	QPointF findPoint(const QPointF& point);
+	//绘制显示信息
+	void drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d);
 };
