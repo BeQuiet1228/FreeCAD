@@ -6,6 +6,17 @@
 #include <mutex>
 #include <QVector>
 #include <QRectF>
+typedef struct DaTaKmt
+{ 
+	//坐标1
+	int point1;
+	//坐标2
+	int point2;
+	//坐标3
+	int point3;
+	//属性
+	int pointproperty;
+}DATAKMT;
 class structureData :public Data{
 public:
 	structureData(Hdf5Data& heData, const RunMod& mod = SINGLE_THREAD);
@@ -16,19 +27,6 @@ public:
 	//载入数据
 	bool loadPoint();
 	bool loadrectpoint();
-	//获取数量
-	int getPointSize()
-	{
-		return pointSize;
-	}
-	//获取一个点
-	QPointF getPoint(const int& index);
-	QPointF getPointHard(const int &index);
-	//根据值寻找一个索引
-	int findIndexFromXValueL(const float& x);
-	int findIndexFromXValueR(const float& x);
-	int findIndexFromYValueT(const float& y);
-	int findIndexFromYValueB(const float& y);
 	//获取真空坐标
 	QVector<QRectF> GetVacuoPoint();
 	//获取导管坐标
@@ -59,17 +57,21 @@ public:
 private:
 	//初始化xy的取值范围
 	bool initXYRang();
+	//获取切割的空间
+	QVector<QRectF> GetAllCutspace();
+	//获取dataSetkmt的全部数据
+	QVector<DaTaKmt> GetdatasetKmt();
+	//填充相关属性的队列
+	void fileproperty(QVector<QRectF> list);
 private:
-	//所有的点数据
-	Data::ValuesPtr points;//后续会弃用
-	//所有x的数据
+	//所有1mx的数据
 	Data::ValuesPtr pointi1mx;
-	//所有y的数据
+	//所有2mx的数据
 	Data::ValuesPtr pointi2mx;
+	//所有3mx的数据
 	Data::ValuesPtr pointi3mx;
 	//方格的相关参数
 	Data::ValuesPtr pointdatasetkmt;
-	int pointSize;
 	//横向点的个数
 	int pointXSize;
 	//纵向点的个数
@@ -78,8 +80,8 @@ private:
 	QVector<QRectF> vacuo_vector;
 	//导管坐标
 	QVector<QRectF> conduit_vector;
-	//特殊属性坐标
-	QVector<QRectF> specificproperty_vector;
+	//datasetkmt的数据采集
+	QVector<DaTaKmt> datakmtinfo;
 	//xy的范围
 	Rang xRang, yRang;
 	std::mutex xRangMutex, yRangMutex;

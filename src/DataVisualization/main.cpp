@@ -13,50 +13,33 @@
 #include"Axis.h"
 int main(int argc, char *argv[])
 {
-        QApplication a(argc, argv);
-        CanvasItem::registerMetaTye();
-		/*QString sPath = QString("./plugin/");
-		a.addLibraryPath(sPath);*/
+    QApplication a(argc, argv);
+    CanvasItem::registerMetaTye();
+	/*QString sPath = QString("./plugin/");
+	a.addLibraryPath(sPath);*/
 
-        std::string path = "D:/wandaotongProject/MILO_C_2.h5";
-        Hdf5IO io(path);
-	QApplication a(argc, argv);
-	CanvasItem::registerMetaTye();
-
-	std::string path = "E:/lingshiwenjianjia/MILO_C_2.h5";
-	Hdf5IO io(path);
+    std::string path = "F:\wdtproject\PICGUI\MILO_C_2.h5";
+    Hdf5IO io(path);
 	
 	io.initHdf5Data();
 	auto data = io.hdf5DataList.begin();
-	data +=22;
+	//data +=22;
 	Hdf5Data d = *data;
 	std::shared_ptr<TimeData> timeData(new TimeData(d));
-	TimeRenderer *timeRenderer = new TimeRenderer(timeData);
-	timeRenderer->dataInit();
-	timeRenderer->setDefaultRang();
-	Plot p;
-	std::shared_ptr<Renderer> rd(timeRenderer);
-	p.setMainRenderer(rd);
-	p.show();
-        io.initHdf5Data();
-        auto data = io.hdf5DataList.begin();
-
-       // data +=22;
-        Hdf5Data d = *data;
-		std::shared_ptr<structureData> _structData(new structureData(d));
-        //std::shared_ptr<TimeData> timeData(new TimeData(d));
-		StructureRenderer* structureRenderer = new StructureRenderer(_structData);
-        //TimeRenderer *timeRenderer = new TimeRenderer(timeData);
-        //timeRenderer->dataInit();
-        //timeRenderer->setDefaultRang();
-		structureRenderer->dataInit();
-		structureRenderer->setDefaultRang();
-        Plot p;
-		std::shared_ptr<Renderer> rd(structureRenderer);
-        p.setMainRenderer(rd);
-        p.show();
-		std::shared_ptr<Renderer> re(structureRenderer);
-        RenderTask task(re);
+	std::shared_ptr<structureData> _structData(new structureData(d));
+    //std::shared_ptr<TimeData> timeData(new TimeData(d));
+	StructureRenderer* structureRenderer = new StructureRenderer(_structData);
+    //TimeRenderer *timeRenderer = new TimeRenderer(timeData);
+    //timeRenderer->dataInit();
+    //timeRenderer->setDefaultRang();
+	structureRenderer->dataInit();
+	structureRenderer->setDefaultRang();
+    Plot p;
+	std::shared_ptr<Renderer> rd(structureRenderer);
+    p.setMainRenderer(rd);
+    p.show();
+	std::shared_ptr<Renderer> re(structureRenderer);
+    RenderTask task(re);
 	//刻度组件测试
 	//Axis w;
 	//以下都为省却，有初始化参数

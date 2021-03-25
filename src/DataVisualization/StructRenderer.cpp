@@ -28,7 +28,7 @@ bool StructureRenderer::drawImage()
 	if (!d)
 	{
 #if LOG
-		std::cerr << "TimeRenderer::drawImage() data dynamic cast failed!" << std::endl;
+		std::cerr << "StructureRenderer::drawImage() data dynamic cast failed!" << std::endl;
 #endif
 		return false;
 	}
@@ -36,10 +36,8 @@ bool StructureRenderer::drawImage()
 	auto xr = getXRang();
 	auto yr = getYRang();
 
-	//获取数据索引的范围
-	int startIndex(0), endIndex(0);
-	startIndex = d->findIndexFromXValueL(xr.min);
-	endIndex = d->findIndexFromXValueR(xr.max);
+
+	//开始绘制
 
 	//新建画布 画笔
 	QImage img(getSize(), QImage::Format_ARGB32);
@@ -50,16 +48,21 @@ bool StructureRenderer::drawImage()
 	painter.setRenderHint(QPainter::Antialiasing, true);;
 	painter.setPen(pen);
 
-	QPointF starPoint, endPoint;
-	starPoint = d->getPoint(startIndex);
-	transitionPoint(starPoint, xScale, xr, yScale, yr);
-	startIndex++;
-	for (int index = startIndex + 1; index < endIndex; index++)
+	//开始绘制图表
+	QVector<QRectF> _conduit_list = d->GetConduitPoint();
+	auto iter = _conduit_list.begin();
+	for (;iter!=_conduit_list.end();iter++)
 	{
-		endPoint = d->getPoint(index);
-		transitionPoint(endPoint, xScale, xr, yScale, yr);
-		painter.drawLine(starPoint, endPoint);
-		starPoint = endPoint;
+		//获取缩放
+		transitionRectF(*iter, xScale, xr, yScale, yr);
+	}
+	for (int index = 0; index < _conduit_list.size(); index++)
+	{
+		//绘制矩形
+		painter.drawLine(_conduit_list[index].left(), _conduit_list[index].top(),_conduit_list[index].right(),_conduit_list[index].top());
+		painter.drawLine(_conduit_list[index].left(),_conduit_list[index].bottom(),_conduit_list[index].right(),_conduit_list[index].bottom());
+		painter.drawLine(_conduit_list[index].left(), _conduit_list[index].top(), _conduit_list[index].left(), _conduit_list[index].bottom());
+		painter.drawLine(_conduit_list[index].right(), _conduit_list[index].top(), _conduit_list[index].right(), _conduit_list[index].bottom());
 	}
 	auto nImg = img.mirrored(false, true);
 	setImage(nImg);
@@ -80,28 +83,24 @@ bool StructureRenderer::addListRang(std::list<Data::Rang> listRang)
 	iter++;
 	setYRang(*iter);
 }
-
-
-
 /**
-* @brief TimeRenderer::drawPointImage 渲染取点的页面
+* @brief TimeRenderer::drawPointImage 渲染取点
 * @return bool
 */
 bool StructureRenderer::drawPointImage()
 {
 	//新建画布 画笔
-	QImage img(getSize(), QImage::Format_ARGB32);
+	/*QImage img(getSize(), QImage::Format_ARGB32);
 	img.fill(qRgba(0, 0, 0, 0));
 	QPen pen(Qt::red);
 	pen.setBrush(Qt::blue);
 	pen.setWidth(5);
 	QPainter painter(&img);
 	painter.setPen(pen);
-
 	painter.drawPoint(this->getFindPosition());
-
 	auto nImg = img.mirrored(false, true);
-	setImage(nImg);
+	setImage(nImg);*/
+	//待实现
 	return true;
 }
 
@@ -159,24 +158,22 @@ float StructureRenderer::transitionY(const float& y, const float& yScale, const 
 {
 	return (y - yr.min)*yScale;
 }
-
-
-
 /**
-* @brief TimeRenderer::transitionPoint 坐标值转换
-* @param QPointF & point
-* @param const float & xScale
-* @param const Data::Rang & xr
-* @param const float & yScale
-* @param Data::Rang & yr
+* @brief StructureRenderer::transitionRectF 切割空间的坐标转换
+* @param QRectF& _rect
+* @param const float& xScale
+* @param const Data::Rang& xr
+* @param const float& yScale
+* @param Data::Rang& yr
 * @return void
 */
-void StructureRenderer::transitionPoint(QPointF& point, const float& xScale, const Data::Rang& xr, const float& yScale, Data::Rang& yr)
+void StructureRenderer::transitionRectF(QRectF& _rectf, const float& xScale, const Data::Rang& xr, const float& yScale, Data::Rang& yr)
 {
-	point.setX(transitionX(point.x(), xScale, xr));
-	point.setY(transitionY(point.y(), yScale, yr));
+	_rectf.setLeft(transitionX(_rectf.left(), xScale,xr));
+	_rectf.setRight(transitionX(_rectf.right(),xScale,yr));
+	_rectf.setTop(transitionY(_rectf.top(), yScale, yr));
+	_rectf.setBottom(transitionY(_rectf.bottom(), yScale, yr));
 }
-
 /**
 * @brief TimeRenderer::getTransitionScale 初始化数据与图片坐标的缩放比例
 * @param float & xScale
@@ -195,7 +192,7 @@ bool StructureRenderer::getTransitionScale(float& xScale, float& yScale)
 	if (xLength < 0 || yLength < 0)
 	{
 #if MY_DEBUG
-		std::cerr << "TimeRenderer::getTransitionScale length < 0" << std::endl;
+		std::cerr << "StructRenderer::getTransitionScale length < 0" << std::endl;
 #endif
 		return false;
 	}
@@ -203,7 +200,7 @@ bool StructureRenderer::getTransitionScale(float& xScale, float& yScale)
 	if (size.width() <= 0 || size.height() <= 0)
 	{
 #if MY_DEBUG
-		std::cerr << "TimeRenderer::getTransitionScale size <= 0" << std::endl;
+		std::cerr << "StructRenderer::getTransitionScale size <= 0" << std::endl;
 #endif
 		return false;
 	}

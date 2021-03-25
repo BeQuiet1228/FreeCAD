@@ -30,12 +30,12 @@ void Hdf5IO::setFilePath(const std::string& path)
 	if (nullptr==gbk)
 	{
 		//没有gb2312的字符集
-//		return;
+		//return;
 	}
 	QString temp = QString::fromUtf8(path.c_str());
 	qDebug() << temp;
 	//std::string newPath = gbk->fromUnicode(temp).data();
-	std::string newPath = "D:/wandaotongProject/MILO_C_2.h5";
+	std::string newPath = "F:/wdtproject/PICGUI/MILO_C_2.h5";
 	deleteH5File();
 	Hdf5File = new H5File(newPath, H5F_ACC_RDWR);
 }

@@ -7,8 +7,6 @@
 #include <QPoint>
 
 class Data{
-
-
 public:
 	using Values = std::vector<float>;
 	using ValuesPtr = std::shared_ptr<Values>;
