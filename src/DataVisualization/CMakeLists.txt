@@ -26,6 +26,10 @@ SET(SRC main.cpp
 	TimeData.cpp
 	TimeRenderer.cpp
 	TimeRenderer.h
+	structureData.h
+	structureData.cpp
+	StructRenderer.cpp
+	StructRenderer.h
 	Renderer.cpp
 	Renderer.h
 	Plot.cpp

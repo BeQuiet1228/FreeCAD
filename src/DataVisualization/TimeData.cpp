@@ -28,7 +28,8 @@ bool TimeData::loadPoint()
 	if (!ok && !listValues && listValues->size() == 0)
 		return false;
 	points = *(listValues->begin());
-	pointSize = points->size()/2;
+	pointSize = points->size()/3;//修改参数为3，之前为2
+	//
 	//初始化范围
 	initXYRang();
 
