@@ -30,12 +30,12 @@ void Hdf5IO::setFilePath(const std::string& path)
 	if (nullptr==gbk)
 	{
 		//没有gb2312的字符集
-		return;
+//		return;
 	}
 	QString temp = QString::fromUtf8(path.c_str());
 	qDebug() << temp;
 	//std::string newPath = gbk->fromUnicode(temp).data();
-	std::string newPath = "D:/wandaotongProject/MILO_C_Temp.h5";
+	std::string newPath = "D:/wandaotongProject/MILO_C_2.h5";
 	deleteH5File();
 	Hdf5File = new H5File(newPath, H5F_ACC_RDWR);
 }
@@ -499,15 +499,15 @@ void Hdf5IO::initHdf5Data()
 
     // 获取结构数据
      {
-		// getStructData();
+		 getStructData();
      }
     //获取所有grd的数据组
     {
-//		getGrdData();
+		//getGrdData();
     }
     //获取par的数据组
     {
-		getParData();
+		//getParData();
     }
     //获取二维等位图数据
     {

@@ -10,5 +10,7 @@ int main(){
 	auto data = io.hdf5DataList;
 	VectorF value;
 	io.getValue(data.at(0).listDataSet.at(0), value);
-
+	printf("%f\n",value[0]);
+	printf("%f\n", value[1]);
+	printf("%f\n", value[2]);
 }
