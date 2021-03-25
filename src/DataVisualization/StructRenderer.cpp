@@ -16,7 +16,7 @@ StructureRenderer::~StructureRenderer()
 {
 
 }
-
+#include <QDebug>
 bool StructureRenderer::drawImage()
 {
 	//获取坐标缩放比例
@@ -35,10 +35,7 @@ bool StructureRenderer::drawImage()
 	//获取起始点,因为图表的刻度不一定是从零开始的。
 	auto xr = getXRang();
 	auto yr = getYRang();
-
-
 	//开始绘制
-
 	//新建画布 画笔
 	QImage img(getSize(), QImage::Format_ARGB32);
 	img.fill(qRgba(0, 0, 0, 0));
@@ -56,15 +53,23 @@ bool StructureRenderer::drawImage()
 		//获取缩放
 		transitionRectF(*iter, xScale, xr, yScale, yr);
 	}
-	for (int index = 0; index < _conduit_list.size(); index++)
+	painter.drawRects(_conduit_list);
+	/*for (int index = 0; index < _conduit_list.size(); index++)
 	{
-		//绘制矩形
-		painter.drawLine(_conduit_list[index].left(), _conduit_list[index].top(),_conduit_list[index].right(),_conduit_list[index].top());
-		painter.drawLine(_conduit_list[index].left(),_conduit_list[index].bottom(),_conduit_list[index].right(),_conduit_list[index].bottom());
-		painter.drawLine(_conduit_list[index].left(), _conduit_list[index].top(), _conduit_list[index].left(), _conduit_list[index].bottom());
-		painter.drawLine(_conduit_list[index].right(), _conduit_list[index].top(), _conduit_list[index].right(), _conduit_list[index].bottom());
-	}
+			painter.drawLine(_conduit_list[index].left(), _conduit_list[index].top(), _conduit_list[index].right(), _conduit_list[index].top());
+			painter.drawLine(_conduit_list[index].left(), _conduit_list[index].bottom(), _conduit_list[index].right(), _conduit_list[index].bottom());
+			painter.drawLine(_conduit_list[index].left(), _conduit_list[index].top(), _conduit_list[index].left(), _conduit_list[index].bottom());
+			painter.drawLine(_conduit_list[index].right(), _conduit_list[index].top(), _conduit_list[index].right(), _conduit_list[index].bottom());
+	}*/
 	auto nImg = img.mirrored(false, true);
+//#define _Debug
+#ifdef _Debug
+	static int index = 0;
+	QString _path = QString("C:/Users/Administrator/Desktop/save/savepmg_%1.png").arg(index++);
+	qDebug() << _path;
+	bool res=nImg.save(_path);
+#undef _Debug
+#endif
 	setImage(nImg);
 	return true;
 }
@@ -170,7 +175,7 @@ float StructureRenderer::transitionY(const float& y, const float& yScale, const 
 void StructureRenderer::transitionRectF(QRectF& _rectf, const float& xScale, const Data::Rang& xr, const float& yScale, Data::Rang& yr)
 {
 	_rectf.setLeft(transitionX(_rectf.left(), xScale,xr));
-	_rectf.setRight(transitionX(_rectf.right(),xScale,yr));
+	_rectf.setRight(transitionX(_rectf.right(),xScale,xr));
 	_rectf.setTop(transitionY(_rectf.top(), yScale, yr));
 	_rectf.setBottom(transitionY(_rectf.bottom(), yScale, yr));
 }
@@ -183,7 +188,7 @@ void StructureRenderer::transitionRectF(QRectF& _rectf, const float& xScale, con
 bool StructureRenderer::getTransitionScale(float& xScale, float& yScale)
 {
 	auto size = getSize();
-	auto xr = getXRang();
+   	auto xr = getXRang();
 	auto yr = getYRang();
 
 	float xLength = xr.max - xr.min;
