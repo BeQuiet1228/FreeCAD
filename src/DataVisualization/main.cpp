@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
 	Plot p;
 	std::shared_ptr<Renderer> rd(timeRenderer);
 	p.setMainRenderer(rd);
+	p.setFixedSize(600, 400);
 	p.show();
 
 

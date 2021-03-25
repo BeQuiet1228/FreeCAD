@@ -52,7 +52,7 @@ bool TimeRenderer::drawImage()
 	QPen pen(Qt::red);
 	pen.setWidth(1);
 	QPainter painter(&img);
-	painter.setRenderHint(QPainter::Antialiasing, true);;
+	//painter.setRenderHint(QPainter::Antialiasing, true);;
 	painter.setPen(pen);
 	
 	//获取边界索引
