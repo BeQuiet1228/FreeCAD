@@ -30,7 +30,7 @@ void Hdf5IO::setFilePath(const std::string& path)
 	if (nullptr==gbk)
 	{
 		//没有gb2312的字符集
-		return;
+	//	return;
 	}
 	QString temp = QString::fromUtf8(path.c_str());
 	qDebug() << temp;

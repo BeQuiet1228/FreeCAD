@@ -11,6 +11,9 @@ void structureData::restorDeriveData()
 
 structureData::~structureData()
 {
+	vacuo_vector.clear();
+	conduit_vector.clear();
+	datakmtinfo.clear();
 }
 /**
 * @brief structureData::loadPoint 载入点数据
