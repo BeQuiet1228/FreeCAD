@@ -60,7 +60,6 @@ bool structureData::initXYRang(){
 	itery = pointi2mx->end();
 	itery -= 1;
 	yr.max = *itery;
-
 	setXRang(xr);
 	setYRang(yr);
 	return true;
@@ -85,6 +84,8 @@ bool structureData::loadrectpoint(){
 	//datakmtnifo获取成功，填充真空和导管队列
 	fileproperty(list);
 	//真空和导管队列装入完成
+	//填充给圆柱坐标系需要的信息
+	fileCylindrical_info();
 	return true;
 }
 /**
@@ -184,4 +185,27 @@ void structureData::fileproperty(QVector<QRectF> list)
 QVector<QRectF> structureData::GetConduitPoint()
 {
 	return conduit_vector;
+}
+QVector<qreal> structureData::Get_R_val()
+{
+	return R_val;
+}
+QVector<qreal> structureData::Get_rand_val()
+{
+	return rand_val;
+}
+void structureData::fileCylindrical_info()
+{
+	R_val.clear();
+	rand_val.clear();
+	auto iter2mx = pointi2mx->begin();
+	for (;iter2mx!=pointi2mx->end();iter2mx++)
+	{
+		R_val.push_back(*iter2mx);
+	}
+	auto iter3mx = pointi3mx->begin();
+	for (;iter3mx!=pointi3mx->end();iter3mx++)
+	{
+		rand_val.push_back(*iter3mx);
+	}
 }

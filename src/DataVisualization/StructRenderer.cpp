@@ -6,8 +6,10 @@
 #include <QPointF>
 #include <QImage>
 #include <QRgb>
+
+
 StructureRenderer::StructureRenderer(std::shared_ptr<structureData> data)
-	:Renderer(std::dynamic_pointer_cast<Data>(data))
+	:Renderer(std::dynamic_pointer_cast<Data>(data)), m_Coordinate_Dir(Z_R_coordinater)
 {
 
 }
@@ -20,58 +22,16 @@ StructureRenderer::~StructureRenderer()
 bool StructureRenderer::drawImage()
 {
 	//获取坐标缩放比例
-	float yScale(0.0), xScale(0.0);
-	if (!getTransitionScale(xScale, yScale))
-		return false;
-
-	std::shared_ptr<structureData> d = std::dynamic_pointer_cast<structureData>(data);
-	if (!d)
+	switch(m_Coordinate_Dir)
 	{
-#if LOG
-		std::cerr << "StructureRenderer::drawImage() data dynamic cast failed!" << std::endl;
-#endif
-		return false;
+	case cylindrical_coordinate:
+		return drawImage_Cylindrical_Coordinate();
+	case polar_coordinate:
+		return drawImage_Polar_coordinate();
+	case Z_R_coordinater:
+		return drawImage_Z_R();
 	}
-	//获取起始点,因为图表的刻度不一定是从零开始的。
-	auto xr = getXRang();
-	auto yr = getYRang();
-	//开始绘制
-	//新建画布 画笔
-	QImage img(getSize(), QImage::Format_ARGB32);
-	img.fill(qRgba(0, 0, 0, 0));
-	QPen pen(Qt::black);
-	pen.setWidth(1);
-	QPainter painter(&img);
-	painter.setRenderHint(QPainter::Antialiasing, true);;
-	painter.setPen(pen);
-
-	//开始绘制图表
-	QVector<QRectF> _conduit_list = d->GetConduitPoint();
-	auto iter = _conduit_list.begin();
-	for (;iter!=_conduit_list.end();iter++)
-	{
-		//获取缩放
-		transitionRectF(*iter, xScale, xr, yScale, yr);
-	}
-	painter.drawRects(_conduit_list);
-	/*for (int index = 0; index < _conduit_list.size(); index++)
-	{
-			painter.drawLine(_conduit_list[index].left(), _conduit_list[index].top(), _conduit_list[index].right(), _conduit_list[index].top());
-			painter.drawLine(_conduit_list[index].left(), _conduit_list[index].bottom(), _conduit_list[index].right(), _conduit_list[index].bottom());
-			painter.drawLine(_conduit_list[index].left(), _conduit_list[index].top(), _conduit_list[index].left(), _conduit_list[index].bottom());
-			painter.drawLine(_conduit_list[index].right(), _conduit_list[index].top(), _conduit_list[index].right(), _conduit_list[index].bottom());
-	}*/
-	auto nImg = img.mirrored(false, true);
-//#define _Debug
-#ifdef _Debug
-	static int index = 0;
-	QString _path = QString("C:/Users/Administrator/Desktop/save/savepmg_%1.png").arg(index++);
-	qDebug() << _path;
-	bool res=nImg.save(_path);
-#undef _Debug
-#endif
-	setImage(nImg);
-	return true;
+	return  false;
 }
 
 /**
@@ -115,11 +75,11 @@ bool StructureRenderer::drawPointImage()
 */
 bool StructureRenderer::setDefaultRang()
 {
-	auto timeData = std::dynamic_pointer_cast<structureData>(data);
-	if (!timeData)
+	auto _structureData = std::dynamic_pointer_cast<structureData>(data);
+	if (!_structureData)
 		return false;
-	setXRang(timeData->getXRang());
-	setYRang(timeData->getYRang());
+	setXRang(_structureData->getXRang());
+	setYRang(_structureData->getYRang());
 
 	return true;
 }
@@ -214,3 +174,178 @@ bool StructureRenderer::getTransitionScale(float& xScale, float& yScale)
 	return true;
 }
 
+void StructureRenderer::SetCoordinateDir(Coordinate_Dir _coordinadir)
+{
+	m_Coordinate_Dir = _coordinadir;
+	switch (_coordinadir)
+	{
+	case cylindrical_coordinate:
+	{
+		auto _structureData = std::dynamic_pointer_cast<structureData>(data);
+		if (!_structureData)
+			return ;
+
+		Data::Rang xr;
+		QVector<qreal> R_range = _structureData->Get_R_val();
+		auto maxiter = R_range.end() - 1;
+		xr.max = *maxiter;
+		xr.min = -xr.max;
+		setXRang(xr);
+		setYRang(xr);
+	}
+		break;
+	case polar_coordinate:
+	{
+	
+	}
+		break;
+	case Z_R_coordinater:
+	{
+		setDefaultRang();
+	}
+		break;
+	}
+}
+Coordinate_Dir StructureRenderer::getCurCoordinateDir()
+{
+	return m_Coordinate_Dir;
+}
+bool StructureRenderer::drawImage_Z_R()
+{
+	float yScale(0.0), xScale(0.0);
+	if (!getTransitionScale(xScale, yScale))
+		return false;
+	std::shared_ptr<structureData> d = std::dynamic_pointer_cast<structureData>(data);
+	//获取起始点,因为图表的刻度不一定是从零开始的。
+	auto xr = getXRang();
+	auto yr = getYRang();
+	//开始绘制
+	//新建画布 画笔
+	QImage img(getSize(), QImage::Format_ARGB32);
+	img.fill(qRgba(0, 0, 0, 0));
+	QPen pen(Qt::black);
+	pen.setWidth(1);
+	QPainter painter(&img);
+	painter.setRenderHint(QPainter::Antialiasing, true);;
+	painter.setPen(pen);
+
+	//开始绘制图表
+	QVector<QRectF> _conduit_list = d->GetConduitPoint();
+	auto iter = _conduit_list.begin();
+	for (; iter != _conduit_list.end(); iter++)
+	{
+		//获取缩放
+		transitionRectF(*iter, xScale, xr, yScale, yr);
+	}
+	painter.drawRects(_conduit_list);
+	auto nImg = img.mirrored(false, true);
+	//#define _Debug
+#ifdef _Debug
+	static int index = 0;
+	QString _path = QString("C:/Users/Administrator/Desktop/save/savepmg_%1.png").arg(index++);
+	qDebug() << _path;
+	bool res = nImg.save(_path);
+#undef _Debug
+#endif
+	setImage(nImg);
+	return true;
+}
+
+bool StructureRenderer::drawImage_Polar_coordinate(){
+	return false;
+}
+bool StructureRenderer::drawImage_Cylindrical_Coordinate(){
+	float yScale(0.0), xScale(0.0);
+	if (!getTransitionScale(xScale, yScale))
+		return false;
+	std::shared_ptr<structureData> d = std::dynamic_pointer_cast<structureData>(data);
+	//获取起始点,因为图表的刻度不一定是从零开始的。
+	auto xr = getXRang();
+	auto yr = getYRang();
+	//开始绘制
+	//新建画布 画笔
+	QImage img(getSize(), QImage::Format_ARGB32);
+	img.fill(qRgba(0, 0, 0, 0));
+	QPen pen(Qt::black);
+	pen.setWidth(1);
+	QPainter painter(&img);
+	painter.setRenderHint(QPainter::Antialiasing, true);;
+	painter.setPen(pen);
+	//开始绘制圆柱
+	QVector<qreal> _R_list = d->Get_R_val();
+	QVector<qreal> _rand_list = d->Get_rand_val();
+	//获取矩形
+	QVector<QRectF> _rl = GetCylindricalRect(_R_list);
+	auto iter = _rl.begin();
+	for (; iter != _rl.end(); iter++)
+	{
+		//获取缩放
+		transitionRectF(*iter, xScale, xr, yScale, yr);
+	}
+	//获取绘制角度
+	//获取圆心
+	QPointF  p1 = _rl[0].center();
+	qreal pi = 3.1415926;//指定π
+	//获取弧度与角度的比值
+	qreal w1 = 180 / pi;
+	qreal w2 = pi / 180;
+	
+	auto iterRange = _rand_list.begin();
+	qreal startdeg = (*iterRange)*w1;
+	iterRange = _rand_list.end() - 1;
+	qreal enddeg = (*iterRange)*w1;
+	for (auto i = 0; i < _rl.size();i++)
+	{
+		painter.drawArc(_rl[i], startdeg * 16, enddeg * 16);
+	}
+	//绘制切割线
+	iter = _rl.end()-1;
+	qreal _width = iter->width();
+	qreal _height = iter->height();
+	for (auto i = 0; i < _rand_list.size();i++)
+	{
+		qreal x = (_width / 2)*cos(_rand_list[i]) + p1.x();
+		qreal y = p1.y() - (_height / 2)*sin(_rand_list[i]);
+		QPointF p2 = QPointF(x, y);
+		painter.drawLine(p1,p2);
+	}
+	//获取圆心
+	//开始绘制图表
+	//QVector<QRectF> _conduit_list = d->GetConduitPoint();
+	//auto iter = _conduit_list.begin();
+	//for (; iter != _conduit_list.end(); iter++)
+	//{
+	//	//获取缩放
+	//	transitionRectF(*iter, xScale, xr, yScale, yr);
+	//}
+	//painter.drawRects(_conduit_list);
+	auto nImg = img.mirrored(false, true);
+	//#define _Debug
+#ifdef _Debug
+	static int index = 0;
+	QString _path = QString("C:/Users/Administrator/Desktop/save/savepmg_%1.png").arg(index++);
+	qDebug() << _path;
+	bool res = nImg.save(_path);
+#undef _Debug
+#endif
+	setImage(nImg);
+	return true;
+}
+QVector<QRectF> StructureRenderer::GetCylindricalRect(QVector<qreal> _r_rang)
+{
+	QVector<QRectF> CylindricalRectF;
+	CylindricalRectF.clear();
+	auto itera = _r_rang.begin();
+	for (;itera!=_r_rang.end();itera++)
+	{
+		qreal r_distanse = *itera;
+		QRectF temp;
+		temp.setLeft(-r_distanse);
+		temp.setRight(r_distanse);
+		temp.setBottom(r_distanse);
+		temp.setTop(-r_distanse);
+		CylindricalRectF.push_back(temp);
+
+	}
+	return CylindricalRectF;
+}

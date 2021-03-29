@@ -26,7 +26,9 @@ int main(int argc, char *argv[])
 	
 	StructureRenderer* structureRenderer = new StructureRenderer(_structData);
 	structureRenderer->dataInit();
-	structureRenderer->setDefaultRang();
+	structureRenderer->SetCoordinateDir(cylindrical_coordinate);
+	//structureRenderer->setDefaultRang();
+
 
     Plot p;
 	std::shared_ptr<Renderer> rd(structureRenderer);

@@ -33,6 +33,8 @@ public:
 	QVector<QRectF> GetConduitPoint();
 	//获取特定属性坐标
 	QVector<QRectF> GetSpecificPoint(int property);
+	QVector<qreal> Get_R_val();
+	QVector<qreal> Get_rand_val();
 	//获取取值范围
 	Rang getXRang()
 	{
@@ -63,6 +65,8 @@ private:
 	QVector<DaTaKmt> GetdatasetKmt();
 	//填充相关属性的队列
 	void fileproperty(QVector<QRectF> list);
+	//填充圆柱坐标系需要的信息
+	void fileCylindrical_info();
 private:
 	//所有1mx的数据
 	Data::ValuesPtr pointi1mx;
@@ -84,6 +88,9 @@ private:
 	QVector<DaTaKmt> datakmtinfo;
 	//xy的范围
 	Rang xRang, yRang;
+	//圆柱坐标系的取值范围
+	QVector<qreal> R_val;
+	QVector<qreal> rand_val;
 	std::mutex xRangMutex, yRangMutex;
 };
 
