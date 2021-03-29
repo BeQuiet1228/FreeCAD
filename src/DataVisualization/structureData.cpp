@@ -208,4 +208,30 @@ void structureData::fileCylindrical_info()
 	{
 		rand_val.push_back(*iter3mx);
 	}
+
+
+	for each (DaTaKmt var in datakmtinfo)
+	{
+		if (1 == var.point1)
+		{
+			switch (var.pointproperty)
+			{
+			case 3:
+			{
+				//µ¼¹Ü
+				//conduit_vector.push_back(list[(var.point1 - 1)*(pointYsize - 1) + var.point2 - 1]);
+				
+			}
+				break;
+			case 1024:
+			{
+				//Õæ¿Õ
+				//vacuo_vector.push_back(list[(var.point1 - 1)*(pointYsize - 1) + var.point2 - 1]);
+				//R_val[var.point2] = 0;
+			}
+				break;
+			}
+		}
+	}
+
 }
