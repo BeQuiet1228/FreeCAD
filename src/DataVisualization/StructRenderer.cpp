@@ -188,6 +188,14 @@ void StructureRenderer::SetCoordinateDir(Coordinate_Dir _coordinadir)
 		Data::Rang xr;
 		QVector<qreal> R_range = _structureData->Get_R_val();
 		auto maxiter = R_range.end() - 1;
+//#define _DEBUG_
+#ifdef _DEBUG_
+		for each (qreal var in R_range)
+		{
+			printf("%f\n", var);
+		}
+#undef _DEBUG_
+#endif
 		xr.max = *maxiter;
 		xr.min = -xr.max;
 		setXRang(xr);
@@ -299,26 +307,22 @@ bool StructureRenderer::drawImage_Cylindrical_Coordinate(){
 		painter.drawArc(_rl[i], startdeg * 16, enddeg * 16);
 	}
 	//绘制切割线
-	iter = _rl.end()-1;
-	qreal _width = iter->width();
-	qreal _height = iter->height();
-	for (auto i = 0; i < _rand_list.size();i++)
+	//起始设置为原点
+	QVector<QLineF> _lines=Getlines(p1,_rl,_rand_list);
+	painter.drawLines(_lines);
+	/*for (auto cut = 0; cut < _rl.size();cut++)
 	{
-		qreal x = (_width / 2)*cos(_rand_list[i]) + p1.x();
-		qreal y = p1.y() - (_height / 2)*sin(_rand_list[i]);
-		QPointF p2 = QPointF(x, y);
-		painter.drawLine(p1,p2);
-	}
-	//获取圆心
-	//开始绘制图表
-	//QVector<QRectF> _conduit_list = d->GetConduitPoint();
-	//auto iter = _conduit_list.begin();
-	//for (; iter != _conduit_list.end(); iter++)
-	//{
-	//	//获取缩放
-	//	transitionRectF(*iter, xScale, xr, yScale, yr);
-	//}
-	//painter.drawRects(_conduit_list);
+		qreal _width = _rl[cut].width();
+		qreal _height = _rl[cut].height();
+		for (auto i = 0; i < _rand_list.size(); i++)
+		{
+			qreal x = (_width / 2)*cos(_rand_list[i]) + p1.x();
+			qreal y = p1.y() - (_height / 2)*sin(_rand_list[i]);
+			QPointF p2 = QPointF(x, y);
+			painter.drawLine(p1, p2);
+		}
+	}*/
+	
 	auto nImg = img.mirrored(false, true);
 	//#define _Debug
 #ifdef _Debug
@@ -348,4 +352,27 @@ QVector<QRectF> StructureRenderer::GetCylindricalRect(QVector<qreal> _r_rang)
 
 	}
 	return CylindricalRectF;
+}
+QVector<QLineF> StructureRenderer::Getlines(QPointF p0,QVector<QRectF> RAxis,QVector<qreal> rands)
+{
+	QVector<QLineF> lines;
+	lines.clear();
+	//起始为原点
+	for (auto i = 0; i < RAxis.size()-1;i++)
+	{
+		QPointF lastpoint;
+		QPointF nextpoint;
+		if (RAxis[i].width()>0 && RAxis[i].height()>0&&RAxis[i+1].width()>0&&RAxis[i+1].height()>0)
+		{
+			for (auto j = 0; j < rands.size();j++)
+			{
+				lastpoint.setX(RAxis[i].width()/2*cos(rands[j])+p0.x());
+				lastpoint.setY(p0.y() - RAxis[i].height() / 2 * sin(rands[j]));
+				nextpoint.setX((RAxis[i + 1].width() / 2) * cos(rands[j]) + p0.x());
+				nextpoint.setY(p0.y() - (RAxis[i + 1].height() / 2) * sin(rands[j]));
+				lines.push_back(QLineF(lastpoint.x(),lastpoint.y(),nextpoint.x(),nextpoint.y()));
+			}
+		}
+	}	
+	return lines;
 }

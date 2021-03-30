@@ -157,7 +157,7 @@ void structureData::fileproperty(QVector<QRectF> list)
 {
 	for each (DaTaKmt var in datakmtinfo)
 	{
-		if (1 == var.point3&&var.point1 < pointXSize)
+		if (1 == var.point3&&var.point1 < pointXSize-1)
 		{
 			switch (var.pointproperty)
 			{
@@ -204,6 +204,14 @@ void structureData::fileCylindrical_info()
 	{
 		_r_val.push_back(*iter2mx);
 	}
+//#define _DEBUG_
+#ifdef _DEBUG_
+	for (auto i = 0; i < _r_val.size();i++)
+	{
+		printf("%d---%f\n", i, _r_val[i]);
+	}
+#undef _DEBUG_
+#endif
 	auto iter3mx = pointi3mx->begin();
 	for (;iter3mx!=pointi3mx->end();iter3mx++)
 	{
@@ -236,5 +244,12 @@ void structureData::fileCylindrical_info()
 			}
 		}
 	}
-
+//#define _DEBUG_
+#ifdef _DEBUG_
+	for each (qreal var in R_val)
+	{
+		printf("%f\n", var);
+	}
+#undef _DEBUG_
+#endif
 }
