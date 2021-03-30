@@ -186,14 +186,26 @@ QVector<QRectF> structureData::GetConduitPoint()
 {
 	return conduit_vector;
 }
+/**
+* @brief structureData::Get_R_val 获取刻度队列
+* @return QVector<qreal>
+*/
 QVector<qreal> structureData::Get_R_val()
 {
 	return R_val;
 }
+/**
+* @brief structureData::Get_rand_val 获取需要切割的角度
+* @return QVector<qreal>
+*/
 QVector<qreal> structureData::Get_rand_val()
 {
 	return rand_val;
 }
+/**
+* @brief structureData::fileCylindrical_info 填充圆柱图需要的信息
+* @return void
+*/
 void structureData::fileCylindrical_info()
 {
 	R_val.clear();
@@ -212,15 +224,17 @@ void structureData::fileCylindrical_info()
 	}
 #undef _DEBUG_
 #endif
-	auto iter3mx = pointi3mx->begin();
-	for (;iter3mx!=pointi3mx->end();iter3mx++)
+	//填充需要切割的角度
+	for (auto iter3mx = pointi3mx->begin(); iter3mx != pointi3mx->end(); iter3mx++)
 	{
 		rand_val.push_back(*iter3mx);
 	}
+	
 	for (auto i = 0; i < _r_val.size();i++)
 	{
 		R_val.push_back(0);
 	}
+	//根据导管和真空两种参数填入R_val
 	for each (DaTaKmt var in datakmtinfo)
 	{
 		if (var.point1==pointXSize/2)
@@ -230,15 +244,12 @@ void structureData::fileCylindrical_info()
 			case 3:
 			{
 				//导管
-				//conduit_vector.push_back(list[(var.point1 - 1)*(pointYsize - 1) + var.point2 - 1]);
 				R_val[var.point2] = _r_val[var.point2];
 			}
 				break;
 			case 1024:
 			{
 				//真空
-				//vacuo_vector.push_back(list[(var.point1 - 1)*(pointYsize - 1) + var.point2 - 1]);
-				//R_val[var.point2] = 0;
 			}
 				break;
 			}

@@ -173,7 +173,11 @@ bool StructureRenderer::getTransitionScale(float& xScale, float& yScale)
 	yScale = size.height() / yLength;
 	return true;
 }
-
+/**
+* @brief StructureRenderer::SetCoordinateDir 设置结构图视图种类
+* @param Coordinate_Dir _coordinadir
+* @return void
+*/
 void StructureRenderer::SetCoordinateDir(Coordinate_Dir _coordinadir)
 {
 	m_Coordinate_Dir = _coordinadir;
@@ -214,10 +218,18 @@ void StructureRenderer::SetCoordinateDir(Coordinate_Dir _coordinadir)
 		break;
 	}
 }
+/**
+* @brief StructureRenderer::getCurCoordinateDir 获取当前结构图视图种类
+* @return Coordinate
+*/
 Coordinate_Dir StructureRenderer::getCurCoordinateDir()
 {
 	return m_Coordinate_Dir;
 }
+/**
+* @brief StructureRenderer::drawImage_Z_R 绘制Z_R方位的结构图
+* @return bool
+*/
 bool StructureRenderer::drawImage_Z_R()
 {
 	float yScale(0.0), xScale(0.0);
@@ -258,10 +270,17 @@ bool StructureRenderer::drawImage_Z_R()
 	setImage(nImg);
 	return true;
 }
-
+/**
+* @brief StructureRenderer::drawImage_Polar_coordinate 绘制极坐标系
+* @return bool
+*/
 bool StructureRenderer::drawImage_Polar_coordinate(){
 	return false;
 }
+/**
+* @brief StructureRenderer::drawImage_Cylindrical_Coordinate 绘制圆柱坐标系结构图
+* @return bool
+*/
 bool StructureRenderer::drawImage_Cylindrical_Coordinate(){
 	float yScale(0.0), xScale(0.0);
 	if (!getTransitionScale(xScale, yScale))
@@ -284,8 +303,8 @@ bool StructureRenderer::drawImage_Cylindrical_Coordinate(){
 	QVector<qreal> _rand_list = d->Get_rand_val();
 	//获取矩形
 	QVector<QRectF> _rl = GetCylindricalRect(_R_list);
-	auto iter = _rl.begin();
-	for (; iter != _rl.end(); iter++)
+	//auto iter = _rl.begin();
+	for (auto iter=_rl.begin(); iter != _rl.end(); iter++)
 	{
 		//获取缩放
 		transitionRectF(*iter, xScale, xr, yScale, yr);
@@ -294,10 +313,9 @@ bool StructureRenderer::drawImage_Cylindrical_Coordinate(){
 	//获取圆心
 	QPointF  p1 = _rl[0].center();
 	qreal pi = 3.1415926;//指定π
-	//获取弧度与角度的比值
+	//获取弧度与角度的转换系数
 	qreal w1 = 180 / pi;
 	qreal w2 = pi / 180;
-	
 	auto iterRange = _rand_list.begin();
 	qreal startdeg = (*iterRange)*w1;
 	iterRange = _rand_list.end() - 1;
@@ -310,19 +328,6 @@ bool StructureRenderer::drawImage_Cylindrical_Coordinate(){
 	//起始设置为原点
 	QVector<QLineF> _lines=Getlines(p1,_rl,_rand_list);
 	painter.drawLines(_lines);
-	/*for (auto cut = 0; cut < _rl.size();cut++)
-	{
-		qreal _width = _rl[cut].width();
-		qreal _height = _rl[cut].height();
-		for (auto i = 0; i < _rand_list.size(); i++)
-		{
-			qreal x = (_width / 2)*cos(_rand_list[i]) + p1.x();
-			qreal y = p1.y() - (_height / 2)*sin(_rand_list[i]);
-			QPointF p2 = QPointF(x, y);
-			painter.drawLine(p1, p2);
-		}
-	}*/
-	
 	auto nImg = img.mirrored(false, true);
 	//#define _Debug
 #ifdef _Debug
@@ -335,6 +340,11 @@ bool StructureRenderer::drawImage_Cylindrical_Coordinate(){
 	setImage(nImg);
 	return true;
 }
+/**
+* @brief StructureRenderer::GetCylindricalRect 获取需要绘制的圆柱的相切矩形队列
+* @param QVector<qreal> _r_rang R刻度
+* @return QVector<QRectF>
+*/
 QVector<QRectF> StructureRenderer::GetCylindricalRect(QVector<qreal> _r_rang)
 {
 	QVector<QRectF> CylindricalRectF;
@@ -353,6 +363,13 @@ QVector<QRectF> StructureRenderer::GetCylindricalRect(QVector<qreal> _r_rang)
 	}
 	return CylindricalRectF;
 }
+/**
+* @brief StructureRenderer::Getlines 获取需要绘制的圆柱图的线段
+* @param QPointF p0 圆心坐标
+* @param QVector<QRectF> RAxis 所有需要绘制的弧的相切矩形队列
+* @param QVector<qreal> rands 切割的角度
+* @return QVector<QLineF>
+*/
 QVector<QLineF> StructureRenderer::Getlines(QPointF p0,QVector<QRectF> RAxis,QVector<qreal> rands)
 {
 	QVector<QLineF> lines;
