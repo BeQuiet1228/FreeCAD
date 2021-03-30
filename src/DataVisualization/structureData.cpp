@@ -198,21 +198,24 @@ void structureData::fileCylindrical_info()
 {
 	R_val.clear();
 	rand_val.clear();
+	QVector<qreal> _r_val;
 	auto iter2mx = pointi2mx->begin();
 	for (;iter2mx!=pointi2mx->end();iter2mx++)
 	{
-		R_val.push_back(*iter2mx);
+		_r_val.push_back(*iter2mx);
 	}
 	auto iter3mx = pointi3mx->begin();
 	for (;iter3mx!=pointi3mx->end();iter3mx++)
 	{
 		rand_val.push_back(*iter3mx);
 	}
-
-
+	for (auto i = 0; i < _r_val.size();i++)
+	{
+		R_val.push_back(0);
+	}
 	for each (DaTaKmt var in datakmtinfo)
 	{
-		if (1 == var.point1)
+		if (var.point1==pointXSize-3)
 		{
 			switch (var.pointproperty)
 			{
@@ -220,7 +223,7 @@ void structureData::fileCylindrical_info()
 			{
 				//µ¼¹Ü
 				//conduit_vector.push_back(list[(var.point1 - 1)*(pointYsize - 1) + var.point2 - 1]);
-				
+				R_val[var.point2] = _r_val[var.point2];
 			}
 				break;
 			case 1024:
