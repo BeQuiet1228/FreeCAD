@@ -5,7 +5,8 @@
 #include <mutex>
 #include <memory>
 #include <QPoint>
-
+#include <QString>
+#include <QStringList>
 class Data{
 
 
@@ -36,6 +37,7 @@ public:
 		float max;
 		float min;
 	};
+
 public:
 	enum RunMod{
 		SINGLE_THREAD = 0, //单线程
@@ -44,7 +46,6 @@ public:
 public:
 	Data(Hdf5Data& h5Data ,const RunMod& mod = SINGLE_THREAD);
 	virtual ~Data();
-
 
 private:
 	//h5文件数据
@@ -57,11 +58,10 @@ private:
 	RunMod runMod;
 	//原数据是否已载入
 	bool sourceDataIsLoad;
+protected:
+	//h5数据头部信息
+	std::vector<std::string> headList;
 public:
-	//获取类名
-	virtual	std::string getClassName(){
-		return "Data";
-	}
 	//载入h5文件中的数据
 	bool  loadSourceData();
 	//强制载入h5文件 不管是否已经载入都重新载入
@@ -86,6 +86,8 @@ protected:
 	virtual void restorDeriveData() = 0;
 	//根据运行模式自动调整获取数据的方式
 	bool autoModGetSourceData(ListValuesPtr& listValues);
+	//初始化基本信息
+	virtual void initInformation();
 };
 
 class XYData :public Data{
@@ -118,6 +120,23 @@ public:
 		std::lock_guard<std::mutex> am(yRangMutex);
 		yRang = rg;
 	}
+	//操作tag
+	void setXTag(const std::string& tag){
+		std::lock_guard<std::mutex> am(xTagMute);
+		xTag = tag;
+	}
+	std::string getXTag(){
+		std::lock_guard<std::mutex> am(xTagMute);
+		return xTag;
+	}
+	void setYTag(const std::string tag){
+		std::lock_guard<std::mutex> am(yTagMutex);
+		yTag = tag;
+	}
+	std::string getYTag(){
+		std::lock_guard<std::mutex> am(yTagMutex);
+		return yTag;
+	}
 protected:
 	virtual bool initXYRang() = 0;
 	//设置size
@@ -125,6 +144,7 @@ protected:
 		std::lock_guard<std::mutex> am(pointSizeMutex);
 		pointSize = size;
 	}
+	void initInformation();
 private:
 	//点的个数
 	unsigned int pointSize;
@@ -132,4 +152,7 @@ private:
 	//xy的范围
 	Rang xRang, yRang;
 	std::mutex xRangMutex, yRangMutex;
+	//xy数据的单位
+	std::string xTag, yTag;
+	std::mutex xTagMute, yTagMutex;
 };

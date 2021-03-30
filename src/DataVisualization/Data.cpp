@@ -4,7 +4,6 @@ Data::Data(Hdf5Data& h5Data,const RunMod& mod)
 	:h5Data(h5Data), sourceData(new ListValues)
 	, sourceDataMutex(new std::mutex), runMod(mod), sourceDataIsLoad(false)
 {
-
 }
 
 Data::~Data()
@@ -31,7 +30,11 @@ bool Data::loadSourceData()
 bool Data::loadSourceDataHard()
 {
 	auto h5IO = h5Data.hdf5Io;
+	AutoMutx am(sourceDataMutex);
 	sourceDataIsLoad = h5IO->getValue(h5Data.listDataSet, *(sourceData.get()));
+
+	headList = h5Data.headList;
+
 	return sourceDataIsLoad;
 }
 
@@ -124,6 +127,11 @@ bool Data::autoModGetSourceData(ListValuesPtr& listValues)
 	return ok;
 }
 
+void Data::initInformation()
+{
+	std::cerr << "Can't call Data::initInformation()" << std::endl;
+}
+
 XYData::XYData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
 	:Data(h5Data, mod), pointSize(0)
 {
@@ -141,4 +149,17 @@ unsigned int XYData::findIndexFromXValueR(const float& x)
 	if (index > getPointSize())
 		return getPointSize() - 1;
 	return index;
+}
+
+void XYData::initInformation()
+{
+	if (headList.size() == 0)
+		return;
+	QString str = QString::fromStdString(headList.at(0));
+	QStringList sl = str.split("$");
+	
+	if (sl.size() < 6)
+		return;
+	setXTag(sl.at(3).toStdString());
+	setYTag(sl.at(4).toStdString());
 }

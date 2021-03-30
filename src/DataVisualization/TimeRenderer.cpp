@@ -294,7 +294,11 @@ QPointF TimeRenderer::findPoint(const QPointF& point)
 		float yDistance = abs(point.y() - y);
 		float d = sqrt(pow(xDistance, 2) + pow(yDistance, 2));
 		if (i == points.begin())
+		{
 			minDistance = d;
+			temp = *i;
+		}
+			
 		if (d < minDistance)
 		{
 			temp = *i;

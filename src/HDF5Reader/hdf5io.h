@@ -3,7 +3,7 @@
 #define CONTROL_EXPORT __declspec(dllexport)
 #else
 #define CONTROL_EXPORT   __declspec(dllimport)
-#endif // _CONTORL_
+#endif 
 
 
 #include "H5Cpp.h"
@@ -14,13 +14,30 @@
 using namespace  H5;
 class Hdf5IO;
 using VectorF = std::vector<float>;
+
 struct CONTROL_EXPORT Hdf5Data
 {
+	enum CoordinateSystem{
+		CARTESIAN = 0,
+		CYLINDER,
+		POLAR
+	};
+	
+	//数据分组对象
     Group group;
+	//头部信息
     std::vector<std::string> headList;
+	//h5文件对象
     Hdf5IO *hdf5Io;
+	//数据集对象
     std::vector<DataSet> listDataSet;
+	//图名称
 	std::string name;
+	//坐标系类型
+	CoordinateSystem coordinateSystem;
+	//初始化基本信息
+	void initInformation();
+
 };
 
 class CONTROL_EXPORT Hdf5IO

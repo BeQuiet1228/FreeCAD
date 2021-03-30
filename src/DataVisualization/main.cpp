@@ -17,11 +17,12 @@ int main(int argc, char *argv[])
 	CanvasItem::registerMetaTye();
 
 	//std::string path = "E:/lingshiwenjianjia/MILO_C/MILO_C.h5";
-	std::string path = "D:\MILO_C.h5";
+	std::string path = "D:\RBWO_CY.h5";
 	Hdf5IO io(path);
 	
 	io.initHdf5Data();
 	auto data = io.hdf5DataList.begin();
+	data += 9;
 	Hdf5Data d = *data;
 
 
