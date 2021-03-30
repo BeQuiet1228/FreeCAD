@@ -215,7 +215,7 @@ void structureData::fileCylindrical_info()
 	}
 	for each (DaTaKmt var in datakmtinfo)
 	{
-		if (var.point1==pointXSize-3)
+		if (var.point1==pointXSize/2)
 		{
 			switch (var.pointproperty)
 			{
