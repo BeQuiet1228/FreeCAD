@@ -29,10 +29,14 @@ SET(PARTICLE_SRC ParticleData.h
 	ParticleRenderer.h
 	ParticleRenderer.cpp
 )
+SET(INTERSPACE_SRC InterspaceData.h
+	InterspaceData.cpp
+	InterspaceRender.h
+	InterspaceRender.cpp
+)
 SET(SRC main.cpp
 	Data.h
 	Data.cpp
-
 	Renderer.cpp
 	Renderer.h
 	Plot.cpp
@@ -62,6 +66,7 @@ SET(DataVisualization_src
 	${UI_SRC}
 	${PARTICLE_SRC}
 	${TIME_SRC}
+	${INTERSPACE_SRC}
 )
 add_definitions(-DMY_DEBUG)
 #设置编译生成文件类型
@@ -74,6 +79,7 @@ set(RELEASE_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 SOURCE_GROUP("src" FILES ${SRC})
 SOURCE_GROUP("time" FILES ${TIME_SRC})
 SOURCE_GROUP("particle" FILES ${PARTICLE_SRC})
+SOURCE_GROUP("interspace" FILES ${INTERSPACE_SRC})
 
 #增加包含目录
 include_directories(

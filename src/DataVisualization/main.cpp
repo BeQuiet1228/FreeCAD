@@ -11,6 +11,8 @@
 #include"Axis.h"
 #include "ParticleData.h"
 #include <ParticleRenderer.h>
+#include "InterSpaceData.h"
+#include "InterspaceRender.h"
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
@@ -22,15 +24,15 @@ int main(int argc, char *argv[])
 	
 	io.initHdf5Data();
 	auto data = io.hdf5DataList.begin();
-	data += 9;
+	//data += 9;
 	Hdf5Data d = *data;
 
 
 
-	std::shared_ptr<ParticleData> particleData(new ParticleData(d));
+	std::shared_ptr<InterspaceData> particleData(new InterspaceData(d));
 
 
-	ParticleRenderer *timeRenderer = new ParticleRenderer(particleData);
+	InterspaceRender *timeRenderer = new InterspaceRender(particleData);
 	timeRenderer->dataInit();
 	timeRenderer->setDefaultRang();
 	Plot p;
