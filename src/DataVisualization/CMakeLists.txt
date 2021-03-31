@@ -19,17 +19,20 @@ SET(MY_MOC_HDR RenderThread.h
 	Plot.h
 	Canvas.h
 	Axis.h)
-SET(SRC main.cpp
-	Data.h
-	Data.cpp
-	TimeData.h
+SET(TIME_SRC TimeData.h
 	TimeData.cpp
 	TimeRenderer.cpp
 	TimeRenderer.h
-	structureData.h
-	structureData.cpp
-	StructRenderer.cpp
-	StructRenderer.h
+)
+SET(PARTICLE_SRC ParticleData.h
+	ParticleData.cpp
+	ParticleRenderer.h
+	ParticleRenderer.cpp
+)
+SET(SRC main.cpp
+	Data.h
+	Data.cpp
+
 	Renderer.cpp
 	Renderer.h
 	Plot.cpp
@@ -43,7 +46,8 @@ SET(SRC main.cpp
 	RenderThreadManager.cpp
 	RenderThreadManager.h
 	RenderThread.cpp
-	RenderThread.h)
+	RenderThread.h
+	)
 
 #处理ui和qrc文件
 if (BUILD_QT5)
@@ -56,6 +60,8 @@ endif()
 SET(DataVisualization_src
 	${SRC}
 	${UI_SRC}
+	${PARTICLE_SRC}
+	${TIME_SRC}
 )
 add_definitions(-DMY_DEBUG)
 #设置编译生成文件类型
@@ -66,6 +72,8 @@ set(RELEASE_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 #添加目录分类
 SOURCE_GROUP("src" FILES ${SRC})
+SOURCE_GROUP("time" FILES ${TIME_SRC})
+SOURCE_GROUP("particle" FILES ${PARTICLE_SRC})
 
 #增加包含目录
 include_directories(

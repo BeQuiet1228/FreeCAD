@@ -36,7 +36,7 @@ private:
 	QImage image;
 	std::mutex imageMutex;
 	//渲染大小
-	QSize imageSize;
+	QSize imageSize; 
 	std::mutex imageSizeMutex;
 	//点的位置
 	QPointF findPosition;
@@ -47,6 +47,10 @@ private:
 protected:
 	//数据类
 	std::shared_ptr<Data> data;
+	//获取屏幕与数据之间的缩放比例
+	bool getTransitionScale(float& xScale, float& yScale);
+	//数据转换
+	float transitionDataToScreen(const  float& d, const float scale, Data::Rang rang);
 public:
 	virtual bool drawImage() = 0;
 	virtual bool addListRang(std::list<Data::Rang> listRang);

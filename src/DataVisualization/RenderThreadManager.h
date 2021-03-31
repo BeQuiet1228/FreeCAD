@@ -4,6 +4,10 @@
 #include "RenderTask.h"
 #include "Canvas.h"
 #include <QObject>
+
+#ifdef MY_DEBUG
+#include <QDateTime>
+#endif
 class RenderThread;
 class RenderThreadManager:public QObject{
 	Q_OBJECT
@@ -55,4 +59,9 @@ public Q_SLOTS:
 Q_SIGNALS:
 	//渲染全部完成信号
 	void allWorkFinished();
+
+#ifdef MY_DEBUG
+public:
+	qint64 d_time;
+#endif
 };

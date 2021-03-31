@@ -343,6 +343,7 @@ void Hdf5IO::getAllSubGroupAndDataSet(const Group& group, const std::vector<std:
 		data.listDataSet = datas;
 		data.group = subGroup;
 		data.headList = headList;
+		data.initInformation();
 		data.name = getNameFromHeadList(headList);
 		hdf5DataList.push_back(data);
 	}
@@ -375,6 +376,7 @@ void Hdf5IO::getStructData()
 		data.listDataSet.push_back(dataSet4);
 		data.group = group;
 		data.headList = headList;
+		data.initInformation();
 		hdf5DataList.push_back(data);
 	}
 }
@@ -406,6 +408,7 @@ void Hdf5IO::getParData()
 		data.listDataSet.push_back(dataSet);
 		data.group = subGroup;
 		data.headList = headList;
+		data.initInformation();
 		data.name = getNameFromHeadList(headList);
 		hdf5DataList.push_back(data);
 	}
@@ -486,10 +489,10 @@ void Hdf5IO::getGrdData()
 	datasetNames.push_back("datasetGrd");
 	getAllSubGroupAndDataSet(ObserveGroup, datasetNames);
 
-	Group rangeGroup;
-	if (!getGroup(grdGroup, "2D_rangers", rangeGroup))
-		return;
-	getAllSubGroupAndDataSet(rangeGroup, datasetNames);
+	//Group rangeGroup;
+	//if (!getGroup(grdGroup, "2D_rangers", rangeGroup))
+	//	return;
+	//getAllSubGroupAndDataSet(rangeGroup, datasetNames);
 }
 /*
  * 初始化所有的图的数据组、数据库、头部信息
@@ -507,7 +510,7 @@ void Hdf5IO::initHdf5Data()
     }
     //获取par的数据组
     {
-		//getParData();
+		getParData();
     }
     //获取二维等位图数据
     {
@@ -515,3 +518,28 @@ void Hdf5IO::initHdf5Data()
     }
 }
 
+/**
+* @brief Hdf5Data::initInformation 根据头信息初始化基本信息
+* @return void
+*/
+void Hdf5Data::initInformation()
+{
+	if (headList.size() == 0)
+		return;
+	QString str = QString::fromStdString(headList.at(0));
+	QStringList sl = str.split("$");
+
+	if (sl.size() < 2)
+		return;
+	QString temp = sl.at(1);
+	if (temp == "CYLINDRICAL")
+		coordinateSystem = CYLINDER;
+	else if (temp == "POLAR")
+		coordinateSystem = POLAR;
+	else if (temp == "CARTESIAN")
+		coordinateSystem = CARTESIAN;
+
+	if (sl.size() < 3)
+		return;
+	name = sl.at(2).toStdString();
+}

@@ -230,6 +230,12 @@ void Plot::keyReleaseEvent(QKeyEvent *event)
 			(*i)->setXRang(xr);
 			(*i)->setYRang(yr);
 		}
+		//改变坐标轴的范围
+		AxisL->setAxisRange(yr.min, yr.max);
+		AxisB->setAxisRange(xr.min, xr.max);
+		AxisL->_update();
+		AxisB->_update();
+
 		reRender();
 	}
 	
