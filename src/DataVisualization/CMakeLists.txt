@@ -29,10 +29,13 @@ SET(PARTICLE_SRC ParticleData.h
 	ParticleRenderer.h
 	ParticleRenderer.cpp
 )
+SET(STRUCT_SRC StructRenderer.h
+	StructRenderer.cpp
+	structureData.h
+	structureData.cpp)
 SET(SRC main.cpp
 	Data.h
 	Data.cpp
-
 	Renderer.cpp
 	Renderer.h
 	Plot.cpp
@@ -62,6 +65,7 @@ SET(DataVisualization_src
 	${UI_SRC}
 	${PARTICLE_SRC}
 	${TIME_SRC}
+	${STRUCT_SRC}
 )
 add_definitions(-DMY_DEBUG)
 #设置编译生成文件类型
@@ -74,6 +78,7 @@ set(RELEASE_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 SOURCE_GROUP("src" FILES ${SRC})
 SOURCE_GROUP("time" FILES ${TIME_SRC})
 SOURCE_GROUP("particle" FILES ${PARTICLE_SRC})
+SOURCE_GROUP("struct" FILES ${STRUCT_SRC})
 
 #增加包含目录
 include_directories(
