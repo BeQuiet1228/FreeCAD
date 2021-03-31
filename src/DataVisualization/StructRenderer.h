@@ -38,8 +38,16 @@ private:
 	bool drawImage_Z_R();
 	bool drawImage_Polar_coordinate();
 	bool drawImage_Cylindrical_Coordinate();
+	//渲染取点
+	bool drawPointImage_Cylindrical();
+	bool drawPointImage_polar();
+	bool drawPointImage_Z_R();
 	//获取圆柱图需要切割的线段
 	QVector<QLineF> Getlines(QPointF p0,QVector<QRectF> RAxis,QVector<qreal> randlist);
+	//获取接近点
+	QPointF findApoint(QPointF _curpostion);
+	//计算距离
+	float GetDistance(QPointF p1,QPointF p2);
 public:
 	////真空坐标
 	//QVector<QRectF> vacuo_vector; 

@@ -54,17 +54,18 @@ bool StructureRenderer::addListRang(std::list<Data::Rang> listRang)
 */
 bool StructureRenderer::drawPointImage()
 {
-	//新建画布 画笔
-	/*QImage img(getSize(), QImage::Format_ARGB32);
-	img.fill(qRgba(0, 0, 0, 0));
-	QPen pen(Qt::red);
-	pen.setBrush(Qt::blue);
-	pen.setWidth(5);
-	QPainter painter(&img);
-	painter.setPen(pen);
-	painter.drawPoint(this->getFindPosition());
-	auto nImg = img.mirrored(false, true);
-	setImage(nImg);*/
+	
+	switch (m_Coordinate_Dir)
+	{
+	case cylindrical_coordinate:
+		return drawPointImage_Cylindrical();
+	case polar_coordinate:
+		return drawPointImage_polar();
+	case Z_R_coordinater:
+		return drawPointImage_Z_R();
+	}
+
+	
 	//待实现
 	return true;
 }
@@ -392,4 +393,110 @@ QVector<QLineF> StructureRenderer::Getlines(QPointF p0,QVector<QRectF> RAxis,QVe
 		}
 	}	
 	return lines;
+}
+/**
+* @brief StructureRenderer::drawPointImage_Cylindrical 获取渲染的点（圆柱坐标系）
+* @return bool
+*/
+bool StructureRenderer::drawPointImage_Cylindrical(){
+
+	return true;
+}
+/**
+* @brief StructureRenderer::drawPointImage_polar 获取渲染的点（极坐标）
+* @return bool
+*/
+bool StructureRenderer::drawPointImage_polar(){
+	return true;
+}
+/**
+* @brief StructureRenderer::drawPointImage_Z_R 获取渲染的点（Z_R坐标）
+* @return bool
+*/
+bool StructureRenderer::drawPointImage_Z_R(){
+
+	//新建画布 画笔
+
+	QImage img(getSize(), QImage::Format_ARGB32);
+	img.fill(qRgba(0, 0, 0, 0));
+	QPen pen(Qt::red);
+	pen.setBrush(Qt::blue);
+	pen.setWidth(5);
+	QPainter painter(&img);
+	painter.setPen(pen);
+	//获取当前点位
+	QPointF _point = findApoint(this->getFindPosition());
+	//painter.drawPoint(this->getFindPosition());
+	painter.drawPoint(_point);
+	auto nImg = img.mirrored(true, true);
+	setImage(nImg);
+	return true;
+}
+
+QPointF StructureRenderer::findApoint(QPointF _curpostion){
+	//获取屏幕与数据的比例
+	float xScale, yScale;
+	getTransitionScale(xScale, yScale);
+	auto xr = getXRang();
+	auto yr = getYRang();
+	//区域中的点
+	std::list<structureData::structpoint> _point;
+	//获取所有的点
+	/******************************/
+	std::shared_ptr<structureData> d = std::dynamic_pointer_cast<structureData>(data);
+	//开始绘制图表
+	//获取真实的数据
+	QVector<QRectF> _conduit_list = d->GetConduitPoint();
+	//获取矩形中心点
+	QVector<QPointF> Scale_coord;
+	for (auto iter = _conduit_list.begin(); iter != _conduit_list.end(); iter++)
+	{
+		//获取缩放
+		//transitionRectF(*iter, xScale, xr, yScale, yr);
+		QPointF _centerpoint = iter->center();
+		transitionX(_centerpoint.x(), xScale, xr);
+		transitionY(_centerpoint.y(), yScale, yr);
+		Scale_coord.push_back(_centerpoint);
+	}
+	//获取最接近的中心点（待优化）
+	unsigned int index = 0;
+	unsigned int distance = ~0;
+	for (unsigned int i = 0; i < Scale_coord.size();i++)
+	{
+		float _distance = GetDistance(_curpostion, Scale_coord[i]);
+		if (_distance>-0.00001&&_distance<0.00001)
+		{
+			distance = _distance;
+			index = i;
+			break;
+		}
+		if (distance>_distance)
+		{
+			distance = _distance;
+			index = i;
+		}
+	}
+	//获取到最近的中心点
+	QRectF _rectf = _conduit_list[index];
+	QRectF _recfCoord = _rectf;
+	transitionRectF(_recfCoord,xScale,xr,yScale,yr);
+	//获取接近的x坐标
+	qreal xpoint = ((abs(_curpostion.x() - _recfCoord.left())) >= (abs(_curpostion.x() - _recfCoord.right()))) ? (_recfCoord.right()) : (_recfCoord.left());
+	//获取最接近的y坐标
+	qreal ypoint = ((abs(_curpostion.y() - _recfCoord.top())) >= (abs(_curpostion.y() - _recfCoord.bottom()))) ? (_recfCoord.bottom()) : (_recfCoord.top());
+#define _DEBUG_
+#ifdef _DEBUG_
+	printf("鼠标点坐标-(x=%f,y=%f)\n", _curpostion.x(), _curpostion.y());
+	printf("接近的点----(x=%f,y=%f)\n",xpoint,ypoint);
+#undef _DEBUG_
+#endif
+	return QPointF(xpoint,ypoint);
+}
+float StructureRenderer::GetDistance(QPointF p1, QPointF p2)
+{
+	unsigned int distance;
+	distance = ((p1.x() - p2.x())*(p1.x() - p2.x())) +
+		((p1.y() - p2.y())*(p1.y() - p2.y()));
+	return sqrt(distance);
+
 }

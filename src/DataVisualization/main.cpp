@@ -11,32 +11,31 @@
 #include"Axis.h"
 #include "ParticleData.h"
 #include <ParticleRenderer.h>
+#include "StructRenderer.h"
+#include "structureData.h"
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 	CanvasItem::registerMetaTye();
 
 	//std::string path = "E:/lingshiwenjianjia/MILO_C/MILO_C.h5";
-	std::string path = "D:\RBWO_CY.h5";
+	std::string path = "D:/wandaotongProject/TEMP(1).H5";
 	Hdf5IO io(path);
 	
 	io.initHdf5Data();
 	auto data = io.hdf5DataList.begin();
-	data += 9;
+	//data += 9;
 	Hdf5Data d = *data;
+	std::shared_ptr<structureData> _structData(new structureData(d));
 
 
-
-	std::shared_ptr<ParticleData> particleData(new ParticleData(d));
-
-
-	ParticleRenderer *timeRenderer = new ParticleRenderer(particleData);
-	timeRenderer->dataInit();
-	timeRenderer->setDefaultRang();
+	StructureRenderer *_structRenderer = new StructureRenderer(_structData);
+	_structRenderer->dataInit();
+	_structRenderer->SetCoordinateDir(Coordinate_Dir::Z_R_coordinater );
 	Plot p;
-	std::shared_ptr<Renderer> rd(timeRenderer);
+	std::shared_ptr<Renderer> rd(_structRenderer);
 	p.setMainRenderer(rd);
-	p.setFixedSize(600, 400);
+	p.setFixedSize(600*3, 400*3);
 	p.show();
 
 

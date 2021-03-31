@@ -17,15 +17,23 @@ typedef struct DaTaKmt
 	//属性
 	int pointproperty;
 }DATAKMT;
-class structureData :public Data{
+
+class structureData :public XYData{
 public:
+	struct  structpoint
+	{
+		structpoint(){}
+		float x, y;//直角坐标系下的数据
+		float d1, d2;//原始数据
+	};
 	structureData(Hdf5Data& heData, const RunMod& mod = SINGLE_THREAD);
 	~structureData();
 protected:
 	virtual void restorDeriveData() override;
 public:
 	//载入数据
-	bool loadPoint();
+	virtual bool loadPoint();
+	virtual unsigned int findIndexFromXValueL(const float& x){ return 0; }
 	bool loadrectpoint();
 	//获取真空坐标
 	QVector<QRectF> GetVacuoPoint();
@@ -56,9 +64,9 @@ public:
 		std::lock_guard<std::mutex> am(yRangMutex);
 		yRang = rg;
 	}
-private:
+protected:
 	//初始化xy的取值范围
-	bool initXYRang();
+	virtual bool initXYRang();
 	//获取切割的空间
 	QVector<QRectF> GetAllCutspace();
 	//获取dataSetkmt的全部数据

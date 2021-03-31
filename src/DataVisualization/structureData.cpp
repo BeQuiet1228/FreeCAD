@@ -1,6 +1,6 @@
 #include "structureData.h"
 structureData::structureData(Hdf5Data& h5Data, const RunMod &mod)
-	:Data(h5Data, mod)
+	:XYData(h5Data, mod)
 {
 
 }
