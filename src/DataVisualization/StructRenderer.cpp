@@ -97,6 +97,8 @@ void StructureRenderer::dataInit()
 	{
 		_structuredate->loadPoint();
 		_structuredate->loadrectpoint();
+		//释放中间参数
+		_structuredate->Dropout_value();
 	}
 		
 }

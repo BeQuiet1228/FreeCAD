@@ -8,7 +8,6 @@ void structureData::restorDeriveData()
 {
 
 }
-
 structureData::~structureData()
 {
 	vacuo_vector.clear();
@@ -19,7 +18,6 @@ structureData::~structureData()
 * @brief structureData::loadPoint 载入点数据
 * @return bool
 */
-
 bool structureData::loadPoint()
 {
 	Data::ListValuesPtr listValues;
@@ -263,4 +261,15 @@ void structureData::fileCylindrical_info()
 	}
 #undef _DEBUG_
 #endif
+}
+/**
+* @brief structureData::Dropout_value 释放参数
+* @return bool
+*/
+bool structureData::Dropout_value(){
+	pointi1mx->clear();
+	pointi2mx->clear();
+	pointi3mx->clear();
+	pointdatasetkmt->clear();
+	return true;
 }

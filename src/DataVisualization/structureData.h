@@ -35,6 +35,8 @@ public:
 	virtual bool loadPoint();
 	virtual unsigned int findIndexFromXValueL(const float& x){ return 0; }
 	bool loadrectpoint();
+	//释放中间参数
+	bool Dropout_value();
 	//获取真空坐标
 	QVector<QRectF> GetVacuoPoint();
 	//获取导管坐标
@@ -101,6 +103,4 @@ private:
 	QVector<qreal> rand_val;
 	std::mutex xRangMutex, yRangMutex;
 };
-
-
 #endif
