@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 	CanvasItem::registerMetaTye();
 
 	//std::string path = "E:/lingshiwenjianjia/MILO_C/MILO_C.h5";
-	std::string path = "D:/wandaotongProject/TEMP(1).H5";
+	std::string path = "F:/wdtproject/PICGUI/TEMP(1).H5";
 	Hdf5IO io(path);
 	
 	io.initHdf5Data();

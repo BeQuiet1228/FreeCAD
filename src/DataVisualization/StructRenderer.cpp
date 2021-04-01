@@ -454,22 +454,26 @@ QPointF StructureRenderer::findApoint(QPointF _curpostion){
 		//获取缩放
 		//transitionRectF(*iter, xScale, xr, yScale, yr);
 		QPointF _centerpoint = iter->center();
-		transitionX(_centerpoint.x(), xScale, xr);
-		transitionY(_centerpoint.y(), yScale, yr);
+		_centerpoint.setX(transitionX(_centerpoint.x(), xScale, xr));
+		_centerpoint.setY(transitionY(_centerpoint.y(), yScale, yr));
 		Scale_coord.push_back(_centerpoint);
+//#define _DEBUG_
+#ifdef _DEBUG_
+		printf("中心点point=(x=%f,y=%f)\n", _centerpoint.x(), _centerpoint.y());
+#undef _DEBUG_
+#endif
 	}
 	//获取最接近的中心点（待优化）
 	unsigned int index = 0;
-	unsigned int distance = ~0;
+	float distance = 10000.0f;
 	for (unsigned int i = 0; i < Scale_coord.size();i++)
 	{
 		float _distance = GetDistance(_curpostion, Scale_coord[i]);
-		if (_distance>-0.00001&&_distance<0.00001)
-		{
-			distance = _distance;
-			index = i;
-			break;
-		}
+//#define _DEBUG_
+#ifdef _DEBUG_
+		printf("距离范围为：distance=%f-----%d\n", _distance, i);
+#undef _DEBUG_
+#endif
 		if (distance>_distance)
 		{
 			distance = _distance;
