@@ -346,13 +346,7 @@ bool Chipic::disposHintMessage(const Message& msg)
 		//如果为自动运行模式，则直接发送继续消息
 		if (getIsAuto())
 		{
-			int i = 100;
-			while (i > 0)
-			{
-				i--;
-				sendMessage(108, 3, -2);
-			}
-			
+			sendMessage(108, 3, -2);
 			break;
 		}
 		hintDailog.setText(msg.text);
