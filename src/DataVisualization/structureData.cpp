@@ -13,6 +13,8 @@ structureData::~structureData()
 	vacuo_vector.clear();
 	conduit_vector.clear();
 	datakmtinfo.clear();
+	R_val.clear();
+	rand_val.clear();
 }
 /**
 * @brief structureData::loadPoint 载入点数据
@@ -25,17 +27,13 @@ bool structureData::loadPoint()
 	if (!ok && !listValues && listValues->size() == 0)
 		return false;
 	auto it = (listValues->begin());
-	pointi1mx = *it; 
 	pointXSize = (*it)->size();//获取I1MX的数据总数
 	it++;
-	pointi2mx = *it;
 	pointYsize = (*it)->size();//获取I2MX的数据总数
 	it++;
-	pointi3mx = *it;//获取I3MX的数据总数
-	it++;
-	pointdatasetkmt = *it;
 	//初始化范围
 	initXYRang();
+	loadrectpoint();
 	return true;
 }
 /**
@@ -47,12 +45,26 @@ bool structureData::initXYRang(){
 		return false;
 	//获取x轴的范围
 	Rang xr, yr;
+	
+	/***********************************************************/
+	//获取H5文件中取到的数据
+	Data::ListValuesPtr listValues;
+	bool ok = autoModGetSourceData(listValues);//获取原始数据
+	if (!ok && !listValues && listValues->size() == 0)
+		return false;
+	auto it = (listValues->begin());
+	Data::ValuesPtr pointi1mx = *it;
+	it++;
+	Data::ValuesPtr pointi2mx = *it;
+	/*********************************************************/
+
 	auto iterx = pointi1mx->begin();
 	xr.min = *iterx;
 	iterx = pointi1mx->end();
 	iterx -= 1;
 	xr.max = (*iterx);
 	//获取y轴的范围
+	
 	auto itery=pointi2mx->begin();
 	yr.min = *itery;
 	itery = pointi2mx->end();
@@ -92,8 +104,22 @@ bool structureData::loadrectpoint(){
 */
 QVector<QRectF> structureData::GetAllCutspace()
 {
-	//获取全部需要切割的空间
 	QVector<QRectF> list;
+	//获取全部需要切割的空间
+
+	/********************************************/
+	//获取从H5F文件中获取到的数据
+	Data::ListValuesPtr listValues;
+	bool ok = autoModGetSourceData(listValues);//获取原始数据
+	if (!ok && !listValues && listValues->size() == 0)
+		return list;
+	auto it = (listValues->begin());
+	Data::ValuesPtr pointi1mx = *it; it++;
+	Data::ValuesPtr pointi2mx = *it; it++;
+	/*Data::ValuesPtr pointi3mx = *it; it++;
+	Data::ValuesPtr pointdatasetkmt = *it;*/
+	/********************************************/
+	
 	//开始获取
 	auto iterleft = pointi1mx->begin();
 	auto iterRight = pointi1mx->begin() + 1;
@@ -125,7 +151,22 @@ QVector<QRectF> structureData::GetAllCutspace()
 */
 QVector<DaTaKmt> structureData::GetdatasetKmt()
 {
+	//获取全部需要切割的空间
+	/*******************************************************/
+	//获取从H5F文件中的到的数据
+	Data::ListValuesPtr listValues;
+	bool ok = autoModGetSourceData(listValues);//获取原始数据
+	if (!ok && !listValues && listValues->size() == 0)
+		return datakmtinfo;
 	//获取dataSetKmt里的全部数据
+	auto it = listValues->begin();
+	
+	Data::ValuesPtr pointi1mx = *it; it++;
+	Data::ValuesPtr pointi2mx = *it; it++;
+	Data::ValuesPtr pointi3mx = *it; it++;
+	Data::ValuesPtr pointdatasetkmt = *it;
+	/*******************************************************/
+
 	auto iterkmt = pointdatasetkmt->begin();
 	for (; iterkmt != pointdatasetkmt->end();)
 	{
@@ -206,9 +247,24 @@ QVector<qreal> structureData::Get_rand_val()
 */
 void structureData::fileCylindrical_info()
 {
+
 	R_val.clear();
 	rand_val.clear();
+	
+	Data::ListValuesPtr listValues;
+	bool ok = autoModGetSourceData(listValues);//获取原始数据
+	if (!ok && !listValues && listValues->size() == 0)
+		return ;
+	//获取dataSetKmt里的全部数据
+	auto it = listValues->begin();
+
+	Data::ValuesPtr pointi1mx = *it; it++;
+	Data::ValuesPtr pointi2mx = *it; it++;
+	Data::ValuesPtr pointi3mx = *it; it++;
+	Data::ValuesPtr pointdatasetkmt = *it;
+
 	QVector<qreal> _r_val;
+
 	auto iter2mx = pointi2mx->begin();
 	for (;iter2mx!=pointi2mx->end();iter2mx++)
 	{
@@ -261,15 +317,4 @@ void structureData::fileCylindrical_info()
 	}
 #undef _DEBUG_
 #endif
-}
-/**
-* @brief structureData::Dropout_value 释放参数
-* @return bool
-*/
-bool structureData::Dropout_value(){
-	pointi1mx->clear();
-	pointi2mx->clear();
-	pointi3mx->clear();
-	pointdatasetkmt->clear();
-	return true;
 }

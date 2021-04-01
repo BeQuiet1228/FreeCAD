@@ -78,14 +78,6 @@ protected:
 	//填充圆柱坐标系需要的信息
 	void fileCylindrical_info();
 private:
-	//所有1mx的数据
-	Data::ValuesPtr pointi1mx;
-	//所有2mx的数据
-	Data::ValuesPtr pointi2mx;
-	//所有3mx的数据
-	Data::ValuesPtr pointi3mx;
-	//方格的相关参数
-	Data::ValuesPtr pointdatasetkmt;
 	//横向点的个数
 	int pointXSize;
 	//纵向点的个数
