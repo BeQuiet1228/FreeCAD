@@ -13,6 +13,8 @@
 #include <ParticleRenderer.h>
 #include "StructRenderer.h"
 #include "structureData.h"
+#include "InterSpaceData.h"
+#include "InterspaceRender.h"
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
@@ -28,6 +30,12 @@ int main(int argc, char *argv[])
 	StructureRenderer *_structRenderer = new StructureRenderer(_structData);
 	_structRenderer->dataInit();
 	_structRenderer->SetCoordinateDir(Coordinate_Dir::Z_R_coordinater);
+	//std::shared_ptr<InterspaceData> particleData(new InterspaceData(d));
+
+
+	//InterspaceRender *timeRenderer = new InterspaceRender(particleData);
+	//timeRenderer->dataInit();
+	//timeRenderer->setDefaultRang();
 	Plot p;
 	std::shared_ptr<Renderer> rd(_structRenderer);
 	p.setMainRenderer(rd);

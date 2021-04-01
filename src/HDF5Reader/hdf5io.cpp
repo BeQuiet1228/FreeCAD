@@ -487,12 +487,12 @@ void Hdf5IO::getGrdData()
 	//获取grd组中的数据
 	std::vector<std::string> datasetNames;
 	datasetNames.push_back("datasetGrd");
-	getAllSubGroupAndDataSet(ObserveGroup, datasetNames);
+	//getAllSubGroupAndDataSet(ObserveGroup, datasetNames);
 
-	//Group rangeGroup;
-	//if (!getGroup(grdGroup, "2D_rangers", rangeGroup))
-	//	return;
-	//getAllSubGroupAndDataSet(rangeGroup, datasetNames);
+	Group rangeGroup;
+	if (!getGroup(grdGroup, "2D_rangers", rangeGroup))
+		return;
+	getAllSubGroupAndDataSet(rangeGroup, datasetNames);
 }
 /*
  * 初始化所有的图的数据组、数据库、头部信息
@@ -506,11 +506,11 @@ void Hdf5IO::initHdf5Data()
      }
     //获取所有grd的数据组
     {
-		//getGrdData();
+		getGrdData();
     }
     //获取par的数据组
     {
-		getParData();
+	//	getParData();
     }
     //获取二维等位图数据
     {
