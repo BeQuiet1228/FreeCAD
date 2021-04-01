@@ -355,13 +355,20 @@ void Axis::AxisResize(bool ada, QSize _size)
 		case AxisRight:
 		{
 			//            this->resize(Axisunitfontsize + 50, CanvasSize->height());
-
+			AxisRect.setLeft(0);
+			AxisRect.setRight(this->size().width());
+			AxisRect.setTop(10);
+			AxisRect.setBottom(this->size().height() - 10);
 		}
 			break;
 		case AxisTop:
 		case AxisBottom:
 		{
-			//            this->resize(CanvasSize->width(), Axisunitfontsize + 50);
+			//this->resize(CanvasSize->width(), Axisunitfontsize + 50);
+			AxisRect.setLeft(10);
+			AxisRect.setRight(this->size().width() - 10);
+			AxisRect.setTop(0);
+			AxisRect.setBottom(this->size().height());
 		}
 			break;
 		}
@@ -370,10 +377,10 @@ void Axis::AxisResize(bool ada, QSize _size)
 	else
 		this->resize(_size);
 
-	AxisRect.setLeft(0);
-	AxisRect.setTop(0);
-	AxisRect.setRight(this->size().width());
-	AxisRect.setBottom(this->size().height());
+	//	AxisRect.setLeft(0);
+	//	AxisRect.setTop(0);
+	//	AxisRect.setRight(this->size().width());
+	//	AxisRect.setBottom(this->size().height());
 	//    AxisRect.setTopLeft(QPointF(0,0));
 	//    AxisRect.setBottomRight(QPointF(this->size().width(),this->size().height()));
 }

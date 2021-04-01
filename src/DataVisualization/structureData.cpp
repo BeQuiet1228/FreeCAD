@@ -108,7 +108,7 @@ QVector<QRectF> structureData::GetAllCutspace()
 	//获取全部需要切割的空间
 
 	/********************************************/
-	//获取从H5F文件中获取到的数据
+	//获取从H5F文件中的数据
 	Data::ListValuesPtr listValues;
 	bool ok = autoModGetSourceData(listValues);//获取原始数据
 	if (!ok && !listValues && listValues->size() == 0)
