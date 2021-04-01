@@ -410,15 +410,18 @@ bool StructureRenderer::drawPointImage_Cylindrical(){
 	painter.setPen(pen);
 	//获取当前点位
 
-	QPointF _point = findApoint_Cylindrical(this->getFindPosition());
+	structureData::structpoint _point = findApoint_Cylindrical(this->getFindPosition());
 #define _DEBUG_
 #ifdef _DEBUG_
-	printf("获取的当前点位:(x=%f,y=%f)\n", _point.x(), _point.y());
+	printf("获取的当前点位:(x=%f,y=%f)\n", _point.x, _point.y);
 #undef _DEBUG_
 #endif
-	painter.drawPoint(_point);
-	auto nImg = img.mirrored(false, true);
-	setImage(nImg);
+	//坐标翻转
+	_point.y = getSize().height() - _point.y;
+	painter.drawPoint(QPointF(_point.x,_point.y));
+	drawDisplayPoint(painter, QPointF(_point.x, _point.y), QPointF(_point.d1, _point.d2));
+	//auto nImg = img.mirrored(false, true);
+	setImage(img);
 	return true;
 }
 /**
@@ -443,21 +446,30 @@ bool StructureRenderer::drawPointImage_Z_R(){
 	pen.setWidth(5);
 	QPainter painter(&img);
 	painter.setPen(pen);
+	QPointF A_pos;//原始坐标
 	//获取当前点位
-	QPointF _point = findApoint_Z_R(this->getFindPosition());
+	structureData::structpoint _point = findApoint_Z_R(this->getFindPosition());
 	//painter.drawPoint(this->getFindPosition());
 //#define _DEBUG_
 #ifdef _DEBUG_
 	printf("获取绘制的点的结果:x=%f,y=%f\n",_point.x(),_point.y());
 #undef _DEBUG_
 #endif
-	painter.drawPoint(_point);
-	auto nImg = img.mirrored(false, true);
-	setImage(nImg);
+	//坐标翻转
+	_point.y = getSize().height() - _point.y;
+	painter.drawPoint(QPointF(_point.x,_point.y));
+	drawDisplayPoint(painter,QPointF(_point.x,_point.y),QPointF(_point.d1,_point.d2));
+	//auto nImg = img.mirrored(false, true);
+	setImage(img);
 	return true;
 }
-
-QPointF StructureRenderer::findApoint_Z_R(QPointF _curpostion){
+/**
+* @brief StructureRenderer::findApoint_Z_R 查找Z_R坐标系中最接近的点
+* @param QPointF _curpostion 鼠标的点击坐标系参数
+* @return structureData::structpoint 返回相关参数（包括真实参数和，直角坐标系下的参数）
+*/
+structureData::structpoint StructureRenderer::findApoint_Z_R(QPointF _curpostion){
+	structureData::structpoint mpoint;
 	//获取屏幕与数据的比例
 	float xScale, yScale;
 	getTransitionScale(xScale, yScale);
@@ -510,17 +522,44 @@ QPointF StructureRenderer::findApoint_Z_R(QPointF _curpostion){
 	QRectF _recfCoord = _rectf;
 	transitionRectF(_recfCoord,xScale,xr,yScale,yr);
 	//获取接近的x坐标
-	qreal xpoint = ((abs(_curpostion.x() - _recfCoord.left())) >= (abs(_curpostion.x() - _recfCoord.right()))) ? (_recfCoord.right()) : (_recfCoord.left());
+	if (abs(_curpostion.x() - _recfCoord.left()) >= abs(_curpostion.x() - _recfCoord.right()))
+	{
+		mpoint.x = _recfCoord.right();
+		mpoint.d1 = _conduit_list[index].right();
+	}
+	else
+	{
+		mpoint.x = _recfCoord.left();
+		mpoint.d1
+			= _conduit_list[index].left();
+	}
+	//qreal xpoint = ((abs(_curpostion.x() - _recfCoord.left())) >= (abs(_curpostion.x() - _recfCoord.right()))) ? (_recfCoord.right()) : (_recfCoord.left());
 	//获取最接近的y坐标
-	qreal ypoint = ((abs(_curpostion.y() - _recfCoord.top())) >= (abs(_curpostion.y() - _recfCoord.bottom()))) ? (_recfCoord.bottom()) : (_recfCoord.top());
+	if ((abs(_curpostion.y() - _recfCoord.top())) >= (abs(_curpostion.y() - _recfCoord.bottom())))
+	{
+		mpoint.y = _recfCoord.bottom();
+		mpoint.d2 = _conduit_list[index].bottom();
+	}
+	else
+	{
+		mpoint.y = _recfCoord.top();
+		mpoint.d2 = _conduit_list[index].top();
+	}
+	//qreal ypoint = ((abs(_curpostion.y() - _recfCoord.top())) >= (abs(_curpostion.y() - _recfCoord.bottom()))) ? (_recfCoord.bottom()) : (_recfCoord.top());
 #define _DEBUG_
 #ifdef _DEBUG_
 	printf("鼠标点坐标-(x=%f,y=%f)\n", _curpostion.x(), _curpostion.y());
-	printf("接近的点----(x=%f,y=%f)\n",xpoint,ypoint);
+	//printf("接近的点----(x=%f,y=%f)\n",xpoint,ypoint);
 #undef _DEBUG_
 #endif
-	return QPointF(xpoint,ypoint);
+	return mpoint;
 }
+/**
+* @brief StructureRenderer::GetDistance 返回两点之间的距离
+* @param QPointF p1 
+* @param QPointF p2
+* @return float
+*/
 float StructureRenderer::GetDistance(QPointF p1, QPointF p2)
 {
 	float distance;
@@ -529,9 +568,14 @@ float StructureRenderer::GetDistance(QPointF p1, QPointF p2)
 	return sqrt(distance);
 
 }
-
-QPointF StructureRenderer::findApoint_Cylindrical(QPointF _curpoint)
+/**
+* @brief StructureRenderer::findApoint_Cylindrical 查找直直角坐标系中的最近点
+* @param QPointF _curpoint当前鼠标点击的点位
+* @return structureData::structpoint
+*/
+structureData::structpoint StructureRenderer::findApoint_Cylindrical(QPointF _curpoint)
 {
+	structureData::structpoint mpoint;
 	//获取屏幕的缩放比例
 	float xScale, yScale;
 	getTransitionScale(xScale, yScale);
@@ -545,6 +589,8 @@ QPointF StructureRenderer::findApoint_Cylindrical(QPointF _curpoint)
 	QVector<qreal> _rand_list = d->Get_rand_val();
 	//获取矩形
 	QVector<QRectF> _rl = GetCylindricalRect(_R_list);
+	//获取原始的切割数据
+	QVector<QLineF> a_lines = Getlines(QPointF(0.0, 0.0), _rl, _rand_list);
 	for (auto iter = _rl.begin(); iter != _rl.end(); iter++)
 	{
 		//获取缩放
@@ -565,13 +611,16 @@ QPointF StructureRenderer::findApoint_Cylindrical(QPointF _curpoint)
 	float distance = 100000.0;//MAX_DISTANCE
 	QPointF minPoint;
 	unsigned int index = 0;
+	unsigned int type = 0;
 	for (auto  i = 0; i <_lines.size(); i++)
 	{
 		float _distance1 = GetDistance(_curpoint,_lines[i].p1());
 		float _distance2 = GetDistance(_curpoint, _lines[i].p2());
 		if (distance>_distance1 ||distance>_distance2)
 		{
+			index = i;
 			distance = (_distance1 > _distance2) ? (_distance2) : (_distance1);
+			type = (_distance1 > _distance2) ? (2) : (1);
 			minPoint = (_distance1 > _distance2) ?(_lines[i].p2()) :(_lines[i].p1()) ;
 		}
 	}
@@ -581,6 +630,68 @@ QPointF StructureRenderer::findApoint_Cylindrical(QPointF _curpoint)
 	printf("鼠标的点位(x=%f,y=%f)\n",_curpoint.x(),_curpoint.y());
 	printf("计算得出最小点为（x=%f,y=%f）\n", minPoint.x(), minPoint.y());
 #endif
-	return minPoint;
+	mpoint.x = minPoint.x();
+	mpoint.y = minPoint.y();
+	switch (type)
+	{
+	case 1:
+	{
+		mpoint.d1 = a_lines[index].p1().x();
+		mpoint.d2 = a_lines[index].p1().y();
+	}
+		break;
+	case 2:
+	{
+		mpoint.d1 = a_lines[index].p2().x();
+		mpoint.d2 = a_lines[index].p2().y();
+	}
+		break;
+	}
+	return mpoint;
+}
+/**
+* @brief StructureRenderer::drawDisplayPoint 绘制点位展示信息
+* @param QPainter& painter
+* @param const QPointF& position
+* @param const QPointF& d
+* @return void
+*/
+void StructureRenderer::drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d)
+{
+	//设置画笔的颜色
+	QPen pen;
+	pen.setColor(QColor(102, 205, 170));
+	pen.setWidth(2);
+	painter.setPen(pen);
+	painter.setBrush(QBrush(QColor(255, 250, 240)));
+	//建立话画框
+	QRectF displayRect;
+	displayRect.setX(position.x() + 10);
+	displayRect.setY(position.y() - 5);
+	//如果这个点在边界上  那么调整话框的位置
+	auto size = getSize();
+	if (displayRect.y() > (size.height() - 60))
+	{
+		displayRect.setY(displayRect.y() - 70);
+	}
+	if (displayRect.x() > (size.width() - 130))
+	{
+		displayRect.setX(displayRect.x() - 150);
+	}
 
+	displayRect.setWidth(110);
+	displayRect.setHeight(50);
+	painter.drawRect(displayRect);
+	//绘制显示信息
+	QFont f;
+	f.setPixelSize(17);
+	painter.setFont(f);
+	painter.drawText(displayRect.x() + 10,
+		displayRect.y() + 20,
+		QString("X:%1").arg(d.x(), 0, 'E', 2)
+		);
+	painter.drawText(displayRect.x() + 10,
+		displayRect.y() + 40,
+		QString("Y:%1").arg(d.y(), 0, 'E', 2)
+		);
 }

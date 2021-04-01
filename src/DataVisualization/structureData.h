@@ -22,7 +22,7 @@ class structureData :public XYData{
 public:
 	struct  structpoint
 	{
-		structpoint(){}
+		structpoint():x(0.0),y(0.0),d1(0.0),d2(0.0){}
 		float x, y;//直角坐标系下的数据
 		float d1, d2;//原始数据
 	};

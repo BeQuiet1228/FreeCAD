@@ -45,17 +45,13 @@ private:
 	//获取圆柱图需要切割的线段
 	QVector<QLineF> Getlines(QPointF p0,QVector<QRectF> RAxis,QVector<qreal> randlist);
 	//获取接近点
-	QPointF findApoint_Z_R(QPointF _curpostion);
-	QPointF findApoint_Cylindrical(QPointF _curpoint);
+	structureData::structpoint findApoint_Z_R(QPointF _curpostion);
+	structureData::structpoint findApoint_Cylindrical(QPointF _curpoint);
 	//计算距离
 	float GetDistance(QPointF p1,QPointF p2);
+	//绘制需要显示的信息
+	void drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d);
 public:
-	////真空坐标
-	//QVector<QRectF> vacuo_vector; 
-	////导管坐标
-	//QVector<QRectF> conduit_vector;
-	////特殊属性坐标
-	//QVector<QRectF> specificproperty_vector;
 private:
 	Coordinate_Dir m_Coordinate_Dir;
 };
