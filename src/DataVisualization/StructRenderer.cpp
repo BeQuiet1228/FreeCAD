@@ -399,7 +399,26 @@ QVector<QLineF> StructureRenderer::Getlines(QPointF p0,QVector<QRectF> RAxis,QVe
 * @return bool
 */
 bool StructureRenderer::drawPointImage_Cylindrical(){
+	//新建画布 画笔
+	QImage img(getSize(), QImage::Format_ARGB32);
+	//填充透明画布
+	img.fill(qRgba(0, 0, 0, 0));
+	QPen pen(Qt::red);
+	pen.setBrush(Qt::blue);
+	pen.setWidth(5);
+	QPainter painter(&img);
+	painter.setPen(pen);
+	//获取当前点位
 
+	QPointF _point = findApoint_Cylindrical(this->getFindPosition());
+#define _DEBUG_
+#ifdef _DEBUG_
+	printf("获取的当前点位:(x=%f,y=%f)\n", _point.x(), _point.y());
+#undef _DEBUG_
+#endif
+	painter.drawPoint(_point);
+	auto nImg = img.mirrored(false, true);
+	setImage(nImg);
 	return true;
 }
 /**
@@ -425,9 +444,9 @@ bool StructureRenderer::drawPointImage_Z_R(){
 	QPainter painter(&img);
 	painter.setPen(pen);
 	//获取当前点位
-	QPointF _point = findApoint(this->getFindPosition());
+	QPointF _point = findApoint_Z_R(this->getFindPosition());
 	//painter.drawPoint(this->getFindPosition());
-#define _DEBUG_
+//#define _DEBUG_
 #ifdef _DEBUG_
 	printf("获取绘制的点的结果:x=%f,y=%f\n",_point.x(),_point.y());
 #undef _DEBUG_
@@ -438,7 +457,7 @@ bool StructureRenderer::drawPointImage_Z_R(){
 	return true;
 }
 
-QPointF StructureRenderer::findApoint(QPointF _curpostion){
+QPointF StructureRenderer::findApoint_Z_R(QPointF _curpostion){
 	//获取屏幕与数据的比例
 	float xScale, yScale;
 	getTransitionScale(xScale, yScale);
@@ -507,6 +526,61 @@ float StructureRenderer::GetDistance(QPointF p1, QPointF p2)
 	float distance;
 	distance = ((p1.x() - p2.x())*(p1.x() - p2.x())) +
 		((p1.y() - p2.y())*(p1.y() - p2.y()));
-	return (distance);
+	return sqrt(distance);
+
+}
+
+QPointF StructureRenderer::findApoint_Cylindrical(QPointF _curpoint)
+{
+	//获取屏幕的缩放比例
+	float xScale, yScale;
+	getTransitionScale(xScale, yScale);
+	auto xr = getXRang();
+	auto yr = getYRang();
+	/*********************************/
+	//获取所有的点，只能一个一个对比
+	std::shared_ptr<structureData> d = std::dynamic_pointer_cast<structureData>(data);
+	//获取起始点,因为图表的刻度不一定是从零开始的。
+	QVector<qreal> _R_list = d->Get_R_val();
+	QVector<qreal> _rand_list = d->Get_rand_val();
+	//获取矩形
+	QVector<QRectF> _rl = GetCylindricalRect(_R_list);
+	for (auto iter = _rl.begin(); iter != _rl.end(); iter++)
+	{
+		//获取缩放
+		transitionRectF(*iter, xScale, xr, yScale, yr);
+	}
+	//获取绘制角度
+	//获取圆心
+	QPointF  p1 = _rl[0].center();
+	QVector<QLineF> _lines = Getlines(p1, _rl, _rand_list);
+//#define _DEBUG_
+#ifdef _DEBUG_
+	for each (QLineF var in _lines)
+	{
+		printf("(x1=%f,y1=%f,x2=%f,y2=%f)\n", var.p1().x(), var.p1().y(), var.p2().x(), var.p2().y());
+	}
+#endif
+	//开始比较
+	float distance = 100000.0;//MAX_DISTANCE
+	QPointF minPoint;
+	unsigned int index = 0;
+	for (auto  i = 0; i <_lines.size(); i++)
+	{
+		float _distance1 = GetDistance(_curpoint,_lines[i].p1());
+		float _distance2 = GetDistance(_curpoint, _lines[i].p2());
+		if (distance>_distance1 ||distance>_distance2)
+		{
+			distance = (_distance1 > _distance2) ? (_distance2) : (_distance1);
+			minPoint = (_distance1 > _distance2) ?(_lines[i].p2()) :(_lines[i].p1()) ;
+		}
+	}
+	//获取到最小点
+//#define _DEBUG_
+#ifdef _DEBUG_
+	printf("鼠标的点位(x=%f,y=%f)\n",_curpoint.x(),_curpoint.y());
+	printf("计算得出最小点为（x=%f,y=%f）\n", minPoint.x(), minPoint.y());
+#endif
+	return minPoint;
 
 }

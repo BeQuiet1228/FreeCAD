@@ -45,7 +45,8 @@ private:
 	//获取圆柱图需要切割的线段
 	QVector<QLineF> Getlines(QPointF p0,QVector<QRectF> RAxis,QVector<qreal> randlist);
 	//获取接近点
-	QPointF findApoint(QPointF _curpostion);
+	QPointF findApoint_Z_R(QPointF _curpostion);
+	QPointF findApoint_Cylindrical(QPointF _curpoint);
 	//计算距离
 	float GetDistance(QPointF p1,QPointF p2);
 public:
