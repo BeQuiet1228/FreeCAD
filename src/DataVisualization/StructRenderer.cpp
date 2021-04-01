@@ -427,8 +427,13 @@ bool StructureRenderer::drawPointImage_Z_R(){
 	//获取当前点位
 	QPointF _point = findApoint(this->getFindPosition());
 	//painter.drawPoint(this->getFindPosition());
+#define _DEBUG_
+#ifdef _DEBUG_
+	printf("获取绘制的点的结果:x=%f,y=%f\n",_point.x(),_point.y());
+#undef _DEBUG_
+#endif
 	painter.drawPoint(_point);
-	auto nImg = img.mirrored(true, true);
+	auto nImg = img.mirrored(false, true);
 	setImage(nImg);
 	return true;
 }
@@ -469,13 +474,14 @@ QPointF StructureRenderer::findApoint(QPointF _curpostion){
 	for (unsigned int i = 0; i < Scale_coord.size();i++)
 	{
 		float _distance = GetDistance(_curpostion, Scale_coord[i]);
-//#define _DEBUG_
-#ifdef _DEBUG_
-		printf("距离范围为：distance=%f-----%d\n", _distance, i);
-#undef _DEBUG_
-#endif
+
 		if (distance>_distance)
 		{
+//#define _DEBUG_
+#ifdef _DEBUG_
+			printf("距离范围为：distance=%f-----%d\n", distance, i);
+#undef _DEBUG_
+#endif
 			distance = _distance;
 			index = i;
 		}
@@ -498,9 +504,9 @@ QPointF StructureRenderer::findApoint(QPointF _curpostion){
 }
 float StructureRenderer::GetDistance(QPointF p1, QPointF p2)
 {
-	unsigned int distance;
+	float distance;
 	distance = ((p1.x() - p2.x())*(p1.x() - p2.x())) +
 		((p1.y() - p2.y())*(p1.y() - p2.y()));
-	return sqrt(distance);
+	return (distance);
 
 }
