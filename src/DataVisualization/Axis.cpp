@@ -214,12 +214,17 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 		qreal nextval = startval;
 		QPointF startposition = QPointF(_rect.right() - 11, _rect.bottom() + 4);
 		QPointF nextPosition = startposition;
+
+		/***************************************************************/
+		//获取左边的方向的刻度数值和位置
 		auto func = [&](int number)->void{
 			AXISVAL mmaxisval;
 			mmaxisval.valsize = QString("%1").arg(startval + number*interval);
 			mmaxisval.postion = QPointF(startposition.x() - mmaxisval.valsize.length() * 5 - 5, startposition.y() - number*Axisinterval);
 			m_axisval.push_back(mmaxisval);
 		};
+		/***************************************************************/
+		
 		for (auto i = 0; i <= Axisnumber; i++)
 			func(i);
 	}
@@ -231,12 +236,17 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 		qreal nextval = startval;
 		QPointF startposition = QPointF(_rect.left() + 11, _rect.bottom() + 4);
 		QPointF nextPosition = startposition;
+		
+		/**************************************************************************/
+		//lambda(记录刻度文字与相对的布局的坐标位置)
 		auto func = [&](int number)->void{
 			AXISVAL mmaxisval;
 			mmaxisval.valsize = QString("%1").arg(startval + number*interval);
 			mmaxisval.postion = QPointF(startposition.x(), startposition.y() - number*Axisinterval);
 			m_axisval.push_back(mmaxisval);
 		};
+		/**************************************************************************/
+
 		for (auto i = 0; i <= Axisnumber; i++)
 			func(i);
 	}
@@ -247,6 +257,9 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 		qreal startval = axisvalrange.min;
 		QPointF startposition = QPointF(_rect.left() + 1, _rect.bottom() - 10);
 		QPointF nextPosition = startposition;
+		
+		/***********************************************************************/
+		//获取AxisTop风格的刻度值以及坐标位置
 		auto func = [&](int number)->void{
 			nextPosition.setX(startposition.x() + number*Axisinterval);
 			AXISVAL mmaxisval;
@@ -254,6 +267,8 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 			mmaxisval.postion = QPointF(nextPosition.x() - mmaxisval.valsize.length() * 10 / 4, startposition.y());
 			m_axisval.push_back(mmaxisval);
 		};
+		/************************************************************************/
+
 		for (auto i = 0; i <= Axisnumber; i++)
 			func(i);
 	}
@@ -264,6 +279,9 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 		qreal startval = axisvalrange.min;
 		QPointF startposition = QPointF(_rect.left() + 1, _rect.top() + 20);
 		QPointF nextPosition = startposition;
+
+		/*************************************************************************/
+		//存储AxisBottom方向的刻度值以及坐标
 		auto func = [&](int number)->void{
 			nextPosition.setX(startposition.x() + number*Axisinterval);
 			AXISVAL mmaxisval;
@@ -271,6 +289,8 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 			mmaxisval.postion = QPointF(nextPosition.x() - mmaxisval.valsize.length() * 10 / 4, startposition.y());
 			m_axisval.push_back(mmaxisval);
 		};
+		/************************************************************************/
+
 		for (auto i = 0; i <= Axisnumber; i++)
 			func(i);
 	}
@@ -381,8 +401,9 @@ void Axis::AxisResize(bool ada, QSize _size)
 	//	AxisRect.setTop(0);
 	//	AxisRect.setRight(this->size().width());
 	//	AxisRect.setBottom(this->size().height());
-	//    AxisRect.setTopLeft(QPointF(0,0));
-	//    AxisRect.setBottomRight(QPointF(this->size().width(),this->size().height()));
+
+	//	AxisRect.setTopLeft(QPointF(0,0));
+	//	AxisRect.setBottomRight(QPointF(this->size().width(),this->size().height()));
 }
 /**
 * @brief Axis::AxisCanvas 传入画布的大小
@@ -406,7 +427,6 @@ void Axis::SetCanvas(QWidget* mCanvas)
 
 void Axis::resizeEvent(QResizeEvent* event)
 {
-
 	CanvasSize->setWidth(this->width());
 	CanvasSize->setHeight(this->height());
 	AxisResize(true);
