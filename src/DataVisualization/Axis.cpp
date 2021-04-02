@@ -424,6 +424,20 @@ void Axis::SetCanvas(QWidget* mCanvas)
 {
 	CanvasWidget = mCanvas;
 }
+QString Axis::GetScientific_notation(qreal _value, unsigned int significant_digit)
+{
+	QString value_str;
+	//首先获取浮点数的整数部分
+	int value_i = _value;
+	//判断整数部分是否大于零
+	qreal value_dec = _value - (qreal)value_i;
+	int index = 0;
+	if (value_i>0)
+	{
+		//value_str = QString("%1+%2*E-%3").arg(value_i).arg();
+	}
+	return value_str;
+}
 
 void Axis::resizeEvent(QResizeEvent* event)
 {
