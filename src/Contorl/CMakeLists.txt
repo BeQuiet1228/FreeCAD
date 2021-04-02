@@ -220,7 +220,7 @@ else()
 endif()
 #链接静态库
 target_link_libraries(Contorl ${QT_LIB})
-SET_BIN_DIR(Contorl Contorl) #设置文件输出目录
+SET_BIN_DIR(Contorl FreeCAD) #设置文件输出目录
 #生成moc文件
 fc_wrap_cpp(MY_MOC_SRCS ${MY_MOC_HDR})
 

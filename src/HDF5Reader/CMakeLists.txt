@@ -87,4 +87,4 @@ endif()
 
 #链接静态库
 target_link_libraries(HDF5Reader ${HDF5Reader_LIB})
-SET_BIN_DIR(HDF5Reader HDF5Reader) #设置文件输出目录
+SET_BIN_DIR(HDF5Reader FreeCAD) #设置文件输出目录

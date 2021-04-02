@@ -13,6 +13,7 @@
 #include <ParticleRenderer.h>
 #include "InterSpaceData.h"
 #include "InterspaceRender.h"
+#include <qwt/qwt_plot.h>
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
@@ -41,7 +42,8 @@ int main(int argc, char *argv[])
 	p.setFixedSize(600, 400);
 	p.show();
 
-
+	QwtPlot plot;
+	plot.show();
 
 	////≤‚ ‘µ•œﬂ≥Ã‰÷»æ
 	//std::shared_ptr<Renderer> re(timeRenderer);

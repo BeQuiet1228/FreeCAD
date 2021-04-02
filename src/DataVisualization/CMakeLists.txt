@@ -1,3 +1,5 @@
+#添加子文件目录
+add_subdirectory(qwt)
 #设置项目名称
 project(DataVisualization)
 #引入头文件
@@ -34,6 +36,12 @@ SET(INTERSPACE_SRC InterspaceData.h
 	InterspaceRender.h
 	InterspaceRender.cpp
 )
+SET(CONTOUR_SRC ContourData.h
+	ContourData.cpp
+	ContourRender.h
+	ContourRender.cpp
+)
+
 SET(SRC main.cpp
 	Data.h
 	Data.cpp
@@ -67,6 +75,7 @@ SET(DataVisualization_src
 	${PARTICLE_SRC}
 	${TIME_SRC}
 	${INTERSPACE_SRC}
+	${CONTOUR_SRC}
 )
 add_definitions(-DMY_DEBUG)
 #设置编译生成文件类型
@@ -75,11 +84,14 @@ add_executable(DataVisualization ${DataVisualization_src}) # 生成可执行文�
 set(DEBUG_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(RELEASE_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
+SET_BIN_DIR(DataVisualization FreeCAD)
+
 #添加目录分类
 SOURCE_GROUP("src" FILES ${SRC})
 SOURCE_GROUP("time" FILES ${TIME_SRC})
 SOURCE_GROUP("particle" FILES ${PARTICLE_SRC})
 SOURCE_GROUP("interspace" FILES ${INTERSPACE_SRC})
+SOURCE_GROUP("contour" FILES ${CONTOUR_SRC})
 
 #增加包含目录
 include_directories(
@@ -92,6 +104,7 @@ list(APPEND QT_LIB
     debug MSVCPRTD.LIB
     optimized MSVCRT.LIB
     optimized MSVCPRT.LIB
+	qwt
 	HDF5Reader
 	)
 if (BUILD_QT5)
