@@ -2,6 +2,8 @@
 #include<QRect>
 #include<QSize>
 #include<QPainter>
+
+#define ZERO_F (0.000000000001f)	//定义浮点数的零
 Axis::Axis(QWidget *parent) :
 QWidget(parent)/*,horizontalAxis(0),verticalAxis(0),isstart(false)*/, CanvasWidget(nullptr)
 {
@@ -205,6 +207,7 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 	m_axisval.clear();
 	qreal interval = (axisvalrange.max - axisvalrange.min) / (Axisnumber);
 	qreal Axisinterval;
+	QVector<QString> _axisval = GetScientific_notation();
 	switch (_Axisstyle)
 	{
 	case Axisleft:
@@ -214,19 +217,30 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 		qreal nextval = startval;
 		QPointF startposition = QPointF(_rect.right() - 11, _rect.bottom() + 4);
 		QPointF nextPosition = startposition;
-
 		/***************************************************************/
 		//获取左边的方向的刻度数值和位置
-		auto func = [&](int number)->void{
+		auto func = [&](int number,int maxnumber)->void{
 			AXISVAL mmaxisval;
-			mmaxisval.valsize = QString("%1").arg(startval + number*interval);
-			mmaxisval.postion = QPointF(startposition.x() - mmaxisval.valsize.length() * 5 - 5, startposition.y() - number*Axisinterval);
+			mmaxisval.valsize = _axisval[number]; /*QString("%1").arg(startval + number*interval)*/;
+			if (number>0&&number<maxnumber)
+			{
+				mmaxisval.postion = QPointF(startposition.x() - mmaxisval.valsize.length() * 5 - 5, startposition.y() - number*Axisinterval);
+			}
+			else if (0==number)
+			{
+				mmaxisval.postion = QPointF(startposition.x() - mmaxisval.valsize.length() * 5 - 5, startposition.y() - number*Axisinterval - 5);
+			}
+			else{
+				mmaxisval.postion = QPointF(startposition.x() - mmaxisval.valsize.length() * 5 - 5, startposition.y() - number*Axisinterval+5);
+			}
 			m_axisval.push_back(mmaxisval);
 		};
 		/***************************************************************/
 		
 		for (auto i = 0; i <= Axisnumber; i++)
-			func(i);
+			func(i,Axisnumber);
+		//刻度开始的地方---需要往右挪动
+
 	}
 		break;
 	case AxisRight:
@@ -236,19 +250,25 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 		qreal nextval = startval;
 		QPointF startposition = QPointF(_rect.left() + 11, _rect.bottom() + 4);
 		QPointF nextPosition = startposition;
-		
 		/**************************************************************************/
 		//lambda(记录刻度文字与相对的布局的坐标位置)
-		auto func = [&](int number)->void{
+		auto func = [&](int number,int maxnumber)->void{
 			AXISVAL mmaxisval;
-			mmaxisval.valsize = QString("%1").arg(startval + number*interval);
-			mmaxisval.postion = QPointF(startposition.x(), startposition.y() - number*Axisinterval);
+			mmaxisval.valsize = _axisval[number];/*QString("%1").arg(startval + number*interval)*/;
+			if (number > 0 && number < maxnumber)
+				mmaxisval.postion = QPointF(startposition.x(), startposition.y() - number*Axisinterval);
+			else if (0 == number)
+				mmaxisval.postion = QPointF(startposition.x(), startposition.y() - number*Axisinterval - 5);
+			else
+				mmaxisval.postion = QPointF(startposition.x(), startposition.y() - number*Axisinterval - 5);
 			m_axisval.push_back(mmaxisval);
 		};
 		/**************************************************************************/
 
 		for (auto i = 0; i <= Axisnumber; i++)
-			func(i);
+			func(i,Axisnumber);
+		//第一个刻度和最后的一个刻度需要移动位置
+
 	}
 		break;
 	case AxisTop:
@@ -260,17 +280,29 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 		
 		/***********************************************************************/
 		//获取AxisTop风格的刻度值以及坐标位置
-		auto func = [&](int number)->void{
+		auto func = [&](int number,int maxNumber)->void{
 			nextPosition.setX(startposition.x() + number*Axisinterval);
 			AXISVAL mmaxisval;
-			mmaxisval.valsize = QString("%1").arg(startval + number*interval);
-			mmaxisval.postion = QPointF(nextPosition.x() - mmaxisval.valsize.length() * 10 / 4, startposition.y());
+			mmaxisval.valsize =_axisval[number] /*QString("%1").arg(startval + number*interval)*/;
+			if (number<maxNumber&& number>0)
+			{
+				mmaxisval.postion = QPointF(nextPosition.x() - mmaxisval.valsize.length() * 10 / 4, startposition.y());
+			}
+			else if (number==0)
+			{
+				mmaxisval.postion = QPointF(nextPosition.x(), startposition.y());
+			}
+			else
+			{
+				mmaxisval.postion = QPointF(nextPosition.x() - mmaxisval.valsize.length()*10/2,startposition.y());
+			}
 			m_axisval.push_back(mmaxisval);
 		};
 		/************************************************************************/
 
 		for (auto i = 0; i <= Axisnumber; i++)
-			func(i);
+			func(i,Axisnumber);
+		//第一个刻度和最后一个刻度需要移动位置
 	}
 		break;
 	case AxisBottom:
@@ -282,17 +314,29 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 
 		/*************************************************************************/
 		//存储AxisBottom方向的刻度值以及坐标
-		auto func = [&](int number)->void{
+		auto func = [&](int number,int maxnumber)->void{
 			nextPosition.setX(startposition.x() + number*Axisinterval);
 			AXISVAL mmaxisval;
-			mmaxisval.valsize = QString("%1").arg(startval + number*interval);
-			mmaxisval.postion = QPointF(nextPosition.x() - mmaxisval.valsize.length() * 10 / 4, startposition.y());
+			mmaxisval.valsize = _axisval[number]; /*QString("%1").arg(startval + number*interval)*/;
+			if (number>0 &&number<maxnumber)
+			{
+				mmaxisval.postion = QPointF(nextPosition.x() - mmaxisval.valsize.length() * 10 / 4, startposition.y());
+			}
+			else if (0==number)
+			{
+				mmaxisval.postion = QPointF(nextPosition.x(), startposition.y());
+			}
+			else
+			{
+				mmaxisval.postion = QPointF(nextPosition.x() - mmaxisval.valsize.length() * 10 / 2, startposition.y());
+			}
 			m_axisval.push_back(mmaxisval);
 		};
 		/************************************************************************/
 
 		for (auto i = 0; i <= Axisnumber; i++)
-			func(i);
+			func(i,Axisnumber);
+		//第一刻度和最后一个刻度需要移动位置
 	}
 		break;
 	}
@@ -375,20 +419,20 @@ void Axis::AxisResize(bool ada, QSize _size)
 		case AxisRight:
 		{
 			//            this->resize(Axisunitfontsize + 50, CanvasSize->height());
-			AxisRect.setLeft(0);
-			AxisRect.setRight(this->size().width());
-			AxisRect.setTop(10);
-			AxisRect.setBottom(this->size().height() - 10);
+			//AxisRect.setLeft(0);
+			//AxisRect.setRight(this->size().width());
+			//AxisRect.setTop(10);
+			//AxisRect.setBottom(this->size().height() - 10);
 		}
 			break;
 		case AxisTop:
 		case AxisBottom:
 		{
 			//this->resize(CanvasSize->width(), Axisunitfontsize + 50);
-			AxisRect.setLeft(10);
-			AxisRect.setRight(this->size().width() - 10);
-			AxisRect.setTop(0);
-			AxisRect.setBottom(this->size().height());
+			//AxisRect.setLeft(10);
+			//AxisRect.setRight(this->size().width() - 10);
+			//AxisRect.setTop(0);
+			//AxisRect.setBottom(this->size().height());
 		}
 			break;
 		}
@@ -397,10 +441,10 @@ void Axis::AxisResize(bool ada, QSize _size)
 	else
 		this->resize(_size);
 
-	//	AxisRect.setLeft(0);
-	//	AxisRect.setTop(0);
-	//	AxisRect.setRight(this->size().width());
-	//	AxisRect.setBottom(this->size().height());
+		AxisRect.setLeft(0);
+		AxisRect.setTop(0);
+		AxisRect.setRight(this->size().width());
+		AxisRect.setBottom(this->size().height());
 
 	//	AxisRect.setTopLeft(QPointF(0,0));
 	//	AxisRect.setBottomRight(QPointF(this->size().width(),this->size().height()));
@@ -424,19 +468,66 @@ void Axis::SetCanvas(QWidget* mCanvas)
 {
 	CanvasWidget = mCanvas;
 }
-QString Axis::GetScientific_notation(qreal _value, unsigned int significant_digit)
+/**
+* @brief Axis::GetScientific_notation 获取数值-科学计数法
+* @return QVector<QString> 
+*/
+QVector<QString> Axis::GetScientific_notation()
 {
-	QString value_str;
-	//首先获取浮点数的整数部分
-	int value_i = _value;
-	//判断整数部分是否大于零
-	qreal value_dec = _value - (qreal)value_i;
-	int index = 0;
-	if (value_i>0)
+	QVector<QString> valstr_list;
+	//获取数值区间
+	qreal max = axisvalrange.max;
+	qreal min = axisvalrange.min;
+	//计算每个大刻度之间的间值
+	qreal interval = (max - min) / (qreal)Axisnumber;
+	QVector<qreal> rang_f;
+	if (interval>ZERO_F)//间值大于0
 	{
-		//value_str = QString("%1+%2*E-%3").arg(value_i).arg();
+		qreal lastval=min;
+		qreal nextval;
+		int index = 0;
+		qreal temp_interval = interval;
+		int _interval_i=interval;
+		//获取整数部分
+		while (_interval_i<=0)
+		{
+			_interval_i = int(temp_interval*=10);
+			index++;
+		}
+		//获取至少要保留的位数index
+		if (index<=3)
+		{
+			//直接装填
+			QString _str;
+			_str = QString::number(min, 'f', index);
+			valstr_list.push_back(_str);
+			for (auto i = 1; i < Axisnumber;i++)
+			{
+				_str = QString::number((min + interval*i), 'f', index);
+				valstr_list.push_back(_str);
+			}
+			_str = QString::number(max,'f',index);
+			valstr_list.push_back(_str);
+		}
+		else
+		{
+			//当位数大于三位时
+			//QString("%1").arg(d.x(), 0, 'E', 2)
+			//获取间值
+			QString _str;
+			_str = QString("%1").arg(min, 0, 'E', 2);
+			valstr_list.push_back(_str);
+			for (auto i = 1; i < Axisnumber;i++)
+			{
+				qreal nexf = min + interval*i;
+				_str = QString("%1").arg(nexf,0,'E',2);
+				valstr_list.push_back(_str);
+			}
+			_str = QString("%1").arg(max, 0, 'E', 2);
+			valstr_list.push_back(_str);
+		}
 	}
-	return value_str;
+	return valstr_list;
 }
 
 void Axis::resizeEvent(QResizeEvent* event)
