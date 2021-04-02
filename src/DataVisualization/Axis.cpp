@@ -80,6 +80,7 @@ void Axis::_update()
 {
 	//是否需要调整大小
 	lines = Getlines(mAxisstyle, AxisRect);
+
 	getAxisVal(mAxisstyle, AxisRect);
 	GetAxisUnit(mAxisstyle, AxisRect);
 	update();
@@ -483,8 +484,6 @@ QVector<QString> Axis::GetScientific_notation()
 	QVector<qreal> rang_f;
 	if (interval>ZERO_F)//间值大于0
 	{
-		qreal lastval=min;
-		qreal nextval;
 		int index = 0;
 		qreal temp_interval = interval;
 		int _interval_i=interval;
@@ -512,18 +511,26 @@ QVector<QString> Axis::GetScientific_notation()
 		else
 		{
 			//当位数大于三位时
-			//QString("%1").arg(d.x(), 0, 'E', 2)
-			//获取间值
+			int min_i = (int)min;
+			qreal min_f = min;
+			int minindex = 0;
+			while (min_i==0)
+			{
+				min_i = int(min_f *= 10);
+				minindex++;
+			}
+
 			QString _str;
-			_str = QString("%1").arg(min, 0, 'E', 2);
+			//获取最小值的有效位
+			_str = QString("%1").arg(min, 0, 'E', index-minindex);
 			valstr_list.push_back(_str);
 			for (auto i = 1; i < Axisnumber;i++)
 			{
 				qreal nexf = min + interval*i;
-				_str = QString("%1").arg(nexf,0,'E',2);
+				_str = QString("%1").arg(nexf,0,'E',index-minindex);
 				valstr_list.push_back(_str);
 			}
-			_str = QString("%1").arg(max, 0, 'E', 2);
+			_str = QString("%1").arg(max, 0, 'E', index-minindex);
 			valstr_list.push_back(_str);
 		}
 	}
