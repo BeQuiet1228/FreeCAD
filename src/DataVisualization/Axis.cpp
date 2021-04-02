@@ -225,14 +225,14 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 			mmaxisval.valsize = _axisval[number]; /*QString("%1").arg(startval + number*interval)*/;
 			if (number>0&&number<maxnumber)
 			{
-				mmaxisval.postion = QPointF(startposition.x() - mmaxisval.valsize.length() * 5 - 5, startposition.y() - number*Axisinterval);
+				mmaxisval.postion = QPointF(startposition.x() - mmaxisval.valsize.length() * 10, startposition.y() - number*Axisinterval);
 			}
 			else if (0==number)
 			{
-				mmaxisval.postion = QPointF(startposition.x() - mmaxisval.valsize.length() * 5 - 5, startposition.y() - number*Axisinterval - 5);
+				mmaxisval.postion = QPointF(startposition.x() - mmaxisval.valsize.length() * 10, startposition.y() - number*Axisinterval - 5);
 			}
 			else{
-				mmaxisval.postion = QPointF(startposition.x() - mmaxisval.valsize.length() * 5 - 5, startposition.y() - number*Axisinterval+5);
+				mmaxisval.postion = QPointF(startposition.x() - mmaxisval.valsize.length() * 10, startposition.y() - number*Axisinterval+5);
 			}
 			m_axisval.push_back(mmaxisval);
 		};
@@ -295,7 +295,7 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 			}
 			else
 			{
-				mmaxisval.postion = QPointF(nextPosition.x() - mmaxisval.valsize.length()*10/2,startposition.y());
+				mmaxisval.postion = QPointF(nextPosition.x() - mmaxisval.valsize.length() * 7 - mmaxisval.valsize.length(), startposition.y());
 			}
 			m_axisval.push_back(mmaxisval);
 		};
@@ -329,7 +329,7 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 			}
 			else
 			{
-				mmaxisval.postion = QPointF(nextPosition.x() - mmaxisval.valsize.length() * 10 / 2, startposition.y());
+				mmaxisval.postion = QPointF(nextPosition.x() - mmaxisval.valsize.length() * 7 - mmaxisval.valsize.length(), startposition.y());
 			}
 			m_axisval.push_back(mmaxisval);
 		};
@@ -482,7 +482,8 @@ QVector<QString> Axis::GetScientific_notation()
 	//计算每个大刻度之间的间值
 	qreal interval = (max - min) / (qreal)Axisnumber;
 	QVector<qreal> rang_f;
-	if (interval>ZERO_F)//间值大于0
+#pragma region 计算方式
+	if (/*interval>ZERO_F*/true)//间值大于0
 	{
 		int index = 0;
 		qreal temp_interval = interval;
@@ -519,7 +520,6 @@ QVector<QString> Axis::GetScientific_notation()
 				min_i = int(min_f *= 10);
 				minindex++;
 			}
-
 			QString _str;
 			//获取最小值的有效位
 			_str = QString("%1").arg(min, 0, 'E', index-minindex);
@@ -534,6 +534,7 @@ QVector<QString> Axis::GetScientific_notation()
 			valstr_list.push_back(_str);
 		}
 	}
+#pragma endregion
 	return valstr_list;
 }
 
