@@ -39,6 +39,11 @@ SET(INTERSPACE_SRC InterspaceData.h
 	InterspaceRender.h
 	InterspaceRender.cpp
 )
+SET(PHASOR_SRC phasorData.h
+	phasorData.cpp
+	phasorRenderer.h
+	phasorRenderer.cpp
+)
 SET(SRC main.cpp
 	Data.h
 	Data.cpp
@@ -73,6 +78,7 @@ SET(DataVisualization_src
 	${TIME_SRC}
 	${STRUCT_SRC}
 	${INTERSPACE_SRC}
+	${PHASOR_SRC}
 )
 add_definitions(-DMY_DEBUG)
 #设置编译生成文件类型
@@ -87,6 +93,7 @@ SOURCE_GROUP("time" FILES ${TIME_SRC})
 SOURCE_GROUP("particle" FILES ${PARTICLE_SRC})
 SOURCE_GROUP("struct" FILES ${STRUCT_SRC})
 SOURCE_GROUP("interspace" FILES ${INTERSPACE_SRC})
+SOURCE_GROUP("phasor" FILES ${PHASOR_SRC})
 
 #增加包含目录
 include_directories(
