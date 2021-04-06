@@ -61,6 +61,8 @@ public:
 	QVector<QRectF> getAllCutRoom();
 	QVector<QPointF> Getp1Point();
 	QVector<QPointF> Getp2Point();
+	float GetVecXScale();
+	float GetVecYScale();
 private:
 	//xy的范围
 	Rang xRang, yRang;
@@ -72,5 +74,8 @@ private:
 	QVector<QRectF> mPiflist_rect;
 	QVector<QPointF> p1;//箭头起点
 	QVector <QPointF> p2;//箭头终点
+	//获取x,y的缩放
+	float m_xScale;
+	float m_yScale;
 };
 #endif

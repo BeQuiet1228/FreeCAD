@@ -35,5 +35,6 @@ private:
 		_rectf.setTop(transitionY(_rectf.top(), yScale, yr));
 		_rectf.setBottom(transitionY(_rectf.bottom(), yScale, yr));
 	}
+	void transionVector(QPointF& endpoint, QPointF startpoint, const float& xScale, const float& yScale);
 };
 #endif

@@ -41,11 +41,16 @@ bool phasorRenderer::drawImage(){
 	//绘制向量
 	QVector<QPointF> p1 = d->Getp1Point();
 	QVector<QPointF> p2 = d->Getp2Point();
+	//向量可能太小，需要缩放
 	for (auto i = 0; i < p1.size();i++)
 	{
+
 		qreal _distance = sqrt((p2[i].x() - p1[i].x())*(p2[i].x()-p1[i].x())+(p2[i].y()-p1[i].y())*(p2[i].y()-p2[i].y()));
 		if (_distance>0)
-		{
+		{	
+			//transitionpointF(p1[i],d->GetVecXScale(),d->GetVecYScale(),xr,yr);
+			//transitionpointF(p2[i], d->GetVecXScale(), d->GetVecYScale(), xr, yr);
+			transionVector(p2[i], p1[i], d->GetVecXScale(), d->GetVecYScale());
 			transitionpointF(p1[i], xScale, yScale, xr, yr);
 			transitionpointF(p2[i], xScale, yScale, xr, yr);
 			painter.drawLine(p1[i], p2[i]);
@@ -154,4 +159,26 @@ QPointF phasorRenderer::GetarrowBottom(QPointF endpoint, QPointF startpoint){
 	QPointF arrowP2 = line.p2() - QPointF(sin(angle+M_PI_-M_PI_/3)*arrowSize,
 		cos(angle+M_PI_-M_PI_/3)*arrowSize);
 	return arrowP2;
+}
+/**
+* @brief phasorRenderer::transionVector 向量坐标转换
+* @param QPointF endpoint
+* @param QPointF startpoint
+* @param const float& xScale
+* @param const float& yScale
+* @retrun void
+*/
+#include <QDebug>
+void phasorRenderer::transionVector(QPointF& endpoint, QPointF startpoint, const float& xScale, const float& yScale)
+{
+	qreal x_distance = (endpoint.x() - startpoint.x())*xScale;
+	qreal y_distance = (endpoint.y() - startpoint.y())*yScale;
+	endpoint.setX( x_distance+ startpoint.x());
+	endpoint.setY( y_distance+ startpoint.y());
+//#define _DEBUG_
+#ifdef _DEBUG_
+	qDebug() << "x_distance:" << x_distance << "y_distance:" <<
+		y_distance << "endpoint.x:" << endpoint.x() << "endpoint.y:" << endpoint.y();
+#undef _DEBUG_
+#endif
 }

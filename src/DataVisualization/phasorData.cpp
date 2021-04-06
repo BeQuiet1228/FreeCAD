@@ -171,15 +171,45 @@ bool phasorData::initVectorData()
 	for (auto i = 0; i < mPiflist_rect.size();i++)
 		p1.push_back(QPointF(mPiflist_rect[i].left(), mPiflist_rect[i].bottom()));
 	//获取终点p2(真实的点位)
+	//获取缩放比例
+	qreal Srect = mPiflist_rect[0].width()*mPiflist_rect[0].height();
+	int index_rectmin = 0;
+	qreal SVector=0;
+	qreal Widmin=mPiflist_rect[0].width(), HeightMin=mPiflist_rect[0].height(), Xmax=0, yMax=0;
+	int index_vector = 0;
 	for (auto i = 0; i < mPiflist_rect.size(); i++)
 	{
 		qreal x_scal = dataC[2 * i];
 		qreal y_scal = dataC[2 * i + 1];
+		//测试
 		qreal p2x = p1[i].x() + (mPiflist_rect[i].width()*x_scal);
 		qreal p2y = p1[i].y() + (mPiflist_rect[i].height()*y_scal);
 		p2.push_back(QPointF(p2x, p2y));
+#ifdef _TEST1_
+		if (Srect>mPiflist_rect[i].width()*mPiflist_rect[i].height())
+		{
+			Srect = mPiflist_rect[i].width()*mPiflist_rect[i].height();
+			index_rectmin = i;
+		}
+		if (SVector<x_scal*y_scal)
+		{
+			SVector = x_scal*y_scal;
+			index_vector = i;
+		}
+#else
+		(Xmax < x_scal) ? (Xmax=x_scal) : (Xmax);
+		(yMax < y_scal) ? (yMax=y_scal) : (yMax);
+		(Widmin > mPiflist_rect[i].width()) ? (Widmin=mPiflist_rect[i].width()) : (Widmin);
+		(HeightMin>mPiflist_rect[i].height())?(HeightMin=mPiflist_rect[i].height()):(HeightMin);
+#endif
 	}
-	//
+#ifdef _TEST1_
+	m_xScale = abs(mPiflist_rect[index_rectmin].width() / dataC[2 * index_vector]);
+	m_yScale = abs(mPiflist_rect[index_rectmin].height() / dataC[2 * index_vector + 1]);
+#else 
+	m_xScale = abs(Widmin / Xmax);
+	m_yScale = abs(HeightMin / yMax);
+#endif
 	return true;
 }
 /**
@@ -195,4 +225,18 @@ QVector<QPointF> phasorData::Getp1Point(){
 */
 QVector<QPointF> phasorData::Getp2Point(){
 	return p2;
+}
+/**
+* @brief phasorData::GetVecXScale 获取横向的缩放
+* @return float
+*/
+float phasorData::GetVecXScale(){
+	return m_xScale;
+}
+/**
+* @brief phasorData::GetVecYScale 获取纵向的缩放
+* @return float
+*/
+float phasorData::GetVecYScale(){
+	return m_yScale;
 }
