@@ -15,21 +15,30 @@
 #include "structureData.h"
 #include "InterSpaceData.h"
 #include "InterspaceRender.h"
+#include "phasorData.h"
+#include "phasorRenderer.h"
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 	CanvasItem::registerMetaTye();
 	//std::string path = "E:/lingshiwenjianjia/MILO_C/MILO_C.h5";
-	std::string path = "F:/wdtproject/PICGUI/TEMP(1).H5";
+	std::string path = "F:/wdtproject/PICGUI/MILO_C_2.h5";
 	Hdf5IO io(path);
 	io.initHdf5Data();
 	auto data = io.hdf5DataList.begin();
-	//data += 9;
+	data += 753;
 	Hdf5Data d = *data;
-	std::shared_ptr<structureData> _structData(new structureData(d));
+	
+	// ∏¡øÕº≤‚ ‘
+	std::shared_ptr<phasorData> _phasordata(new phasorData(d));
+	phasorRenderer* _phasorRenderer = new phasorRenderer(_phasordata);
+	_phasorRenderer->dataInit();
+	_phasorRenderer->setDefaultRang();
+
+	/*std::shared_ptr<structureData> _structData(new structureData(d));
 	StructureRenderer *_structRenderer = new StructureRenderer(_structData);
 	_structRenderer->dataInit();
-	_structRenderer->SetCoordinateDir(Coordinate_Dir::Z_R_coordinater);
+	_structRenderer->SetCoordinateDir(Coordinate_Dir::cylindrical_coordinate);*/
 	
 	//std::shared_ptr<InterspaceData> particleData(new InterspaceData(d));
 	//InterspaceRender *timeRenderer = new InterspaceRender(particleData);
@@ -37,7 +46,7 @@ int main(int argc, char *argv[])
 	//timeRenderer->setDefaultRang();
 
 	Plot p;
-	std::shared_ptr<Renderer> rd(_structRenderer);
+	std::shared_ptr<Renderer> rd(_phasorRenderer);
 	p.setMainRenderer(rd);
 	p.setFixedSize(600*3, 400*3);
 	p.show();
