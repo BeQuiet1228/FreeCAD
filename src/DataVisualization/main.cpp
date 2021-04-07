@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
 	for (double level = contour->getVlaueRange().max / 10; level < contour->getVlaueRange().max; level += contour->getVlaueRange().max / 10)
 		contourLevels += level;
 	spec->setContourLevels(contourLevels);
+	//spec->setDisplayMode(QwtPlotSpectrogram::ContourMode,true);
 
 	QwtPlot plot;
 	spec->attach(&plot);
