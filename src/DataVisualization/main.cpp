@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 	Hdf5IO io(path);
 	io.initHdf5Data();
 	auto data = io.hdf5DataList.begin();
-	data += 753;
+	data += 754;
 	Hdf5Data d = *data;
 	
 	//Ê¸Á¿Í¼²âÊÔ
@@ -34,21 +34,10 @@ int main(int argc, char *argv[])
 	phasorRenderer* _phasorRenderer = new phasorRenderer(_phasordata);
 	_phasorRenderer->dataInit();
 	_phasorRenderer->setDefaultRang();
-
-	/*std::shared_ptr<structureData> _structData(new structureData(d));
-	StructureRenderer *_structRenderer = new StructureRenderer(_structData);
-	_structRenderer->dataInit();
-	_structRenderer->SetCoordinateDir(Coordinate_Dir::cylindrical_coordinate);*/
-	
-	//std::shared_ptr<InterspaceData> particleData(new InterspaceData(d));
-	//InterspaceRender *timeRenderer = new InterspaceRender(particleData);
-	//timeRenderer->dataInit();
-	//timeRenderer->setDefaultRang();
-
 	Plot p;
 	std::shared_ptr<Renderer> rd(_phasorRenderer);
 	p.setMainRenderer(rd);
-	p.setFixedSize(600*3, 400*3);
+	p.setFixedSize(600*3, 400*2);
 	p.show();
 	return a.exec();
 }

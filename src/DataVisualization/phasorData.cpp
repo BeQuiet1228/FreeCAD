@@ -52,13 +52,13 @@ bool phasorData::initXYRang(){
 	//因为datasetEmA和datasetEmB的数据都是连续的，所以直接取首尾端即可
 	//x
 	auto itx = datasetEmA->begin();
-	xr.min = *itx;
+	xr.min = 0;
 	itx = datasetEmA->end() - 1;
 	xr.max = *itx;
 	setXRang(xr);
 	//y
 	auto ity = datasetEmB->begin();
-	yr.min = *ity;
+	yr.min = 0;
 	ity = datasetEmB->end() - 1;
 	yr.max = *ity;
 	setYRang(yr);
@@ -94,9 +94,13 @@ bool phasorData::initData()
 			QRectF _rectf;
 			_rectf.setLeft(valuesA_list[valueA]);
 			_rectf.setRight(valuesA_list[valueA+1]);
-			_rectf.setTop(valueB_list[valueB]);
-			_rectf.setBottom(valueB_list[valueB+1]);
+			_rectf.setTop(valueB_list[valueB+1]);
+			_rectf.setBottom(valueB_list[valueB]);
 			mPiflist_rect.push_back(_rectf);
+//#define _DEBUG_
+#ifdef _DEBUG_
+			printf("left=%f,right=%f,top=%f.bottom=%f\n",_rectf.left(),_rectf.right(),_rectf.top(),_rectf.bottom());
+#endif
 		}
 	}
 #pragma endregion
@@ -116,6 +120,7 @@ std::vector<qreal> phasorData::getaxis_x()
 	//获取EMA的全部数据
 	auto iter = ListValues->begin();
 	Data::ValuesPtr datasetEmA = *iter;
+	axis_xlist.push_back(0);
 	for (auto iter_A = datasetEmA->begin(); iter_A != datasetEmA->end();iter_A++)
 	{
 		axis_xlist.push_back(*iter_A);
@@ -135,6 +140,7 @@ std::vector<qreal> phasorData::getaxis_y()
 		return axis_ylist;
 	auto iter = ListValues->begin(); iter++;
 	Data::ValuesPtr datasetEmB = *iter;
+	axis_ylist.push_back(0);
 	for (auto iterb = datasetEmB->begin(); iterb != datasetEmB->end();iterb++)
 	{
 		axis_ylist.push_back(*iterb);
@@ -177,41 +183,37 @@ bool phasorData::initVectorData()
 	qreal SVector=0;
 	qreal Widmin=mPiflist_rect[0].width(), HeightMin=mPiflist_rect[0].height(), Xmax=0, yMax=0;
 	int index_vector = 0;
-	for (auto i = 0; i < mPiflist_rect.size(); i++)
+	//获取x和y的缩放
+	for (auto i = 0; i < mPiflist_rect.size();i++)
 	{
-		qreal x_scal = dataC[2 * i];
-		qreal y_scal = dataC[2 * i + 1];
-		//测试
-		qreal p2x = p1[i].x() + (mPiflist_rect[i].width()*x_scal);
-		qreal p2y = p1[i].y() + (mPiflist_rect[i].height()*y_scal);
-		p2.push_back(QPointF(p2x, p2y));
-#define _TEST1_
-#ifdef _TEST1_
 		if (Srect>mPiflist_rect[i].width()*mPiflist_rect[i].height())
 		{
 			Srect = mPiflist_rect[i].width()*mPiflist_rect[i].height();
 			index_rectmin = i;
 		}
-		if (SVector<x_scal*y_scal)
+		if (SVector<dataC[2*i]*dataC[2*i+1])
 		{
-			SVector = x_scal*y_scal;
+			SVector = dataC[2 * i] * dataC[2 * i + 1];
 			index_vector = i;
 		}
-#else
-		(Xmax < x_scal) ? (Xmax=x_scal) : (Xmax);
-		(yMax < y_scal) ? (yMax=y_scal) : (yMax);
-		(Widmin > mPiflist_rect[i].width()) ? (Widmin=mPiflist_rect[i].width()) : (Widmin);
-		(HeightMin>mPiflist_rect[i].height())?(HeightMin=mPiflist_rect[i].height()):(HeightMin);
-#endif
 	}
-#ifdef _TEST1_
-	m_xScale = abs(mPiflist_rect[index_rectmin].width() / dataC[2 * index_vector]);
-	m_yScale = abs(mPiflist_rect[index_rectmin].height() / dataC[2 * index_vector + 1]);
-#else 
-	m_xScale = abs(Widmin / Xmax);
-	m_yScale = abs(HeightMin / yMax);
+	//此处获取到缩放的比例
+	m_xScale = abs(mPiflist_rect[index_rectmin].width()/dataC[2*index_vector]);
+	m_yScale = abs(mPiflist_rect[index_rectmin].height()/dataC[2*index_vector+1]);
+	for (auto i = 0; i < mPiflist_rect.size(); i++)
+	{
+		qreal x_scal = dataC[2 * i];
+		qreal y_scal = dataC[2 * i + 1];
+		qreal p2x = p1[i].x() + (mPiflist_rect[i].width()*x_scal);
+		qreal p2y = p1[i].y() + (mPiflist_rect[i].height()*y_scal);
+		//qreal p2x = p1[i].x() + x_scal*m_xScale;
+		//qreal p2y = p1[i].y() + y_scal*m_yScale;
+//#define _DEBUG_
+#ifdef _DEBUG_
+		printf("x_scal=%f,y_scal=%f,\tindex=%d\n,",x_scal,y_scal,2*i);
 #endif
-#undef _TEST1_
+		p2.push_back(QPointF(p2x, p2y));
+	}
 	//这里删除长度为0的线段
 	for (auto i = p1.size() - 1; i >= 0;i--)
 	{

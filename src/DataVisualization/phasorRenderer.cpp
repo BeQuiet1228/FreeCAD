@@ -2,8 +2,9 @@
 #include <qpen.h>
 #include <QPainter>
 #define  M_PI_ (3.141592653589793)
-#define  HORI_GRID (10.0f)
-#define  VERT_GRID (10.0f)
+//按像素来
+#define  HORI_GRID (50.0f)
+#define  VERT_GRID (50.0f)
 phasorRenderer::phasorRenderer(std::shared_ptr<phasorData> data):Renderer(std::dynamic_pointer_cast<Data>(data))
 {
 
@@ -148,10 +149,10 @@ bool phasorRenderer::drawImage_Scence(){
 	QPainter painter(&img);
 	painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setPen(pen);
-	//获取屏幕网格10*10
+	//获取屏幕按像素来
 	QVector<QRectF> CutRect = GetRectF_Scene(xr, yr);
-	for (auto iter = CutRect.begin(); iter != CutRect.end(); iter++)
-		transitionRectF(*iter, xScale, yScale, xr, yr);
+	/*for (auto iter = CutRect.begin(); iter != CutRect.end(); iter++)
+		transitionRectF(*iter, xScale, yScale, xr, yr);*/
 	painter.drawRects(CutRect);
 	//寻找向量
 	QPen pen2(Qt::red);
@@ -166,14 +167,8 @@ bool phasorRenderer::drawImage_Scence(){
 	//向量可能太小，需要缩放
 	for (auto i = 0; i < p1.size(); i++)
 	{
-			//transitionpointF(p1[i],d->GetVecXScale(),d->GetVecYScale(),xr,yr);
-			//transitionpointF(p2[i], d->GetVecXScale(), d->GetVecYScale(), xr, yr);
-			transionVector(p2[i], p1[i], d->GetVecXScale(), d->GetVecYScale());
-			transitionpointF(p1[i], xScale, yScale, xr, yr);
-			transitionpointF(p2[i], xScale, yScale, xr, yr);
-			/*painter.drawLine(p1[i], p2[i]);
-			painter.drawLine(p2[i], GetarrowTop(p2[i], p1[i]));
-			painter.drawLine(p2[i], GetarrowBottom(p2[i], p1[i]));*/
+		transitionpointF(p1[i], xScale, yScale, xr, yr);
+		transitionpointF(p2[i], xScale, yScale, xr, yr);
 	}
 	QVector<QLineF> linelist = findVecLines(CutRect, p1, p2);
 	painter.drawLines(linelist);
@@ -183,7 +178,7 @@ bool phasorRenderer::drawImage_Scence(){
 }
 QVector<QRectF> phasorRenderer::GetRectF_Scene(const Data::Rang xr, const Data::Rang yr){
 	QVector<QRectF> scene_Rect;
-	qreal x_distance = (xr.max - xr.min) / HORI_GRID;
+	/*qreal x_distance = (xr.max - xr.min) / HORI_GRID;
 	qreal y_distance = (yr.max - yr.min) / VERT_GRID;
 	for (auto y = 0; y < VERT_GRID;y++)
 	{
@@ -195,6 +190,23 @@ QVector<QRectF> phasorRenderer::GetRectF_Scene(const Data::Rang xr, const Data::
 			_cutRect.setTop(yr.min+y*y_distance);
 			_cutRect.setBottom(_cutRect.top()+y_distance);
 			scene_Rect.push_back(_cutRect);
+		}
+	}*/
+
+	float width=getSize().width();
+	float height = getSize().height();
+	int ver_num = width / VERT_GRID ;
+	int hori_num = height / HORI_GRID;
+	for (auto y = 0; y <= hori_num;y++)
+	{
+		for (auto x = 0; x <= ver_num;x++)
+		{
+			QRectF _rectf;
+			_rectf.setLeft(x*VERT_GRID);
+			_rectf.setRight((x + 1)*VERT_GRID);
+			_rectf.setBottom(y*HORI_GRID);
+			_rectf.setTop((y + 1)*HORI_GRID);
+			scene_Rect.push_back(_rectf);
 		}
 	}
 	return scene_Rect;
@@ -218,10 +230,10 @@ bool phasorRenderer::drawImage_Coord(){
 	painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setPen(pen);
 	//开始绘制图表
-	/*QVector<QRectF> CutRoomlist = d->getAllCutRoom();
+	QVector<QRectF> CutRoomlist = d->getAllCutRoom();
 	for (auto iter = CutRoomlist.begin(); iter != CutRoomlist.end(); iter++)
 	transitionRectF(*iter, xScale, yScale, xr, yr);
-	painter.drawRects(CutRoomlist);*/
+	painter.drawRects(CutRoomlist);
 	QPen pen2(Qt::red);
 	pen2.setWidth(2);
 	painter.setPen(pen2);
@@ -231,7 +243,7 @@ bool phasorRenderer::drawImage_Coord(){
 	//向量可能太小，需要缩放
 	for (auto i = 0; i < p1.size(); i++)
 	{
-		transionVector(p2[i], p1[i], d->GetVecXScale(), d->GetVecYScale());
+		//transionVector(p2[i], p1[i], d->GetVecXScale(), d->GetVecYScale());
 		transitionpointF(p1[i], xScale, yScale, xr, yr);
 		transitionpointF(p2[i], xScale, yScale, xr, yr);
 		painter.drawLine(p1[i], p2[i]);
@@ -268,9 +280,22 @@ QVector<QLineF> phasorRenderer::findVecLines(QVector<QRectF> scene_rect, QVector
 		if (-1!=index)
 		{
 			//判断是否需要缩放
-			lines.push_back(QLineF(p1[index], p2[index]));
-			lines.push_back(QLineF(p2[index], GetarrowTop(p2[index], p1[index])));
-			lines.push_back(QLineF(p2[index], GetarrowBottom(p2[index], p1[index])));
+			if (iter->width() <= abs(p2[index].x() - p1[index].x()) || iter->height() <= abs(p2[index].y() - p1[index].y()))
+			{
+				lines.push_back(QLineF(p1[index], p2[index]));
+				lines.push_back(QLineF(p2[index], GetarrowTop(p2[index], p1[index])));
+				lines.push_back(QLineF(p2[index], GetarrowBottom(p2[index], p1[index])));
+			}
+			//需要缩放
+			else
+			{
+				float X_Scale = (p2[index].x() - p1[index].x() == 0.0) ? (iter->width()) : abs(iter->width() / (p2[index].x()-p1[index].x()));
+				float Y_Scale = (p2[index].y() - p1[index].y() == 0.0) ? (iter->height()) : abs(iter->height() / (p2[index].y() - p1[index].y()));
+				transionVector(p2[index], p1[index],X_Scale,Y_Scale);
+				lines.push_back(QLineF(p1[index], p2[index]));
+				lines.push_back(QLineF(p2[index], GetarrowTop(p2[index], p1[index])));
+				lines.push_back(QLineF(p2[index], GetarrowBottom(p2[index], p1[index])));
+			}
 		}
 	}
 	return lines;
