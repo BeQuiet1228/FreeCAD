@@ -185,6 +185,7 @@ bool phasorData::initVectorData()
 		qreal p2x = p1[i].x() + (mPiflist_rect[i].width()*x_scal);
 		qreal p2y = p1[i].y() + (mPiflist_rect[i].height()*y_scal);
 		p2.push_back(QPointF(p2x, p2y));
+#define _TEST1_
 #ifdef _TEST1_
 		if (Srect>mPiflist_rect[i].width()*mPiflist_rect[i].height())
 		{
@@ -210,6 +211,17 @@ bool phasorData::initVectorData()
 	m_xScale = abs(Widmin / Xmax);
 	m_yScale = abs(HeightMin / yMax);
 #endif
+#undef _TEST1_
+	//这里删除长度为0的线段
+	for (auto i = p1.size() - 1; i >= 0;i--)
+	{
+		bool ok = (p1[i] == p2[i]);
+		if (ok)
+		{
+			p1.erase(p1.begin() + i);
+			p2.erase(p2.begin() + i);
+		}
+	}
 	return true;
 }
 /**
