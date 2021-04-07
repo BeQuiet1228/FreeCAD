@@ -2,8 +2,8 @@
 #include "Data.h"
 #include <vector>
 #include <mutex>
-#include "qwt/qwt_raster_data.h"
-class ContourData :public XYData, public QwtRasterData{
+#include "qwt/qwt_matrix_raster_data.h"
+class ContourData :public XYData, public QwtMatrixRasterData{
 public:
 	struct Grid
 	{
@@ -19,14 +19,6 @@ protected:
 	bool initXYRang() override;
 public:
 	bool loadPoint() override;
-
-	//获取值的范围
-	virtual QwtDoubleInterval range() const override{
-		return QwtDoubleInterval(valueRang.min, valueRang.max);
-	}
-	//获取网格中的值
-	virtual double value(double x, double y) const override;
-	virtual QwtRasterData* copy() const override;
 
 public:
 	void setValueRang(const Rang& r){

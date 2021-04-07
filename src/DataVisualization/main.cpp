@@ -17,6 +17,19 @@
 #include "ContourData.h"
 #include <qwt/qwt_plot_spectrogram.h>
 #include <qwt/qwt_color_map.h>
+#include "qwt/qwt_scale_widget.h"
+class ColorMap : public QwtLinearColorMap
+{
+public:
+	ColorMap() :
+		QwtLinearColorMap(Qt::darkBlue, Qt::darkRed)
+	{
+		addColorStop(0.2, Qt::blue);
+		addColorStop(0.4, Qt::cyan);
+		addColorStop(0.6, Qt::yellow);
+		addColorStop(0.8, Qt::red);
+	}
+};
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
@@ -35,24 +48,31 @@ int main(int argc, char *argv[])
 	contour->loadPoint();
 
 	QwtPlotSpectrogram *spec = new QwtPlotSpectrogram;
-	spec->setData(*contour);
+	spec->setData(contour);
+	contour->setResampleMode(QwtMatrixRasterData::BilinearInterpolation);
 
-	QwtLinearColorMap colorMap(Qt::darkCyan, Qt::red);
-	colorMap.addColorStop(0.1, Qt::cyan);
-	colorMap.addColorStop(0.6, Qt::green);
-	colorMap.addColorStop(0.95, Qt::yellow);
-
-	spec->setColorMap(colorMap);
-
-	QwtValueList contourLevels;
-	for (double level = contour->getVlaueRange().max / 10; level < contour->getVlaueRange().max; level += contour->getVlaueRange().max / 10)
-		contourLevels += level;
-	spec->setContourLevels(contourLevels);
-	//spec->setDisplayMode(QwtPlotSpectrogram::ContourMode,true);
+	spec->setRenderThreadCount(0);
+	spec->setColorMap(new ColorMap);
+	spec->setDisplayMode(QwtPlotSpectrogram::ContourMode,true);
 
 	QwtPlot plot;
 	spec->attach(&plot);
+
+
+	const QwtInterval zInterval = contour->interval(Qt::ZAxis);
+	// A color bar on the right axis
+	QwtScaleWidget *rightAxis = plot.axisWidget(QwtPlot::yRight);
+	rightAxis->setColorBarEnabled(true);
+	rightAxis->setColorBarWidth(40);
+	rightAxis->setColorMap(zInterval, new ColorMap());
+
+	plot.setAxisScale(QwtPlot::yRight, zInterval.minValue(), zInterval.maxValue());
+	plot.enableAxis(QwtPlot::yRight);
+
 	plot.show();
+
+
+	
 
 
 /*	std::shared_ptr<InterspaceData> particleData(new InterspaceData(d));
