@@ -26,6 +26,8 @@ public:
 	}
 	//获取网格中的值
 	virtual double value(double x, double y) const override;
+	virtual QwtRasterData* copy() const override;
+
 public:
 	void setValueRang(const Rang& r){
 		std::lock_guard<std::mutex> am(ValueRangMutex);
@@ -36,8 +38,13 @@ public:
 		return valueRang;
 	}
 private:
+	//获取顶点
+	std::vector<Grid> getVertex(const double& x,const double& y) const;
+private:
 	std::vector<Grid> grids;
 
 	Rang valueRang;
 	std::mutex ValueRangMutex;
+	//网格大小
+	unsigned int width, height;
 };

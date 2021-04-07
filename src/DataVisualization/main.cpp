@@ -14,6 +14,9 @@
 #include "InterSpaceData.h"
 #include "InterspaceRender.h"
 #include <qwt/qwt_plot.h>
+#include "ContourData.h"
+#include <qwt/qwt_plot_spectrogram.h>
+#include <qwt/qwt_color_map.h>
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
@@ -25,12 +28,33 @@ int main(int argc, char *argv[])
 	
 	io.initHdf5Data();
 	auto data = io.hdf5DataList.begin();
-	//data += 9;
+	data +=11;
 	Hdf5Data d = *data;
 
+	ContourData *contour = new ContourData(d);
+	contour->loadPoint();
+
+	QwtPlotSpectrogram *spec = new QwtPlotSpectrogram;
+	spec->setData(*contour);
+
+	QwtLinearColorMap colorMap(Qt::darkCyan, Qt::red);
+	colorMap.addColorStop(0.1, Qt::cyan);
+	colorMap.addColorStop(0.6, Qt::green);
+	colorMap.addColorStop(0.95, Qt::yellow);
+
+	spec->setColorMap(colorMap);
+
+	QwtValueList contourLevels;
+	for (double level = contour->getVlaueRange().max / 10; level < contour->getVlaueRange().max; level += contour->getVlaueRange().max / 10)
+		contourLevels += level;
+	spec->setContourLevels(contourLevels);
+
+	QwtPlot plot;
+	spec->attach(&plot);
+	plot.show();
 
 
-	std::shared_ptr<InterspaceData> particleData(new InterspaceData(d));
+/*	std::shared_ptr<InterspaceData> particleData(new InterspaceData(d));
 
 
 	InterspaceRender *timeRenderer = new InterspaceRender(particleData);
@@ -40,10 +64,9 @@ int main(int argc, char *argv[])
 	std::shared_ptr<Renderer> rd(timeRenderer);
 	p.setMainRenderer(rd);
 	p.setFixedSize(600, 400);
-	p.show();
+	p.show(); */
 
-	QwtPlot plot;
-	plot.show();
+
 
 	////≤‚ ‘µ•œﬂ≥Ã‰÷»æ
 	//std::shared_ptr<Renderer> re(timeRenderer);

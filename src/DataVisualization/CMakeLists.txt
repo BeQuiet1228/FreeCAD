@@ -84,7 +84,7 @@ add_executable(DataVisualization ${DataVisualization_src}) # 生成可执行文�
 set(DEBUG_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(RELEASE_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
-SET_BIN_DIR(DataVisualization FreeCAD)
+SET_BIN_DIR(DataVisualization DataVisualization)
 
 #添加目录分类
 SOURCE_GROUP("src" FILES ${SRC})
