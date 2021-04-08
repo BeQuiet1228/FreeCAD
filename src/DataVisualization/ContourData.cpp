@@ -55,10 +55,6 @@ bool ContourData::loadPoint()
 
 	width = xg->size();
 	height = yg->size();
-	//获取网格数据 并初始化网格范围
-	QVector<double> qv;
-	qv.reserve(width*height);
-
 
 	Rang vr;
 	vr.min = vr.max = *vIter;
@@ -78,13 +74,11 @@ bool ContourData::loadPoint()
 				vr.max = *vIter;
 			else if (*vIter < vr.min)
 				vr.min = *vIter;
-			qv += *vIter;
 			vIter++;
 		}
 	
 	}
 
-	setValueMatrix(qv, width);
 	//初始化数据范围
 	setValueRang(vr);
 	Rang xr, yr;
@@ -101,11 +95,51 @@ bool ContourData::loadPoint()
 
 	setXRang(xr);
 	setYRang(yr);
-
-	setInterval(Qt::XAxis,
-		QwtInterval(xr.min, xr.max, QwtInterval::ExcludeMaximum));
-	setInterval(Qt::YAxis,
-		QwtInterval(yr.min, yr.max, QwtInterval::ExcludeMaximum));
-	setInterval(Qt::ZAxis, QwtInterval(vr.min, vr.max));
 	
+}
+
+/**
+* @brief ContourData::getQwtMatrixRasterData 获取一个rasterData对象
+* @return QwtMatrixRasterData*
+*/
+QwtMatrixRasterData* ContourData::getQwtMatrixRasterData()
+{
+	QVector<double> data;
+	Rang xr = getXRang();
+	Rang yr = getYRang();
+
+
+	float xBlock = xr.length() / width;
+	float yBlock = yr.length() / height;
+
+	auto grid = grids.begin();
+	for (int i = 0; i < grids.size() && grid != grids.end(); )
+	{
+#if 0 //是否处理非均匀网格
+		int w = i % width;
+		int h = i / width;
+		if (grid->x > (w*xBlock + xr.min) && grid->y > (h*yBlock + yr.min))
+		{
+			data.append(grid->value);
+			i++;
+		}else{
+			grid++;
+		}
+#else
+		data.append(grid->value);
+		grid++;
+#endif			
+	}
+	QwtMatrixRasterData *rasterData = new QwtMatrixRasterData;
+	rasterData->setValueMatrix(data, width);
+
+	rasterData->setInterval(Qt::XAxis,
+		QwtInterval(xr.min, xr.max, QwtInterval::ExcludeMaximum));
+	rasterData->setInterval(Qt::YAxis,
+		QwtInterval(yr.min, yr.max, QwtInterval::ExcludeMaximum));
+
+	Rang vr = getVlaueRange();
+	rasterData->setInterval(Qt::ZAxis, QwtInterval(vr.min, vr.max));
+	rasterData->setResampleMode(QwtMatrixRasterData::BilinearInterpolation);
+	return rasterData;
 }

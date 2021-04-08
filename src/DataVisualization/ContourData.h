@@ -3,7 +3,7 @@
 #include <vector>
 #include <mutex>
 #include "qwt/qwt_matrix_raster_data.h"
-class ContourData :public XYData, public QwtMatrixRasterData{
+class ContourData :public XYData{
 public:
 	struct Grid
 	{
@@ -19,7 +19,8 @@ protected:
 	bool initXYRang() override;
 public:
 	bool loadPoint() override;
-
+	//获取一个rasterData对象
+	QwtMatrixRasterData* getQwtMatrixRasterData();
 public:
 	void setValueRang(const Rang& r){
 		std::lock_guard<std::mutex> am(ValueRangMutex);

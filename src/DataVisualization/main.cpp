@@ -18,18 +18,8 @@
 #include <qwt/qwt_plot_spectrogram.h>
 #include <qwt/qwt_color_map.h>
 #include "qwt/qwt_scale_widget.h"
-class ColorMap : public QwtLinearColorMap
-{
-public:
-	ColorMap() :
-		QwtLinearColorMap(Qt::darkBlue, Qt::darkRed)
-	{
-		addColorStop(0.2, Qt::blue);
-		addColorStop(0.4, Qt::cyan);
-		addColorStop(0.6, Qt::yellow);
-		addColorStop(0.8, Qt::red);
-	}
-};
+#include "ContourRender.h"
+
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
@@ -37,19 +27,27 @@ int main(int argc, char *argv[])
 
 	//std::string path = "E:/lingshiwenjianjia/MILO_C/MILO_C.h5";
 	std::string path = "D:\RBWO_CY.h5";
+	//std::string path = "D:\MILO_P.h5";
+	//std::string path = "E:/tt/TEST.h5";
 	Hdf5IO io(path);
 	
 	io.initHdf5Data();
 	auto data = io.hdf5DataList.begin();
-	data +=11;
+	data +=35;
+	//data += 99;
 	Hdf5Data d = *data;
+
+#if 0
+
+
 
 	ContourData *contour = new ContourData(d);
 	contour->loadPoint();
 
 	QwtPlotSpectrogram *spec = new QwtPlotSpectrogram;
-	spec->setData(contour);
-	contour->setResampleMode(QwtMatrixRasterData::BilinearInterpolation);
+	auto rasterData = contour->getQwtMatrixRasterData();
+	spec->setData(rasterData);
+	rasterData->setResampleMode(QwtMatrixRasterData::BilinearInterpolation);
 
 	spec->setRenderThreadCount(0);
 	spec->setColorMap(new ColorMap);
@@ -59,7 +57,7 @@ int main(int argc, char *argv[])
 	spec->attach(&plot);
 
 
-	const QwtInterval zInterval = contour->interval(Qt::ZAxis);
+	const QwtInterval zInterval = rasterData->interval(Qt::ZAxis);
 	// A color bar on the right axis
 	QwtScaleWidget *rightAxis = plot.axisWidget(QwtPlot::yRight);
 	rightAxis->setColorBarEnabled(true);
@@ -71,21 +69,22 @@ int main(int argc, char *argv[])
 
 	plot.show();
 
-
+#endif // DEBUG
 	
 
 
-/*	std::shared_ptr<InterspaceData> particleData(new InterspaceData(d));
+	std::shared_ptr<ContourData> particleData(new ContourData(d));
 
 
-	InterspaceRender *timeRenderer = new InterspaceRender(particleData);
+	ContourRender *timeRenderer = new ContourRender(particleData);
 	timeRenderer->dataInit();
 	timeRenderer->setDefaultRang();
+	//timeRenderer->setDisplayMode(QwtPlotSpectrogram::ContourMode,true);
 	Plot p;
 	std::shared_ptr<Renderer> rd(timeRenderer);
 	p.setMainRenderer(rd);
-	p.setFixedSize(600, 400);
-	p.show(); */
+	//p.resize(800,600);
+	p.showMaximized(); 
 
 
 
