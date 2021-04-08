@@ -187,6 +187,7 @@ void Plot::canvasSelectRect(QRect rect)
 		(*iter)->setYRang(yr);
 		(*iter)->setXRang(xr);
 	}
+
 	//重绘
 	reRender(); 
 }
@@ -235,6 +236,9 @@ void Plot::keyReleaseEvent(QKeyEvent *event)
 		AxisB->setAxisRange(xr.min, xr.max);
 		AxisL->_update();
 		AxisB->_update();
+
+		//清理点取点图层
+		canvas->removeItem(1);
 
 		reRender();
 	}

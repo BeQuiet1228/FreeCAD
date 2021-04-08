@@ -143,3 +143,48 @@ QwtMatrixRasterData* ContourData::getQwtMatrixRasterData()
 	rasterData->setResampleMode(QwtMatrixRasterData::BilinearInterpolation);
 	return rasterData;
 }
+
+/**
+* @brief ContourData::findGrid 根据坐标寻找网格
+* @param const float & x
+* @param const float & y
+* @return ContourData::Grid
+*/
+ContourData::Grid ContourData::findGrid(const float& x, const float& y)
+{
+	int w(0), h(0);
+
+	Grid grid;
+
+	//获取宽度索引
+	for (unsigned int index = width / 2; index > 0 && index < width ;)
+	{
+		grid = grids.at(index + w);
+		if (grid.x < x)
+		{
+			w += index;
+		}
+		index = index / 2;
+	}
+	//获取高度索引
+	for (unsigned int index = height / 2; index > 0 && index < height;)
+	{
+		grid = grids.at(index*width + h*width);
+		if (grid.y < y)
+		{
+			h += index;
+		}
+		index = index / 2;
+	}
+
+	int index = w + h*width;
+#ifdef MY_DEBUG
+	if (index > grids.size())
+	{
+		std::cerr << "ContourData::findGrid index out of range" << std::endl;
+		Grid g;
+		return g;
+	}
+#endif
+	return grids.at(index);
+}

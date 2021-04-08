@@ -21,6 +21,8 @@ public:
 	bool loadPoint() override;
 	//获取一个rasterData对象
 	QwtMatrixRasterData* getQwtMatrixRasterData();
+	//寻找一个网格
+	Grid findGrid(const float& x, const float& y);
 public:
 	void setValueRang(const Rang& r){
 		std::lock_guard<std::mutex> am(ValueRangMutex);

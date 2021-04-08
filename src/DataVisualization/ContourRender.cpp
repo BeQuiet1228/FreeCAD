@@ -47,6 +47,37 @@ bool ContourRender::addListRang(std::list<Data::Rang> listRang)
 
 bool ContourRender::drawPointImage()
 {
+	std::shared_ptr<ContourData> d = std::dynamic_pointer_cast<ContourData>(Renderer::data);
+
+	auto pos = getFindPosition();
+	//获取屏幕与数据的比例
+	float xScale, yScale;
+	getTransitionScale(xScale, yScale);
+	Data::Rang xr = getXRang(), yr = getYRang();
+
+	ContourData::Grid grid = d->findGrid(pos.x()/xScale+xr.min, pos.y()/yScale+yr.min);
+	
+
+	float x = grid.x, y = grid.y;
+	x = transitionDataToScreen(x, xScale, getXRang());
+	y = transitionDataToScreen(y, yScale, getYRang());
+	//坐标翻转（因为坐标系原点不一致的关系）
+	y = getSize().height() - y;
+
+	//新建画布 画笔
+	QImage img(getSize(), QImage::Format_ARGB32);
+	img.fill(qRgba(0, 0, 0, 0));
+	QPen pen(Qt::red);
+	pen.setBrush(Qt::blue);
+	pen.setWidth(5);
+	QPainter painter(&img);
+	painter.setPen(pen);
+
+	QPointF point(x, y);
+	painter.drawPoint(point);
+
+	drawDisplayPoint(painter, point, grid);
+	setImage(img);
 	return true;
 }
 
@@ -75,4 +106,55 @@ void ContourRender::dataInit()
 	auto cd = std::dynamic_pointer_cast<ContourData>(Renderer::data);
 	cd->loadPoint();
 	setData(cd->getQwtMatrixRasterData());
+}
+
+/**
+* @brief ContourRender::drawDisplayPoint 显示点提示框
+* @param QPainter & painter 画笔
+* @param const QPointF & position 位置
+* @param const ContourData::Grid & grid 网格信息
+* @return void
+*/
+void ContourRender::drawDisplayPoint(QPainter& painter, const QPointF& position, const ContourData::Grid& grid)
+{
+	//设置画笔的颜色
+	QPen pen;
+	pen.setColor(QColor(102, 205, 170));
+	pen.setWidth(2);
+	painter.setPen(pen);
+	painter.setBrush(QBrush(QColor(255, 250, 240)));
+	//建立话画框
+	QRectF displayRect;
+	displayRect.setX(position.x() + 10);
+	displayRect.setY(position.y() - 5);
+	//如果这个点在边界上  那么调整话框的位置
+	auto size = getSize();
+	if (displayRect.y() > (size.height() - 60))
+	{
+		displayRect.setY(displayRect.y() - 90);
+	}
+	if (displayRect.x() > (size.width() - 170))
+	{
+		displayRect.setX(displayRect.x() - 190);
+	}
+
+	displayRect.setWidth(150);
+	displayRect.setHeight(80);
+	painter.drawRect(displayRect);
+	//绘制显示信息
+	QFont f;
+	f.setPixelSize(17);
+	painter.setFont(f);
+	painter.drawText(displayRect.x() + 10,
+		displayRect.y() + 20,
+		QString("X:%1").arg(grid.x, 0, 'E', 2)
+		);
+	painter.drawText(displayRect.x() + 10,
+		displayRect.y() + 40,
+		QString("Y:%1").arg(grid.y, 0, 'E', 2)
+		);
+	painter.drawText(displayRect.x() + 10,
+		displayRect.y() + 60,
+		QString("Value:%1").arg(grid.value, 0, 'E', 2)
+		);
 }
