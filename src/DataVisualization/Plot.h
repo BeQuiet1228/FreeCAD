@@ -11,6 +11,8 @@
 class Renderer;
 class RenderThreadManager;
 class Axis;
+class QwtScaleEngine;
+class QwtScaleWidget;
 class Plot:public QWidget{
 	Q_OBJECT
 public:
@@ -35,6 +37,11 @@ private:
 	std::shared_ptr<Renderer> mainRenderer;
 	//从渲染器起始层级
 	const unsigned int subRenderStartRank = 10;
+	//颜色图例
+	QwtScaleWidget *scaleWIdget;
+	QwtScaleEngine *scaleEngine;
+	//图例是否可用
+	bool axisRightEnabled;
 public:
 	//重渲染
 	void reRender();
@@ -42,7 +49,10 @@ public:
 	void addSubRenderer(const std::shared_ptr<Renderer>& rd);
 	//设置主渲染器
 	void setMainRenderer(const std::shared_ptr<Renderer>& rd);
-
+	//设置图例是否可用
+	void setAxisRightEnabled(const bool& e);
+	//更新坐标轴
+	void updateAxis();
 	//清理从渲染器
 	void cleraSubRenderer(){
 		subRenderers.clear();

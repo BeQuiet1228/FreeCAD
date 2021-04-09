@@ -19,22 +19,23 @@
 #include <qwt/qwt_color_map.h>
 #include "qwt/qwt_scale_widget.h"
 #include "ContourRender.h"
-
+#include "qwt/qwt_scale_widget.h"
+#include "qwt/qwt_scale_engine.h"
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 	CanvasItem::registerMetaTye();
 
 	//std::string path = "E:/lingshiwenjianjia/MILO_C/MILO_C.h5";
-	std::string path = "D:\RBWO_CY.h5";
+	//std::string path = "D:\RBWO_CY.h5";
 	//std::string path = "D:\MILO_P.h5";
-	//std::string path = "E:/tt/TEST.h5";
+	std::string path = "E:/tt/TEST.h5";
 	Hdf5IO io(path);
 	
 	io.initHdf5Data();
 	auto data = io.hdf5DataList.begin();
-	data +=35;
-	//data += 99;
+	//data +=35;
+	data += 95;
 	Hdf5Data d = *data;
 
 #if 0
@@ -79,15 +80,30 @@ int main(int argc, char *argv[])
 	ContourRender *timeRenderer = new ContourRender(particleData);
 	timeRenderer->dataInit();
 	timeRenderer->setDefaultRang();
-	//timeRenderer->setDisplayMode(QwtPlotSpectrogram::ContourMode,true);
+	timeRenderer->setDisplayMode(QwtPlotSpectrogram::ContourMode,true);
 	Plot p;
 	std::shared_ptr<Renderer> rd(timeRenderer);
 	p.setMainRenderer(rd);
+	p.setAxisRightEnabled(true);
 	//p.resize(800,600);
 	p.showMaximized(); 
 
 
+/*	QwtScaleWidget *sw = new QwtScaleWidget(QwtScaleDraw::RightScale, 0);
+	sw->setColorBarEnabled(true);
 
+
+	QwtLinearScaleEngine en;
+	double max = 100, min = 1.23;
+	double setp = 0;
+	QwtInterval iterval(min, max);
+	sw->setScaleDiv(en.divideScale(min, max, 5, 8, 0));
+	sw->setTitle("KW");
+
+	sw->setColorMap(iterval, new ColorMap);
+
+	sw->show();
+	*/
 	////≤‚ ‘µ•œﬂ≥Ã‰÷»æ
 	//std::shared_ptr<Renderer> re(timeRenderer);
 	//RenderTask task(re);

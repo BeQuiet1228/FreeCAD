@@ -108,6 +108,14 @@ void ContourRender::dataInit()
 	setData(cd->getQwtMatrixRasterData());
 }
 
+Data::Rang ContourRender::getValueRange()
+{
+	auto d = std::dynamic_pointer_cast<ContourData>(Renderer::data);
+	if (!d)
+		return Data::Rang();
+	return d->getVlaueRange();
+}
+
 /**
 * @brief ContourRender::drawDisplayPoint 显示点提示框
 * @param QPainter & painter 画笔

@@ -15,6 +15,8 @@ public:
 	bool drawPointImage() override;
 	bool setDefaultRang() override;
 	void dataInit() override;
+	//获取value范围
+	Data::Rang getValueRange();
 private:
 	//绘制提示框
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const ContourData::Grid& grid);

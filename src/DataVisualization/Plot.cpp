@@ -5,6 +5,9 @@
 #include "RenderThreadManager.h"
 #include "RenderTask.h"
 #include "Renderer.h"
+#include "qwt/qwt_scale_widget.h"
+#include "qwt/qwt_scale_engine.h"
+#include "ContourRender.h"
 Plot::Plot(QWidget* parent /*= 0*/)
 	:QWidget(parent)
 {
@@ -18,6 +21,8 @@ Plot::~Plot()
 	delete canvas;
 	delete AxisB;
 	delete AxisL;
+	delete scaleWIdget;
+	delete scaleEngine;
 }
 
 
@@ -72,6 +77,47 @@ void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
 }
 
 /**
+* @brief Plot::setAxisRightEnabled 设置是否显示图例
+* @param const bool & e
+* @return void
+*/
+void Plot::setAxisRightEnabled(const bool& e)
+{
+	if (axisRightEnabled == e)
+		return;
+	axisRightEnabled = e;
+	if (axisRightEnabled)
+		updateAxis();
+	else
+		scaleWIdget->hide();
+}
+
+void Plot::updateAxis()
+{
+	if (!mainRenderer)
+		return;
+
+	Data::Rang xr, yr;
+	xr = mainRenderer->getXRang();
+	yr = mainRenderer->getYRang();
+	AxisL->setAxisRange(yr.min, yr.max);
+	AxisL->_update();
+	AxisB->setAxisRange(xr.min, xr.max);
+	AxisB->_update();
+
+	if (!axisRightEnabled)
+		return;
+	auto contourRender = std::dynamic_pointer_cast<ContourRender>(mainRenderer);
+	if (!contourRender)
+		return;
+	Data::Rang vr = contourRender->getValueRange();
+	QwtInterval interval(vr.min, vr.max);
+	scaleWIdget->setColorMap(interval, new ColorMap);
+	scaleWIdget->setScaleDiv(scaleEngine->divideScale(vr.min, vr.max, 6, 8, 0));
+	scaleWIdget->show();
+}
+
+/**
 * @brief Plot::initGUI 初始化布局
 * @return void
 */
@@ -91,15 +137,22 @@ void Plot::initGUI()
 	AxisB->setAxixStyle(AxisBottom);
 	AxisB->SetAxisNumber(6);
 
+	scaleWIdget = new QwtScaleWidget(QwtScaleDraw::RightScale, this);
+	scaleWIdget->setColorBarEnabled(true);
+	scaleWIdget->setColorBarWidth(20);
 
 	gridLayout->addWidget(canvas, 0, 1, 1, 1);
 	gridLayout->addWidget(AxisL, 0, 0, 1, 1);
 	gridLayout->addWidget(AxisB, 1, 1, 1, 1);
+	gridLayout->addWidget(scaleWIdget, 0, 2, 1, 1);
 
 	gridLayout->setRowStretch(0, 9);
 	gridLayout->setRowStretch(1, 1);
 	gridLayout->setColumnStretch(0, 1);
 	gridLayout->setColumnStretch(1, 9);
+	gridLayout->setColumnStretch(2, 0);
+
+	scaleWIdget->hide();
 	
 	
 }
@@ -108,6 +161,9 @@ void Plot::initData()
 {
 	renderManager.reset(new RenderThreadManager);
 	connect(renderManager.get(), SIGNAL(allWorkFinished()), this, SLOT(renderFinished()));
+
+	scaleEngine = new QwtLinearScaleEngine;
+	axisRightEnabled = false;
 }
 
 /**
