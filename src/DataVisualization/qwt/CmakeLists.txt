@@ -1,3 +1,4 @@
+add_subdirectory(polar)
 project(qwt)
 #引入头文件
 include_directories(

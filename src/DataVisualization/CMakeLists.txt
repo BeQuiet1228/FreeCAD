@@ -13,6 +13,8 @@ include_directories(
     ${XercesC_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIR}
     ${PYCXX_INCLUDE_DIR}
+	./qwt
+	./qwt/polar
 )
 SET(QRC_SRC "")
 SET(UI_SRC "")
@@ -46,6 +48,8 @@ SET(CONTOUR_SRC ContourData.h
 	ContourData.cpp
 	ContourRender.h
 	ContourRender.cpp
+	ContourRenderPolar.cpp
+	ContourRenderPolar.h
 )
 
 
@@ -124,6 +128,7 @@ list(APPEND QT_LIB
     optimized MSVCPRT.LIB
 	qwt
 	HDF5Reader
+	qwt_polar
 	)
 if (BUILD_QT5)
     include_directories(

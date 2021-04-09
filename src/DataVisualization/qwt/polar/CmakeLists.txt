@@ -1,0 +1,87 @@
+project(QwtPolar)
+
+set(qwt_polar_src qwt_polar.h
+ qwt_polar_canvas.cpp
+ qwt_polar_canvas.h
+ qwt_polar_curve.cpp
+ qwt_polar_curve.h
+ qwt_polar_fitter.cpp
+ qwt_polar_fitter.h
+ qwt_polar_global.h
+ qwt_polar_grid.cpp
+ qwt_polar_grid.h
+ qwt_polar_item.cpp
+ qwt_polar_item.h
+ qwt_polar_itemdict.cpp
+ qwt_polar_itemdict.h
+ qwt_polar_layout.cpp
+ qwt_polar_layout.h
+ qwt_polar_magnifier.cpp
+ qwt_polar_magnifier.h
+ qwt_polar_marker.cpp
+ qwt_polar_marker.h
+ qwt_polar_panner.cpp
+ qwt_polar_panner.h
+ qwt_polar_picker.cpp
+ qwt_polar_picker.h
+ qwt_polar_plot.cpp
+ qwt_polar_plot.h
+ qwt_polar_renderer.cpp
+ qwt_polar_renderer.h
+ qwt_polar_spectrogram.cpp
+ qwt_polar_spectrogram.h)
+ 
+ set(moc_header  qwt_polar_canvas.h    
+   qwt_polar_magnifier.h     
+   qwt_polar_panner.h     
+   qwt_polar_picker.h     
+   qwt_polar_plot.h     
+   qwt_polar_renderer.h)
+   
+ fc_wrap_cpp(moc_src ${moc_header})
+ 
+ add_library(qwt_polar ${qwt_polar_src} ${moc_src})
+ 
+
+#增加包含目录
+include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}
+	../
+)
+#增加外部库
+list(APPEND QT_LIB
+    debug MSVCRTD.LIB
+    debug MSVCPRTD.LIB
+    optimized MSVCRT.LIB
+    optimized MSVCPRT.LIB
+	qwt
+	)
+if (BUILD_QT5)
+    include_directories(
+        ${Qt5Core_INCLUDE_DIRS}
+        ${Qt5Widgets_INCLUDE_DIRS}
+        ${Qt5OpenGL_INCLUDE_DIRS}
+        ${Qt5PrintSupport_INCLUDE_DIRS}
+        ${Qt5Svg_INCLUDE_DIRS}
+        ${Qt5Network_INCLUDE_DIRS}
+        ${Qt5UiTools_INCLUDE_DIRS}
+    )
+    list(APPEND QT_LIB
+        ${Qt5Core_LIBRARIES}
+        ${Qt5Widgets_LIBRARIES}
+        ${Qt5OpenGL_LIBRARIES}
+        ${Qt5PrintSupport_LIBRARIES}
+        ${Qt5Svg_LIBRARIES}
+        ${Qt5Network_LIBRARIES}
+        ${Qt5UiTools_LIBRARIES}
+    )
+else()
+    include_directories(
+        ${QT_INCLUDE_DIR}
+    )
+    list(APPEND QT_LIB
+        ${QT_LIBRARIES}
+        ${QT_QTUITOOLS_LIBRARY}
+    )
+endif()
+target_link_libraries(qwt_polar ${QT_LIB})

@@ -21,6 +21,7 @@
 #include "ContourRender.h"
 #include "qwt/qwt_scale_widget.h"
 #include "qwt/qwt_scale_engine.h"
+#include "ContourRenderPolar.h"
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
@@ -29,13 +30,14 @@ int main(int argc, char *argv[])
 	//std::string path = "E:/lingshiwenjianjia/MILO_C/MILO_C.h5";
 	//std::string path = "D:\RBWO_CY.h5";
 	//std::string path = "D:\MILO_P.h5";
-	std::string path = "E:/tt/TEST.h5";
+	//std::string path = "E:/tt/TEST.h5";
+	std::string path = "D:/MILO_C.h5";
 	Hdf5IO io(path);
 	
 	io.initHdf5Data();
 	auto data = io.hdf5DataList.begin();
 	//data +=35;
-	data += 95;
+	data += 752;
 	Hdf5Data d = *data;
 
 #if 0
@@ -77,10 +79,10 @@ int main(int argc, char *argv[])
 	std::shared_ptr<ContourData> particleData(new ContourData(d));
 
 
-	ContourRender *timeRenderer = new ContourRender(particleData);
+	ContourRenderPolar *timeRenderer = new ContourRenderPolar(particleData);
 	timeRenderer->dataInit();
 	timeRenderer->setDefaultRang();
-	timeRenderer->setDisplayMode(QwtPlotSpectrogram::ContourMode,true);
+	//timeRenderer->setDisplayMode(QwtPlotSpectrogram::ContourMode,true);
 	Plot p;
 	std::shared_ptr<Renderer> rd(timeRenderer);
 	p.setMainRenderer(rd);
