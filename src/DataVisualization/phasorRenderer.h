@@ -17,6 +17,7 @@ public:
 	virtual bool drawPointImage() override;
 	virtual bool setDefaultRang() override;
 	virtual void dataInit() override;
+	
 private:
 	QPointF GetarrowTop(QPointF endpoint,QPointF startpoint);
 	QPointF GetarrowBottom(QPointF endpoint,QPointF startpoint);
@@ -36,9 +37,13 @@ private:
 		_rectf.setBottom(transitionY(_rectf.bottom(), yScale, yr));
 	}
 	void transionVector(QPointF& endpoint, QPointF startpoint, const float& xScale, const float& yScale);
-	QVector<QRectF> GetRectF_Scene(const Data::Rang xr,const Data::Rang yr);
+	void transionVector(QPointF& endipoint,QPointF startpoint,const float& lenScale);
+	QVector<QRectF> GetRectF_Scene();
 	QVector<QLineF> findVecLines(QVector<QRectF> scene_rect,QVector<QPointF> p1,QVector<QPointF> p2);
 	bool drawImage_Scence();
 	bool drawImage_Coord();
+
+	/*float pix_hori;
+	float pix_ver;*/
 };
 #endif

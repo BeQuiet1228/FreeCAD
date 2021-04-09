@@ -22,13 +22,12 @@ int main(int argc, char *argv[])
 	QApplication a(argc, argv);
 	CanvasItem::registerMetaTye();
 	//std::string path = "E:/lingshiwenjianjia/MILO_C/MILO_C.h5";
-	std::string path = "F:/wdtproject/PICGUI/MILO_C_2.h5";
+	std::string path = "D:/MILO_C_2.h5";
 	Hdf5IO io(path);
 	io.initHdf5Data();
 	auto data = io.hdf5DataList.begin();
-	data += 754;
+	data += 762;
 	Hdf5Data d = *data;
-	
 	// ∏¡øÕº≤‚ ‘
 	std::shared_ptr<phasorData> _phasordata(new phasorData(d));
 	phasorRenderer* _phasorRenderer = new phasorRenderer(_phasordata);
@@ -37,7 +36,7 @@ int main(int argc, char *argv[])
 	Plot p;
 	std::shared_ptr<Renderer> rd(_phasorRenderer);
 	p.setMainRenderer(rd);
-	p.setFixedSize(600*3, 400*2);
+	//p.setFixedSize(600*3, 400*2);
 	p.show();
 	return a.exec();
 }

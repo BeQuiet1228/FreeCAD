@@ -3,8 +3,8 @@
 #include <QPainter>
 #define  M_PI_ (3.141592653589793)
 //按像素来
-#define  HORI_GRID (50.0f)
-#define  VERT_GRID (50.0f)
+#define  HORI_GRID (30.0f)
+#define  VERT_GRID (30.0f)
 phasorRenderer::phasorRenderer(std::shared_ptr<phasorData> data):Renderer(std::dynamic_pointer_cast<Data>(data))
 {
 
@@ -17,8 +17,18 @@ phasorRenderer::~phasorRenderer(){
 * @return bool
 */
 bool phasorRenderer::drawImage(){
-	//return drawImage_Coord();
+#define _PROJECT_CHANGE_	
+#ifndef _PROJECT_CHANGE_
 	return drawImage_Scence();
+#else
+	return drawImage_Coord();
+#endif
+
+#ifdef _PROJECT_CHANGE_
+#undef _PROJECT_CHANGE_
+#endif
+
+
 }
 /**
 * @brief phasorRenderer::addListRang 
@@ -130,7 +140,10 @@ void phasorRenderer::transionVector(QPointF& endpoint, QPointF startpoint, const
 	endpoint.setX( x_distance+ startpoint.x());
 	endpoint.setY( y_distance+ startpoint.y());
 }
-
+/**
+* @brief phasorRenderer::drawImage_Scence 依据屏幕缩放绘制
+* @retrun bool
+*/
 bool phasorRenderer::drawImage_Scence(){
 	//获取画布缩放
 	float xScale(0.0), yScale(0.0);
@@ -149,50 +162,52 @@ bool phasorRenderer::drawImage_Scence(){
 	QPainter painter(&img);
 	painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setPen(pen);
-	//获取屏幕按像素来
-	QVector<QRectF> CutRect = GetRectF_Scene(xr, yr);
+	//获取屏幕网格按像素来
+	QVector<QRectF> CutRect = GetRectF_Scene();
 	/*for (auto iter = CutRect.begin(); iter != CutRect.end(); iter++)
 		transitionRectF(*iter, xScale, yScale, xr, yr);*/
-	painter.drawRects(CutRect);
+	//painter.drawRects(CutRect);
 	//寻找向量
 	QPen pen2(Qt::red);
 	pen2.setWidth(2);
 	painter.setPen(pen2);
-	//
-
-	//先画出传统的向量
-	//绘制向量
 	QVector<QPointF> p1 = d->Getp1Point();
 	QVector<QPointF> p2 = d->Getp2Point();
-	//向量可能太小，需要缩放
-	for (auto i = 0; i < p1.size(); i++)
-	{
-		transitionpointF(p1[i], xScale, yScale, xr, yr);
-		transitionpointF(p2[i], xScale, yScale, xr, yr);
-	}
-	QVector<QLineF> linelist = findVecLines(CutRect, p1, p2);
-	painter.drawLines(linelist);
+	QVector<QLineF> lines = findVecLines(CutRect,p1,p2);
+#pragma region 先画出传统的向量
+	//{
+	//	//获取缩放的比例
+	//	QVector<qreal> rations;//比例系数
+	//	for (auto i = 0; i < p1.size();i++)
+	//	{
+	//		qreal ration=
+	//		sqrt(p2[i].x()*p2[i].x()+p2[i].y()*p2[i].y())/sqrt(d->GetVecXScale()*d->GetVecXScale()+d->GetVecYScale()*d->GetVecYScale());
+	//		rations.push_back(ration);
+	//		transitionpointF(p1[i], xScale, yScale, xr, yr);
+	//	}
+	//	for (auto i = 0; i < p2.size();i++)
+	//	{
+	//		p2[i].setX(p1[i].x() + HORI_GRID*rations[i] * (p2[i].x() / sqrt(p2[i].x()*p2[i].x() + p2[i].y()*p2[i].y())));
+	//		p2[i].setY(p1[i].y() + VERT_GRID*rations[i] * (p2[i].y() / sqrt(p2[i].x()*p2[i].x() + p2[i].y()*p2[i].y())));
+	//		painter.drawLine(p1[i], p2[i]);
+	//		painter.drawLine(p2[i], GetarrowTop(p2[i], p1[i]));
+	//		painter.drawLine(p2[i], GetarrowBottom(p2[i], p1[i]));
+	//	}
+	//}
+#pragma endregion
+	painter.drawLines(lines);
 	auto nImg = img.mirrored(false, true);
 	setImage(nImg);
 	return true;
 }
-QVector<QRectF> phasorRenderer::GetRectF_Scene(const Data::Rang xr, const Data::Rang yr){
+/**
+* @brief phasorRenderer::GetRectF_Scene 获取屏幕切割的网格
+* @param const Data::Rang xr 
+* @param const Data::Rang yr
+* @return QVector<QRectF>
+*/
+QVector<QRectF> phasorRenderer::GetRectF_Scene(){
 	QVector<QRectF> scene_Rect;
-	/*qreal x_distance = (xr.max - xr.min) / HORI_GRID;
-	qreal y_distance = (yr.max - yr.min) / VERT_GRID;
-	for (auto y = 0; y < VERT_GRID;y++)
-	{
-		for (auto x = 0; x < HORI_GRID;x++)
-		{
-			QRectF _cutRect;
-			_cutRect.setLeft(xr.min+x*x_distance);
-			_cutRect.setRight(_cutRect.left()+x_distance);
-			_cutRect.setTop(yr.min+y*y_distance);
-			_cutRect.setBottom(_cutRect.top()+y_distance);
-			scene_Rect.push_back(_cutRect);
-		}
-	}*/
-
 	float width=getSize().width();
 	float height = getSize().height();
 	int ver_num = width / VERT_GRID ;
@@ -209,9 +224,14 @@ QVector<QRectF> phasorRenderer::GetRectF_Scene(const Data::Rang xr, const Data::
 			scene_Rect.push_back(_rectf);
 		}
 	}
+	//网格缩放
+
 	return scene_Rect;
 }
-
+/**
+* @brief phasorRenderer::drawImage_Coord 依据坐标系进行缩放展示
+* @return bool
+*/
 bool phasorRenderer::drawImage_Coord(){
 	//获取画布缩放
 	float xScale(0.0), yScale(0.0);
@@ -230,10 +250,10 @@ bool phasorRenderer::drawImage_Coord(){
 	painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setPen(pen);
 	//开始绘制图表
-	QVector<QRectF> CutRoomlist = d->getAllCutRoom();
+	/*QVector<QRectF> CutRoomlist = d->getAllCutRoom();
 	for (auto iter = CutRoomlist.begin(); iter != CutRoomlist.end(); iter++)
 	transitionRectF(*iter, xScale, yScale, xr, yr);
-	painter.drawRects(CutRoomlist);
+	painter.drawRects(CutRoomlist);*/
 	QPen pen2(Qt::red);
 	pen2.setWidth(2);
 	painter.setPen(pen2);
@@ -263,40 +283,85 @@ bool phasorRenderer::drawImage_Coord(){
 */
 QVector<QLineF> phasorRenderer::findVecLines(QVector<QRectF> scene_rect, QVector<QPointF> p1, QVector<QPointF> p2){
 	QVector<QLineF> lines;
-	for (auto iter = scene_rect.begin(); iter != scene_rect.end();iter++)
+	float xScale(0.0), yScale(0.0);
+	getTransitionScale(xScale, yScale);
+	auto xr = getXRang();
+	auto yr = getYRang();
+	QVector<qreal> rations;//比例系数
+	std::shared_ptr<phasorData> d = std::dynamic_pointer_cast<phasorData>(data);
+	//获取最大系数
+	qreal MaxSver = 0;
+	int maxindex = 0;
+	for (auto i = 0; i < p1.size();i++)
 	{
-		int index = -1;
-		qreal Distance_min = sqrt((iter->width())*(iter->width()) + (iter->height())*(iter->height()));
-		for (auto indexp1 = 0; indexp1 < p1.size();indexp1++)
+		if (p1[i].x() >= xr.min && p1[i].x() <= xr.max
+			&&p1[i].y()>yr.min&& p1[i].y()<=yr.max)
 		{
-			qreal _distance = sqrt((p1[indexp1].x() - iter->left())*(p1[indexp1].x() - iter->left()) + 
-				(p1[indexp1].y() - iter->bottom())*(p1[indexp1].y() - iter->bottom()));
-			if (Distance_min>_distance && p1[indexp1].x()>=iter->left()&& p1[indexp1].y()>=iter->bottom())
+			qreal curSver = sqrt(p2[i].x()*p2[i].x() + p2[i].y()*p2[i].y());
+			if (MaxSver<curSver)
 			{
-				Distance_min = _distance;
-				index = indexp1;
-			}
-		}
-		if (-1!=index)
-		{
-			//判断是否需要缩放
-			if (iter->width() <= abs(p2[index].x() - p1[index].x()) || iter->height() <= abs(p2[index].y() - p1[index].y()))
-			{
-				lines.push_back(QLineF(p1[index], p2[index]));
-				lines.push_back(QLineF(p2[index], GetarrowTop(p2[index], p1[index])));
-				lines.push_back(QLineF(p2[index], GetarrowBottom(p2[index], p1[index])));
-			}
-			//需要缩放
-			else
-			{
-				float X_Scale = (p2[index].x() - p1[index].x() == 0.0) ? (iter->width()) : abs(iter->width() / (p2[index].x()-p1[index].x()));
-				float Y_Scale = (p2[index].y() - p1[index].y() == 0.0) ? (iter->height()) : abs(iter->height() / (p2[index].y() - p1[index].y()));
-				transionVector(p2[index], p1[index],X_Scale,Y_Scale);
-				lines.push_back(QLineF(p1[index], p2[index]));
-				lines.push_back(QLineF(p2[index], GetarrowTop(p2[index], p1[index])));
-				lines.push_back(QLineF(p2[index], GetarrowBottom(p2[index], p1[index])));
+				maxindex = i;
+				MaxSver = curSver;
 			}
 		}
 	}
+	qreal VecXcoef = abs(p2[maxindex].x());
+	qreal VecYcorf = abs(p2[maxindex].y());
+	for (auto i = 0; i < p1.size();i++)
+	{
+		qreal ration=
+		sqrt(p2[i].x()*p2[i].x()+p2[i].y()*p2[i].y())/sqrt(VecXcoef*VecXcoef+VecYcorf*VecYcorf);
+		rations.push_back(ration);
+		transitionpointF(p1[i], xScale, yScale, xr, yr);
+		p2[i].setX(p1[i].x() + HORI_GRID*rations[i] * (p2[i].x() / sqrt(p2[i].x()*p2[i].x() + p2[i].y()*p2[i].y())));
+		p2[i].setY(p1[i].y() + VERT_GRID*rations[i] * (p2[i].y() / sqrt(p2[i].x()*p2[i].x() + p2[i].y()*p2[i].y())));
+	}
+	//开始填充线段
+	//for (auto i = 0; i <scene_rect.size(); i++)
+	//{
+		//在屏幕范围内
+		//float _distance = sqrt(scene_rect[i].width()*scene_rect[i].width()+scene_rect[i].height()*scene_rect[i].height());
+		//int minindex = -1;
+		//for (auto index = 0; index < p1.size();index++)
+		//{
+		//	float __distance = sqrt((p1[index].x() - scene_rect[i].left())*(p1[index].x() - scene_rect[i].left()) + 
+		//		(p1[index].y() - scene_rect[i].bottom())*(p1[index].y() - scene_rect[i].bottom()));
+		//	if (_distance>__distance)
+		//	{
+		//		_distance = __distance;
+		//		minindex = index;
+		//	}
+		//}
+		//if (minindex!=-1)
+		//{
+	for (auto i = 0; i < p1.size();i++)
+	{
+		lines.push_back(QLineF(p1[i], p2[i]));
+		lines.push_back(QLineF(p2[i], GetarrowTop(p2[i], p1[i])));
+		lines.push_back(QLineF(p2[i], GetarrowBottom(p2[i], p1[i])));
+	}
+			
+		//}
+		
+	//}
 	return lines;
+}
+/**
+* @brief phasorRenderer::transionVector 向量转换
+* @param QPointF& endipoint
+* @param QPointF startpoint
+* @param const float& lenScale
+* @return void
+*/
+void phasorRenderer::transionVector(QPointF& endipoint, QPointF startpoint, const float& lenScale){
+	//获取线段长度
+	float x_lenght = abs(endipoint.x() - startpoint.x());
+	float y_lenght = abs(endipoint.y() - startpoint.y());
+	float line_lenght = sqrt(x_lenght*x_lenght+y_lenght*y_lenght);
+	//获取缩放比例
+	float curscale = line_lenght*lenScale;
+	qreal x = (endipoint.x() - startpoint.x())*(x_lenght / line_lenght)*lenScale;
+	qreal y = (endipoint.y() - startpoint.y())*(y_lenght / line_lenght)*lenScale;
+	endipoint.setX(startpoint.x() + x);
+	endipoint.setY(startpoint.y() + y);
 }
