@@ -43,6 +43,8 @@ public:
 	void paintEvent(QPaintEvent* event);
 protected:
 	virtual void resizeEvent(QResizeEvent* event)override;
+	//获取科学计数法的字符串
+	QVector<QString> GetScientific_notation();
 private:
 	bool isstart;
 	unsigned int Axisnumber;//大刻度个数

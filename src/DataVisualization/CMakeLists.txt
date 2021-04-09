@@ -31,15 +31,28 @@ SET(PARTICLE_SRC ParticleData.h
 	ParticleRenderer.h
 	ParticleRenderer.cpp
 )
+
+SET(STRUCT_SRC StructRenderer.h
+	StructRenderer.cpp
+	structureData.h
+	structureData.cpp)
 SET(INTERSPACE_SRC InterspaceData.h
 	InterspaceData.cpp
 	InterspaceRender.h
 	InterspaceRender.cpp
 )
+
 SET(CONTOUR_SRC ContourData.h
 	ContourData.cpp
 	ContourRender.h
 	ContourRender.cpp
+)
+
+
+SET(PHASOR_SRC phasorData.h
+	phasorData.cpp
+	phasorRenderer.h
+	phasorRenderer.cpp
 )
 
 SET(SRC main.cpp
@@ -74,8 +87,10 @@ SET(DataVisualization_src
 	${UI_SRC}
 	${PARTICLE_SRC}
 	${TIME_SRC}
+	${STRUCT_SRC}
 	${INTERSPACE_SRC}
 	${CONTOUR_SRC}
+	${PHASOR_SRC}
 )
 add_definitions(-DMY_DEBUG)
 #设置编译生成文件类型
@@ -90,8 +105,11 @@ SET_BIN_DIR(DataVisualization DataVisualization)
 SOURCE_GROUP("src" FILES ${SRC})
 SOURCE_GROUP("time" FILES ${TIME_SRC})
 SOURCE_GROUP("particle" FILES ${PARTICLE_SRC})
+SOURCE_GROUP("struct" FILES ${STRUCT_SRC})
 SOURCE_GROUP("interspace" FILES ${INTERSPACE_SRC})
 SOURCE_GROUP("contour" FILES ${CONTOUR_SRC})
+SOURCE_GROUP("phasor" FILES ${PHASOR_SRC})
+
 
 #增加包含目录
 include_directories(

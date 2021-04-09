@@ -1,0 +1,98 @@
+#pragma once 
+#ifndef _STRUCTUREDATA_H_
+#define _STRUCTUREDATA_H_
+#include "Data.h"
+#include <vector>
+#include <mutex>
+#include <QVector>
+#include <QRectF>
+typedef struct DaTaKmt
+{ 
+	//坐标1
+	int point1;
+	//坐标2
+	int point2;
+	//坐标3
+	int point3;
+	//属性
+	int pointproperty;
+}DATAKMT;
+
+class structureData :public XYData{
+public:
+	struct  structpoint
+	{
+		structpoint():x(0.0),y(0.0),d1(0.0),d2(0.0){}
+		float x, y;//直角坐标系下的数据
+		float d1, d2;//原始数据
+	};
+	structureData(Hdf5Data& heData, const RunMod& mod = SINGLE_THREAD);
+	~structureData();
+protected:
+	virtual void restorDeriveData() override;
+public:
+	//载入数据
+	virtual bool loadPoint();
+	virtual unsigned int findIndexFromXValueL(const float& x){ return 0; }
+	bool loadrectpoint();
+	//释放中间参数
+	bool Dropout_value();
+	//获取真空坐标
+	QVector<QRectF> GetVacuoPoint();
+	//获取导管坐标
+	QVector<QRectF> GetConduitPoint();
+	//获取特定属性坐标
+	QVector<QRectF> GetSpecificPoint(int property);
+	QVector<qreal> Get_R_val();
+	QVector<qreal> Get_rand_val();
+	//获取取值范围
+	Rang getXRang()
+	{
+		std::lock_guard<std::mutex> am(xRangMutex);
+		return xRang;
+	}
+	Rang getYRang()
+	{
+		std::lock_guard<std::mutex> am(yRangMutex);
+		return yRang;
+	}
+	void setXRang(const Rang& rg)
+	{
+		std::lock_guard<std::mutex> am(xRangMutex);
+		xRang = rg;
+	}
+	void setYRang(const Rang& rg)
+	{
+		std::lock_guard<std::mutex> am(yRangMutex);
+		yRang = rg;
+	}
+protected:
+	//初始化xy的取值范围
+	virtual bool initXYRang();
+	//获取切割的空间
+	QVector<QRectF> GetAllCutspace();
+	//获取dataSetkmt的全部数据
+	QVector<DaTaKmt> GetdatasetKmt();
+	//填充相关属性的队列
+	void fileproperty(QVector<QRectF> list);
+	//填充圆柱坐标系需要的信息
+	void fileCylindrical_info();
+private:
+	//横向点的个数
+	int pointXSize;
+	//纵向点的个数
+	int pointYsize;
+	//真空坐标
+	QVector<QRectF> vacuo_vector;
+	//导管坐标
+	QVector<QRectF> conduit_vector;
+	//datasetkmt的数据采集
+	QVector<DaTaKmt> datakmtinfo;
+	//xy的范围
+	Rang xRang, yRang;
+	//圆柱坐标系的取值范围
+	QVector<qreal> R_val;
+	QVector<qreal> rand_val;
+	std::mutex xRangMutex, yRangMutex;
+};
+#endif
