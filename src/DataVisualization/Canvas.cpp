@@ -35,7 +35,7 @@ void Canvas::addIteam(const CanvasItem& iteam)
 void Canvas::removeItem(const unsigned int& rank)
 {
 	auto iter = items.find(rank);
-	if (iter == items.end());
+	if (iter == items.end())
 		return;
 	items.erase(iter);
 	update();

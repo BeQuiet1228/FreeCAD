@@ -46,10 +46,10 @@ public:
 public:
 	Data(Hdf5Data& h5Data ,const RunMod& mod = SINGLE_THREAD);
 	virtual ~Data();
-
-private:
+protected:
 	//h5文件数据
 	Hdf5Data h5Data;
+private:
 	//原始数据
 	ListValuesPtr sourceData;
 	//原始数据锁
@@ -95,7 +95,7 @@ public:
 	XYData(Hdf5Data& h5Data, const RunMod& mod = SINGLE_THREAD);
 	~XYData() = default;
 public:
-	virtual unsigned int findIndexFromXValueL(const float& x) = 0;
+	virtual unsigned int findIndexFromXValueL(const float& x);
 	unsigned int findIndexFromXValueR(const float& x);
 	virtual bool loadPoint() = 0;
 	//操作size

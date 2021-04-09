@@ -34,8 +34,8 @@ void Hdf5IO::setFilePath(const std::string& path)
 	}
 	QString temp = QString::fromUtf8(path.c_str());
 	qDebug() << temp;
-	//std::string newPath = gbk->fromUnicode(temp).data();
-	std::string newPath = "F:/wdtproject/PICGUI/MILO_C_2.h5";
+	std::string newPath = gbk->fromUnicode(temp).data();
+	//std::string newPath = "F:/wdtproject/PICGUI/MILO_C_2.h5";
 	deleteH5File();
 	Hdf5File = new H5File(newPath, H5F_ACC_RDWR);
 }
@@ -487,7 +487,7 @@ void Hdf5IO::getGrdData()
 	//获取grd组中的数据
 	std::vector<std::string> datasetNames;
 	datasetNames.push_back("datasetGrd");
-	//getAllSubGroupAndDataSet(ObserveGroup, datasetNames);
+	getAllSubGroupAndDataSet(ObserveGroup, datasetNames);
 
 	Group rangeGroup;
 	if (!getGroup(grdGroup, "2D_rangers", rangeGroup))
@@ -510,11 +510,11 @@ void Hdf5IO::initHdf5Data()
     }
     //获取par的数据组
     {
-	//	getParData();
+		getParData();
     }
     //获取二维等位图数据
     {
-		//getFildData();
+		getFildData();
     }
 }
 

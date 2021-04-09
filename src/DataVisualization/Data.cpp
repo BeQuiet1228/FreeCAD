@@ -138,6 +138,12 @@ XYData::XYData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
 
 }
 
+unsigned int XYData::findIndexFromXValueL(const float& x)
+{
+	std::cerr << "Can't call XYData::findIndexFromXValueL" << std::endl;
+	return 0;
+}
+
 /**
 * @brief XYData::findIndexFromXValueR 通过x轴的值查找最近的索引，靠近右边
 * @param const float & x

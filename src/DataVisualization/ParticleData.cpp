@@ -63,7 +63,7 @@ bool ParticleData::loadPointHard()
 	if (!ok || !listValues || listValues->size() == 0)
 		return false;
 	particles.clear();
-
+	//Ô¤·ÖÅävectorµÄ¿Õ¼ä
 	particles.reserve(listValues->size() / 3 + 10);
 
 	Particle p;
