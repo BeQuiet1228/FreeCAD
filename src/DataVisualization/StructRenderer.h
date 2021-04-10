@@ -25,6 +25,10 @@ public:
 	virtual void dataInit() override;
 	void SetCoordinateDir(Coordinate_Dir);
 	Coordinate_Dir getCurCoordinateDir();
+	void SetColor(int Material_index, QColor& _color)
+	{
+		//color_tab[Material_index] =QColor(_color.red,_color.green,_color.blue,_color.alpha);
+	}
 private:
 	//将数据坐标转换为图片上的坐标
 	float transitionX(const float& x, const float& xScale, const Data::Rang& xr);
@@ -54,6 +58,7 @@ private:
 public:
 private:
 	Coordinate_Dir m_Coordinate_Dir;
+	QMap<int, QColor> color_tab;
 };
 
 #endif

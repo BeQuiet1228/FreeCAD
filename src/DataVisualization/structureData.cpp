@@ -10,8 +10,6 @@ void structureData::restorDeriveData()
 }
 structureData::~structureData()
 {
-	vacuo_vector.clear();
-	conduit_vector.clear();
 	datakmtinfo.clear();
 	R_val.clear();
 	rand_val.clear();
@@ -83,9 +81,6 @@ bool structureData::loadrectpoint(){
 	{
 		return false;
 	}
-	//获取真空坐标，和导管坐标
-	vacuo_vector.clear();
-	conduit_vector.clear();
 	//获取全部切割的空间
 	QVector<QRectF> list;
 	list=GetAllCutspace();
@@ -194,36 +189,14 @@ QVector<DaTaKmt> structureData::GetdatasetKmt()
 */
 void structureData::fileproperty(QVector<QRectF> list)
 {
+	allKmtInfo.clear();
 	for each (DaTaKmt var in datakmtinfo)
 	{
-		if (1 == var.point3&&var.point1 < pointXSize-1)
+		if (1 == var.point3&&var.point1 < pointXSize - 1)
 		{
-			switch (var.pointproperty)
-			{
-			case 3:
-			{
-				//导管
-				conduit_vector.push_back(list[(var.point1 - 1)*(pointYsize - 1) + var.point2 - 1]);
-			}
-				break;
-			case 1024:
-			{
-				//真空
-				vacuo_vector.push_back(list[(var.point1 - 1)*(pointYsize - 1) + var.point2 - 1]);
-
-			}
-				break;
-			}
+			allKmtInfo[var.pointproperty].push_back(list[(var.point1 - 1)*(pointYsize - 1) + var.point2 - 1]);
 		}
 	}
-}
-/**
-* @brief structureData::GetConduitPoint 获取导管所有的坐标
-* @return QVector<QRectF> 
-*/
-QVector<QRectF> structureData::GetConduitPoint()
-{
-	return conduit_vector;
 }
 /**
 * @brief structureData::Get_R_val 获取刻度队列
@@ -263,58 +236,89 @@ void structureData::fileCylindrical_info()
 	Data::ValuesPtr pointi3mx = *it; it++;
 	Data::ValuesPtr pointdatasetkmt = *it;
 
-	QVector<qreal> _r_val;
 
+	/*********************************************************/
+	//获取切割的点位
+	QVector<CutCir> _CutCirlist;
+	//原点
+	QPointF p0 = QPointF(0.0, 0.0);
+	//获取所有半径
+	QVector<qreal> _r_val;
 	auto iter2mx = pointi2mx->begin();
 	for (;iter2mx!=pointi2mx->end();iter2mx++)
 	{
 		_r_val.push_back(*iter2mx);
 	}
-//#define _DEBUG_
-#ifdef _DEBUG_
-	for (auto i = 0; i < _r_val.size();i++)
-	{
-		printf("%d---%f\n", i, _r_val[i]);
-	}
-#undef _DEBUG_
-#endif
-	//填充需要切割的角度
+	QVector<qreal> _rand_val;
 	for (auto iter3mx = pointi3mx->begin(); iter3mx != pointi3mx->end(); iter3mx++)
 	{
-		rand_val.push_back(*iter3mx);
+		_rand_val.push_back(*iter3mx);
 	}
-	
-	for (auto i = 0; i < _r_val.size();i++)
+#pragma region 遍历获取全部的切割圆环
+	for (auto index_rand = 0; index_rand < _rand_val.size() - 1;index_rand++)
 	{
-		R_val.push_back(0);
-	}
-	//根据导管和真空两种参数填入R_val
-	for each (DaTaKmt var in datakmtinfo)
-	{
-		if (var.point1==pointXSize/2)
+		for (auto index_R = 0; index_R < _r_val.size() - 1;index_R++)
 		{
-			switch (var.pointproperty)
-			{
-			case 3:
-			{
-				//导管
-				R_val[var.point2] = _r_val[var.point2];
-			}
-				break;
-			case 1024:
-			{
-				//真空
-			}
-				break;
-			}
+			CutCir _curcir;
+			//内圈半径
+			_curcir.R_inner = _r_val[index_R];
+			//外圈半径
+			_curcir.R_excir = _r_val[index_R + 1];
+			//内圈切点
+			_curcir.inner1 = QPointF(
+				_curcir.R_inner*cos(_rand_val[index_rand])+p0.x(),
+				p0.y()-_curcir.R_inner*sin(_rand_val[index_rand]));
+			_curcir.inner2 = QPointF(
+				_curcir.R_inner*cos(_rand_val[index_rand+1]) + p0.x(),
+				p0.y() - _curcir.R_inner*sin(_rand_val[index_rand+1]));
+			//外圈切点
+			_curcir.excir1 = QPointF(
+				_curcir.R_excir*cos(_rand_val[index_rand]+p0.x()),
+				p0.y()-_curcir.R_excir*sin(_rand_val[index_rand]));
+			_curcir.excir2 = QPointF(
+				_curcir.R_excir*cos(_rand_val[index_rand+1] + p0.x()),
+				p0.y() - _curcir.R_excir*sin(_rand_val[index_rand]));
+			//开始角度，结束角度
+			_curcir.startAngle = _rand_val[index_rand];
+			_curcir.endAngle = _rand_val[index_rand + 1];
+			_CutCirlist.push_back(_curcir);
 		}
 	}
-//#define _DEBUG_
-#ifdef _DEBUG_
-	for each (qreal var in R_val)
+#pragma  endregion
+#pragma region 筛选属性
+	allKmtinfo_cir.clear();
+	//获取一个圆环的切割数量
+	int CutNum=_rand_val.size()-1;
+	for each(DaTaKmt var in datakmtinfo)
 	{
-		printf("%f\n", var);
+		if (var.point1==pointXSize/2 && var.point3<_rand_val.size())
+		{
+			allKmtinfo_cir[var.pointproperty].push_back(_CutCirlist[(var.point2-1)*CutNum+(var.point3-1)]);
+		}
 	}
-#undef _DEBUG_
-#endif
+#pragma endregion
+	//CutNum = 0;
+	/********************************************************/
+	////根据导管和真空两种参数填入R_val
+	//for each (DaTaKmt var in datakmtinfo)
+	//{
+	//	if (var.point1==pointXSize/2)
+	//	{
+	//		switch (var.pointproperty)
+	//		{
+	//		case 3:
+	//		{
+	//			//导管
+	//			R_val[var.point2] = _r_val[var.point2];
+	//		}
+	//			break;
+	//		case 1024:
+	//		{
+	//			//真空
+	//		}
+	//			break;
+	//		}
+	//	}
+	//}
+
 }

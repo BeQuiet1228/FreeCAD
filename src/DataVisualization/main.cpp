@@ -21,22 +21,19 @@
 #include"phasorData.h"
 #include "phasorRenderer.h"
 #include "ContourRender.h"
+#include "structureData.h"
+#include "StructRenderer.h"
 
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 	CanvasItem::registerMetaTye();
-
-	//std::string path = "E:/lingshiwenjianjia/MILO_C/MILO_C.h5";
-	//std::string path = "D:\RBWO_CY.h5";
-	//std::string path = "D:\MILO_P.h5";
-	//std::string path = "E:/tt/TEST.h5";
-	std::string path = "D:\MILO_C_2.h5";
+	std::string path = "D:\TEMP(1).H5";
 	Hdf5IO io(path);
 	
 	io.initHdf5Data();
 	auto data = io.hdf5DataList.begin();
-	data +=816;
+	//data +=816;
 	//data += 99;
 	Hdf5Data d = *data;
 
@@ -87,16 +84,25 @@ int main(int argc, char *argv[])
 	////p.resize(800,600);
 	//p.showMaximized(); 
 
-	std::shared_ptr<phasorData> _phasorData(new phasorData(d));
-	phasorRenderer *_phasorRenderer = new phasorRenderer(_phasorData);
-	_phasorRenderer->dataInit();
-	_phasorRenderer->setDefaultRang();
+	//std::shared_ptr<phasorData> _phasorData(new phasorData(d));
+	//phasorRenderer *_phasorRenderer = new phasorRenderer(_phasorData);
+	//_phasorRenderer->dataInit();
+	//_phasorRenderer->setDefaultRang();
+	//Plot p;
+	//std::shared_ptr<Renderer> rd(_phasorRenderer);
+	//p.setMainRenderer(rd);
+	//p.showMaximized();
+
+	std::shared_ptr<structureData> _structdata(new structureData(d));
+	StructureRenderer* _StructureRenderer = new StructureRenderer(_structdata);
+	_StructureRenderer->dataInit();
+	_StructureRenderer->SetCoordinateDir(Coordinate_Dir::cylindrical_coordinate);
+	_StructureRenderer->setDefaultRang();
+
 	Plot p;
-	std::shared_ptr<Renderer> rd(_phasorRenderer);
+	std::shared_ptr<Renderer> rd(_StructureRenderer);
 	p.setMainRenderer(rd);
 	p.showMaximized();
-
-
 	////≤‚ ‘µ•œﬂ≥Ã‰÷»æ
 	//std::shared_ptr<Renderer> re(timeRenderer);
 	//RenderTask task(re);

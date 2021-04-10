@@ -11,12 +11,16 @@
 StructureRenderer::StructureRenderer(std::shared_ptr<structureData> data)
 	:Renderer(std::dynamic_pointer_cast<Data>(data)), m_Coordinate_Dir(Z_R_coordinater)
 {
-
+	//填充颜色
+	//理想导体
+	color_tab[StructTexture::Perfect_Conductor] = QColor(125,125,125,255);
+	//真空
+	color_tab[StructTexture::Vacuo] = QColor(255,255,255,0);
 }
 
 StructureRenderer::~StructureRenderer()
 {
-
+	color_tab.clear();
 }
 #include <QDebug>
 bool StructureRenderer::drawImage()
@@ -252,15 +256,30 @@ bool StructureRenderer::drawImage_Z_R()
 	painter.setRenderHint(QPainter::Antialiasing, true);;
 	painter.setPen(pen);
 
-	//开始绘制图表
-	QVector<QRectF> _conduit_list = d->GetConduitPoint();
-	auto iter = _conduit_list.begin();
-	for (; iter != _conduit_list.end(); iter++)
+	QMap<int, QVector<QRectF>> _map = d->GetAllKMTInfo();
+	for (auto iter = _map.begin(); iter != _map.end();iter++)
 	{
-		//获取缩放
-		transitionRectF(*iter, xScale, xr, yScale, yr);
+		auto itercolor = color_tab.find(iter.key());
+		if (itercolor!=color_tab.end())
+		{
+			//进行缩放
+			for (auto iterrecct = iter.value().begin(); iterrecct != iter.value().end(); iterrecct++)
+				transitionRectF(*iterrecct, xScale, xr, yScale, yr);
+			QBrush m_brush(itercolor.value());
+			painter.setBrush(m_brush);
+			painter.drawRects(iter.value());
+		}
 	}
-	painter.drawRects(_conduit_list);
+	//开始绘制图表
+	//QVector<QRectF> _conduit_list = d->GetConduitPoint();
+	//auto iter = _conduit_list.begin();
+	//for (; iter != _conduit_list.end(); iter++)
+	//{
+	//	//获取缩放
+	//	transitionRectF(*iter, xScale, xr, yScale, yr);
+	//}
+
+	//painter.drawRects(_conduit_list);
 	auto nImg = img.mirrored(false, true);
 	//#define _Debug
 #ifdef _Debug
@@ -301,6 +320,36 @@ bool StructureRenderer::drawImage_Cylindrical_Coordinate(){
 	QPainter painter(&img);
 	painter.setRenderHint(QPainter::Antialiasing, true);;
 	painter.setPen(pen);
+	/*************************************************/
+	//获取圆心
+	QPointF p0 = QPointF(0.0, 0.0);
+	transitionPoint(p0, xScale, xr, yScale, yr);
+	//绘制圆柱
+	QMap<int, QVector<structureData::CutCir>> _map = d->GetAllKMTInfo_Cir();
+	for (auto iter = _map.begin();iter!=_map.end(); iter++)
+	{
+		auto itercolor = color_tab.find(iter.key());
+		if (itercolor!=color_tab.end())
+		{
+			QBrush m_brush(itercolor.value());
+			painter.setBrush(m_brush);
+			//开始绘制
+			for (auto iterrect = iter.value().begin(); iterrect != iter.value().end();iterrect++)
+			{
+				QPainterPath path;
+				transitionPoint(iterrect->inner1,xScale,xr,yScale,yr);
+				transitionPoint(iterrect->inner2, xScale, xr, yScale, yr);
+				transitionPoint(iterrect->excir1, xScale, xr, yScale, yr);
+				transitionPoint(iterrect->excir2, xScale, xr, yScale, yr);
+				path.moveTo(iterrect->inner1);
+				path.lineTo(iterrect->excir1);
+				//外圈矩形
+				QRectF excirrect;
+				//path.arcTo()
+			}
+		}
+	}
+	/*************************************************/
 	//开始绘制圆柱
 	QVector<qreal> _R_list = d->Get_R_val();
 	QVector<qreal> _rand_list = d->Get_rand_val();
@@ -484,7 +533,7 @@ structureData::structpoint StructureRenderer::findApoint_Z_R(QPointF _curpostion
 	std::shared_ptr<structureData> d = std::dynamic_pointer_cast<structureData>(data);
 	//开始绘制图表
 	//获取真实的数据
-	QVector<QRectF> _conduit_list = d->GetConduitPoint();
+	QVector<QRectF> _conduit_list = d->GetAllKMTInfo()[3];
 	//获取矩形中心点
 	QVector<QPointF> Scale_coord;
 	for (auto iter = _conduit_list.begin(); iter != _conduit_list.end(); iter++)
