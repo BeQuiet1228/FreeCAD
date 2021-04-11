@@ -249,15 +249,17 @@ void structureData::fileCylindrical_info()
 	{
 		_r_val.push_back(*iter2mx);
 	}
+	R_val = _r_val;
 	QVector<qreal> _rand_val;
 	for (auto iter3mx = pointi3mx->begin(); iter3mx != pointi3mx->end(); iter3mx++)
 	{
 		_rand_val.push_back(*iter3mx);
 	}
 #pragma region 遍历获取全部的切割圆环
-	for (auto index_rand = 0; index_rand < _rand_val.size() - 1;index_rand++)
+	
+	for (auto index_R = 0; index_R < _r_val.size() - 1; index_R++)
 	{
-		for (auto index_R = 0; index_R < _r_val.size() - 1;index_R++)
+		for (auto index_rand = 0; index_rand < _rand_val.size() - 1; index_rand++)
 		{
 			CutCir _curcir;
 			//内圈半径
@@ -277,11 +279,12 @@ void structureData::fileCylindrical_info()
 				p0.y()-_curcir.R_excir*sin(_rand_val[index_rand]));
 			_curcir.excir2 = QPointF(
 				_curcir.R_excir*cos(_rand_val[index_rand+1] + p0.x()),
-				p0.y() - _curcir.R_excir*sin(_rand_val[index_rand]));
+				p0.y() - _curcir.R_excir*sin(_rand_val[index_rand+1]));
 			//开始角度，结束角度
 			_curcir.startAngle = _rand_val[index_rand];
 			_curcir.endAngle = _rand_val[index_rand + 1];
 			_CutCirlist.push_back(_curcir);
+			//printf("index=%d,x=%f,y=%f\n",index_R,_curcir.inner1.x(),_curcir.inner1.y());
 		}
 	}
 #pragma  endregion
@@ -289,9 +292,11 @@ void structureData::fileCylindrical_info()
 	allKmtinfo_cir.clear();
 	//获取一个圆环的切割数量
 	int CutNum=_rand_val.size()-1;
+	/*for (auto iter = _CutCirlist.begin(); iter != _CutCirlist.end(); iter++)
+		allKmtinfo_cir[3].push_back(*iter);*/
 	for each(DaTaKmt var in datakmtinfo)
 	{
-		if (var.point1==pointXSize/2 && var.point3<_rand_val.size())
+		if (var.point1==1 && var.point3<_rand_val.size())
 		{
 			allKmtinfo_cir[var.pointproperty].push_back(_CutCirlist[(var.point2-1)*CutNum+(var.point3-1)]);
 		}

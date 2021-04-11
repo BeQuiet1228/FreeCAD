@@ -15,7 +15,6 @@ StructureRenderer::StructureRenderer(std::shared_ptr<structureData> data)
 	//理想导体
 	color_tab[StructTexture::Perfect_Conductor] = QColor(125,125,125,255);
 	//真空
-	color_tab[StructTexture::Vacuo] = QColor(255,255,255,0);
 }
 
 StructureRenderer::~StructureRenderer()
@@ -80,12 +79,45 @@ bool StructureRenderer::drawPointImage()
 */
 bool StructureRenderer::setDefaultRang()
 {
-	auto _structureData = std::dynamic_pointer_cast<structureData>(data);
-	if (!_structureData)
-		return false;
-	setXRang(_structureData->getXRang());
-	setYRang(_structureData->getYRang());
+	switch (m_Coordinate_Dir)
+	{
+	case cylindrical_coordinate:
+	{
+		auto _structureData = std::dynamic_pointer_cast<structureData>(data);
+		if (!_structureData)
+			return false;
 
+		Data::Rang xr;
+		QVector<qreal> R_range = _structureData->Get_R_val();
+		auto maxiter = R_range.end() - 1;
+		//#define _DEBUG_
+#ifdef _DEBUG_
+		for each (qreal var in R_range)
+		{
+			printf("%f\n", var);
+		}
+#undef _DEBUG_
+#endif
+		xr.max = *maxiter;
+		xr.min = -xr.max;
+		setXRang(xr);
+		setYRang(xr);
+	}
+		break;
+	case polar_coordinate:
+		break;
+	case Z_R_coordinater:
+	{
+		auto _structureData = std::dynamic_pointer_cast<structureData>(data);
+		if (!_structureData)
+			return false;
+		setXRang(_structureData->getXRang());
+		setYRang(_structureData->getYRang());
+	}
+		break;
+	default:
+		break;
+	}
 	return true;
 }
 
@@ -320,10 +352,6 @@ bool StructureRenderer::drawImage_Cylindrical_Coordinate(){
 	QPainter painter(&img);
 	painter.setRenderHint(QPainter::Antialiasing, true);;
 	painter.setPen(pen);
-	/*************************************************/
-	//获取圆心
-	QPointF p0 = QPointF(0.0, 0.0);
-	transitionPoint(p0, xScale, xr, yScale, yr);
 	//绘制圆柱
 	QMap<int, QVector<structureData::CutCir>> _map = d->GetAllKMTInfo_Cir();
 	for (auto iter = _map.begin();iter!=_map.end(); iter++)
@@ -333,62 +361,12 @@ bool StructureRenderer::drawImage_Cylindrical_Coordinate(){
 		{
 			QBrush m_brush(itercolor.value());
 			painter.setBrush(m_brush);
-			//开始绘制
-			for (auto iterrect = iter.value().begin(); iterrect != iter.value().end();iterrect++)
-			{
-				QPainterPath path;
-				transitionPoint(iterrect->inner1,xScale,xr,yScale,yr);
-				transitionPoint(iterrect->inner2, xScale, xr, yScale, yr);
-				transitionPoint(iterrect->excir1, xScale, xr, yScale, yr);
-				transitionPoint(iterrect->excir2, xScale, xr, yScale, yr);
-				path.moveTo(iterrect->inner1);
-				path.lineTo(iterrect->excir1);
-				//外圈矩形
-				QRectF excirrect;
-				//path.arcTo()
-			}
+			QVector<QPainterPath> _path = GetPath(iter.value(), xr, yr, xScale, yScale);
+			for (auto iterpath = _path.begin(); iterpath != _path.end(); iterpath++)
+				painter.drawPath(*iterpath);
 		}
 	}
-	/*************************************************/
-	//开始绘制圆柱
-	QVector<qreal> _R_list = d->Get_R_val();
-	QVector<qreal> _rand_list = d->Get_rand_val();
-	//获取矩形
-	QVector<QRectF> _rl = GetCylindricalRect(_R_list);
-	//auto iter = _rl.begin();
-	for (auto iter=_rl.begin(); iter != _rl.end(); iter++)
-	{
-		//获取缩放
-		transitionRectF(*iter, xScale, xr, yScale, yr);
-	}
-	//获取绘制角度
-	//获取圆心
-	QPointF  p1 = _rl[0].center();
-	qreal pi = 3.1415926;//指定π
-	//获取弧度与角度的转换系数
-	qreal w1 = 180 / pi;
-	qreal w2 = pi / 180;
-	auto iterRange = _rand_list.begin();
-	qreal startdeg = (*iterRange)*w1;
-	iterRange = _rand_list.end() - 1;
-	qreal enddeg = (*iterRange)*w1;
-	for (auto i = 0; i < _rl.size();i++)
-	{
-		painter.drawArc(_rl[i], startdeg * 16, enddeg * 16);
-	}
-	//绘制切割线
-	//起始设置为原点
-	QVector<QLineF> _lines=Getlines(p1,_rl,_rand_list);
-	painter.drawLines(_lines);
 	auto nImg = img.mirrored(false, true);
-	//#define _Debug
-#ifdef _Debug
-	static int index = 0;
-	QString _path = QString("C:/Users/Administrator/Desktop/save/savepmg_%1.png").arg(index++);
-	qDebug() << _path;
-	bool res = nImg.save(_path);
-#undef _Debug
-#endif
 	setImage(nImg);
 	return true;
 }
@@ -745,4 +723,68 @@ void StructureRenderer::drawDisplayPoint(QPainter& painter, const QPointF& posit
 		displayRect.y() + 40,
 		QString("Y:%1").arg(d.y(), 0, 'E', 2)
 		);
+}
+
+/**
+* @brief StructureRenderer::transitionPoint 转换坐标
+* @param QPointF& point
+* @param const float& xScale
+* @param const Data::Rang& xr
+* @param const float& yScale
+* @param const Data::Rang& yr
+* @return void 
+*/
+void StructureRenderer::transitionPoint(QPointF& point, const float& xScale, const Data::Rang& xr, const float& yScale,const Data::Rang& yr)
+{
+	point.setX(transitionX(point.x(),xScale,xr));
+	point.setY(transitionY(point.y(),yScale,yr));
+}
+/**
+* @brief StructureRenderer::GetPath 获取需要绘制的圆柱坐标系的路径
+* @param QVector<structureData::CutCir> _vector
+* @param const Data::Rang& xr
+* @param const Data::Rang& yr
+* @param const float& xScale
+* @param const float& yScale
+* @return QVector<QPainterPath>
+*/
+QVector<QPainterPath> StructureRenderer::GetPath(QVector<structureData::CutCir> _vector, const Data::Rang& xr,const Data::Rang& yr, const float& xScale, const float& yScale)
+{
+	qreal pi = 3.141592653589793;
+	qreal w1 = 180 / pi;
+	QPointF p0(0.0, 0.0);
+	transitionPoint(p0, xScale, xr, yScale, yr);
+	QVector<QPainterPath> pathlist;
+	for (auto iterrect = _vector.begin(); iterrect != _vector.end(); iterrect++)
+	{
+		QPainterPath path;
+		transitionPoint(iterrect->inner1, xScale, xr, yScale, yr);
+		transitionPoint(iterrect->inner2, xScale, xr, yScale, yr);
+		transitionPoint(iterrect->excir1, xScale, xr, yScale, yr);
+		transitionPoint(iterrect->excir2, xScale, xr, yScale, yr);
+#pragma region 绘制路径
+		path.moveTo(iterrect->inner1);
+		path.lineTo(iterrect->excir1);
+		//外圈矩形
+		QRectF excirrect;
+		float HR = iterrect->R_excir*xScale;
+		float VR = iterrect->R_excir*yScale;
+		excirrect.setLeft(p0.x() - HR);
+		excirrect.setTop(p0.y() - VR);
+		excirrect.setBottom(excirrect.top() + 2 * VR);
+		excirrect.setRight(excirrect.left() + 2 * HR);
+
+		path.arcTo(excirrect, iterrect->startAngle*w1, ((iterrect->endAngle*w1) - (iterrect->startAngle*w1)));
+		path.lineTo(iterrect->inner2);
+		HR = iterrect->R_inner*xScale;
+		VR = iterrect->R_inner*yScale;
+		excirrect.setLeft(p0.x() - HR);
+		excirrect.setTop(p0.y() - VR);
+		excirrect.setBottom(excirrect.top() + 2 * VR);
+		excirrect.setRight(excirrect.left() + 2 * HR);
+		path.arcTo(excirrect, iterrect->endAngle*w1, ((iterrect->startAngle*w1) - (iterrect->endAngle*w1)));
+		pathlist.push_back(path);
+#pragma  endregion
+	}
+	return pathlist;
 }
