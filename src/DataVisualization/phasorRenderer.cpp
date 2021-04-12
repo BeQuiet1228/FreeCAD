@@ -43,7 +43,34 @@ bool phasorRenderer::addListRang(std::list<Data::Rang> listRang){
 * @return bool
 */
 bool phasorRenderer::drawPointImage(){
-
+	//新建画布 画笔
+	float xScale, yScale;
+	getTransitionScale(xScale, yScale);
+	auto xr = getXRang();
+	auto yr = getYRang();
+	QImage img(getSize(),QImage::Format_ARGB32);
+	img.fill(qRgba(0, 0, 0, 0));
+	QPen pen(Qt::black);
+	pen.setBrush(Qt::blue);
+	pen.setWidth(5);
+	QPainter painter(&img);
+	painter.setPen(pen);
+	//原始坐标
+	QPointF A_pos=this->getFindPosition();
+	//获取索引值
+	int index = findApoint(A_pos);
+	std::shared_ptr<phasorData> d = std::dynamic_pointer_cast<phasorData>(data);
+	//获取原点
+	QPointF p1 = d->findindexP1(index);
+	A_pos = p1;
+	transitionpointF(A_pos,xScale,yScale,xr,yr);
+	//获取长度系数
+	QPointF len_coef = d->findindexlen_coef(index);
+	//坐标翻转
+	A_pos.setY(getSize().height() - A_pos.y());
+	painter.drawPoint(A_pos);
+	drawDisplayPoint(painter, A_pos, p1, len_coef);
+	setImage(img);
 	return true;
 }
 /**
@@ -364,4 +391,76 @@ void phasorRenderer::transionVector(QPointF& endipoint, QPointF startpoint, cons
 	qreal y = (endipoint.y() - startpoint.y())*(y_lenght / line_lenght)*lenScale;
 	endipoint.setX(startpoint.x() + x);
 	endipoint.setY(startpoint.y() + y);
+}
+/**
+* @brief phasorRenderer::findApoint 寻找最近的点位的索引
+* @param QPointF A_point
+* @return int
+*/
+int phasorRenderer::findApoint(QPointF A_point)
+{
+	int index = 0;
+	float xScale, yScale;
+	getTransitionScale(xScale, yScale);
+	auto xr = getXRang();
+	auto yr = getYRang();
+	std::shared_ptr<phasorData> d = std::dynamic_pointer_cast<phasorData>(data);
+	QVector<QPointF> p1 = d->Getp1Point();
+	//转换屏幕坐标
+	for (auto iter = p1.begin(); iter != p1.end(); iter++)
+		transitionpointF(*iter,xScale,yScale,xr,yr);
+	//寻找最近的点
+	qreal _mindistance = sqrt((A_point.x() - p1[0].x())*(A_point.x() - p1[0].x()) + (A_point.y() - p1[0].y())*(A_point.y() - p1[0].y()));
+	for (auto i = 0; i < p1.size();i++)
+	{
+		qreal curdistance = sqrt((A_point.x() - p1[i].x())*(A_point.x() - p1[i].x()) + (A_point.y() - p1[i].y())*(A_point.y() - p1[i].y()));
+		if (_mindistance>curdistance)
+		{
+			_mindistance = curdistance;
+			index = i;
+		}
+	}
+
+	return index;
+}
+/**
+* @brief phasorRenderer::drawDisplayPoint 绘制显示信息
+* @param QPainter& painter 
+* @param QPointF& postion
+* @param QPointF& len_coef
+* @return void
+*/
+void phasorRenderer::drawDisplayPoint(QPainter& painter, QPointF& postion, QPointF& p1, QPointF& len_coef)
+{
+	//设置画笔的颜色
+	QPen pen;
+	pen.setColor(QColor(102,205,170));
+	pen.setWidth(2);
+	painter.setPen(pen);
+	painter.setBrush(QBrush(QColor(255,250,240)));
+	//建立对话框
+	QRectF displatRect;
+	displatRect.setX(postion.x() + 10);
+	displatRect.setY(postion.y() - 5);
+	//如果这个点在边界上 那么调整对话框
+	auto size = getSize();
+	if (displatRect.y()>(size.height()-80))
+	{
+		displatRect.setY(displatRect.y()-90);
+	}
+	if (displatRect.x()>(size.width()-190))
+	{
+		displatRect.setX(displatRect.x() - 210);
+	}
+	displatRect.setWidth(170);
+	displatRect.setHeight(90);
+	painter.drawRect(displatRect);
+	//绘制显示信息
+	QFont f;
+	f.setPixelSize(17);
+	painter.setFont(f);
+	painter.drawText(displatRect.x() + 10, displatRect.y() + 20, QString("X:%1").arg(p1.x(), 0, 'E', 2));
+	painter.drawText(displatRect.x() + 10, displatRect.y() + 40, QString("Y:%1").arg(p1.y(), 0, 'E', 2));
+	painter.drawText(displatRect.x() + 10, displatRect.y() + 60, QString("X_COEF:%1").arg(len_coef.x(),0,'E',2));
+	painter.drawText(displatRect.x() + 10, displatRect.y() + 80, QString("Y_COEF:%1").arg(len_coef.y(),0,'E',2));
 }

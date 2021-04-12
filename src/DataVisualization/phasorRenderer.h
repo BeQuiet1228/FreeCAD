@@ -42,7 +42,8 @@ private:
 	QVector<QLineF> findVecLines(QVector<QRectF> scene_rect,QVector<QPointF> p1,QVector<QPointF> p2);
 	bool drawImage_Scence();
 	bool drawImage_Coord();
-
+	int findApoint(QPointF A_point);
+	void drawDisplayPoint(QPainter& painter,QPointF& position,QPointF& p1,QPointF& len_coef);
 	/*float pix_hori;
 	float pix_ver;*/
 };

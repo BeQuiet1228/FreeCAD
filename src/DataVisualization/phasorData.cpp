@@ -308,9 +308,11 @@ bool phasorData::initVectorData2(){
 			y_coef<0.0000001&&y_coef>-0.0000001)
 		{
 			p2.push_back(p1[i]);
+			len_coef.push_back(QPointF(0.0,0.0));
 		}
 		else
 		{
+			len_coef.push_back(QPointF(x_coef,y_coef));
 			float _p2Len = sqrt(x_coef*x_coef + y_coef*y_coef);
 			float rotation = _p2Len / Svector;
 			QPointF _p2;
@@ -327,8 +329,37 @@ bool phasorData::initVectorData2(){
 			p1[i].y() - p2[i].y()>-0.000001&&p1[i].y() - p2[i].y() < 0.000001)
 		{
 			p1.erase(p1.begin() + i);
+			len_coef.erase(len_coef.begin()+i);
 			p2.erase(p2.begin() + i);
 		}
 	}
 	return true;
+}
+/**
+* @brief phasorData::findindexlen_coef 索引向量的长度系数
+* @param int index
+* @return QPointF
+*/
+QPointF phasorData::findindexlen_coef(int index)
+{
+	auto iter = len_coef.begin() + index;
+	if (iter!=len_coef.end())
+	{
+		return *iter;
+	}
+	return QPointF(0.0, 0.0);
+}
+/**
+* @brief phasorData::findindexP1 索引向量的起点
+* @param int index
+* @return QPointF
+*/
+QPointF phasorData::findindexP1(int index)
+{
+	auto iter = p1.begin() + index;
+	if (iter!=p1.end())
+	{
+		return *iter;
+	}
+	return QPointF(0.0,0.0);
 }
