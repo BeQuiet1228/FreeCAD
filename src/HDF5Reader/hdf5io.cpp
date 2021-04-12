@@ -355,29 +355,58 @@ void Hdf5IO::getStructData()
 	Group group;
 	if (!getGroup("Group_kmat", group))
 		return;
-
+	int datatype = 0;//3表示3维，2表示2维
 	DataSet dataSet1, dataSet2, dataSet3, dataSet4;
-		//获取数据库
-	if (!(getDataSet(group, "I1MX", dataSet1)
+	//获取数据库
+	if ((getDataSet(group, "I1MX", dataSet1)
 		&& getDataSet(group, "I2MX", dataSet2)
 		&& getDataSet(group, "I3MX", dataSet3)
 		&& getDataSet(group, "datasetKmt", dataSet4)))
-		return;	
+	{
+		datatype = 3;
+	}
+	else if ((getDataSet(group, "I1MX", dataSet1)
+		&& getDataSet(group, "I2MX", dataSet2)
+		&& getDataSet(group, "datasetKmt", dataSet3)))
+	{
+		datatype = 2;
+	}
+	else
+		return;
 
 	std::vector<std::string> headList = getHeadValue(group);
 
 	//如果头数据为空，则说明该图为空
 	if (!headList.empty())
 	{
-		Hdf5Data data;
-		data.listDataSet.push_back(dataSet1);
-		data.listDataSet.push_back(dataSet2);
-		data.listDataSet.push_back(dataSet3);
-		data.listDataSet.push_back(dataSet4);
-		data.group = group;
-		data.headList = headList;
-		data.initInformation();
-		hdf5DataList.push_back(data);
+		switch (datatype)
+		{
+		case 2:
+		{
+			Hdf5Data data;
+			data.listDataSet.push_back(dataSet1);
+			data.listDataSet.push_back(dataSet2);
+			data.listDataSet.push_back(dataSet3);
+			data.group = group;
+			data.headList = headList;
+			data.initInformation();
+			hdf5DataList.push_back(data);
+		}
+			break;
+		case 3:
+		{
+			Hdf5Data data;
+			data.listDataSet.push_back(dataSet1);
+			data.listDataSet.push_back(dataSet2);
+			data.listDataSet.push_back(dataSet3);
+			data.listDataSet.push_back(dataSet4);
+			data.group = group;
+			data.headList = headList;
+			data.initInformation();
+			hdf5DataList.push_back(data);
+		}
+			break;
+		}
 	}
 }
 
@@ -500,7 +529,10 @@ void Hdf5IO::getGrdData()
 void Hdf5IO::initHdf5Data()
 {
 
-    // 获取结构数据
+	{
+		
+	}
+	//获取结构数据
      {
 		 getStructData();
      }

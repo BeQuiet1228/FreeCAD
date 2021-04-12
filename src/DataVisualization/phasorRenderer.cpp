@@ -5,7 +5,8 @@
 //°´ÏñËØÀ´
 #define  HORI_GRID (30.0f)
 #define  VERT_GRID (30.0f)
-phasorRenderer::phasorRenderer(std::shared_ptr<phasorData> data):Renderer(std::dynamic_pointer_cast<Data>(data))
+phasorRenderer::phasorRenderer(std::shared_ptr<phasorData> data)
+	:Renderer(std::dynamic_pointer_cast<Data>(data))
 {
 
 }

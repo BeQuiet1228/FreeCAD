@@ -439,14 +439,11 @@ bool StructureRenderer::drawPointImage_Cylindrical(){
 	painter.setPen(pen);
 	//获取当前点位
 
-	structureData::structpoint _point = findApoint_Cylindrical(this->getFindPosition());
-#define _DEBUG_
-#ifdef _DEBUG_
-	printf("获取的当前点位:(x=%f,y=%f)\n", _point.x, _point.y);
-#undef _DEBUG_
-#endif
+	//structureData::structpoint _point = findApoint_Cylindrical(this->getFindPosition());
+	QPointF A_Point = this->getFindPosition();
+	structureData::structpoint _point = findApoint_Cylindrical(A_Point);
 	//坐标翻转
-	_point.y = getSize().height() - _point.y;
+	 _point.y= getSize().height() - _point.y;
 	painter.drawPoint(QPointF(_point.x,_point.y));
 	drawDisplayPoint(painter, QPointF(_point.x, _point.y), QPointF(_point.d1, _point.d2));
 	//auto nImg = img.mirrored(false, true);
@@ -614,65 +611,103 @@ structureData::structpoint StructureRenderer::findApoint_Cylindrical(QPointF _cu
 	//获取所有的点，只能一个一个对比
 	std::shared_ptr<structureData> d = std::dynamic_pointer_cast<structureData>(data);
 	//获取起始点,因为图表的刻度不一定是从零开始的。
-	QVector<qreal> _R_list = d->Get_R_val();
-	QVector<qreal> _rand_list = d->Get_rand_val();
+	//QVector<qreal> _R_list = d->Get_R_val();
+	//QVector<qreal> _rand_list = d->Get_rand_val();
 	//获取矩形
-	QVector<QRectF> _rl = GetCylindricalRect(_R_list);
+	//QVector<QRectF> _rl = GetCylindricalRect(_R_list);
 	//获取原始的切割数据
-	QVector<QLineF> a_lines = Getlines(QPointF(0.0, 0.0), _rl, _rand_list);
-	for (auto iter = _rl.begin(); iter != _rl.end(); iter++)
+	//QVector<QLineF> a_lines = Getlines(QPointF(0.0, 0.0), _rl, _rand_list);
+	QMap<int, QVector<structureData::CutCir>> map = d->GetAllKMTInfo_Cir();
+	QVector<QPointF> pointlist;
+	//查找方式还待优化
+	int key, index, pointype;
+	unsigned int _mindistance = ~0;
+	for (auto iter = color_tab.begin(); iter != color_tab.end();iter++)
 	{
-		//获取缩放
-		transitionRectF(*iter, xScale, xr, yScale, yr);
-	}
-	//获取绘制角度
-	//获取圆心
-	QPointF  p1 = _rl[0].center();
-	QVector<QLineF> _lines = Getlines(p1, _rl, _rand_list);
-//#define _DEBUG_
-#ifdef _DEBUG_
-	for each (QLineF var in _lines)
-	{
-		printf("(x1=%f,y1=%f,x2=%f,y2=%f)\n", var.p1().x(), var.p1().y(), var.p2().x(), var.p2().y());
-	}
-#endif
-	//开始比较
-	float distance = 100000.0;//MAX_DISTANCE
-	QPointF minPoint;
-	unsigned int index = 0;
-	unsigned int type = 0;
-	for (auto  i = 0; i <_lines.size(); i++)
-	{
-		float _distance1 = GetDistance(_curpoint,_lines[i].p1());
-		float _distance2 = GetDistance(_curpoint, _lines[i].p2());
-		if (distance>_distance1 ||distance>_distance2)
+		auto iterp = map.find(iter.key());
+		if (iterp!=map.end())
 		{
-			index = i;
-			distance = (_distance1 > _distance2) ? (_distance2) : (_distance1);
-			type = (_distance1 > _distance2) ? (2) : (1);
-			minPoint = (_distance1 > _distance2) ?(_lines[i].p2()) :(_lines[i].p1()) ;
+			for (auto _index = 0; _index < map[iter.key()].size();_index++)
+			{
+				transitionPoint(map[iter.key()][_index].inner1, xScale, xr, yScale, yr);
+				QPointF inner1 = map[iter.key()][_index].inner1;
+				transitionPoint(map[iter.key()][_index].inner2, xScale, xr, yScale, yr);
+				QPointF inner2 = map[iter.key()][_index].inner2;
+				transitionPoint(map[iter.key()][_index].excir1, xScale, xr, yScale, yr);
+				QPointF excir1 = map[iter.key()][_index].excir1;
+				transitionPoint(map[iter.key()][_index].excir2, xScale, xr, yScale, yr);
+				QPointF excir2 = map[iter.key()][_index].excir2;
+				unsigned int distance_inner1 = sqrt((inner1.x() - _curpoint.x())*(inner1.x() - _curpoint.x()) + (inner1.y() - _curpoint.y())*(inner1.y() - _curpoint.y()));
+				unsigned int distance_inner2 = sqrt((inner2.x() - _curpoint.x())*(inner2.x() - _curpoint.x()) + (inner2.y() - _curpoint.y())*(inner2.y() - _curpoint.y()));
+				unsigned int distance_excir1 = sqrt((excir1.x() - _curpoint.x())*(excir1.x() - _curpoint.x()) + (excir1.y() - _curpoint.y())*(excir1.y() - _curpoint.y()));
+				unsigned int distance_excir2 = sqrt((excir2.x() - _curpoint.x())*(excir2.x() - _curpoint.x()) + (excir2.y() - _curpoint.y())*(excir2.y() - _curpoint.y()));
+				//比较距离
+				if (_mindistance>distance_inner1)
+				{
+					_mindistance = distance_inner1;
+					key = iter.key();
+					index = _index;
+					pointype = 0;
+				}
+				if (_mindistance>distance_inner2)
+				{
+					_mindistance = distance_inner2;
+					key = iter.key();
+					index = _index;
+					pointype = 1;
+				}
+				if (_mindistance>distance_excir1)
+				{
+					_mindistance = distance_excir1;
+					key = iter.key();
+					index = _index;
+					pointype = 2;
+				}
+				if (_mindistance>distance_excir2)
+				{
+					_mindistance = distance_excir2;
+					key = iter.key();
+					index = _index;
+					pointype = 3;
+				}
+			}
 		}
 	}
-	//获取到最小点
-//#define _DEBUG_
-#ifdef _DEBUG_
-	printf("鼠标的点位(x=%f,y=%f)\n",_curpoint.x(),_curpoint.y());
-	printf("计算得出最小点为（x=%f,y=%f）\n", minPoint.x(), minPoint.y());
-#endif
-	mpoint.x = minPoint.x();
-	mpoint.y = minPoint.y();
-	switch (type)
+//找到最近的点
+	QMap<int, QVector<structureData::CutCir>> __map = d->GetAllKMTInfo_Cir();
+	QPointF dp;
+	switch (pointype)
 	{
+	case 0:
+	{
+		mpoint.x = map[key][index].inner1.x();
+		mpoint.y = map[key][index].inner1.y();
+		mpoint.d1 = __map[key][index].inner1.x();
+		mpoint.d2 = __map[key][index].inner1.y();
+	}
+		break;
 	case 1:
 	{
-		mpoint.d1 = a_lines[index].p1().x();
-		mpoint.d2 = a_lines[index].p1().y();
+		mpoint.x = map[key][index].inner2.x();
+		mpoint.y = map[key][index].inner2.y();
+		mpoint.d1 = __map[key][index].inner2.x();
+		mpoint.d2 = __map[key][index].inner2.y();
 	}
 		break;
 	case 2:
 	{
-		mpoint.d1 = a_lines[index].p2().x();
-		mpoint.d2 = a_lines[index].p2().y();
+		mpoint.x = map[key][index].excir1.x();
+		mpoint.y = map[key][index].excir1.y();
+		mpoint.d1 = __map[key][index].excir1.x();
+		mpoint.d2 = __map[key][index].excir1.y();
+	}
+		break;
+	case 3:
+	{
+		mpoint.x = map[key][index].excir2.x();
+		mpoint.y = map[key][index].excir2.y();
+		mpoint.d1 = __map[key][index].excir2.x();
+		mpoint.d2 = __map[key][index].excir2.y();
 	}
 		break;
 	}

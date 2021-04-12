@@ -284,7 +284,6 @@ void structureData::fileCylindrical_info()
 			_curcir.startAngle = _rand_val[index_rand];
 			_curcir.endAngle = _rand_val[index_rand + 1];
 			_CutCirlist.push_back(_curcir);
-			//printf("index=%d,x=%f,y=%f\n",index_R,_curcir.inner1.x(),_curcir.inner1.y());
 		}
 	}
 #pragma  endregion
@@ -292,8 +291,6 @@ void structureData::fileCylindrical_info()
 	allKmtinfo_cir.clear();
 	//获取一个圆环的切割数量
 	int CutNum=_rand_val.size()-1;
-	/*for (auto iter = _CutCirlist.begin(); iter != _CutCirlist.end(); iter++)
-		allKmtinfo_cir[3].push_back(*iter);*/
 	for each(DaTaKmt var in datakmtinfo)
 	{
 		if (var.point1==1 && var.point3<_rand_val.size())
@@ -302,28 +299,4 @@ void structureData::fileCylindrical_info()
 		}
 	}
 #pragma endregion
-	//CutNum = 0;
-	/********************************************************/
-	////根据导管和真空两种参数填入R_val
-	//for each (DaTaKmt var in datakmtinfo)
-	//{
-	//	if (var.point1==pointXSize/2)
-	//	{
-	//		switch (var.pointproperty)
-	//		{
-	//		case 3:
-	//		{
-	//			//导管
-	//			R_val[var.point2] = _r_val[var.point2];
-	//		}
-	//			break;
-	//		case 1024:
-	//		{
-	//			//真空
-	//		}
-	//			break;
-	//		}
-	//	}
-	//}
-
 }
