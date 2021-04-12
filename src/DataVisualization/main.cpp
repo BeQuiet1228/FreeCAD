@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 	std::shared_ptr<CountourDataPolar> particleData(new CountourDataPolar(d));
 
 
-	ContourRenderPolar *timeRenderer = new ContourRenderPolar(particleData);
+	ContourRender *timeRenderer = new ContourRender(particleData);
 	timeRenderer->dataInit();
 	timeRenderer->setDefaultRang();
 	//timeRenderer->setDisplayMode(QwtPlotSpectrogram::ContourMode,true);

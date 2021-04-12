@@ -5,7 +5,7 @@
 ContourRenderPolar::ContourRenderPolar(std::shared_ptr<ContourData> data)
 	:Renderer(data)
 {
-	setRenderThreadCount(0);
+	setRenderThreadCount(1);
 	setColorMap(new ColorMap);
 
 }

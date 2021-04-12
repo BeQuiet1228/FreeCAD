@@ -43,9 +43,9 @@ QwtMatrixRasterData* CountourDataPolar::getQwtMatrixRasterData()
 	rasterData->setValueMatrix(data, width);
 
 	rasterData->setInterval(Qt::XAxis,
-		QwtInterval(yr.min, yr.max, QwtInterval::ExcludeMaximum));
+		QwtInterval(xr.min, xr.max, QwtInterval::ExcludeMaximum));
 	rasterData->setInterval(Qt::YAxis,
-		QwtInterval(0, xr.max, QwtInterval::ExcludeMaximum));
+		QwtInterval(0, yr.max, QwtInterval::ExcludeMaximum));
 
 	Rang vr = getVlaueRange();
 	rasterData->setInterval(Qt::ZAxis, QwtInterval(vr.min, vr.max));

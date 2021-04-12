@@ -20,6 +20,15 @@ public:
 private:
 	//绘制提示框
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const ContourData::Grid& grid);
+
+protected:
+	void renderTile(const QwtScaleMap &xMap, const QwtScaleMap &yMap,
+		const QRect &tile, QImage *) const;
+	QImage renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QRectF &area, const QSize &imageSize)const override;
+
+	QPointF transiton(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const double& x, const double& y) const;
+
+	QSize size;
 };
 
 //测试用

@@ -29,34 +29,6 @@
 #include <QElapsedTimer>
 #endif
 
-class QwtPlotSpectrogram::PrivateData
-{
-public:
-    PrivateData():
-        data( NULL )
-    {
-        colorMap = new QwtLinearColorMap();
-        displayMode = ImageMode;
-
-        conrecFlags = QwtRasterData::IgnoreAllVerticesOnLevel;
-#if 0
-        conrecFlags |= QwtRasterData::IgnoreOutOfRange;
-#endif
-    }
-    ~PrivateData()
-    {
-        delete data;
-        delete colorMap;
-    }
-
-    QwtRasterData *data;
-    QwtColorMap *colorMap;
-    DisplayModes displayMode;
-
-    QList<double> contourLevels;
-    QPen defaultContourPen;
-    QwtRasterData::ConrecFlags conrecFlags;
-};
 
 /*!
    Sets the following item attributes:
@@ -399,8 +371,8 @@ QRectF QwtPlotSpectrogram::pixelHint( const QRectF &area ) const
        QwtColorMap::colorIndex()
 */
 QImage QwtPlotSpectrogram::renderImage(
-    const QwtScaleMap &xMap, const QwtScaleMap &yMap,
-    const QRectF &area, const QSize &imageSize ) const
+	const QwtScaleMap &xMap, const QwtScaleMap &yMap,
+	const QRectF &area, const QSize &imageSize) const
 {
     if ( imageSize.isEmpty() || d_data->data == NULL
         || d_data->colorMap == NULL )
@@ -673,4 +645,22 @@ void QwtPlotSpectrogram::draw( QPainter *painter,
             drawContourLines( painter, xMap, yMap, lines );
         }
     }
+}
+
+QwtPlotSpectrogram::PrivateData::PrivateData()
+	:data(NULL)
+{
+	colorMap = new QwtLinearColorMap();
+	displayMode = ImageMode;
+
+	conrecFlags = QwtRasterData::IgnoreAllVerticesOnLevel;
+#if 0
+	conrecFlags |= QwtRasterData::IgnoreOutOfRange;
+#endif
+}
+
+QwtPlotSpectrogram::PrivateData::~PrivateData()
+{
+	delete data;
+	delete colorMap;
 }
