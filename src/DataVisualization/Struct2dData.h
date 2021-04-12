@@ -23,7 +23,9 @@ protected:
 public:
 	virtual bool loadPoint();
 	virtual unsigned int findIndexFromXValueL(const float&x) override;
-	std::map<int, std::map<int, std::vector<QPointF>>> GetAllinfo;
+	std::map<int, std::map<int, std::vector<QPointF>>> GetAllinfo(){
+		return allinfo;
+	}
 public:
 	Rang getXRang()
 	{

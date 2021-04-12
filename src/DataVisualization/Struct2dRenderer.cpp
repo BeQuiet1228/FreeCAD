@@ -1,7 +1,14 @@
 #include "Struct2dRenderer.h"
 #include <qpen.h>
+#include <QPainter>
 Struct2DRenderer::Struct2DRenderer(std::shared_ptr<Struct2dData> data):
 Renderer(std::dynamic_pointer_cast<Data> (data)){
+
+	color_tab[1]=QColor(125,125,125);
+	color_tab[3]=QColor(255,255,125);
+	color_tab[4]=QColor(255,125,125);
+	color_tab[5]=QColor(125,125,255);
+	color_tab[6]=QColor(255,255,0);
 }
 Struct2DRenderer::~Struct2DRenderer(){  }
 bool Struct2DRenderer::drawImage() {
@@ -17,7 +24,45 @@ bool Struct2DRenderer::drawImage() {
 	img.fill(qRgba(0, 0, 0, 0));
 	QPen pen(Qt::black);
 	pen.setWidth(1);
-	std::map<int, std::map<int, std::vector<QPointF>>> map;
+	QPainter painter(&img);
+	painter.setPen(pen);
+	std::map<int, std::map<int, std::vector<QPointF>>> map=d->GetAllinfo();
+	for (auto iter = map.begin(); iter != map.end();iter++)
+	{
+		auto itercolor = color_tab.find(iter->first);
+		if (itercolor!=color_tab.end())
+		{
+			QBrush brush(itercolor.value());
+			painter.setBrush(brush);
+			for (auto iterlines = iter->second.begin(); iterlines != iter->second.end();iterlines++)
+			{
+				if (iterlines->second.size() == 2)
+				{
+					auto iterpoint = (*iterlines).second.begin();
+					transitionPoint(*iterpoint, xScale, xr, yScale, yr);
+					transitionPoint(*(iterpoint + 1),xScale,xr,yScale,yr);
+					painter.drawLine((*iterpoint),*(iterpoint+1));
+				}
+				else
+				{
+					QPainterPath _path;
+					auto iterpoint = (*iterlines).second.begin();
+					transitionPoint(*iterpoint,xScale,xr,yScale,yr);
+					_path.moveTo(*iterpoint); iterpoint++;
+					for (;iterpoint!=(*iterlines).second.end();iterpoint++)
+					{
+						transitionPoint(*iterpoint, xScale, xr, yScale, yr);
+						_path.lineTo(*iterpoint);
+					}
+					painter.drawPath(_path);
+				}
+				
+
+			}
+		}
+	}
+	auto nImg = img.mirrored(false, true);
+	setImage(nImg);
 	return true;
 }
 bool Struct2DRenderer::addListRang(std::list<Data::Rang> listRang){
