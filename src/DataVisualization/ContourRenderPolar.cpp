@@ -1,10 +1,11 @@
 #include "ContourRenderPolar.h"
 #include "ContourRender.h"
 #include "qwt/qwt_scale_map.h"
+#include <qmath.h>
 ContourRenderPolar::ContourRenderPolar(std::shared_ptr<ContourData> data)
 	:Renderer(data)
 {
-	setRenderThreadCount(4);
+	setRenderThreadCount(0);
 	setColorMap(new ColorMap);
 
 }
@@ -19,7 +20,7 @@ bool ContourRenderPolar::drawImage()
 	QwtScaleMap xmap, ymap;
 	xmap.setPaintInterval(0, this->getSize().height()/2);
 	xmap.setScaleInterval(0, getXRang().max);
-	ymap.setPaintInterval(0, 360);
+	ymap.setPaintInterval(0, 2*M_PI);
 	ymap.setScaleInterval(getYRang().min, getYRang().max);
 	QRectF rect(0, 0, getSize().width(), getSize().height());
 

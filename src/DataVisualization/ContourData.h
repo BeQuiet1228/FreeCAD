@@ -20,7 +20,7 @@ protected:
 public:
 	bool loadPoint() override;
 	//获取一个rasterData对象
-	QwtMatrixRasterData* getQwtMatrixRasterData();
+	virtual QwtMatrixRasterData* getQwtMatrixRasterData();
 	//寻找一个网格
 	Grid findGrid(const float& x, const float& y);
 public:
@@ -35,7 +35,7 @@ public:
 private:
 	//获取顶点
 	std::vector<Grid> getVertex(const double& x,const double& y) const;
-private:
+protected:
 	std::vector<Grid> grids;
 
 	Rang valueRang;

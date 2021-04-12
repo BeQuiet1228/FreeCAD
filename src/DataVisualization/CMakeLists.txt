@@ -50,6 +50,8 @@ SET(CONTOUR_SRC ContourData.h
 	ContourRender.cpp
 	ContourRenderPolar.cpp
 	ContourRenderPolar.h
+	ContourDataPolar.cpp
+	ContourDataPolar.h
 )
 
 

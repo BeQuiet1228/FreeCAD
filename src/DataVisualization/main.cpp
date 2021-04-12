@@ -22,6 +22,7 @@
 #include "qwt/qwt_scale_widget.h"
 #include "qwt/qwt_scale_engine.h"
 #include "ContourRenderPolar.h"
+#include "ContourDataPolar.h"
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
@@ -76,7 +77,7 @@ int main(int argc, char *argv[])
 	
 
 
-	std::shared_ptr<ContourData> particleData(new ContourData(d));
+	std::shared_ptr<CountourDataPolar> particleData(new CountourDataPolar(d));
 
 
 	ContourRenderPolar *timeRenderer = new ContourRenderPolar(particleData);

@@ -236,16 +236,20 @@ void QwtPolarSpectrogram::draw( QPainter *painter,
     const QPointF &pole, double,
     const QRectF &canvasRect ) const
 {
-    const QRectF plotRect = plot()->plotRect( canvasRect.toRect() );
+	QRegion clipRegion(canvasRect.toRect());
+#if 0
+	const QRectF plotRect = plot()->plotRect(canvasRect.toRect());
 
-    QRegion clipRegion( canvasRect.toRect() );
-    if ( qwtNeedsClipping( plotRect, canvasRect ) )
-    {
-        // For large plotRects the ellipse becomes a huge polygon.
-        // So we better clip only, when we really need to.
+	
+	if (qwtNeedsClipping(plotRect, canvasRect))
+	{
+		// For large plotRects the ellipse becomes a huge polygon.
+		// So we better clip only, when we really need to.
 
-        clipRegion &= QRegion( plotRect.toRect(), QRegion::Ellipse );
-    }
+		clipRegion &= QRegion(plotRect.toRect(), QRegion::Ellipse);
+	}
+
+#endif
 
     QRect imageRect = canvasRect.toRect();
 

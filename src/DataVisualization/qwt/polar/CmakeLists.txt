@@ -42,6 +42,7 @@ set(qwt_polar_src qwt_polar.h
  
  add_library(qwt_polar ${qwt_polar_src} ${moc_src})
  
+ source_group("src" FILES ${qwt_polar_src})
 
 #增加包含目录
 include_directories(
