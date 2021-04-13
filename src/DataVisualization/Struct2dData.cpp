@@ -6,6 +6,10 @@ Struct2dData::~Struct2dData(){
 }
 void Struct2dData::restorDeriveData(){
 }
+/**
+* @brief Struct2dData::initXYRang 初始化数值区间
+* @return bool
+*/
 bool Struct2dData::initXYRang(){
 	if (posxSize < 2 || posySize < 2)
 		return false;
@@ -31,6 +35,10 @@ bool Struct2dData::initXYRang(){
 	setYRang(yr);
 	return true;
 }
+/**
+* @brief Struct2dData::loadPoint
+* @return bool
+*/
 bool Struct2dData::loadPoint(){
 	Data::ListValuesPtr ListValues;
 	//获取原始数据
@@ -46,6 +54,10 @@ bool Struct2dData::loadPoint(){
 	initdata();
 	return true;
 }
+/**
+* @brief Struct2dData::initdata 初始化数据
+* @return bool
+*/
 bool Struct2dData::initdata(){
 	Data::ListValuesPtr ListValues;
 	//获取原始数据
@@ -69,6 +81,15 @@ bool Struct2dData::initdata(){
 		datasetkmtlist.push_back(_datasetkmtinfo);
 	}
 	//装入成功
+	//获取所有点位
+	for (auto y = 0; y < IM2X->size(); y++)
+	{
+		for (auto x = 0; x < IM1X->size();x++)
+		{
+		
+			ALLPointf.push_back(QPointF(*(IM1X->begin() + x), *(IM2X->begin() + y)));
+		}
+	}
 	for each(datasetkmtinfo i in datasetkmtlist)
 	{
 		allinfo[i.data3][i.data4].push_back(QPointF(*(IM1X->begin() + i.data1-1), *(IM2X->begin() + i.data2-1)));

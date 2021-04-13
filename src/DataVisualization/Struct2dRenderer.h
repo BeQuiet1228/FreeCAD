@@ -19,7 +19,12 @@ public:
 	virtual bool drawPointImage() override;
 	virtual bool setDefaultRang() override;
 	virtual void dataInit() override;
+public:
+	void SetColor(int,QColor);
+	void SetPen(int ,QPen);
 private:
+	QVector<QLineF> Getlines(std::vector<QPointF> points);
+	void drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d);
 	void transitionPoint(QPointF& point, const float& xScale, const Data::Rang& xr, const float& yScale, const Data::Rang& yr)
 	{
 		point.setX(transitionX(point.x(), xScale, xr));
@@ -33,7 +38,9 @@ private:
 	{
 		return (y - yr.min)*yScale;
 	}
+	QPointF GetA_pos(QPointF& A_pos);
 private:
 	QMap<int, QColor> color_tab;
+	QMap<int, QPen> pen_tab;
 };
 #endif

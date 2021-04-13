@@ -26,6 +26,18 @@ public:
 	std::map<int, std::map<int, std::vector<QPointF>>> GetAllinfo(){
 		return allinfo;
 	}
+	std::vector<QPointF> ALLPOINTF()
+	{
+		return ALLPointf;
+	}
+	int getposxSize()
+	{
+		return posxSize;
+	}
+	int getposySize()
+	{
+		return posySize;
+	}
 public:
 	Rang getXRang()
 	{
@@ -56,5 +68,7 @@ private:
 	int posxSize;
 	int posySize;
 	std::map<int, std::map<int, std::vector<QPointF>>> allinfo;
+	//全部点位，(包括多边型内部的网格点)
+	std::vector<QPointF> ALLPointf;
  };
 #endif

@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 	QApplication a(argc, argv);
 	CanvasItem::registerMetaTye();
 	//std::string path = "D:\\MILO_C_2.h5";
-	std::string path = "D:\\wandaotongProject\\TEMP2.H5";
+	std::string path = "D:\\TEMP2.H5";
 	Hdf5IO io(path);
 	
 	io.initHdf5Data();
