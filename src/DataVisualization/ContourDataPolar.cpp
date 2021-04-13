@@ -1,4 +1,5 @@
 #include "ContourDataPolar.h"
+#include <qmath.h>
 CountourDataPolar::CountourDataPolar(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
 	:ContourData(h5Data,mod)
 {
@@ -39,13 +40,13 @@ QwtMatrixRasterData* CountourDataPolar::getQwtMatrixRasterData()
 		grid++;
 #endif			
 	}
-	QwtMatrixRasterData *rasterData = new QwtMatrixRasterData;
+	QwtMatrixRasterData *rasterData = new PolarMatrixRasterData;
 	rasterData->setValueMatrix(data, width);
 
 	rasterData->setInterval(Qt::XAxis,
-		QwtInterval(xr.min, xr.max, QwtInterval::ExcludeMaximum));
+		QwtInterval(yr.min, yr.max, QwtInterval::ExcludeMaximum));
 	rasterData->setInterval(Qt::YAxis,
-		QwtInterval(0, yr.max, QwtInterval::ExcludeMaximum));
+		QwtInterval(0, xr.max, QwtInterval::ExcludeMaximum));
 
 	Rang vr = getVlaueRange();
 	rasterData->setInterval(Qt::ZAxis, QwtInterval(vr.min, vr.max));
@@ -53,3 +54,12 @@ QwtMatrixRasterData* CountourDataPolar::getQwtMatrixRasterData()
 	return rasterData;
 }
 
+
+double PolarMatrixRasterData::value(double x, double y) const
+{
+	double r, theta;
+	theta = qAtan2(x, y);
+	r = sqrt(pow(x, 2) + pow(y, 2));
+
+	return QwtMatrixRasterData::value(r, theta);
+}

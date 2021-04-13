@@ -29,6 +29,34 @@
 #include <QElapsedTimer>
 #endif
 
+class QwtPlotSpectrogram::PrivateData
+{
+public:
+    PrivateData():
+        data( NULL )
+    {
+        colorMap = new QwtLinearColorMap();
+        displayMode = ImageMode;
+
+        conrecFlags = QwtRasterData::IgnoreAllVerticesOnLevel;
+#if 0
+        conrecFlags |= QwtRasterData::IgnoreOutOfRange;
+#endif
+    }
+    ~PrivateData()
+    {
+        delete data;
+        delete colorMap;
+    }
+
+    QwtRasterData *data;
+    QwtColorMap *colorMap;
+    DisplayModes displayMode;
+
+    QList<double> contourLevels;
+    QPen defaultContourPen;
+    QwtRasterData::ConrecFlags conrecFlags;
+};
 
 /*!
    Sets the following item attributes:

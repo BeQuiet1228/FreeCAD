@@ -5,12 +5,10 @@
 #include <QImage>
 #include "Data.h"
 #include <memory.h>
-#include <QtConcurrentRun>
-#include <qmath.h>
 ContourRender::ContourRender(std::shared_ptr<ContourData> data)
 	:Renderer(std::dynamic_pointer_cast<Data>(data))
 {
-	setRenderThreadCount(1);
+	setRenderThreadCount(4);
 	setColorMap(new ColorMap);
 }
 

@@ -108,25 +108,9 @@ protected:
     void renderTile( const QwtScaleMap &xMap, const QwtScaleMap &yMap,
         const QRect &tile, QImage * ) const;
 
-protected:
+private:
     class PrivateData;
     PrivateData *d_data;
-};
-
-class QWT_EXPORT QwtPlotSpectrogram::PrivateData
-{
-public:
-	PrivateData();
-	~PrivateData();
-	
-
-	QwtRasterData *data;
-	QwtColorMap *colorMap;
-	DisplayModes displayMode;
-
-	QList<double> contourLevels;
-	QPen defaultContourPen;
-	QwtRasterData::ConrecFlags conrecFlags;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPlotSpectrogram::DisplayModes )
