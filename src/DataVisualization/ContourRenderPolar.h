@@ -1,9 +1,9 @@
 #pragma once
 #include "Renderer.h"
 #include "ContourData.h"
+#include "ContourRender.h"
 #include <memory>
-#include "qwt_polar_spectrogram.h"
-class ContourRenderPolar :public Renderer,public QwtPolarSpectrogram{
+class ContourRenderPolar :public ContourRender{
 public:
 	ContourRenderPolar(std::shared_ptr<ContourData> data);
 	~ContourRenderPolar();
@@ -19,5 +19,24 @@ public:
 private:
 	//绘制提示框
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const ContourData::Grid& grid);
+
+
+protected:
+	void renderTile(const QwtScaleMap &xMap, const QwtScaleMap &yMap,
+		const QRect &tile, QImage *) const;
+	QImage renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QRectF &area, const QSize &imageSize)const override;
+
+	QPointF transiton(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const double& x, const double& y) const;
+
+	QSize size;
+
+private:
+	//初始化坐标转换需要的数据
+	void initTransitionData();
+
+private:
+	//原点位置
+	QPointF origin;
+	double xScale;
 
 };

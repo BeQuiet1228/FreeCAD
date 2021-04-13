@@ -32,8 +32,8 @@ bool ContourRender::drawImage()
 
 	QImage img = renderImage(xmap, ymap, rect, getSize());
 
-	//setImage(img.mirrored(false, true));
-	setImage(img);
+	setImage(img.mirrored(false, true));
+	//setImage(img);
 	return true;
 }
 
