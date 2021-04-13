@@ -11,12 +11,15 @@
 StructureRenderer::StructureRenderer(std::shared_ptr<structureData> data)
 	:Renderer(std::dynamic_pointer_cast<Data>(data)), m_Coordinate_Dir(Z_R_coordinater)
 {
-
+	//填充颜色
+	//理想导体
+	color_tab[StructTexture::Perfect_Conductor] = QColor(125,125,125,255);
+	//真空
 }
 
 StructureRenderer::~StructureRenderer()
 {
-
+	color_tab.clear();
 }
 #include <QDebug>
 bool StructureRenderer::drawImage()
@@ -76,12 +79,45 @@ bool StructureRenderer::drawPointImage()
 */
 bool StructureRenderer::setDefaultRang()
 {
-	auto _structureData = std::dynamic_pointer_cast<structureData>(data);
-	if (!_structureData)
-		return false;
-	setXRang(_structureData->getXRang());
-	setYRang(_structureData->getYRang());
+	switch (m_Coordinate_Dir)
+	{
+	case cylindrical_coordinate:
+	{
+		auto _structureData = std::dynamic_pointer_cast<structureData>(data);
+		if (!_structureData)
+			return false;
 
+		Data::Rang xr;
+		QVector<qreal> R_range = _structureData->Get_R_val();
+		auto maxiter = R_range.end() - 1;
+		//#define _DEBUG_
+#ifdef _DEBUG_
+		for each (qreal var in R_range)
+		{
+			printf("%f\n", var);
+		}
+#undef _DEBUG_
+#endif
+		xr.max = *maxiter;
+		xr.min = -xr.max;
+		setXRang(xr);
+		setYRang(xr);
+	}
+		break;
+	case polar_coordinate:
+		break;
+	case Z_R_coordinater:
+	{
+		auto _structureData = std::dynamic_pointer_cast<structureData>(data);
+		if (!_structureData)
+			return false;
+		setXRang(_structureData->getXRang());
+		setYRang(_structureData->getYRang());
+	}
+		break;
+	default:
+		break;
+	}
 	return true;
 }
 
@@ -252,15 +288,30 @@ bool StructureRenderer::drawImage_Z_R()
 	painter.setRenderHint(QPainter::Antialiasing, true);;
 	painter.setPen(pen);
 
-	//开始绘制图表
-	QVector<QRectF> _conduit_list = d->GetConduitPoint();
-	auto iter = _conduit_list.begin();
-	for (; iter != _conduit_list.end(); iter++)
+	QMap<int, QVector<QRectF>> _map = d->GetAllKMTInfo();
+	for (auto iter = _map.begin(); iter != _map.end();iter++)
 	{
-		//获取缩放
-		transitionRectF(*iter, xScale, xr, yScale, yr);
+		auto itercolor = color_tab.find(iter.key());
+		if (itercolor!=color_tab.end())
+		{
+			//进行缩放
+			for (auto iterrecct = iter.value().begin(); iterrecct != iter.value().end(); iterrecct++)
+				transitionRectF(*iterrecct, xScale, xr, yScale, yr);
+			QBrush m_brush(itercolor.value());
+			painter.setBrush(m_brush);
+			painter.drawRects(iter.value());
+		}
 	}
-	painter.drawRects(_conduit_list);
+	//开始绘制图表
+	//QVector<QRectF> _conduit_list = d->GetConduitPoint();
+	//auto iter = _conduit_list.begin();
+	//for (; iter != _conduit_list.end(); iter++)
+	//{
+	//	//获取缩放
+	//	transitionRectF(*iter, xScale, xr, yScale, yr);
+	//}
+
+	//painter.drawRects(_conduit_list);
 	auto nImg = img.mirrored(false, true);
 	//#define _Debug
 #ifdef _Debug
@@ -301,45 +352,21 @@ bool StructureRenderer::drawImage_Cylindrical_Coordinate(){
 	QPainter painter(&img);
 	painter.setRenderHint(QPainter::Antialiasing, true);;
 	painter.setPen(pen);
-	//开始绘制圆柱
-	QVector<qreal> _R_list = d->Get_R_val();
-	QVector<qreal> _rand_list = d->Get_rand_val();
-	//获取矩形
-	QVector<QRectF> _rl = GetCylindricalRect(_R_list);
-	//auto iter = _rl.begin();
-	for (auto iter=_rl.begin(); iter != _rl.end(); iter++)
+	//绘制圆柱
+	QMap<int, QVector<structureData::CutCir>> _map = d->GetAllKMTInfo_Cir();
+	for (auto iter = _map.begin();iter!=_map.end(); iter++)
 	{
-		//获取缩放
-		transitionRectF(*iter, xScale, xr, yScale, yr);
+		auto itercolor = color_tab.find(iter.key());
+		if (itercolor!=color_tab.end())
+		{
+			QBrush m_brush(itercolor.value());
+			painter.setBrush(m_brush);
+			QVector<QPainterPath> _path = GetPath(iter.value(), xr, yr, xScale, yScale);
+			for (auto iterpath = _path.begin(); iterpath != _path.end(); iterpath++)
+				painter.drawPath(*iterpath);
+		}
 	}
-	//获取绘制角度
-	//获取圆心
-	QPointF  p1 = _rl[0].center();
-	qreal pi = 3.1415926;//指定π
-	//获取弧度与角度的转换系数
-	qreal w1 = 180 / pi;
-	qreal w2 = pi / 180;
-	auto iterRange = _rand_list.begin();
-	qreal startdeg = (*iterRange)*w1;
-	iterRange = _rand_list.end() - 1;
-	qreal enddeg = (*iterRange)*w1;
-	for (auto i = 0; i < _rl.size();i++)
-	{
-		painter.drawArc(_rl[i], startdeg * 16, enddeg * 16);
-	}
-	//绘制切割线
-	//起始设置为原点
-	QVector<QLineF> _lines=Getlines(p1,_rl,_rand_list);
-	painter.drawLines(_lines);
 	auto nImg = img.mirrored(false, true);
-	//#define _Debug
-#ifdef _Debug
-	static int index = 0;
-	QString _path = QString("C:/Users/Administrator/Desktop/save/savepmg_%1.png").arg(index++);
-	qDebug() << _path;
-	bool res = nImg.save(_path);
-#undef _Debug
-#endif
 	setImage(nImg);
 	return true;
 }
@@ -412,14 +439,11 @@ bool StructureRenderer::drawPointImage_Cylindrical(){
 	painter.setPen(pen);
 	//获取当前点位
 
-	structureData::structpoint _point = findApoint_Cylindrical(this->getFindPosition());
-#define _DEBUG_
-#ifdef _DEBUG_
-	printf("获取的当前点位:(x=%f,y=%f)\n", _point.x, _point.y);
-#undef _DEBUG_
-#endif
+	//structureData::structpoint _point = findApoint_Cylindrical(this->getFindPosition());
+	QPointF A_Point = this->getFindPosition();
+	structureData::structpoint _point = findApoint_Cylindrical(A_Point);
 	//坐标翻转
-	_point.y = getSize().height() - _point.y;
+	 _point.y= getSize().height() - _point.y;
 	painter.drawPoint(QPointF(_point.x,_point.y));
 	drawDisplayPoint(painter, QPointF(_point.x, _point.y), QPointF(_point.d1, _point.d2));
 	//auto nImg = img.mirrored(false, true);
@@ -484,7 +508,7 @@ structureData::structpoint StructureRenderer::findApoint_Z_R(QPointF _curpostion
 	std::shared_ptr<structureData> d = std::dynamic_pointer_cast<structureData>(data);
 	//开始绘制图表
 	//获取真实的数据
-	QVector<QRectF> _conduit_list = d->GetConduitPoint();
+	QVector<QRectF> _conduit_list = d->GetAllKMTInfo()[3];
 	//获取矩形中心点
 	QVector<QPointF> Scale_coord;
 	for (auto iter = _conduit_list.begin(); iter != _conduit_list.end(); iter++)
@@ -587,65 +611,103 @@ structureData::structpoint StructureRenderer::findApoint_Cylindrical(QPointF _cu
 	//获取所有的点，只能一个一个对比
 	std::shared_ptr<structureData> d = std::dynamic_pointer_cast<structureData>(data);
 	//获取起始点,因为图表的刻度不一定是从零开始的。
-	QVector<qreal> _R_list = d->Get_R_val();
-	QVector<qreal> _rand_list = d->Get_rand_val();
+	//QVector<qreal> _R_list = d->Get_R_val();
+	//QVector<qreal> _rand_list = d->Get_rand_val();
 	//获取矩形
-	QVector<QRectF> _rl = GetCylindricalRect(_R_list);
+	//QVector<QRectF> _rl = GetCylindricalRect(_R_list);
 	//获取原始的切割数据
-	QVector<QLineF> a_lines = Getlines(QPointF(0.0, 0.0), _rl, _rand_list);
-	for (auto iter = _rl.begin(); iter != _rl.end(); iter++)
+	//QVector<QLineF> a_lines = Getlines(QPointF(0.0, 0.0), _rl, _rand_list);
+	QMap<int, QVector<structureData::CutCir>> map = d->GetAllKMTInfo_Cir();
+	QVector<QPointF> pointlist;
+	//查找方式还待优化
+	int key, index, pointype;
+	unsigned int _mindistance = ~0;
+	for (auto iter = color_tab.begin(); iter != color_tab.end();iter++)
 	{
-		//获取缩放
-		transitionRectF(*iter, xScale, xr, yScale, yr);
-	}
-	//获取绘制角度
-	//获取圆心
-	QPointF  p1 = _rl[0].center();
-	QVector<QLineF> _lines = Getlines(p1, _rl, _rand_list);
-//#define _DEBUG_
-#ifdef _DEBUG_
-	for each (QLineF var in _lines)
-	{
-		printf("(x1=%f,y1=%f,x2=%f,y2=%f)\n", var.p1().x(), var.p1().y(), var.p2().x(), var.p2().y());
-	}
-#endif
-	//开始比较
-	float distance = 100000.0;//MAX_DISTANCE
-	QPointF minPoint;
-	unsigned int index = 0;
-	unsigned int type = 0;
-	for (auto  i = 0; i <_lines.size(); i++)
-	{
-		float _distance1 = GetDistance(_curpoint,_lines[i].p1());
-		float _distance2 = GetDistance(_curpoint, _lines[i].p2());
-		if (distance>_distance1 ||distance>_distance2)
+		auto iterp = map.find(iter.key());
+		if (iterp!=map.end())
 		{
-			index = i;
-			distance = (_distance1 > _distance2) ? (_distance2) : (_distance1);
-			type = (_distance1 > _distance2) ? (2) : (1);
-			minPoint = (_distance1 > _distance2) ?(_lines[i].p2()) :(_lines[i].p1()) ;
+			for (auto _index = 0; _index < map[iter.key()].size();_index++)
+			{
+				transitionPoint(map[iter.key()][_index].inner1, xScale, xr, yScale, yr);
+				QPointF inner1 = map[iter.key()][_index].inner1;
+				transitionPoint(map[iter.key()][_index].inner2, xScale, xr, yScale, yr);
+				QPointF inner2 = map[iter.key()][_index].inner2;
+				transitionPoint(map[iter.key()][_index].excir1, xScale, xr, yScale, yr);
+				QPointF excir1 = map[iter.key()][_index].excir1;
+				transitionPoint(map[iter.key()][_index].excir2, xScale, xr, yScale, yr);
+				QPointF excir2 = map[iter.key()][_index].excir2;
+				unsigned int distance_inner1 = sqrt((inner1.x() - _curpoint.x())*(inner1.x() - _curpoint.x()) + (inner1.y() - _curpoint.y())*(inner1.y() - _curpoint.y()));
+				unsigned int distance_inner2 = sqrt((inner2.x() - _curpoint.x())*(inner2.x() - _curpoint.x()) + (inner2.y() - _curpoint.y())*(inner2.y() - _curpoint.y()));
+				unsigned int distance_excir1 = sqrt((excir1.x() - _curpoint.x())*(excir1.x() - _curpoint.x()) + (excir1.y() - _curpoint.y())*(excir1.y() - _curpoint.y()));
+				unsigned int distance_excir2 = sqrt((excir2.x() - _curpoint.x())*(excir2.x() - _curpoint.x()) + (excir2.y() - _curpoint.y())*(excir2.y() - _curpoint.y()));
+				//比较距离
+				if (_mindistance>distance_inner1)
+				{
+					_mindistance = distance_inner1;
+					key = iter.key();
+					index = _index;
+					pointype = 0;
+				}
+				if (_mindistance>distance_inner2)
+				{
+					_mindistance = distance_inner2;
+					key = iter.key();
+					index = _index;
+					pointype = 1;
+				}
+				if (_mindistance>distance_excir1)
+				{
+					_mindistance = distance_excir1;
+					key = iter.key();
+					index = _index;
+					pointype = 2;
+				}
+				if (_mindistance>distance_excir2)
+				{
+					_mindistance = distance_excir2;
+					key = iter.key();
+					index = _index;
+					pointype = 3;
+				}
+			}
 		}
 	}
-	//获取到最小点
-//#define _DEBUG_
-#ifdef _DEBUG_
-	printf("鼠标的点位(x=%f,y=%f)\n",_curpoint.x(),_curpoint.y());
-	printf("计算得出最小点为（x=%f,y=%f）\n", minPoint.x(), minPoint.y());
-#endif
-	mpoint.x = minPoint.x();
-	mpoint.y = minPoint.y();
-	switch (type)
+//找到最近的点
+	QMap<int, QVector<structureData::CutCir>> __map = d->GetAllKMTInfo_Cir();
+	QPointF dp;
+	switch (pointype)
 	{
+	case 0:
+	{
+		mpoint.x = map[key][index].inner1.x();
+		mpoint.y = map[key][index].inner1.y();
+		mpoint.d1 = __map[key][index].inner1.x();
+		mpoint.d2 = __map[key][index].inner1.y();
+	}
+		break;
 	case 1:
 	{
-		mpoint.d1 = a_lines[index].p1().x();
-		mpoint.d2 = a_lines[index].p1().y();
+		mpoint.x = map[key][index].inner2.x();
+		mpoint.y = map[key][index].inner2.y();
+		mpoint.d1 = __map[key][index].inner2.x();
+		mpoint.d2 = __map[key][index].inner2.y();
 	}
 		break;
 	case 2:
 	{
-		mpoint.d1 = a_lines[index].p2().x();
-		mpoint.d2 = a_lines[index].p2().y();
+		mpoint.x = map[key][index].excir1.x();
+		mpoint.y = map[key][index].excir1.y();
+		mpoint.d1 = __map[key][index].excir1.x();
+		mpoint.d2 = __map[key][index].excir1.y();
+	}
+		break;
+	case 3:
+	{
+		mpoint.x = map[key][index].excir2.x();
+		mpoint.y = map[key][index].excir2.y();
+		mpoint.d1 = __map[key][index].excir2.x();
+		mpoint.d2 = __map[key][index].excir2.y();
 	}
 		break;
 	}
@@ -696,4 +758,68 @@ void StructureRenderer::drawDisplayPoint(QPainter& painter, const QPointF& posit
 		displayRect.y() + 40,
 		QString("Y:%1").arg(d.y(), 0, 'E', 2)
 		);
+}
+
+/**
+* @brief StructureRenderer::transitionPoint 转换坐标
+* @param QPointF& point
+* @param const float& xScale
+* @param const Data::Rang& xr
+* @param const float& yScale
+* @param const Data::Rang& yr
+* @return void 
+*/
+void StructureRenderer::transitionPoint(QPointF& point, const float& xScale, const Data::Rang& xr, const float& yScale,const Data::Rang& yr)
+{
+	point.setX(transitionX(point.x(),xScale,xr));
+	point.setY(transitionY(point.y(),yScale,yr));
+}
+/**
+* @brief StructureRenderer::GetPath 获取需要绘制的圆柱坐标系的路径
+* @param QVector<structureData::CutCir> _vector
+* @param const Data::Rang& xr
+* @param const Data::Rang& yr
+* @param const float& xScale
+* @param const float& yScale
+* @return QVector<QPainterPath>
+*/
+QVector<QPainterPath> StructureRenderer::GetPath(QVector<structureData::CutCir> _vector, const Data::Rang& xr,const Data::Rang& yr, const float& xScale, const float& yScale)
+{
+	qreal pi = 3.141592653589793;
+	qreal w1 = 180 / pi;
+	QPointF p0(0.0, 0.0);
+	transitionPoint(p0, xScale, xr, yScale, yr);
+	QVector<QPainterPath> pathlist;
+	for (auto iterrect = _vector.begin(); iterrect != _vector.end(); iterrect++)
+	{
+		QPainterPath path;
+		transitionPoint(iterrect->inner1, xScale, xr, yScale, yr);
+		transitionPoint(iterrect->inner2, xScale, xr, yScale, yr);
+		transitionPoint(iterrect->excir1, xScale, xr, yScale, yr);
+		transitionPoint(iterrect->excir2, xScale, xr, yScale, yr);
+#pragma region 绘制路径
+		path.moveTo(iterrect->inner1);
+		path.lineTo(iterrect->excir1);
+		//外圈矩形
+		QRectF excirrect;
+		float HR = iterrect->R_excir*xScale;
+		float VR = iterrect->R_excir*yScale;
+		excirrect.setLeft(p0.x() - HR);
+		excirrect.setTop(p0.y() - VR);
+		excirrect.setBottom(excirrect.top() + 2 * VR);
+		excirrect.setRight(excirrect.left() + 2 * HR);
+
+		path.arcTo(excirrect, iterrect->startAngle*w1, ((iterrect->endAngle*w1) - (iterrect->startAngle*w1)));
+		path.lineTo(iterrect->inner2);
+		HR = iterrect->R_inner*xScale;
+		VR = iterrect->R_inner*yScale;
+		excirrect.setLeft(p0.x() - HR);
+		excirrect.setTop(p0.y() - VR);
+		excirrect.setBottom(excirrect.top() + 2 * VR);
+		excirrect.setRight(excirrect.left() + 2 * HR);
+		path.arcTo(excirrect, iterrect->endAngle*w1, ((iterrect->startAngle*w1) - (iterrect->endAngle*w1)));
+		pathlist.push_back(path);
+#pragma  endregion
+	}
+	return pathlist;
 }

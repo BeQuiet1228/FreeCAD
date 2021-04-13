@@ -23,11 +23,13 @@ SET(MY_MOC_HDR RenderThread.h
 	Plot.h
 	Canvas.h
 	Axis.h)
+
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
 	TimeRenderer.cpp
 	TimeRenderer.h
 )
+
 SET(PARTICLE_SRC ParticleData.h
 	ParticleData.cpp
 	ParticleRenderer.h
@@ -38,6 +40,10 @@ SET(STRUCT_SRC StructRenderer.h
 	StructRenderer.cpp
 	structureData.h
 	structureData.cpp)
+SET(STRUCT2D_SRC Struct2dRenderer.h
+	Struct2dRenderer.cpp
+	Struct2dData.h
+	Struct2dData.cpp)
 SET(INTERSPACE_SRC InterspaceData.h
 	InterspaceData.cpp
 	InterspaceRender.h
@@ -60,7 +66,6 @@ SET(PHASOR_SRC phasorData.h
 	phasorRenderer.h
 	phasorRenderer.cpp
 )
-
 SET(SRC main.cpp
 	Data.h
 	Data.cpp
@@ -97,6 +102,9 @@ SET(DataVisualization_src
 	${INTERSPACE_SRC}
 	${CONTOUR_SRC}
 	${PHASOR_SRC}
+	${PHASOR_SRC}
+	${CONTOUR_SRC}
+	${STRUCT2D_SRC}
 )
 add_definitions(-DMY_DEBUG)
 #设置编译生成文件类型
@@ -115,7 +123,9 @@ SOURCE_GROUP("struct" FILES ${STRUCT_SRC})
 SOURCE_GROUP("interspace" FILES ${INTERSPACE_SRC})
 SOURCE_GROUP("contour" FILES ${CONTOUR_SRC})
 SOURCE_GROUP("phasor" FILES ${PHASOR_SRC})
-
+SOURCE_GROUP("phasor" FILES ${PHASOR_SRC})
+SOURCE_GROUP("contour" FILES ${CONTOUR_SRC})
+SOURCE_GROUP("struct2d" FILES ${STRUCT2D_SRC})
 
 #增加包含目录
 include_directories(

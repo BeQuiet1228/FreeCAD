@@ -4,11 +4,20 @@
 #include <Renderer.h>
 #include "structureData.h"
 #include<QVector>
+#include <QColor>
 enum Coordinate_Dir{
 	cylindrical_coordinate,
 	polar_coordinate,
 	Z_R_coordinater,
 };//坐标系方向
+
+struct COLOR
+{
+	float r;
+	float g;
+	float b;
+	float a;
+};
 class StructureRenderer :public Renderer{
 public:
 	StructureRenderer(std::shared_ptr<structureData> data);
@@ -25,11 +34,23 @@ public:
 	virtual void dataInit() override;
 	void SetCoordinateDir(Coordinate_Dir);
 	Coordinate_Dir getCurCoordinateDir();
+	void SetColor(int Material_index,QColor color)
+	{
+		color_tab[Material_index]=color;
+	}
+	void discolor(int Material_index)
+	{
+		auto iter = color_tab.find(Material_index);
+		if (iter!=color_tab.end())
+		{
+			color_tab.erase(iter);
+		}
+	}
 private:
 	//将数据坐标转换为图片上的坐标
 	float transitionX(const float& x, const float& xScale, const Data::Rang& xr);
 	float transitionY(const float& y, const float& yScale, const Data::Rang& yr);
-	void transitionPoint(QPointF& point, const float& xScale, const Data::Rang& xr, const float& yScale, Data::Rang& yr);
+	void transitionPoint(QPointF& point, const float& xScale, const Data::Rang& xr, const float& yScale,const Data::Rang& yr);
 	void transitionRectF(QRectF& _rectf, const float& sScale, const Data::Rang& xr, const float& yScale,Data::Rang& yr);
 
 	QVector<QRectF> GetCylindricalRect(QVector<qreal> _r_rang);
@@ -51,9 +72,12 @@ private:
 	float GetDistance(QPointF p1,QPointF p2);
 	//绘制需要显示的信息
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d);
+	//
+	QVector<QPainterPath> GetPath(QVector<structureData::CutCir> _vector, const Data::Rang& xr, const Data::Rang& yr, const float& xScale, const float& yScale);
 public:
 private:
 	Coordinate_Dir m_Coordinate_Dir;
+	QMap<int, QColor> color_tab;
 };
 
 #endif

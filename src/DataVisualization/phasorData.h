@@ -39,6 +39,8 @@ protected:
 public:
 	virtual bool loadPoint();
 	virtual unsigned int findIndexFromXValueL(const float& x) override;
+	QPointF findindexlen_coef(int index);
+	QPointF findindexP1(int index);
 	//获取取值范围
 	Rang getXRang()
 	{
@@ -76,6 +78,7 @@ private:
 	QVector<QRectF> mPiflist_rect;
 	QVector<QPointF> p1;//箭头起点
 	QVector <QPointF> p2;//箭头终点
+	QVector<QPointF> len_coef;//长度系数
 	//获取x,y的缩放
 	float m_xScale;
 	float m_yScale;
