@@ -297,6 +297,5 @@ QPointF ContourRender::transiton(const QwtScaleMap &xMap, const QwtScaleMap &yMa
 	if (theta < xMap.p1())
 		theta += 2 * M_PI;
 
-
 	return QPointF(r, theta);
 }

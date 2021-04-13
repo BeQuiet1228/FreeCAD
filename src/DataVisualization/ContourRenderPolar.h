@@ -30,13 +30,4 @@ protected:
 
 	QSize size;
 
-private:
-	//初始化坐标转换需要的数据
-	void initTransitionData();
-
-private:
-	//原点位置
-	QPointF origin;
-	double xScale;
-
 };

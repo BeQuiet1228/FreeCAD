@@ -9,8 +9,6 @@
 ContourRenderPolar::ContourRenderPolar(std::shared_ptr<ContourData> data)
 	:ContourRender(data)
 {
-	setRenderThreadCount(1);
-	setColorMap(new ColorMap);
 
 }
 
@@ -21,7 +19,6 @@ ContourRenderPolar::~ContourRenderPolar()
 
 bool ContourRenderPolar::drawImage()
 {
-	initTransitionData();
 
 	QwtScaleMap xmap, ymap;
 	xmap.setPaintInterval(0, this->getSize().width());
@@ -34,8 +31,45 @@ bool ContourRenderPolar::drawImage()
 
 	QImage img = renderImage(xmap, ymap, rect, getSize());
 
+	
+	auto d = std::dynamic_pointer_cast<ContourData>(Renderer::data);
+
+	QRectF area(d->getXRang().min, d->getYRang().min, d->getXRang().length(), d->getYRang().length());
+	QwtRasterData::ContourLines ContourLines =
+		renderContourLines(area, QSize(100,100));
+
+
+	QPainter painter(&img);
+	QPen pen(Qt::black);
+	painter.setPen(pen);
+
+
+	for (auto lines = ContourLines.begin(); lines != ContourLines.end(); lines++)
+	{
+		if (lines->size() <2)
+			continue;
+		auto startPoint = lines->begin();
+		for (auto point = startPoint + 1; point != lines->end(); point++)
+		{
+			double x1, x2, y1, y2;
+			x1 = startPoint->x()*cos(startPoint->y());
+			y1 = startPoint->x()*sin(startPoint->y());
+
+			x2 = point->x()*cos(point->y());
+			y2 = point->x()*sin(point->y());
+
+			x1 = xmap.transform(x1);
+			x2 = xmap.transform(x2);
+			y1 = ymap.transform(y1);
+			y2 = ymap.transform(y2);
+
+			painter.drawLine(x1, y1, x2, y2);
+			startPoint = point;
+		}
+	}
+
 	setImage(img.mirrored(false, true));
-	//setImage(img);
+
 	return true;
 }
 
@@ -67,7 +101,7 @@ bool ContourRenderPolar::setDefaultRang()
 	QList<double> contourLevels;
 	for (double level = (vr.length() / 10 + vr.min); level < vr.max; level += vr.length() / 10)
 		contourLevels += level;
-	//setContourLevels(contourLevels);
+	setContourLevels(contourLevels);
 	return true;
 }
 
@@ -194,26 +228,23 @@ QImage ContourRenderPolar::renderImage(const QwtScaleMap &xMap, const QwtScaleMa
 	return image;
 }
 
+/**
+* @brief ContourRenderPolar::transiton 将直角坐标像素，转换为极坐标数据
+* @param const QwtScaleMap & xMap
+* @param const QwtScaleMap & yMap
+* @param const double & x
+* @param const double & y
+* @return QT_NAMESPACE::QPointF x = R,y = Theta
+*/
 QPointF ContourRenderPolar::transiton(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const double& x, const double& y) const
 {
-	//QPointF origin(size.width() / 2, size.height() / 2);
-
-	double MaxR = size.width() > size.height() ? size.height() / 2 : size.width() / 2;
-	double xScale = size.width() / 2 / MaxR;
-	double yScale = size.height() / 2 / MaxR;
-
-
 	double nx, ny;
-	nx = (x - origin.x())/xScale;
-	ny = (y - origin.y());
-
 	nx = xMap.invTransform(x);
 	ny = yMap.invTransform(y);
 
 	double r, theta;
 	theta = qAtan2(nx, ny);
 	r = sqrt(pow(nx, 2) + pow(ny, 2));
-	//r = xMap.invTransform(r);
 
 	if (theta < 0.0)
 		theta += 2 * M_PI;
@@ -224,24 +255,4 @@ QPointF ContourRenderPolar::transiton(const QwtScaleMap &xMap, const QwtScaleMap
 	return QPointF(r, theta);
 }
 
-void ContourRenderPolar::initTransitionData()
-{
-	Data::Rang xr, yr;
-	xr = getXRang();
-	yr = getYRang();
-
-	auto d = std::dynamic_pointer_cast<ContourData>(Renderer::data);
-
-	double rMax = d->getXRang().max;
-
-	QSize size = getSize();
-	double xScale = size.width() / xr.length();
-	double yScale = size.height() / yr.length();
-	
-	origin.setX(-xr.min*xScale);
-	origin.setY(yr.max*yScale);
-
-	 this->xScale = (size.width() / xr.length()) / (size.height() / yr.length());
-	//double yScale = size.height() / 2 / MaxR;
-}
 
