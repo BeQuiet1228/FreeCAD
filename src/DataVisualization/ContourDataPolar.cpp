@@ -44,9 +44,9 @@ QwtMatrixRasterData* CountourDataPolar::getQwtMatrixRasterData()
 	rasterData->setValueMatrix(data, width);
 
 	rasterData->setInterval(Qt::XAxis,
-		QwtInterval(yr.min, yr.max, QwtInterval::ExcludeMaximum));
+		QwtInterval(xr.min, xr.max, QwtInterval::ExcludeMaximum));
 	rasterData->setInterval(Qt::YAxis,
-		QwtInterval(0, xr.max, QwtInterval::ExcludeMaximum));
+		QwtInterval(yr.min, yr.max, QwtInterval::ExcludeMaximum));
 
 	Rang vr = getVlaueRange();
 	rasterData->setInterval(Qt::ZAxis, QwtInterval(vr.min, vr.max));
@@ -60,6 +60,10 @@ double PolarMatrixRasterData::value(double x, double y) const
 	double r, theta;
 	theta = qAtan2(x, y);
 	r = sqrt(pow(x, 2) + pow(y, 2));
+
+	if (theta < 0.0)
+		theta += 2 * M_PI;
+
 
 	return QwtMatrixRasterData::value(r, theta);
 }

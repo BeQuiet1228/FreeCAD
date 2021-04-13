@@ -8,7 +8,7 @@
 ContourRender::ContourRender(std::shared_ptr<ContourData> data)
 	:Renderer(std::dynamic_pointer_cast<Data>(data))
 {
-	setRenderThreadCount(4);
+	setRenderThreadCount(0);
 	setColorMap(new ColorMap);
 }
 
@@ -20,18 +20,23 @@ ContourRender::~ContourRender()
 bool ContourRender::drawImage()
 {
 	QwtScaleMap xmap, ymap;
-	xmap.setPaintInterval(0, this->getSize().height() / 2);
-	xmap.setScaleInterval(0, getXRang().max);
-	ymap.setPaintInterval(0, this->getSize().height()/2);
-	ymap.setScaleInterval(0, getYRang().max);
+	xmap.setPaintInterval(0, this->getSize().width());
+	xmap.setScaleInterval(getXRang().min, getXRang().max);
+	ymap.setPaintInterval(0, this->getSize().height());
+	ymap.setScaleInterval(getYRang().min, getYRang().max);
 	QRectF rect(0, 0, getSize().width(), getSize().height());
-	
-	size = getSize();
 
-	QImage img = renderImage(xmap, ymap, rect, getSize());
+	//ÐÂ½¨»­²¼ »­±Ê
+	QImage img(getSize(), QImage::Format_ARGB32);
+	img.fill(qRgba(0, 0, 0, 0));
+	QPainter painter(&img);
+	painter.setRenderHint(QPainter::Antialiasing, true);
+	draw(&painter, xmap, ymap, rect);
+
+	//renderImage(xmap, ymap, rect, getSize());
 
 	setImage(img.mirrored(false, true));
-	//setImage(img);
+
 	return true;
 }
 
@@ -160,140 +165,4 @@ void ContourRender::drawDisplayPoint(QPainter& painter, const QPointF& position,
 		displayRect.y() + 60,
 		QString("Value:%1").arg(grid.value, 0, 'E', 2)
 		);
-}
-
-void ContourRender::renderTile(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QRect &tile, QImage *image) const
-{
-	const QwtInterval range = d_data->data->interval(Qt::ZAxis);
-	if (!range.isValid())
-		return;
-
-	if (d_data->colorMap->format() == QwtColorMap::RGB)
-	{
-		for (int y = tile.top(); y <= tile.bottom(); y++)
-		{
-			//const double ty = yMap.invTransform(y);
-			QPointF f;
-			QRgb *line = reinterpret_cast<QRgb *>(image->scanLine(y));
-			line += tile.left();
-
-			for (int x = tile.left(); x <= tile.right(); x++)
-			{
-				//const double tx = xMap.invTransform(x);
-				f = transiton(xMap, yMap, x, y);
-				*line++ = d_data->colorMap->rgb(range,
-					d_data->data->value(f.x(),f.y()));
-			}
-		}
-	}
-	else if (d_data->colorMap->format() == QwtColorMap::Indexed)
-	{
-		for (int y = tile.top(); y <= tile.bottom(); y++)
-		{
-			const double ty = yMap.invTransform(y);
-
-			unsigned char *line = image->scanLine(y);
-			line += tile.left();
-
-			for (int x = tile.left(); x <= tile.right(); x++)
-			{
-				const double tx = xMap.invTransform(x);
-
-				*line++ = d_data->colorMap->colorIndex(range,
-					d_data->data->value(tx, ty));
-			}
-		}
-	}
-}
-
-QImage ContourRender::renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QRectF &area, const QSize &imageSize) const
-{
-	if (imageSize.isEmpty() || d_data->data == NULL
-		|| d_data->colorMap == NULL)
-	{
-		return QImage();
-	}
-
-	const QwtInterval intensityRange = d_data->data->interval(Qt::ZAxis);
-	if (!intensityRange.isValid())
-		return QImage();
-
-	QImage::Format format = (d_data->colorMap->format() == QwtColorMap::RGB)
-		? QImage::Format_ARGB32 : QImage::Format_Indexed8;
-
-	QImage image(imageSize, format);
-
-	if (d_data->colorMap->format() == QwtColorMap::Indexed)
-		image.setColorTable(d_data->colorMap->colorTable(intensityRange));
-
-	d_data->data->initRaster(area, image.size());
-
-#if DEBUG_RENDER
-	QElapsedTimer time;
-	time.start();
-#endif
-
-#if QT_VERSION >= 0x040400 && !defined(QT_NO_QFUTURE)
-	uint numThreads = renderThreadCount();
-
-	if (numThreads <= 0)
-		numThreads = QThread::idealThreadCount();
-
-	if (numThreads <= 0)
-		numThreads = 1;
-
-	const int numRows = imageSize.height() / numThreads;
-
-	QList< QFuture<void> > futures;
-	for (uint i = 0; i < numThreads; i++)
-	{
-		QRect tile(0, i * numRows, image.width(), numRows);
-		if (i == numThreads - 1)
-		{
-			tile.setHeight(image.height() - i * numRows);
-			renderTile(xMap, yMap, tile, &image);
-		}
-		else
-		{
-			futures += QtConcurrent::run(
-				this, &ContourRender::renderTile,
-				xMap, yMap, tile, &image);
-		}
-	}
-	for (int i = 0; i < futures.size(); i++)
-		futures[i].waitForFinished();
-
-#else // QT_VERSION < 0x040400
-	const QRect tile(0, 0, image.width(), image.height());
-	renderTile(xMap, yMap, tile, &image);
-#endif
-
-#if DEBUG_RENDER
-	const qint64 elapsed = time.elapsed();
-	qDebug() << "renderImage" << imageSize << elapsed;
-#endif
-
-	d_data->data->discardRaster();
-
-	return image;
-}
-
-QPointF ContourRender::transiton(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const double& x, const double& y) const
-{
-	QPointF origin(size.width()/2,size.height()/2);
-	double nx, ny;
-	nx = x - origin.x();
-	ny = y - origin.y();
-
-	double r, theta;
-	theta = qAtan2(nx,ny);
-	r = sqrt(pow(nx,2) + pow(ny,2));
-	r = xMap.invTransform(r);
-
-	if (theta < 0.0)
-		theta += 2 * M_PI;
-	if (theta < xMap.p1())
-		theta += 2 * M_PI;
-
-	return QPointF(r, theta);
 }

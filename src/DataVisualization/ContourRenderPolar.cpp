@@ -29,8 +29,15 @@ bool ContourRenderPolar::drawImage()
 
 
 	QImage img = renderImage(xmap, ymap, rect, getSize());
+	QPainter painter(&img);
+	painter.setRenderHint(QPainter::Antialiasing, true);
+
 
 	
+	QRectF area = QwtScaleMap::invTransform(xmap, ymap, rect);
+	QwtRasterData::ContourLines lines =renderContourLines(area, rect.toRect().size());
+	drawContourLines(&painter, xmap, ymap, lines);
+
 	setImage(img.mirrored(false, true));
 
 	return true;
