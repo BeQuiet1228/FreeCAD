@@ -28,7 +28,7 @@ struct CONTROL_EXPORT Hdf5Data
 	//头部信息
     std::vector<std::string> headList;
 	//h5文件对象
-    Hdf5IO *hdf5Io;
+	std::shared_ptr<Hdf5IO> hdf5Io;
 	//数据集对象
     std::vector<DataSet> listDataSet;
 	//图名称

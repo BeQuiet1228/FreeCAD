@@ -42,8 +42,11 @@ void Plot::reRender()
 		renderManager->addTask(task);
 		rank++;
 	}
+
 	renderManager->start();
+
 }
+
 /**
 * @brief Plot::addSubRenderer 添加附属渲染器 渲染一些附加内容，这些内容会自动覆盖到主渲染器渲染的内容之上（层级按照添加顺序覆盖）。
 * @param const std::shared_ptr<Renderer> & rd

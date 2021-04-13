@@ -8,6 +8,8 @@
 #include <QString>
 #include <QStringList>
 class Data{
+
+
 public:
 	using Values = std::vector<float>;
 	using ValuesPtr = std::shared_ptr<Values>;
@@ -27,8 +29,6 @@ public:
 	private:
 		MutexPtr mutex;
 	};
-
-
 	struct Rang{
 		Rang() :max(0), min(0){};
 		float length(){

@@ -52,11 +52,13 @@ SET(PHASOR_SRC phasorData.h
 	phasorRenderer.h
 	phasorRenderer.cpp
 )
+
 SET(CONTOUR_SRC ContourData.h
 	ContourData.cpp
 	ContourRender.h
 	ContourRender.cpp
 )
+
 SET(SRC main.cpp
 	Data.h
 	Data.cpp

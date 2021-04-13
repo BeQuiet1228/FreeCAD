@@ -18,7 +18,7 @@ Hdf5IO::~Hdf5IO()
 	if (Hdf5File != nullptr)
 		delete Hdf5File;
 }
-#include <QDebug>
+
 /**
 * @brief Hdf5IO::setFilePath 设置h5文件路径 路径中如果有中文 必须是utf8格式的 
 * @param const std::string & path
@@ -27,15 +27,9 @@ Hdf5IO::~Hdf5IO()
 void Hdf5IO::setFilePath(const std::string& path)
 {
 	auto gbk = QTextCodec::codecForName("gb2312");
-	if (nullptr==gbk)
-	{
-		//没有gb2312的字符集
-	//	return;
-	}
+
 	QString temp = QString::fromUtf8(path.c_str());
-	qDebug() << temp;
 	std::string newPath = gbk->fromUnicode(temp).data();
-	//std::string newPath = "F:/wdtproject/PICGUI/MILO_C_2.h5";
 	deleteH5File();
 	Hdf5File = new H5File(newPath, H5F_ACC_RDWR);
 }

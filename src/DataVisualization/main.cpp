@@ -36,8 +36,6 @@ int main(int argc, char *argv[])
 	
 	io.initHdf5Data();
 	auto data = io.hdf5DataList.begin();
-	//data +=816;
-	//data += 99;
 	Hdf5Data d = *data;
 
 #if 0
@@ -114,7 +112,6 @@ int main(int argc, char *argv[])
 	Struct2DRenderer* _Struct2DRenderer = new Struct2DRenderer(_Struct2dData);
 	_Struct2DRenderer->dataInit();
 	_Struct2DRenderer->setDefaultRang();
-
 	Plot p;
 	std::shared_ptr<Renderer> rd(_Struct2DRenderer);
 	p.setMainRenderer(rd);
