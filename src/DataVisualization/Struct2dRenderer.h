@@ -5,6 +5,12 @@
 #include "Struct2dData.h"
 #include <QMap>
 #include <QColor>
+#include <QPen>
+struct linepen
+{
+	QPen pen;
+	QLineF line;
+};
 class Struct2DRenderer :public Renderer
 {
 public:
@@ -22,6 +28,8 @@ public:
 public:
 	void SetColor(int,QColor);
 	void SetPen(int ,QPen);
+	bool getPloy_grid();
+	bool drawPloy();
 private:
 	QVector<QLineF> Getlines(std::vector<QPointF> points);
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d);
@@ -39,6 +47,8 @@ private:
 		return (y - yr.min)*yScale;
 	}
 	QPointF GetA_pos(QPointF& A_pos);
+	QVector<QLineF> GetCurLine_x();
+	QVector<QLineF> GetCutLine_y();
 private:
 	QMap<int, QColor> color_tab;
 	QMap<int, QPen> pen_tab;

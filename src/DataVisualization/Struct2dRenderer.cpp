@@ -1,4 +1,4 @@
-#include "Struct2dRenderer.h"
+ï»¿#include "Struct2dRenderer.h"
 #include <qpen.h>
 #include <QPainter>
 
@@ -11,7 +11,7 @@ Renderer(std::dynamic_pointer_cast<Data> (data)){
 	color_tab[5]=QColor(125,125,255,255);
 	color_tab[9]=QColor(255,255,0,255);
 	QPen pen(Qt::red);
-	//ĞéÏß
+	//è™šçº¿
 	pen.setStyle(Qt::DashLine);
 	pen.setWidth(5);
 	pen_tab[1] = pen;
@@ -27,99 +27,8 @@ Struct2DRenderer::~Struct2DRenderer(){  }
 * @return bool 
 */
 bool Struct2DRenderer::drawImage() {
-	float xScale, yScale;
-	if (!getTransitionScale(xScale, yScale))
-		return false;
-	std::shared_ptr<Struct2dData> d = std::dynamic_pointer_cast<Struct2dData>(data);
-	//»ñÈ¡x,yµÄÈ¡Öµ·¶Î§
-	auto xr = getXRang();
-	auto yr = getYRang();
-	//¿ªÊ¼»æÖÆ
-	QImage img(getSize(), QImage::Format_ARGB32);
-	img.fill(qRgba(0, 0, 0, 0));
-	QPen pen(Qt::black);
-	pen.setWidth(1);
-	QPainter painter(&img);
-	painter.setPen(pen);
-	std::map<int, std::map<int, std::vector<QPointF>>> map=d->GetAllinfo();
-	QVector<QVector<QLineF>> lines_list;
-	for (auto iter = map.begin(); iter != map.end();iter++)
-	{
-		auto itercolor = color_tab.find(iter->first);
-		if (itercolor!=color_tab.end())
-		{
-			QBrush brush(itercolor.value());
-			painter.setBrush(brush);
-			for (auto iterlines = iter->second.begin(); iterlines != iter->second.end();iterlines++)
-			{
-				if (iterlines->second.size() == 2)
-				{
-					auto linestyle = pen_tab.find(iter->first);
-					if (linestyle!=pen_tab.end())
-					{
-						painter.setPen(*linestyle);
-					}
-					auto iterpoint = (*iterlines).second.begin();
-					transitionPoint(*iterpoint, xScale, xr, yScale, yr);
-					transitionPoint(*(iterpoint + 1),xScale,xr,yScale,yr);
-					painter.drawLine((*iterpoint),*(iterpoint+1));
-					painter.setPen(pen);
-				}
-				else
-				{
-					QPainterPath _path;
-					auto iterpoint = (*iterlines).second.begin();
-					transitionPoint(*iterpoint,xScale,xr,yScale,yr);
-					_path.moveTo(*iterpoint); iterpoint++;
-					for (;iterpoint!=(*iterlines).second.end();iterpoint++)
-					{
-						transitionPoint(*iterpoint, xScale, xr, yScale, yr);
-						_path.lineTo(*iterpoint);
-					}
-					QVector<QLineF> lines = Getlines((*iterlines).second);
-					painter.drawPath(_path);
-					lines_list.push_back(lines);
-				}
-			}
-		}
-	}
-	for each (QVector<QLineF> var in lines_list)
-	{
-		painter.drawLines(var);
-	}
-	//QPen pen2(Qt::white);
-	//pen2.setWidth(1);
-	//painter.setPen(pen2);
-	//std::vector<QPointF> allpos = d->ALLPOINTF();
-	//int XSize = d->getposxSize();
-	//int YSize = d->getposySize();
-	////²âÊÔÓÃ
-	//for (auto y = 0; y < YSize-1;y++)
-	//{
-	//	for (auto x = 0; x < XSize-1;x++)
-	//	{
-	//		QPointF _left = allpos[y*(XSize)+x];
-	//		QPointF _right = allpos[y*(XSize) + (x + 1)];
-	//		transitionPoint(_left, xScale, xr, yScale, yr);
-	//		transitionPoint(_right, xScale, xr, yScale, yr);
-	//		painter.drawLine(_left, _right);
-	//	}
-	//}
-
-	//for (auto x = 0; x < XSize - 1; x++)
-	//{
-	//	for (auto y = 0; y < YSize - 1; y++)
-	//	{
-	//		QPointF _top = allpos[y*(XSize)+x];
-	//		QPointF _bottom = allpos[(y+1)*(XSize)+(x)];
-	//		transitionPoint(_top, xScale, xr, yScale, yr);
-	//		transitionPoint(_bottom, xScale, xr, yScale, yr);
-	//		painter.drawLine(_top, _bottom);
-	//	}
-	//}
-	auto nImg = img.mirrored(false, true);
-	setImage(nImg);
-	return true;
+	//return drawPloy();
+	return getPloy_grid();
 }
 /**
 * @brief Struct2DRenderer::addListRang 
@@ -130,11 +39,11 @@ bool Struct2DRenderer::addListRang(std::list<Data::Rang> listRang){
 	return true;
 }
 /**
-* @brief Struct2DRenderer::drawPointImage µãÎ»»æÖÆ
+* @brief Struct2DRenderer::drawPointImage ç‚¹ä½ç»˜åˆ¶
 * @return bool
 */
 bool Struct2DRenderer::drawPointImage(){
-	//ĞÂ½¨»­²¼
+	//æ–°å»ºç”»å¸ƒ
 
 	QImage img(getSize(),QImage::Format_ARGB32);
 	img.fill(qRgba(0, 0, 0, 0));
@@ -143,10 +52,10 @@ bool Struct2DRenderer::drawPointImage(){
 	pen.setWidth(5);
 	QPainter painter(&img);
 	painter.setPen(pen);
-	//Ô­Ê¼×ø±ê
+	//åŸå§‹åæ ‡
 	QPointF A_pos=this->getFindPosition();
 	QPointF d_pos=QPointF(0.0,0.0);
-	//»ñÈ¡µ±Ç°µãÎ»
+	//è·å–å½“å‰ç‚¹ä½
 	/**************************/
 	d_pos=GetA_pos(A_pos);
 	/***************************/
@@ -157,7 +66,7 @@ bool Struct2DRenderer::drawPointImage(){
 	return true;
 }
 /**
-* @brief Struct2DRenderer::setDefaultRang ÉèÖÃÄ¬ÈÏÊı¾İÇø¼ä
+* @brief Struct2DRenderer::setDefaultRang è®¾ç½®é»˜è®¤æ•°æ®åŒºé—´
 * @return bool
 */
 bool Struct2DRenderer::setDefaultRang(){
@@ -169,7 +78,7 @@ bool Struct2DRenderer::setDefaultRang(){
 	return true;
 }
 /**
-* @brief Struct2DRenderer::dataInit ÊıÖµ³õÊ¼»¯
+* @brief Struct2DRenderer::dataInit æ•°å€¼åˆå§‹åŒ–
 * return void
 */
 void Struct2DRenderer::dataInit(){
@@ -181,7 +90,7 @@ void Struct2DRenderer::dataInit(){
 	}
 }
 /**
-* @brief Struct2DRenderer::Getlines »ñÈ¡Ïß¶Î
+* @brief Struct2DRenderer::Getlines è·å–çº¿æ®µ
 * @param std::vector<QPointF> points
 * @return QVector<QLineF>
 */
@@ -208,7 +117,7 @@ QVector<QLineF> Struct2DRenderer::Getlines(std::vector<QPointF> points){
 	return lines;
 }
 /**
-* @brief Struct2DRenderer::drawDisplayPoint »æÖÆÏÔÊ¾ĞÅÏ¢
+* @brief Struct2DRenderer::drawDisplayPoint ç»˜åˆ¶æ˜¾ç¤ºä¿¡æ¯
 * @param QPainter& painter
 * @param const QPointF& position
 * @param const QPointF& d
@@ -216,17 +125,17 @@ QVector<QLineF> Struct2DRenderer::Getlines(std::vector<QPointF> points){
 */
 void Struct2DRenderer::drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d)
 {
-	//ÉèÖÃ»­±ÊµÄÑÕÉ«
+	//è®¾ç½®ç”»ç¬”çš„é¢œè‰²
 	QPen pen;
 	pen.setColor(QColor(102, 205, 170));
 	pen.setWidth(2);
 	painter.setPen(pen);
 	painter.setBrush(QBrush(QColor(255, 250, 240)));
-	//½¨Á¢»°»­¿ò
+	//å»ºç«‹è¯ç”»æ¡†
 	QRectF displayRect;
 	displayRect.setX(position.x() + 10);
 	displayRect.setY(position.y() - 5);
-	//Èç¹ûÕâ¸öµãÔÚ±ß½çÉÏ  ÄÇÃ´µ÷Õû»°¿òµÄÎ»ÖÃ
+	//å¦‚æœè¿™ä¸ªç‚¹åœ¨è¾¹ç•Œä¸Š  é‚£ä¹ˆè°ƒæ•´è¯æ¡†çš„ä½ç½®
 	auto size = getSize();
 	if (displayRect.y() > (size.height() - 60))
 	{
@@ -239,7 +148,7 @@ void Struct2DRenderer::drawDisplayPoint(QPainter& painter, const QPointF& positi
 	displayRect.setWidth(110);
 	displayRect.setHeight(50);
 	painter.drawRect(displayRect);
-	//»æÖÆÏÔÊ¾ĞÅÏ¢
+	//ç»˜åˆ¶æ˜¾ç¤ºä¿¡æ¯
 	QFont f;
 	f.setPixelSize(17);
 	painter.setFont(f);
@@ -253,9 +162,9 @@ void Struct2DRenderer::drawDisplayPoint(QPainter& painter, const QPointF& positi
 		);
 }
 /**
-* @brief Struct2DRenderer::GetA_pos »ñÈ¡×î½Ó½üµÄµã
-* @param QPointF& A_pos ÆÁÄ»ÉÏµÄµã
-* @return QPointF ÕæÊµ×ø±ê
+* @brief Struct2DRenderer::GetA_pos è·å–æœ€æ¥è¿‘çš„ç‚¹
+* @param QPointF& A_pos å±å¹•ä¸Šçš„ç‚¹
+* @return QPointF çœŸå®åæ ‡
 */
 QPointF Struct2DRenderer::GetA_pos(QPointF& A_pos)
 {
@@ -286,7 +195,7 @@ QPointF Struct2DRenderer::GetA_pos(QPointF& A_pos)
 			}
 		}
 	}
-	//»ñÈ¡×îĞ¡µÄµã
+	//è·å–æœ€å°çš„ç‚¹
 	QPointF dpos = map[data1][data2][data3];
 	QPointF apos = dpos;
 	transitionPoint(apos, xScale, xr, yScale, yr);
@@ -294,9 +203,9 @@ QPointF Struct2DRenderer::GetA_pos(QPointF& A_pos)
 	return dpos;
 }
 /**
-* @brief Struct2DRenderer::SetColor ÉèÖÃ²»Í¬¶à±ßĞÎµÄÑÕÉ«
-* @param int pro ¶à±ßĞÎÊôĞÔ
-* @param QColor _color ÑÕÉ«
+* @brief Struct2DRenderer::SetColor è®¾ç½®ä¸åŒå¤šè¾¹å½¢çš„é¢œè‰²
+* @param int pro å¤šè¾¹å½¢å±æ€§
+* @param QColor _color é¢œè‰²
 * @return void
 */
 void Struct2DRenderer::SetColor(int pro, QColor _color)
@@ -304,12 +213,259 @@ void Struct2DRenderer::SetColor(int pro, QColor _color)
 	color_tab[pro] = _color;
 }
 /**
-* @brief Struct2DRenderer::SetPen ÉèÖÃÖ±ÏßÇé¿öÏÂµÄ»­±Ê·ç¸ñ
-* @param int pro Ö±ÏßµÄÊôĞÔ
-* @param QPen pen »­±Ê
+* @brief Struct2DRenderer::SetPen è®¾ç½®ç›´çº¿æƒ…å†µä¸‹çš„ç”»ç¬”é£æ ¼
+* @param int pro ç›´çº¿çš„å±æ€§
+* @param QPen pen ç”»ç¬”
 * @return void
 */
 void Struct2DRenderer::SetPen(int pro, QPen pen)
 {
 	pen_tab[pro] = pen;
+}
+/**
+* @brief Struct2DRenderer::getPloy_grid è·å–å¤šè¾¹å½¢çš„ç½‘æ ¼
+* @return void
+*/
+bool Struct2DRenderer::getPloy_grid(){
+	float xScale, yScale;
+	if (!getTransitionScale(xScale, yScale))
+		return false;
+	std::shared_ptr<Struct2dData> d = std::dynamic_pointer_cast<Struct2dData>(data);
+	//è·å–x,yçš„å–å€¼èŒƒå›´
+	auto xr = getXRang();
+	auto yr = getYRang();
+	//å¼€å§‹ç»˜åˆ¶
+	QImage img1(getSize(), QImage::Format_ARGB32);
+	img1.fill(qRgba(255,255,255,255));
+	QPen pen(Qt::black);
+	pen.setWidth(1);
+	QPainter painter1(&img1);
+	painter1.setPen(pen);
+	std::vector<QPointF> allpos = d->ALLPOINTF();
+	int XSize = d->getposxSize();
+	int YSize = d->getposySize();
+	//ç»˜åˆ¶ç¬¬äºŒå¼ å›¾
+	QImage img2(getSize(), QImage::Format_ARGB32);
+	img2.fill(qRgba(255, 255, 255, 255));
+	QPainter painter2(&img2);
+	painter2.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+	std::map<int, std::map<int, std::vector<QPointF>>> map = d->GetAllinfo();
+	QVector<QVector<QLineF>> lines_list;
+	QVector<linepen> linepenlist;
+	for (auto iter = map.begin(); iter != map.end(); iter++)
+	{
+		auto itercolor = color_tab.find(iter->first);
+		if (itercolor != color_tab.end())
+		{
+			QBrush brush(itercolor.value());
+			painter1.setBrush(brush);
+			painter2.setBrush(brush);//è®¾ç½®ç”»åˆ·
+			for (auto iterlines = iter->second.begin(); iterlines != iter->second.end(); iterlines++)
+			{
+				if (iterlines->second.size() == 2)
+				{
+					linepen _linepen;
+					auto linestyle = pen_tab.find(iter->first);
+					if (linestyle != pen_tab.end())
+					{
+						_linepen.pen= linestyle.value();
+						auto iterpoint = (*iterlines).second.begin();
+						transitionPoint(*iterpoint, xScale, xr, yScale, yr);
+						transitionPoint(*(iterpoint + 1), xScale, xr, yScale, yr);
+						_linepen.line = QLineF((*iterpoint), *(iterpoint + 1));
+						linepenlist.push_back(_linepen);
+					}
+				}
+				if (iterlines->second.size()>2)
+				{
+					QPainterPath _path;
+					auto iterpoint = (*iterlines).second.begin();
+					transitionPoint(*iterpoint, xScale, xr, yScale, yr);
+					_path.moveTo(*iterpoint); iterpoint++;
+					for (; iterpoint != (*iterlines).second.end(); iterpoint++)
+					{
+						transitionPoint(*iterpoint, xScale, xr, yScale, yr);
+						_path.lineTo(*iterpoint);
+					}
+					QVector<QLineF> lines = Getlines((*iterlines).second);
+					painter2.fillPath(_path, QBrush(QColor(0,0,0,0)));
+					painter1.drawPath(_path);
+					lines_list.push_back(lines);
+				}
+			}
+		}
+	}
+#pragma region æµ‹è¯•ç”¨
+	//ç»˜åˆ¶æ¨ªå‘åˆ‡å‰²çº¿
+	QVector<QLineF> liney = GetCutLine_y();
+	QVector<QLineF> linex = GetCurLine_x();
+	painter1.drawLines(linex);
+	painter1.drawLines(liney);
+#pragma endregion
+	painter1.setCompositionMode(QPainter::CompositionMode_SourceOver);
+	painter1.drawImage(0, 0, img2);
+	for each (QVector<QLineF> var in lines_list)
+	{
+		painter1.drawLines(var);
+	}
+	//ç»˜åˆ¶çº¿æ®µ
+	/**********************************************/
+	for each (linepen var in linepenlist)
+	{
+		painter1.setPen(var.pen);
+		painter1.drawLine(var.line);
+	}
+	/**********************************************/
+	auto nImg = img1.mirrored(false, true);
+//#define  _Debug
+#ifdef _Debug
+	static int index = 0;
+	QString _path = QString("D:/savepmg_%1.png").arg(index++);
+	//qDebug() << _path;
+	bool res = nImg2.save(_path);
+#undef _Debug
+#endif
+
+	setImage(nImg);
+	return true;
+}
+/**
+* @brief Struct2DRenderer::drawPloy ç»˜åˆ¶å¤šè¾¹å½¢
+* @return bool
+*/
+bool Struct2DRenderer::drawPloy()
+{
+	float xScale, yScale;
+	if (!getTransitionScale(xScale, yScale))
+		return false;
+	std::shared_ptr<Struct2dData> d = std::dynamic_pointer_cast<Struct2dData>(data);
+	//è·å–x,yçš„å–å€¼èŒƒå›´
+	auto xr = getXRang();
+	auto yr = getYRang();
+	//å¼€å§‹ç»˜åˆ¶
+	QImage img(getSize(), QImage::Format_ARGB32);
+	img.fill(qRgba(0, 0, 0, 0));
+	QPen pen(Qt::black);
+	pen.setWidth(1);
+	QPainter painter(&img);
+	painter.setPen(pen);
+	std::map<int, std::map<int, std::vector<QPointF>>> map = d->GetAllinfo();
+	QVector<QVector<QLineF>> lines_list;
+	for (auto iter = map.begin(); iter != map.end(); iter++)
+	{
+		auto itercolor = color_tab.find(iter->first);
+		if (itercolor != color_tab.end())
+		{
+			QBrush brush(itercolor.value());
+			painter.setBrush(brush);
+			for (auto iterlines = iter->second.begin(); iterlines != iter->second.end(); iterlines++)
+			{
+				if (iterlines->second.size() == 2)
+				{
+					auto linestyle = pen_tab.find(iter->first);
+					if (linestyle != pen_tab.end())
+					{
+						painter.setPen(*linestyle);
+					}
+					auto iterpoint = (*iterlines).second.begin();
+					transitionPoint(*iterpoint, xScale, xr, yScale, yr);
+					transitionPoint(*(iterpoint + 1), xScale, xr, yScale, yr);
+					painter.drawLine((*iterpoint), *(iterpoint + 1));
+					painter.setPen(pen);
+				}
+				else
+				{
+					QPainterPath _path;
+					auto iterpoint = (*iterlines).second.begin();
+					transitionPoint(*iterpoint, xScale, xr, yScale, yr);
+					_path.moveTo(*iterpoint); iterpoint++;
+					for (; iterpoint != (*iterlines).second.end(); iterpoint++)
+					{
+						transitionPoint(*iterpoint, xScale, xr, yScale, yr);
+						_path.lineTo(*iterpoint);
+					}
+					QVector<QLineF> lines = Getlines((*iterlines).second);
+					painter.drawPath(_path);
+					lines_list.push_back(lines);
+				}
+			}
+		}
+	}
+	for each (QVector<QLineF> var in lines_list)
+	{
+		painter.drawLines(var);
+	}
+	//QPen pen2(Qt::white);
+	//pen2.setWidth(1);
+	//painter.setPen(pen2);
+	//std::vector<QPointF> allpos = d->ALLPOINTF();
+	//int XSize = d->getposxSize();
+	//int YSize = d->getposySize();
+	////æµ‹è¯•ç”¨
+	//for (auto y = 0; y < YSize-1;y++)
+	//{
+	//	for (auto x = 0; x < XSize-1;x++)
+	//	{
+	//		QPointF _left = allpos[y*(XSize)+x];
+	//		QPointF _right = allpos[y*(XSize) + (x + 1)];
+	//		transitionPoint(_left, xScale, xr, yScale, yr);
+	//		transitionPoint(_right, xScale, xr, yScale, yr);
+	//		painter.drawLine(_left, _right);
+	//	}
+	//}
+
+	//for (auto x = 0; x < XSize - 1; x++)
+	//{
+	//	for (auto y = 0; y < YSize - 1; y++)
+	//	{
+	//		QPointF _top = allpos[y*(XSize)+x];
+	//		QPointF _bottom = allpos[(y+1)*(XSize)+(x)];
+	//		transitionPoint(_top, xScale, xr, yScale, yr);
+	//		transitionPoint(_bottom, xScale, xr, yScale, yr);
+	//		painter.drawLine(_top, _bottom);
+	//	}
+	//}
+	auto nImg = img.mirrored(false, true);
+	setImage(nImg);
+	return true;
+}
+QVector<QLineF> Struct2DRenderer::GetCurLine_x(){
+	QVector<QLineF> lines;
+	float xScale, yScale;
+	getTransitionScale(xScale, yScale);
+	auto xr = getXRang();
+	auto yr = getYRang();
+	std::shared_ptr<Struct2dData> d = std::dynamic_pointer_cast<Struct2dData>(data);
+	std::vector<QPointF> Allpoint = d->ALLPOINTF();
+	int posxSizeX = d->getposxSize();
+	int posxSizeY = d->getposySize();
+	for (auto y = 0; y < posxSizeY;y++)
+	{
+		QPointF _left = Allpoint[y*posxSizeX];
+		QPointF _right = Allpoint[(y + 1)*posxSizeX - 1];
+		transitionPoint(_left, xScale, xr, yScale, yr);
+		transitionPoint(_right, xScale, xr, yScale, yr);
+		lines.push_back(QLineF(_left, _right));
+	}
+	return lines;
+}
+QVector<QLineF> Struct2DRenderer::GetCutLine_y(){
+	QVector<QLineF> lines;
+	float xScale, yScale;
+	getTransitionScale(xScale, yScale);
+	auto xr = getXRang();
+	auto yr = getYRang();
+	std::shared_ptr<Struct2dData> d = std::dynamic_pointer_cast<Struct2dData>(data);
+	std::vector<QPointF> Allpoint = d->ALLPOINTF();
+	int posxsize = d->getposxSize();
+	int posysize = d->getposySize();
+	for (auto x = 0; x < posxsize;x++)
+	{
+		QPointF bottom = Allpoint[x];
+		QPointF top = Allpoint[(posysize - 1)*posxsize + x];
+		transitionPoint(top, xScale, xr, yScale, yr);
+		transitionPoint(bottom, xScale, xr, yScale, yr);
+		lines.push_back(QLineF(top,bottom));
+	}
+	return lines;
 }
