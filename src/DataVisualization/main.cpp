@@ -19,19 +19,11 @@
 #include <qwt/qwt_color_map.h>
 #include "qwt/qwt_scale_widget.h"
 #include "ContourRender.h"
-<<<<<<< HEAD
-#include "structureData.h"
-#include "StructRenderer.h"
-#include "Struct2dData.h"
-#include"Struct2DRenderer.h"
-#include "ListTreeWidget.h"
-=======
 #include "qwt/qwt_scale_widget.h"
 #include "qwt/qwt_scale_engine.h"
 #include "ContourRenderPolar.h"
 #include "ContourDataPolar.h"
 #include "RendererFactory.h"
->>>>>>> remotes/origin/DataVisualization
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
@@ -49,7 +41,7 @@ int main(int argc, char *argv[])
 	auto data = io.hdf5DataList.begin();
 	data +=35;
 	//data += 752;
-	Hdf5Data d = *data
+	Hdf5Data d = *data;
 
 	//Hdf5Data d = *data;
 #if 0
@@ -85,110 +77,5 @@ int main(int argc, char *argv[])
 	plot.show();
 
 #endif // DEBUG
-	
-
-
-	/*std::shared_ptr<ContourDataPolar> particleData(new ContourDataPolar(d));
-
-<<<<<<< HEAD
-	//2维结构图测试
-	//std::shared_ptr<Struct2dData> _Struct2dData(new Struct2dData(d));
-	//Struct2DRenderer* _Struct2DRenderer = new Struct2DRenderer(_Struct2dData);
-	//_Struct2DRenderer->dataInit();
-	//_Struct2DRenderer->setDefaultRang();
-	//Plot p;
-	//std::shared_ptr<Renderer> rd(_Struct2DRenderer);
-	//p.setMainRenderer(rd);
-	//p.showMaximized();
-=======
-
-	ContourRenderPolar *timeRenderer = new ContourRenderPolar(particleData);
-	timeRenderer->dataInit();
-	timeRenderer->setDefaultRang();
-	//timeRenderer->setDisplayMode(QwtPlotSpectrogram::ContourMode,true);
-	Plot p;
-	std::shared_ptr<Renderer> rd(timeRenderer);*/
-
-	RendererPtr rd = RendererFactory::creatRenderer(d);
-
-	rd->dataInit();
-	rd->setDefaultRang();
-	Plot p;
-	p.setMainRenderer(rd);
-	//p.setAxisRightEnabled(true);
-	p.resize(800,600);
-	//p.showMaximized();
-	//p.renderFinished();
-	p.show();
-
-
-	
-
-/*	QwtScaleWidget *sw = new QwtScaleWidget(QwtScaleDraw::RightScale, 0);
-	sw->setColorBarEnabled(true);
-
-
-	QwtLinearScaleEngine en;
-	double max = 100, min = 1.23;
-	double setp = 0;
-	QwtInterval iterval(min, max);
-	sw->setScaleDiv(en.divideScale(min, max, 5, 8, 0));
-	sw->setTitle("KW");
-
-	sw->setColorMap(iterval, new ColorMap);
->>>>>>> remotes/origin/DataVisualization
-
-	sw->show();
-	*/
-	////测试单线程渲染
-	//std::shared_ptr<Renderer> re(timeRenderer);
-	//RenderTask task(re);
-	//
-	//RenderThreadManager ma;
-	//ma.addTask(task);
-	//task.rank = 3;
-	//ma.addTask(task);
-	//task.rank = 2;
-	//ma.addTask(task);
-	//ma.start();
-
-	//刻度组件测试
-	//Axis w;
-	//以下都为省却，有初始化参数
-	//m.setAxixStyle(Axisleft);
-	//m.setAxisRange(20, 700);
-	//m.SetAxisNumber(10);
-	//m.setAxisText("XX(s)", 20);
-	//w.show();
-	
-	//Axis m;
-	//m.setAxixStyle(Axisleft);
-	
-	
-	//m.AxisCanvans(QSizeF(500, 500));
-	
-	//m.AxisResize(true);
-	//m._update();
-	//m.show();
-
-	//Axis n;
-	//n.setAxixStyle(AxisTop);
-	//n.setAxisRange(20, 700);
-	//n.SetAxisNumber(10);
-	//n.AxisCanvans(QSizeF(500, 500));
-	//n.setAxisText("XX(s)", 20);
-	//n.AxisResize(true);
-	//n._update();
-	//n.show();
-
-	//Axis s;
-	//s.setAxixStyle(AxisBottom);
-	//s.setAxisRange(20, 700);
-	//s.SetAxisNumber(10);
-	//s.AxisCanvans(QSizeF(500, 500));
-	//s.setAxisText("XX(s)", 20);
-	//s.AxisResize(true);
-	//s._update();
-	//s.show();
 	return a.exec();
 }

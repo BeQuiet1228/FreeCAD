@@ -29,13 +29,7 @@ void Hdf5IO::setFilePath(const std::string& path)
 
 	QString temp = QString::fromUtf8(path.c_str());
 	std::string newPath = gbk->fromUnicode(temp).data();
-<<<<<<< HEAD
-	deleteH5File();
-	Hdf5File = new H5File(newPath, H5F_ACC_RDWR);
-=======
-
 	Hdf5File.reset(new H5File(newPath, H5F_ACC_RDWR));
->>>>>>> remotes/origin/DataVisualization
 }
 
 /*
