@@ -4,21 +4,6 @@
 #include <memory>
 #include <vector>
 
-enum DirectionType{
-	NONE = 0xff,
-	X = 0x1,
-	Y = 0x2,
-	Z = 0x4,
-	R = 0x8,
-	THETA = 0x10,
-
-	X_Y = X|Y,
-	X_Z = X|Z,
-	Y_Z = Y|Z,
-	R_Z = R|Z,
-	R_THETA = R|THETA
-};
-
 class ParticleData :public XYData{
 public:
 	struct Particle{
@@ -52,8 +37,6 @@ public:
 	//载入点
 	virtual bool loadPoint() override;
 	bool loadPointHard();
-	//初始化图表类型、方向
-	void initDiretion();
 	//根据索引获取一个粒子数据
 	Particle getParticle(const unsigned int& index);
 	Particle getParticleHard(const unsigned int& index);
@@ -64,16 +47,10 @@ public:
 	std::vector<Particle> particles;
 
 private:
-	//平面方向
-	DirectionType directionTyp;
-	//图类型
-	Type mapType;
 	//是否已经载入点数据
 	bool isLoadPoint;
 
 private:
-	//将字符串转换为direction
-	DirectionType QStringToDirection(const std::string& str);
 	//数据转换
 	void transitionData();
 	//排序

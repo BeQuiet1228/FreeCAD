@@ -115,7 +115,7 @@ QwtMatrixRasterData* ContourData::getQwtMatrixRasterData()
 	auto grid = grids.begin();
 	for (int i = 0; i < grids.size() && grid != grids.end(); )
 	{
-#if 0 //是否处理非均匀网格
+#if 1 //是否处理非均匀网格
 		int w = i % width;
 		int h = i / width;
 		if (grid->x > (w*xBlock + xr.min) && grid->y > (h*yBlock + yr.min))

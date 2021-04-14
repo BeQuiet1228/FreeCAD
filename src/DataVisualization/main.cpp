@@ -18,28 +18,38 @@
 #include <qwt/qwt_plot_spectrogram.h>
 #include <qwt/qwt_color_map.h>
 #include "qwt/qwt_scale_widget.h"
-#include"phasorData.h"
-#include "phasorRenderer.h"
 #include "ContourRender.h"
+<<<<<<< HEAD
 #include "structureData.h"
 #include "StructRenderer.h"
 #include "Struct2dData.h"
 #include"Struct2DRenderer.h"
 #include "ListTreeWidget.h"
+=======
+#include "qwt/qwt_scale_widget.h"
+#include "qwt/qwt_scale_engine.h"
+#include "ContourRenderPolar.h"
+#include "ContourDataPolar.h"
+#include "RendererFactory.h"
+>>>>>>> remotes/origin/DataVisualization
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 	CanvasItem::registerMetaTye();
-	//std::string path = "D:\\MILO_C_2.h5";
-	////std::string path = "D:\\TEMP2.H5";
-	//Hdf5IO io(path);
-	//io.initHdf5Data();
-	////获取到H5的list
 
-	//auto data = io.hdf5DataList.begin();
-	//ListTreeWidget* widget = new ListTreeWidget();
-	//widget->loadHdflist(io.hdf5DataList);
-	//widget->showMaximized();
+
+	//std::string path = "E:/lingshiwenjianjia/MILO_C/MILO_C.h5";
+	//std::string path = "D:\RBWO_CY.h5";
+	//std::string path = "D:\MILO_P.h5";
+	//std::string path = "E:/tt/TEST.h5";
+	std::string path = "D:/MILO_C.h5";
+	Hdf5IO io(path);
+	
+	io.initHdf5Data();
+	auto data = io.hdf5DataList.begin();
+	data +=35;
+	//data += 752;
+	Hdf5Data d = *data
 
 	//Hdf5Data d = *data;
 #if 0
@@ -78,39 +88,9 @@ int main(int argc, char *argv[])
 	
 
 
-	//std::shared_ptr<ContourData> particleData(new ContourData(d));
-	//ContourRender *timeRenderer = new ContourRender(particleData);
-	//timeRenderer->dataInit();
-	//timeRenderer->setDefaultRang();
-	////timeRenderer->setDisplayMode(QwtPlotSpectrogram::ContourMode,true);
-	//Plot p;
-	//std::shared_ptr<Renderer> rd(timeRenderer);
-	//p.setMainRenderer(rd);
-	////p.resize(800,600);
-	//p.showMaximized(); 
-	
-	//矢量图测试
-	//std::shared_ptr<phasorData> _phasorData(new phasorData(d));
-	//phasorRenderer *_phasorRenderer = new phasorRenderer(_phasorData);
-	//_phasorRenderer->dataInit();
-	//_phasorRenderer->setDefaultRang();
-	//Plot p;
-	//std::shared_ptr<Renderer> rd(_phasorRenderer);
-	//p.setMainRenderer(rd);
-	//p.showMaximized();
+	/*std::shared_ptr<ContourDataPolar> particleData(new ContourDataPolar(d));
 
-	//结构图测试
-	//std::shared_ptr<structureData> _structdata(new structureData(d));
-	//StructureRenderer* _StructureRenderer = new StructureRenderer(_structdata);
-	//_StructureRenderer->dataInit();
-	//_StructureRenderer->SetCoordinateDir(Coordinate_Dir::cylindrical_coordinate);
-	//_StructureRenderer->setDefaultRang();
-	//
-	//Plot p;
-	//std::shared_ptr<Renderer> rd(_StructureRenderer);
-	//p.setMainRenderer(rd);
-	//p.showMaximized();
-
+<<<<<<< HEAD
 	//2维结构图测试
 	//std::shared_ptr<Struct2dData> _Struct2dData(new Struct2dData(d));
 	//Struct2DRenderer* _Struct2DRenderer = new Struct2DRenderer(_Struct2dData);
@@ -120,7 +100,47 @@ int main(int argc, char *argv[])
 	//std::shared_ptr<Renderer> rd(_Struct2DRenderer);
 	//p.setMainRenderer(rd);
 	//p.showMaximized();
+=======
 
+	ContourRenderPolar *timeRenderer = new ContourRenderPolar(particleData);
+	timeRenderer->dataInit();
+	timeRenderer->setDefaultRang();
+	//timeRenderer->setDisplayMode(QwtPlotSpectrogram::ContourMode,true);
+	Plot p;
+	std::shared_ptr<Renderer> rd(timeRenderer);*/
+
+	RendererPtr rd = RendererFactory::creatRenderer(d);
+
+	rd->dataInit();
+	rd->setDefaultRang();
+	Plot p;
+	p.setMainRenderer(rd);
+	//p.setAxisRightEnabled(true);
+	p.resize(800,600);
+	//p.showMaximized();
+	//p.renderFinished();
+	p.show();
+
+
+	
+
+/*	QwtScaleWidget *sw = new QwtScaleWidget(QwtScaleDraw::RightScale, 0);
+	sw->setColorBarEnabled(true);
+
+
+	QwtLinearScaleEngine en;
+	double max = 100, min = 1.23;
+	double setp = 0;
+	QwtInterval iterval(min, max);
+	sw->setScaleDiv(en.divideScale(min, max, 5, 8, 0));
+	sw->setTitle("KW");
+
+	sw->setColorMap(iterval, new ColorMap);
+>>>>>>> remotes/origin/DataVisualization
+
+	sw->show();
+	*/
+	////测试单线程渲染
 	//std::shared_ptr<Renderer> re(timeRenderer);
 	//RenderTask task(re);
 	//

@@ -13,6 +13,8 @@ include_directories(
     ${XercesC_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIR}
     ${PYCXX_INCLUDE_DIR}
+	./qwt
+	./qwt/polar
 )
 SET(QRC_SRC "")
 SET(UI_SRC "")
@@ -48,16 +50,19 @@ SET(INTERSPACE_SRC InterspaceData.h
 	InterspaceRender.h
 	InterspaceRender.cpp
 )
-SET(PHASOR_SRC phasorData.h
-	phasorData.cpp
-	phasorRenderer.h
-	phasorRenderer.cpp
-)
-
 SET(CONTOUR_SRC ContourData.h
 	ContourData.cpp
 	ContourRender.h
 	ContourRender.cpp
+	ContourRenderPolar.cpp
+	ContourRenderPolar.h
+	ContourDataPolar.cpp
+	ContourDataPolar.h
+)
+SET(PHASOR_SRC phasorData.h
+	phasorData.cpp
+	phasorRenderer.h
+	phasorRenderer.cpp
 )
 
 SET(LISTTREE_SRC ListTreeWidget.h
@@ -81,6 +86,8 @@ SET(SRC main.cpp
 	RenderThreadManager.h
 	RenderThread.cpp
 	RenderThread.h
+	RendererFactory.h
+	RendererFactory.cpp
 	)
 
 #处理ui和qrc文件
@@ -98,10 +105,13 @@ SET(DataVisualization_src
 	${TIME_SRC}
 	${STRUCT_SRC}
 	${INTERSPACE_SRC}
+	${CONTOUR_SRC}
+	${PHASOR_SRC}
 	${PHASOR_SRC}
 	${CONTOUR_SRC}
 	${STRUCT2D_SRC}
 	${LISTTREE_SRC}
+
 )
 add_definitions(-DMY_DEBUG)
 #设置编译生成文件类型
@@ -118,10 +128,13 @@ SOURCE_GROUP("time" FILES ${TIME_SRC})
 SOURCE_GROUP("particle" FILES ${PARTICLE_SRC})
 SOURCE_GROUP("struct" FILES ${STRUCT_SRC})
 SOURCE_GROUP("interspace" FILES ${INTERSPACE_SRC})
+
+SOURCE_GROUP("contour" FILES ${CONTOUR_SRC})
 SOURCE_GROUP("phasor" FILES ${PHASOR_SRC})
 SOURCE_GROUP("contour" FILES ${CONTOUR_SRC})
 SOURCE_GROUP("struct2d" FILES ${STRUCT2D_SRC})
 SOURCE_GROUP("DataManage" FILES ${LISTTREE_SRC})
+
 #增加包含目录
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
@@ -135,6 +148,7 @@ list(APPEND QT_LIB
     optimized MSVCPRT.LIB
 	qwt
 	HDF5Reader
+	qwt_polar
 	)
 if (BUILD_QT5)
     include_directories(

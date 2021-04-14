@@ -1,3 +1,4 @@
+add_subdirectory(polar)
 project(qwt)
 #引入头文件
 include_directories(
@@ -239,7 +240,7 @@ fc_wrap_cpp(qwt_moc_cpp ${qwt_moc_header})
 #设置编译生成文件类型
 add_library(qwt ${qwt_src} ${qwt_moc_cpp}) # 生成可执行文件
 
-
+source_group("src" FILES ${qwt_src})
 #增加包含目录
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}

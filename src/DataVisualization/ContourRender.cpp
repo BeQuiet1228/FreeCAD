@@ -8,7 +8,7 @@
 ContourRender::ContourRender(std::shared_ptr<ContourData> data)
 	:Renderer(std::dynamic_pointer_cast<Data>(data))
 {
-	setRenderThreadCount(4);
+	setRenderThreadCount(0);
 	setColorMap(new ColorMap);
 }
 
@@ -106,6 +106,14 @@ void ContourRender::dataInit()
 	auto cd = std::dynamic_pointer_cast<ContourData>(Renderer::data);
 	cd->loadPoint();
 	setData(cd->getQwtMatrixRasterData());
+}
+
+Data::Rang ContourRender::getValueRange()
+{
+	auto d = std::dynamic_pointer_cast<ContourData>(Renderer::data);
+	if (!d)
+		return Data::Rang();
+	return d->getVlaueRange();
 }
 
 /**
