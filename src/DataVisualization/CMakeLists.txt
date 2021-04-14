@@ -20,7 +20,8 @@ SET(MY_MOC_HDR RenderThread.h
 	RenderThreadManager.h
 	Plot.h
 	Canvas.h
-	Axis.h)
+	Axis.h
+	ListTreeWidget.h)
 
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
@@ -59,6 +60,10 @@ SET(CONTOUR_SRC ContourData.h
 	ContourRender.cpp
 )
 
+SET(LISTTREE_SRC ListTreeWidget.h
+	ListTreeWidget.cpp
+	Dataresource.h
+	Dataresource.cpp)
 SET(SRC main.cpp
 	Data.h
 	Data.cpp
@@ -96,6 +101,7 @@ SET(DataVisualization_src
 	${PHASOR_SRC}
 	${CONTOUR_SRC}
 	${STRUCT2D_SRC}
+	${LISTTREE_SRC}
 )
 add_definitions(-DMY_DEBUG)
 #设置编译生成文件类型
@@ -115,7 +121,7 @@ SOURCE_GROUP("interspace" FILES ${INTERSPACE_SRC})
 SOURCE_GROUP("phasor" FILES ${PHASOR_SRC})
 SOURCE_GROUP("contour" FILES ${CONTOUR_SRC})
 SOURCE_GROUP("struct2d" FILES ${STRUCT2D_SRC})
-
+SOURCE_GROUP("DataManage" FILES ${LISTTREE_SRC})
 #增加包含目录
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}

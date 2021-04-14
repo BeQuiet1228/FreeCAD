@@ -1,0 +1,28 @@
+#pragma once
+#ifndef LIST_TREE_WIDGET_H_
+#define LIST_TREE_WIDGET_H_
+//Ê÷×´ÁÐ±í¿Ø¼þ
+#include<QWidget>
+#include<QTreeView>
+#include <vector>
+#include <HDF5Reader/hdf5io.h>
+#include <QStandardItemModel>
+class ListTreeWidget:public QWidget
+{
+	Q_OBJECT
+public:
+	explicit ListTreeWidget(QWidget* parent=nullptr);
+	~ListTreeWidget();
+public:
+	void loadHdflist(std::vector<Hdf5Data> Hdf5Datalist);
+protected:
+	virtual void resizeEvent(QResizeEvent * event) override;
+
+private slots:
+	void on_doubleclick(const QModelIndex &index);
+private:
+	QTreeView* m_TreeView;
+	QStandardItemModel *goodsModel;
+	std::map <QStandardItem*,Hdf5Data> datainfor;
+};
+#endif

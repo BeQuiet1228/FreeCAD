@@ -25,19 +25,23 @@
 #include "StructRenderer.h"
 #include "Struct2dData.h"
 #include"Struct2DRenderer.h"
-
+#include "ListTreeWidget.h"
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 	CanvasItem::registerMetaTye();
 	//std::string path = "D:\\MILO_C_2.h5";
-	std::string path = "D:\\TEMP2.H5";
-	Hdf5IO io(path);
-	
-	io.initHdf5Data();
-	auto data = io.hdf5DataList.begin();
-	Hdf5Data d = *data;
+	////std::string path = "D:\\TEMP2.H5";
+	//Hdf5IO io(path);
+	//io.initHdf5Data();
+	////获取到H5的list
 
+	//auto data = io.hdf5DataList.begin();
+	//ListTreeWidget* widget = new ListTreeWidget();
+	//widget->loadHdflist(io.hdf5DataList);
+	//widget->showMaximized();
+
+	//Hdf5Data d = *data;
 #if 0
 
 
@@ -108,14 +112,14 @@ int main(int argc, char *argv[])
 	//p.showMaximized();
 
 	//2维结构图测试
-	std::shared_ptr<Struct2dData> _Struct2dData(new Struct2dData(d));
-	Struct2DRenderer* _Struct2DRenderer = new Struct2DRenderer(_Struct2dData);
-	_Struct2DRenderer->dataInit();
-	_Struct2DRenderer->setDefaultRang();
-	Plot p;
-	std::shared_ptr<Renderer> rd(_Struct2DRenderer);
-	p.setMainRenderer(rd);
-	p.showMaximized();
+	//std::shared_ptr<Struct2dData> _Struct2dData(new Struct2dData(d));
+	//Struct2DRenderer* _Struct2DRenderer = new Struct2DRenderer(_Struct2dData);
+	//_Struct2DRenderer->dataInit();
+	//_Struct2DRenderer->setDefaultRang();
+	//Plot p;
+	//std::shared_ptr<Renderer> rd(_Struct2DRenderer);
+	//p.setMainRenderer(rd);
+	//p.showMaximized();
 
 	//std::shared_ptr<Renderer> re(timeRenderer);
 	//RenderTask task(re);
