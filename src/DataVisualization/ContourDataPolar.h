@@ -1,10 +1,10 @@
 #pragma once
 #include "ContourData.h"
 #include "qwt/qwt_raster_data.h"
-class CountourDataPolar :public ContourData{
+class ContourDataPolar :public ContourData{
 public:
-	CountourDataPolar(Hdf5Data& h5Data, const RunMod& mod = SINGLE_THREAD);
-	~CountourDataPolar();
+	ContourDataPolar(Hdf5Data& h5Data, const RunMod& mod = SINGLE_THREAD);
+	~ContourDataPolar();
 
 public:
 	virtual QwtMatrixRasterData* getQwtMatrixRasterData() override;

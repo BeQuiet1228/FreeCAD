@@ -83,6 +83,8 @@ SET(SRC main.cpp
 	RenderThreadManager.h
 	RenderThread.cpp
 	RenderThread.h
+	RendererFactory.h
+	RendererFactory.cpp
 	)
 
 #处理ui和qrc文件

@@ -10,13 +10,12 @@ Hdf5IO::Hdf5IO(std::string fileName)
 
 Hdf5IO::Hdf5IO()
 {
-	Hdf5File = nullptr;
+	
 }
 
 Hdf5IO::~Hdf5IO()
 {
-	if (Hdf5File != nullptr)
-		delete Hdf5File;
+
 }
 
 /**
@@ -30,8 +29,8 @@ void Hdf5IO::setFilePath(const std::string& path)
 
 	QString temp = QString::fromUtf8(path.c_str());
 	std::string newPath = gbk->fromUnicode(temp).data();
-	deleteH5File();
-	Hdf5File = new H5File(newPath, H5F_ACC_RDWR);
+
+	Hdf5File.reset(new H5File(newPath, H5F_ACC_RDWR));
 }
 
 /*
@@ -148,7 +147,15 @@ bool Hdf5IO::getDataSet(const Group& group, const std::string& dataSetName, Data
  */
 int Hdf5IO::getSubGroupCount(const Group &group)
 {
-    return group.getNumObjs();
+	int size = 0;
+	try
+	{
+		size = group.getNumObjs();
+	}catch (...)
+	{
+	
+	}
+    return size;
 }
 
 /**
@@ -333,12 +340,11 @@ void Hdf5IO::getAllSubGroupAndDataSet(const Group& group, const std::vector<std:
 			datas.push_back(dataSet);
 		}	
 
-		Hdf5Data data;
+		Hdf5Data data(this->Hdf5File);
 		data.listDataSet = datas;
 		data.group = subGroup;
 		data.headList = headList;
 		data.initInformation();
-		data.name = getNameFromHeadList(headList);
 		hdf5DataList.push_back(data);
 	}
 }
@@ -363,12 +369,13 @@ void Hdf5IO::getStructData()
 	//如果头数据为空，则说明该图为空
 	if (!headList.empty())
 	{
-		Hdf5Data data;
+		Hdf5Data data(this->Hdf5File);
 		data.listDataSet.push_back(dataSet1);
 		data.listDataSet.push_back(dataSet2);
 		data.listDataSet.push_back(dataSet3);
 		data.listDataSet.push_back(dataSet4);
 		data.group = group;
+		data.name = "struct";
 		data.headList = headList;
 		data.initInformation();
 		hdf5DataList.push_back(data);
@@ -398,12 +405,11 @@ void Hdf5IO::getParData()
 			continue;
 		}
 
-		Hdf5Data data;
+		Hdf5Data data(this->Hdf5File);
 		data.listDataSet.push_back(dataSet);
 		data.group = subGroup;
 		data.headList = headList;
 		data.initInformation();
-		data.name = getNameFromHeadList(headList);
 		hdf5DataList.push_back(data);
 	}
 }
@@ -456,13 +462,7 @@ std::string Hdf5IO::getNameFromHeadList(const std::vector<std::string>& headList
 */
 void Hdf5IO::deleteH5File()
 {
-	if (Hdf5File != nullptr)
-	{
-		hdf5DataList.clear();
-		Hdf5File->close();
-		delete Hdf5File;
-		Hdf5File = nullptr;	
-	}
+
 }
 
 /**
@@ -496,15 +496,15 @@ void Hdf5IO::initHdf5Data()
 
     // 获取结构数据
      {
-		// getStructData();
+		 getStructData();
      }
     //获取所有grd的数据组
     {
-	//	getGrdData();
+		getGrdData();
     }
     //获取par的数据组
     {
-	//	getParData();
+		getParData();
     }
     //获取二维等位图数据
     {

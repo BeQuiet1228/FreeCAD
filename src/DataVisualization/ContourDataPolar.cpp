@@ -1,17 +1,17 @@
 #include "ContourDataPolar.h"
 #include <qmath.h>
-CountourDataPolar::CountourDataPolar(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
+ContourDataPolar::ContourDataPolar(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
 	:ContourData(h5Data,mod)
 {
 
 }
 
-CountourDataPolar::~CountourDataPolar()
+ContourDataPolar::~ContourDataPolar()
 {
 
 }
 
-QwtMatrixRasterData* CountourDataPolar::getQwtMatrixRasterData()
+QwtMatrixRasterData* ContourDataPolar::getQwtMatrixRasterData()
 {
 	QVector<double> data;
 	Rang xr = getXRang();

@@ -23,6 +23,7 @@
 #include "qwt/qwt_scale_engine.h"
 #include "ContourRenderPolar.h"
 #include "ContourDataPolar.h"
+#include "RendererFactory.h"
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
@@ -37,8 +38,8 @@ int main(int argc, char *argv[])
 	
 	io.initHdf5Data();
 	auto data = io.hdf5DataList.begin();
-	//data +=35;
-	data += 752;
+	data +=35;
+	//data += 752;
 	Hdf5Data d = *data;
 
 #if 0
@@ -77,7 +78,7 @@ int main(int argc, char *argv[])
 	
 
 
-	std::shared_ptr<CountourDataPolar> particleData(new CountourDataPolar(d));
+	/*std::shared_ptr<ContourDataPolar> particleData(new ContourDataPolar(d));
 
 
 	ContourRenderPolar *timeRenderer = new ContourRenderPolar(particleData);
@@ -85,12 +86,22 @@ int main(int argc, char *argv[])
 	timeRenderer->setDefaultRang();
 	//timeRenderer->setDisplayMode(QwtPlotSpectrogram::ContourMode,true);
 	Plot p;
-	std::shared_ptr<Renderer> rd(timeRenderer);
-	p.setMainRenderer(rd);
-	p.setAxisRightEnabled(true);
-	//p.resize(800,600);
-	p.showMaximized(); 
+	std::shared_ptr<Renderer> rd(timeRenderer);*/
 
+	RendererPtr rd = RendererFactory::creatRenderer(d);
+
+	rd->dataInit();
+	rd->setDefaultRang();
+	Plot p;
+	p.setMainRenderer(rd);
+	//p.setAxisRightEnabled(true);
+	p.resize(800,600);
+	//p.showMaximized();
+	//p.renderFinished();
+	p.show();
+
+
+	
 
 /*	QwtScaleWidget *sw = new QwtScaleWidget(QwtScaleDraw::RightScale, 0);
 	sw->setColorBarEnabled(true);

@@ -2,8 +2,9 @@
 
 Data::Data(Hdf5Data& h5Data,const RunMod& mod)
 	:h5Data(h5Data), sourceData(new ListValues)
-	, sourceDataMutex(new std::mutex), runMod(mod), sourceDataIsLoad(false)
+	, sourceDataMutex(new std::mutex), runMod(mod), sourceDataIsLoad(false), headList(h5Data.headList)
 {
+	
 }
 
 Data::~Data()
@@ -29,12 +30,8 @@ bool Data::loadSourceData()
 */
 bool Data::loadSourceDataHard()
 {
-	auto h5IO = h5Data.hdf5Io;
 	AutoMutx am(sourceDataMutex);
-	sourceDataIsLoad = h5IO->getValue(h5Data.listDataSet, *(sourceData.get()));
-
-	headList = h5Data.headList;
-
+	sourceDataIsLoad = Hdf5IO::getValue(h5Data.listDataSet, *(sourceData.get()));
 	return sourceDataIsLoad;
 }
 
@@ -132,10 +129,38 @@ void Data::initInformation()
 	std::cerr << "Can't call Data::initInformation()" << std::endl;
 }
 
-XYData::XYData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
-	:Data(h5Data, mod), pointSize(0)
+/**
+* @brief Data::stringToDirection 将坐标tile转换为方向
+* @param const std::string & str
+* @return DirectionType
+*/
+DirectionType Data::stringToDirection(const std::string& str)
 {
 
+	DirectionType direction;
+
+	if (str == "X ")
+		direction = X;
+	else if (str == "Y ")
+		direction = Y;
+	else if (str == "Z ")
+		direction = Z;
+	else if (str == "R ")
+		direction = R;
+	else if (str == "R*cos")
+		direction = R;
+	else if (str == "R*sin")
+		direction = THETA;
+	else
+		direction = NONE;
+
+	return direction;
+}
+
+XYData::XYData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
+	:Data(h5Data, mod), pointSize(0), directionTyp(NONE), mapType(NEEDLESS_STRUCT)
+{
+	
 }
 
 unsigned int XYData::findIndexFromXValueL(const float& x)
@@ -168,4 +193,25 @@ void XYData::initInformation()
 		return;
 	setXTag(sl.at(3).toStdString());
 	setYTag(sl.at(4).toStdString());
+}
+
+/**
+* @brief XYData::initDiretion 初始化数据方向信息
+* @return void
+*/
+void XYData::initDiretion()
+{
+	initInformation();
+	QString xt = QString::fromStdString(getXTag());
+	QString yt = QString::fromStdString(getYTag());
+
+	if (xt.indexOf('(') < 0 || yt.indexOf('(') < 0)
+		return;
+	QString xd = xt.split('(').at(0);
+	QString yd = yt.split('(').at(0);
+	directionTyp = DirectionType(stringToDirection(xd.toStdString()) | stringToDirection(yd.toStdString()));
+	if (directionTyp == NONE)
+		mapType = NEEDLESS_STRUCT;
+	else
+		mapType = NEED_STRUCT;
 }

@@ -7,9 +7,24 @@
 #include <QPoint>
 #include <QString>
 #include <QStringList>
+
+/*区分数据的方向*/
+enum DirectionType{
+	NONE = 0xff,
+	X = 0x1,
+	Y = 0x2,
+	Z = 0x4,
+	R = 0x8,
+	THETA = 0x10,
+
+	X_Y = X | Y,
+	X_Z = X | Z,
+	Y_Z = Y | Z,
+	R_Z = R | Z,
+	R_THETA = R | THETA
+};
+
 class Data{
-
-
 public:
 	using Values = std::vector<float>;
 	using ValuesPtr = std::shared_ptr<Values>;
@@ -70,6 +85,8 @@ public:
 	void clearSourceData();
 	//设置渲染模式
 	void setRunMod(const RunMod& mod);
+	//初始化基本信息
+	virtual void initInformation();
 	//数据是否已载入
 	bool isLoad(){
 		return sourceDataIsLoad;
@@ -86,14 +103,22 @@ protected:
 	virtual void restorDeriveData() = 0;
 	//根据运行模式自动调整获取数据的方式
 	bool autoModGetSourceData(ListValuesPtr& listValues);
-	//初始化基本信息
-	virtual void initInformation();
+
+public:
+	//将字符串转换为directions
+	static	DirectionType stringToDirection(const std::string& str);
 };
 
 class XYData :public Data{
 public:
 	XYData(Hdf5Data& h5Data, const RunMod& mod = SINGLE_THREAD);
 	~XYData() = default;
+
+	//图表的类型
+	enum NeedStructType{
+		NEED_STRUCT = 0,
+		NEEDLESS_STRUCT
+	};
 public:
 	virtual unsigned int findIndexFromXValueL(const float& x);
 	unsigned int findIndexFromXValueR(const float& x);
@@ -137,6 +162,13 @@ public:
 		std::lock_guard<std::mutex> am(yTagMutex);
 		return yTag;
 	}
+	//操作类型
+	DirectionType getDirectionType(){
+		return directionTyp;
+	}
+	NeedStructType getNeedStructType(){
+		return mapType;
+	}
 protected:
 	virtual bool initXYRang() = 0;
 	//设置size
@@ -144,7 +176,6 @@ protected:
 		std::lock_guard<std::mutex> am(pointSizeMutex);
 		pointSize = size;
 	}
-	void initInformation();
 private:
 	//点的个数
 	unsigned int pointSize;
@@ -155,4 +186,12 @@ private:
 	//xy数据的单位
 	std::string xTag, yTag;
 	std::mutex xTagMute, yTagMutex;
+protected:
+	//平面方向
+	DirectionType directionTyp;
+	//图类型
+	NeedStructType mapType;
+public:
+	virtual void initDiretion();
+	void initInformation() override;
 };
