@@ -34,12 +34,12 @@ int main(int argc, char *argv[])
 	//std::string path = "D:\RBWO_CY.h5";
 	//std::string path = "D:\MILO_P.h5";
 	//std::string path = "E:/tt/TEST.h5";
-	std::string path = "D:/MILO_C.h5";
+	std::string path = "D:/MILO_P.h5";
 	Hdf5IO io(path);
 	
 	io.initHdf5Data();
 	auto data = io.hdf5DataList.begin();
-	data +=35;
+	//data +=35;
 	//data += 752;
 	Hdf5Data d = *data;
 
@@ -77,5 +77,17 @@ int main(int argc, char *argv[])
 	plot.show();
 
 #endif // DEBUG
+
+	RendererPtr rd = RendererFactory::creatStructRender(d,R_Z);
+
+	rd->dataInit();
+	rd->setDefaultRang();
+	Plot p;
+	p.setMainRenderer(rd);
+	//p.setAxisRightEnabled(true);
+	p.resize(800, 600);
+	//p.showMaximized();
+	//p.renderFinished();
+	p.show();
 	return a.exec();
 }

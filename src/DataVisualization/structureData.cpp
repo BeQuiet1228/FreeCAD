@@ -111,8 +111,8 @@ QVector<QRectF> structureData::GetAllCutspace()
 	auto it = (listValues->begin());
 	Data::ValuesPtr pointi1mx = *it; it++;
 	Data::ValuesPtr pointi2mx = *it; it++;
-	/*Data::ValuesPtr pointi3mx = *it; it++;
-	Data::ValuesPtr pointdatasetkmt = *it;*/
+	Data::ValuesPtr pointi3mx = *it; it++;
+	Data::ValuesPtr pointdatasetkmt = *it;
 	/********************************************/
 	
 	//开始获取
@@ -293,10 +293,12 @@ void structureData::fileCylindrical_info()
 	int CutNum=_rand_val.size()-1;
 	for each(DaTaKmt var in datakmtinfo)
 	{
-		if (var.point1==1 && var.point3<_rand_val.size())
+		if (var.point1==1 && var.point3<_rand_val.size()&&var.point2<R_val.size())
 		{
 			allKmtinfo_cir[var.pointproperty].push_back(_CutCirlist[(var.point2-1)*CutNum+(var.point3-1)]);
 		}
 	}
 #pragma endregion
+
+	printf("1");
 }

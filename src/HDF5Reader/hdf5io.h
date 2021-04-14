@@ -21,9 +21,9 @@ struct CONTROL_EXPORT Hdf5Data
 		this->hdf5File = h5;
 	}
 	enum CoordinateSystem{
-		CARTESIAN = 0,
-		CYLINDER,
-		POLAR
+		CARTESIAN = 0, //xyz
+		CYLINDER,		//
+		POLAR			//
 	};
 	
 	//数据分组对象
