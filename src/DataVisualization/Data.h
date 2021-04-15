@@ -103,7 +103,8 @@ protected:
 	virtual void restorDeriveData() = 0;
 	//根据运行模式自动调整获取数据的方式
 	bool autoModGetSourceData(ListValuesPtr& listValues);
-
+	//
+	std::vector<std::string> autoHeaderInfo();
 public:
 	//将字符串转换为directions
 	static	DirectionType stringToDirection(const std::string& str);

@@ -491,6 +491,10 @@ QVector<QString> Axis::GetScientific_notation()
 		//获取整数部分
 		while (_interval_i<=0)
 		{
+			if (temp_interval==0)
+			{
+				break;
+			}
 			_interval_i = int(temp_interval*=10);
 			index++;
 		}

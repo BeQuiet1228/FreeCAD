@@ -1,16 +1,17 @@
 #pragma once
 #ifndef DATARESOURCE_H_
 #define DATARESOURCE_H_
+#include <QWidget>
 #include "HDF5Reader/hdf5io.h"
 #include "Renderer.h"
 #include<map>
 #include "Plot.h"
-class DataSourceManage
+#include "RendererFactory.h"
+class DataSourceManage:public QObject
 {
-private:
-	DataSourceManage(){
-		RendererManger.clear();
-	}
+	Q_OBJECT
+public:
+	explicit DataSourceManage();
 	DataSourceManage& operator =(const DataSourceManage& that){}
 public:
 	~DataSourceManage(){
@@ -22,13 +23,17 @@ public:
 		return &instance;
 	}
 public:
+	void init();
+signals:
+	void _loadhdflist(std::vector<Hdf5Data> Hdf5Data);
+public slots:
 	void tranfromRenderer(std::string name,Hdf5Data data);
 	void clearMap();
 	void loadhdffile(std::string filepath);
 private:
-	Renderer* CreateRendererList(Hdf5Data data);
+	RendererPtr CreateRendererList(Hdf5Data data);
 private:
-	std::map<std::string, std::shared_ptr<Renderer>> RendererManger;
+	std::map<std::string,RendererPtr> RendererManger;
 	std::vector<Hdf5Data> hdfDatelist;
 	Plot p;
 };

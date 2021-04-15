@@ -13,12 +13,13 @@ class ListTreeWidget:public QWidget
 public:
 	explicit ListTreeWidget(QWidget* parent=nullptr);
 	~ListTreeWidget();
-public:
-	void loadHdflist(std::vector<Hdf5Data> Hdf5Datalist);
+	
 protected:
 	virtual void resizeEvent(QResizeEvent * event) override;
-
-private slots:
+signals:
+	void _transfromRenderer(std::string name,Hdf5Data data);
+public slots:
+	void loadHdflist(std::vector<Hdf5Data> Hdf5Datalist);
 	void on_doubleclick(const QModelIndex &index);
 private:
 	QTreeView* m_TreeView;

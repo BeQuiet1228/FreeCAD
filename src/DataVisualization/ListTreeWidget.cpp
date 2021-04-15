@@ -103,7 +103,8 @@ void ListTreeWidget::on_doubleclick(const QModelIndex &index)
 		std::string name = (index.data().toString()).toStdString();
 		printf("%s",name.c_str());
 		Hdf5Data data = iter->second;
-		DataSourceManage::Getinstance()->tranfromRenderer(name, data);
+		//DataSourceManage::Getinstance()->tranfromRenderer(name, data);
+		emit _transfromRenderer(name, data);
 	}
 }
 #include "moc_ListTreeWidget.cpp"

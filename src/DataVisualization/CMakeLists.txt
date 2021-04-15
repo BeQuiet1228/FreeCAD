@@ -23,7 +23,8 @@ SET(MY_MOC_HDR RenderThread.h
 	Plot.h
 	Canvas.h
 	Axis.h
-	ListTreeWidget.h)
+	ListTreeWidget.h
+	Dataresource.h)
 
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
@@ -65,10 +66,10 @@ SET(PHASOR_SRC phasorData.h
 	phasorRenderer.cpp
 )
 
-#SET(LISTTREE_SRC ListTreeWidget.h
-#	ListTreeWidget.cpp
-#	Dataresource.h
-#	Dataresource.cpp)
+SET(LISTTREE_SRC ListTreeWidget.h
+	ListTreeWidget.cpp
+	Dataresource.h
+	Dataresource.cpp)
 SET(SRC main.cpp
 	Data.h
 	Data.cpp
@@ -110,6 +111,7 @@ SET(DataVisualization_src
 	${PHASOR_SRC}
 	${CONTOUR_SRC}
 	${STRUCT2D_SRC}
+	${LISTTREE_SRC}
 
 )
 add_definitions(-DMY_DEBUG)
@@ -132,7 +134,7 @@ SOURCE_GROUP("contour" FILES ${CONTOUR_SRC})
 SOURCE_GROUP("phasor" FILES ${PHASOR_SRC})
 SOURCE_GROUP("contour" FILES ${CONTOUR_SRC})
 SOURCE_GROUP("struct2d" FILES ${STRUCT2D_SRC})
-
+SOURCE_GROUP("dataManage" FILES ${LISTTREE_SRC})
 #增加包含目录
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}

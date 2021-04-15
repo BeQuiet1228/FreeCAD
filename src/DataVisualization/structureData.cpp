@@ -25,10 +25,55 @@ bool structureData::loadPoint()
 	if (!ok && !listValues && listValues->size() == 0)
 		return false;
 	auto it = (listValues->begin());
-	pointXSize = (*it)->size();//获取I1MX的数据总数
-	it++;
-	pointYsize = (*it)->size();//获取I2MX的数据总数
-	it++;
+	/********************************************************/
+	std::vector<std::string> headerlist = autoHeaderInfo();
+	auto headeriter = headerlist.end() - 1;
+	if (headeriter->find("polar")!=std::string::npos)
+	{
+		//当前为polar
+		curstype = C_Type::POLAR;
+	}
+	else if (headeriter->find("cylindrical")!=std::string::npos)
+	{
+		//当前为cylindrical
+		curstype = C_Type::CYLINDRICAL;
+	}
+	else if (headeriter->find("cartesian")!=std::string::npos)
+	{
+		//当前为cartexian
+		curstype = C_Type::CARTESIAN;
+	}
+	Data::ValuesPtr IM2X;
+	Data::ValuesPtr IM3X;
+	Data::ValuesPtr IM1X;
+	Data::ValuesPtr datasetkmt;
+	switch (curstype)
+	{
+	case C_Type::CARTESIAN:
+	{
+		IM1X = *it; it++;
+		IM2X = *it; it++;
+		IM3X = *it; it++;
+		datasetkmt = *it;
+	}
+	case C_Type::CYLINDRICAL:
+	{
+		IM1X = *it; it++;
+		IM2X = *it; it++;
+		IM3X = *it;
+		datasetkmt = *it;
+	}
+	case C_Type::POLAR:
+	{
+		IM2X = *it; it++;
+		IM3X = *it; it++;
+		IM1X = *it;
+		datasetkmt = *it;
+	}
+	}
+	/**********************************************************/
+	pointXSize = IM1X->size();//获取I1MX的数据总数
+	pointYsize = IM2X->size();//获取I2MX的数据总数
 	//初始化范围
 	initXYRang();
 	loadrectpoint();
@@ -51,21 +96,46 @@ bool structureData::initXYRang(){
 	if (!ok && !listValues && listValues->size() == 0)
 		return false;
 	auto it = (listValues->begin());
-	Data::ValuesPtr pointi1mx = *it;
-	it++;
-	Data::ValuesPtr pointi2mx = *it;
+	Data::ValuesPtr IM2X;
+	Data::ValuesPtr IM3X;
+	Data::ValuesPtr IM1X;
+	Data::ValuesPtr datasetkmt;
+	switch (curstype)
+	{
+	case C_Type::CARTESIAN:
+	{
+		IM1X = *it; it++;
+		IM2X = *it; it++;
+		IM3X = *it; it++;
+		datasetkmt = *it;
+	}
+	case C_Type::CYLINDRICAL:
+	{
+		IM1X = *it; it++;
+		IM2X = *it; it++;
+		IM3X = *it; it++;
+		datasetkmt = *it;
+	}
+	case C_Type::POLAR:
+	{
+		IM2X = *it; it++;
+		IM3X = *it; it++;
+		IM1X = *it; it++;
+		datasetkmt = *it;
+	}
+	}
 	/*********************************************************/
 
-	auto iterx = pointi1mx->begin();
+	auto iterx = IM1X->begin();
 	xr.min = *iterx;
-	iterx = pointi1mx->end();
+	iterx = IM1X->end();
 	iterx -= 1;
 	xr.max = (*iterx);
 	//获取y轴的范围
 	
-	auto itery=pointi2mx->begin();
+	auto itery=IM2X->begin();
 	yr.min = *itery;
-	itery = pointi2mx->end();
+	itery = IM2X->end();
 	itery -= 1;
 	yr.max = *itery;
 	setXRang(xr);
@@ -109,21 +179,46 @@ QVector<QRectF> structureData::GetAllCutspace()
 	if (!ok && !listValues && listValues->size() == 0)
 		return list;
 	auto it = (listValues->begin());
-	Data::ValuesPtr pointi1mx = *it; it++;
-	Data::ValuesPtr pointi2mx = *it; it++;
-	Data::ValuesPtr pointi3mx = *it; it++;
-	Data::ValuesPtr pointdatasetkmt = *it;
+
+	Data::ValuesPtr IM2X;
+	Data::ValuesPtr IM3X;
+	Data::ValuesPtr IM1X;
+	Data::ValuesPtr datasetkmt;
+	switch (curstype)
+	{
+	case C_Type::CARTESIAN:
+	{
+		IM1X = *it; it++;
+		IM2X = *it; it++;
+		IM3X = *it; it++;
+		datasetkmt = *it;
+	}
+	case C_Type::CYLINDRICAL:
+	{
+		IM1X = *it; it++;
+		IM2X = *it; it++;
+		IM3X = *it; it++;
+		datasetkmt = *it;
+	}
+	case C_Type::POLAR:
+	{
+		IM2X = *it; it++;
+		IM3X = *it; it++;
+		IM1X = *it; it++;
+		datasetkmt = *it;
+	}
+	}
 	/********************************************/
 	
 	//开始获取
-	auto iterleft = pointi1mx->begin();
-	auto iterRight = pointi1mx->begin() + 1;
-	auto iterTop = pointi2mx->begin();
-	auto iterbottom = pointi2mx->begin() + 1;
+	auto iterleft = IM1X->begin();
+	auto iterRight = IM1X->begin() + 1;
+	auto iterTop = IM2X->begin();
+	auto iterbottom = IM2X->begin() + 1;
 	for (auto x = 0; x < pointXSize - 1; x++)
 	{
-		iterTop = pointi2mx->begin();
-		iterbottom = pointi2mx->begin() + 1;
+		iterTop = IM2X->begin();
+		iterbottom = IM2X->begin() + 1;
 		for (auto y = 0; y < pointYsize - 1; y++)
 		{
 			QRectF temp;//介值
@@ -156,14 +251,37 @@ QVector<DaTaKmt> structureData::GetdatasetKmt()
 	//获取dataSetKmt里的全部数据
 	auto it = listValues->begin();
 	
-	Data::ValuesPtr pointi1mx = *it; it++;
-	Data::ValuesPtr pointi2mx = *it; it++;
-	Data::ValuesPtr pointi3mx = *it; it++;
-	Data::ValuesPtr pointdatasetkmt = *it;
+	Data::ValuesPtr IM2X;
+	Data::ValuesPtr IM3X;
+	Data::ValuesPtr IM1X;
+	Data::ValuesPtr datasetkmt;
+	switch (curstype)
+	{
+	case C_Type::CARTESIAN:
+	{
+		IM1X = *it; it++;
+		IM2X = *it; it++;
+		IM3X = *it; it++;
+		datasetkmt = *it;
+	}
+	case C_Type::CYLINDRICAL:
+	{
+		IM1X = *it; it++;
+		IM2X = *it; it++;
+		IM3X = *it; it++;
+		datasetkmt = *it;
+	}
+	case C_Type::POLAR:
+	{
+		IM2X = *it; it++;
+		IM3X = *it; it++;
+		IM1X = *it; it++;
+		datasetkmt = *it;
+	}
+	}
 	/*******************************************************/
-
-	auto iterkmt = pointdatasetkmt->begin();
-	for (; iterkmt != pointdatasetkmt->end();)
+	auto iterkmt = datasetkmt->begin();
+	for (; iterkmt != datasetkmt->end();)
 	{
 		DaTaKmt temp;
 		//坐标1
@@ -231,10 +349,34 @@ void structureData::fileCylindrical_info()
 	//获取dataSetKmt里的全部数据
 	auto it = listValues->begin();
 
-	Data::ValuesPtr pointi1mx = *it; it++;
-	Data::ValuesPtr pointi2mx = *it; it++;
-	Data::ValuesPtr pointi3mx = *it; it++;
-	Data::ValuesPtr pointdatasetkmt = *it;
+	Data::ValuesPtr IM2X;
+	Data::ValuesPtr IM3X;
+	Data::ValuesPtr IM1X;
+	Data::ValuesPtr datasetkmt;
+	switch (curstype)
+	{
+	case C_Type::CARTESIAN:
+	{
+		IM1X = *it; it++;
+		IM2X = *it; it++;
+		IM3X = *it; it++;
+		datasetkmt = *it;
+	}
+	case C_Type::CYLINDRICAL:
+	{
+		IM1X = *it; it++;
+		IM2X = *it; it++;
+		IM3X = *it;
+		datasetkmt = *it;
+	}
+	case C_Type::POLAR:
+	{
+		IM2X = *it; it++;
+		IM3X = *it; it++;
+		IM1X = *it;
+		datasetkmt = *it;
+	}
+	}
 
 
 	/*********************************************************/
@@ -244,14 +386,14 @@ void structureData::fileCylindrical_info()
 	QPointF p0 = QPointF(0.0, 0.0);
 	//获取所有半径
 	QVector<qreal> _r_val;
-	auto iter2mx = pointi2mx->begin();
-	for (;iter2mx!=pointi2mx->end();iter2mx++)
+	auto iter2mx = IM2X->begin();
+	for (;iter2mx!=IM2X->end();iter2mx++)
 	{
 		_r_val.push_back(*iter2mx);
 	}
 	R_val = _r_val;
 	QVector<qreal> _rand_val;
-	for (auto iter3mx = pointi3mx->begin(); iter3mx != pointi3mx->end(); iter3mx++)
+	for (auto iter3mx = IM3X->begin(); iter3mx != IM3X->end(); iter3mx++)
 	{
 		_rand_val.push_back(*iter3mx);
 	}
@@ -293,12 +435,10 @@ void structureData::fileCylindrical_info()
 	int CutNum=_rand_val.size()-1;
 	for each(DaTaKmt var in datakmtinfo)
 	{
-		if (var.point1==1 && var.point3<_rand_val.size()&&var.point2<R_val.size())
+		if (var.point1==1 && var.point3<_rand_val.size())
 		{
 			allKmtinfo_cir[var.pointproperty].push_back(_CutCirlist[(var.point2-1)*CutNum+(var.point3-1)]);
 		}
 	}
 #pragma endregion
-
-	printf("1");
 }
