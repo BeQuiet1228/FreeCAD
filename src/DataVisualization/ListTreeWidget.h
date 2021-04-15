@@ -13,9 +13,9 @@ class ListTreeWidget:public QWidget
 public:
 	explicit ListTreeWidget(QWidget* parent=nullptr);
 	~ListTreeWidget();
-	
 protected:
 	virtual void resizeEvent(QResizeEvent * event) override;
+	std::string GetType(std::string name);
 signals:
 	void _transfromRenderer(std::string name,int index);
 public slots:

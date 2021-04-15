@@ -2,6 +2,16 @@
 #include <map>
 #include <vector>
 #include "Dataresource.h"
+#define  MAX_TYPE_NUMBER 5
+enum emType
+{
+	CONTOUR=0,
+	PHASEPACE,
+	RANGE,
+	VECTOR,
+	STRUCT,
+};
+std::string Type[MAX_TYPE_NUMBER] = { "CONTOUR", "PHASEPACE", "RANGE", "VECTOR", "struct" };
 ListTreeWidget::ListTreeWidget(QWidget* parent) :QWidget(parent)
 {
 	//初始化TreeView的风格
@@ -11,7 +21,7 @@ ListTreeWidget::ListTreeWidget(QWidget* parent) :QWidget(parent)
 	goodsModel->setRowCount(0);
 	goodsModel->setColumnCount(0);
 	//goodsModel->setHeaderData(0, Qt::Horizontal, QString::fromLocal8Bit("分类:"));
-	goodsModel->setHorizontalHeaderLabels(QStringList() << (QString::fromLocal8Bit("项目名")));
+	goodsModel->setHorizontalHeaderLabels(QStringList() << (QString::fromLocal8Bit("分类")));
 	m_TreeView->setModel(goodsModel);
 	m_TreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	connect(m_TreeView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(on_doubleclick(const QModelIndex&)));
@@ -36,8 +46,6 @@ void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 	std::map<std::string, std::vector<std::string>> itemlist;
 	std::map<std::string, std::map<std::string, int>> datalist;
 	itemlist.clear();
-	//for each (Hdf5Data var in Hdf5Datalist)
-	//for (auto var = Hdf5Datalist.begin(); var != Hdf5Datalist.end();var++)
 	for (auto i = 0; i < Hdf5Datalist.size();i++)
 	{
 		auto iter=itemlist.find(Hdf5Datalist[i].name);
@@ -91,7 +99,6 @@ void ListTreeWidget::resizeEvent(QResizeEvent * event)
 * @param const QModelIndex &index
 * @return void
 */
-#include <QDebug>
 void ListTreeWidget::on_doubleclick(const QModelIndex &index)
 {
 	//qDebug() << index;
@@ -108,6 +115,32 @@ void ListTreeWidget::on_doubleclick(const QModelIndex &index)
 		//std::shared_ptr<Hdf5Data> data =iter->second;
 		//DataSourceManage::Getinstance()->tranfromRenderer(name, data);
 		emit _transfromRenderer(name, iter->second);
+	}
+}
+std::string ListTreeWidget::GetType(std::string name)
+{
+	int index = -1;
+	for (auto i = 0; i <MAX_TYPE_NUMBER;i++)
+	{
+		if (name.find(Type[i])!=std::string::npos)
+		{
+			index = i;
+			break;
+		}
+	}
+	switch (index)
+	{
+	case emType::CONTOUR:
+		return "等位图";
+	case emType::PHASEPACE:
+		return "相空间图";
+	case emType::RANGE:
+		return "时间图";
+	case emType::STRUCT:
+		return "结构图";
+	default:
+		return "未知图";
+		break;
 	}
 }
 #include "moc_ListTreeWidget.cpp"
