@@ -220,42 +220,42 @@ bool StructureRenderer::getTransitionScale(float& xScale, float& yScale)
 void StructureRenderer::SetCoordinateDir(Coordinate_Dir _coordinadir)
 {
 	m_Coordinate_Dir = _coordinadir;
-	switch (_coordinadir)
-	{
-	case cylindrical_coordinate:
-	{
-		auto _structureData = std::dynamic_pointer_cast<structureData>(data);
-		if (!_structureData)
-			return ;
-
-		Data::Rang xr;
-		QVector<qreal> R_range = _structureData->Get_R_val();
-		auto maxiter = R_range.end() - 1;
-//#define _DEBUG_
-#ifdef _DEBUG_
-		for each (qreal var in R_range)
-		{
-			printf("%f\n", var);
-		}
-#undef _DEBUG_
-#endif
-		xr.max = *maxiter;
-		xr.min = -xr.max;
-		setXRang(xr);
-		setYRang(xr);
-	}
-		break;
-	case polar_coordinate:
-	{
-	
-	}
-		break;
-	case Z_R_coordinater:
-	{
-		setDefaultRang();
-	}
-		break;
-	}
+//	switch (_coordinadir)
+//	{
+//	case cylindrical_coordinate:
+//	{
+//		auto _structureData = std::dynamic_pointer_cast<structureData>(data);
+//		if (!_structureData)
+//			return ;
+//
+//		Data::Rang xr;
+//		QVector<qreal> R_range = _structureData->Get_R_val();
+//		auto maxiter = R_range.end() - 1;
+////#define _DEBUG_
+//#ifdef _DEBUG_
+//		for each (qreal var in R_range)
+//		{
+//			printf("%f\n", var);
+//		}
+//#undef _DEBUG_
+//#endif
+//		xr.max = *maxiter;
+//		xr.min = -xr.max;
+//		setXRang(xr);
+//		setYRang(xr);
+//	}
+//		break;
+//	case polar_coordinate:
+//	{
+//	
+//	}
+//		break;
+//	case Z_R_coordinater:
+//	{
+//		setDefaultRang();
+//	}
+//		break;
+//	}
 }
 /**
 * @brief StructureRenderer::getCurCoordinateDir 获取当前结构图视图种类

@@ -77,6 +77,25 @@ void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
 }
 
 /**
+* @brief Plot::addRenderer 添加渲染器 这个操作会清空之前的渲染器，第一个渲染器默认为主渲染器。
+* @param const std::list<std::shared_ptr<Renderer>> & listRender
+* @return void
+*/
+void Plot::addRenderer(const std::list<std::shared_ptr<Renderer>>& listRender)
+{
+	if (listRender.size() < 1)
+		return;
+	clearSubRenderer();
+	auto iter = listRender.begin();
+	setMainRenderer(*iter);
+	iter++;
+	for (; iter != listRender.end(); iter++)
+	{
+		addSubRenderer(*iter); 
+	}
+}
+
+/**
 * @brief Plot::setAxisRightEnabled 设置是否显示图例
 * @param const bool & e
 * @return void

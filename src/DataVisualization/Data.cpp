@@ -215,3 +215,7 @@ void XYData::initDiretion()
 	else
 		mapType = NEED_STRUCT;
 }
+std::vector<std::string> Data::autoHeaderInfo()
+{
+	return h5Data.headList;
+}

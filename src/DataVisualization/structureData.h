@@ -19,6 +19,12 @@ typedef struct DaTaKmt
 	int pointproperty;
 }DATAKMT;
 
+enum C_Type
+{
+	POLAR=0,
+	CYLINDRICAL,
+	CARTESIAN,
+};
 enum StructTexture
 {
 	//理想导体
@@ -127,6 +133,7 @@ private:
 	//圆柱坐标系的取值范围
 	QVector<qreal> R_val;
 	QVector<qreal> rand_val;
+	int curstype;
 	std::mutex xRangMutex, yRangMutex;
 };
 #endif

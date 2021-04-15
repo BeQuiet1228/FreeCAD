@@ -49,12 +49,14 @@ public:
 	void addSubRenderer(const std::shared_ptr<Renderer>& rd);
 	//设置主渲染器
 	void setMainRenderer(const std::shared_ptr<Renderer>& rd);
+	//添加渲染器
+	void addRenderer(const std::list<std::shared_ptr<Renderer>>& listRender);
 	//设置图例是否可用
 	void setAxisRightEnabled(const bool& e);
 	//更新坐标轴
 	void updateAxis();
 	//清理从渲染器
-	void cleraSubRenderer(){
+	void clearSubRenderer(){
 		subRenderers.clear();
 	}
 private:

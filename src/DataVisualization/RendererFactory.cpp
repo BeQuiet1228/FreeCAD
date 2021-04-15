@@ -9,13 +9,16 @@
 #include "ParticleRenderer.h"
 #include "ContourRender.h"
 #include "ContourRenderPolar.h"
+#include "structureData.h"
+#include "StructRenderer.h"
+#include "phasorData.h"
+#include "phasorRenderer.h"
 #include "Renderer.h"
 RendererFactory::RendererFactory(std::vector<Hdf5Data> d)
 	:datas(d)
 {
 
 }
-
 /**
 * @brief RendererFactory::creatRenderers 根据类型创建所有渲染器
 * @param Hdf5Data h5d
@@ -99,4 +102,31 @@ DataPtr RendererFactory::creatInterspaceData(Hdf5Data h5d)
 	InterspaceData *data = new InterspaceData(h5d);
 	return DataPtr(data);
 }
-
+RendererPtr RendererFactory::creatStructRender(Hdf5Data h5d, DirectionType type)
+{
+	std::shared_ptr<structureData> _structdata(new structureData(h5d));
+	StructureRenderer* _StructureRenderer = new StructureRenderer(_structdata);
+	switch (type)
+	{
+	case X_Y:
+	case R_Z:
+	{
+		_StructureRenderer->SetCoordinateDir(Coordinate_Dir::Z_R_coordinater);
+	}
+		break;
+	case R_THETA:
+	{
+		_StructureRenderer->SetCoordinateDir(Coordinate_Dir::cylindrical_coordinate);
+	}
+		break;
+	}
+	return RendererPtr(_StructureRenderer);
+	/*_StructureRenderer->dataInit();
+	_StructureRenderer->setDefaultRang();*/
+}
+RendererPtr RendererFactory::creatVectorRender(Hdf5Data h5d)
+{
+	std::shared_ptr<phasorData> r(new phasorData(h5d));
+	phasorRenderer* rd = new phasorRenderer(r);
+	return RendererPtr(rd);
+}
