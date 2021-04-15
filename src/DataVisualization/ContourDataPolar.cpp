@@ -46,7 +46,7 @@ QwtMatrixRasterData* ContourDataPolar::getQwtMatrixRasterData()
 	rasterData->setInterval(Qt::XAxis,
 		QwtInterval(xr.min, xr.max, QwtInterval::ExcludeMaximum));
 	rasterData->setInterval(Qt::YAxis,
-		QwtInterval(yr.min, yr.max, QwtInterval::ExcludeMaximum));
+		QwtInterval(0, yr.max, QwtInterval::ExcludeMaximum));
 
 	Rang vr = getVlaueRange();
 	rasterData->setInterval(Qt::ZAxis, QwtInterval(vr.min, vr.max));
@@ -54,6 +54,18 @@ QwtMatrixRasterData* ContourDataPolar::getQwtMatrixRasterData()
 	return rasterData;
 }
 
+
+bool ContourDataPolar::loadPoint()
+{
+	bool ok = ContourData::loadPoint();
+
+	//角项最大最小值必须是0 - 2PI，否则画出来不圆
+	Rang yr = getYRang();
+	yr.min = 0;
+	yr.max = 2 * M_PI;
+	setYRang(yr);
+	return ok;
+}
 
 double PolarMatrixRasterData::value(double x, double y) const
 {

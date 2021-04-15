@@ -8,6 +8,8 @@ public:
 
 public:
 	virtual QwtMatrixRasterData* getQwtMatrixRasterData() override;
+
+	bool loadPoint() override;
 };
 
 class PolarMatrixRasterData :public QwtMatrixRasterData{

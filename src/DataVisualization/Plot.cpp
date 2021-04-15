@@ -72,8 +72,8 @@ void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
 	this->mainRenderer = rd;
 	auto xr = mainRenderer->getXRang();
 	auto yr = mainRenderer->getYRang();
-	AxisL->setAxisRange(yr.min, yr.max);
-	AxisB->setAxisRange(xr.min, xr.max);
+	//AxisL->setAxisRange(yr.min, yr.max);
+	//AxisB->setAxisRange(xr.min, xr.max);
 }
 
 /**
@@ -100,10 +100,11 @@ void Plot::updateAxis()
 	Data::Rang xr, yr;
 	xr = mainRenderer->getXRang();
 	yr = mainRenderer->getYRang();
-	AxisL->setAxisRange(yr.min, yr.max);
-	AxisL->_update();
-	AxisB->setAxisRange(xr.min, xr.max);
-	AxisB->_update();
+
+//	AxisL->setAxisRange(yr.min, yr.max);
+//	AxisL->_update();
+//	AxisB->setAxisRange(xr.min, xr.max);
+//	AxisB->_update();
 
 	if (!axisRightEnabled)
 		return;
@@ -133,9 +134,11 @@ void Plot::initGUI()
 	AxisL = new Axis();
 	AxisL->setAxixStyle(Axisleft);
 	AxisL->SetAxisNumber(6);
+	AxisL->setAxisRange(-100, 100);
 	AxisB = new Axis();
 	AxisB->setAxixStyle(AxisBottom);
 	AxisB->SetAxisNumber(6);
+	AxisB->setAxisRange(-100, 100);
 
 	scaleWIdget = new QwtScaleWidget(QwtScaleDraw::RightScale, this);
 	scaleWIdget->setColorBarEnabled(true);
