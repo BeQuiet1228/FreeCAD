@@ -15,8 +15,8 @@ void DataSourceManage::tranfromRenderer(std::string name,int index){
 		RendererPtr renderer = CreateRendererList(hdfDatelist[index]);
 		//先装入队列
 		RendererManger[name] = renderer;
-		renderer->dataInit();
-		renderer->setDefaultRang();
+		/*renderer->dataInit();
+		renderer->setDefaultRang();*/
 		p.setMainRenderer(renderer);
 		p.reRender();
 	}
@@ -25,7 +25,31 @@ void DataSourceManage::tranfromRenderer(std::string name,int index){
 RendererPtr DataSourceManage::CreateRendererList(Hdf5Data data){
 	//从工厂获取到相关的渲染器
 	//RendererPtr rd = RendererFactory::creatRenderer(data);
-	RendererPtr rd = RendererFactory::creatStructRender(data, R_Z);
+	Hdf5Data _data(data);
+	RendererFactory factory(_data);
+	if (data.name.find("CONTOUR")!=std::string::npos)
+	{
+
+	}
+	else if (data.name.find("PHASEPACE")!=std::string::npos)
+	{
+
+	}
+	else if (data.name.find("RANGE")!=std::string::npos)
+	{
+
+	}
+	else if (data.name.find("VECTOR")!=std::string::npos)
+	{
+
+	}
+	else if (data.name.find("struct")!=std::string::npos)
+	{
+	}
+
+	RendererPtr rd=factory.creatRenderer(data);
+	//RendererPtr rd = RendererFactory::creatStructRender(data, R_Z);
+	//RendererFactory factor();
 	return rd;
 }
 

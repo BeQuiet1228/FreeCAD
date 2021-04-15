@@ -15,6 +15,12 @@ void phasorData::restorDeriveData()
 */
 bool phasorData::loadPoint()
 {
+	//需要先清空数据
+	mPiflist_rect.clear();
+	p1.clear();
+	p2.clear();
+	len_coef.clear();
+	/*************************************/
 	Data::ListValuesPtr ListValues;
 	//获取原始数据
 	bool ok = autoModGetSourceData(ListValues);
@@ -145,6 +151,7 @@ std::vector<qreal> phasorData::getaxis_y()
 	axis_ylist.push_back(0);
 	for (auto iterb = datasetEmB->begin(); iterb != datasetEmB->end();iterb++)
 	{
+		//printf("y=%f\n", *iterb);
 		axis_ylist.push_back(*iterb);
 	}
 	return axis_ylist;
@@ -279,7 +286,10 @@ bool phasorData::initVectorData2(){
 	for (auto iterC = datasetEmC->begin(); iterC != datasetEmC->end(); iterC++)
 		dataC.push_back(*iterC);
 	for (auto i = 0; i < mPiflist_rect.size(); i++)
+	{
 		p1.push_back(QPointF(mPiflist_rect[i].left(), mPiflist_rect[i].bottom()));
+	//	printf("x:%f,y:%f\n",p1[i].x(),p1[i].y());
+	}	
 	Data::Rang xr = getXRang();
 	Data::Rang yr = getYRang();
 	float Width = (xr.max - xr.min)/datasetEmA->size();
@@ -315,9 +325,19 @@ bool phasorData::initVectorData2(){
 			len_coef.push_back(QPointF(x_coef,y_coef));
 			float _p2Len = sqrt(x_coef*x_coef + y_coef*y_coef);
 			float rotation = _p2Len / Svector;
+			//printf("\n rotation:%f\n", rotation);
 			QPointF _p2;
+//#define _DEBUG_
+#ifdef _DEBUG_
+			QPointF _p1 = p1[i];
+			float _X = MaxRectLen*rotation*(x_coef / _p2Len);
+			float _Y = MaxRectLen*rotation*(y_coef / _p2Len);
+			printf("X:%f,Y:%f,MAX_LEN:%f\n", _X, _Y, MaxRectLen);
+#endif
 			_p2.setX(p1[i].x() + MaxRectLen*rotation*(x_coef / _p2Len));
 			_p2.setY(p1[i].y() + MaxRectLen*rotation*(y_coef / _p2Len));
+			//printf("p1.x:%f,p2.x:%f\n",p1[i].x(),_p2.x());
+			//printf("p1.y:%f,p2.y:%f\n", p1[i].y(), _p2.y());
 			p2.push_back(_p2);
 		}
 		
