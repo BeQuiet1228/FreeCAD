@@ -17,13 +17,13 @@ public:
 protected:
 	virtual void resizeEvent(QResizeEvent * event) override;
 signals:
-	void _transfromRenderer(std::string name,Hdf5Data data);
+	void _transfromRenderer(std::string name,int index);
 public slots:
-	void loadHdflist(std::vector<Hdf5Data> Hdf5Datalist);
+	void loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist);
 	void on_doubleclick(const QModelIndex &index);
 private:
 	QTreeView* m_TreeView;
 	QStandardItemModel *goodsModel;
-	std::map <QStandardItem*,Hdf5Data> datainfor;
+	std::map <QStandardItem*, int> datainfor;
 };
 #endif

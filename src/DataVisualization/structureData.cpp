@@ -60,14 +60,15 @@ bool structureData::loadPoint()
 	{
 		IM1X = *it; it++;
 		IM2X = *it; it++;
-		IM3X = *it;
+		IM3X = *it; it++;
 		datasetkmt = *it;
 	}
 	case C_Type::POLAR:
 	{
+
 		IM2X = *it; it++;
 		IM3X = *it; it++;
-		IM1X = *it;
+		IM1X = *it; it++;
 		datasetkmt = *it;
 	}
 	}
@@ -193,6 +194,7 @@ QVector<QRectF> structureData::GetAllCutspace()
 		IM3X = *it; it++;
 		datasetkmt = *it;
 	}
+		break;
 	case C_Type::CYLINDRICAL:
 	{
 		IM1X = *it; it++;
@@ -200,6 +202,7 @@ QVector<QRectF> structureData::GetAllCutspace()
 		IM3X = *it; it++;
 		datasetkmt = *it;
 	}
+		break;
 	case C_Type::POLAR:
 	{
 		IM2X = *it; it++;
@@ -207,6 +210,7 @@ QVector<QRectF> structureData::GetAllCutspace()
 		IM1X = *it; it++;
 		datasetkmt = *it;
 	}
+		break;
 	}
 	/********************************************/
 	
@@ -264,6 +268,7 @@ QVector<DaTaKmt> structureData::GetdatasetKmt()
 		IM3X = *it; it++;
 		datasetkmt = *it;
 	}
+		break;
 	case C_Type::CYLINDRICAL:
 	{
 		IM1X = *it; it++;
@@ -271,6 +276,7 @@ QVector<DaTaKmt> structureData::GetdatasetKmt()
 		IM3X = *it; it++;
 		datasetkmt = *it;
 	}
+		break;
 	case C_Type::POLAR:
 	{
 		IM2X = *it; it++;
@@ -278,21 +284,61 @@ QVector<DaTaKmt> structureData::GetdatasetKmt()
 		IM1X = *it; it++;
 		datasetkmt = *it;
 	}
+		break;
 	}
 	/*******************************************************/
 	auto iterkmt = datasetkmt->begin();
 	for (; iterkmt != datasetkmt->end();)
 	{
 		DaTaKmt temp;
-		//坐标1
-		temp.point1 = *iterkmt;
-		iterkmt++;
-		//坐标2
-		temp.point2 = *iterkmt;
-		iterkmt++;
-		//坐标3
-		temp.point3 = *iterkmt;
-		iterkmt++;
+		switch (curstype)
+		{
+		case C_Type::CARTESIAN:
+		{
+			temp.point1 = *iterkmt;
+			iterkmt++;
+			//坐标2
+			temp.point2 = *iterkmt;
+			iterkmt++;
+			//坐标3
+			temp.point3 = *iterkmt;
+			iterkmt++;
+		}
+			break;
+		case C_Type::CYLINDRICAL:
+		{
+			temp.point1 = *iterkmt;
+			iterkmt++;
+			//坐标2
+			temp.point2 = *iterkmt;
+			iterkmt++;
+			//坐标3
+			temp.point3 = *iterkmt;
+			iterkmt++;
+		}
+			break;
+		case C_Type::POLAR:
+		{
+			temp.point2 = *iterkmt;
+			iterkmt++;
+			//坐标2
+			temp.point3 = *iterkmt;
+			iterkmt++;
+			//坐标3
+			temp.point1 = *iterkmt;
+			iterkmt++;
+		}
+			break;
+		}
+		////坐标1
+		//temp.point1 = *iterkmt;
+		//iterkmt++;
+		////坐标2
+		//temp.point2 = *iterkmt;
+		//iterkmt++;
+		////坐标3
+		//temp.point3 = *iterkmt;
+		//iterkmt++;
 		//属性
 		temp.pointproperty = *iterkmt;
 		iterkmt++;
@@ -362,6 +408,7 @@ void structureData::fileCylindrical_info()
 		IM3X = *it; it++;
 		datasetkmt = *it;
 	}
+		break;
 	case C_Type::CYLINDRICAL:
 	{
 		IM1X = *it; it++;
@@ -369,6 +416,7 @@ void structureData::fileCylindrical_info()
 		IM3X = *it;
 		datasetkmt = *it;
 	}
+		break;
 	case C_Type::POLAR:
 	{
 		IM2X = *it; it++;
@@ -376,8 +424,8 @@ void structureData::fileCylindrical_info()
 		IM1X = *it;
 		datasetkmt = *it;
 	}
+		break;
 	}
-
 
 	/*********************************************************/
 	//获取切割的点位

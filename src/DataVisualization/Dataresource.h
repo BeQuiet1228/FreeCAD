@@ -7,6 +7,7 @@
 #include<map>
 #include "Plot.h"
 #include "RendererFactory.h"
+#include "ListTreeWidget.h"
 class DataSourceManage:public QObject
 {
 	Q_OBJECT
@@ -23,11 +24,11 @@ public:
 		return &instance;
 	}
 public:
-	void init();
+	void init(ListTreeWidget* ptr);
 signals:
-	void _loadhdflist(std::vector<Hdf5Data> Hdf5Data);
+	void _loadhdflist(std::vector<Hdf5Data>& Hdf5Data);
 public slots:
-	void tranfromRenderer(std::string name,Hdf5Data data);
+	void tranfromRenderer(std::string name, int index);
 	void clearMap();
 	void loadhdffile(std::string filepath);
 private:
