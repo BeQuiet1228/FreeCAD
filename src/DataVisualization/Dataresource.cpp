@@ -8,7 +8,7 @@ void DataSourceManage::tranfromRenderer(std::string name,Hdf5Data data){
 		/*	rd->dataInit();
 			rd->setDefaultRang();*/
 		p.setMainRenderer(rd);
-		p.update();
+		p.reRender();
 	}
 	else
 	{
@@ -18,7 +18,7 @@ void DataSourceManage::tranfromRenderer(std::string name,Hdf5Data data){
 		renderer->dataInit();
 		renderer->setDefaultRang();
 		p.setMainRenderer(renderer);
-		p.update();
+		p.reRender();
 	}
 }
 
@@ -32,8 +32,6 @@ RendererPtr DataSourceManage::CreateRendererList(Hdf5Data data){
 void DataSourceManage::clearMap(){
 	//RendererManger.clear();
 }
-
-
 void DataSourceManage::loadhdffile(std::string filepath)
 {
 	Hdf5IO io(filepath);
@@ -51,7 +49,11 @@ DataSourceManage::DataSourceManage(){
 
 }
 
-void DataSourceManage::init(){
+void DataSourceManage::init(ListTreeWidget* ptr){
+
+	//进行连接
+	connect(this, SIGNAL(_loadhdflist(std::vector<Hdf5Data>)), ptr, SLOT(loadHdflist(std::vector<Hdf5Data>)));
+	connect(ptr, SIGNAL(_transfromRenderer(std::string, Hdf5Data)), this, SLOT(tranfromRenderer(std::string, Hdf5Data)));
 	p.resize(400, 300);
 	p.show();
 }

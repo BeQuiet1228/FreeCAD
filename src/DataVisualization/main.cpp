@@ -32,27 +32,11 @@ int main(int argc, char *argv[])
 	CanvasItem::registerMetaTye();
 	ListTreeWidget m_tree;
 	DataSourceManage dataMannage;
-	a.connect(&dataMannage, SIGNAL(_loadhdflist(std::vector<Hdf5Data>)), &m_tree, SLOT(loadHdflist(std::vector<Hdf5Data>)));
-	a.connect(&m_tree, SIGNAL(_transfromRenderer(std::string, Hdf5Data)), &dataMannage, SLOT(tranfromRenderer(std::string, Hdf5Data)));
 	std::string path = "D:/MILO_P.h5";
-	dataMannage.init();
+	dataMannage.init(&m_tree);
 	dataMannage.loadhdffile(path);
 	m_tree.resize(400,300);
 	m_tree.show();
-	//std::string path = "E:/lingshiwenjianjia/MILO_C/MILO_C.h5";
-	//std::string path = "D:\RBWO_CY.h5";
-	//std::string path = "D:\MILO_P.h5";
-	//std::string path = "E:/tt/TEST.h5";
-	//std::string path = "D:/MILO_P.h5";
-	//Hdf5IO io(path);
-	//
-	//io.initHdf5Data();
-	//auto data = io.hdf5DataList.begin();
-	////data +=35;
-	////data += 752;
-	//Hdf5Data d = *data;
-
-	//Hdf5Data d = *data;
 #if 0
 
 
