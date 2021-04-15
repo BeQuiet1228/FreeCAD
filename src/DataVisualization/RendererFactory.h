@@ -11,12 +11,12 @@ using Renderers = std::list<RendererPtr>;
 using DataPtr = std::shared_ptr<Data>;
 class RendererFactory{
 public:
-	RendererFactory(std::vector<Hdf5Data> d);
-	~RendererFactory();
+	RendererFactory(Hdf5Data h5d);
+	~RendererFactory() =default;
 
 public:
-	Renderers creatRenderers(Hdf5Data h5d);
-	static RendererPtr creatRenderer(Hdf5Data h5d);
+	Renderers creatRenderers(Hdf5Data h5d,DirectionType type = X_Y);
+	static RendererPtr creatRenderer(Hdf5Data h5d,DirectionType type = X_Y);
 	static RendererPtr creatRenderer(DataPtr data);
 	static DataPtr creatData(Hdf5Data h5d);
 	static DataPtr creatTimeData(Hdf5Data h5d);
@@ -27,6 +27,10 @@ public:
 
 	static RendererPtr creatStructRender(Hdf5Data h5d, DirectionType type = X_Y);
 	static RendererPtr creatVectorRender(Hdf5Data h5d);
+
+	//Ѱ�ҽṹͼ
+	static int  findStructDataIndex(const std::vector<Hdf5Data>& datas);
 private:
-	std::vector<Hdf5Data> datas;
+	Hdf5Data structData;
+
 };

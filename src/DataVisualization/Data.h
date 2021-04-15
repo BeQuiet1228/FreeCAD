@@ -58,6 +58,11 @@ public:
 		SINGLE_THREAD = 0, //单线程
 		MULTITHREAD		//多线程
 	};
+	//图表的类型
+	enum NeedStructType{
+		NEED_STRUCT = 0,
+		NEEDLESS_STRUCT
+	};
 public:
 	Data(Hdf5Data& h5Data ,const RunMod& mod = SINGLE_THREAD);
 	virtual ~Data();
@@ -108,18 +113,25 @@ protected:
 public:
 	//将字符串转换为directions
 	static	DirectionType stringToDirection(const std::string& str);
+
+	//操作类型
+	DirectionType getDirectionType(){
+		return directionTyp;
+	}
+	NeedStructType getNeedStructType(){
+		return mapType;
+	}
+protected:
+	//平面方向
+	DirectionType directionTyp;
+	//图类型
+	NeedStructType mapType;
 };
 
 class XYData :public Data{
 public:
 	XYData(Hdf5Data& h5Data, const RunMod& mod = SINGLE_THREAD);
 	~XYData() = default;
-
-	//图表的类型
-	enum NeedStructType{
-		NEED_STRUCT = 0,
-		NEEDLESS_STRUCT
-	};
 public:
 	virtual unsigned int findIndexFromXValueL(const float& x);
 	unsigned int findIndexFromXValueR(const float& x);
@@ -163,13 +175,6 @@ public:
 		std::lock_guard<std::mutex> am(yTagMutex);
 		return yTag;
 	}
-	//操作类型
-	DirectionType getDirectionType(){
-		return directionTyp;
-	}
-	NeedStructType getNeedStructType(){
-		return mapType;
-	}
 protected:
 	virtual bool initXYRang() = 0;
 	//设置size
@@ -187,11 +192,6 @@ private:
 	//xy数据的单位
 	std::string xTag, yTag;
 	std::mutex xTagMute, yTagMutex;
-protected:
-	//平面方向
-	DirectionType directionTyp;
-	//图类型
-	NeedStructType mapType;
 public:
 	virtual void initDiretion();
 	void initInformation() override;

@@ -20,13 +20,13 @@ struct CONTROL_EXPORT Hdf5Data
 	Hdf5Data(std::shared_ptr<H5File> h5){
 		this->hdf5File = h5;
 	}
-	Hdf5Data(){}
+	Hdf5Data() = default;
 	enum CoordinateSystem{
-		CARTESIAN = 0, //xyz
-		CYLINDER,		//
-		POLAR			//
-
+		CARTESIAN = 0,
+		CYLINDER,
+		POLAR
 	};
+	
 	//数据分组对象
     Group group;
 	//头部信息

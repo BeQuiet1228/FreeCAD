@@ -59,6 +59,8 @@ void Plot::reRender()
 */
 void Plot::addSubRenderer(const std::shared_ptr<Renderer>& rd)
 {
+	rd->dataInit();
+	rd->setDefaultRang();
 	subRenderers.push_back(rd);
 }
 
@@ -69,11 +71,34 @@ void Plot::addSubRenderer(const std::shared_ptr<Renderer>& rd)
 */
 void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
 {
+	//初始化数据
+	rd->dataInit();
+	rd->setDefaultRang();
+
 	this->mainRenderer = rd;
 	auto xr = mainRenderer->getXRang();
 	auto yr = mainRenderer->getYRang();
-	AxisL->setAxisRange(yr.min, yr.max);
-	AxisB->setAxisRange(xr.min, xr.max);
+	//AxisL->setAxisRange(yr.min, yr.max);
+	//AxisB->setAxisRange(xr.min, xr.max);
+}
+
+/**
+* @brief Plot::addRenderer 添加渲染器 这个操作会清空之前的渲染器，第一个渲染器默认为主渲染器。
+* @param const std::list<std::shared_ptr<Renderer>> & listRender
+* @return void
+*/
+void Plot::addRenderer(const std::list<std::shared_ptr<Renderer>>& listRender)
+{
+	if (listRender.size() < 1)
+		return;
+	clearSubRenderer();
+	auto iter = listRender.begin();
+	setMainRenderer(*iter);
+	iter++;
+	for (; iter != listRender.end(); iter++)
+	{
+		addSubRenderer(*iter); 
+	}
 }
 
 /**
@@ -100,10 +125,11 @@ void Plot::updateAxis()
 	Data::Rang xr, yr;
 	xr = mainRenderer->getXRang();
 	yr = mainRenderer->getYRang();
-	AxisL->setAxisRange(yr.min, yr.max);
-	AxisL->_update();
-	AxisB->setAxisRange(xr.min, xr.max);
-	AxisB->_update();
+
+//	AxisL->setAxisRange(yr.min, yr.max);
+//	AxisL->_update();
+//	AxisB->setAxisRange(xr.min, xr.max);
+//	AxisB->_update();
 
 	if (!axisRightEnabled)
 		return;
@@ -133,9 +159,11 @@ void Plot::initGUI()
 	AxisL = new Axis();
 	AxisL->setAxixStyle(Axisleft);
 	AxisL->SetAxisNumber(6);
+	AxisL->setAxisRange(-100, 100);
 	AxisB = new Axis();
 	AxisB->setAxixStyle(AxisBottom);
 	AxisB->SetAxisNumber(6);
+	AxisB->setAxisRange(-100, 100);
 
 	scaleWIdget = new QwtScaleWidget(QwtScaleDraw::RightScale, this);
 	scaleWIdget->setColorBarEnabled(true);
