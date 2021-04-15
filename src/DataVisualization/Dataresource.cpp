@@ -1,6 +1,6 @@
 #include "Dataresource.h"
 
-void DataSourceManage::tranfromRenderer(std::string name,Hdf5Data data){
+void DataSourceManage::tranfromRenderer(std::string name,int index){
 	auto iter = RendererManger.find(name);
 	if (iter!=RendererManger.end())
 	{
@@ -12,7 +12,7 @@ void DataSourceManage::tranfromRenderer(std::string name,Hdf5Data data){
 	}
 	else
 	{
-		RendererPtr renderer = CreateRendererList(data);
+		RendererPtr renderer = CreateRendererList(hdfDatelist[index]);
 		//先装入队列
 		RendererManger[name] = renderer;
 		renderer->dataInit();
@@ -25,7 +25,7 @@ void DataSourceManage::tranfromRenderer(std::string name,Hdf5Data data){
 RendererPtr DataSourceManage::CreateRendererList(Hdf5Data data){
 	//从工厂获取到相关的渲染器
 	//RendererPtr rd = RendererFactory::creatRenderer(data);
-	RendererPtr rd = RendererFactory::creatStructRender(data,R_THETA);
+	RendererPtr rd = RendererFactory::creatStructRender(data, R_Z);
 	return rd;
 }
 
@@ -52,8 +52,8 @@ DataSourceManage::DataSourceManage(){
 void DataSourceManage::init(ListTreeWidget* ptr){
 
 	//进行连接
-	connect(this, SIGNAL(_loadhdflist(std::vector<Hdf5Data>)), ptr, SLOT(loadHdflist(std::vector<Hdf5Data>)));
-	connect(ptr, SIGNAL(_transfromRenderer(std::string, Hdf5Data)), this, SLOT(tranfromRenderer(std::string, Hdf5Data)));
+	connect(this, SIGNAL(_loadhdflist(std::vector<Hdf5Data>&)), ptr, SLOT(loadHdflist(std::vector<Hdf5Data>&)));
+	connect(ptr, SIGNAL(_transfromRenderer(std::string,int)), this, SLOT(tranfromRenderer(std::string,int)));
 	p.resize(400, 300);
 	p.show();
 }

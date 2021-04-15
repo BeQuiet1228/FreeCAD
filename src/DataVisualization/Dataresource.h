@@ -26,9 +26,9 @@ public:
 public:
 	void init(ListTreeWidget* ptr);
 signals:
-	void _loadhdflist(std::vector<Hdf5Data> Hdf5Data);
+	void _loadhdflist(std::vector<Hdf5Data>& Hdf5Data);
 public slots:
-	void tranfromRenderer(std::string name,Hdf5Data data);
+	void tranfromRenderer(std::string name, int index);
 	void clearMap();
 	void loadhdffile(std::string filepath);
 private:

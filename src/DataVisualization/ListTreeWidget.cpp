@@ -17,14 +17,14 @@ ListTreeWidget::ListTreeWidget(QWidget* parent) :QWidget(parent)
 	connect(m_TreeView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(on_doubleclick(const QModelIndex&)));
 }
 ListTreeWidget::~ListTreeWidget(){
-
+	//datainfor.clear();
 }
 /**
 * @brief ListTreeWidget::loadHdflist 读取hdf文件
 * @param std::vector<Hdf5Data> Hdf5Datalist
 * @return void
 */
-void ListTreeWidget::loadHdflist(std::vector<Hdf5Data> Hdf5Datalist)
+void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 {
 	DataSourceManage::Getinstance()->clearMap();
 	//需要清空所有节点信息
@@ -34,26 +34,29 @@ void ListTreeWidget::loadHdflist(std::vector<Hdf5Data> Hdf5Datalist)
 	}
 	//开始实现
 	std::map<std::string, std::vector<std::string>> itemlist;
-	std::map<std::string, std::map<std::string, Hdf5Data>> datalist;
+	std::map<std::string, std::map<std::string, int>> datalist;
 	itemlist.clear();
-	for each (Hdf5Data var in Hdf5Datalist)
+	//for each (Hdf5Data var in Hdf5Datalist)
+	//for (auto var = Hdf5Datalist.begin(); var != Hdf5Datalist.end();var++)
+	for (auto i = 0; i < Hdf5Datalist.size();i++)
 	{
-		auto iter=itemlist.find(var.name);
+		auto iter=itemlist.find(Hdf5Datalist[i].name);
 		if (iter!=itemlist.end())
 		{
-			std::string str = var.name+"_"+std::to_string(itemlist[var.name].size());
-			itemlist[var.name].push_back(str);
-			datalist[var.name][str] = var;
+			std::string str = Hdf5Datalist[i].name+"_"+std::to_string(itemlist[Hdf5Datalist[i].name].size());
+			itemlist[Hdf5Datalist[i].name].push_back(str);
+			datalist[Hdf5Datalist[i].name][str]=i;
 		}
 		else
 		{
-			std::string str = var.name + "_0";
-			itemlist[var.name].push_back(str);
-			datalist[var.name][str] = var;
+			std::string str = Hdf5Datalist[i].name + "_0";
+			itemlist[Hdf5Datalist[i].name].push_back(str);
+			datalist[Hdf5Datalist[i].name][str] =i;
 		}
 	}
+
 	//开始创建树控件
-	std::map<QStandardItem*, Hdf5Data> _datainfo;
+	std::map<QStandardItem*, int> _datainfo;
 	for (auto iter = itemlist.begin(); iter != itemlist.end();iter++)
 	{
 		//添加完父节点
@@ -102,9 +105,9 @@ void ListTreeWidget::on_doubleclick(const QModelIndex &index)
 		//传入hdf5数据
 		std::string name = (index.data().toString()).toStdString();
 		printf("%s",name.c_str());
-		Hdf5Data data = iter->second;
+		//std::shared_ptr<Hdf5Data> data =iter->second;
 		//DataSourceManage::Getinstance()->tranfromRenderer(name, data);
-		emit _transfromRenderer(name, data);
+		emit _transfromRenderer(name, iter->second);
 	}
 }
 #include "moc_ListTreeWidget.cpp"
