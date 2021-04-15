@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 	auto data = io.hdf5DataList.begin();
 	while (data->name != "CONTOUR")
 		data++;
-	data += 49;
+	data += 51;
 	//data += 752;
 	Hdf5Data d = *data;
 
@@ -89,13 +89,14 @@ int main(int argc, char *argv[])
 	//timeRenderer->setDisplayMode(QwtPlotSpectrogram::ContourMode,true);
 	Plot p;
 	std::shared_ptr<Renderer> rd(timeRenderer);*/
+	int structIndex = RendererFactory::findStructDataIndex(io.hdf5DataList);
+	
+	Hdf5Data structData(io.hdf5DataList.at(structIndex));
+	RendererFactory factory(structData);
 
-	RendererPtr rd = RendererFactory::creatRenderer(d);
-
-	rd->dataInit();
-	rd->setDefaultRang();
+	Renderers renderers = factory.creatRenderers(d);
 	Plot p;
-	p.setMainRenderer(rd);
+	p.addRenderer(renderers);
 	//p.setAxisRightEnabled(true);
 	p.resize(800,600);
 	//p.showMaximized();

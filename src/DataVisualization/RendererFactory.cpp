@@ -14,22 +14,29 @@
 #include "phasorData.h"
 #include "phasorRenderer.h"
 #include "Renderer.h"
-RendererFactory::RendererFactory(std::vector<Hdf5Data> d)
-	:datas(d)
+#include <iostream>
+RendererFactory::RendererFactory(Hdf5Data h5d)
+	: structData(h5d)
 {
 
 }
-/**
-* @brief RendererFactory::creatRenderers 根据类型创建所有渲染器
-* @param Hdf5Data h5d
-* @return Renderers
-*/
-Renderers RendererFactory::creatRenderers(Hdf5Data h5d)
+
+Renderers RendererFactory::creatRenderers(Hdf5Data h5d, DirectionType type /*= X_Y*/)
 {
-	return Renderers();
+	RendererPtr renderer = creatRenderer(h5d,type);
+
+	Renderers renderers;
+	renderers.push_back(renderer);
+	if (renderer->getNeedStrucuType() == Data::NEED_STRUCT)
+	{
+		RendererPtr structRenderer = creatRenderer(structData, renderer->getDirection());
+		renderers.push_back(structRenderer);
+	}
+	return renderers;
 }
 
-RendererPtr RendererFactory::creatRenderer(Hdf5Data h5d)
+
+RendererPtr RendererFactory::creatRenderer(Hdf5Data h5d, DirectionType type /*= X_Y*/)
 {
 	if (h5d.name == "OBSERVE")
 	{
@@ -37,24 +44,28 @@ RendererPtr RendererFactory::creatRenderer(Hdf5Data h5d)
 		TimeRenderer *r = new TimeRenderer(d);
 		return RendererPtr(r);
 
-	}else if (h5d.name == "PHASESPACE"){
+	}
+	else if (h5d.name == "PHASESPACE"){
 		std::shared_ptr<ParticleData> d(new ParticleData(h5d));
 		ParticleRenderer *r = new ParticleRenderer(d);
 		return RendererPtr(r);
 	}
 	else if (h5d.name == "CONTOUR"){
 		return creatContuorRender(h5d);
-		
-	}
-	else if (h5d.name == "RANGE"){
+
+	}else if (h5d.name == "RANGE"){
 		std::shared_ptr<InterspaceData> d(new InterspaceData(h5d));
 		InterspaceRender* r = new InterspaceRender(d);
 		return RendererPtr(r);
+	}else if (h5d.name == "struct"){
+		return creatStructRender(h5d, type);
+	}else if (h5d.name == "VECTOR")
+	{
+		return creatVectorRender(h5d);
 	}
 
 	return RendererPtr();
 }
-
 
 DataPtr RendererFactory::creatTimeData(Hdf5Data h5d)
 {
@@ -83,7 +94,6 @@ DataPtr RendererFactory::creatContuorData(Hdf5Data h5d)
 RendererPtr RendererFactory::creatContuorRender(Hdf5Data h5d)
 {
 	std::shared_ptr<ContourData> data(new ContourData(h5d));
-	data->initDiretion();
 	if (data->getDirectionType() != R_THETA)
 	{
 		ContourRender* r = new ContourRender(data);
@@ -129,4 +139,24 @@ RendererPtr RendererFactory::creatVectorRender(Hdf5Data h5d)
 	std::shared_ptr<phasorData> r(new phasorData(h5d));
 	phasorRenderer* rd = new phasorRenderer(r);
 	return RendererPtr(rd);
+}
+
+/**
+* @brief RendererFactory::findStructDataIndex 寻找结构图的索引
+* @param const std::vector<Hdf5Data>& datas datas 数据集
+* @return int -1表示寻找失败
+*/
+int RendererFactory::findStructDataIndex(const std::vector<Hdf5Data>& datas)
+{
+	if (datas.size() == 0)
+		return -1;
+	for (int i = 0; i < datas.size(); i++)
+	{
+		if (datas.at(i).name == "struct")
+			return i;
+	}
+#ifdef MY_DEBUG
+	std::cerr << "RendererFactory::findHdf5Data not found struct data!" << std::endl;
+#endif // MY_DEBUG
+	return -1;
 }

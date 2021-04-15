@@ -3,6 +3,7 @@
 Data::Data(Hdf5Data& h5Data,const RunMod& mod)
 	:h5Data(h5Data), sourceData(new ListValues)
 	, sourceDataMutex(new std::mutex), runMod(mod), sourceDataIsLoad(false), headList(h5Data.headList)
+	, directionTyp(NONE), mapType(NEEDLESS_STRUCT)
 {
 	
 }
@@ -158,9 +159,10 @@ DirectionType Data::stringToDirection(const std::string& str)
 }
 
 XYData::XYData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
-	:Data(h5Data, mod), pointSize(0), directionTyp(NONE), mapType(NEEDLESS_STRUCT)
+	:Data(h5Data, mod), pointSize(0)
 {
-	
+	initInformation();
+	initDiretion();
 }
 
 unsigned int XYData::findIndexFromXValueL(const float& x)

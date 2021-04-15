@@ -29,7 +29,14 @@ public:
 	Data::Rang getXRang();
 	void setYRang(const Data::Rang& rang);
 	Data::Rang getYRang();
-
+	//获取图类型
+	Data::NeedStructType getNeedStrucuType(){
+		return data->getNeedStructType();
+	}
+	//获取方向
+	DirectionType getDirection(){
+		return data->getDirectionType();
+	}
 	
 private:
 	//渲染图
