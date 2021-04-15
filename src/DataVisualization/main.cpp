@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 	auto data = io.hdf5DataList.begin();
 	while (data->name != "CONTOUR")
 		data++;
-	data += 51;
+	data += 50;
 	//data += 752;
 	Hdf5Data d = *data;
 
