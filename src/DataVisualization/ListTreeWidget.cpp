@@ -11,7 +11,10 @@ enum emType
 	VECTOR,
 	STRUCT,
 };
-std::string Type[MAX_TYPE_NUMBER] = { "CONTOUR", "PHASEPACE", "RANGE", "VECTOR", "struct" };
+std::string Type[MAX_TYPE_NUMBER] = { "CONTOUR", "PHASESPACE", "RANGE", "VECTOR", "struct" };
+std::string Structdirection[3] = { "Phi-Z",
+"Z-R",
+"R*cos(Phi)-R*sin(Phi)" };
 ListTreeWidget::ListTreeWidget(QWidget* parent) :QWidget(parent)
 {
 	//初始化TreeView的风格
@@ -48,18 +51,38 @@ void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 	itemlist.clear();
 	for (auto i = 0; i < Hdf5Datalist.size();i++)
 	{
-		auto iter=itemlist.find(Hdf5Datalist[i].name);
+		std::string _str = GetType(Hdf5Datalist[i].name);
+		auto iter=itemlist.find(_str);
 		if (iter!=itemlist.end())
 		{
-			std::string str = Hdf5Datalist[i].name+"_"+std::to_string(itemlist[Hdf5Datalist[i].name].size());
-			itemlist[Hdf5Datalist[i].name].push_back(str);
-			datalist[Hdf5Datalist[i].name][str]=i;
+			std::string str = Hdf5Datalist[i].name+"_"+std::to_string(itemlist[_str].size());
+			itemlist[_str].push_back(str);
+			datalist[_str][str]=i;
 		}
 		else
 		{
+			//当获取到图表信息是结构图时
+			if (Hdf5Datalist[i].name.find("struct")!=std::string::npos)
+			{
+				for each (std::string var in Structdirection)
+				{
+					itemlist[_str].push_back(var);
+					datalist[_str][var] = i;
+				}
+				//std::string str1 = "Phi-Z";
+				//std::string str2 = "Z-R";
+				//std::string str3 = "R*cos(Phi)-R*sin(Phi)";
+				//itemlist[_str].push_back(str1);
+				//itemlist[_str].push_back(str2);
+				//itemlist[_str].push_back(str3);
+				//datalist[_str][str1] = i;
+				//datalist[_str][str2] = i;
+				//datalist[_str][str3] = i;
+				continue;
+			}
 			std::string str = Hdf5Datalist[i].name + "_0";
-			itemlist[Hdf5Datalist[i].name].push_back(str);
-			datalist[Hdf5Datalist[i].name][str] =i;
+			itemlist[_str].push_back(str);
+			datalist[_str][str] =i;
 		}
 	}
 
@@ -68,7 +91,8 @@ void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 	for (auto iter = itemlist.begin(); iter != itemlist.end();iter++)
 	{
 		//添加完父节点
-		QStandardItem* item = new QStandardItem(QString::fromStdString(iter->first));
+		//QString str = QString::fromStdString(iter->first);
+		QStandardItem* item = new QStandardItem(QString::fromLocal8Bit((iter->first).c_str()));
 		int row = goodsModel->rowCount();
 		goodsModel->setItem(row,item);
 		//添加子节点
@@ -107,6 +131,7 @@ void ListTreeWidget::on_doubleclick(const QModelIndex &index)
 	QStandardItem* currenitem = goodsModel->itemFromIndex(index);
 	//寻找对应的hdf数据
 	auto iter = datainfor.find(currenitem);
+	//QModelIndex _parent=index.parent();//获取父节点
 	if (iter!=datainfor.end())
 	{
 		//传入hdf5数据
@@ -135,12 +160,13 @@ std::string ListTreeWidget::GetType(std::string name)
 	case emType::PHASEPACE:
 		return "相空间图";
 	case emType::RANGE:
-		return "时间图";
+		return "空间变化图";
 	case emType::STRUCT:
 		return "结构图";
+	case emType::VECTOR:
+		return "矢量图";
 	default:
 		return "未知图";
-		break;
 	}
 }
 #include "moc_ListTreeWidget.cpp"

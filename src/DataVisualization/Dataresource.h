@@ -33,6 +33,7 @@ public slots:
 	void loadhdffile(std::string filepath);
 private:
 	Renderers CreateRendererList(Hdf5Data data);
+	Renderers CreateRenderer(Hdf5Data data, DirectionType _type);
 private:
 	std::map<std::string,Renderers> RendererManger;
 	std::vector<Hdf5Data> hdfDatelist;
