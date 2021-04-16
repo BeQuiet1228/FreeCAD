@@ -65,6 +65,11 @@ SET(PHASOR_SRC phasorData.h
 	phasorRenderer.h
 	phasorRenderer.cpp
 )
+SET(CONFIG_SRC Config.cpp
+	Config.h
+	xml/pugiconfig.hpp
+	xml/pugixml.cpp
+	xml/pugixml.hpp)
 
 SET(LISTTREE_SRC ListTreeWidget.h
 	ListTreeWidget.cpp
@@ -112,7 +117,7 @@ SET(DataVisualization_src
 	${CONTOUR_SRC}
 	${STRUCT2D_SRC}
 	${LISTTREE_SRC}
-
+	${CONFIG_SRC}
 )
 add_definitions(-DMY_DEBUG)
 #设置编译生成文件类型
@@ -129,12 +134,12 @@ SOURCE_GROUP("time" FILES ${TIME_SRC})
 SOURCE_GROUP("particle" FILES ${PARTICLE_SRC})
 SOURCE_GROUP("struct" FILES ${STRUCT_SRC})
 SOURCE_GROUP("interspace" FILES ${INTERSPACE_SRC})
-
 SOURCE_GROUP("contour" FILES ${CONTOUR_SRC})
 SOURCE_GROUP("phasor" FILES ${PHASOR_SRC})
 SOURCE_GROUP("contour" FILES ${CONTOUR_SRC})
 SOURCE_GROUP("struct2d" FILES ${STRUCT2D_SRC})
 SOURCE_GROUP("dataManage" FILES ${LISTTREE_SRC})
+SOURCE_GROUP("config" FILES ${CONFIG_SRC})
 #增加包含目录
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}

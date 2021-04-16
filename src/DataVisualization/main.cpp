@@ -24,18 +24,36 @@
 #include "ContourRenderPolar.h"
 #include "ContourDataPolar.h"
 #include "RendererFactory.h"
+#include "Dataresource.h"
+#include "ListTreeWidget.h"
+#include "Config.h"
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 	CanvasItem::registerMetaTye();
 
+	ListTreeWidget m_tree;
+	DataSourceManage dataMannage;
+	std::string path = "D:/MILO_P.h5";
+	dataMannage.init(&m_tree);
+	dataMannage.loadhdffile(path);
+	m_tree.resize(400,300);
+	m_tree.show();
+
+	auto cg = Config::GetInstance();
+	auto group = cg->getRootGroup();
+	group.setSetting("value", "test");
+	auto group1 = group.getGroup("group");
+	group1.addSetting("config","ttt");
+	
+#if 0
 	//std::string path = "E:/lingshiwenjianjia/MILO_C/MILO_C.h5";
 	//std::string path = "D:\RBWO_CY.h5";
 	//std::string path = "D:\MILO_P.h5";
 	//std::string path = "E:/tt/TEST.h5";
 	std::string path = "D:/MILO_P.h5";
 	Hdf5IO io(path);
-	
+
 	io.initHdf5Data();
 	auto data = io.hdf5DataList.begin();
 	while (data->name != "CONTOUR")
@@ -43,6 +61,33 @@ int main(int argc, char *argv[])
 	data += 50;
 	//data += 752;
 	Hdf5Data d = *data;
+
+
+
+	/*std::shared_ptr<ContourDataPolar> particleData(new ContourDataPolar(d));
+
+
+	ContourRenderPolar *timeRenderer = new ContourRenderPolar(particleData);
+	timeRenderer->dataInit();
+	timeRenderer->setDefaultRang();
+	//timeRenderer->setDisplayMode(QwtPlotSpectrogram::ContourMode,true);
+	Plot p;
+	std::shared_ptr<Renderer> rd(timeRenderer);*/
+	int structIndex = RendererFactory::findStructDataIndex(io.hdf5DataList);
+
+	Hdf5Data structData(io.hdf5DataList.at(structIndex));
+	RendererFactory factory(structData);
+
+	Renderers renderers = factory.creatRenderers(d);
+	Plot p;
+	p.addRenderer(renderers);
+	//p.setAxisRightEnabled(true);
+	p.resize(800, 600);
+	//p.showMaximized();
+	//p.renderFinished();
+	p.show();
+#endif
+
 
 #if 0
 
@@ -79,29 +124,6 @@ int main(int argc, char *argv[])
 #endif // DEBUG
 	
 
-
-	/*std::shared_ptr<ContourDataPolar> particleData(new ContourDataPolar(d));
-
-
-	ContourRenderPolar *timeRenderer = new ContourRenderPolar(particleData);
-	timeRenderer->dataInit();
-	timeRenderer->setDefaultRang();
-	//timeRenderer->setDisplayMode(QwtPlotSpectrogram::ContourMode,true);
-	Plot p;
-	std::shared_ptr<Renderer> rd(timeRenderer);*/
-	int structIndex = RendererFactory::findStructDataIndex(io.hdf5DataList);
-	
-	Hdf5Data structData(io.hdf5DataList.at(structIndex));
-	RendererFactory factory(structData);
-
-	Renderers renderers = factory.creatRenderers(d);
-	Plot p;
-	p.addRenderer(renderers);
-	//p.setAxisRightEnabled(true);
-	p.resize(800,600);
-	//p.showMaximized();
-	//p.renderFinished();
-	p.show();
 
 
 	
