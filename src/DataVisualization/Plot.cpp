@@ -99,6 +99,8 @@ void Plot::addRenderer(const std::list<std::shared_ptr<Renderer>>& listRender)
 	{
 		addSubRenderer(*iter); 
 	}
+
+	canvas->clearIteam();
 }
 
 /**
