@@ -44,6 +44,7 @@ struct _3DPointf
 	float _3th;
 	_3DPointf() :_1st(0.0f), _2rd(0.0f), _3th(0.0){}
 };
+
 class structureData :public XYData{
 	/************************************************/
 public:
@@ -133,7 +134,6 @@ protected:
 	QVector<QRectF> GetAllCutspace();
 	//获取dataSetkmt的全部数据
 	QVector<DaTaKmt> GetdatasetKmt();
-	
 	//填充相关属性的队列
 	void fileproperty(QVector<QRectF> list);
 	//填充圆柱坐标系需要的信息
