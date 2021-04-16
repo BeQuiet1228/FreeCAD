@@ -18,7 +18,6 @@ typedef struct DaTaKmt
 	//属性
 	int pointproperty;
 }DATAKMT;
-
 enum C_Type
 {
 	POLAR=0,
@@ -38,7 +37,22 @@ enum StructTexture
 	//真空
 	Vacuo=1024,
 };
+struct _3DPointf
+{
+	float _1st;
+	float _2rd;
+	float _3th;
+	_3DPointf() :_1st(0.0f), _2rd(0.0f), _3th(0.0){}
+};
 class structureData :public XYData{
+	/************************************************/
+public:
+	structureData(Hdf5Data& heData, DirectionType _type, const RunMod& mod = SINGLE_THREAD);//根据方向进行构造
+	structureData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf endpoint, const RunMod& mod = SINGLE_THREAD);//跟据两个点进行构造
+public:
+	C_Type curType;//当前的坐标系类型
+	DirectionType _curdirtype;//当前的坐标系方向
+	/************************************************/
 public:
 	//Z-R坐标系
 	struct  structpoint
@@ -47,7 +61,6 @@ public:
 		float x, y;//直角坐标系下的数据
 		float d1, d2;//原始数据
 	};
-
 	//圆环坐标系
 	struct CutCir{
 		//内圆的切点
@@ -63,7 +76,6 @@ public:
 		qreal R_inner;
 		qreal R_excir;
 	};
-
 	structureData(Hdf5Data& heData, const RunMod& mod = SINGLE_THREAD);
 	~structureData();
 protected:
@@ -106,9 +118,17 @@ public:
 		std::lock_guard<std::mutex> am(yRangMutex);
 		yRang = rg;
 	}
+	//获取当前坐标系类型
+	C_Type GetCoord_type()
+	{
+		return (C_Type)curstype;
+	}
 protected:
 	//初始化xy的取值范围
 	virtual bool initXYRang();
+	bool initcartesianRang();
+	bool initpolarRang();
+	bool inicylindricalRang();
 	//获取切割的空间
 	QVector<QRectF> GetAllCutspace();
 	//获取dataSetkmt的全部数据
@@ -125,15 +145,14 @@ private:
 	int pointYsize;
 	//datasetkmt的数据采集
 	QVector<DaTaKmt> datakmtinfo;
-
 	QMap<int, QVector<QRectF>> allKmtInfo;
 	QMap<int, QVector<CutCir>> allKmtinfo_cir;
 	//xy的范围
-	Rang xRang, yRang;
+	Rang xRang, yRang,zRang;
 	//圆柱坐标系的取值范围
 	QVector<qreal> R_val;
 	QVector<qreal> rand_val;
 	int curstype;
-	std::mutex xRangMutex, yRangMutex;
+	std::mutex xRangMutex, yRangMutex,zRangMutex;
 };
 #endif

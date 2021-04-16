@@ -1,5 +1,5 @@
 #include "structureData.h"
-structureData::structureData(Hdf5Data& h5Data, const RunMod &mod)
+structureData::structureData(Hdf5Data& h5Data,const RunMod &mod)
 	:XYData(h5Data, mod)
 {
 
@@ -51,31 +51,34 @@ bool structureData::loadPoint()
 	{
 	case C_Type::CARTESIAN:
 	{
-		IM1X = *it; it++;
-		IM2X = *it; it++;
-		IM3X = *it; it++;
+		IM1X = *it; it++;//x
+		IM2X = *it; it++;//y
+		IM3X = *it; it++;//z
 		datasetkmt = *it;
 	}
+		break;
 	case C_Type::CYLINDRICAL:
 	{
-		IM1X = *it; it++;
-		IM2X = *it; it++;
-		IM3X = *it; it++;
+		IM1X = *it; it++;//Z
+		IM2X = *it; it++;//R
+		IM3X = *it; it++;//Pin
 		datasetkmt = *it;
 	}
+		break;
 	case C_Type::POLAR:
 	{
 
-		IM2X = *it; it++;
-		IM3X = *it; it++;
-		IM1X = *it; it++;
+		IM2X = *it; it++;//R
+		IM3X = *it; it++;//PIN
+		IM1X = *it; it++;//Z
 		datasetkmt = *it;
 	}
+		break;
 	}
 	/**********************************************************/
-	pointXSize = IM1X->size();//获取I1MX的数据总数
-	pointYsize = IM2X->size();//获取I2MX的数据总数
 	//初始化范围
+		pointXSize = IM1X->size();//获取I1MX的数据总数
+		pointYsize = IM2X->size();//获取I2MX的数据总数
 	initXYRang();
 	loadrectpoint();
 	return true;
@@ -85,6 +88,20 @@ bool structureData::loadPoint()
 * @return bool
 */
 bool structureData::initXYRang(){
+	//switch (curstype)
+	//{
+	//case C_Type::CARTESIAN:
+	//	return initcartesianRang();
+	//case C_Type::CYLINDRICAL:
+	//	return inicylindricalRang();
+	//case C_Type::POLAR:
+	//	return initpolarRang();
+	//}
+	///***********************************/
+	//Data::ListValuesPtr ListValues;
+	//bool ok = autoModGetSourceData(ListValues);
+
+#pragma region 后续修改
 	if (pointXSize < 2||pointYsize<2)
 		return false;
 	//获取x轴的范围
@@ -142,6 +159,7 @@ bool structureData::initXYRang(){
 	setXRang(xr);
 	setYRang(yr);
 	return true;
+#pragma endregion
 }
 /**
 * @brief structureData::loadrectpoint 加载内部切割的矩形空间
@@ -489,4 +507,62 @@ void structureData::fileCylindrical_info()
 		}
 	}
 #pragma endregion
+}
+/**
+* @brief structureData::initcartesianRang 初始话cartesian间值
+* @return bool
+*/
+bool structureData::initcartesianRang(){
+	Data::ListValuesPtr ListValues;
+	bool ok = autoModGetSourceData(ListValues);
+	if (!ok&& !ListValues&&!ListValues->size() == 0)
+		return false;
+	Rang xr, yr;//先默认方向是
+	auto it = ListValues->begin();
+	Data::ValuesPtr IM1X = *it; it++;//X
+	Data::ValuesPtr IM2X = *it; it++;//Y
+	Data::ValuesPtr IM3X = *it; it++;//Z
+	Data::ValuesPtr DataSetKmt = *it;
+	yr.max = *(IM2X->end() - 1);
+	yr.min = -abs(yr.max);
+	//先默认方向是Z_R
+	setXRang(xr);
+	setYRang(yr);
+	return true;
+}
+/**
+* @brief structureData::initpolarRang 初始话polar坐标间值
+* @return bool 
+*/
+bool structureData::initpolarRang(){
+	Data::ListValuesPtr ListValues;
+	bool ok = autoModGetSourceData(ListValues);
+	if (!ok&&!ListValues&&ListValues->size())
+		return false;
+	//坐标依次是 R,rad,Z,
+	auto it = ListValues->begin();
+	Data::ValuesPtr IM1X = *it; it++;//R
+	Data::ValuesPtr IM2X = *it; it++;//rad
+	Data::ValuesPtr IM3X = *it; it++;//Z
+	//首先默认Z_R方向
+	Rang Zr, rRang;
+	return true;
+}
+/**
+* @brief structureData::inicylindricalRang 初始化圆柱坐标系间值
+* @return bool
+*/
+bool structureData::inicylindricalRang(){
+	return true;
+}
+
+structureData::structureData(Hdf5Data& heData, DirectionType _type, const RunMod& mod)//根据方向进行构造
+	:XYData(heData,mod)
+{
+
+}
+structureData::structureData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf endpoint, const RunMod& mod)//跟据两个点进行构造
+:XYData(heData, mod)
+{
+
 }

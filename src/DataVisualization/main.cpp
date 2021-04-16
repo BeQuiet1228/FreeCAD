@@ -24,6 +24,8 @@
 #include "ContourRenderPolar.h"
 #include "ContourDataPolar.h"
 #include "RendererFactory.h"
+#include "Dataresource.h"
+#include "ListTreeWidget.h"
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
@@ -33,16 +35,23 @@ int main(int argc, char *argv[])
 	//std::string path = "D:\RBWO_CY.h5";
 	//std::string path = "D:\MILO_P.h5";
 	//std::string path = "E:/tt/TEST.h5";
+
 	std::string path = "D:/MILO_P.h5";
-	Hdf5IO io(path);
-	
-	io.initHdf5Data();
-	auto data = io.hdf5DataList.begin();
-	while (data->name != "CONTOUR")
-		data++;
-	data += 50;
-	//data += 752;
-	Hdf5Data d = *data;
+	DataSourceManage _datasourceMange;
+	ListTreeWidget _ListTreeWidget;
+	_datasourceMange.init(&_ListTreeWidget);
+	_datasourceMange.loadhdffile(path);
+	_ListTreeWidget.resize(400, 300);
+	_ListTreeWidget.show();
+
+	//Hdf5IO io(path);
+	//io.initHdf5Data();
+	//auto data = io.hdf5DataList.begin();
+	//while (data->name != "CONTOUR")
+	//	data++;
+	//data += 50;
+	////data += 752;
+	//Hdf5Data d = *data;
 
 #if 0
 
@@ -89,19 +98,19 @@ int main(int argc, char *argv[])
 	//timeRenderer->setDisplayMode(QwtPlotSpectrogram::ContourMode,true);
 	Plot p;
 	std::shared_ptr<Renderer> rd(timeRenderer);*/
-	int structIndex = RendererFactory::findStructDataIndex(io.hdf5DataList);
-	
-	Hdf5Data structData(io.hdf5DataList.at(structIndex));
-	RendererFactory factory(structData);
-
-	Renderers renderers = factory.creatRenderers(d);
-	Plot p;
-	p.addRenderer(renderers);
+	//int structIndex = RendererFactory::findStructDataIndex(io.hdf5DataList);
+	//
+	//Hdf5Data structData(io.hdf5DataList.at(structIndex));
+	//RendererFactory factory(structData);
+	//
+	//Renderers renderers = factory.creatRenderers(d);
+	//Plot p;
+	//p.addRenderer(renderers);
 	//p.setAxisRightEnabled(true);
-	p.resize(800,600);
+	//p.resize(800,600);
 	//p.showMaximized();
 	//p.renderFinished();
-	p.show();
+	//p.show();
 
 
 	
