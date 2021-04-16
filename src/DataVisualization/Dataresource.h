@@ -32,10 +32,11 @@ public slots:
 	void clearMap();
 	void loadhdffile(std::string filepath);
 private:
-	RendererPtr CreateRendererList(Hdf5Data data);
+	Renderers CreateRendererList(Hdf5Data data);
 private:
-	std::map<std::string,RendererPtr> RendererManger;
+	std::map<std::string,Renderers> RendererManger;
 	std::vector<Hdf5Data> hdfDatelist;
 	Plot p;
+	RendererFactory* factoryptr;
 };
 #endif

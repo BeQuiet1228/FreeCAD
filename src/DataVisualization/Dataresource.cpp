@@ -1,32 +1,40 @@
 #include "Dataresource.h"
-
+/**
+* @brief DataSourceManage::tranfromRenderer 树表点击事件槽
+* @param std::string name
+* @param int index 索引号
+* @return void
+*/
 void DataSourceManage::tranfromRenderer(std::string name,int index){
 	auto iter = RendererManger.find(name);
 	if (iter!=RendererManger.end())
 	{
-		RendererPtr rd = iter->second;
+		Renderers rd = iter->second;
 		/*	rd->dataInit();
 			rd->setDefaultRang();*/
-		p.setMainRenderer(rd);
+		p.addRenderer(rd);
 		p.reRender();
 	}
 	else
 	{
-		RendererPtr renderer = CreateRendererList(hdfDatelist[index]);
+		Renderers renderer = CreateRendererList(hdfDatelist[index]);
 		//先装入队列
 		RendererManger[name] = renderer;
 		/*renderer->dataInit();
 		renderer->setDefaultRang();*/
-		p.setMainRenderer(renderer);
+		p.addRenderer(renderer);
 		p.reRender();
 	}
 }
-
-RendererPtr DataSourceManage::CreateRendererList(Hdf5Data data){
+/**
+* @brief DataSourceManage::CreateRendererList 获取渲染器
+* @param Hdf5Data data
+* @return RendererPtr
+*/
+Renderers DataSourceManage::CreateRendererList(Hdf5Data data){
 	//从工厂获取到相关的渲染器
 	//RendererPtr rd = RendererFactory::creatRenderer(data);
 	Hdf5Data _data(data);
-	RendererFactory factory(_data);
 	if (data.name.find("CONTOUR")!=std::string::npos)
 	{
 
@@ -47,15 +55,23 @@ RendererPtr DataSourceManage::CreateRendererList(Hdf5Data data){
 	{
 	}
 
-	RendererPtr rd=factory.creatRenderer(data);
+	Renderers rd=factoryptr->creatRenderers(data);
 	//RendererPtr rd = RendererFactory::creatStructRender(data, R_Z);
 	//RendererFactory factor();
 	return rd;
 }
-
+/**
+* @brief DataSourceManage::clearMap 清除字典
+* @return void 
+*/
 void DataSourceManage::clearMap(){
 	//RendererManger.clear();
 }
+/**
+* @brief DataSourceManage::loadhdffile 加载hdf5文件
+* @param std::string filepath 文件路径
+* @return void
+*/
 void DataSourceManage::loadhdffile(std::string filepath)
 {
 	Hdf5IO io(filepath);
@@ -65,14 +81,21 @@ void DataSourceManage::loadhdffile(std::string filepath)
 	emit _loadhdflist(_hdfDatelist);
 	//深度交换
 	hdfDatelist.swap(_hdfDatelist);
-	
+	int structindex = RendererFactory::findStructDataIndex(hdfDatelist);
+	Hdf5Data structDate(hdfDatelist.at(structindex));
+	factoryptr = new RendererFactory(structDate);
 }
-
+/**
+* @brief DataSourceManage::DataSourceManage 数据管理构造
+*/
 DataSourceManage::DataSourceManage(){
 	RendererManger.clear();
-
 }
-
+/**
+* @brief DataSourceManage::init 数据管理初始化
+* @param ListTreeWidget* ptr
+* @void
+*/
 void DataSourceManage::init(ListTreeWidget* ptr){
 
 	//进行连接
