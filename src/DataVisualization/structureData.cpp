@@ -371,10 +371,68 @@ QVector<DaTaKmt> structureData::GetdatasetKmt()
 */
 void structureData::fileproperty(QVector<QRectF> list)
 {
+	int index = 1;
+	Data::ListValuesPtr listValues;
+	autoModGetSourceData(listValues);//获取原始数据
+	//获取dataSetKmt里的全部数据
+	auto it = listValues->begin();
+
+	Data::ValuesPtr IM2X;
+	Data::ValuesPtr IM3X;
+	Data::ValuesPtr IM1X;
+	Data::ValuesPtr datasetkmt;
+
+	switch (curstype)
+	{
+	case C_Type::CARTESIAN:
+	{
+	}
+		break;
+	case C_Type::CYLINDRICAL:
+	{
+		IM1X = *it; it++;
+		IM2X = *it; it++;
+		IM3X = *it; it++;
+		datasetkmt = *it;
+		if (auto res=(mstartpoint==mendpoint)==3)
+		{
+			for (auto i = 0; i < IM3X->size();i++)
+			{
+				auto iter = IM3X->begin() + i;
+				if (*iter==mstartpoint[res])
+				{
+					index = i;
+					break;
+				}
+			}
+		}
+	}
+		break;
+	case C_Type::POLAR:
+	{
+		IM2X = *it; it++;
+		IM3X = *it; it++;
+		IM1X = *it; it++;
+		datasetkmt = *it;
+		if (auto res=(mstartpoint==mendpoint)==2)
+		{
+			for (auto i = 0; i < IM3X->size();i++)
+			{
+				auto iter = IM3X->begin() + i;
+				if (*iter==mstartpoint[res])
+				{
+					index = i;
+					break;
+				}
+			}
+		}
+	}
+		break;
+	}
 	allKmtInfo.clear();
 	for each (DaTaKmt var in datakmtinfo)
 	{
-		if (1 == var.point3&&var.point1 < pointXSize - 1)
+		if (index == var.point3&&var.point1 < pointXSize - 1)
 		{
 			allKmtInfo[var.pointproperty].push_back(list[(var.point1 - 1)*(pointYsize - 1) + var.point2 - 1]);
 		}
@@ -417,6 +475,8 @@ void structureData::fileCylindrical_info()
 	Data::ValuesPtr IM3X;
 	Data::ValuesPtr IM1X;
 	Data::ValuesPtr datasetkmt;
+	bool istrue=false;
+	int index=1;
 	switch (curstype)
 	{
 	case C_Type::CARTESIAN:
@@ -425,6 +485,7 @@ void structureData::fileCylindrical_info()
 		IM2X = *it; it++;
 		IM3X = *it; it++;
 		datasetkmt = *it;
+		index = 1;
 	}
 		break;
 	case C_Type::CYLINDRICAL:
@@ -433,6 +494,20 @@ void structureData::fileCylindrical_info()
 		IM2X = *it; it++;
 		IM3X = *it;
 		datasetkmt = *it;
+		if (auto res = (mstartpoint == mendpoint) == 1)
+		{
+			for (auto i = 0; i < IM1X->size() - 1; i++)
+			{
+				auto iter = IM1X->begin() + i;
+				if (*iter == mstartpoint[res])
+				{
+					index = i;
+					break;
+				}
+			}
+		}
+		else
+			index = 1;
 	}
 		break;
 	case C_Type::POLAR:
@@ -441,6 +516,20 @@ void structureData::fileCylindrical_info()
 		IM3X = *it; it++;
 		IM1X = *it;
 		datasetkmt = *it;
+		if (auto res = (mstartpoint == mendpoint) == 3)
+		{
+			for (auto i = 0; i < IM1X->size(); i++)
+			{
+				auto iter = IM1X->begin() + i;
+				if (*iter == mstartpoint[res])
+				{
+					index = i;
+					break;
+				}
+			}
+		}
+		else
+			index = 1;
 	}
 		break;
 	}
@@ -501,7 +590,7 @@ void structureData::fileCylindrical_info()
 	int CutNum=_rand_val.size()-1;
 	for each(DaTaKmt var in datakmtinfo)
 	{
-		if (var.point1==1 && var.point3<_rand_val.size())
+		if (var.point1==index && var.point3<_rand_val.size())
 		{
 			allKmtinfo_cir[var.pointproperty].push_back(_CutCirlist[(var.point2-1)*CutNum+(var.point3-1)]);
 		}
@@ -555,14 +644,8 @@ bool structureData::initpolarRang(){
 bool structureData::inicylindricalRang(){
 	return true;
 }
-
-structureData::structureData(Hdf5Data& heData, DirectionType _type, const RunMod& mod)//根据方向进行构造
-	:XYData(heData,mod)
+structureData::structureData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf _endpoint, const RunMod& mod) :XYData(heData, mod)
 {
-
-}
-structureData::structureData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf endpoint, const RunMod& mod)//跟据两个点进行构造
-:XYData(heData, mod)
-{
-
+	mstartpoint = startpoint;
+	mendpoint = _endpoint;
 }

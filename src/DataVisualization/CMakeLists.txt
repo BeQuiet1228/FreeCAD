@@ -41,7 +41,12 @@ SET(PARTICLE_SRC ParticleData.h
 SET(STRUCT_SRC StructRenderer.h
 	StructRenderer.cpp
 	structureData.h
-	structureData.cpp)
+	structureData.cpp
+	StructData.cpp
+	StructData.h
+	StructRender.cpp
+	StructRender.h
+	)
 SET(STRUCT2D_SRC Struct2dRenderer.h
 	Struct2dRenderer.cpp
 	Struct2dData.h

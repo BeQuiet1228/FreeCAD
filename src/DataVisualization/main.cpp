@@ -26,6 +26,8 @@
 #include "RendererFactory.h"
 #include "Dataresource.h"
 #include "ListTreeWidget.h"
+//#include "StructData.h"
+//#include "StructRender.h"
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
@@ -36,7 +38,7 @@ int main(int argc, char *argv[])
 	//std::string path = "D:\MILO_P.h5";
 	//std::string path = "E:/tt/TEST.h5";
 
-	std::string path = "D:/MILO_P.h5";
+	std::string path = "D:/wandaotongProject/MILO_P.h5";
 	DataSourceManage _datasourceMange;
 	ListTreeWidget _ListTreeWidget;
 	_datasourceMange.init(&_ListTreeWidget);
@@ -47,6 +49,18 @@ int main(int argc, char *argv[])
 	//Hdf5IO io(path);
 	//io.initHdf5Data();
 	//auto data = io.hdf5DataList.begin();
+	//Hdf5Data d = *data;
+	//std::shared_ptr<StructData> _StructData(new StructData(d,R_Z));
+	//StructRender* _StruRender = new StructRender(_StructData);
+	//Plot p;
+	//std::shared_ptr<StructRender> rd(_StruRender);
+	//Renderers renderers;
+	//renderers.push_back(rd);
+	////p.addRenderer(renderers);
+	//p.setMainRenderer(rd);
+	//p.setAxisRightEnabled(true);
+	//p.resize(800, 600);
+	//p.show();
 	//while (data->name != "CONTOUR")
 	//	data++;
 	//data += 50;

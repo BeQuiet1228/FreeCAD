@@ -43,13 +43,34 @@ struct _3DPointf
 	float _2rd;
 	float _3th;
 	_3DPointf() :_1st(0.0f), _2rd(0.0f), _3th(0.0){}
+	int operator ==(const _3DPointf& that)
+	{
+		if (this->_1st == that._1st&&this->_2rd != that._2rd&&this->_3th != that._3th)
+			return 1;
+		else if (this->_2rd == that._2rd&&this->_1st != that._1st&&this->_3th != that._3th)
+			return 2;
+		else if (this->_3th == that._3th&&this->_1st != that._1st&&this->_2rd != that._2rd)
+			return 3;
+		return -1;
+	}
+	float operator [](int index)
+	{
+		switch (index)
+		{
+		case 1:
+			return _1st;
+		case 2:
+			return _2rd;
+		case 3:
+			return _3th;
+		default:
+			return 0.0f;
+		}
+	}
 };
 
 class structureData :public XYData{
 	/************************************************/
-public:
-	structureData(Hdf5Data& heData, DirectionType _type, const RunMod& mod = SINGLE_THREAD);//根据方向进行构造
-	structureData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf endpoint, const RunMod& mod = SINGLE_THREAD);//跟据两个点进行构造
 public:
 	C_Type curType;//当前的坐标系类型
 	DirectionType _curdirtype;//当前的坐标系方向
@@ -78,6 +99,7 @@ public:
 		qreal R_excir;
 	};
 	structureData(Hdf5Data& heData, const RunMod& mod = SINGLE_THREAD);
+	structureData(Hdf5Data& heData,_3DPointf startpoint,_3DPointf _endpoint,const RunMod& mod = SINGLE_THREAD);
 	~structureData();
 protected:
 	virtual void restorDeriveData() override;
@@ -145,8 +167,9 @@ private:
 	int pointYsize;
 	//datasetkmt的数据采集
 	QVector<DaTaKmt> datakmtinfo;
-	QMap<int, QVector<QRectF>> allKmtInfo;
+	QMap<int, QVector<QRectF>>allKmtInfo;
 	QMap<int, QVector<CutCir>> allKmtinfo_cir;
+	_3DPointf mstartpoint, mendpoint;
 	//xy的范围
 	Rang xRang, yRang,zRang;
 	//圆柱坐标系的取值范围
