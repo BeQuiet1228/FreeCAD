@@ -22,11 +22,6 @@ public:
 	~DataSourceManage(){
 		RendererManger.clear();
 	}
-	static DataSourceManage* Getinstance()
-	{
-		static DataSourceManage instance;
-		return &instance;
-	}
 public:
 	void init(ListTreeWidget* ptr);
 signals:

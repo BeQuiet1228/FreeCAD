@@ -39,7 +39,6 @@ ListTreeWidget::~ListTreeWidget(){
 */
 void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 {
-	DataSourceManage::Getinstance()->clearMap();
 	//需要清空所有节点信息
 	if (goodsModel->hasChildren()>0)
 	{
