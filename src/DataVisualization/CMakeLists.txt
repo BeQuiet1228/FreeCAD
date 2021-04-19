@@ -94,6 +94,7 @@ SET(SRC main.cpp
 	RenderThread.h
 	RendererFactory.h
 	RendererFactory.cpp
+	exportConfig.hpp
 	)
 
 #处理ui和qrc文件
@@ -119,9 +120,15 @@ SET(DataVisualization_src
 	${LISTTREE_SRC}
 	${CONFIG_SRC}
 )
-add_definitions(-DMY_DEBUG)
+add_definitions(-DMY_DEBUG -D_DATA_VISUALIZATION_)
+if(DataVisualizationDll)
+add_definitions(DDATA_VISUALIZATIONG_DLL)
+add_library(DataVisualization ${DataVisualization_src})
+else()
 #设置编译生成文件类型
 add_executable(DataVisualization ${DataVisualization_src}) # 生成可执行文件
+endif()
+
 #设置执行文件的输出目录
 set(DEBUG_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(RELEASE_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)

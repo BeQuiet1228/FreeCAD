@@ -3,17 +3,19 @@
 #include <QPaintEvent>
 #include <QImage>
 #include <QGridLayout>
-#include "Canvas.h"
 #include <memory>
 #include <list>
 #include <QResizeEvent>
 #include <QKeyEvent>
+#include "exportConfig.hpp"
+#include "Canvas.h"
+class Canvas;
 class Renderer;
 class RenderThreadManager;
 class Axis;
 class QwtScaleEngine;
 class QwtScaleWidget;
-class Plot:public QWidget{
+class DATA_VISUALIZATION_EXPORT Plot:public QWidget{
 	Q_OBJECT
 public:
 	Plot(QWidget* parent = 0);
