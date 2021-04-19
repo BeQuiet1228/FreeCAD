@@ -62,6 +62,11 @@ if(MSVC)
 		SmartContorl
 	)
 	endif()
+	if(DataVisualizationDll)
+	list(APPEND FreeCADGui_LIBS
+		DataVisualization
+	)
+	endif()
 else(MSVC)
     set(FreeCADGui_LIBS
         FreeCADApp

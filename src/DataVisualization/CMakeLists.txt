@@ -127,8 +127,8 @@ SET(DataVisualization_src
 )
 add_definitions(-DMY_DEBUG -D_DATA_VISUALIZATION_)
 if(DataVisualizationDll)
-add_definitions(DDATA_VISUALIZATIONG_DLL)
-add_library(DataVisualization ${DataVisualization_src})
+add_definitions(-DDATA_VISUALIZATIONG_DLL)
+add_library(DataVisualization SHARED ${DataVisualization_src})
 else()
 #设置编译生成文件类型
 add_executable(DataVisualization ${DataVisualization_src}) # 生成可执行文件

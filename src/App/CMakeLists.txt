@@ -63,6 +63,11 @@ if(contorl_client_dll)
 		Contorl
 	)
 endif()
+if(DataVisualizationDll)
+list(APPEND FreeCADApp_LIBS
+		DataVisualization
+	)
+endif()
 
 if (BUILD_QT5)
     include_directories(
