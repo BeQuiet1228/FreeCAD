@@ -70,8 +70,8 @@ SET(PHASOR_SRC phasorData.h
 	phasorRenderer.h
 	phasorRenderer.cpp
 )
-SET(CONFIG_SRC Config.cpp
-	Config.h
+SET(CONFIG_SRC CustomConfig.cpp
+	CustomConfig.h
 	xml/pugiconfig.hpp
 	xml/pugixml.cpp
 	xml/pugixml.hpp)
