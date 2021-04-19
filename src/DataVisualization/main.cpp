@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 	//std::string path = "D:\MILO_P.h5";
 	//std::string path = "E:/tt/TEST.h5";
 
-	std::string path = "D:/wandaotongProject/MILO_P.h5";
+	std::string path = "D:/MILO_P.h5";
 	DataSourceManage _datasourceMange;
 	ListTreeWidget _ListTreeWidget;
 	_datasourceMange.init(&_ListTreeWidget);

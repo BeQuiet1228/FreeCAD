@@ -1,5 +1,6 @@
 #include "Dataresource.h"
-
+#include "RendererFactory.h"
+#include "Plot.h"
 
 //结构图的方向
 enum stru_dir
@@ -25,8 +26,8 @@ void DataSourceManage::tranfromRenderer(std::string name,int index){
 		Renderers rd = iter->second;
 		/*	rd->dataInit();
 			rd->setDefaultRang();*/
-		p.addRenderer(rd);
-		p.reRender();
+		p->addRenderer(rd);
+		p->reRender();
 	}
 	else
 	{
@@ -58,8 +59,8 @@ void DataSourceManage::tranfromRenderer(std::string name,int index){
 			//是结构体
 			Renderers rd = CreateRenderer(hdfDatelist[index], type);
 			RendererManger[name] = rd;
-			p.addRenderer(rd);
-			p.reRender();
+			p->addRenderer(rd);
+			p->reRender();
 			return;
 		}
 		Renderers renderer = CreateRendererList(hdfDatelist[index]);
@@ -67,15 +68,15 @@ void DataSourceManage::tranfromRenderer(std::string name,int index){
 		RendererManger[name] = renderer;
 		/*renderer->dataInit();
 		renderer->setDefaultRang();*/
-		p.addRenderer(renderer);
-		p.reRender();
+		p->addRenderer(renderer);
+		p->reRender();
 	}
 }
 
-Renderers DataSourceManage::CreateRenderer(Hdf5Data data, DirectionType _type)
+Renderers DataSourceManage::CreateRenderer(Hdf5Data data, int _type)
 {
 	Renderers rds;
-	RendererPtr rd = factoryptr->creatStructRender(data,_type);
+	RendererPtr rd = factoryptr->creatStructRender(data,(DirectionType)_type);
 	rds.push_back(rd);
 	return rds;
 }
@@ -154,8 +155,9 @@ void DataSourceManage::init(ListTreeWidget* ptr){
 	//进行连接
 	connect(this, SIGNAL(_loadhdflist(std::vector<Hdf5Data>&)), ptr, SLOT(loadHdflist(std::vector<Hdf5Data>&)));
 	connect(ptr, SIGNAL(_transfromRenderer(std::string,int)), this, SLOT(tranfromRenderer(std::string,int)));
-	p.resize(400, 300);
-	p.show();
+	p = new Plot();
+	p->resize(400, 300);
+	p->show();
 }
 //std::map<Hdf5Data, Renderer*> RendererManger;
 #include "moc_Dataresource.cpp"

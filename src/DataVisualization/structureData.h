@@ -68,7 +68,6 @@ struct _3DPointf
 		}
 	}
 };
-
 class structureData :public XYData{
 	/************************************************/
 public:
