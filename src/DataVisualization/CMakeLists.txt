@@ -70,6 +70,11 @@ SET(PHASOR_SRC phasorData.h
 	phasorRenderer.h
 	phasorRenderer.cpp
 )
+SET(CONFIG_SRC Config.cpp
+	Config.h
+	xml/pugiconfig.hpp
+	xml/pugixml.cpp
+	xml/pugixml.hpp)
 
 SET(LISTTREE_SRC ListTreeWidget.h
 	ListTreeWidget.cpp
@@ -94,6 +99,7 @@ SET(SRC main.cpp
 	RenderThread.h
 	RendererFactory.h
 	RendererFactory.cpp
+	exportConfig.hpp
 	)
 
 #处理ui和qrc文件
@@ -117,11 +123,17 @@ SET(DataVisualization_src
 	${CONTOUR_SRC}
 	${STRUCT2D_SRC}
 	${LISTTREE_SRC}
-
+	${CONFIG_SRC}
 )
-add_definitions(-DMY_DEBUG)
+add_definitions(-DMY_DEBUG -D_DATA_VISUALIZATION_)
+if(DataVisualizationDll)
+add_definitions(-DDATA_VISUALIZATIONG_DLL)
+add_library(DataVisualization SHARED ${DataVisualization_src})
+else()
 #设置编译生成文件类型
 add_executable(DataVisualization ${DataVisualization_src}) # 生成可执行文件
+endif()
+
 #设置执行文件的输出目录
 set(DEBUG_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(RELEASE_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
@@ -134,12 +146,12 @@ SOURCE_GROUP("time" FILES ${TIME_SRC})
 SOURCE_GROUP("particle" FILES ${PARTICLE_SRC})
 SOURCE_GROUP("struct" FILES ${STRUCT_SRC})
 SOURCE_GROUP("interspace" FILES ${INTERSPACE_SRC})
-
 SOURCE_GROUP("contour" FILES ${CONTOUR_SRC})
 SOURCE_GROUP("phasor" FILES ${PHASOR_SRC})
 SOURCE_GROUP("contour" FILES ${CONTOUR_SRC})
 SOURCE_GROUP("struct2d" FILES ${STRUCT2D_SRC})
 SOURCE_GROUP("dataManage" FILES ${LISTTREE_SRC})
+SOURCE_GROUP("config" FILES ${CONFIG_SRC})
 #增加包含目录
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}

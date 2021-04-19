@@ -7,7 +7,8 @@
 #include <vector>
 #include <HDF5Reader/hdf5io.h>
 #include <QStandardItemModel>
-class ListTreeWidget:public QWidget
+#include "exportConfig.hpp"
+class DATA_VISUALIZATION_EXPORT ListTreeWidget:public QWidget
 {
 	Q_OBJECT
 public:

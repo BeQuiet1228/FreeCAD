@@ -9,8 +9,9 @@
 #include <map>
 #include <QMouseEvent>
 #include <QRect>
+#include "exportConfig.hpp"
 class Canvas;
-class CanvasItem{
+class DATA_VISUALIZATION_EXPORT CanvasItem{
 	friend class Canvas;
 public:
 	CanvasItem();
@@ -42,7 +43,7 @@ public:
 	//层级 同一个canvas中层级不能重复 不然会被覆盖掉
 	unsigned int rank;
 };
-class Canvas :public QWidget{
+class DATA_VISUALIZATION_EXPORT Canvas : public QWidget{
 	Q_OBJECT
 public:
 	enum MouseLeftMode{

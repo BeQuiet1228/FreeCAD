@@ -5,12 +5,13 @@
 #include "HDF5Reader/hdf5io.h"
 #include<map>
 #include "ListTreeWidget.h"
+#include "exportConfig.hpp"
 class Plot;
 class RendererFactory;
 class Renderer;
 using RendererPtr = std::shared_ptr < Renderer > ;
 using Renderers = std::list < RendererPtr > ;
-class  DataSourceManage:public QObject
+class DATA_VISUALIZATION_EXPORT DataSourceManage:public QObject
 {
 	Q_OBJECT
 public:
