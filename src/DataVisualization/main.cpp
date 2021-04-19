@@ -26,7 +26,7 @@
 #include "RendererFactory.h"
 #include "Dataresource.h"
 #include "ListTreeWidget.h"
-#include "Config.h"
+#include "CustomConfig.h"
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);

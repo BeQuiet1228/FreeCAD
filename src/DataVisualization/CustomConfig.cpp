@@ -1,4 +1,4 @@
-#include "Config.h"
+#include "CustomConfig.h"
 #include <iostream>
 
 std::shared_ptr<Config> Config::instance;
