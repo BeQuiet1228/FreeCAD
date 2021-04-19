@@ -1,4 +1,17 @@
 #include "Dataresource.h"
+#include "RendererFactory.h"
+#include "Plot.h"
+
+//结构图的方向
+enum stru_dir
+{
+	PIN_Z=0,
+	Z_R,
+	R_PIN,
+};
+std::string StructDirection[] = { "Phi-Z",
+"Z-R",
+"R*cos(Phi)-R*sin(Phi)"};
 /**
 * @brief DataSourceManage::tranfromRenderer 树表点击事件槽
 * @param std::string name
@@ -6,25 +19,66 @@
 * @return void
 */
 void DataSourceManage::tranfromRenderer(std::string name,int index){
+	
 	auto iter = RendererManger.find(name);
 	if (iter!=RendererManger.end())
 	{
 		Renderers rd = iter->second;
 		/*	rd->dataInit();
 			rd->setDefaultRang();*/
-		p.addRenderer(rd);
-		p.reRender();
+		p->addRenderer(rd);
+		p->reRender();
 	}
 	else
 	{
+		//如果是结构图需要另外处理
+		int structindex = RendererFactory::findStructDataIndex(hdfDatelist);
+		if (index==structindex)
+		{
+			DirectionType type=R_Z;
+			int index_dir = 0;
+			for (auto i = 0; i < 3;i++)
+			{
+				if (name.find(StructDirection[i])!=std::string::npos)
+				{
+					index_dir = i;
+					break;
+				}
+			}
+			switch (index_dir)
+			{
+			case PIN_Z:
+				type = R_Z; break;
+			case Z_R:
+				type = R_Z; break;
+			case R_PIN:
+				type = R_THETA; break;
+			default:
+				break;
+			}
+			//是结构体
+			Renderers rd = CreateRenderer(hdfDatelist[index], type);
+			RendererManger[name] = rd;
+			p->addRenderer(rd);
+			p->reRender();
+			return;
+		}
 		Renderers renderer = CreateRendererList(hdfDatelist[index]);
 		//先装入队列
 		RendererManger[name] = renderer;
 		/*renderer->dataInit();
 		renderer->setDefaultRang();*/
-		p.addRenderer(renderer);
-		p.reRender();
+		p->addRenderer(renderer);
+		p->reRender();
 	}
+}
+
+Renderers DataSourceManage::CreateRenderer(Hdf5Data data, int _type)
+{
+	Renderers rds;
+	RendererPtr rd = factoryptr->creatStructRender(data,(DirectionType)_type);
+	rds.push_back(rd);
+	return rds;
 }
 /**
 * @brief DataSourceManage::CreateRendererList 获取渲染器
@@ -101,8 +155,9 @@ void DataSourceManage::init(ListTreeWidget* ptr){
 	//进行连接
 	connect(this, SIGNAL(_loadhdflist(std::vector<Hdf5Data>&)), ptr, SLOT(loadHdflist(std::vector<Hdf5Data>&)));
 	connect(ptr, SIGNAL(_transfromRenderer(std::string,int)), this, SLOT(tranfromRenderer(std::string,int)));
-	p.resize(400, 300);
-	p.show();
+	p = new Plot();
+	p->resize(400, 300);
+	p->show();
 }
 //std::map<Hdf5Data, Renderer*> RendererManger;
 #include "moc_Dataresource.cpp"
