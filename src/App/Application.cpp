@@ -450,6 +450,7 @@ App::Document* App::Application::newDocumentM2dText(const char * Name /*= 0l*/, 
 	//切换到对应的工作台
 	Base::InterpreterSingleton python;
 	python.runString("Gui.activateWorkbench(\"StartWorkbench\")");
+
 	return newDocument(new DocumentM2dText, Name, UserName);
 }
 

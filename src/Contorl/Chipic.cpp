@@ -270,7 +270,6 @@ bool Chipic::disposeChipicTimerState(const Message& msg)
 	}
 	return false;
 }
-
 /**
 * @brief Chipic::disposeChipicIsPause 处理chipic暂停状态消息
 * @param const Message & msg

@@ -326,7 +326,6 @@ set(Gui_MOC_HDRS
         picgui_ribbon/PICRibbon.h
         picgui_ribbon/PICRibbonTabContent.h
         picgui_ribbon/PICRibbonButtonGroup.h
-        picgui_ribbon/MainWindow.h
 )
 
 fc_wrap_cpp(Gui_MOC_SRCS ${Gui_MOC_HDRS})
@@ -1042,7 +1041,6 @@ SET(Widget_CPP_SRCS
         picgui_ribbon/PICRibbon.cpp
         picgui_ribbon/PICRibbonTabContent.cpp
         picgui_ribbon/PICRibbonButtonGroup.cpp
-        picgui_ribbon/MainWindow.cpp
 )
 SET(Widget_HPP_SRCS
     FileDialog.h
@@ -1062,8 +1060,7 @@ SET(Widget_HPP_SRCS
     LuaEditView.h
     picgui_ribbon/PICRibbon.h
     picgui_ribbon/PICRibbonTabContent.h
-    picgui_ribbon/PICRibbonButtonGroup.h
-    picgui_ribbon/MainWindow.h)
+    picgui_ribbon/PICRibbonButtonGroup.h)
 SET(Widget_SRCS
 	LuaEditView.cpp
 	MainWindowDef.ui
@@ -1232,9 +1229,6 @@ if(MSVC)
         picgui_ribbon/PICRibbon.cpp
         picgui_ribbon/PICRibbonTabContent.cpp
         picgui_ribbon/PICRibbonButtonGroup.cpp
-        picgui_ribbon/MainWindow.cpp
-
-
 
         ${Command_CPP_SRCS}
         ${Dialog_CPP_SRCS}
@@ -1252,8 +1246,13 @@ if(MSVC)
     )
     ADD_MSVC_PRECOMPILED_HEADER(FreeCADGui PreCompiled.h PreCompiled.cpp FreeCADGui_CPP_SRCS)
 endif(MSVC)
+SET(Control_SRC ControlTreeWidget.cpp
+	ControlTreeWidget.h)
+fc_wrap_cpp(ControlTreeWidgetMoc ControlTreeWidget.h)
+SOURCE_GROUP("Control" ${Control_SRC})
 
-add_library(FreeCADGui SHARED ${FreeCADGui_SRCS})
+
+add_library(FreeCADGui SHARED ${FreeCADGui_SRCS} ${Control_SRC} ${ControlTreeWidgetMoc})
 
 if (FREECAD_USE_QT_FILEDIALOG)
     set_source_files_properties(FileDialog.cpp PROPERTIES COMPILE_FLAGS -DUSE_QT_FILEDIALOG)
