@@ -35,10 +35,10 @@ int main(int argc, char *argv[])
 	ListTreeWidget m_tree;
 	DataSourceManage dataMannage;
 	std::string path = "D:/MILO_P.h5";
-	dataMannage.init(&m_tree);
-	dataMannage.loadhdffile(path);
-	m_tree.resize(400,300);
-	m_tree.show();
+	//dataMannage.init(&m_tree);
+	//dataMannage.loadhdffile(path);
+	//m_tree.resize(400,300);
+	//m_tree.show();
 
 	auto cg = Config::GetInstance();
 	auto group = cg->getRootGroup();

@@ -330,5 +330,9 @@ void Plot::keyReleaseEvent(QKeyEvent *event)
 	}
 	
 }
-
+void Plot::reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender)
+{
+	addRenderer(listRender);
+	reRender();
+}
 #include "moc_Plot.cpp"

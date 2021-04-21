@@ -323,10 +323,11 @@ set(Gui_MOC_HDRS
     TaskView/TaskView.h
     DAGView/DAGView.h
     DAGView/DAGModel.h
-        picgui_ribbon/PICRibbon.h
-        picgui_ribbon/PICRibbonTabContent.h
-        picgui_ribbon/PICRibbonButtonGroup.h
-        picgui_ribbon/MainWindow.h
+    picgui_ribbon/PICRibbon.h
+    picgui_ribbon/PICRibbonTabContent.h
+    picgui_ribbon/PICRibbonButtonGroup.h
+    picgui_ribbon/MainWindow.h
+	PlotMDIView.h
 )
 
 fc_wrap_cpp(Gui_MOC_SRCS ${Gui_MOC_HDRS})
@@ -434,6 +435,8 @@ SET(Command_CPP_SRCS
     CommandStructure.cpp
 	OpenFileConfig.h
 	OpenFileConfig.cpp
+	FileFormatH5.h
+	FileFormatH5.cpp
 )
 SET(Command_SRCS
     ${Command_CPP_SRCS}
@@ -1183,6 +1186,8 @@ SET(FreeCADGui_SRCS
     ManualAlignment.h
     TransactionObject.h
     WinNativeGestureRecognizers.h
+	PlotMDIView.h
+	PlotMDIView.cpp
 )
 
 SET(FreeCADGui_SRCS

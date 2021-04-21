@@ -1,16 +1,18 @@
 #pragma once
 #ifndef DATARESOURCE_H_
 #define DATARESOURCE_H_
-#include <QWidget>
+//#include <QWidget>
 #include "HDF5Reader/hdf5io.h"
 #include<map>
 #include "ListTreeWidget.h"
 #include "exportConfig.hpp"
+//#include "RendererFactory.h"
 class Plot;
 class RendererFactory;
 class Renderer;
 using RendererPtr = std::shared_ptr < Renderer > ;
 using Renderers = std::list < RendererPtr > ;
+class ListTreeWidget;
 class DATA_VISUALIZATION_EXPORT DataSourceManage:public QObject
 {
 	Q_OBJECT
@@ -20,14 +22,13 @@ public:
 		return *this;
 	}
 public:
-	~DataSourceManage(){
-		RendererManger.clear();
-	}
+	~DataSourceManage();
 public:
-	void init(ListTreeWidget* ptr);
-signals:
+	void init(ListTreeWidget* ptr,Plot* p);
+Q_SIGNALS:
 	void _loadhdflist(std::vector<Hdf5Data>& Hdf5Data);
-public slots:
+	void _reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender);
+public Q_SLOTS :
 	void tranfromRenderer(std::string name, int index);
 	void clearMap();
 	void loadhdffile(std::string filepath);
@@ -39,5 +40,6 @@ private:
 	std::vector<Hdf5Data> hdfDatelist;
 	Plot* p;
 	RendererFactory* factoryptr;
+	Hdf5IO _hdf5io;
 };
 #endif

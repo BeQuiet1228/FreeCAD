@@ -1,7 +1,7 @@
 #include "Dataresource.h"
 #include "RendererFactory.h"
 #include "Plot.h"
-
+//#include "ListTreeWidget.h"
 //结构图的方向
 enum stru_dir
 {
@@ -26,8 +26,9 @@ void DataSourceManage::tranfromRenderer(std::string name,int index){
 		Renderers rd = iter->second;
 		/*	rd->dataInit();
 			rd->setDefaultRang();*/
-		p->addRenderer(rd);
-		p->reRender();
+	/*	p->addRenderer(rd);
+		p->reRender();*/
+		emit _reRendererEvent(rd);
 	}
 	else
 	{
@@ -59,8 +60,9 @@ void DataSourceManage::tranfromRenderer(std::string name,int index){
 			//是结构体
 			Renderers rd = CreateRenderer(hdfDatelist[index], type);
 			RendererManger[name] = rd;
-			p->addRenderer(rd);
-			p->reRender();
+		/*	p->addRenderer(rd);
+			p->reRender();*/
+			emit _reRendererEvent(rd);
 			return;
 		}
 		Renderers renderer = CreateRendererList(hdfDatelist[index]);
@@ -68,8 +70,9 @@ void DataSourceManage::tranfromRenderer(std::string name,int index){
 		RendererManger[name] = renderer;
 		/*renderer->dataInit();
 		renderer->setDefaultRang();*/
-		p->addRenderer(renderer);
-		p->reRender();
+		/*p->addRenderer(renderer);
+		p->reRender();*/
+		emit _reRendererEvent(renderer);
 	}
 }
 
@@ -89,7 +92,7 @@ Renderers DataSourceManage::CreateRendererList(Hdf5Data data){
 	//从工厂获取到相关的渲染器
 	//RendererPtr rd = RendererFactory::creatRenderer(data);
 	Hdf5Data _data(data);
-	if (data.name.find("CONTOUR")!=std::string::npos)
+	/*if (data.name.find("CONTOUR")!=std::string::npos)
 	{
 
 	}
@@ -108,7 +111,7 @@ Renderers DataSourceManage::CreateRendererList(Hdf5Data data){
 	else if (data.name.find("struct")!=std::string::npos)
 	{
 	}
-
+*/
 	Renderers rd=factoryptr->creatRenderers(data);
 	//RendererPtr rd = RendererFactory::creatStructRender(data, R_Z);
 	//RendererFactory factor();
@@ -138,6 +141,7 @@ void DataSourceManage::loadhdffile(std::string filepath)
 	int structindex = RendererFactory::findStructDataIndex(hdfDatelist);
 	Hdf5Data structDate(hdfDatelist.at(structindex));
 	factoryptr = new RendererFactory(structDate);
+	_hdf5io = io;
 }
 /**
 * @brief DataSourceManage::DataSourceManage 数据管理构造
@@ -150,14 +154,25 @@ DataSourceManage::DataSourceManage(){
 * @param ListTreeWidget* ptr
 * @void
 */
-void DataSourceManage::init(ListTreeWidget* ptr){
+void DataSourceManage::init(ListTreeWidget* ptr,Plot* _plot){
 
 	//进行连接
 	connect(this, SIGNAL(_loadhdflist(std::vector<Hdf5Data>&)), ptr, SLOT(loadHdflist(std::vector<Hdf5Data>&)));
 	connect(ptr, SIGNAL(_transfromRenderer(std::string,int)), this, SLOT(tranfromRenderer(std::string,int)));
-	p = new Plot();
+	/*p = new Plot();
 	p->resize(400, 300);
-	p->show();
+	p->show();*/
+	p = _plot;
+	if (p)
+	{
+		void _reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender);
+		connect(this, SIGNAL(_reRendererEvent(const std::list<std::shared_ptr<Renderer>>&)), p, SLOT(reRendererEvent(const std::list<std::shared_ptr<Renderer>>&)));
+		//p->show();
+	}
+}
+
+DataSourceManage::~DataSourceManage(){
+	RendererManger.clear();
 }
 //std::map<Hdf5Data, Renderer*> RendererManger;
 #include "moc_Dataresource.cpp"

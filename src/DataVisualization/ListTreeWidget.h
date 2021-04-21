@@ -2,11 +2,11 @@
 #ifndef LIST_TREE_WIDGET_H_
 #define LIST_TREE_WIDGET_H_
 //Ê÷×´ÁÐ±í¿Ø¼þ
-#include<QWidget>
 #include<QTreeView>
 #include <vector>
 #include <HDF5Reader/hdf5io.h>
 #include <QStandardItemModel>
+#include <string>
 #include "exportConfig.hpp"
 class DATA_VISUALIZATION_EXPORT ListTreeWidget:public QWidget
 {
@@ -17,9 +17,9 @@ public:
 protected:
 	virtual void resizeEvent(QResizeEvent * event) override;
 	std::string GetType(std::string name);
-signals:
+	Q_SIGNALS:
 	void _transfromRenderer(std::string name,int index);
-public slots:
+public Q_SLOTS:
 	void loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist);
 	void on_doubleclick(const QModelIndex &index);
 private:
