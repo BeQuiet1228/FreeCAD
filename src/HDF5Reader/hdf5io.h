@@ -97,5 +97,7 @@ public:
 	static void copyDataSet(DataSet& dataset, Group& toGroup, const std::string& newDataSetName);
 	static void copyGroup(Group& group, Group& toGroup);
 	static void copyToHdf5IO(Hdf5IO& hdf5IO, std::vector<Hdf5Data>& datas);
+	static void creatNewHdf5File(const std::string& fileName);
+	static void creatHdf5File(const std::string& fileName);
 
 };
