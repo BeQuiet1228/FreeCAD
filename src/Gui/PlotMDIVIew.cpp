@@ -5,7 +5,8 @@ namespace Gui{
 	{
 		plot = new Plot(this);
 		//plot->resize(400, 300);
-		plot->resize(this->size().height(), this->size().height());
+		//plot->resize(this->size().height(), this->size().height());
+		plot->resize(this->size());
 		//plot->show();
 	}
 	PlotMDIView::~PlotMDIView(){
@@ -17,7 +18,8 @@ namespace Gui{
 	}
 	void PlotMDIView::resizeEvent(QResizeEvent* _event)
 	{
-		plot->resize(QSize(this->size().height(), this->size().height()));
+		//plot->resize(QSize(this->size().height(), this->size().height()));
+		plot->resize(this->size());
 	}
 }
 #include "moc_PlotMDIView.cpp"

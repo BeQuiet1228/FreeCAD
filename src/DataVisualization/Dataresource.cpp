@@ -24,10 +24,6 @@ void DataSourceManage::tranfromRenderer(std::string name,int index){
 	if (iter!=RendererManger.end())
 	{
 		Renderers rd = iter->second;
-		/*	rd->dataInit();
-			rd->setDefaultRang();*/
-	/*	p->addRenderer(rd);
-		p->reRender();*/
 		emit _reRendererEvent(rd);
 	}
 	else

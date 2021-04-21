@@ -150,6 +150,16 @@ bool StructRender::drawImage_polar()
 }
 bool StructRender::drawImage_cylindrical()
 {
+	std::shared_ptr<StructData> d = std::dynamic_pointer_cast<StructData>(data);
+	DirectionType _type = d->GetDirectionType();
+	switch (_type)
+	{
+	case R_Z:
+		return drawImage_cylindrical_r_z();
+		break;
+	case R_THETA:
+		return drawImage_cylindrical_r_theta();
+	}
 	return true;
 }
 bool StructRender::drawImage_cartesian()
@@ -158,6 +168,59 @@ bool StructRender::drawImage_cartesian()
 }
 
 bool StructRender::drawImage_polar_r_z(){
+	return drawImage_rect_space();
+}
+bool StructRender::drawImage_polar_r_theta(){
+	return drawImage_rand_space();
+}
+QVector<QPainterPath> StructRender::GetPath(std::vector<StructData::CutCir>& _vector, const Data::Rang& xr, const Data::Rang& yr, const float& xScale, const float& yScale)
+{
+	qreal pi = 3.141592653589793;
+	qreal w1 = 180 / pi;
+	QPointF p0(0.0, 0.0);
+	transitionPoint(p0, xScale, xr, yScale, yr);
+	QVector<QPainterPath> pathlist;
+	for (auto iterrect = _vector.begin(); iterrect != _vector.end(); iterrect++)
+	{
+		QPainterPath path;
+		transitionPoint(iterrect->inner1, xScale, xr, yScale, yr);
+		transitionPoint(iterrect->inner2, xScale, xr, yScale, yr);
+		transitionPoint(iterrect->excir1, xScale, xr, yScale, yr);
+		transitionPoint(iterrect->excir2, xScale, xr, yScale, yr);
+#pragma region 绘制路径
+		path.moveTo(iterrect->inner1);
+		path.lineTo(iterrect->excir1);
+		//外圈矩形
+		QRectF excirrect;
+		float HR = iterrect->R_excir*xScale;
+		float VR = iterrect->R_excir*yScale;
+		excirrect.setLeft(p0.x() - HR);
+		excirrect.setTop(p0.y() - VR);
+		excirrect.setBottom(excirrect.top() + 2 * VR);
+		excirrect.setRight(excirrect.left() + 2 * HR);
+
+		path.arcTo(excirrect, iterrect->startAngle*w1, ((iterrect->endAngle*w1) - (iterrect->startAngle*w1)));
+		path.lineTo(iterrect->inner2);
+		HR = iterrect->R_inner*xScale;
+		VR = iterrect->R_inner*yScale;
+		excirrect.setLeft(p0.x() - HR);
+		excirrect.setTop(p0.y() - VR);
+		excirrect.setBottom(excirrect.top() + 2 * VR);
+		excirrect.setRight(excirrect.left() + 2 * HR);
+		path.arcTo(excirrect, iterrect->endAngle*w1, ((iterrect->startAngle*w1) - (iterrect->endAngle*w1)));
+		pathlist.push_back(path);
+#pragma  endregion
+	}
+	return pathlist;
+}
+
+bool StructRender::drawImage_cylindrical_r_z(){
+	return drawImage_rect_space();
+}
+bool StructRender::drawImage_cylindrical_r_theta(){
+	return drawImage_rect_space();
+}
+bool StructRender::drawImage_rect_space(){
 	float yScale(0.0), xScale(0.0);
 	if (!getTransitionScale(xScale, yScale))
 		return false;
@@ -174,7 +237,7 @@ bool StructRender::drawImage_polar_r_z(){
 	QPainter painter(&img);
 	painter.setRenderHint(QPainter::Antialiasing, true);;
 	painter.setPen(pen);
-	QMap<int, QVector<QRectF>> _map = d->GetAllKMTInfo();
+	QMap<int, QVector<QRectF>> _map = d->GetAllcutInfo();
 	for (auto iter = _map.begin(); iter != _map.end(); iter++)
 	{
 		auto itercolor = color_tab.find(iter.key());
@@ -189,7 +252,7 @@ bool StructRender::drawImage_polar_r_z(){
 		}
 	}
 	auto nImg = img.mirrored(false, true);
-#define _Debug
+	//#define _Debug
 #ifdef _Debug
 	static int index = 0;
 	QString _path = QString("C:/Users/Administrator/Desktop/save/savepmg_%1.png").arg(index++);
@@ -199,6 +262,36 @@ bool StructRender::drawImage_polar_r_z(){
 	setImage(nImg);
 	return true;
 }
-bool StructRender::drawImage_polar_r_theta(){
+bool StructRender::drawImage_rand_space(){
+	float yScale(0.0), xScale(0.0);
+	if (!getTransitionScale(xScale, yScale))
+		return false;
+	std::shared_ptr<StructData> d = std::dynamic_pointer_cast<StructData>(data);
+	//获取起始点,因为图表的刻度不一定是从零开始的。
+	auto xr = getXRang();
+	auto yr = getYRang();
+	QImage img(getSize(), QImage::Format_ARGB32);
+	img.fill(qRgba(0, 0, 0, 0));
+	QPen pen(Qt::black);
+	pen.setWidth(1);
+	QPainter painter(&img);
+	painter.setRenderHint(QPainter::Antialiasing, true);;
+	painter.setPen(pen);
+	//绘制圆柱
+	std::map<int, std::vector<StructData::CutCir>> _map = d->GetAllcurInfo_cir();
+	for (auto iter = _map.begin(); iter != _map.end(); iter++)
+	{
+		auto itercolor = color_tab.find(iter->first);
+		if (itercolor != color_tab.end())
+		{
+			QBrush m_brush(itercolor.value());
+			painter.setBrush(m_brush);
+			QVector<QPainterPath> _path = GetPath(iter->second, xr, yr, xScale, yScale);
+			for (auto iterpath = _path.begin(); iterpath != _path.end(); iterpath++)
+				painter.drawPath(*iterpath);
+		}
+	}
+	auto nImg = img.mirrored(false, true);
+	setImage(nImg);
 	return true;
 }

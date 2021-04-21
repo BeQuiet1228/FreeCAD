@@ -25,7 +25,7 @@ SET(contorl_client_dll " ")
 SET(smart_contorl_dll " ")
 
 #设置后处理模块以Dll的形式生成
-SET(DataVisualizationDll " ")
+#SET(DataVisualizationDll " ")
 
 #添加一些宏
 add_definitions(-D_PICGUI_) #这个宏用于替换freecad原生代码的时候使用

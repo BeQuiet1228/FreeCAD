@@ -25,7 +25,7 @@ ListTreeWidget::ListTreeWidget(QWidget* parent) :QWidget(parent)
 	goodsModel->setRowCount(0);
 	goodsModel->setColumnCount(0);
 	//goodsModel->setHorizontalHeaderLabels(QStringList() << (QString::fromLocal8Bit("分类")));
-	goodsModel->setHorizontalHeaderLabels(QStringList() << GetEncodingstr(QString("分类"),ENCODING_UTF8));
+	goodsModel->setHorizontalHeaderLabels(QStringList() << GetEncodingstr("分类",ENCODING_GB2312));
 	m_TreeView->setModel(goodsModel);
 	m_TreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	connect(m_TreeView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(on_doubleclick(const QModelIndex&)));
@@ -93,7 +93,7 @@ void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 		//添加完父节点
 		//QString str = QString::fromStdString(iter->first);
 		//QStandardItem* item = new QStandardItem(QString::fromLocal8Bit((iter->first).c_str()));
-		QStandardItem* item = new QStandardItem(GetEncodingstr(QString((iter->first).c_str()),ENCODING_GB2312));
+		QStandardItem* item = new QStandardItem(GetEncodingstr((iter->first).c_str(),ENCODING_GB2312));
 		int row = goodsModel->rowCount();
 		goodsModel->setItem(row,item);
 		//添加子节点

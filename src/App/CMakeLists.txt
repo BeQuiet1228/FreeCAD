@@ -176,8 +176,8 @@ SET(Document_CPP_SRCS
 	DocumentM3dMod.cpp
 	DocumentM2dMod.h
 	DocumentM2dMod.cpp
-	DocumentDataManager.h
 	DocumentDataManager.cpp
+	
 )
 
 SET(Document_HPP_SRCS
@@ -230,13 +230,19 @@ SET(Document_HPP_SRCS
 	SimpleClientController.hpp
 	UserJson.hpp
 	DocumentDataManager.h
+	
 )
+SET(Document_Manager_SRC
+	DocumentDataManager.h
+	DocumentDataManager.cpp
+	)
 SET(Document_SRCS
     ${Document_CPP_SRCS}
     ${Document_HPP_SRCS}
+	${Document_Manager_SRC}
 )
 SOURCE_GROUP("Document" FILES ${Document_SRCS})
-
+SOURCE_GROUP("Document_Manager" FILES ${Document_Manager_SRC})
 # The property stuff
 SET(Properties_CPP_SRCS
     DynamicProperty.cpp

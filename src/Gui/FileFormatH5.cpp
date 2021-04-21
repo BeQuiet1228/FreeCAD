@@ -8,6 +8,8 @@
 #include "DockWindowManager.h"
 #include "MainWindow.h"
 #include "DataVisualization/Canvas.h"
+#include"DataVisualization/ListTreeWidget.h"
+#include "DataVisualization/C_encoding.h"
 void FileFormatH5::open(const QStringList& fileList)
 {
 	for (auto i = fileList.begin();i!=fileList.end(); i++)
@@ -19,7 +21,6 @@ void FileFormatH5::open(const QStringList& fileList)
 		Gui::FileDialog::setWorkingDirectory(QString(*i).remove(filename));
 	}
 }
-#include"DataVisualization/ListTreeWidget.h"
 void FileFormatH5::openOnce(const QString& fileList, App::Document* doc)
 {
 	doc->FileName.setValue(fileList.toUtf8());
@@ -33,9 +34,7 @@ void FileFormatH5::openOnce(const QString& fileList, App::Document* doc)
 	Gui::DockWnd::CombiView* pcCombiView = qobject_cast<Gui::DockWnd::CombiView*>(Gui::DockWindowManager::instance()->getDockWindow("Combo View"));
 	QTabWidget* _tabwidget = pcCombiView->getTabPanel();
 	ListTreeWidget* m_lisTreeWidget = new ListTreeWidget();
-	std::string _str = "获取结果";
-	QString str = QString::fromStdString(_str);
-	_tabwidget->insertTab(3, m_lisTreeWidget,str);
+	_tabwidget->insertTab(3, m_lisTreeWidget,GetEncodingstr("获取结果",ENCODING_GB2312));
 	docManager->bindTreeContrue(m_lisTreeWidget,(Plot*)plot->GetViewPtr());
 	docManager->loadfile(fileList);
 	//auto guiDoc = Gui::Application::Instance->getDocument(doc);

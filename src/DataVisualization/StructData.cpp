@@ -154,12 +154,14 @@ bool StructData::loadPoint_cylindrical()
 	{
 		//设置X_Y的范围
 		Rang xr, yr;
-		xr.max = *(IM2X->end()-1);
-		xr.min = *(IM2X->begin());
-		yr.max = *(IM1X->end() - 1);
-		yr.min = *(IM1X->begin());
+		xr.max = *(IM1X->end()-1);
+		xr.min = *(IM1X->begin());
+		yr.max = *(IM2X->end() - 1);
+		yr.min = *(IM2X->begin());
 		setXRang(xr);
 		setYRang(yr);
+		pointXSize = IM1X->size();
+		pointYSize = IM2X->size();
 	}
 		break;
 	case R_THETA:
@@ -172,6 +174,8 @@ bool StructData::loadPoint_cylindrical()
 		yr = xr;
 		setXRang(xr);
 		setYRang(yr);
+		pointXSize = IM2X->size();
+		pointYSize = IM2X->size();
 	}
 		break;
 	}
@@ -185,9 +189,10 @@ bool StructData::loadPoint_polar()
 	if (!ok && !listValues && listValues->size() == 0)
 		return false;
 	auto it = (listValues->begin());
-	Data::ValuesPtr IM1X = *it; it++;
-	Data::ValuesPtr IM2X = *it; it++;
-	Data::ValuesPtr IM3X = *it; it++;
+
+	Data::ValuesPtr IM2X = *it; it++;//R
+	Data::ValuesPtr IM3X = *it; it++;//THETA
+	Data::ValuesPtr IM1X = *it; it++;//Z
 	Data::ValuesPtr datasetkmt = *it;
 	//R_THETA_Z
 	switch (m_Type)
@@ -199,10 +204,12 @@ bool StructData::loadPoint_polar()
 		xr.max= *(IM1X->end() - 1);
 		xr.min =*(IM1X->begin());
 		Rang yr;
-		yr.min = *(IM3X->begin());
-		yr.max = *(IM3X->end()-1);
+		yr.min = *(IM2X->begin());
+		yr.max = *(IM2X->end()-1);
 		setXRang(xr);
 		setYRang(yr);
+		pointXSize = IM1X->size();
+		pointYSize = IM2X->size();
 	}
 		break;
 	case R_THETA:
@@ -210,11 +217,13 @@ bool StructData::loadPoint_polar()
 		//设置X_Y的范围
 		Rang xr;
 		Rang yr;
-		xr.max = *(IM1X->end() - 1);
+		xr.max = *(IM2X->end() - 1);
 		xr.min = -xr.max;
 		yr = xr;
 		setXRang(xr); 
 		setYRang(yr);
+		pointXSize = IM2X->size();
+		pointYSize = IM2X->size();
 	}
 		break;
 	}
@@ -241,45 +250,66 @@ bool StructData::loadroom_polar(){
 	case R_Z:
 		return loadroom_polar_R_Z();
 	case R_THETA:
-		return false;
+		return loadroom_polar_R_THETA();
 	}
 }
 bool StructData::loadroom_cylindrical(){
+	switch (m_Type)
+	{
+	case R_Z:
+		return loadroom_cylindrical_r_z();
+	case R_THETA:
+		return loadroom_cylindrical_r_theta();
+	}
 	return true;
 }
 bool StructData::loadroom_cartesian(){
 	return true;
 }
-
-//
-
 bool StructData::loadroom_polar_R_Z()
 {
+	if (pointXSize<2||pointYSize<2)
+		return false;
 	Data::ListValuesPtr listValues;
 	bool ok = autoModGetSourceData(listValues);//获取原始数据
 	if (!ok && !listValues && listValues->size() == 0)
 		return false;
 	auto it = (listValues->begin());
-	Data::ValuesPtr IM2X = *it; it++;//R
-	Data::ValuesPtr IM3X = *it; it++;//THETA
-	Data::ValuesPtr IM1X = *it; it++;//Z
-	Data::ValuesPtr datasetkmt = *it;//datasetkmt
-	pointXSize = IM1X->size();
-	pointYSize=IM2X->size();
-	//R_THETA_Z
-	//获取切割空间
+	//获取全部切割
+	std::vector<QRectF> list= GetAllCurspace_polar_R_Z();
+	//获取datasetKmt的信息
+	std::vector<DaTaKmt> datainfolist = GetdatasetKmt_polar_R_Z();
+	//填充
+	QMap<int, QVector<QRectF>>allKmtInfo=fileproperty_polar_R_Z(list, datainfolist);
+	allcutroom.swap(allKmtInfo);
+}
+std::vector<QRectF> StructData::GetAllCurspace_polar_R_Z()
+{
+	std::vector<QRectF> list;
+	//获取全部切割空间
+	//获取从H5F文件中的数据
+	Data::ListValuesPtr listValues;
+	bool ok = autoModGetSourceData(listValues);//获取原始数据
+	if (!ok && !listValues && listValues->size() == 0)
+		return list;
+	auto it = (listValues->begin());
+	//polar_R_Z
+	Data::ValuesPtr IM2X = *it; it++;
+	Data::ValuesPtr IM3X = *it; it++;
+	Data::ValuesPtr IM1X = *it; it++;
+	Data::ValuesPtr datasetkmt = *it;
+	//开始获取
 	auto iterleft = IM1X->begin();
 	auto iterRight = IM1X->begin() + 1;
 	auto iterTop = IM2X->begin();
 	auto iterbottom = IM2X->begin() + 1;
-	std::vector<QRectF> list;
-	for (auto x = 0; x < pointXSize-1; x++)
+	for (auto x = 0; x < pointXSize - 1; x++)
 	{
 		iterTop = IM2X->begin();
 		iterbottom = IM2X->begin() + 1;
 		for (auto y = 0; y < pointYSize - 1; y++)
 		{
-			QRectF temp;
+			QRectF temp;//介值
 			temp.setLeft(*iterleft);
 			temp.setRight(*iterRight);
 			temp.setTop(*iterTop);
@@ -291,66 +321,232 @@ bool StructData::loadroom_polar_R_Z()
 		iterleft++;
 		iterRight++;
 	}
-	//获取到全部切割空间
-	//获取datasetkmt中的数据
-	std::vector<DaTaKmt> datakmtlist;
-	auto iterkmt = datasetkmt->begin();
-	for (;iterkmt!=datasetkmt->end();)
+	return list;
+}
+std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_polar_R_Z()
+{
+	std::vector<DaTaKmt> list;
+	Data::ListValuesPtr listValues;
+	bool ok = autoModGetSourceData(listValues);//获取原始数据
+	//获取dataSetKmt里的全部数据
+	auto it = listValues->begin();
+	Data::ValuesPtr IM2X = *it; it++;
+	Data::ValuesPtr IM3X = *it; it++;
+	Data::ValuesPtr IM1X = *it; it++;
+	Data::ValuesPtr datasetkmt = *it;
+	for (auto iterkmt = datasetkmt->begin(); iterkmt != datasetkmt->end();)
 	{
+		//polar
 		DaTaKmt temp;
-		temp.point2 = *iterkmt; iterkmt++;
-		temp.point3 = *iterkmt; iterkmt++;
-		temp.point1 = *iterkmt; iterkmt++;
+		temp.point2 = *iterkmt;	iterkmt++;
+		temp.point3 = *iterkmt;	iterkmt++;
+		temp.point1 = *iterkmt;	iterkmt++;
 		temp.pointproperty = *iterkmt; iterkmt++;
-		datakmtlist.push_back(temp);
+		list.push_back(temp);
 	}
+	return list;
+}
+QMap<int, QVector<QRectF>> StructData::fileproperty_polar_R_Z(std::vector<QRectF>& list, std::vector<StructData::DaTaKmt>& datainfo)
+{
+	Data::ListValuesPtr listValues;
+	autoModGetSourceData(listValues);//获取原始数据
+	//获取dataSetKmt里的全部数据
+	auto it = listValues->begin();
+	Data::ValuesPtr IM2X = *it; it++;
+	Data::ValuesPtr IM3X = *it; it++;
+	Data::ValuesPtr IM1X = *it; it++;
+	Data::ValuesPtr datasetkmt = *it;
+	QMap<int, QVector<QRectF>> allinfo;
+	for each (DaTaKmt var in datainfo)
+	{
+		if (var.point3==1&&var.point1<pointXSize-1)
+		{
+			allinfo[var.pointproperty].push_back(list[(var.point1 - 1)*(pointYSize - 1) + var.point2 - 1]);
+		}
+	}
+	return allinfo;
+}
 
+bool StructData::loadroom_polar_R_THETA()
+{
+	if (pointXSize < 2 || pointYSize < 2)
+		return false;
+	Data::ListValuesPtr listValues;
+	bool ok = autoModGetSourceData(listValues);//获取原始数据
+	if (!ok && !listValues && listValues->size() == 0)
+		return false;
+	auto it = (listValues->begin());
+	std::map<int, std::vector<CutCir>> temp = filecir_polar_R_THETA();
+	allcutroom_cir.swap(temp);
+	return true;
+}
+std::map<int, std::vector<StructData::CutCir>> StructData::filecir_polar_R_THETA()
+{
+	std::map<int, std::vector<CutCir>> listcir;
+	std::vector<float> r_val;
+	std::vector<float> rand_val;
+	Data::ListValuesPtr listValues;
+	bool ok = autoModGetSourceData(listValues);//获取原始数据
+	auto it = listValues->begin();
+	Data::ValuesPtr IM2X = *it; it++;
+	Data::ValuesPtr IM3X = *it; it++;
+	Data::ValuesPtr IM1X = *it; it++;
+	Data::ValuesPtr datasetkmt = *it;
+	//原点
+	QPointF p0 = QPointF(0.0, 0.0);
+	//获取所有半径
+	for (auto iter2mx = IM2X->begin(); iter2mx != IM2X->end();iter2mx++)
+		r_val.push_back(*iter2mx);
+	for (auto iter3mx = IM3X->begin(); iter3mx != IM3X->end(); iter3mx++)
+		rand_val.push_back(*iter3mx);
+#pragma region 遍历所有切割圆环
+	std::vector<CutCir> _CutCirlist;
+	for (auto index_R = 0; index_R < r_val.size() - 1; index_R++)
+	{
+		for (auto index_rand = 0; index_rand < rand_val.size() - 1; index_rand++)
+		{
+			CutCir _curcir;
+			//内圈半径
+			_curcir.R_inner = r_val[index_R];
+			//外圈半径
+			_curcir.R_excir = r_val[index_R + 1];
+			//内圈切点
+			_curcir.inner1 = QPointF(
+				_curcir.R_inner*cos(rand_val[index_rand]) + p0.x(),
+				p0.y() - _curcir.R_inner*sin(rand_val[index_rand]));
+			_curcir.inner2 = QPointF(
+				_curcir.R_inner*cos(rand_val[index_rand + 1]) + p0.x(),
+				p0.y() - _curcir.R_inner*sin(rand_val[index_rand + 1]));
+			//外圈切点
+			_curcir.excir1 = QPointF(
+				_curcir.R_excir*cos(rand_val[index_rand] + p0.x()),
+				p0.y() - _curcir.R_excir*sin(rand_val[index_rand]));
+			_curcir.excir2 = QPointF(
+				_curcir.R_excir*cos(rand_val[index_rand + 1] + p0.x()),
+				p0.y() - _curcir.R_excir*sin(rand_val[index_rand + 1]));
+			//开始角度，结束角度
+			_curcir.startAngle = rand_val[index_rand];
+			_curcir.endAngle = rand_val[index_rand + 1];
+			_CutCirlist.push_back(_curcir);
+		}
+	}
+#pragma endregion
+#pragma region 筛选属性
+	int CutNum = rand_val.size() - 1;
+	std::vector<DaTaKmt> datakmtinfo =GetdatasetKmt_polar_R_THETA();
+	for each (DaTaKmt var in datakmtinfo)
+	{
+		if (var.point1==1&&var.point3<rand_val.size())
+		{
+			listcir[var.pointproperty].push_back(_CutCirlist[(var.point2 - 1)*CutNum + (var.point3 - 1)]);
+		}
+	}
+#pragma endregion 
+	/**************************************/
+	return listcir;
+}
+std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_polar_R_THETA(){
+	return GetdatasetKmt_polar_R_Z();
+}
+bool StructData::loadroom_cylindrical_r_z(){
+	if (pointXSize < 2 || pointYSize < 2)
+		return false;
+	Data::ListValuesPtr listValues;
+	bool ok = autoModGetSourceData(listValues);//获取原始数据
+	if (!ok && !listValues && listValues->size() == 0)
+		return false;
+	auto it = (listValues->begin());
+	//获取全部切割
+	std::vector<QRectF> list = GetAllCurspace_cylindrical_R_Z();
+	//获取datasetKmt的信息
+	std::vector<DaTaKmt> datainfolist = GetdatasetKmt_cylindrical_R_Z();
+	//填充
+	QMap<int, QVector<QRectF>>allKmtInfo = fileproperty_cylindrical_R_Z(list, datainfolist);
+	allcutroom.swap(allKmtInfo);
+	return true;
+}
+bool StructData::loadroom_cylindrical_r_theta(){
+	return true;
+}
 
-	int _theta, rmin, rmax, zmin, zmax;
-	if (auto res = (mstartpoint == mendpoint)!=-1)
+std::vector<QRectF> StructData::GetAllCurspace_cylindrical_R_Z()
+{
+	std::vector<QRectF> list;
+	//获取全部切割空间
+	//获取从H5F文件中的数据
+	Data::ListValuesPtr listValues;
+	bool ok = autoModGetSourceData(listValues);//获取原始数据
+	if (!ok && !listValues && listValues->size() == 0)
+		return list;
+	auto it = (listValues->begin());
+	//cylindrical_R_Z
+	Data::ValuesPtr IM1X = *it; it++;
+	Data::ValuesPtr IM2X = *it; it++;
+	Data::ValuesPtr IM3X = *it; it++;
+	Data::ValuesPtr datasetkmt = *it;
+	//开始获取
+	auto iterleft = IM1X->begin();
+	auto iterRight = IM1X->begin() + 1;
+	auto iterTop = IM2X->begin();
+	auto iterbottom = IM2X->begin() + 1;
+	for (auto x = 0; x < pointXSize - 1; x++)
 	{
-		//THETA
-		for (auto  i = 0; i < IM2X->size(); i++)
+		iterTop = IM2X->begin();
+		iterbottom = IM2X->begin() + 1;
+		for (auto y = 0; y < pointYSize - 1; y++)
 		{
-			auto iter = IM2X->begin() + i;
-			if (*iter==mstartpoint[res])
-			{
-				_theta = i;
-				break;
-			}
+			QRectF temp;//介值
+			temp.setLeft(*iterleft);
+			temp.setRight(*iterRight);
+			temp.setTop(*iterTop);
+			temp.setBottom(*iterbottom);
+			list.push_back(temp);
+			iterTop++;
+			iterbottom++;
 		}
-		//R
-		for (auto i = 0; i < IM1X->size();i++)
+		iterleft++;
+		iterRight++;
+	}
+	return list;
+}
+std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_cylindrical_R_Z(){
+	std::vector<DaTaKmt> list;
+	Data::ListValuesPtr listValues;
+	bool ok = autoModGetSourceData(listValues);//获取原始数据
+	//获取dataSetKmt里的全部数据
+	auto it = listValues->begin();
+	Data::ValuesPtr IM1X = *it; it++;
+	Data::ValuesPtr IM2X = *it; it++;
+	Data::ValuesPtr IM3X = *it; it++;
+	Data::ValuesPtr datasetkmt = *it;
+	for (auto iterkmt = datasetkmt->begin(); iterkmt != datasetkmt->end();)
+	{
+		//polar
+		DaTaKmt temp;
+		temp.point1 = *iterkmt;	iterkmt++;
+		temp.point2 = *iterkmt;	iterkmt++;
+		temp.point3 = *iterkmt;	iterkmt++;
+		temp.pointproperty = *iterkmt; iterkmt++;
+		list.push_back(temp);
+	}
+	return list;
+}
+QMap<int, QVector<QRectF>> StructData::fileproperty_cylindrical_R_Z(std::vector<QRectF>& list, std::vector<DaTaKmt>& datainfo){
+	Data::ListValuesPtr listValues;
+	autoModGetSourceData(listValues);//获取原始数据
+	//获取dataSetKmt里的全部数据
+	auto it = listValues->begin();
+	Data::ValuesPtr IM1X = *it; it++;
+	Data::ValuesPtr IM2X = *it; it++;
+	Data::ValuesPtr IM3X = *it; it++;
+	Data::ValuesPtr datasetkmt = *it;
+	QMap<int, QVector<QRectF>> allinfo;
+	for each (DaTaKmt var in datainfo)
+	{
+		if (var.point3 == 1 && var.point1 < pointXSize - 1)
 		{
-			auto iter = IM1X->begin()+i;
-			if (*iter == mstartpoint[1])
-				rmin = i;
-			if (*iter == mendpoint[1])
-				rmax = i;
-		}
-		//Z
-		for (auto i = 0; i < IM2X->size();i++)
-		{
-			auto iter = IM2X->begin() + i;
-			if (*iter == mstartpoint[3])
-				zmin = i;
-			if (*iter == mendpoint[3])
-				zmax = i;
+			allinfo[var.pointproperty].push_back(list[(var.point1 - 1)*(pointYSize - 1) + var.point2 - 1]);
 		}
 	}
-	else
-	{
-		_theta = 1;
-		rmin = 1;
-		rmax = IM1X->size();
-		zmin = 1;
-		zmax = IM3X->size();
-	}
-	for each (DaTaKmt var in datakmtlist)
-	{
-		if (var.point3 == _theta&& var.point1<zmax-1 && var.point1>zmin && var.point2 < rmax-1&&var.point2>rmin)
-		{
-			allkmtInfo[var.pointproperty].push_back(list[(var.point1 - 1)*(rmax-1) + var.point2 - 1]);
-		}
-	}
+	return allinfo;
 }

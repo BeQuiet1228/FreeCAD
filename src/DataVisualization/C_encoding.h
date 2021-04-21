@@ -12,5 +12,5 @@
 #define	ENCODING_UTF8	0x02u
 
 class QString;
-QString EXTERN_C DATA_VISUALIZATION_EXPORT GetEncodingstr(QString,unsigned int);
+QString EXTERN_C DATA_VISUALIZATION_EXPORT GetEncodingstr(const char*,unsigned int);
 #endif

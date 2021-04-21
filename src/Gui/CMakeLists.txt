@@ -435,17 +435,22 @@ SET(Command_CPP_SRCS
     CommandStructure.cpp
 	OpenFileConfig.h
 	OpenFileConfig.cpp
+)
+#新写得相关文件------白海鑫
+SET(FILE_FORMAT_SRC
 	FileFormatH5.h
 	FileFormatH5.cpp
 )
+#------------------------------
 SET(Command_SRCS
     ${Command_CPP_SRCS}
     Action.h
     ActionFunction.h
     Command.h
 )
-SOURCE_GROUP("Command" FILES ${Command_SRCS})
 
+SOURCE_GROUP("Command" FILES ${Command_SRCS})
+SOURCE_GROUP("FileFormatH5" FILES ${FILE_FORMAT_SRC})
 # The dialog sources
 SET(Dialog_CPP_SRCS
     Clipping.cpp
@@ -1220,6 +1225,7 @@ SET(FreeCADGui_SRCS
     ${Workbench_SRCS}
     ${Selection_SRCS}
     ${FreeCADGui_SRCS}
+	${FILE_FORMAT_SRC}
 )
 
 if(MSVC)
