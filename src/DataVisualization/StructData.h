@@ -71,6 +71,12 @@ public:
 		qreal R_inner;
 		qreal R_excir;
 	};
+	struct  structpoint
+	{
+		structpoint() :x(0.0), y(0.0), d1(0.0), d2(0.0){}
+		float x, y;//直角坐标系下的数据
+		float d1, d2;//原始数据
+	};
 	StructData(Hdf5Data& heData, DirectionType _type,const RunMod& mod=SINGLE_THREAD);
 	StructData(Hdf5Data& heData,_3DPointf startpoint,_3DPointf endpoint,const RunMod& mod=SINGLE_THREAD);
 public:
@@ -130,6 +136,9 @@ protected:
 	bool loadroom_cylindrical_r_z();
 	bool loadroom_cylindrical_r_theta();
 	bool loadroom_cartesian();
+	bool loadroom_cartesian_x_y();
+	bool loadroom_cartesian_x_z();
+	bool loadroom_cartesian_y_z();
 	//
 	std::vector<QRectF> GetAllCurspace_polar_R_Z();
 	std::vector<DaTaKmt> GetdatasetKmt_polar_R_Z();
@@ -140,6 +149,17 @@ protected:
 	QMap<int, QVector<QRectF>> fileproperty_cylindrical_R_Z(std::vector<QRectF>&, std::vector<DaTaKmt>&);
 	std::map<int, std::vector<CutCir>> filecir_polar_R_THETA();
 	std::vector<DaTaKmt> GetdatasetKmt_polar_R_THETA();
+	std::map<int, std::vector<CutCir>> filecir_cylindrical_R_THETA();
+	std::vector<DaTaKmt> GetdatasetKmt_cylindrical_R_THETA();
+	std::vector<QRectF> GetAllCurspace_cartesian_x_y();
+	std::vector<DaTaKmt> GetdatasetKmt_cartesian_x_y();
+	QMap<int, QVector<QRectF>> fileproperty_cartesian_x_y(std::vector<QRectF>&,std::vector<DaTaKmt>&);
+	std::vector<QRectF> GetAllCurspace_cartesian_y_z();
+	std::vector<DaTaKmt> GetdatasetKmt_cartesian_y_z();
+	QMap<int, QVector<QRectF>> fileproperty_cartesian_y_z(std::vector<QRectF>&, std::vector<DaTaKmt>&);
+	std::vector<QRectF> GetAllCurspace_cartesian_x_z();
+	std::vector<DaTaKmt> GetdatasetKmt_cartesian_x_z();
+	QMap<int, QVector<QRectF>> fileproperty_cartesian_x_z(std::vector<QRectF>&, std::vector<DaTaKmt>&);
 private:
 	//全部切割空间
 	QMap<int, QVector<QRectF>> allcutroom;
