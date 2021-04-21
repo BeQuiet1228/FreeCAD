@@ -109,6 +109,7 @@ public:
         std::vector<std::string> Def3DParasNames;
         typedef std::map<std::string, unsigned> VarMap_t;
         VarMap_t Variables;
+		std::vector<std::string> VariablesUse;
 
         typedef std::map<std::string, double> ConstMap_t;
         ConstMap_t Constants;
@@ -153,6 +154,7 @@ public:
 
     bool checkRecursiveLinking(const ExpParser*) const;
 public:
+	bool isHasVarible(std::string v);
     bool isValidName(const std::string&) const;
     bool AddConstant(const std::string& name, double value);
     bool AddUnit(const std::string& name, std::string value);

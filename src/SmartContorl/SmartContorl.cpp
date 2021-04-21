@@ -514,10 +514,11 @@ void SmartContorl::chipicErrorClose(unsigned long threadID)
 	*/
 	if (chipicData->errorExitCount == 3)
 	{
-		QMessageBox msgBox;
-		msgBox.setWindowTitle(QString::fromLocal8Bit("提示"));
-		msgBox.setText(QString::fromLocal8Bit("m3d文本出错，导致优化算法停止运行，文本路径:%1").arg(m3dPath));
-		msgBox.exec();
+		QMessageBox *msgBox = new QMessageBox;
+		msgBox->setAttribute(Qt::WA_DeleteOnClose);
+		msgBox->setWindowTitle(QString::fromLocal8Bit("提示"));
+		msgBox->setText(QString::fromLocal8Bit("m3d文本出错，导致优化算法停止运行，文本路径:%1").arg(m3dPath));
+		msgBox->show();
 		this->stop();
 		return;
 	}

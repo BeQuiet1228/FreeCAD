@@ -371,8 +371,15 @@ bool ChipicManager::dispoesStartChipicMessage(const std::string json)
 	newChipic->threadCount = threadCount;
 
 	//根据运行模式 设置是否处理看图消息
+	//将运行模式发送给内核
 	if (runType == AUTO)
+	{
 		newChipic->setIsAuto(true);
+		newChipic->sendMessage(12, 1, 0);
+	}else{
+		newChipic->sendMessage(12, 0, 0);
+	}
+		
 
 	//将对象放入map
 	chipicMap.insert(std::map<DWORD, std::shared_ptr<Chipic>>::value_type(newChipic->threadID, newChipic));

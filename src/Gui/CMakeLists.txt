@@ -1249,7 +1249,7 @@ endif(MSVC)
 SET(Control_SRC ControlTreeWidget.cpp
 	ControlTreeWidget.h)
 fc_wrap_cpp(ControlTreeWidgetMoc ControlTreeWidget.h)
-SOURCE_GROUP("Control" ${Control_SRC})
+SOURCE_GROUP("Control" FILES ${Control_SRC})
 
 
 add_library(FreeCADGui SHARED ${FreeCADGui_SRCS} ${Control_SRC} ${ControlTreeWidgetMoc})

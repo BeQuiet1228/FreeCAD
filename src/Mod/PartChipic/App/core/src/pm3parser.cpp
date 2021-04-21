@@ -781,7 +781,18 @@ namespace
         while(F[Ind] && isspace(F[Ind])) ++Ind;
     }
 };
-
+bool ExpParser::isHasVarible(std::string v)
+{
+	/*Data::VarMap_t::const_iterator vIter =
+		FindVariable(v.c_str(), data->Variables);
+	if (vIter == data->Variables.end())
+		return false;
+	return true;*/
+	for (int i = 0; i < data->VariablesUse.size(); i++)
+		if (data->VariablesUse[i] == v)
+			return true;
+	return false;
+}
 // Returns an iterator to the variable with the same name as 'F', or to
 // Variables.end() if no such variable exists:
 inline ExpParser::Data::VarMap_t::const_iterator
@@ -794,6 +805,7 @@ ExpParser::FindVariable(const char* F, const Data::VarMap_t& vars) const
         if(ind)
         {
             string name(F, ind);
+			data->VariablesUse.push_back(name);
             return vars.find(name);
         }
     }

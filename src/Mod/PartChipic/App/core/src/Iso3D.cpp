@@ -370,7 +370,7 @@ Iso3D::Iso3D(){
 
 	Start = vcg::Point3d(-4, -4, -4);
 	End = vcg::Point3d(4, 4, 4);
-
+	nVar[XDIM] = nVar[YDIM] = nVar[ZDIM] = 1;
 	nGrid[XDIM] = nGrid[YDIM] = nGrid[ZDIM] = DISTANCE_RESOL_MAX;
 	IsoValue = 0;
 
@@ -497,6 +497,7 @@ bool Iso3D::ParseExpression() {
 	ImplicitFunction = fmt.str();*/
 	if ((pValParser->ParseExp(ImplicitFunction, er, gsysType == PM3::SYSCARTESIAN ? "x,y,z" : "r,phi,z") != -1))
 		return false;
+	nVar[YDIM] = pValParser->isHasVarible("phi");
 
 	//       pValParser->ParseExp(XlimitSup);//std::string((const char *)(XlimitSup.toLocal8Bit())), "x,y,z,t");
 	//       X_Start = valParser.Eval(vals);
