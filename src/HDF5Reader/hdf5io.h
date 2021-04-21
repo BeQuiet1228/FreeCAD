@@ -73,7 +73,7 @@ private:
 	Group getGroup(const Group &group, const std::string &groupName, bool &ok);
 	Group getGroup(const std::string &groupName, bool &ok);
 	int getSubGroupCount(const Group &group);
-    std::vector<std::string> getHeadValue(const Group &group);
+    static std::vector<std::string> getHeadValue(const Group &group);
     Group OpenH5File(H5File &file,const std::string &groupName,bool &ok);
 	Group OpenGroup(Group &group, const std::string &groupName,bool &ok);
     DataSet OpenGroupDataset(Group &group,const std::string &datasetName,bool &ok);
@@ -92,5 +92,10 @@ private:
 	//使用headlist获取观测的名称
 	std::string getNameFromHeadList(const std::vector<std::string>& headList);
 
+public:
+	static void copyToHdf5IO(Hdf5IO& hdf5IO,Hdf5Data& data);
+	static void copyDataSet(DataSet& dataset, Group& toGroup, const std::string& newDataSetName);
+	static void copyGroup(Group& group, Group& toGroup);
+	static void copyToHdf5IO(Hdf5IO& hdf5IO, std::vector<Hdf5Data>& datas);
 
 };

@@ -30,7 +30,10 @@ void Hdf5IO::setFilePath(const std::string& path)
 	QString temp = QString::fromUtf8(path.c_str());
 	std::string newPath = gbk->fromUnicode(temp).data();
 
+	H5Fcreate()
+
 	Hdf5File.reset(new H5File(newPath, H5F_ACC_RDWR));
+	
 }
 
 /*
@@ -456,6 +459,86 @@ std::string Hdf5IO::getNameFromHeadList(const std::vector<std::string>& headList
 	qs = qs.split(":").last().toLower();
 
 	return qs.toStdString();
+}
+
+
+void Hdf5IO::copyDataSet(DataSet& dataset, Group& toGroup, const std::string& newDataSetName)
+{
+	//数据大小 行与列的长度
+	DataSpace dataSpace = dataset.getSpace();
+
+	hsize_t size[2];
+	dataSpace.getSimpleExtentDims(size, 0);
+	float* values(new float[size[0] * size[1]]);
+	dataset.read(values, PredType::NATIVE_FLOAT);
+
+	DataSpace sapce(2, size);
+	DataType dataType(PredType::NATIVE_FLOAT);
+	DataSet toDataSet(toGroup.createDataSet(newDataSetName, dataType, dataSpace));
+	toDataSet.write(values, dataType);
+
+	delete[] values;
+}
+
+void Hdf5IO::copyGroup(Group& group, Group& toGroup)
+{
+	unsigned int attrSpace = 128;
+
+	int atCount = group.getNumAttrs();
+	for (int i = 0; i < atCount; i++)
+	{
+		Attribute attr = group.openAttribute(i);
+
+		hsize_t dims[1] = {1};
+		DataSpace attr_dataspace = DataSpace(1, dims);
+		DataType dataType(H5T_STRING,128);
+
+		Attribute toAttr = toGroup.createAttribute(attr.getName(), dataType,attr_dataspace);
+		std::string value;
+		attr.read(attr.getStrType(), value);
+		toAttr.write(dataType, value);
+	}
+}
+
+
+void Hdf5IO::copyToHdf5IO(Hdf5IO& hdf5IO, Hdf5Data& data)
+{
+	int groupSize = hdf5IO.Hdf5File->getNumObjs();
+	std::string groupName = "DataGroup" + QString::number(groupSize).toStdString();
+	Group toGroup(hdf5IO.Hdf5File->createGroup(groupName));
+	copyGroup(data.group, toGroup);
+
+
+	auto datalist = data.listDataSet;
+	for (int i = 0; i < datalist.size(); i++)
+	{
+		auto dataset = datalist.at(i);
+		std::string dataSetName = data.group.getObjnameByIdx(i);
+		copyDataSet(dataset, toGroup, dataSetName);
+	}
+}
+
+void Hdf5IO::copyToHdf5IO(Hdf5IO& hdf5IO, std::vector<Hdf5Data>& datas)
+{
+	for each (Hdf5Data data in datas)
+	{
+		copyToHdf5IO(hdf5IO, data);
+	}
+}
+
+/**
+* @brief Hdf5IO::creatNewHdf5File 
+* @param const std::string & fileName
+* @return void
+*/
+void Hdf5IO::creatNewHdf5File(const std::string& fileName)
+{
+	H5Fcreate(fileName.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+}
+
+void Hdf5IO::creatHdf5File(const std::string& fileName)
+{
+	H5Fcreate(fileName.c_str(), H5F_ACC_RDWR, H5P_DEFAULT, H5P_DEFAULT);
 }
 
 /**

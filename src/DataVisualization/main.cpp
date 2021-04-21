@@ -30,6 +30,21 @@
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
+
+	std::string path = "D:/MILO_P.h5";
+	Hdf5IO IO(path);
+	IO.initHdf5Data();
+	std::string toPath = "D:/MILO_P_Temp.h5";
+	Hdf5IO toIO(toPath);
+	toIO.initHdf5Data();
+
+	auto data = IO.hdf5DataList.begin();
+	Hdf5IO::copyToHdf5IO(toIO, IO.hdf5DataList);
+
+
+	QWidget w;
+	w.show();
+#if 0
 	CanvasItem::registerMetaTye();
 
 	ListTreeWidget m_tree;
@@ -37,14 +52,16 @@ int main(int argc, char *argv[])
 	std::string path = "D:/MILO_P.h5";
 	dataMannage.init(&m_tree);
 	dataMannage.loadhdffile(path);
-	m_tree.resize(400,300);
+	m_tree.resize(400, 300);
 	m_tree.show();
 
 	auto cg = Config::GetInstance();
 	auto group = cg->getRootGroup();
 	group.setSetting("value", "test");
 	auto group1 = group.getGroup("group");
-	group1.addSetting("config","ttt");
+	group1.addSetting("config", "ttt");
+#endif
+
 	
 #if 0
 	//std::string path = "E:/lingshiwenjianjia/MILO_C/MILO_C.h5";
