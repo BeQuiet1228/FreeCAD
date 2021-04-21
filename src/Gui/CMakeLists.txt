@@ -49,6 +49,7 @@ include_directories(
 if(MSVC)
     set(FreeCADGui_LIBS
          FreeCADApp
+		 HDF5Reader
          ${COIN3D_LIBRARIES}
          ${OPENGL_gl_LIBRARY}
     )
@@ -70,6 +71,7 @@ if(MSVC)
 else(MSVC)
     set(FreeCADGui_LIBS
         FreeCADApp
+		HDF5Reader
         ${COIN3D_LIBRARIES}
         ${Boost_LIBRARIES}
         ${OPENGL_gl_LIBRARY}

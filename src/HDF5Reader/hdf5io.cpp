@@ -173,7 +173,9 @@ std::vector<std::string> Hdf5IO::getHeadValue(const Group &group)
         Attribute at = group.openAttribute(i);
         std::string value;
         at.read(at.getStrType(),value);
-        headValue.push_back(value);
+		std::string name;
+		at.getName(name);
+        headValue.push_back(name+"="+value);
     }
     return headValue;
 }

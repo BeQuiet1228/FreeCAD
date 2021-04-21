@@ -125,6 +125,7 @@
 #include <QMessageBox>
 #include "MainWindowDef.h"
 #include <QVBoxLayout>
+#include "ControlTreeWidget.h"
 #if defined(Q_OS_WIN32)
 #define slots
 //#include <private/qmainwindowlayout_p.h>
@@ -532,6 +533,10 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
 	this->smartContorlInterface = new SmartContorlInterface;
 	this->smartContorlInterface->init();
 	inintContorlUI();
+
+    /**************²âÊÔ´úÂë******************/
+    ControlTreeWidget* treeWidget = new ControlTreeWidget;
+    treeWidget->show();
 }
 
 MainWindow::~MainWindow()
