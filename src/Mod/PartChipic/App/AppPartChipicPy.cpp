@@ -46,6 +46,7 @@
 # include <BRepBuilderAPI_MakeSolid.hxx>
 # include <BRepOffsetAPI_Sewing.hxx>
 # include <BRepExtrema_DistShapeShape.hxx>
+# include <BRepPrimAPI_MakeRevol.hxx>
 # include <BRepFill.hxx>
 # include <BRepLib.hxx>
 #include <BRepTools.hxx>
@@ -191,6 +192,8 @@
 #include<Gui/ViewProviderDocumentObject.h>
 
 # include <BRepAlgoAPI_Common.hxx>
+
+#include "../core/basicstring.h"
 
 #ifndef M_PI
 #define M_PI    3.1415926535897932384626433832795 /* pi */
@@ -2580,7 +2583,7 @@ namespace PartChipic {
 			char* func;
 			double xmax, xmin, ymax, ymin, zmax = 0, zmin = 0;
 			double xmaxo, xmino, ymaxo, ymino, zmaxo, zmino = 0;
-
+			
 			/*int nb_ligne = DISTANCE_RESOL_MAX,
 			nb_colon = DISTANCE_RESOL_MAX,
 			nb_depth = DISTANCE_RESOL_MAX;*/
@@ -2597,6 +2600,7 @@ namespace PartChipic {
 				throw Py::Exception();
 			if (std::string(func) == "")
 				throw Py::Exception();
+			
 			if (type == 10 || type == 20) {
 				if (type == 20)
 					zmax = zmin = 0;
@@ -2636,6 +2640,43 @@ namespace PartChipic {
 				xmax = xmin;
 			}
 			else {
+				if (std::string(coor) != S_COOR_RECTANGULAR)
+				{
+					std::string fu = func, er;
+					PM3::ExpParser exparser;
+					std::transform(fu.begin(), fu.end(), fu.begin(), ::tolower);
+
+					fu = PM3::replace_str(fu, "**", "^");
+					if ((exparser.ParseExp(fu, er, "r,phi,z") != -1))
+						throw Py::Exception();
+					if (!exparser.isHasVarible("phi"))
+						return makeFuncMeshHuan(args);
+					if (!exparser.isHasVarible("x"))
+						return makeFuncMesh2DTo3DRECTANGULAR(args, XDIM);
+					if (!exparser.isHasVarible("z"))
+						return makeFuncMesh2DTo3DRECTANGULAR(args, ZDIM);
+				}
+				else {
+					int stype = -1;
+					std::string fu = func, er;
+					PM3::ExpParser exparser;
+					std::transform(fu.begin(), fu.end(), fu.begin(), ::tolower);
+
+					fu = PM3::replace_str(fu, "**", "^");
+					if ((exparser.ParseExp(fu, er, "x,y,z") != -1))
+						throw Py::Exception();
+					if (!exparser.isHasVarible("x")) {
+						stype = XDIM;
+					}
+					else if (!exparser.isHasVarible("y")) {
+						stype = YDIM;
+					}
+					else if (!exparser.isHasVarible("z")) {
+						stype = ZDIM;
+					}
+					if (stype != -1)
+						return makeFuncMesh2DTo3DRECTANGULAR(args, stype);
+				}
 				type = 1;
 				ndim = -1;
 				if (rxt > 0 && ryt > 0 && rzt > 0){
@@ -3509,7 +3550,7 @@ namespace PartChipic {
 				}
 
 				try {
-					/*Part::TopoShape* funcShape = 0;
+					Part::TopoShape* funcShape = 0;
 					{
 						int k = 0;
 						for (k = 0; k < far_pointV.size(); k++){
@@ -3547,24 +3588,1183 @@ namespace PartChipic {
 						return Py::asObject(new Part::TopoShapePy(funcShape));
 					}
 					else
-						return Py::asObject(new Part::TopoShapePy(new Part::TopoShape()));*/
-					Part::TopoShape* funcShape = new Part::TopoShape();
-					BRep_Builder builder;
-					TopoDS_Compound comp;
-					builder.MakeCompound(comp);
-					for (int i = 0; i < far_pointV.size(); i++){
-						if (topoShapeV[i] != 0) {
-							TopExp_Explorer vertex(topoShapeV[i]->getShape(), TopAbs_VERTEX);
-							if (vertex.More()) {
-								builder.Add(comp, topoShapeV[i]->getShape());
+						return Py::asObject(new Part::TopoShapePy(new Part::TopoShape()));
+					//Part::TopoShape* funcShape = new Part::TopoShape();
+					//BRep_Builder builder;
+					//TopoDS_Compound comp;
+					//builder.MakeCompound(comp);
+					//for (int i = 0; i < far_pointV.size(); i++){
+					//	if (topoShapeV[i] != 0) {
+					//		TopExp_Explorer vertex(topoShapeV[i]->getShape(), TopAbs_VERTEX);
+					//		if (vertex.More()) {
+					//			builder.Add(comp, topoShapeV[i]->getShape());
+					//		}
+					//	}
+					//}
+					//if (comp.IsNull())
+					//	std::cerr << "TopoDS_Shape:" << 0 << std::endl;
+					//else
+					//	funcShape->setShape(comp);// static_cast<Part::Feature*>(funcShape)->Shape.setValue(comp);
+					//return Py::asObject(new Part::TopoShapePy(funcShape));
+					//3
+					//return Py::asObject(new Mesh::MeshPy(mesh));
+				}
+				catch (Standard_Failure& e) {
+					throw Py::Exception(Part::PartExceptionOCCError, e.GetMessageString());
+				}
+			}
+			catch (Standard_DomainError) {
+				throw Py::Exception(Part::PartExceptionOCCDomainError, "creation of funcmesh failed");
+			}
+		}
+		Py::Object makeFuncMesh2DTo3DRECTANGULAR(const Py::Tuple& args, int stype)
+		{
+			//clock_t t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
+			//由面形成实体的精确度 如果函数体的范围是1-10  将精确度设置为0.001（否则会很慢），一般情况下设置为0.01，
+			Standard_Real facePrecision = 0.01;
+			//type=0表示面，1表示体
+			int type = -1, ndim = -1;//0x1y2z else volume
+			double angle = 360;
+			char* func;
+			double xmax, xmin, ymax, ymin, zmax = 0, zmin = 0;
+			double xmaxo, xmino, ymaxo, ymino, zmaxo, zmino = 0;
+
+			/*int nb_ligne = DISTANCE_RESOL_MAX,
+			nb_colon = DISTANCE_RESOL_MAX,
+			nb_depth = DISTANCE_RESOL_MAX;*/
+			int nGrid[] = { DISTANCE_RESOL_MAX, DISTANCE_RESOL_MAX, DISTANCE_RESOL_MAX };
+			double rxyz[] = { 0.01, 0.01, 0.01 }, rxt = -1, ryt = -1, rzt = -1;//分辨率
+			char* coor;
+			//精度
+			char* precision;
+			char* attribute;
+			PyObject *pPnt = 0, *pDir = 0;
+			if (!PyArg_ParseTuple(args.ptr(), "isddddddsss|ddd",
+				&type, &func, &xmin, &xmax, &ymin, &ymax, &zmin, &zmax, &coor, &precision, &attribute, &rxt, &ryt, &rzt
+				))
+				throw Py::Exception();
+			if (std::string(func) == "")
+				throw Py::Exception();
+			double oymax = ymax, oymin = ymin;
+			double oxmax = xmax, oxmin = xmin;
+			double ozmax = zmax, ozmin = zmin;
+			int huantheta = 1;//3D
+			type = stype;
+			
+			if (type == ZDIM || type == 20) {
+				Base::Console().Error("2dto3d:z");
+				if (type == 20)
+					zmax = zmin = 0;
+				type = 0;
+				ndim = ZDIM;
+				if (rxt > 0 && ryt > 0){
+					rxyz[0] = rxt; rxyz[1] = ryt;
+				}
+				else {
+					if (std::string(coor) != S_COOR_RECTANGULAR)
+						rxyz[1] = 1;
+				}
+				zmax = zmin;
+			}
+			else if (type == YDIM){
+				type = 0;
+				ndim = YDIM;
+				if (rxt > 0 && rzt > 0){
+					rxyz[0] = rxt; rxyz[2] = rzt;
+				}
+				else {
+					if (std::string(coor) != S_COOR_RECTANGULAR)
+						rxyz[1] = 1;
+				}
+				ymax = ymin;
+				Base::Console().Error("2dto3d:y");
+			}
+			else if (type == XDIM){
+				type = 0;
+				ndim = XDIM;
+				if (ryt > 0 && rzt > 0){
+					rxyz[1] = ryt; rxyz[2] = rzt;
+				}
+				else {
+					if (std::string(coor) != S_COOR_RECTANGULAR)
+						rxyz[1] = 1;
+				}
+				xmax = xmin;
+				Base::Console().Error("2dto3d:x");
+			}
+			else {
+				type = 1;
+				ndim = -1;
+				if (rxt > 0 && ryt > 0 && rzt > 0){
+					rxyz[0] = rxt; rxyz[1] = ryt; rxyz[2] = rzt;
+				}
+				else {
+					if (std::string(coor) != S_COOR_RECTANGULAR)
+						rxyz[1] = 1;
+				}
+			}
+
+			try {
+				//划分为6个象限
+				if (std::string(coor) != S_COOR_RECTANGULAR)
+				{
+					if (fabs(ymax) > 360) ymax = ymax - 360. * ((int)(ymax) / 360);
+					if (fabs(ymin) > 360) ymin = ymin - 360. * ((int)(ymin) / 360);
+				}
+				boost::format fmt("if(x=%2%,1,if(x=%3%,1,if(y=%4%,1,if(y=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))");
+				fmt%func% xmin % xmax % ymin %ymax%zmin%zmax;
+				Base::Console().Log("fmt: ");
+				Base::Console().Log(fmt.str().c_str());
+
+				PM3::ExpParser exparser;
+				vcg::Point3d Start, End;
+				std::string er;
+				PM3::DefValue3D far_ori, near_ori;
+
+				//double yreso = (ymax - ymin) * GRAD / 20.;
+				float extVoid = 0.00001;//0.1mm
+				float extVoidAngle = 0.01;//deg度
+
+				if (std::string(attribute) == S_VOID)//当为空扩大体
+				{
+					if (std::string(coor) == S_COOR_RECTANGULAR) {
+						far_ori.X() = PM3::convertToStringd(xmax + extVoid);
+						far_ori.Y() = PM3::convertToStringd(ymax + extVoid);
+						far_ori.Z() = PM3::convertToStringd(zmax + extVoid);
+						near_ori.X() = PM3::convertToStringd(xmin - extVoid);
+						near_ori.Y() = PM3::convertToStringd(ymin - extVoid);
+						near_ori.Z() = PM3::convertToStringd(zmin - extVoid);
+						far_ori.Parser(&exparser, End, er);
+						near_ori.Parser(&exparser, Start, er);
+					}
+					else {
+						far_ori.X() = PM3::convertToStringd(xmax + extVoid);
+						far_ori.Y() = PM3::convertToStringd(ymax + extVoidAngle);
+						far_ori.Z() = PM3::convertToStringd(zmax + extVoid);
+						near_ori.X() = PM3::convertToStringd(xmin - extVoid);
+						near_ori.Y() = PM3::convertToStringd(ymin - extVoidAngle);
+						near_ori.Z() = PM3::convertToStringd(zmin - extVoid);
+						far_ori.Parser(&exparser, End, er);
+						near_ori.Parser(&exparser, Start, er);
+					}
+				}
+				else//其它保持不变
+				{
+					far_ori.X() = PM3::convertToStringd(xmax);
+					far_ori.Y() = PM3::convertToStringd(ymax);
+					far_ori.Z() = PM3::convertToStringd(zmax);
+					near_ori.X() = PM3::convertToStringd(xmin);
+					near_ori.Y() = PM3::convertToStringd(ymin);
+					near_ori.Z() = PM3::convertToStringd(zmin);
+					far_ori.Parser(&exparser, End, er);
+					near_ori.Parser(&exparser, Start, er);
+				}
+
+				{
+					double d = 0.0001;
+					xmax = End.X();
+					ymax = End.Y();
+					zmax = End.Z();
+					xmin = Start.X();
+					ymin = Start.Y();
+					zmin = Start.Z();
+					xmino = xmin;
+					xmaxo = xmax;
+					ymino = ymin;
+					ymaxo = ymax;
+					zmino = zmin;
+					zmaxo = zmax;
+				}
+				float dev = 0.000001;
+				std::vector<PM3::DefValue3D> far_pointV, near_pointV, far_pointV_cut, near_pointV_cut;
+				std::vector<Base::Vector3d> far_pointVo, near_pointVo;
+				std::vector < std::string > funcV;
+				if (std::string(coor) == S_COOR_RECTANGULAR) {
+					float dev = 0;
+					//nb_ligne = DISTANCE_RESOL_MAX, nb_colon = DISTANCE_RESOL_MAX, nb_depth = DISTANCE_RESOL_MAX;					
+					double stepx = 0;// (xmax - xmin) / (16 - 5);
+					double stepy = 0;// (ymax - ymin) / (16 - 5);
+					double stepz = 0;// (zmax - zmin) / (16 - 5);
+					//only 1 volume
+					/*far_pointV.push_back(transferToDefValue3DRECTANGULAR(xmax, ymax, zmax));
+					near_pointV.push_back(transferToDefValue3DRECTANGULAR(xmin, ymin, zmin));
+					far_pointVo.push_back(Base::Vector3d(xmax, ymax, zmax));
+					near_pointVo.push_back(Base::Vector3d(xmin, ymin, zmin));*/
+					/*far_pointV_cut.push_back(transferToDefValue3DRECTANGULAR(xmaxo + (xmaxo - xmino) / 10, ymaxo + (ymax - ymino) / 10, zmaxo + (zmaxo - zmino) / 10));
+					near_pointV_cut.push_back(transferToDefValue3DRECTANGULAR(xmino - (xmaxo - xmino) / 10, ymino - (ymax - ymino) / 10, zmino - (zmaxo - zmino) / 10));
+					far_pointVo.push_back(transferToDefValue3DRECTANGULAR(xmaxo + dev * 0, ymaxo + dev * 0, zmaxo + dev * 0));
+					near_pointVo.push_back(transferToDefValue3DRECTANGULAR(xmino - dev * 0, ymino - dev * 0, zmino - dev * 0));
+					xmax += stepx, ymax += stepy, zmax += stepz;
+					xmin -= stepx, ymin -= stepy, zmin -= stepz;*/
+					boost::format fmt("if(x=%2%,1,if(x=%3%,1,if(y=%4%,1,if(y=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))");
+					fmt%func% xmin % xmax % ymin %ymax%zmin%zmax;
+					funcV.push_back(fmt.str().c_str());
+					//					
+					//split corrd
+					std::vector<double> spxmin, spxmax, spymin, spymax, spzmin, spzmax, spxmino, spxmaxo, spymino, spymaxo, spzmino, spzmaxo;
+					double mx = splitCorrRange(xmin, xmax, spxmin, spxmax, spxmino, spxmaxo, ndim == XDIM, rxyz[XDIM]);
+					double my = splitCorrRange(ymin, ymax, spymin, spymax, spymino, spymaxo, ndim == YDIM, rxyz[YDIM]);
+					double mz = splitCorrRange(zmin, zmax, spzmin, spzmax, spzmino, spzmaxo, ndim == ZDIM, rxyz[ZDIM]);
+					double mm = max(mx, max(my, mz));
+
+					nGrid[XDIM] = mx / rxyz[0] + 0.5, nGrid[YDIM] = my / rxyz[1] + 0.5, nGrid[ZDIM] = mz / rxyz[2] + 0.5;
+					for (int i = 0; i < spxmin.size(); i++)
+						for (int j = 0; j < spymin.size(); j++)
+							for (int k = 0; k < spzmin.size(); k++) {
+								far_pointV.push_back(transferToDefValue3DRECTANGULAR(spxmax[i], spymax[j], spzmax[k]));
+								near_pointV.push_back(transferToDefValue3DRECTANGULAR(spxmin[i], spymin[j], spzmin[k]));
+								far_pointVo.push_back(Base::Vector3d(spxmaxo[i], spymaxo[j], spzmaxo[k]));
+								near_pointVo.push_back(Base::Vector3d(spxmino[i], spymino[j], spzmino[k]));
+							}
+				}
+				else {
+					//角度范围 - 360—360deg，且跨度Point_2.Theta - Point_1.Theta <= 360deg、Point_2.Theta > Point_1.Theta。
+					//在python代码添加此限制条件，以提醒用户
+					if (ymax <= 360 && ymin <= 360 &&
+						ymax >= -360 && ymin >= -360 &&
+						(ymax - ymin) <= 360 &&
+						(ymax > ymin || ndim == 1)) {
+						////
+						//int close = 0;
+						//if ((360 - fabs(ymax - ymin)) < 0.000001)
+						//	close = 1;
+						//if (close)
+						//{
+						//	far_pointV.push_back(transferToDefValue3D(xmax, ymin + 180, zmax));
+						//	near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+						//	far_pointVo.push_back(Base::Vector3d(xmax, (ymin + 180)*GRAD, zmax));
+						//	near_pointVo.push_back(Base::Vector3d(xmin, ymin*GRAD, zmin));
+						//	far_pointV.push_back(transferToDefValue3D(xmax, ymin + 360, zmax));
+						//	near_pointV.push_back(transferToDefValue3D(xmin, ymin + 180, zmin));
+						//	far_pointVo.push_back(Base::Vector3d(xmax, (ymin + 360)*GRAD, zmax));
+						//	near_pointVo.push_back(Base::Vector3d(xmin, (ymin + 180)*GRAD, zmin));
+						//}
+						//else
+						//{
+						//	if (fabs(ymax - ymin) > 270.)
+						//	{
+						//		float temp = (ymax - ymin)/2;
+						//		far_pointV.push_back(transferToDefValue3D(xmax, ymin + temp, zmax));
+						//		near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+						//		far_pointVo.push_back(Base::Vector3d(xmax, (ymin + temp)*GRAD, zmax));
+						//		near_pointVo.push_back(Base::Vector3d(xmin, ymin*GRAD, zmin));
+						//		far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+						//		near_pointV.push_back(transferToDefValue3D(xmin, ymin + temp, zmin));
+						//		far_pointVo.push_back(Base::Vector3d(xmax, ymax*GRAD, zmax));
+						//		near_pointVo.push_back(Base::Vector3d(xmin, (ymin + temp)*GRAD, zmin));
+						//	}
+						//	else {
+						//		far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+						//		near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+						//		far_pointVo.push_back(Base::Vector3d(xmax, ymax*GRAD, zmax));
+						//		near_pointVo.push_back(Base::Vector3d(xmin, ymin*GRAD, zmin));
+						//	}							
+						//}
+
+						//split corrd
+						std::vector<double> spxmin, spxmax, spymin, spymax, spzmin, spzmax, spxmino, spxmaxo, spymino, spymaxo, spzmino, spzmaxo;
+						double mx = splitCorrRange(xmin, xmax, spxmin, spxmax, spxmino, spxmaxo, ndim == XDIM, rxyz[XDIM]);
+						double my = splitCorrRangeAngle(ymin, ymax, spymin, spymax, spymino, spymaxo, ndim == YDIM, rxyz[YDIM]);
+						double mz = splitCorrRange(zmin, zmax, spzmin, spzmax, spzmino, spzmaxo, ndim == ZDIM, rxyz[ZDIM]);
+						double mm = max(mx, mz);
+
+						nGrid[XDIM] = mx / rxyz[0] + 0.5, nGrid[YDIM] = my / rxyz[1] + 0.5, nGrid[ZDIM] = mz / rxyz[2] + 0.5;
+
+						for (int i = 0; i < spxmin.size(); i++)
+							for (int j = 0; j < spymin.size(); j++)
+								for (int k = 0; k < spzmin.size(); k++) {
+									far_pointV.push_back(transferToDefValue3D(spxmax[i], spymax[j], spzmax[k]));
+									near_pointV.push_back(transferToDefValue3D(spxmin[i], spymin[j], spzmin[k]));
+									far_pointVo.push_back(transferToDefValue3DBase(spxmaxo[i], spymaxo[j], spzmaxo[k]));
+									near_pointVo.push_back(transferToDefValue3DBase(spxmino[i], spymino[j], spzmino[k]));
+								}
+					}
+				}
+				//
+				if (nGrid[XDIM] > DISTANCE_RESOL_MAX) nGrid[XDIM] = DISTANCE_RESOL_MAX;
+				if (nGrid[YDIM] > DISTANCE_RESOL_MAX) nGrid[YDIM] = DISTANCE_RESOL_MAX;
+				if (nGrid[ZDIM] > DISTANCE_RESOL_MAX) nGrid[ZDIM] = DISTANCE_RESOL_MAX;
+				if (nGrid[XDIM] < DISTANCE_RESOL_MIN) nGrid[XDIM] = DISTANCE_RESOL_MIN;
+				if (nGrid[YDIM] < DISTANCE_RESOL_MIN) nGrid[YDIM] = DISTANCE_RESOL_MIN;
+				if (nGrid[ZDIM] < DISTANCE_RESOL_MIN) nGrid[ZDIM] = DISTANCE_RESOL_MIN;
+				//if (ndim == XDIM)
+				//	nGrid[XDIM] = 1;
+				//else if (ndim == YDIM)
+				//	nGrid[YDIM] = 1;
+				//else if (ndim == ZDIM)
+				//	nGrid[ZDIM] = 1;
+
+				Part::TopoShape* topoShapeV[10] = { 0 };
+				if (far_pointV.size() > 0)
+				{
+					clock_t t0, t1;
+					t0 = clock();
+					//	std::cout << "start" << double(t0) << std::endl;
+#pragma omp parallel for
+					for (int nn = 0; nn < far_pointV.size(); nn++) {
+						char s[256];
+						std::string tempstr;
+						std::string filename;
+						//存放点
+						std::vector<Base::Vector3d> Points;
+						//存放面
+						std::vector<Data::ComplexGeoData::Facet> Facets;
+						double maxf = -1;
+
+						/**/PM3::VFunctional vfunc;
+						vfunc.yreso = rxyz[1];
+						vfunc.iso->type = 1;
+						vfunc.iso->ndim = ndim;
+						vfunc.iso->nGrid[XDIM] = nGrid[XDIM];
+						vfunc.iso->nGrid[YDIM] = nGrid[YDIM];
+						vfunc.iso->nGrid[ZDIM] = nGrid[ZDIM];
+						vfunc.iso->isSunk = 1;//稳定
+
+						if (std::string(coor) == S_COOR_RECTANGULAR)
+							vfunc.setSystem(PM3::SYSCARTESIAN);
+						else
+							vfunc.setSystem(PM3::SYSCYLINDRICAL);
+						vfunc.f = func;
+						_itoa(nn, s, 10);
+						vfunc.name = s;
+						vfunc.far_point = far_pointV[nn];// .setValue(PM3::convertToStringd(xmax) + "," + PM3::convertToStringd(ymax) + "," + PM3::convertToStringd(zmax));
+						tempstr = vfunc.name + "max: " + far_pointV[nn][0] + " " + far_pointV[nn][1] + " " + far_pointV[nn][2] + "\n";
+						
+						vfunc.near_point = near_pointV[nn];// .setValue(PM3::convertToStringd(xmin) + "," + PM3::convertToStringd(ymin) + "," + PM3::convertToStringd(zmin));
+						tempstr = vfunc.name + "min: " + near_pointV[nn][0] + " " + near_pointV[nn][1] + " " + near_pointV[nn][2] + "\n";
+						Base::Console().Error(tempstr.c_str());
+						PM3::ExpParser exparser;
+						vfunc.pexparser = &exparser;
+
+						vfunc.update_mesh_topology(Points, Facets, maxf);
+
+						if (Facets.size() > 0)
+						{
+							//if (false) 
+							{
+								try {
+									Part::TopoShape* funcShape = meshToShape(Points, Facets, 0, nn, 1);
+									if (funcShape != 0) {// && type == 1
+										vcg::Point3d Start, End;
+										//End = vfunc.iso->End;
+										//Start = vfunc.iso->Start;
+										std::string er;
+										_itoa(nn, s, 10);
+										vfunc.name = s;
+										//if (std::string(coor) == S_COOR_RECTANGULAR)
+										{
+											std::cout << "#max " << nn << ": " << far_pointVo[nn].x << far_pointVo[nn].y << far_pointVo[nn].z << std::endl;
+											std::cout << "#min " << nn << ": " << near_pointVo[nn].x << near_pointVo[nn].y << near_pointVo[nn].z << std::endl;
+
+											Part::TopoShape* com = getShapeOfComformal(coor,
+												near_pointVo[nn],
+												far_pointVo[nn], type, ndim);
+											if (TEST_OUTPUT == 1) {
+												filename = "d://comformal";
+												_itoa(nn, s, 10);
+												filename = filename + s;
+												filename = filename + ".brp";
+												com->write(filename.c_str());
+											}
+											BRepAlgoAPI_Common mkCommon(com->getShape(), funcShape->getShape());
+											if (!mkCommon.IsDone()) {
+												Base::Console().Log("makeFuncMesh - mkCommon not done\n");
+												;// return new App::DocumentObjectExecReturn("DVD::execute - mkCommon not done");
+											}
+											TopExp_Explorer vertex(funcShape->getShape(), TopAbs_VERTEX);
+											if (mkCommon.Shape().IsNull() || !vertex.More()) {
+												tempstr = vfunc.name + ":makeFuncMesh - mkCommon.Shape is Null\n";
+												Base::Console().Error(tempstr.c_str());
+												;// return new App::DocumentObjectExecReturn("DVD::execute - mkCommon.Shape is Null");
+												delete funcShape;
+												funcShape = 0;
+											}
+											else {
+												{
+													funcShape->setShape(mkCommon.Shape());
+													TopoDS_Shape cutShape = funcShape->removeSplitter();
+													funcShape->setShape(cutShape);
+
+													//delete cut;
+													if (TEST_OUTPUT == 1) {
+														filename = "d://common";
+														_itoa(nn, s, 10);
+														filename = filename + s;
+														filename = filename + ".brp";
+														funcShape->write(filename.c_str());
+														Base::Console().Log("topoShapeV.push_back(funcShape)\n");
+													}
+												}
+											}
+											/*{
+											BRepAlgoAPI_Cut mkCut(list[0], funcShape->getShape());
+											TopoDS_Shape cutcut = mkCut.Shape();
+											if (TEST_OUTPUT == 1) {
+											com->setShape(cutcut);
+											filename = "d://cutcut";
+											_itoa(nn, s, 10);
+											filename = filename + s;
+											filename = filename + ".brp";
+											com->write(filename.c_str());
+											}
+											funcShape->fuse(cutcut);
+
+											}*/
+											delete com;
+											topoShapeV[nn] = funcShape;
+										}
+										//else {
+										//	Part::TopoShape* com1 = getShapeOfComformal1(coor,
+										//		near_pointVo[nn],
+										//		far_pointVo[nn]);
+										//	if (TEST_OUTPUT == 1) {
+										//		filename = "d://comformal1";
+										//		_itoa(nn, s, 10);
+										//		filename = filename + s;
+										//		filename = filename + ".brp";
+										//		com1->write(filename.c_str());
+										//	}
+										//	BRepAlgoAPI_Common mkCommon(com1->getShape(), funcShape->getShape());
+										//	if (!mkCommon.IsDone()) {
+										//		Base::Console().Log("makeFuncMesh - mkCommon not done\n");
+										//		;// return new App::DocumentObjectExecReturn("DVD::execute - mkCommon not done");
+										//	}
+										//	TopExp_Explorer vertex(mkCommon.Shape(), TopAbs_VERTEX);
+										//	if (!vertex.More()) {
+										//		tempstr = vfunc.name + ":makeFuncMesh - mkCommon.Shape is Null\n";
+										//		Base::Console().Error(tempstr.c_str());
+										//		;// return new App::DocumentObjectExecReturn("DVD::execute - mkCommon.Shape is Null");
+										//		//delete funcShape;
+										//		//funcShape = 0;
+										//	}
+										//	else {
+										//		TopoDS_Shape cutcut = mkCommon.Shape();
+										//		Part::TopoShape* com3 = getShapeOfComformal3(coor,
+										//			near_pointVo[nn],
+										//			far_pointVo[nn]);
+										//		
+										//		if (com3 != 0) {
+										//			if (TEST_OUTPUT == 1) {
+										//				filename = "d://comformal3";
+										//				_itoa(nn, s, 10);
+										//				filename = filename + s;
+										//				filename = filename + ".brp";
+										//				com3->write(filename.c_str());
+										//			}
+										//			BRepAlgoAPI_Cut mkCut(cutcut, com3->getShape());
+										//			cutcut = mkCut.Shape();
+										//			TopExp_Explorer vertex(cutcut, TopAbs_VERTEX);
+										//			if (!vertex.More()) {
+										//				tempstr = vfunc.name + ":makeFuncMesh - mkCut.Shape is Null\n";
+										//				Base::Console().Error(tempstr.c_str());
+										//				;// return new App::DocumentObjectExecReturn("DVD::execute - mkCommon.Shape is Null");
+										//				//delete funcShape;
+										//				//funcShape = 0;														
+										//			}
+										//			
+										//			delete com3;
+										//		}
+										//		Part::TopoShape* com2 = getShapeOfComformal2(coor,
+										//			near_pointVo[nn],
+										//			far_pointVo[nn]);
+										//		if (com2 != 0) {
+										//			BRepAlgoAPI_Cut mkCut2(cutcut, com2->getShape());
+										//			cutcut = mkCut2.Shape();
+										//			delete com2;
+										//		}
+										//		{
+										//			funcShape->setShape(cutcut);
+										//		}
+										//		TopExp_Explorer vertex(funcShape->getShape(), TopAbs_VERTEX);
+										//		if (vertex.More()) {
+										//			TopoDS_Shape cutShape = funcShape->removeSplitter();
+										//			funcShape->setShape(cutShape);
+
+										//			//delete cut;
+										//			if (TEST_OUTPUT == 1) {
+										//				filename = "d://common";
+										//				_itoa(nn, s, 10);
+										//				filename = filename + s;
+										//				filename = filename + ".brp";
+										//				funcShape->write(filename.c_str());
+										//				Base::Console().Log("topoShapeV.push_back(funcShape)\n");
+										//			}
+										//		}
+										//	}
+										//	delete com1;											
+										//	topoShapeV[nn] = funcShape;
+										//}
+									}
+									else {
+										topoShapeV[nn] = funcShape;
+										//topoShapeV[nn] = Shell(faces);//Compound(faces);//
+										//topoShapeV[nn] = makeFace(faces, "Part::FaceMakerBullseye"); //shell;
+									}
+								}
+								catch (Standard_Failure& e) {
+									throw Py::Exception(Part::PartExceptionOCCError, e.GetMessageString());
+								}
 							}
 						}
 					}
-					if (comp.IsNull())
-						std::cerr << "TopoDS_Shape:" << 0 << std::endl;
+					t1 = clock();
+					std::cout << "#pragma: " << (t1 - t0) << std::endl;
+				}
+				try {
+					Part::TopoShape* funcShape = 0;
+					{
+						int k = 0;
+						for (k = 0; k < far_pointV.size(); k++){
+
+							if (topoShapeV[k] != 0) {
+								TopExp_Explorer vertex(topoShapeV[k]->getShape(), TopAbs_VERTEX);
+								if (vertex.More()) {
+									funcShape = topoShapeV[k];
+									break;
+								}
+							}
+						}
+						std::vector<TopoDS_Shape> tmpv;
+						for (k = k + 1; k < far_pointV.size(); k++) {
+							if (topoShapeV[k] == 0)
+								continue;
+							TopExp_Explorer vertex(topoShapeV[k]->getShape(), TopAbs_VERTEX);
+							if (!vertex.More())
+								continue;
+							tmpv.push_back(topoShapeV[k]->getShape());
+
+						}
+						if (funcShape != 0 && tmpv.size() > 0)
+							funcShape->setShape(funcShape->fuse(tmpv));
+					}
+					if (funcShape != 0) {
+						TopoDS_Shape sh = funcShape->removeSplitter();
+						funcShape->setShape(sh);
+						if (TEST_OUTPUT == 1) {
+							std::string filename = "d://000";
+							filename = filename + ".brp";
+							funcShape->write(filename.c_str());
+							Base::Console().Log("save funcShape\n");
+						}
+						//
+						if (huantheta == 1)
+						{
+
+							gp_Pnt p(0, 0, 0);
+							gp_Dir d(0, 0, 1);
+							{
+								gp_Vec d(0, 0, 1);
+								if (stype == XDIM) {
+									d.SetCoord(oxmax - oxmin, 0, 0);
+								}
+								else if (stype == YDIM) {
+									d.SetCoord(0, oymax - oymin, 0);
+								}
+								else if (stype == ZDIM) {
+									d.SetCoord(0, 0, ozmax - ozmin);
+								}
+								BRepPrimAPI_MakePrism mkPrism(funcShape->getShape(), d);
+								funcShape->setShape(mkPrism.Shape());
+							}
+							
+						}
+						//
+						return Py::asObject(new Part::TopoShapePy(funcShape));
+					}
 					else
-						funcShape->setShape(comp);// static_cast<Part::Feature*>(funcShape)->Shape.setValue(comp);
+						return Py::asObject(new Part::TopoShapePy(new Part::TopoShape()));
+					//3
+					//return Py::asObject(new Mesh::MeshPy(mesh));
+				}
+				catch (Standard_Failure& e) {
+					throw Py::Exception(Part::PartExceptionOCCError, e.GetMessageString());
+				}
+			}
+			catch (Standard_DomainError) {
+				throw Py::Exception(Part::PartExceptionOCCDomainError, "creation of funcmesh failed");
+			}
+		}
+		Py::Object makeFuncMeshHuan(const Py::Tuple& args)
+		{
+			//clock_t t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
+			//由面形成实体的精确度 如果函数体的范围是1-10  将精确度设置为0.001（否则会很慢），一般情况下设置为0.01，
+			Standard_Real facePrecision = 0.01;
+			//type=0表示面，1表示体
+			int type = -1, ndim = -1;//0x1y2z else volume
+			double angle = 360;
+			char* func;
+			double xmax, xmin, ymax, ymin, zmax = 0, zmin = 0;
+			double xmaxo, xmino, ymaxo, ymino, zmaxo, zmino = 0;
+
+			/*int nb_ligne = DISTANCE_RESOL_MAX,
+			nb_colon = DISTANCE_RESOL_MAX,
+			nb_depth = DISTANCE_RESOL_MAX;*/
+			int nGrid[] = { DISTANCE_RESOL_MAX, DISTANCE_RESOL_MAX, DISTANCE_RESOL_MAX };
+			double rxyz[] = { 0.01, 0.01, 0.01 }, rxt = -1, ryt = -1, rzt = -1;//分辨率
+			char* coor;
+			//精度
+			char* precision;
+			char* attribute;
+			PyObject *pPnt = 0, *pDir = 0;
+			if (!PyArg_ParseTuple(args.ptr(), "isddddddsss|ddd",
+				&type, &func, &xmin, &xmax, &ymin, &ymax, &zmin, &zmax, &coor, &precision, &attribute, &rxt, &ryt, &rzt
+				))
+				throw Py::Exception();
+			if (std::string(func) == "")
+				throw Py::Exception();
+			double oymax=ymax, oymin=ymin;
+			int huantheta = 0;
+			type = 11;
+			if (type == 10 || type == 20) {
+				if (type == 20)
+					zmax = zmin = 0;
+				type = 0;
+				ndim = ZDIM;
+				if (rxt > 0 && ryt > 0){
+					rxyz[0] = rxt; rxyz[1] = ryt;
+				}
+				else {
+					if (std::string(coor) != S_COOR_RECTANGULAR)
+						rxyz[1] = 1;
+				}
+				zmax = zmin;
+			}
+			else if (type == 11){
+				type = 0;
+				huantheta = 1;
+				ndim = YDIM;
+				if (rxt > 0 && rzt > 0){
+					rxyz[0] = rxt; rxyz[2] = rzt;
+				}
+				else {
+					if (std::string(coor) != S_COOR_RECTANGULAR)
+						rxyz[1] = 1;
+				}
+				ymax = ymin;
+			}
+			else if (type == 12){
+				type = 0;
+				ndim = XDIM;
+				if (ryt > 0 && rzt > 0){
+					rxyz[1] = ryt; rxyz[2] = rzt;
+				}
+				else {
+					if (std::string(coor) != S_COOR_RECTANGULAR)
+						rxyz[1] = 1;
+				}
+				xmax = xmin;
+			}
+			else {
+				type = 1;
+				ndim = -1;
+				if (rxt > 0 && ryt > 0 && rzt > 0){
+					rxyz[0] = rxt; rxyz[1] = ryt; rxyz[2] = rzt;
+				}
+				else {
+					if (std::string(coor) != S_COOR_RECTANGULAR)
+						rxyz[1] = 1;
+				}
+			}
+
+			try {
+				//划分为6个象限
+				if (std::string(coor) != S_COOR_RECTANGULAR)
+				{
+					if (fabs(ymax) > 360) ymax = ymax - 360. * ((int)(ymax) / 360);
+					if (fabs(ymin) > 360) ymin = ymin - 360. * ((int)(ymin) / 360);
+				}
+				boost::format fmt("if(x=%2%,1,if(x=%3%,1,if(y=%4%,1,if(y=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))");
+				fmt%func% xmin % xmax % ymin %ymax%zmin%zmax;
+				Base::Console().Log("fmt: ");
+				Base::Console().Log(fmt.str().c_str());
+
+				PM3::ExpParser exparser;
+				vcg::Point3d Start, End;
+				std::string er;
+				PM3::DefValue3D far_ori, near_ori;
+
+				//double yreso = (ymax - ymin) * GRAD / 20.;
+				float extVoid = 0.00001;//0.1mm
+				float extVoidAngle = 0.01;//deg度
+
+				if (std::string(attribute) == S_VOID)//当为空扩大体
+				{
+					if (std::string(coor) == S_COOR_RECTANGULAR) {
+						far_ori.X() = PM3::convertToStringd(xmax + extVoid);
+						far_ori.Y() = PM3::convertToStringd(ymax + extVoid);
+						far_ori.Z() = PM3::convertToStringd(zmax + extVoid);
+						near_ori.X() = PM3::convertToStringd(xmin - extVoid);
+						near_ori.Y() = PM3::convertToStringd(ymin - extVoid);
+						near_ori.Z() = PM3::convertToStringd(zmin - extVoid);
+						far_ori.Parser(&exparser, End, er);
+						near_ori.Parser(&exparser, Start, er);
+					}
+					else {
+						far_ori.X() = PM3::convertToStringd(xmax + extVoid);
+						far_ori.Y() = PM3::convertToStringd(ymax + extVoidAngle);
+						far_ori.Z() = PM3::convertToStringd(zmax + extVoid);
+						near_ori.X() = PM3::convertToStringd(xmin - extVoid);
+						near_ori.Y() = PM3::convertToStringd(ymin - extVoidAngle);
+						near_ori.Z() = PM3::convertToStringd(zmin - extVoid);
+						far_ori.Parser(&exparser, End, er);
+						near_ori.Parser(&exparser, Start, er);
+					}
+				}
+				else//其它保持不变
+				{
+					far_ori.X() = PM3::convertToStringd(xmax);
+					far_ori.Y() = PM3::convertToStringd(ymax);
+					far_ori.Z() = PM3::convertToStringd(zmax);
+					near_ori.X() = PM3::convertToStringd(xmin);
+					near_ori.Y() = PM3::convertToStringd(ymin);
+					near_ori.Z() = PM3::convertToStringd(zmin);
+					far_ori.Parser(&exparser, End, er);
+					near_ori.Parser(&exparser, Start, er);
+				}
+				
+				{
+					double d = 0.0001;
+					xmax = End.X();
+					ymax = End.Y();
+					zmax = End.Z();
+					xmin = Start.X();
+					ymin = Start.Y();
+					zmin = Start.Z();
+					xmino = xmin;
+					xmaxo = xmax;
+					ymino = ymin;
+					ymaxo = ymax;
+					zmino = zmin;
+					zmaxo = zmax;
+				}
+				float dev = 0.000001;
+				std::vector<PM3::DefValue3D> far_pointV, near_pointV, far_pointV_cut, near_pointV_cut;
+				std::vector<Base::Vector3d> far_pointVo, near_pointVo;
+				std::vector < std::string > funcV;
+				if (std::string(coor) == S_COOR_RECTANGULAR) {
+					float dev = 0;
+					//nb_ligne = DISTANCE_RESOL_MAX, nb_colon = DISTANCE_RESOL_MAX, nb_depth = DISTANCE_RESOL_MAX;					
+					double stepx = 0;// (xmax - xmin) / (16 - 5);
+					double stepy = 0;// (ymax - ymin) / (16 - 5);
+					double stepz = 0;// (zmax - zmin) / (16 - 5);
+					//only 1 volume
+					/*far_pointV.push_back(transferToDefValue3DRECTANGULAR(xmax, ymax, zmax));
+					near_pointV.push_back(transferToDefValue3DRECTANGULAR(xmin, ymin, zmin));
+					far_pointVo.push_back(Base::Vector3d(xmax, ymax, zmax));
+					near_pointVo.push_back(Base::Vector3d(xmin, ymin, zmin));*/
+					/*far_pointV_cut.push_back(transferToDefValue3DRECTANGULAR(xmaxo + (xmaxo - xmino) / 10, ymaxo + (ymax - ymino) / 10, zmaxo + (zmaxo - zmino) / 10));
+					near_pointV_cut.push_back(transferToDefValue3DRECTANGULAR(xmino - (xmaxo - xmino) / 10, ymino - (ymax - ymino) / 10, zmino - (zmaxo - zmino) / 10));
+					far_pointVo.push_back(transferToDefValue3DRECTANGULAR(xmaxo + dev * 0, ymaxo + dev * 0, zmaxo + dev * 0));
+					near_pointVo.push_back(transferToDefValue3DRECTANGULAR(xmino - dev * 0, ymino - dev * 0, zmino - dev * 0));
+					xmax += stepx, ymax += stepy, zmax += stepz;
+					xmin -= stepx, ymin -= stepy, zmin -= stepz;*/
+					boost::format fmt("if(x=%2%,1,if(x=%3%,1,if(y=%4%,1,if(y=%5%,1,if(z=%6%,1,if(z=%7%,1,%1%))))))");
+					fmt%func% xmin % xmax % ymin %ymax%zmin%zmax;
+					funcV.push_back(fmt.str().c_str());
+					//					
+					//split corrd
+					std::vector<double> spxmin, spxmax, spymin, spymax, spzmin, spzmax, spxmino, spxmaxo, spymino, spymaxo, spzmino, spzmaxo;
+					double mx = splitCorrRange(xmin, xmax, spxmin, spxmax, spxmino, spxmaxo, ndim == XDIM, rxyz[XDIM]);
+					double my = splitCorrRange(ymin, ymax, spymin, spymax, spymino, spymaxo, ndim == YDIM, rxyz[YDIM]);
+					double mz = splitCorrRange(zmin, zmax, spzmin, spzmax, spzmino, spzmaxo, ndim == ZDIM, rxyz[ZDIM]);
+					double mm = max(mx, max(my, mz));
+
+					nGrid[XDIM] = mx / rxyz[0] + 0.5, nGrid[YDIM] = my / rxyz[1] + 0.5, nGrid[ZDIM] = mz / rxyz[2] + 0.5;
+					for (int i = 0; i < spxmin.size(); i++)
+					for (int j = 0; j < spymin.size(); j++)
+					for (int k = 0; k < spzmin.size(); k++) {
+						far_pointV.push_back(transferToDefValue3DRECTANGULAR(spxmax[i], spymax[j], spzmax[k]));
+						near_pointV.push_back(transferToDefValue3DRECTANGULAR(spxmin[i], spymin[j], spzmin[k]));
+						far_pointVo.push_back(Base::Vector3d(spxmaxo[i], spymaxo[j], spzmaxo[k]));
+						near_pointVo.push_back(Base::Vector3d(spxmino[i], spymino[j], spzmino[k]));
+					}
+				}
+				else {
+					//角度范围 - 360—360deg，且跨度Point_2.Theta - Point_1.Theta <= 360deg、Point_2.Theta > Point_1.Theta。
+					//在python代码添加此限制条件，以提醒用户
+					if (ymax <= 360 && ymin <= 360 &&
+						ymax >= -360 && ymin >= -360 &&
+						(ymax - ymin) <= 360 &&
+						(ymax > ymin || ndim == 1)) {
+						////
+						//int close = 0;
+						//if ((360 - fabs(ymax - ymin)) < 0.000001)
+						//	close = 1;
+						//if (close)
+						//{
+						//	far_pointV.push_back(transferToDefValue3D(xmax, ymin + 180, zmax));
+						//	near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+						//	far_pointVo.push_back(Base::Vector3d(xmax, (ymin + 180)*GRAD, zmax));
+						//	near_pointVo.push_back(Base::Vector3d(xmin, ymin*GRAD, zmin));
+						//	far_pointV.push_back(transferToDefValue3D(xmax, ymin + 360, zmax));
+						//	near_pointV.push_back(transferToDefValue3D(xmin, ymin + 180, zmin));
+						//	far_pointVo.push_back(Base::Vector3d(xmax, (ymin + 360)*GRAD, zmax));
+						//	near_pointVo.push_back(Base::Vector3d(xmin, (ymin + 180)*GRAD, zmin));
+						//}
+						//else
+						//{
+						//	if (fabs(ymax - ymin) > 270.)
+						//	{
+						//		float temp = (ymax - ymin)/2;
+						//		far_pointV.push_back(transferToDefValue3D(xmax, ymin + temp, zmax));
+						//		near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+						//		far_pointVo.push_back(Base::Vector3d(xmax, (ymin + temp)*GRAD, zmax));
+						//		near_pointVo.push_back(Base::Vector3d(xmin, ymin*GRAD, zmin));
+						//		far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+						//		near_pointV.push_back(transferToDefValue3D(xmin, ymin + temp, zmin));
+						//		far_pointVo.push_back(Base::Vector3d(xmax, ymax*GRAD, zmax));
+						//		near_pointVo.push_back(Base::Vector3d(xmin, (ymin + temp)*GRAD, zmin));
+						//	}
+						//	else {
+						//		far_pointV.push_back(transferToDefValue3D(xmax, ymax, zmax));
+						//		near_pointV.push_back(transferToDefValue3D(xmin, ymin, zmin));
+						//		far_pointVo.push_back(Base::Vector3d(xmax, ymax*GRAD, zmax));
+						//		near_pointVo.push_back(Base::Vector3d(xmin, ymin*GRAD, zmin));
+						//	}							
+						//}
+
+						//split corrd
+						std::vector<double> spxmin, spxmax, spymin, spymax, spzmin, spzmax, spxmino, spxmaxo, spymino, spymaxo, spzmino, spzmaxo;
+						double mx = splitCorrRange(xmin, xmax, spxmin, spxmax, spxmino, spxmaxo, ndim == XDIM, rxyz[XDIM]);
+						double my = splitCorrRangeAngle(ymin, ymax, spymin, spymax, spymino, spymaxo, ndim == YDIM, rxyz[YDIM]);
+						double mz = splitCorrRange(zmin, zmax, spzmin, spzmax, spzmino, spzmaxo, ndim == ZDIM, rxyz[ZDIM]);
+						double mm = max(mx, mz);
+
+						nGrid[XDIM] = mx / rxyz[0] + 0.5, nGrid[YDIM] = my / rxyz[1] + 0.5, nGrid[ZDIM] = mz / rxyz[2] + 0.5;
+
+						for (int i = 0; i < spxmin.size(); i++)
+						for (int j = 0; j < spymin.size(); j++)
+						for (int k = 0; k < spzmin.size(); k++) {
+							far_pointV.push_back(transferToDefValue3D(spxmax[i], spymax[j], spzmax[k]));
+							near_pointV.push_back(transferToDefValue3D(spxmin[i], spymin[j], spzmin[k]));
+							far_pointVo.push_back(transferToDefValue3DBase(spxmaxo[i], spymaxo[j], spzmaxo[k]));
+							near_pointVo.push_back(transferToDefValue3DBase(spxmino[i], spymino[j], spzmino[k]));
+						}
+					}
+				}
+				//
+				if (nGrid[XDIM] > DISTANCE_RESOL_MAX) nGrid[XDIM] = DISTANCE_RESOL_MAX;
+				if (nGrid[YDIM] > DISTANCE_RESOL_MAX) nGrid[YDIM] = DISTANCE_RESOL_MAX;
+				if (nGrid[ZDIM] > DISTANCE_RESOL_MAX) nGrid[ZDIM] = DISTANCE_RESOL_MAX;
+				if (nGrid[XDIM] < DISTANCE_RESOL_MIN) nGrid[XDIM] = DISTANCE_RESOL_MIN;
+				if (nGrid[YDIM] < DISTANCE_RESOL_MIN) nGrid[YDIM] = DISTANCE_RESOL_MIN;
+				if (nGrid[ZDIM] < DISTANCE_RESOL_MIN) nGrid[ZDIM] = DISTANCE_RESOL_MIN;
+				//if (ndim == XDIM)
+				//	nGrid[XDIM] = 1;
+				//else if (ndim == YDIM)
+				//	nGrid[YDIM] = 1;
+				//else if (ndim == ZDIM)
+				//	nGrid[ZDIM] = 1;
+
+				Part::TopoShape* topoShapeV[10] = { 0 };
+				if (far_pointV.size() > 0)
+				{
+					clock_t t0, t1;
+					t0 = clock();
+					//	std::cout << "start" << double(t0) << std::endl;
+#pragma omp parallel for
+					for (int nn = 0; nn < far_pointV.size(); nn++) {
+						char s[256];
+						std::string tempstr;
+						std::string filename;
+						//存放点
+						std::vector<Base::Vector3d> Points;
+						//存放面
+						std::vector<Data::ComplexGeoData::Facet> Facets;
+						double maxf = -1;
+
+						/**/PM3::VFunctional vfunc;
+						vfunc.yreso = rxyz[1];
+						vfunc.iso->type = 1;
+						vfunc.iso->ndim = ndim;
+						vfunc.iso->nGrid[XDIM] = nGrid[XDIM];
+						vfunc.iso->nGrid[YDIM] = nGrid[YDIM];
+						vfunc.iso->nGrid[ZDIM] = nGrid[ZDIM];
+						vfunc.iso->isSunk = 1;//稳定
+
+						if (std::string(coor) == S_COOR_RECTANGULAR)
+							vfunc.setSystem(PM3::SYSCARTESIAN);
+						else
+							vfunc.setSystem(PM3::SYSCYLINDRICAL);
+						vfunc.f = func;
+						_itoa(nn, s, 10);
+						vfunc.name = s;
+						vfunc.far_point = far_pointV[nn];// .setValue(PM3::convertToStringd(xmax) + "," + PM3::convertToStringd(ymax) + "," + PM3::convertToStringd(zmax));
+						tempstr = vfunc.name + "max: " + far_pointV[nn][0] + " " + far_pointV[nn][1] + " " + far_pointV[nn][2] + "\n";
+						Base::Console().Error(tempstr.c_str());
+						vfunc.near_point = near_pointV[nn];// .setValue(PM3::convertToStringd(xmin) + "," + PM3::convertToStringd(ymin) + "," + PM3::convertToStringd(zmin));
+						tempstr = vfunc.name + "min: " + near_pointV[nn][0] + " " + near_pointV[nn][1] + " " + near_pointV[nn][2] + "\n";
+						Base::Console().Error(tempstr.c_str());
+						PM3::ExpParser exparser;
+						vfunc.pexparser = &exparser;
+
+						vfunc.update_mesh_topology(Points, Facets, maxf);
+
+						if (Facets.size() > 0)
+						{
+							//if (false) 
+							{
+								try {
+									Part::TopoShape* funcShape = meshToShape(Points, Facets, 0, nn, 1);
+									if (funcShape != 0) {// && type == 1
+										vcg::Point3d Start, End;
+										//End = vfunc.iso->End;
+										//Start = vfunc.iso->Start;
+										std::string er;
+										_itoa(nn, s, 10);
+										vfunc.name = s;
+										//if (std::string(coor) == S_COOR_RECTANGULAR)
+										{
+											std::cout << "#max " << nn << ": " << far_pointVo[nn].x << far_pointVo[nn].y << far_pointVo[nn].z << std::endl;
+											std::cout << "#min " << nn << ": " << near_pointVo[nn].x << near_pointVo[nn].y << near_pointVo[nn].z << std::endl;
+
+											Part::TopoShape* com = getShapeOfComformal(coor,
+												near_pointVo[nn],
+												far_pointVo[nn], type, ndim);
+											if (TEST_OUTPUT == 1) {
+												filename = "d://comformal";
+												_itoa(nn, s, 10);
+												filename = filename + s;
+												filename = filename + ".brp";
+												com->write(filename.c_str());
+											}
+											BRepAlgoAPI_Common mkCommon(com->getShape(), funcShape->getShape());
+											if (!mkCommon.IsDone()) {
+												Base::Console().Log("makeFuncMesh - mkCommon not done\n");
+												;// return new App::DocumentObjectExecReturn("DVD::execute - mkCommon not done");
+											}
+											TopExp_Explorer vertex(funcShape->getShape(), TopAbs_VERTEX);
+											if (mkCommon.Shape().IsNull() || !vertex.More()) {
+												tempstr = vfunc.name + ":makeFuncMesh - mkCommon.Shape is Null\n";
+												Base::Console().Error(tempstr.c_str());
+												;// return new App::DocumentObjectExecReturn("DVD::execute - mkCommon.Shape is Null");
+												delete funcShape;
+												funcShape = 0;
+											}
+											else {
+												{
+													funcShape->setShape(mkCommon.Shape());
+													TopoDS_Shape cutShape = funcShape->removeSplitter();
+													funcShape->setShape(cutShape);
+
+													//delete cut;
+													if (TEST_OUTPUT == 1) {
+														filename = "d://common";
+														_itoa(nn, s, 10);
+														filename = filename + s;
+														filename = filename + ".brp";
+														funcShape->write(filename.c_str());
+														Base::Console().Log("topoShapeV.push_back(funcShape)\n");
+													}
+												}
+											}
+											/*{
+											BRepAlgoAPI_Cut mkCut(list[0], funcShape->getShape());
+											TopoDS_Shape cutcut = mkCut.Shape();
+											if (TEST_OUTPUT == 1) {
+											com->setShape(cutcut);
+											filename = "d://cutcut";
+											_itoa(nn, s, 10);
+											filename = filename + s;
+											filename = filename + ".brp";
+											com->write(filename.c_str());
+											}
+											funcShape->fuse(cutcut);
+
+											}*/
+											delete com;
+											topoShapeV[nn] = funcShape;
+										}
+										//else {
+										//	Part::TopoShape* com1 = getShapeOfComformal1(coor,
+										//		near_pointVo[nn],
+										//		far_pointVo[nn]);
+										//	if (TEST_OUTPUT == 1) {
+										//		filename = "d://comformal1";
+										//		_itoa(nn, s, 10);
+										//		filename = filename + s;
+										//		filename = filename + ".brp";
+										//		com1->write(filename.c_str());
+										//	}
+										//	BRepAlgoAPI_Common mkCommon(com1->getShape(), funcShape->getShape());
+										//	if (!mkCommon.IsDone()) {
+										//		Base::Console().Log("makeFuncMesh - mkCommon not done\n");
+										//		;// return new App::DocumentObjectExecReturn("DVD::execute - mkCommon not done");
+										//	}
+										//	TopExp_Explorer vertex(mkCommon.Shape(), TopAbs_VERTEX);
+										//	if (!vertex.More()) {
+										//		tempstr = vfunc.name + ":makeFuncMesh - mkCommon.Shape is Null\n";
+										//		Base::Console().Error(tempstr.c_str());
+										//		;// return new App::DocumentObjectExecReturn("DVD::execute - mkCommon.Shape is Null");
+										//		//delete funcShape;
+										//		//funcShape = 0;
+										//	}
+										//	else {
+										//		TopoDS_Shape cutcut = mkCommon.Shape();
+										//		Part::TopoShape* com3 = getShapeOfComformal3(coor,
+										//			near_pointVo[nn],
+										//			far_pointVo[nn]);
+										//		
+										//		if (com3 != 0) {
+										//			if (TEST_OUTPUT == 1) {
+										//				filename = "d://comformal3";
+										//				_itoa(nn, s, 10);
+										//				filename = filename + s;
+										//				filename = filename + ".brp";
+										//				com3->write(filename.c_str());
+										//			}
+										//			BRepAlgoAPI_Cut mkCut(cutcut, com3->getShape());
+										//			cutcut = mkCut.Shape();
+										//			TopExp_Explorer vertex(cutcut, TopAbs_VERTEX);
+										//			if (!vertex.More()) {
+										//				tempstr = vfunc.name + ":makeFuncMesh - mkCut.Shape is Null\n";
+										//				Base::Console().Error(tempstr.c_str());
+										//				;// return new App::DocumentObjectExecReturn("DVD::execute - mkCommon.Shape is Null");
+										//				//delete funcShape;
+										//				//funcShape = 0;														
+										//			}
+										//			
+										//			delete com3;
+										//		}
+										//		Part::TopoShape* com2 = getShapeOfComformal2(coor,
+										//			near_pointVo[nn],
+										//			far_pointVo[nn]);
+										//		if (com2 != 0) {
+										//			BRepAlgoAPI_Cut mkCut2(cutcut, com2->getShape());
+										//			cutcut = mkCut2.Shape();
+										//			delete com2;
+										//		}
+										//		{
+										//			funcShape->setShape(cutcut);
+										//		}
+										//		TopExp_Explorer vertex(funcShape->getShape(), TopAbs_VERTEX);
+										//		if (vertex.More()) {
+										//			TopoDS_Shape cutShape = funcShape->removeSplitter();
+										//			funcShape->setShape(cutShape);
+
+										//			//delete cut;
+										//			if (TEST_OUTPUT == 1) {
+										//				filename = "d://common";
+										//				_itoa(nn, s, 10);
+										//				filename = filename + s;
+										//				filename = filename + ".brp";
+										//				funcShape->write(filename.c_str());
+										//				Base::Console().Log("topoShapeV.push_back(funcShape)\n");
+										//			}
+										//		}
+										//	}
+										//	delete com1;											
+										//	topoShapeV[nn] = funcShape;
+										//}
+									}
+									else {
+										topoShapeV[nn] = funcShape;
+										//topoShapeV[nn] = Shell(faces);//Compound(faces);//
+										//topoShapeV[nn] = makeFace(faces, "Part::FaceMakerBullseye"); //shell;
+									}
+								}
+								catch (Standard_Failure& e) {
+									throw Py::Exception(Part::PartExceptionOCCError, e.GetMessageString());
+								}
+							}
+						}
+					}
+					t1 = clock();
+					std::cout << "#pragma: " << (t1 - t0) << std::endl;
+				}				
+				try {
+					Part::TopoShape* funcShape = 0;
+					{
+					int k = 0;
+					for (k = 0; k < far_pointV.size(); k++){
+
+					if (topoShapeV[k] != 0) {
+					TopExp_Explorer vertex(topoShapeV[k]->getShape(), TopAbs_VERTEX);
+					if (vertex.More()) {
+					funcShape = topoShapeV[k];
+					break;
+					}
+					}
+					}
+					std::vector<TopoDS_Shape> tmpv;
+					for (k = k + 1; k < far_pointV.size(); k++) {
+					if (topoShapeV[k] == 0)
+					continue;
+					TopExp_Explorer vertex(topoShapeV[k]->getShape(), TopAbs_VERTEX);
+					if (!vertex.More())
+					continue;
+					tmpv.push_back(topoShapeV[k]->getShape());
+
+					}
+					if (funcShape != 0 && tmpv.size() > 0)
+					funcShape->setShape(funcShape->fuse(tmpv));
+					}
+					if (funcShape != 0) {
+					TopoDS_Shape sh = funcShape->removeSplitter();
+					funcShape->setShape(sh);
+					if (TEST_OUTPUT == 1) {
+					std::string filename = "d://000";
+					filename = filename + ".brp";
+					funcShape->write(filename.c_str());
+					Base::Console().Log("save funcShape\n");
+					}
+					//
+					if (huantheta == 1)
+					{
+						
+						gp_Pnt p(0, 0, 0);
+						gp_Dir d(0, 0, 1);
+						TopoDS_Shape sh = funcShape->getShape();
+						if (fabs(oymax - oymin - 360) < TOL) {
+							BRepPrimAPI_MakeRevol mkRevol(sh, gp_Ax1(p, d));
+							funcShape->setShape(mkRevol.Shape());
+						}
+						else {
+							//-360---360
+							if (std::string(coor) != S_COOR_RECTANGULAR)
+							{
+								if (fabs(oymax) > 360) oymax = oymax - 360. * ((int)(oymax) / 360);
+								if (fabs(oymin) > 360) oymin = oymin - 360. * ((int)(oymin) / 360);
+							}
+							//0--360
+							oymax += 360;
+							oymin += 360;
+							if (std::string(coor) != S_COOR_RECTANGULAR)
+							{
+								if (fabs(oymax) > 360) oymax = oymax - 360. * ((int)(oymax) / 360);
+								if (fabs(oymin) > 360) oymin = oymin - 360. * ((int)(oymin) / 360);
+							}
+							Part::TopoShape* funcShapeG = new Part::TopoShape();
+							if (fabs(oymax - 360) < TOL || fabs(oymax - 0) < TOL) {
+								BRepPrimAPI_MakeRevol mkRevol(sh, gp_Ax1(p, d));
+								
+								funcShapeG->setShape(mkRevol.Shape());
+								{
+									BRepPrimAPI_MakeRevol mkRevol(sh, gp_Ax1(p, d), oymin * GRAD);
+									BRepAlgoAPI_Cut mkCut(funcShapeG->getShape(), mkRevol.Shape());
+									funcShapeG->setShape(mkCut.Shape());
+								}
+							}
+							else {
+								BRepPrimAPI_MakeRevol mkRevol(sh, gp_Ax1(p, d), oymax * GRAD);
+
+								funcShapeG->setShape(mkRevol.Shape());
+								if (oymin < TOL)
+								{
+									BRepPrimAPI_MakeRevol mkRevol(sh, gp_Ax1(p, d), oymin * GRAD);
+									BRepAlgoAPI_Cut mkCut(funcShapeG->getShape(), mkRevol.Shape());
+									funcShapeG->setShape(mkCut.Shape());
+								}
+							}
+							delete funcShape;
+							funcShape = funcShapeG;
+						}
+					}
+					//
 					return Py::asObject(new Part::TopoShapePy(funcShape));
+					}
+					else
+					return Py::asObject(new Part::TopoShapePy(new Part::TopoShape()));					
 					//3
 					//return Py::asObject(new Mesh::MeshPy(mesh));
 				}
@@ -5524,7 +6724,7 @@ namespace PartChipic {
 					filename = filename + ".brp";
 					shell->write(filename.c_str());
 				}
-				if (shell != 0) {
+				/*if (shell != 0) {
 					TopoDS_Shape sh = shell->removeSplitter();
 					shell->setShape(sh);
 				}
@@ -5534,7 +6734,7 @@ namespace PartChipic {
 					filename = filename + s;
 					filename = filename + ".brp";
 					shell->write(filename.c_str());
-				}
+				}*/
 				if (type == 0)
 					return shell;
 				funcShape = Solid(shell);

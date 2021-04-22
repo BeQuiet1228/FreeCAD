@@ -49,6 +49,7 @@ include_directories(
 if(MSVC)
     set(FreeCADGui_LIBS
          FreeCADApp
+		 HDF5Reader
          ${COIN3D_LIBRARIES}
          ${OPENGL_gl_LIBRARY}
     )
@@ -70,6 +71,7 @@ if(MSVC)
 else(MSVC)
     set(FreeCADGui_LIBS
         FreeCADApp
+		HDF5Reader
         ${COIN3D_LIBRARIES}
         ${Boost_LIBRARIES}
         ${OPENGL_gl_LIBRARY}
@@ -326,7 +328,6 @@ set(Gui_MOC_HDRS
     picgui_ribbon/PICRibbon.h
     picgui_ribbon/PICRibbonTabContent.h
     picgui_ribbon/PICRibbonButtonGroup.h
-    picgui_ribbon/MainWindow.h
 	PlotMDIView.h
 )
 
@@ -436,7 +437,7 @@ SET(Command_CPP_SRCS
 	OpenFileConfig.h
 	OpenFileConfig.cpp
 )
-#ÐÂÐ´µÃÏà¹ØÎÄ¼þ------°×º£öÎ
+#ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½------ï¿½×ºï¿½ï¿½ï¿½
 SET(FILE_FORMAT_SRC
 	FileFormatH5.h
 	FileFormatH5.cpp
@@ -1050,7 +1051,6 @@ SET(Widget_CPP_SRCS
         picgui_ribbon/PICRibbon.cpp
         picgui_ribbon/PICRibbonTabContent.cpp
         picgui_ribbon/PICRibbonButtonGroup.cpp
-        picgui_ribbon/MainWindow.cpp
 )
 SET(Widget_HPP_SRCS
     FileDialog.h
@@ -1070,8 +1070,7 @@ SET(Widget_HPP_SRCS
     LuaEditView.h
     picgui_ribbon/PICRibbon.h
     picgui_ribbon/PICRibbonTabContent.h
-    picgui_ribbon/PICRibbonButtonGroup.h
-    picgui_ribbon/MainWindow.h)
+    picgui_ribbon/PICRibbonButtonGroup.h)
 SET(Widget_SRCS
 	LuaEditView.cpp
 	MainWindowDef.ui
@@ -1243,9 +1242,6 @@ if(MSVC)
         picgui_ribbon/PICRibbon.cpp
         picgui_ribbon/PICRibbonTabContent.cpp
         picgui_ribbon/PICRibbonButtonGroup.cpp
-        picgui_ribbon/MainWindow.cpp
-
-
 
         ${Command_CPP_SRCS}
         ${Dialog_CPP_SRCS}
@@ -1263,8 +1259,13 @@ if(MSVC)
     )
     ADD_MSVC_PRECOMPILED_HEADER(FreeCADGui PreCompiled.h PreCompiled.cpp FreeCADGui_CPP_SRCS)
 endif(MSVC)
+SET(Control_SRC ControlTreeWidget.cpp
+	ControlTreeWidget.h)
+fc_wrap_cpp(ControlTreeWidgetMoc ControlTreeWidget.h)
+SOURCE_GROUP("Control" FILES ${Control_SRC})
 
-add_library(FreeCADGui SHARED ${FreeCADGui_SRCS})
+
+add_library(FreeCADGui SHARED ${FreeCADGui_SRCS} ${Control_SRC} ${ControlTreeWidgetMoc})
 
 if (FREECAD_USE_QT_FILEDIALOG)
     set_source_files_properties(FileDialog.cpp PROPERTIES COMPILE_FLAGS -DUSE_QT_FILEDIALOG)

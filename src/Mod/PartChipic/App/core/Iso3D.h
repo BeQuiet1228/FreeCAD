@@ -110,6 +110,7 @@ public:
 
 	double newcoeffx, newcoeffy, newcoeffz;
 	vcg::Point3d Start, End;
+	int nVar[3];
 	int nGrid[3], //0 nb_ligne, 1nb_colon, 2nb_depth,
 		clipping, CutLigne, CutColon, CutDepth,
 		IsoConditionRequired;

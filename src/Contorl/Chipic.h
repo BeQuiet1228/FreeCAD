@@ -123,6 +123,10 @@ Q_SIGNALS:
 	void workFinished();
 	//解析完成信号
 	void analysisFinished();
+	//输出新的结果图
+	void newResultFile(unsigned long);
+	//输出结构图
+	void outputStructFile(unsigned long);
 public Q_SLOTS:
 	void buttonClicked(int clickType);
 	void timerOut();

@@ -30,6 +30,7 @@ void Hdf5IO::setFilePath(const std::string& path)
 	QString temp = QString::fromUtf8(path.c_str());
 	std::string newPath = gbk->fromUnicode(temp).data();
 
+	creatHdf5File(newPath);
 	Hdf5File.reset(new H5File(newPath, H5F_ACC_RDWR));
 }
 
@@ -173,7 +174,9 @@ std::vector<std::string> Hdf5IO::getHeadValue(const Group &group)
         Attribute at = group.openAttribute(i);
         std::string value;
         at.read(at.getStrType(),value);
-        headValue.push_back(value);
+		std::string name;
+		at.getName(name);
+        headValue.push_back(name+"="+value);
     }
     return headValue;
 }
@@ -344,7 +347,7 @@ void Hdf5IO::getAllSubGroupAndDataSet(const Group& group, const std::vector<std:
 		data.listDataSet = datas;
 		data.group = subGroup;
 		data.headList = headList;
-		data.initInformation();
+		data.init();
 		hdf5DataList.push_back(data);
 	}
 }
@@ -377,7 +380,7 @@ void Hdf5IO::getStructData()
 		data.group = group;
 		data.name = "struct";
 		data.headList = headList;
-		data.initInformation();
+		data.init();
 		hdf5DataList.push_back(data);
 	}
 }
@@ -409,7 +412,7 @@ void Hdf5IO::getParData()
 		data.listDataSet.push_back(dataSet);
 		data.group = subGroup;
 		data.headList = headList;
-		data.initInformation();
+		data.init();
 		hdf5DataList.push_back(data);
 	}
 }
@@ -454,6 +457,94 @@ std::string Hdf5IO::getNameFromHeadList(const std::vector<std::string>& headList
 	qs = qs.split(":").last().toLower();
 
 	return qs.toStdString();
+}
+
+
+DataSet Hdf5IO::copyDataSet(DataSet& dataset, Group& toGroup, const std::string& newDataSetName)
+{
+	//数据大小 行与列的长度
+	DataSpace dataSpace = dataset.getSpace();
+
+	hsize_t size[2];
+	dataSpace.getSimpleExtentDims(size, 0);
+	float* values(new float[size[0] * size[1]]);
+	dataset.read(values, PredType::NATIVE_FLOAT);
+
+	DataSpace sapce(2, size);
+	DataType dataType(PredType::NATIVE_FLOAT);
+	DataSet toDataSet(toGroup.createDataSet(newDataSetName, dataType, dataSpace));
+	toDataSet.write(values, dataType);
+
+	delete[] values;
+
+	return toDataSet;
+}
+
+void Hdf5IO::copyGroup(Group& group, Group& toGroup)
+{
+	unsigned int attrSpace = 128;
+
+	int atCount = group.getNumAttrs();
+	for (int i = 0; i < atCount; i++)
+	{
+		Attribute attr = group.openAttribute(i);
+
+		hsize_t dims[1] = {1};
+		DataSpace attr_dataspace = DataSpace(1, dims);
+		DataType dataType(H5T_STRING,128);
+
+		Attribute toAttr = toGroup.createAttribute(attr.getName(), dataType,attr_dataspace);
+		std::string value;
+		attr.read(attr.getStrType(), value);
+		toAttr.write(dataType, value);
+	}
+}
+
+
+Hdf5Data Hdf5IO::copyToHdf5IO(Hdf5IO& hdf5IO, Hdf5Data& data)
+{
+	int groupSize = hdf5IO.Hdf5File->getNumObjs();
+	std::string groupName = "DataGroup" + QString::number(groupSize).toStdString();
+	Group toGroup(hdf5IO.Hdf5File->createGroup(groupName));
+	copyGroup(data.group, toGroup);
+
+	Hdf5Data newH5data(hdf5IO.Hdf5File);
+
+	auto datalist = data.listDataSet;
+	for (int i = 0; i < datalist.size(); i++)
+	{
+		auto dataset = datalist.at(i);
+		std::string dataSetName = data.group.getObjnameByIdx(i);
+		DataSet newDataSet = copyDataSet(dataset, toGroup, dataSetName);
+		newH5data.listDataSet.push_back(newDataSet);
+	}
+	newH5data.group = toGroup;
+	auto headlist = getHeadValue(toGroup);
+	newH5data.headList = headlist;
+	return newH5data;
+}
+
+void Hdf5IO::copyToHdf5IO(Hdf5IO& hdf5IO, std::vector<Hdf5Data>& datas)
+{
+	for each (Hdf5Data data in datas)
+	{
+		copyToHdf5IO(hdf5IO, data);
+	}
+}
+
+/**
+* @brief Hdf5IO::creatNewHdf5File 
+* @param const std::string & fileName
+* @return void
+*/
+void Hdf5IO::creatNewHdf5File(const std::string& fileName)
+{
+	H5Fcreate(fileName.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+}
+
+void Hdf5IO::creatHdf5File(const std::string& fileName)
+{
+	H5Fcreate(fileName.c_str(), H5F_ACC_RDWR, H5P_DEFAULT, H5P_DEFAULT);
 }
 
 /**
@@ -512,19 +603,25 @@ void Hdf5IO::initHdf5Data()
     }
 }
 
+
 /**
-* @brief Hdf5Data::initInformation 根据头信息初始化基本信息
-* @return void
+* @brief Hdf5Data::initInformation 初始化通用数据信息
+* @return bool
 */
-void Hdf5Data::initInformation()
+bool Hdf5Data::initInformation()
 {
 	if (headList.size() == 0)
-		return;
+		return false;
 	QString str = QString::fromStdString(headList.at(0));
-	QStringList sl = str.split("$");
+	QStringList sl = str.split("=");
+	if (sl.size() < 2)
+		return false;
+	str = sl.at(1);
+
+	sl = str.split("$");
 
 	if (sl.size() < 2)
-		return;
+		return false;
 	QString temp = sl.at(1);
 	if (temp == "CYLINDRICAL")
 		coordinateSystem = CYLINDER;
@@ -534,6 +631,47 @@ void Hdf5Data::initInformation()
 		coordinateSystem = CARTESIAN;
 
 	if (sl.size() < 3)
-		return;
+		return false;
 	name = sl.at(2).toStdString();
+
+	return true;
+}
+
+/**
+* @brief Hdf5Data::initStructInformation 初始化结构图信息
+* @return bool
+*/
+bool Hdf5Data::initStructInformation()
+{
+	if (headList.size() < 4)
+		return false;
+	name = "struct";
+	QString str = QString::fromStdString(headList.at(3));
+	QStringList sl = str.split("=");
+	if (sl.size() < 2)
+		return false;
+	if (sl.at(0) != "system")
+		return false;
+	str = sl.at(1);
+	str = str.simplified();
+	if (str == "cylindrical")
+		coordinateSystem = CYLINDER;
+	else if (str == "polar")
+		coordinateSystem = POLAR;
+	else if (str == "cartesian")
+		coordinateSystem = CARTESIAN;
+
+	return true;
+}
+
+/**
+* @brief Hdf5Data::init 初始化数据信息
+* @return void
+*/
+void Hdf5Data::init()
+{
+	if (initInformation())
+		return;
+	if (initStructInformation())
+		return;
 }

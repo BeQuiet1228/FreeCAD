@@ -131,6 +131,28 @@ void ContorlInterface::clearChipicManager()
 }
 
 /**
+* @brief ContorlInterface::getM3dPathForThreadID 根据threadID获取运行路径
+* @param unsigned long threadID
+* @return QString
+*/
+QString ContorlInterface::getM3dPathForThreadID(unsigned long threadID)
+{
+	auto manager = getChipicManager();
+	return manager->getM3dpathForThreadID(threadID);
+}
+
+/**
+* @brief ContorlInterface::getChipicThreadCount 根据线程id获取是否使用并行模式
+* @param unsigned long threadID
+* @return unsigned int -1 代表没有这个chipic对象
+*/
+unsigned int ContorlInterface::getChipicThreadCount(unsigned long threadID)
+{
+	auto manager = getChipicManager();
+	return manager->getChipicThreadCount(threadID);
+}
+
+/**
 * @brief ContorlInterface::getChipicManager 返回chipic管理器指针  这个指针由contorl对象管理 
 * @return ChipicManager*
 */

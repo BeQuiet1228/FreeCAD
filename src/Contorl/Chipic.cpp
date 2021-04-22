@@ -270,7 +270,6 @@ bool Chipic::disposeChipicTimerState(const Message& msg)
 	}
 	return false;
 }
-
 /**
 * @brief Chipic::disposeChipicIsPause 处理chipic暂停状态消息
 * @param const Message & msg
@@ -325,7 +324,7 @@ bool Chipic::disposHintMessage(const Message& msg)
 		//如果为自动运行模式，则直接发送继续消息
 		if (getIsAuto())
 		{
-			sendMessage(108, 3, -2);
+			sendMessage(108, 3, -1);
 			break;
 		}
 		hintDailog.setText(msg.text);
@@ -374,12 +373,16 @@ bool Chipic::disposeStructMapMessage(const Message& msg)
 #ifndef SERVICE
 	if (!getIsAuto())
 	{
+#if 0 //新的后处理模块  不在调用python代码
 		std::string fileName = this->makePath("_Temp.h5");
 		fileName = MessageTransition::utf8StdstringToGbkStdstring(fileName);
 		Base::InterpreterSingleton python;
 		python.runString("import Control.controlCommand.LonelinessCmd");
 		python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
 		python.runStringArg("lonemod.openStruct(\'%s\')", fileName.c_str());
+#else
+		emit outputStructFile(threadID);
+#endif
 	}
 	//刷新一下数据
 	this->refreshButtonClicked();
@@ -407,6 +410,7 @@ bool Chipic::disposResultMapMessage(const Message& msg)
 	{
 		if (msg.wParam != -1000 && msg.lParam != -1000)
 		{
+#if 0	//新的后处理模块，不在调用python
 #ifndef SERVICE
 			std::string fileName = this->makePath("_Temp.h5");
 			fileName = MessageTransition::utf8StdstringToGbkStdstring(fileName);
@@ -416,6 +420,9 @@ bool Chipic::disposResultMapMessage(const Message& msg)
 			python.runStringArg("lonemod.openMap(\'%s\',%d,%d)", fileName.c_str(), msg.wParam, msg.lParam);
 #endif // !SERVICE
 			return  true;
+#else
+			emit newResultFile(threadID);
+#endif
 		}
 	}
 
