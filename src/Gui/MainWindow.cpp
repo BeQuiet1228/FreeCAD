@@ -445,6 +445,7 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
         pcCombiView->setObjectName(QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget","Combo View")));
         pcCombiView->setMinimumWidth(150);
         pDockMgr->registerDockWindow("Std_CombiView", pcCombiView);
+		inittreeContor((void*)pcCombiView);
     }
 	//inittreeContor();
 #if QT_VERSION < 0x040500

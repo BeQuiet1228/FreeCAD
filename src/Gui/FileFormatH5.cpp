@@ -36,7 +36,7 @@ void FileFormatH5::openOnce(const QString& fileList, App::Document* doc)
 	QTabWidget* _tabwidget = pcCombiView->getTabPanel();
 	ListTreeWidget* m_lisTreeWidget = new ListTreeWidget();
 	_tabwidget->insertTab(3, m_lisTreeWidget,GetEncodingstr("获取结果",ENCODING_GB2312));
-	ListTreeWidget* m_lisTreeWidget = new ListTreeWidget();
+	//ListTreeWidget* m_lisTreeWidget = new ListTreeWidget();
 	docManager->bindTreeContrue(m_lisTreeWidget,(Plot*)plot->GetViewPtr());
 	docManager->loadfile(fileList);
 	//auto guiDoc = Gui::Application::Instance->getDocument(doc);
