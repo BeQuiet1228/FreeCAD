@@ -16,6 +16,7 @@ std::string Type[MAX_TYPE_NUMBER] = { "CONTOUR", "PHASESPACE", "RANGE", "VECTOR"
 std::string Structdirection[3] = { "Phi-Z",
 "Z-R",
 "R*cos(Phi)-R*sin(Phi)" };
+std::string Structdirection_cartesian[3] = { "X_Y", "Y_Z", "X_Z" };
 ListTreeWidget::ListTreeWidget(QWidget* parent) :QWidget(parent)
 {
 	//初始化TreeView的风格
@@ -64,11 +65,24 @@ void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 			//当获取到图表信息是结构图时
 			if (Hdf5Datalist[i].name.find("struct")!=std::string::npos)
 			{
-				for each (std::string var in Structdirection)
+				std::string coord_type = *(Hdf5Datalist[i].headList.end() - 1);
+				if (coord_type.find("cartesian") != std::string::npos)
 				{
-					itemlist[_str].push_back(var);
-					datalist[_str][var] = i;
+					for each (std::string var in Structdirection_cartesian)
+					{
+						itemlist[_str].push_back(var);
+						datalist[_str][var] = i;
+					}
 				}
+				else
+				{
+					for each (std::string var in Structdirection)
+					{
+						itemlist[_str].push_back(var);
+						datalist[_str][var] = i;
+					}
+				}
+				
 				//std::string str1 = "Phi-Z";
 				//std::string str2 = "Z-R";
 				//std::string str3 = "R*cos(Phi)-R*sin(Phi)";

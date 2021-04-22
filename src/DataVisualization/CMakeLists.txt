@@ -40,10 +40,11 @@ SET(PARTICLE_SRC ParticleData.h
 	ParticleRenderer.cpp
 )
 
-SET(STRUCT_SRC StructRenderer.h
-	StructRenderer.cpp
-	structureData.h
-	structureData.cpp
+SET(STRUCT_SRC 
+	#StructRenderer.h
+	#StructRenderer.cpp
+	#structureData.h
+	#structureData.cpp
 	StructData.cpp
 	StructData.h
 	StructRender.cpp

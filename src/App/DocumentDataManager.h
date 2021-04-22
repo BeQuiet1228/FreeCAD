@@ -26,6 +26,8 @@ public:
 	//‘ÿ»ÎŒƒ±æ
 	bool loadfile(const QString& filePath);
 	bool bindTreeContrue(ListTreeWidget* ptr,Plot* plotptr);
+	void ToStructHdf5(Hdf5Data data);
+	void DisplatPlot(Hdf5Data data,int _type=0);
 private:
 	DataSourceManage* m_DataSourceManage;
 };

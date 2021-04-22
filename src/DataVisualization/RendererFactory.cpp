@@ -9,8 +9,10 @@
 #include "ParticleRenderer.h"
 #include "ContourRender.h"
 #include "ContourRenderPolar.h"
-#include "structureData.h"
-#include "StructRenderer.h"
+//#include "structureData.h"
+//#include "StructRenderer.h"
+#include "StructData.h"
+#include "StructRender.h"
 #include "phasorData.h"
 #include "phasorRenderer.h"
 #include "Renderer.h"
@@ -114,9 +116,9 @@ DataPtr RendererFactory::creatInterspaceData(Hdf5Data h5d)
 }
 RendererPtr RendererFactory::creatStructRender(Hdf5Data h5d, DirectionType type)
 {
-	std::shared_ptr<structureData> _structdata(new structureData(h5d));
-	StructureRenderer* _StructureRenderer = new StructureRenderer(_structdata);
-	switch (type)
+	std::shared_ptr<StructData> _structdata(new StructData(h5d,type));
+	StructRender* _StructureRenderer = new StructRender(_structdata);
+	/*switch (type)
 	{
 	case X_Y:
 	case R_Z:
@@ -129,7 +131,7 @@ RendererPtr RendererFactory::creatStructRender(Hdf5Data h5d, DirectionType type)
 		_StructureRenderer->SetCoordinateDir(Coordinate_Dir::cylindrical_coordinate);
 	}
 		break;
-	}
+	}*/
 	return RendererPtr(_StructureRenderer);
 	/*_StructureRenderer->dataInit();
 	_StructureRenderer->setDefaultRang();*/

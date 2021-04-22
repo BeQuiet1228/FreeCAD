@@ -34,12 +34,14 @@
 #include <QMdiArea>
 #include <QToolBar>
 #include <QDockWidget>
+#include"DataVisualization/ListTreeWidget.h"
 class QMimeData;
 class QUrl;
 class QMdiSubWindow;
 class SmartContorlInterface;
 class ContorlButtonBar;
 class ContorlDataBar;
+//class CombiView;
 class MainWindowDef;
 namespace App {
 class Document;
@@ -289,12 +291,16 @@ public:
 	SmartContorlInterface *smartContorlInterface;
 	MainWindowDef* mainWindowDef;
 	QDockWidget* contorlDockWidget;
+	//新加的树控件
+	ListTreeWidget* mTreeWidget;
 public:
 	void initContorlToolBar();
 	void setContorlUI();
 	void showContorlUI();
 	void hideContorlUI();
 	void inintContorlUI();
+	void inittreeContor();
+	void inittreeContor(void*);
 	void addTitleAction(QAction* action);
 };
 

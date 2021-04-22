@@ -32,7 +32,15 @@ void DocumentManager::Save(Base::Writer &write) const
 {
 
 }
-
 bool DocumentManager::save(){
 	return true;
+}
+void DocumentManager::ToStructHdf5(Hdf5Data data){
+	if (m_DataSourceManage)
+		m_DataSourceManage->initStructData(data);
+}
+void DocumentManager::DisplatPlot(Hdf5Data data, int _type)
+{
+	if (m_DataSourceManage)
+		m_DataSourceManage->DisPlayPlot(data, _type);
 }

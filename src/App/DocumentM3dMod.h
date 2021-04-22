@@ -1,7 +1,7 @@
 #pragma once
-#include "Document.h"
-
-class DocumentM3dMod :public App::Document{
+//#include "Document.h"
+#include "DocumentDataManager.h"
+class DocumentM3dMod :public DocumentManager{
 public:
 	DocumentM3dMod();
 	~DocumentM3dMod();

@@ -25,6 +25,8 @@ public:
 	~DataSourceManage();
 public:
 	void init(ListTreeWidget* ptr,Plot* p);
+	void initStructData(Hdf5Data data);
+	void DisPlayPlot(Hdf5Data data,int _type=0);
 Q_SIGNALS:
 	void _loadhdflist(std::vector<Hdf5Data>& Hdf5Data);
 	void _reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender);

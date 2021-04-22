@@ -5,13 +5,16 @@
 //结构图的方向
 enum stru_dir
 {
-	PIN_Z=0,
-	Z_R,
-	R_PIN,
+	_PIN_Z=0,
+	_Z_R,
+	_R_PIN,
+	_X_Y,
+	_Y_Z,
+	_X_Z,
 };
 std::string StructDirection[] = { "Phi-Z",
 "Z-R",
-"R*cos(Phi)-R*sin(Phi)"};
+"R*cos(Phi)-R*sin(Phi)","X_Y","Y_Z","X_Z"};
 /**
 * @brief DataSourceManage::tranfromRenderer 树表点击事件槽
 * @param std::string name
@@ -29,54 +32,53 @@ void DataSourceManage::tranfromRenderer(std::string name,int index){
 	else
 	{
 		//如果是结构图需要另外处理
-		int structindex = RendererFactory::findStructDataIndex(hdfDatelist);
-		if (index==structindex)
+		//int structindex = RendererFactory::findStructDataIndex(hdfDatelist);
+		/*if (index==structindex)
+		{*/
+		DirectionType type=R_Z;
+		int index_dir = -1;
+		for (auto i = 0; i < 6;i++)
 		{
-			DirectionType type=R_Z;
-			int index_dir = 0;
-			for (auto i = 0; i < 3;i++)
+			if (name.find(StructDirection[i])!=std::string::npos)
 			{
-				if (name.find(StructDirection[i])!=std::string::npos)
-				{
-					index_dir = i;
-					break;
-				}
+				index_dir = i;
+				break;
 			}
+		}
+		if (index_dir!=-1)
+		{
 			switch (index_dir)
 			{
-			case PIN_Z:
-				type = R_Z; break;
-			case Z_R:
-				type = R_Z; break;
-			case R_PIN:
-				type = R_THETA; break;
+			case stru_dir::_PIN_Z:
+				type = DirectionType::R_Z; break;
+			case stru_dir::_Z_R:
+				type = DirectionType::R_Z; break;
+			case stru_dir::_R_PIN:
+				type = DirectionType::R_THETA; break;
+			case stru_dir::_X_Y:
+				type = DirectionType::X_Y; break;
+			case stru_dir::_Y_Z:
+				type = DirectionType::Y_Z; break;
+			case stru_dir::_X_Z:
+				type = DirectionType::X_Z; break;
 			default:
 				break;
 			}
-			//是结构体
 			Renderers rd = CreateRenderer(hdfDatelist[index], type);
 			RendererManger[name] = rd;
-		/*	p->addRenderer(rd);
-			p->reRender();*/
 			emit _reRendererEvent(rd);
 			return;
 		}
 		Renderers renderer = CreateRendererList(hdfDatelist[index]);
 		//先装入队列
 		RendererManger[name] = renderer;
-		/*renderer->dataInit();
-		renderer->setDefaultRang();*/
-		/*p->addRenderer(renderer);
-		p->reRender();*/
 		emit _reRendererEvent(renderer);
 	}
 }
 
 Renderers DataSourceManage::CreateRenderer(Hdf5Data data, int _type)
 {
-	Renderers rds;
-	RendererPtr rd = factoryptr->creatStructRender(data,(DirectionType)_type);
-	rds.push_back(rd);
+	Renderers rds = factoryptr->creatRenderers(data, (DirectionType)_type);
 	return rds;
 }
 /**
@@ -88,29 +90,7 @@ Renderers DataSourceManage::CreateRendererList(Hdf5Data data){
 	//从工厂获取到相关的渲染器
 	//RendererPtr rd = RendererFactory::creatRenderer(data);
 	Hdf5Data _data(data);
-	/*if (data.name.find("CONTOUR")!=std::string::npos)
-	{
-
-	}
-	else if (data.name.find("PHASEPACE")!=std::string::npos)
-	{
-
-	}
-	else if (data.name.find("RANGE")!=std::string::npos)
-	{
-
-	}
-	else if (data.name.find("VECTOR")!=std::string::npos)
-	{
-
-	}
-	else if (data.name.find("struct")!=std::string::npos)
-	{
-	}
-*/
 	Renderers rd=factoryptr->creatRenderers(data);
-	//RendererPtr rd = RendererFactory::creatStructRender(data, R_Z);
-	//RendererFactory factor();
 	return rd;
 }
 /**
@@ -134,9 +114,12 @@ void DataSourceManage::loadhdffile(std::string filepath)
 	emit _loadhdflist(_hdfDatelist);
 	//深度交换
 	hdfDatelist.swap(_hdfDatelist);
-	int structindex = RendererFactory::findStructDataIndex(hdfDatelist);
-	Hdf5Data structDate(hdfDatelist.at(structindex));
-	factoryptr = new RendererFactory(structDate);
+	/*****************************************************/
+	//结构图初始化
+	//int structindex = RendererFactory::findStructDataIndex(hdfDatelist);
+	//Hdf5Data structDate(hdfDatelist.at(structindex));
+	//factoryptr = new RendererFactory(structDate);
+	/****************************************************/
 	_hdf5io = io;
 }
 /**
@@ -166,9 +149,19 @@ void DataSourceManage::init(ListTreeWidget* ptr,Plot* _plot){
 		//p->show();
 	}
 }
-
+void DataSourceManage::initStructData(Hdf5Data data)
+{
+	//int structindex = RendererFactory::findStructDataIndex(hdfDatelist);
+	//Hdf5Data structDate(hdfDatelist.at(structindex));
+	factoryptr = new RendererFactory(data);
+}
 DataSourceManage::~DataSourceManage(){
 	RendererManger.clear();
+}
+void DataSourceManage::DisPlayPlot(Hdf5Data data, int _type)
+{
+	Renderers rds = factoryptr->creatRenderers(data, (DirectionType)_type);
+	emit _reRendererEvent(rds);
 }
 //std::map<Hdf5Data, Renderer*> RendererManger;
 #include "moc_Dataresource.cpp"
