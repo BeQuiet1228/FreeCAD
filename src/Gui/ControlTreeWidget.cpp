@@ -7,12 +7,13 @@
 ControlTreeWidget::ControlTreeWidget(QWidget* parent)
 	:QTreeWidget(parent)
 {
+	initItem();
 	connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(itemDouble_clicke(QTreeWidgetItem*, int)));
 	
 	auto control = ContorlInterface::GetInstance();
 	auto chipicManager = control->getChipicManager();
-	if(connect(chipicManager, SIGNAL(chipicAnalysisFinished(unsigned long)), this, SLOT(controlAnalysis(unsigned long))))
-		std::cerr<< " ";
+	connect(chipicManager, SIGNAL(outputStructFileSignal(unsigned long)), this, SLOT(outputStructFile(unsigned long)));
+	connect(chipicManager, SIGNAL(newResultFIleSignal(unsigned long)), this, SLOT(outputTempFile(unsigned long)));
 }
 
 ControlTreeWidget::~ControlTreeWidget()
@@ -205,22 +206,16 @@ bool ControlTreeWidget::analysisType(const std::string& str, const QString& type
 	return true;
 }
 
-void ControlTreeWidget::itemDouble_clicke(QTreeWidgetItem* item, int column)
-{
-	sendControlMsg(item);
-}
-
-
 /**
-* @brief ControlTreeWidget::controlAnalysis 解析完成槽，再这里处理解析完成之后输出的结构图文件。
+* @brief ControlTreeWidget::makeFilePath 生成chipic输出的临时文件路径，并生成对应的临时数据集合的文件路径 放再tempFilePtah里
 * @param unsigned long threadID
-* @return void
+* @return QString
 */
-void ControlTreeWidget::controlAnalysis(unsigned long threadID)
+QString ControlTreeWidget::makeFilePath(unsigned long threadID)
 {
 	auto control = ContorlInterface::GetInstance();
 	QString m3dPath = control->getM3dPathForThreadID(threadID);
-	
+
 	//去掉文件名的后缀
 	QString temp = m3dPath;
 	QFileInfo fileInfo(temp);
@@ -233,29 +228,66 @@ void ControlTreeWidget::controlAnalysis(unsigned long threadID)
 	//获取线程数，因为并行时输出文件的路径不一样
 	int threadCount = control->getChipicThreadCount(threadID);
 	if (threadCount < 1)
-		return;
+		return "";
 	QString tempFilePath;
 	if (threadCount > 1)
 		tempFilePath = path + "/1/" + m3dFileName + "_Temp.h5";
 	else
-		tempFilePath = path  + "/" + m3dFileName + "_Temp.h5";
-
-	//打开结构图文件 获取结构图对象
-	Hdf5IO tempIO;
-	tempIO.setFilePath(tempFilePath.toStdString());
-	tempIO.initHdf5Data();
-	if (tempIO.hdf5DataList.size() < 1)
-		return;
+		tempFilePath = path + "/" + m3dFileName + "_Temp.h5";
 
 	//生成新的临时文件路径
 	QString newTempPath = path + "/" + m3dFileName + "_gather.h5";
 
+	this->tempFilePath = newTempPath;
+
+	return tempFilePath;
+}
+
+void ControlTreeWidget::itemDouble_clicke(QTreeWidgetItem* item, int column)
+{
+	sendControlMsg(item);
+}
+
+
+void ControlTreeWidget::outputStructFile(unsigned long threadID)
+{
+	QString filePath = makeFilePath(threadID);
+	if (filePath == "")
+		return;
+
+	//打开结构图文件 获取结构图对象
+	Hdf5IO tempIO;
+	tempIO.setFilePath(filePath.toStdString());
+	tempIO.initHdf5Data();
+	if (tempIO.hdf5DataList.size() < 1)
+		return;
+
 	//创建一个新的h5文件 存储临时的数据
-	Hdf5IO::creatNewHdf5File(tempFilePath.toStdString());
+	Hdf5IO::creatNewHdf5File(this->tempFilePath.toStdString());
 	Hdf5IO newHdf5IO;
-	newHdf5IO.setFilePath(tempFilePath.toStdString());
+	newHdf5IO.setFilePath(this->tempFilePath.toStdString());
 	auto structData = tempIO.hdf5DataList.begin();
 	auto newStructData = Hdf5IO::copyToHdf5IO(newHdf5IO, *structData);
-
+	init(newStructData);
 }
+
+void ControlTreeWidget::outputTempFile(unsigned long threadID)
+{
+	QString filePath = makeFilePath(threadID);
+	if (filePath == "")
+		return;
+	//打开结构图文件 获取结构图对象
+	Hdf5IO tempIO;
+	tempIO.setFilePath(filePath.toStdString());
+	tempIO.initHdf5Data();
+	if (tempIO.hdf5DataList.size() < 1)
+		return;
+
+	//打开h5文件 存储临时的数据
+	Hdf5IO newHdf5IO;
+	newHdf5IO.setFilePath(this->tempFilePath.toStdString());
+	auto structData = tempIO.hdf5DataList.begin();
+	auto newStructData = Hdf5IO::copyToHdf5IO(newHdf5IO, *structData);
+}
+
 

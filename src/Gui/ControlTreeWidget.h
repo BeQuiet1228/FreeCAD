@@ -7,9 +7,9 @@ class ControlTreeWidget :public QTreeWidget {
 	enum MsgType {
 		NONE = 0,
 		CONTOUR = 1,
-		OBSERVE,
-		VECTOR,
 		PHASE_SPACE,
+		OBSERVE,
+		VECTOR = 5,
 		RANGE,
 	};
 	Q_OBJECT
@@ -36,11 +36,14 @@ private:
 	bool addRangeItem(const std::string& str);
 	bool addVectorItem(const std::string& str);
 	bool analysisType(const std::string& str,const QString& typeName ,QString& name, QString& rank);
-
+	//生成临时文件路径
+	QString makeFilePath(unsigned long threadID);
 public Q_SLOTS :
 	void itemDouble_clicke(QTreeWidgetItem* item, int column);
 	//控制模块解析完成
-	void controlAnalysis(unsigned long threadID);
+	void outputStructFile(unsigned long threadID);
+	//输出临时文件
+	void outputTempFile(unsigned long threadID);
 
 private:
 	//存储临时文件路径

@@ -1,6 +1,7 @@
 #pragma once
 #include "SmartContorl.h"
 #include "HDF5Reader/hdf5io.h"
+#include <memory>
 class CInterfaceStack{
 
 public:
