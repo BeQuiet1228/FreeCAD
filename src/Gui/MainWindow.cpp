@@ -1916,8 +1916,8 @@ void MainWindow::inittreeContor(void* _combiview)
 {
 	CombiView* pCombiview = (CombiView*)_combiview;
 	QTabWidget* _tabwidget = pCombiview->getTabPanel();
-	ListTreeWidget* m_lisTreeWidget = new ListTreeWidget();
+	mTreeWidget = new ListTreeWidget();
 	int curindex = _tabwidget->count();
-	_tabwidget->insertTab(curindex, m_lisTreeWidget, GetEncodingstr("获取结果", ENCODING_GB2312));
+	_tabwidget->insertTab(curindex, mTreeWidget, tr("获取结果")/*GetEncodingstr("获取结果", ENCODING_GB2312)*/);
 }
 #include "moc_MainWindow.cpp"

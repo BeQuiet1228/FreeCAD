@@ -116,9 +116,9 @@ void DataSourceManage::loadhdffile(std::string filepath)
 	hdfDatelist.swap(_hdfDatelist);
 	/*****************************************************/
 	//结构图初始化
-	//int structindex = RendererFactory::findStructDataIndex(hdfDatelist);
-	//Hdf5Data structDate(hdfDatelist.at(structindex));
-	//factoryptr = new RendererFactory(structDate);
+	int structindex = RendererFactory::findStructDataIndex(hdfDatelist);
+	Hdf5Data structDate(hdfDatelist.at(structindex));
+	factoryptr = new RendererFactory(structDate);
 	/****************************************************/
 	_hdf5io = io;
 }
@@ -151,8 +151,6 @@ void DataSourceManage::init(ListTreeWidget* ptr,Plot* _plot){
 }
 void DataSourceManage::initStructData(Hdf5Data data)
 {
-	//int structindex = RendererFactory::findStructDataIndex(hdfDatelist);
-	//Hdf5Data structDate(hdfDatelist.at(structindex));
 	factoryptr = new RendererFactory(data);
 }
 DataSourceManage::~DataSourceManage(){
