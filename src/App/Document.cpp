@@ -2246,6 +2246,71 @@ int Document::recompute()
     Base::ObjectStatusLocker<Document::Status, Document> exe(Document::Recomputing, this);
 
     // delete recompute log
+    for (auto LogEntry : _RecomputeLog)
+        delete LogEntry;
+    _RecomputeLog.clear();
+
+    //do we have anything to do?
+    if (d->objectMap.empty())
+        return 0;
+
+    // get the sorted vector of all objects in the document and go though it from the end
+    vector<DocumentObject*> topoSortedObjects = topologicalSort();
+
+    if (topoSortedObjects.size() != d->objectArray.size()) {
+        cerr << "App::Document::recompute(): cyclic dependency detected" << endl;
+        topoSortedObjects = d->partialTopologicalSort(d->objectArray);
+    }
+
+    for (auto objIt = topoSortedObjects.rbegin(); objIt != topoSortedObjects.rend(); ++objIt) {
+        // ask the object if it should be recomputed
+        if ((*objIt)->isTouched() || (*objIt)->mustExecute() == 1) {
+            objectCount++;
+            if (_recomputeFeature(*objIt)) {
+                // if something happened break execution of recompute
+                return -1;
+            }
+            else {
+                (*objIt)->purgeTouched();
+                // set all dependent object touched to force recompute
+                for (auto inObjIt : (*objIt)->getInList())
+                    inObjIt->touch();
+            }
+        }
+    }
+#ifdef FC_DEBUG
+    // check if all objects are recalculated which were thouched
+    for (auto objectIt : d->objectArray) {
+        if (objectIt->isTouched())
+            cerr << "Document::recompute(): " << objectIt->getNameInDocument() << " still touched after recompute" << endl;
+    }
+#endif
+
+    signalRecomputed(*this);
+
+    return objectCount;
+}
+
+// 卢老师团队修改的代码，已经替换为原生代码，留作参考
+#ifdef INVALID_CODE
+int Document::recompute()
+{
+    if (testStatus(Document::Recomputing)) {
+        // this is clearly a bug in the calling instance
+        throw Base::RuntimeError("Nested recomputes of a document are not allowed");
+    }
+
+    int objectCount = 0;
+
+    // The 'SkipRecompute' flag can be (tmp.) set to avoid too many
+    // time expensive recomputes
+    bool skip = testStatus(Document::SkipRecompute);
+    if (skip)
+        return 0;
+
+    Base::ObjectStatusLocker<Document::Status, Document> exe(Document::Recomputing, this);
+
+    // delete recompute log
     for (auto LogEntry: _RecomputeLog)
         delete LogEntry;
     _RecomputeLog.clear();
@@ -2470,6 +2535,7 @@ int Document::recompute()
     return objectCount;
 }
 
+#endif
 #endif // USE_OLD_DAG
 
 /*!
