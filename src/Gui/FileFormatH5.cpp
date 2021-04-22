@@ -32,11 +32,12 @@ void FileFormatH5::openOnce(const QString& fileList, App::Document* doc)
 	Gui::PlotMDIView* plot = new Gui::PlotMDIView(*doc);
 	Gui::MainWindow::getInstance()->addWindow(plot);
 	//在MainWindow里面创建
-	Gui::DockWnd::CombiView* pcCombiView = qobject_cast<Gui::DockWnd::CombiView*>(Gui::DockWindowManager::instance()->getDockWindow("Combo View"));
+	/*Gui::DockWnd::CombiView* pcCombiView = qobject_cast<Gui::DockWnd::CombiView*>(Gui::DockWindowManager::instance()->getDockWindow("Combo View"));
 	QTabWidget* _tabwidget = pcCombiView->getTabPanel();
 	ListTreeWidget* m_lisTreeWidget = new ListTreeWidget();
-	_tabwidget->insertTab(3, m_lisTreeWidget,GetEncodingstr("获取结果",ENCODING_GB2312));
+	_tabwidget->insertTab(3, m_lisTreeWidget,GetEncodingstr("获取结果",ENCODING_GB2312));*/
 	//ListTreeWidget* m_lisTreeWidget = new ListTreeWidget();
+	ListTreeWidget* m_lisTreeWidget = Gui::MainWindow::getInstance()->mTreeWidget;
 	docManager->bindTreeContrue(m_lisTreeWidget,(Plot*)plot->GetViewPtr());
 	docManager->loadfile(fileList);
 	//auto guiDoc = Gui::Application::Instance->getDocument(doc);
