@@ -3,6 +3,7 @@
 #include <HDF5Reader/hdf5io.h>
 #include <iostream>
 #include "Contorl/ContorlInterface.h"
+#include <QFileInfo>
 ControlTreeWidget::ControlTreeWidget(QWidget* parent)
 	:QTreeWidget(parent)
 {
@@ -210,13 +211,51 @@ void ControlTreeWidget::itemDouble_clicke(QTreeWidgetItem* item, int column)
 }
 
 
+/**
+* @brief ControlTreeWidget::controlAnalysis 解析完成槽，再这里处理解析完成之后输出的结构图文件。
+* @param unsigned long threadID
+* @return void
+*/
 void ControlTreeWidget::controlAnalysis(unsigned long threadID)
 {
-	Hdf5IO hdf5io;
-	hdf5io.setFilePath("C:/PICGUIC_L/Example/3d/MILO_P/TEMP.H5");
-	hdf5io.initHdf5Data();
-	auto data = *(hdf5io.hdf5DataList.begin());
-	initItem();
-	init(data);
+	auto control = ContorlInterface::GetInstance();
+	QString m3dPath = control->getM3dPathForThreadID(threadID);
+	
+	//去掉文件名的后缀
+	QString temp = m3dPath;
+	QFileInfo fileInfo(temp);
+	QString name = fileInfo.fileName();
+	name = name.left(name.size() - 4);
+
+	QString m3dFileName = name.toLocal8Bit();
+	QString path = fileInfo.absolutePath();
+
+	//获取线程数，因为并行时输出文件的路径不一样
+	int threadCount = control->getChipicThreadCount(threadID);
+	if (threadCount < 1)
+		return;
+	QString tempFilePath;
+	if (threadCount > 1)
+		tempFilePath = path + "/1/" + m3dFileName + "_Temp.h5";
+	else
+		tempFilePath = path  + "/" + m3dFileName + "_Temp.h5";
+
+	//打开结构图文件 获取结构图对象
+	Hdf5IO tempIO;
+	tempIO.setFilePath(tempFilePath.toStdString());
+	tempIO.initHdf5Data();
+	if (tempIO.hdf5DataList.size() < 1)
+		return;
+
+	//生成新的临时文件路径
+	QString newTempPath = path + "/" + m3dFileName + "_gather.h5";
+
+	//创建一个新的h5文件 存储临时的数据
+	Hdf5IO::creatNewHdf5File(tempFilePath.toStdString());
+	Hdf5IO newHdf5IO;
+	newHdf5IO.setFilePath(tempFilePath.toStdString());
+	auto structData = tempIO.hdf5DataList.begin();
+	auto newStructData = Hdf5IO::copyToHdf5IO(newHdf5IO, *structData);
+
 }
 
