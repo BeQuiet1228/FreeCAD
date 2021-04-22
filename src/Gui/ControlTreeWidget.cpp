@@ -1,9 +1,28 @@
+#include "PreCompiled.h"
+
+#ifndef _PreComp_
+# include <boost/signals.hpp>
+# include <boost/bind.hpp>
+# include <QAbstractItemView>
+# include <QActionEvent>
+# include <QApplication>
+# include <QDesktopWidget>
+# include <QEvent>
+# include <QMessageBox>
+# include <QTimer>
+# include <QToolBar>
+# include <QToolButton>
+#endif
 #include "ControlTreeWidget.h"
 #include <QString>
 #include <HDF5Reader/hdf5io.h>
 #include <iostream>
 #include "Contorl/ContorlInterface.h"
 #include <QFileInfo>
+#include "App/Document.h"
+#include "Gui/Document.h"
+#include "App/DocumentDataManager.h"
+#include <QString>
 ControlTreeWidget::ControlTreeWidget(QWidget* parent)
 	:QTreeWidget(parent)
 {
@@ -52,19 +71,19 @@ void ControlTreeWidget::initItem()
 	}
 	
 	contourItem = items.at(0);
-	contourItem->setText(0,"contour");
+	contourItem->setText(0,tr("contour"));
 
 	phaseSpaceItem = items.at(1);
-	phaseSpaceItem->setText(0,"phaseSpace");
+	phaseSpaceItem->setText(0,tr("phaseSpace"));
 
 	observeItem = items.at(2);
-	observeItem->setText(0,"observe");
+	observeItem->setText(0,tr("observe"));
 
 	rangeItem = items.at(3);
-	rangeItem->setText(0,"range");
+	rangeItem->setText(0,tr("range"));
 
 	vectorItem = items.at(4);
-	vectorItem->setText(0,"vector");
+	vectorItem->setText(0,tr("vector"));
 
 	for each (QTreeWidgetItem* item in items)
 	{
@@ -121,7 +140,7 @@ bool ControlTreeWidget::getTypeAndIndex(QTreeWidgetItem* item, MsgType& type, in
 bool ControlTreeWidget::addContourItem(const std::string& str)
 {
 	QString typeName, name, rank;
-	typeName = "Contour";
+	typeName = tr("Contour");
 	if (!analysisType(str, typeName, name, rank))
 		return false;
 
@@ -134,7 +153,7 @@ bool ControlTreeWidget::addContourItem(const std::string& str)
 bool ControlTreeWidget::addPhaseSpaceItem(const std::string& str)
 {
 	QString typeName, name, rank;
-	typeName = "PhaseSpace";
+	typeName = tr("PhaseSpace");
 	if (!analysisType(str, typeName, name, rank))
 		return false;
 
@@ -147,7 +166,7 @@ bool ControlTreeWidget::addPhaseSpaceItem(const std::string& str)
 bool ControlTreeWidget::addObserveItem(const std::string& str)
 {
 	QString typeName, name, rank;
-	typeName = "Observe";
+	typeName = tr("Observe");
 	if (!analysisType(str, typeName, name, rank))
 		return false;
 
@@ -159,7 +178,7 @@ bool ControlTreeWidget::addObserveItem(const std::string& str)
 bool ControlTreeWidget::addRangeItem(const std::string& str)
 {
 	QString typeName, name, rank;
-	typeName = "Range";
+	typeName = tr("Range");
 	if (!analysisType(str, typeName, name, rank))
 		return false;
 
@@ -171,7 +190,7 @@ bool ControlTreeWidget::addRangeItem(const std::string& str)
 bool ControlTreeWidget::addVectorItem(const std::string& str)
 {
 	QString typeName, name, rank;
-	typeName = "Vector";
+	typeName = tr("Vector");
 	if (!analysisType(str, typeName, name, rank))
 		return false;
 
@@ -191,7 +210,7 @@ bool ControlTreeWidget::addVectorItem(const std::string& str)
 bool ControlTreeWidget::analysisType(const std::string& str, const QString& typeName, QString& name, QString& rank)
 {
 	QString qstr = QString::fromStdString(str);
-	auto lists = qstr.split("=");
+	auto lists = qstr.split(tr("="));
 
 	if (lists.size() != 2)
 		return false;
@@ -222,21 +241,21 @@ QString ControlTreeWidget::makeFilePath(unsigned long threadID)
 	QString name = fileInfo.fileName();
 	name = name.left(name.size() - 4);
 
-	QString m3dFileName = name.toLocal8Bit();
+	QString m3dFileName = name;
 	QString path = fileInfo.absolutePath();
 
 	//获取线程数，因为并行时输出文件的路径不一样
 	int threadCount = control->getChipicThreadCount(threadID);
 	if (threadCount < 1)
-		return "";
+		return tr("");
 	QString tempFilePath;
 	if (threadCount > 1)
-		tempFilePath = path + "/1/" + m3dFileName + "_Temp.h5";
+		tempFilePath = path + tr("/1/") + m3dFileName + tr("_Temp.h5");
 	else
-		tempFilePath = path + "/" + m3dFileName + "_Temp.h5";
+		tempFilePath = path + tr("/") + m3dFileName + tr("_Temp.h5");
 
 	//生成新的临时文件路径
-	QString newTempPath = path + "/" + m3dFileName + "_gather.h5";
+	QString newTempPath = path + tr("/") + m3dFileName + tr("_gather.h5");
 
 	this->tempFilePath = newTempPath;
 
@@ -251,8 +270,14 @@ void ControlTreeWidget::itemDouble_clicke(QTreeWidgetItem* item, int column)
 
 void ControlTreeWidget::outputStructFile(unsigned long threadID)
 {
+	//获取document对象
+	App::Document* doc = App::GetApplication().getActiveDocument();
+	DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
+	if (!docM)
+		return;
+
 	QString filePath = makeFilePath(threadID);
-	if (filePath == "")
+	if (filePath == tr(""))
 		return;
 
 	//打开结构图文件 获取结构图对象
@@ -269,12 +294,21 @@ void ControlTreeWidget::outputStructFile(unsigned long threadID)
 	auto structData = tempIO.hdf5DataList.begin();
 	auto newStructData = Hdf5IO::copyToHdf5IO(newHdf5IO, *structData);
 	init(newStructData);
+
+	docM->ToStructHdf5(newStructData);
 }
 
 void ControlTreeWidget::outputTempFile(unsigned long threadID)
 {
+	//获取document对象
+	App::Document *doc = App::GetApplication().getActiveDocument();
+	DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
+	
+	if (!docM)
+		return;
+
 	QString filePath = makeFilePath(threadID);
-	if (filePath == "")
+	if (filePath == tr(""))
 		return;
 	//打开结构图文件 获取结构图对象
 	Hdf5IO tempIO;
@@ -288,6 +322,9 @@ void ControlTreeWidget::outputTempFile(unsigned long threadID)
 	newHdf5IO.setFilePath(this->tempFilePath.toStdString());
 	auto structData = tempIO.hdf5DataList.begin();
 	auto newStructData = Hdf5IO::copyToHdf5IO(newHdf5IO, *structData);
+
+	docM->DisplatPlot(newStructData);
+	
 }
 
 

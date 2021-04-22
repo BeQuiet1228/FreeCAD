@@ -521,6 +521,7 @@ Hdf5Data Hdf5IO::copyToHdf5IO(Hdf5IO& hdf5IO, Hdf5Data& data)
 	newH5data.group = toGroup;
 	auto headlist = getHeadValue(toGroup);
 	newH5data.headList = headlist;
+	newH5data.init();
 	return newH5data;
 }
 

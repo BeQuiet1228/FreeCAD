@@ -33,4 +33,9 @@ public:
 private:
 	Hdf5Data structData;
 
+public: 
+	void setStructData(const Hdf5Data& data) {
+		this->structData = data;
+	}
+
 };
