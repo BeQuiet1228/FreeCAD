@@ -39,6 +39,10 @@ Q_SIGNALS:
 	void chipicAnalysisFinished(unsigned long);
 	//chipic异常退出
 	void chipicErrorClose(unsigned long);
+	//有新的结果图文件被生成
+	void newResultFIleSignal(unsigned long);
+	//输出结构图
+	void outputStructFileSignal(unsigned long);
 public Q_SLOTS:
 	void hasNewMessage();
 	//更新ui状态
@@ -53,6 +57,10 @@ public Q_SLOTS:
 	void chipicAnalysisFinished();
 	//load提示框被关闭
 	void loadDialogClose();
+	//有新的结果图文件被生成
+	void newResultFIleSlot(unsigned long threadID);
+	//输出结构图
+	void outputStructFileSlot(unsigned long threadID);
 public:
 	//关闭所有的chipic
 	void closeAllChipic();
@@ -64,6 +72,8 @@ public:
 	bool ButtonParalleRunClicked(const std::string& m3dPath);
 	//发送启动消息
 	void sendStartChipicMessage(const std::string& path, const int& threadCount);
+	//获取chipic的运行线程数
+	int getChipicThreadCount(unsigned long threadID);
 	//设置运行状态
 	void setRunType(const RunType& runType){
 		this->runType = runType;

@@ -172,6 +172,26 @@ void ChipicManager::loadDialogClose()
 }
 
 /**
+* @brief ChipicManager::newResultFIleSlot 当有新的结果图文件生成时被触发
+* @param unsigned long threadID
+* @return void
+*/
+void ChipicManager::newResultFIleSlot(unsigned long threadID)
+{
+	emit newResultFIleSignal(threadID);
+}
+
+/**
+* @brief ChipicManager::outputStructFileSlot chipic运行时输出结果图时被触发
+* @param unsigned long threadID
+* @return void
+*/
+void ChipicManager::outputStructFileSlot(unsigned long threadID)
+{
+	emit outputStructFileSignal(threadID);
+}
+
+/**
 * @brief ChipicManager::closeAllChipic
 * @return void
 */
@@ -389,6 +409,10 @@ bool ChipicManager::dispoesStartChipicMessage(const std::string json)
 	connect(newChipic.get(), SIGNAL(workFinished()), this, SLOT(chipicWorkFinished()));
 	//链接解析完成槽
 	connect(newChipic.get(), SIGNAL(analysisFinished()), this, SLOT(chipicAnalysisFinished()));
+	//连接有新文件生成槽
+	connect(newChipic.get(), SIGNAL(newResultFile(unsigned long)), this, SLOT(newResultFIleSlot(unsigned long)));
+	//连接结构图生成槽
+	connect(newChipic.get(), SIGNAL(outputStructFile(unsigned long)), this, SLOT(outputStructFileSlot(unsigned long)));
 
 	CurrentChipic = newChipic;
 	newChipic.reset();
@@ -490,6 +514,20 @@ void ChipicManager::sendStartChipicMessage(const std::string& path, const int& t
 
 	showLoadDailog();
 
+}
+
+/**
+* @brief ChipicManager::getChipicThreadCount 获取线程数
+* @param unsigned long thrdadID
+* @return int -1 代表没有找到chipic对象
+*/
+int ChipicManager::getChipicThreadCount(unsigned long threadID)
+{
+	auto chipic = chipicMap.find(threadID);
+	if (chipic == chipicMap.end())
+		return -1;
+	int count = chipic->second->threadCount;
+	return count;
 }
 
 /**

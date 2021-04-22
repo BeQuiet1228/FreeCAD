@@ -30,7 +30,7 @@ struct CONTROL_EXPORT Hdf5Data
     Group group;
 	//头部信息
     std::vector<std::string> headList;
-	//h5文件对象
+	//h5文件对象 
     std::shared_ptr<H5File> hdf5File;
 	//数据集对象
     std::vector<DataSet> listDataSet;

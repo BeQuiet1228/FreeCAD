@@ -57,5 +57,9 @@ public:
 	void showTreeWidget();
 	//清理chipicmanager的数据对象
 	void clearChipicManager();
+	//根据线程id获取路径
+	QString getM3dPathForThreadID(unsigned long threadID);
+	//获取chipic运行的线程数量
+	unsigned int getChipicThreadCount(unsigned long threadID);
 
 };

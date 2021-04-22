@@ -41,4 +41,8 @@ public Q_SLOTS :
 	void itemDouble_clicke(QTreeWidgetItem* item, int column);
 	//控制模块解析完成
 	void controlAnalysis(unsigned long threadID);
+
+private:
+	//存储临时文件路径
+	QString tempFilePath;
 };
