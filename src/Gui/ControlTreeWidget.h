@@ -48,4 +48,8 @@ public Q_SLOTS :
 private:
 	//存储临时文件路径
 	QString tempFilePath;
+	//string类型转换
+	QString tr(const std::string& st) {
+		return QString::fromStdString(st);
+	}
 };

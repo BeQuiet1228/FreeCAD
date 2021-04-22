@@ -112,8 +112,7 @@ void FileFormatM3DText::open(const QStringList& fileList)
 void FileFormatM3DText::openOnce(const QString& filePath, App::Document* doc)
 {
 	doc->FileName.setValue(filePath.toUtf8());
-	DocumentM3dText *docText = static_cast<DocumentM3dText*>(doc);
-
+	DocumentM3dText *docText = static_cast<DocumentM3dText*>(doc);	
 	if (!docText)
 		return;
 	docText->loadfile(filePath);
