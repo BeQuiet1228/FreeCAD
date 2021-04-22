@@ -31,7 +31,7 @@
 #define  putpix()
 
 #include <App/Application.h>
-
+#include "HDF5Reader/hdf5io.h"
 class QCloseEvent;
 
 namespace Gui{
@@ -256,6 +256,10 @@ private:
     struct ApplicationP* d;
     /// workbench python dictionary
     PyObject*             _pcWorkbenchDictionary;
+
+
+	public:
+		static void DisplatPlot(Hdf5Data data, int _type = 0);
 };
 
 } //namespace Gui

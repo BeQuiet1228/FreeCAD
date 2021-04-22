@@ -128,6 +128,9 @@
 #include "ControlTreeWidget.h"
 #include"DataVisualization/C_encoding.h"
 #include "TreeViewctrl.h"
+#include "DataVisualization/Plot.h"
+#include "PlotMDIView.h"
+#include "App/DocumentDataManager.h"
 #if defined(Q_OS_WIN32)
 #define slots
 //#include <private/qmainwindowlayout_p.h>
@@ -1921,4 +1924,25 @@ void MainWindow::inittreeContor(void* _combiview)
 	int curindex = _tabwidget->count();
 	_tabwidget->insertTab(curindex, mTreeWidget, tr("获取结果")/*GetEncodingstr("获取结果", ENCODING_GB2312)*/);
 }
+//void MainWindow::DisplatPlot(Hdf5Data data, DocumentManager* ptr, int _type){
+//	std::list<Gui::MDIView*> list = Gui::Application().activeDocument()->getMDIViews();
+//	Gui::PlotMDIView* ptr = nullptr;
+//	for each (Gui::MDIView* var in list)
+//	{
+//		ptr = dynamic_cast<Gui::PlotMDIView*> (var);
+//		if (ptr)break;
+//	}
+//	if (ptr != nullptr)
+//	{
+//		ptr->DisplatPlot(data, _type);
+//	}
+//	else
+//	{
+//		Gui::PlotMDIView* plot = new Gui::PlotMDIView(Gui::Application().activeDocument()->getDocument());
+//		Gui::MainWindow::getInstance()->addWindow(plot);
+//		ptr->bindTreeContrue(nullptr, (Plot*)plot->GetViewPtr());
+//		ptr->DisplatPlot(data, _type);
+//	}
+//
+//}
 #include "moc_MainWindow.cpp"

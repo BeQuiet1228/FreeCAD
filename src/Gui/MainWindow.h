@@ -205,7 +205,6 @@ public Q_SLOTS:
     void switchToTopLevelMode();
     void switchToDockedMode();
     void showMessage (const QString & message, int timeout = 0);
-
 protected:
     /**
      * This method checks if the main window can be closed by checking all open documents and views.
@@ -294,6 +293,7 @@ public:
 	//新加的树控件
 	//ListTreeWidget* mTreeWidget;
 	TreeViewCtrl* mTreeWidget;
+
 public:
 	void initContorlToolBar();
 	void setContorlUI();
@@ -303,6 +303,7 @@ public:
 	void inittreeContor();
 	void inittreeContor(void*);
 	void addTitleAction(QAction* action);
+	//void DisplatPlot(Hdf5Data data,DocumentManager* ptr,int _type=0);
 };
 
 inline MainWindow* getMainWindow()

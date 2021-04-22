@@ -3,6 +3,12 @@
 #include <string>
 #include <QWidget>
 #include "DataVisualization/Dataresource.h"
+#include "DataVisualization/Plot.h"
+#include "Gui/Document.h"
+#include "Gui/MDIView.h"
+#include "Gui/PlotMDIView.h"
+#include "Gui/MainWindow.h"
+#include "Gui/Application.h"
 bool DocumentManager::loadfile(const QString& filePath)
 {
 	std::string _filePath = filePath.toStdString();
@@ -40,7 +46,27 @@ void DocumentManager::ToStructHdf5(Hdf5Data data){
 		m_DataSourceManage->initStructData(data);
 }
 void DocumentManager::DisplatPlot(Hdf5Data data, int _type)
-{	
+{ 
+
+	m_DataSourceManage->DisPlayPlot(data, _type);
+	/*std::list<Gui::MDIView*> list=Gui::Application().activeDocument()->getMDIViews();
+	Gui::PlotMDIView* ptr=nullptr;
+	for each (Gui::MDIView* var in list)
+	{
+	ptr=dynamic_cast<Gui::PlotMDIView*> (var);
+	if (ptr)break;
+	}
+	if (ptr!=nullptr)
+	{
 	if (m_DataSourceManage)
-		m_DataSourceManage->DisPlayPlot(data, _type);
+	m_DataSourceManage->DisPlayPlot(data, _type);
+	}
+	else
+	{
+	Gui::PlotMDIView* plot = new Gui::PlotMDIView(Gui::Application().activeDocument()->getDocument());
+	Gui::MainWindow::getInstance()->addWindow(plot);
+	bindTreeContrue(nullptr, (Plot*)plot->GetViewPtr());
+	m_DataSourceManage->DisPlayPlot(data, _type);
+	}*/
+	
 }
