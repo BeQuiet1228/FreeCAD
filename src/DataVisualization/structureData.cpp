@@ -127,6 +127,7 @@ bool structureData::initXYRang(){
 		IM3X = *it; it++;
 		datasetkmt = *it;
 	}
+		break;
 	case C_Type::CYLINDRICAL:
 	{
 		IM1X = *it; it++;
@@ -134,6 +135,7 @@ bool structureData::initXYRang(){
 		IM3X = *it; it++;
 		datasetkmt = *it;
 	}
+		break;
 	case C_Type::POLAR:
 	{
 		IM2X = *it; it++;
@@ -141,6 +143,7 @@ bool structureData::initXYRang(){
 		IM1X = *it; it++;
 		datasetkmt = *it;
 	}
+		break;
 	}
 	/*********************************************************/
 

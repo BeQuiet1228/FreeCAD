@@ -31,6 +31,8 @@ SET(TIME_SRC TimeData.h
 	TimeRenderer.cpp
 	TimeRenderer.h
 )
+SET(CHAR_ENCODE C_encoding.cpp
+	C_encoding.h)
 
 SET(PARTICLE_SRC ParticleData.h
 	ParticleData.cpp
@@ -38,10 +40,11 @@ SET(PARTICLE_SRC ParticleData.h
 	ParticleRenderer.cpp
 )
 
-SET(STRUCT_SRC StructRenderer.h
-	StructRenderer.cpp
-	structureData.h
-	structureData.cpp
+SET(STRUCT_SRC 
+	#StructRenderer.h
+	#StructRenderer.cpp
+	#structureData.h
+	#structureData.cpp
 	StructData.cpp
 	StructData.h
 	StructRender.cpp
@@ -124,6 +127,7 @@ SET(DataVisualization_src
 	${STRUCT2D_SRC}
 	${LISTTREE_SRC}
 	${CONFIG_SRC}
+	${CHAR_ENCODE}
 )
 add_definitions(-DMY_DEBUG -D_DATA_VISUALIZATION_)
 if(DataVisualizationDll)
@@ -152,6 +156,7 @@ SOURCE_GROUP("contour" FILES ${CONTOUR_SRC})
 SOURCE_GROUP("struct2d" FILES ${STRUCT2D_SRC})
 SOURCE_GROUP("dataManage" FILES ${LISTTREE_SRC})
 SOURCE_GROUP("config" FILES ${CONFIG_SRC})
+SOURCE_GROUP("character_encoding" FILES ${CHAR_ENCODE})
 #增加包含目录
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}

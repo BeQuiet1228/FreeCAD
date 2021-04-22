@@ -2,6 +2,7 @@
 #include <map>
 #include <vector>
 #include "Dataresource.h"
+#include "C_encoding.h"
 #define  MAX_TYPE_NUMBER 5
 enum emType
 {
@@ -15,6 +16,7 @@ std::string Type[MAX_TYPE_NUMBER] = { "CONTOUR", "PHASESPACE", "RANGE", "VECTOR"
 std::string Structdirection[3] = { "Phi-Z",
 "Z-R",
 "R*cos(Phi)-R*sin(Phi)" };
+std::string Structdirection_cartesian[3] = { "X_Y", "Y_Z", "X_Z" };
 ListTreeWidget::ListTreeWidget(QWidget* parent) :QWidget(parent)
 {
 	//初始化TreeView的风格
@@ -23,8 +25,8 @@ ListTreeWidget::ListTreeWidget(QWidget* parent) :QWidget(parent)
 	goodsModel = new QStandardItemModel(m_TreeView);
 	goodsModel->setRowCount(0);
 	goodsModel->setColumnCount(0);
-	//goodsModel->setHeaderData(0, Qt::Horizontal, QString::fromLocal8Bit("分类:"));
-	goodsModel->setHorizontalHeaderLabels(QStringList() << (QString::fromLocal8Bit("分类")));
+	//goodsModel->setHorizontalHeaderLabels(QStringList() << (QString::fromLocal8Bit("分类")));
+	goodsModel->setHorizontalHeaderLabels(QStringList() << GetEncodingstr("分类",ENCODING_GB2312));
 	m_TreeView->setModel(goodsModel);
 	m_TreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	connect(m_TreeView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(on_doubleclick(const QModelIndex&)));
@@ -39,7 +41,6 @@ ListTreeWidget::~ListTreeWidget(){
 */
 void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 {
-	DataSourceManage::Getinstance()->clearMap();
 	//需要清空所有节点信息
 	if (goodsModel->hasChildren()>0)
 	{
@@ -64,11 +65,24 @@ void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 			//当获取到图表信息是结构图时
 			if (Hdf5Datalist[i].name.find("struct")!=std::string::npos)
 			{
-				for each (std::string var in Structdirection)
+				std::string coord_type = *(Hdf5Datalist[i].headList.end() - 1);
+				if (coord_type.find("cartesian") != std::string::npos)
 				{
-					itemlist[_str].push_back(var);
-					datalist[_str][var] = i;
+					for each (std::string var in Structdirection_cartesian)
+					{
+						itemlist[_str].push_back(var);
+						datalist[_str][var] = i;
+					}
 				}
+				else
+				{
+					for each (std::string var in Structdirection)
+					{
+						itemlist[_str].push_back(var);
+						datalist[_str][var] = i;
+					}
+				}
+				
 				//std::string str1 = "Phi-Z";
 				//std::string str2 = "Z-R";
 				//std::string str3 = "R*cos(Phi)-R*sin(Phi)";
@@ -92,7 +106,8 @@ void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 	{
 		//添加完父节点
 		//QString str = QString::fromStdString(iter->first);
-		QStandardItem* item = new QStandardItem(QString::fromLocal8Bit((iter->first).c_str()));
+		//QStandardItem* item = new QStandardItem(QString::fromLocal8Bit((iter->first).c_str()));
+		QStandardItem* item = new QStandardItem(GetEncodingstr((iter->first).c_str(),ENCODING_GB2312));
 		int row = goodsModel->rowCount();
 		goodsModel->setItem(row,item);
 		//添加子节点

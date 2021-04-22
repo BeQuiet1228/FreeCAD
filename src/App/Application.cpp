@@ -116,6 +116,7 @@
 #include <App/MaterialPy.h>
 #include <Base/GeometryPyCXX.h>
 #include "DocumentM3dMod.h"
+#include "DocumentDataManager.h"
 
 // If you stumble here, run the target "BuildExtractRevision" on Windows systems
 // or the Python script "SubWCRev.py" on Linux based systems which builds
@@ -444,7 +445,12 @@ App::Document* App::Application::newDocumentM3dText(const char * Name /*= 0l*/, 
 	python.runString("Gui.activateWorkbench(\"StartWorkbench\")");
 	return newDocument(new DocumentM3dText(), Name, UserName);
 }
-
+App::Document* App::Application::newDocumentH5(const char* Name/* = 01*/, const char* UserName/* = 01*/)
+{
+	//return newDocument(new DocumentManager(),Name,UserName);
+	DocumentManager* _DocumentManager = new DocumentManager();
+	return _DocumentManager;
+}
 App::Document* App::Application::newDocumentM2dText(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
 {
 	//切换到对应的工作台

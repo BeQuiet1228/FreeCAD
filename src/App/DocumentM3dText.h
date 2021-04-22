@@ -1,7 +1,8 @@
 #pragma once
-#include "Document.h"
+//#include "Document.h"
+#include "DocumentDataManager.h"
 #include <QString>
-class AppExport DocumentM3dText :public App::Document{
+class AppExport DocumentM3dText :public DocumentManager{
 public:
 	DocumentM3dText();
 	~DocumentM3dText();

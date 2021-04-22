@@ -914,9 +914,10 @@ SelectModule::Dict SelectModule::importHandler(const QString& fileName, const QS
 {
     return importHandler(QStringList() << fileName, filter);
 }
-
+#include <QDebug>
 SelectModule::Dict SelectModule::importHandler(const QStringList& fileNames, const QString& filter)
 {
+	qDebug()<<fileNames<<filter;
     // first check if there is a certain filter selected
     SelectModule::Dict dict;
     if (!filter.isEmpty()) {

@@ -78,8 +78,8 @@ void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
 	this->mainRenderer = rd;
 	auto xr = mainRenderer->getXRang();
 	auto yr = mainRenderer->getYRang();
-	//AxisL->setAxisRange(yr.min, yr.max);
-	//AxisB->setAxisRange(xr.min, xr.max);
+	AxisL->setAxisRange(yr.min, yr.max);
+	AxisB->setAxisRange(xr.min, xr.max);
 }
 
 /**
@@ -330,5 +330,9 @@ void Plot::keyReleaseEvent(QKeyEvent *event)
 	}
 	
 }
-
+void Plot::reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender)
+{
+	addRenderer(listRender);
+	reRender();
+}
 #include "moc_Plot.cpp"

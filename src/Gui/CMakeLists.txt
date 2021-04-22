@@ -325,9 +325,10 @@ set(Gui_MOC_HDRS
     TaskView/TaskView.h
     DAGView/DAGView.h
     DAGView/DAGModel.h
-        picgui_ribbon/PICRibbon.h
-        picgui_ribbon/PICRibbonTabContent.h
-        picgui_ribbon/PICRibbonButtonGroup.h
+    picgui_ribbon/PICRibbon.h
+    picgui_ribbon/PICRibbonTabContent.h
+    picgui_ribbon/PICRibbonButtonGroup.h
+	PlotMDIView.h
 )
 
 fc_wrap_cpp(Gui_MOC_SRCS ${Gui_MOC_HDRS})
@@ -436,14 +437,21 @@ SET(Command_CPP_SRCS
 	OpenFileConfig.h
 	OpenFileConfig.cpp
 )
+#��д������ļ�------�׺���
+SET(FILE_FORMAT_SRC
+	FileFormatH5.h
+	FileFormatH5.cpp
+)
+#------------------------------
 SET(Command_SRCS
     ${Command_CPP_SRCS}
     Action.h
     ActionFunction.h
     Command.h
 )
-SOURCE_GROUP("Command" FILES ${Command_SRCS})
 
+SOURCE_GROUP("Command" FILES ${Command_SRCS})
+SOURCE_GROUP("FileFormatH5" FILES ${FILE_FORMAT_SRC})
 # The dialog sources
 SET(Dialog_CPP_SRCS
     Clipping.cpp
@@ -1182,6 +1190,8 @@ SET(FreeCADGui_SRCS
     ManualAlignment.h
     TransactionObject.h
     WinNativeGestureRecognizers.h
+	PlotMDIView.h
+	PlotMDIView.cpp
 )
 
 SET(FreeCADGui_SRCS
@@ -1214,6 +1224,7 @@ SET(FreeCADGui_SRCS
     ${Workbench_SRCS}
     ${Selection_SRCS}
     ${FreeCADGui_SRCS}
+	${FILE_FORMAT_SRC}
 )
 
 if(MSVC)

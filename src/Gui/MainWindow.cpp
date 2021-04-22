@@ -126,6 +126,7 @@
 #include "MainWindowDef.h"
 #include <QVBoxLayout>
 #include "ControlTreeWidget.h"
+#include"DataVisualization/C_encoding.h"
 #if defined(Q_OS_WIN32)
 #define slots
 //#include <private/qmainwindowlayout_p.h>
@@ -304,7 +305,6 @@ void MainWindow::inintContorlUI()
 		//contorlDockWidget->setVisible(true);
 		layout->addStretch();
 	});
-	
 }
 
 void MainWindow::addTitleAction(QAction* action)
@@ -421,7 +421,7 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
         tree->setMinimumWidth(210);
         pDockMgr->registerDockWindow("Std_TreeView", tree);
     }
-
+	//inittreeContor();
     // Property view
     if (hiddenDockWindows.find("Std_PropertyView") == std::string::npos) {
         PropertyDockView* pcPropView = new PropertyDockView(0, this);
@@ -446,8 +446,9 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
         pcCombiView->setObjectName(QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget","Combo View")));
         pcCombiView->setMinimumWidth(150);
         pDockMgr->registerDockWindow("Std_CombiView", pcCombiView);
+		inittreeContor((void*)pcCombiView);
     }
-
+	//inittreeContor();
 #if QT_VERSION < 0x040500
     // Report view
     if (hiddenDockWindows.find("Std_ReportView") == std::string::npos) {
@@ -1902,6 +1903,21 @@ ActionStyleEvent::Style ActionStyleEvent::getType() const
 {
     return type;
 }
-
-
+void MainWindow::inittreeContor()
+{
+	//mTreeWidget = new ListTreeWidget();
+	Gui::DockWnd::CombiView* pcCombiView = qobject_cast<Gui::DockWnd::CombiView*>(Gui::DockWindowManager::instance()->getDockWindow("Combo View"));
+	QTabWidget* _tabwidget = pcCombiView->getTabPanel();
+	ListTreeWidget* m_lisTreeWidget = new ListTreeWidget();
+	int curindex = _tabwidget->count();
+	_tabwidget->insertTab(curindex, m_lisTreeWidget,GetEncodingstr("获取结果",ENCODING_GB2312));
+}
+void MainWindow::inittreeContor(void* _combiview)
+{
+	CombiView* pCombiview = (CombiView*)_combiview;
+	QTabWidget* _tabwidget = pCombiview->getTabPanel();
+	ListTreeWidget* m_lisTreeWidget = new ListTreeWidget();
+	int curindex = _tabwidget->count();
+	_tabwidget->insertTab(curindex, m_lisTreeWidget, GetEncodingstr("获取结果", ENCODING_GB2312));
+}
 #include "moc_MainWindow.cpp"

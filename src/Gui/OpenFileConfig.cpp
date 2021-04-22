@@ -8,6 +8,7 @@
 #include "LuaEditView.h"
 #include "MainWindow.h"
 #include <FileDialog.h>
+#include "FileFormatH5.h"
 std::shared_ptr<OpenFileConfig> OpenFileConfig::_instance;
 OpenFileConfig::~OpenFileConfig()
 {
@@ -27,7 +28,7 @@ void OpenFileConfig::init()
 	formats.push_back(new FileFormatM3DText);
 	formats.push_back(new FileFormatM2DText);
 	formats.push_back(new FileFormatM2dMod);
-
+	formats.push_back(new FileFormatH5);
 }
 
 /**
@@ -40,6 +41,7 @@ void OpenFileConfig::callOpen(QStringList& fileList)
 	for (auto formatIter = formats.begin(); formatIter != formats.end(); formatIter++)
 	{
 		QStringList pathList = (*formatIter)->isFormat(fileList);
+		qDebug() << pathList;
 		if (pathList.size() > 0)
 			(*formatIter)->open(pathList);
 	}
@@ -64,14 +66,17 @@ QString OpenFileConfig::makeFormatString()
 * @param const QStringList & fileList
 * @return QStringList 
 */
+#include <QDebug>
 QStringList  FileFormat::isFormat(QStringList& fileList)
 {
 	QStringList list;
-
+	
 	int formatLen = format.length();
+	qDebug() << format;
 	for (auto i = fileList.begin(); i != fileList.end();)
 	{
 		auto temp = i->right(formatLen).toLower();
+		qDebug() << temp;
 		if (format.toLower() == temp)
 		{
 			list.append(QString(*i));
@@ -82,8 +87,8 @@ QStringList  FileFormat::isFormat(QStringList& fileList)
 		}
 				
 	}
-
 	return list;
+	qDebug() << list;
 }
 
 FileFormatM3DText::FileFormatM3DText()

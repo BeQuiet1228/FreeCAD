@@ -75,7 +75,8 @@ public Q_SLOTS:
 	void canvasSelectRect(QRect rect);
 	//»­²¼È¡µã
 	void canvasSelectPoint(QPoint point);
-
+	//
+	void reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender);
 protected:
 	void resizeEvent(QResizeEvent *event) override;
 protected:
