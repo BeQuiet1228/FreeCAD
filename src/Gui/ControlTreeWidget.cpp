@@ -303,10 +303,8 @@ void ControlTreeWidget::outputTempFile(unsigned long threadID)
 	//获取document对象
 	App::Document *doc = App::GetApplication().getActiveDocument();
 	DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
-	
 	if (!docM)
 		return;
-
 	QString filePath = makeFilePath(threadID);
 	if (filePath == tr(""))
 		return;
