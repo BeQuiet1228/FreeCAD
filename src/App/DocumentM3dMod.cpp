@@ -24,22 +24,22 @@ bool DocumentM3dMod::save()
 bool DocumentM3dMod::undo()
 {
 	bool re = Document::undo();
-
-	Base::InterpreterSingleton python;
+	/*lzg*/
+	//Base::InterpreterSingleton python;
 	this->recompute();
 	this->flagNeedUpdateBoolean.setValue(0);
-	python.runString("DocumentTools.updateBoolean()");
+	//python.runString("DocumentTools.updateBoolean()");
 	return re;
 }
 
 bool DocumentM3dMod::redo()
 {
 	bool re = Document::redo();
-
-	Base::InterpreterSingleton python;
+	/*lzg*/
+	//Base::InterpreterSingleton python;
 	this->recompute();
 	this->flagNeedUpdateBoolean.setValue(0);
-	python.runString("DocumentTools.updateBoolean()");
+	//python.runString("DocumentTools.updateBoolean()");
 	return re;
 	
 }
