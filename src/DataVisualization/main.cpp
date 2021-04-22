@@ -30,7 +30,7 @@
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
-
+#if 1
 	std::string path = "D:/MILO_P.h5";
 	Hdf5IO IO(path);
 	IO.initHdf5Data();
@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
 
 	QWidget w;
 	w.show();
+#endif
 #if 0
 	CanvasItem::registerMetaTye();
 

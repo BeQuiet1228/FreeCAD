@@ -20,7 +20,6 @@ struct CONTROL_EXPORT Hdf5Data
 	Hdf5Data(std::shared_ptr<H5File> h5){
 		this->hdf5File = h5;
 	}
-	Hdf5Data() = default;
 	enum CoordinateSystem{
 		CARTESIAN = 0,
 		CYLINDER,
@@ -40,7 +39,9 @@ struct CONTROL_EXPORT Hdf5Data
 	//坐标系类型
 	CoordinateSystem coordinateSystem;
 	//初始化基本信息
-	void initInformation();
+	bool initInformation();
+	bool initStructInformation();
+	void init();
 
 };
 
@@ -93,8 +94,8 @@ private:
 	std::string getNameFromHeadList(const std::vector<std::string>& headList);
 
 public:
-	static void copyToHdf5IO(Hdf5IO& hdf5IO,Hdf5Data& data);
-	static void copyDataSet(DataSet& dataset, Group& toGroup, const std::string& newDataSetName);
+	static Hdf5Data copyToHdf5IO(Hdf5IO& hdf5IO,Hdf5Data& data);
+	static DataSet copyDataSet(DataSet& dataset, Group& toGroup, const std::string& newDataSetName);
 	static void copyGroup(Group& group, Group& toGroup);
 	static void copyToHdf5IO(Hdf5IO& hdf5IO, std::vector<Hdf5Data>& datas);
 	static void creatNewHdf5File(const std::string& fileName);

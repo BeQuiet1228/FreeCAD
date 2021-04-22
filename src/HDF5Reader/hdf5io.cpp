@@ -30,10 +30,8 @@ void Hdf5IO::setFilePath(const std::string& path)
 	QString temp = QString::fromUtf8(path.c_str());
 	std::string newPath = gbk->fromUnicode(temp).data();
 
-	H5Fcreate()
-
+	creatHdf5File(newPath);
 	Hdf5File.reset(new H5File(newPath, H5F_ACC_RDWR));
-	
 }
 
 /*
@@ -349,7 +347,7 @@ void Hdf5IO::getAllSubGroupAndDataSet(const Group& group, const std::vector<std:
 		data.listDataSet = datas;
 		data.group = subGroup;
 		data.headList = headList;
-		data.initInformation();
+		data.init();
 		hdf5DataList.push_back(data);
 	}
 }
@@ -382,7 +380,7 @@ void Hdf5IO::getStructData()
 		data.group = group;
 		data.name = "struct";
 		data.headList = headList;
-		data.initInformation();
+		data.init();
 		hdf5DataList.push_back(data);
 	}
 }
@@ -414,7 +412,7 @@ void Hdf5IO::getParData()
 		data.listDataSet.push_back(dataSet);
 		data.group = subGroup;
 		data.headList = headList;
-		data.initInformation();
+		data.init();
 		hdf5DataList.push_back(data);
 	}
 }
@@ -462,7 +460,7 @@ std::string Hdf5IO::getNameFromHeadList(const std::vector<std::string>& headList
 }
 
 
-void Hdf5IO::copyDataSet(DataSet& dataset, Group& toGroup, const std::string& newDataSetName)
+DataSet Hdf5IO::copyDataSet(DataSet& dataset, Group& toGroup, const std::string& newDataSetName)
 {
 	//数据大小 行与列的长度
 	DataSpace dataSpace = dataset.getSpace();
@@ -478,6 +476,8 @@ void Hdf5IO::copyDataSet(DataSet& dataset, Group& toGroup, const std::string& ne
 	toDataSet.write(values, dataType);
 
 	delete[] values;
+
+	return toDataSet;
 }
 
 void Hdf5IO::copyGroup(Group& group, Group& toGroup)
@@ -501,21 +501,27 @@ void Hdf5IO::copyGroup(Group& group, Group& toGroup)
 }
 
 
-void Hdf5IO::copyToHdf5IO(Hdf5IO& hdf5IO, Hdf5Data& data)
+Hdf5Data Hdf5IO::copyToHdf5IO(Hdf5IO& hdf5IO, Hdf5Data& data)
 {
 	int groupSize = hdf5IO.Hdf5File->getNumObjs();
 	std::string groupName = "DataGroup" + QString::number(groupSize).toStdString();
 	Group toGroup(hdf5IO.Hdf5File->createGroup(groupName));
 	copyGroup(data.group, toGroup);
 
+	Hdf5Data newH5data(hdf5IO.Hdf5File);
 
 	auto datalist = data.listDataSet;
 	for (int i = 0; i < datalist.size(); i++)
 	{
 		auto dataset = datalist.at(i);
 		std::string dataSetName = data.group.getObjnameByIdx(i);
-		copyDataSet(dataset, toGroup, dataSetName);
+		DataSet newDataSet = copyDataSet(dataset, toGroup, dataSetName);
+		newH5data.listDataSet.push_back(newDataSet);
 	}
+	newH5data.group = toGroup;
+	auto headlist = getHeadValue(toGroup);
+	newH5data.headList = headlist;
+	return newH5data;
 }
 
 void Hdf5IO::copyToHdf5IO(Hdf5IO& hdf5IO, std::vector<Hdf5Data>& datas)
@@ -597,19 +603,25 @@ void Hdf5IO::initHdf5Data()
     }
 }
 
+
 /**
-* @brief Hdf5Data::initInformation 根据头信息初始化基本信息
-* @return void
+* @brief Hdf5Data::initInformation 初始化通用数据信息
+* @return bool
 */
-void Hdf5Data::initInformation()
+bool Hdf5Data::initInformation()
 {
 	if (headList.size() == 0)
-		return;
+		return false;
 	QString str = QString::fromStdString(headList.at(0));
-	QStringList sl = str.split("$");
+	QStringList sl = str.split("=");
+	if (sl.size() < 2)
+		return false;
+	str = sl.at(1);
+
+	sl = str.split("$");
 
 	if (sl.size() < 2)
-		return;
+		return false;
 	QString temp = sl.at(1);
 	if (temp == "CYLINDRICAL")
 		coordinateSystem = CYLINDER;
@@ -619,6 +631,47 @@ void Hdf5Data::initInformation()
 		coordinateSystem = CARTESIAN;
 
 	if (sl.size() < 3)
-		return;
+		return false;
 	name = sl.at(2).toStdString();
+
+	return true;
+}
+
+/**
+* @brief Hdf5Data::initStructInformation 初始化结构图信息
+* @return bool
+*/
+bool Hdf5Data::initStructInformation()
+{
+	if (headList.size() < 4)
+		return false;
+	name = "struct";
+	QString str = QString::fromStdString(headList.at(3));
+	QStringList sl = str.split("=");
+	if (sl.size() < 2)
+		return false;
+	if (sl.at(0) != "system")
+		return false;
+	str = sl.at(1);
+	str = str.simplified();
+	if (str == "cylindrical")
+		coordinateSystem = CYLINDER;
+	else if (str == "polar")
+		coordinateSystem = POLAR;
+	else if (str == "cartesian")
+		coordinateSystem = CARTESIAN;
+
+	return true;
+}
+
+/**
+* @brief Hdf5Data::init 初始化数据信息
+* @return void
+*/
+void Hdf5Data::init()
+{
+	if (initInformation())
+		return;
+	if (initStructInformation())
+		return;
 }
