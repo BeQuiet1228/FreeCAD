@@ -22,6 +22,8 @@ protected:
 public Q_SLOTS:
 	void loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist);
 	void on_doubleclick(const QModelIndex &index);
+public:
+	virtual void double_clicked_event(const QModelIndex &index);
 protected:
 	QTreeView* m_TreeView;
 	QStandardItemModel *goodsModel;

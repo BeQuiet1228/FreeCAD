@@ -35,7 +35,7 @@
 #include <QToolBar>
 #include <QDockWidget>
 //#include"DataVisualization/ListTreeWidget.h"
-class TreeViewCtrl;
+
 class QMimeData;
 class QUrl;
 class QMdiSubWindow;
@@ -55,7 +55,7 @@ class CommandManager;
 class Document;
 class MacroManager;
 class MDIView;
-
+class TreeViewCtrl;
 namespace DockWnd {
     class HelpView;
 } //namespace DockWnd
@@ -292,7 +292,7 @@ public:
 	QDockWidget* contorlDockWidget;
 	//新加的树控件
 	//ListTreeWidget* mTreeWidget;
-	TreeViewCtrl* mTreeWidget;
+	Gui::TreeViewCtrl* mTreeWidget;
 
 public:
 	void initContorlToolBar();
