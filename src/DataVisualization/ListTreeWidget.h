@@ -22,7 +22,7 @@ protected:
 public Q_SLOTS:
 	void loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist);
 	void on_doubleclick(const QModelIndex &index);
-private:
+protected:
 	QTreeView* m_TreeView;
 	QStandardItemModel *goodsModel;
 	std::map <QStandardItem*, int> datainfor;

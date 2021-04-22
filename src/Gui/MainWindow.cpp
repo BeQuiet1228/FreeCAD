@@ -127,6 +127,7 @@
 #include <QVBoxLayout>
 #include "ControlTreeWidget.h"
 #include"DataVisualization/C_encoding.h"
+#include "TreeViewctrl.h"
 #if defined(Q_OS_WIN32)
 #define slots
 //#include <private/qmainwindowlayout_p.h>
@@ -1916,7 +1917,7 @@ void MainWindow::inittreeContor(void* _combiview)
 {
 	CombiView* pCombiview = (CombiView*)_combiview;
 	QTabWidget* _tabwidget = pCombiview->getTabPanel();
-	mTreeWidget = new ListTreeWidget();
+	mTreeWidget = new TreeViewCtrl();
 	int curindex = _tabwidget->count();
 	_tabwidget->insertTab(curindex, mTreeWidget, tr("获取结果")/*GetEncodingstr("获取结果", ENCODING_GB2312)*/);
 }

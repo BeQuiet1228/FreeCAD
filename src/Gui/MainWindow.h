@@ -34,7 +34,8 @@
 #include <QMdiArea>
 #include <QToolBar>
 #include <QDockWidget>
-#include"DataVisualization/ListTreeWidget.h"
+//#include"DataVisualization/ListTreeWidget.h"
+class TreeViewCtrl;
 class QMimeData;
 class QUrl;
 class QMdiSubWindow;
@@ -282,7 +283,6 @@ private:
     /// some kind of singleton
     static MainWindow* instance;
     struct MainWindowP* d;
-
 	//chnegtong
 public:
 	ContorlButtonBar* contorlButtonBar;
@@ -292,7 +292,8 @@ public:
 	MainWindowDef* mainWindowDef;
 	QDockWidget* contorlDockWidget;
 	//新加的树控件
-	ListTreeWidget* mTreeWidget;
+	//ListTreeWidget* mTreeWidget;
+	TreeViewCtrl* mTreeWidget;
 public:
 	void initContorlToolBar();
 	void setContorlUI();
