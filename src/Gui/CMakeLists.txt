@@ -1248,7 +1248,8 @@ if(MSVC)
     ADD_MSVC_PRECOMPILED_HEADER(FreeCADGui PreCompiled.h PreCompiled.cpp FreeCADGui_CPP_SRCS)
 endif(MSVC)
 
-add_library(FreeCADGui SHARED ${FreeCADGui_SRCS})
+fc_wrap_cpp(MyParameter_MOC MyParameter.h )
+add_library(FreeCADGui SHARED ${FreeCADGui_SRCS} MyParameter.h MyParameter.cpp ${MyParameter_MOC})
 
 if (FREECAD_USE_QT_FILEDIALOG)
     set_source_files_properties(FileDialog.cpp PROPERTIES COMPILE_FLAGS -DUSE_QT_FILEDIALOG)
