@@ -329,6 +329,7 @@ set(Gui_MOC_HDRS
     picgui_ribbon/PICRibbonTabContent.h
     picgui_ribbon/PICRibbonButtonGroup.h
 	PlotMDIView.h
+	TreeViewctrl.h
 )
 
 fc_wrap_cpp(Gui_MOC_SRCS ${Gui_MOC_HDRS})
@@ -437,12 +438,12 @@ SET(Command_CPP_SRCS
 	OpenFileConfig.h
 	OpenFileConfig.cpp
 )
-#��д������ļ�------�׺���
 SET(FILE_FORMAT_SRC
 	FileFormatH5.h
 	FileFormatH5.cpp
+	TreeViewctrl.h
+	TreeViewctrl.cpp
 )
-#------------------------------
 SET(Command_SRCS
     ${Command_CPP_SRCS}
     Action.h

@@ -134,10 +134,12 @@ DataSourceManage::DataSourceManage(){
 * @void
 */
 void DataSourceManage::init(ListTreeWidget* ptr,Plot* _plot){
-
-	//进行连接
-	connect(this, SIGNAL(_loadhdflist(std::vector<Hdf5Data>&)), ptr, SLOT(loadHdflist(std::vector<Hdf5Data>&)));
-	connect(ptr, SIGNAL(_transfromRenderer(std::string,int)), this, SLOT(tranfromRenderer(std::string,int)));
+	if (ptr)
+	{
+		//进行连接
+		connect(this, SIGNAL(_loadhdflist(std::vector<Hdf5Data>&)), ptr, SLOT(loadHdflist(std::vector<Hdf5Data>&)));
+		connect(ptr, SIGNAL(_transfromRenderer(std::string, int)), this, SLOT(tranfromRenderer(std::string, int)));
+	}
 	/*p = new Plot();
 	p->resize(400, 300);
 	p->show();*/

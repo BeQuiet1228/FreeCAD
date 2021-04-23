@@ -34,7 +34,8 @@
 #include <QMdiArea>
 #include <QToolBar>
 #include <QDockWidget>
-#include"DataVisualization/ListTreeWidget.h"
+//#include"DataVisualization/ListTreeWidget.h"
+
 class QMimeData;
 class QUrl;
 class QMdiSubWindow;
@@ -54,7 +55,7 @@ class CommandManager;
 class Document;
 class MacroManager;
 class MDIView;
-
+class TreeViewCtrl;
 namespace DockWnd {
     class HelpView;
 } //namespace DockWnd
@@ -204,7 +205,6 @@ public Q_SLOTS:
     void switchToTopLevelMode();
     void switchToDockedMode();
     void showMessage (const QString & message, int timeout = 0);
-
 protected:
     /**
      * This method checks if the main window can be closed by checking all open documents and views.
@@ -282,7 +282,6 @@ private:
     /// some kind of singleton
     static MainWindow* instance;
     struct MainWindowP* d;
-
 	//chnegtong
 public:
 	ContorlButtonBar* contorlButtonBar;
@@ -292,7 +291,9 @@ public:
 	MainWindowDef* mainWindowDef;
 	QDockWidget* contorlDockWidget;
 	//新加的树控件
-	ListTreeWidget* mTreeWidget;
+	//ListTreeWidget* mTreeWidget;
+	Gui::TreeViewCtrl* mTreeWidget;
+
 public:
 	void initContorlToolBar();
 	void setContorlUI();
@@ -302,6 +303,7 @@ public:
 	void inittreeContor();
 	void inittreeContor(void*);
 	void addTitleAction(QAction* action);
+	//void DisplatPlot(Hdf5Data data,DocumentManager* ptr,int _type=0);
 };
 
 inline MainWindow* getMainWindow()

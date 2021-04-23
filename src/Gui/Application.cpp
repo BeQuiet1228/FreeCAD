@@ -130,7 +130,8 @@
 #include <windows.h>
 #include <dbghelp.h>
 #include <LuaEditView.h>
-
+#include "PlotMDIView.h"
+#include "MainWindow.h"
 using namespace Gui;
 using namespace Gui::DockWnd;
 using namespace std;
@@ -292,6 +293,30 @@ Gui::MDIView* Application::activeView(void) const
         return NULL;
 }
 
+void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
+{
+	auto doc = Gui::Application::Instance->activeDocument();
+	std::list<Gui::MDIView*> list = doc->getMDIViews();
+	Gui::PlotMDIView* ptr = nullptr;
+	for each (Gui::MDIView* var in list)
+	{
+		ptr = dynamic_cast<Gui::PlotMDIView*> (var);
+		if (ptr)break;
+	}
+	if (ptr != nullptr)
+	{
+		((DocumentManager*)(doc->getDocument()))->DisplatPlot(data, _type);
+	}
+	else
+	{
+		Gui::PlotMDIView* plot = new Gui::PlotMDIView(*(doc->getDocument()));
+		Gui::MainWindow::getInstance()->addWindow(plot);
+		((DocumentManager*)(doc->getDocument()))->bindTreeContrue(nullptr, (Plot*)plot->GetViewPtr());
+		((DocumentManager*)(doc->getDocument()))->DisplatPlot(data, _type);
+	}
+
+}
+
 } // namespace Gui
 
 Application::Application(bool GUIenabled)
@@ -303,8 +328,6 @@ Application::Application(bool GUIenabled)
         App::GetApplication().signalRenameDocument.connect(boost::bind(&Gui::Application::slotRenameDocument, this, _1));
         App::GetApplication().signalActiveDocument.connect(boost::bind(&Gui::Application::slotActiveDocument, this, _1));
         App::GetApplication().signalRelabelDocument.connect(boost::bind(&Gui::Application::slotRelabelDocument, this, _1));
-
-
         // install the last active language
         ParameterGrp::handle hPGrp = App::GetApplication().GetUserParameter().GetGroup("BaseApp");
         hPGrp = hPGrp->GetGroup("Preferences")->GetGroup("General");
