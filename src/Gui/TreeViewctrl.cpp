@@ -8,6 +8,7 @@
 #include "Gui/Document.h"
 #include "Application.h"
 #include "PlotMDIView.h"
+#include "MainWindow.h"
 namespace Gui{
 	TreeViewCtrl::TreeViewCtrl(QWidget* parent):ListTreeWidget(parent){
 
@@ -32,7 +33,15 @@ namespace Gui{
 		Gui::PlotMDIView* ptr = nullptr;
 		for each (Gui::MDIView* var in list)
 		{
-			ptr=dynamic_cast<Gui::PlotMDIView*>
+			ptr = dynamic_cast<Gui::PlotMDIView*>(var);
+			if (ptr) break;
+		}
+		if (ptr == nullptr)
+		{
+			Gui::PlotMDIView* plot = new Gui::PlotMDIView(*guidoc->getDocument());
+			Gui::MainWindow::getInstance()->addWindow(plot);
+			(DocumentManager*)(docM)->bindTreeContrue(nullptr, (Plot*)plot->GetViewPtr());
+			guidoc->attachView(plot, false);
 		}
 		if (iter != datainfor.end())
 		{
