@@ -58,6 +58,7 @@ QString OpenFileConfig::makeFormatString()
 	{
 		temp += QString::fromLocal8Bit(" *.")  + (*i)->getFormat();
 	}
+	//std::cerr << temp.toStdString();
 	return temp;
 }
 

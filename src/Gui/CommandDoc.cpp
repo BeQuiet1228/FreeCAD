@@ -114,18 +114,18 @@ void StdCmdOpen::activated(int iMsg)
         filetypes.insert(filetypes.begin(), "FCStd");
     }
 
-	filetypes.insert(filetypes.begin() + 1, "h5");
+	
 	/*it = std::find(filetypes.begin(), filetypes.end(), "h5");
 	if (it!=filetypes.end())
 	{
 		filetypes.erase(it);
-		filetypes.insert(filetypes.begin() + 1, "h5");
 	}*/
+	//filetypes.insert(filetypes.begin() + 1, "h5");
     for (it=filetypes.begin();it != filetypes.end();++it) {
         formatList += QLatin1String(" *.");
         formatList += QLatin1String(it->c_str());
     }
-	qDebug() << formatList;
+	//qDebug() << formatList;
 	//新增在C++中添加文件格式的方法
 	//不与之前的功能有任何冲突
 
