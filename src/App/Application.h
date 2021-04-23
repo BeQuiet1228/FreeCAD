@@ -84,7 +84,7 @@ public:
 	App::Document* newDocumentM2dText(const char * Name = 0l, const char * UserName = 0l);
 	App::Document* newDocumentM3dMode(const char * Name = 0l, const char * UserName = 0l);
 	App::Document* newDocumentM2dMod(const char * Name = 0l, const char * UserName = 0l);
-	App::Document* newDocumentH5(const char* Name, const char* UserName);
+	App::Document* newDocumentH5(const char * Name = 0l, const char * UserName = 0l);
     /// Closes the document \a name and removes it from the application.
     bool closeDocument(const char* name);
     /// find a unique document name

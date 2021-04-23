@@ -16,11 +16,11 @@ namespace Gui{
 	}
 	void TreeViewCtrl::double_clicked_event(const QModelIndex &index)
 	{
-		/*App::Document *doc = App::GetApplication().getActiveDocument();
+
+		App::Document *doc = App::GetApplication().getActiveDocument();
 		DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
 		if (!docM)
-			return;*/
-
+			return;
 		//QString filePath = makeFilePath(threadID);
 		//if (filePath == tr(""))
 		//	return;

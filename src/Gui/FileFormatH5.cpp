@@ -9,7 +9,6 @@
 #include "MainWindow.h"
 #include "DataVisualization/Canvas.h"
 #include"DataVisualization/ListTreeWidget.h"
-#include "DataVisualization/C_encoding.h"
 void FileFormatH5::open(const QStringList& fileList)
 {
 	for (auto i = fileList.begin();i!=fileList.end(); i++)
@@ -29,8 +28,9 @@ void FileFormatH5::openOnce(const QString& fileList, App::Document* doc)
 		return;
 	CanvasItem::registerMetaTye();
 	//创建树控件，和plot窗口
-	Gui::PlotMDIView* plot = new Gui::PlotMDIView(*doc);
-	Gui::MainWindow::getInstance()->addWindow(plot);
+	//Gui::PlotMDIView* plot = new Gui::PlotMDIView(*doc);
+	//Gui::MainWindow::getInstance()->addWindow(plot);
+	//Gui::Application::Instance->attachView(plot);
 	//在MainWindow里面创建
 	/*Gui::DockWnd::CombiView* pcCombiView = qobject_cast<Gui::DockWnd::CombiView*>(Gui::DockWindowManager::instance()->getDockWindow("Combo View"));
 	QTabWidget* _tabwidget = pcCombiView->getTabPanel();
@@ -38,7 +38,7 @@ void FileFormatH5::openOnce(const QString& fileList, App::Document* doc)
 	_tabwidget->insertTab(3, m_lisTreeWidget,GetEncodingstr("获取结果",ENCODING_GB2312));*/
 	//ListTreeWidget* m_lisTreeWidget = new ListTreeWidget();
 	Gui::TreeViewCtrl* m_lisTreeWidget = Gui::MainWindow::getInstance()->mTreeWidget;
-	docManager->bindTreeContrue((ListTreeWidget*)m_lisTreeWidget,(Plot*)plot->GetViewPtr());
+	docManager->bindTreeContrue((ListTreeWidget*)m_lisTreeWidget,/*(Plot*)plot->GetViewPtr()*/nullptr);
 	docManager->loadfile(fileList);
 	//auto guiDoc = Gui::Application::Instance->getDocument(doc);
 	//auto view = guiDoc->getActiveView();

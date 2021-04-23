@@ -1,22 +1,48 @@
 #include "StructData.h"
 StructData::StructData(Hdf5Data& heData, DirectionType _type, const RunMod& mod):XYData(heData,mod),istrue(false){
-	m_Type = _type;
+	
 	std::vector<std::string> headerlist = autoHeaderInfo();
 	auto headeriter = headerlist.end() - 1;
 	if (headeriter->find("polar") != std::string::npos)
 	{
 		//当前为polar
 		_ctype = C_TYPE::POLAR;
+		switch (_type)
+		{
+		case R_Z:
+		case R_THETA:
+			m_Type = _type;break;
+		default:
+			m_Type = R_Z; break;
+		}
 	}
 	else if (headeriter->find("cylindrical") != std::string::npos)
 	{
 		//当前为cylindrical
 		_ctype = C_TYPE::CYLINDRICAL;
+		switch (_type)
+		{
+		case R_Z:
+		case R_THETA:
+			m_Type = _type; break;
+		default:
+			m_Type = R_Z; break;
+
+		}
 	}
 	else if (headeriter->find("cartesian") != std::string::npos)
 	{
 		//当前为cartexian
-		_ctype = C_TYPE::CARTESIAN;
+		_ctype = C_TYPE::CARTESIAN; 
+		switch (_type)
+		{
+		case X_Y:
+		case X_Z:
+		case Y_Z:
+			m_Type = _type; break;
+		default:
+			m_Type = X_Y; break;
+		}
 	}
 }
 

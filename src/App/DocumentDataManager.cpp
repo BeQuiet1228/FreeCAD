@@ -25,6 +25,7 @@ bool DocumentManager::bindTreeContrue(ListTreeWidget* ptr,Plot* plotptr)
 	return false;
 }
 DocumentManager::DocumentManager(){
+	//构造数据管理
 	m_DataSourceManage = new DataSourceManage();
 }
 DocumentManager::~DocumentManager(){

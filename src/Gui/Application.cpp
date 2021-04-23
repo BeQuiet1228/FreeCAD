@@ -283,8 +283,6 @@ struct PyMethodDef FreeCADGui_methods[] = {
      "of the Coin library and version information"},
     {NULL, NULL, 0, NULL}  /* sentinel */
 };
-
-
 Gui::MDIView* Application::activeView(void) const
 {
     if (activeDocument())
@@ -311,6 +309,7 @@ void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
 	{
 		Gui::PlotMDIView* plot = new Gui::PlotMDIView(*(doc->getDocument()));
 		Gui::MainWindow::getInstance()->addWindow(plot);
+		doc->attachView(plot,false);
 		((DocumentManager*)(doc->getDocument()))->bindTreeContrue(nullptr, (Plot*)plot->GetViewPtr());
 		((DocumentManager*)(doc->getDocument()))->DisplatPlot(data, _type);
 	}

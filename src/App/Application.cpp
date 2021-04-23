@@ -448,8 +448,9 @@ App::Document* App::Application::newDocumentM3dText(const char * Name /*= 0l*/, 
 App::Document* App::Application::newDocumentH5(const char* Name/* = 01*/, const char* UserName/* = 01*/)
 {
 	//return newDocument(new DocumentManager(),Name,UserName);
-	DocumentManager* _DocumentManager = new DocumentManager();
-	return _DocumentManager;
+	//DocumentManager* _DocumentManager = new DocumentManager();
+	//return _DocumentManager;
+	return newDocument(new DocumentManager(),Name,UserName);
 }
 App::Document* App::Application::newDocumentM2dText(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
 {
