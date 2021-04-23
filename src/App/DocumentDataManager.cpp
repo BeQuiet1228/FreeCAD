@@ -71,3 +71,9 @@ void DocumentManager::DisplatPlot(Hdf5Data data, int _type)
 	}*/
 	
 }
+
+void DocumentManager::_ToRenderer(std::string name, int index)
+{
+	if (m_DataSourceManage)
+		m_DataSourceManage->tranfromRenderer(name,index);
+}

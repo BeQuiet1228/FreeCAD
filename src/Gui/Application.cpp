@@ -315,7 +315,12 @@ void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
 	}
 
 }
-
+void Application::ToStruct(Hdf5Data data)
+{
+	auto doc = Gui::Application::Instance->activeDocument();
+	if (doc)
+		((DocumentManager*)(doc->getDocument()))->ToStructHdf5(data);
+}
 } // namespace Gui
 
 Application::Application(bool GUIenabled)
