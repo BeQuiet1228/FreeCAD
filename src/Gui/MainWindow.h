@@ -44,6 +44,7 @@ class ContorlButtonBar;
 class ContorlDataBar;
 //class CombiView;
 class MainWindowDef;
+class ControlTreeWidget;
 namespace App {
 class Document;
 }
@@ -290,6 +291,7 @@ public:
 	SmartContorlInterface *smartContorlInterface;
 	MainWindowDef* mainWindowDef;
 	QDockWidget* contorlDockWidget;
+    ControlTreeWidget* controlTreeWidget;
 	//新加的树控件
 	//ListTreeWidget* mTreeWidget;
 	Gui::TreeViewCtrl* mTreeWidget;

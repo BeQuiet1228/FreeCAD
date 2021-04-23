@@ -48,6 +48,8 @@ public Q_SLOTS :
 private:
 	//存储临时文件路径
 	QString tempFilePath;
+	//存储临时h5文件
+	Hdf5IO tempHdf5IO;
 	//string类型转换
 	QString tr(const std::string& st) {
 		return QString::fromStdString(st);

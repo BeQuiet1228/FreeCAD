@@ -1193,6 +1193,7 @@ PyObject *Application::sClientSendWinMsg(PyObject *self, PyObject *args, PyObjec
 	//新控制部分的看图接口，暂时使用
 	if (id == 109 || id == 107)
 	{
+		std::cerr << "id:" << id << "wp:" << wParam << std::endl;
 		auto contor = ContorlInterface::GetInstance();
 		contor->senWinMessage(id, wParam, lParam);
 	}

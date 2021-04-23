@@ -451,6 +451,8 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
         pcCombiView->setMinimumWidth(150);
         pDockMgr->registerDockWindow("Std_CombiView", pcCombiView);
 		inittreeContor((void*)pcCombiView);
+        controlTreeWidget = new ControlTreeWidget;
+        pcCombiView->getTabPanel()->addTab(controlTreeWidget,QString::fromLocal8Bit("control"));
     }
 	//inittreeContor();
 #if QT_VERSION < 0x040500
@@ -539,9 +541,6 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
 	this->smartContorlInterface->init();
 	inintContorlUI();
 
-    /**************²âÊÔ´úÂë******************/
-    ControlTreeWidget* treeWidget = new ControlTreeWidget;
-    treeWidget->show();
 }
 
 MainWindow::~MainWindow()

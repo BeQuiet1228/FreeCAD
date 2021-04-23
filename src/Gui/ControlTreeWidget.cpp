@@ -100,7 +100,7 @@ void ControlTreeWidget::sendControlMsg(QTreeWidgetItem* item)
 	
 	if (!getTypeAndIndex(item, type, index))
 		return;
-	control->senWinMessage(109, type, index);
+	control->senWinMessage(109, type, index + 1);
 
 }
 
@@ -123,13 +123,13 @@ bool ControlTreeWidget::getTypeAndIndex(QTreeWidgetItem* item, MsgType& type, in
 		index = observeItem->indexOfChild(item);
 		type = OBSERVE;
 	}else if (vectorItem->indexOfChild(item) >= 0) {
-		index = observeItem->indexOfChild(item);
+		index = vectorItem->indexOfChild(item);
 		type = VECTOR;
 	}else if (phaseSpaceItem->indexOfChild(item) >= 0) {
-		index = observeItem->indexOfChild(item);
+		index = phaseSpaceItem->indexOfChild(item);
 		type = PHASE_SPACE;
 	}else if (rangeItem->indexOfChild(item) >= 0) {
-		index = observeItem->indexOfChild(item);
+		index = rangeItem->indexOfChild(item);
 		type = RANGE;
 	}
 	if (type == NONE)
@@ -270,12 +270,6 @@ void ControlTreeWidget::itemDouble_clicke(QTreeWidgetItem* item, int column)
 
 void ControlTreeWidget::outputStructFile(unsigned long threadID)
 {
-	//获取document对象
-	App::Document* doc = App::GetApplication().getActiveDocument();
-	DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
-	if (!docM)
-		return;
-
 	QString filePath = makeFilePath(threadID);
 	if (filePath == tr(""))
 		return;
@@ -289,24 +283,15 @@ void ControlTreeWidget::outputStructFile(unsigned long threadID)
 
 	//创建一个新的h5文件 存储临时的数据
 	Hdf5IO::creatNewHdf5File(this->tempFilePath.toStdString());
-	Hdf5IO newHdf5IO;
-	newHdf5IO.setFilePath(this->tempFilePath.toStdString());
+	tempHdf5IO.setFilePath(this->tempFilePath.toStdString());
 	auto structData = tempIO.hdf5DataList.begin();
-	auto newStructData = Hdf5IO::copyToHdf5IO(newHdf5IO, *structData);
+	auto newStructData = Hdf5IO::copyToHdf5IO(tempHdf5IO, *structData);
 	init(newStructData);
 
-	docM->ToStructHdf5(newStructData);
 }
 
 void ControlTreeWidget::outputTempFile(unsigned long threadID)
 {
-	//获取document对象
-	App::Document *doc = App::GetApplication().getActiveDocument();
-	DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
-	
-	if (!docM)
-		return;
-
 	QString filePath = makeFilePath(threadID);
 	if (filePath == tr(""))
 		return;
@@ -317,14 +302,10 @@ void ControlTreeWidget::outputTempFile(unsigned long threadID)
 	if (tempIO.hdf5DataList.size() < 1)
 		return;
 
-	//打开h5文件 存储临时的数据
-	Hdf5IO newHdf5IO;
-	newHdf5IO.setFilePath(this->tempFilePath.toStdString());
-	auto structData = tempIO.hdf5DataList.begin();
-	auto newStructData = Hdf5IO::copyToHdf5IO(newHdf5IO, *structData);
-
-	docM->DisplatPlot(newStructData);
 	
+	auto structData = tempIO.hdf5DataList.begin();
+	auto newStructData = Hdf5IO::copyToHdf5IO(tempHdf5IO, *structData);
+
 }
 
 
