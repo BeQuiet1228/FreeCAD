@@ -26,6 +26,7 @@ bool DocumentManager::bindTreeContrue(ListTreeWidget* ptr,Plot* plotptr)
 }
 DocumentManager::DocumentManager(){
 	//构造数据管理
+	CanvasItem::registerMetaTye();
 	m_DataSourceManage = new DataSourceManage();
 }
 DocumentManager::~DocumentManager(){

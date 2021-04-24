@@ -265,21 +265,15 @@ QString ControlTreeWidget::makeFilePath(unsigned long threadID)
 
 void ControlTreeWidget::itemDouble_clicke(QTreeWidgetItem* item, int column)
 {
-	//std::string path = "D:/MILO_P.h5";
-	//Hdf5IO io(path);
-	//io.initHdf5Data();
-	////获取结构图
-	//auto structiter = io.hdf5DataList.begin();
-	//Hdf5Data structdata = *structiter;
-	////获取document对象
-	//App::Document* doc = App::GetApplication().getActiveDocument();
-	//DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
-	//if (!docM)
-	//	return;
-	///*DocumentManager* docM = new DocumentManager();*/
-	////docM->ToStructHdf5(structdata);
-	//Gui::Application::DisplatPlot(structdata);
-	sendControlMsg(item);
+
+	std::string path = "D:/MILO_P.h5";
+	Hdf5IO io(path);
+	io.initHdf5Data();
+	//获取结构图
+	Hdf5Data structData = *(io.hdf5DataList.begin());
+	Gui::Application::ToStruct(structData);
+	Gui::Application::DisplatPlot(structData);
+//	sendControlMsg(item);
 }
 
 

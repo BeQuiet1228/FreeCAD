@@ -1,4 +1,10 @@
 #include "StructData.h"
+/**
+* @brief StructData::StructData 构造函数
+* @param Hdf5Data& heData
+* @param DirectionType _type 方向
+* @param const RunMod& mod
+*/
 StructData::StructData(Hdf5Data& heData, DirectionType _type, const RunMod& mod):XYData(heData,mod),istrue(false){
 	
 	std::vector<std::string> headerlist = autoHeaderInfo();
@@ -45,7 +51,13 @@ StructData::StructData(Hdf5Data& heData, DirectionType _type, const RunMod& mod)
 		}
 	}
 }
-
+/**
+* @brief StructData::StructData 构造函数
+* @param Hdf5Data& heData
+* @param _3DPointf startpoint  三维点位1
+* @param _3DPointf endpoint 三维点位2
+* @parame const RunMod& mod
+*/
 StructData::StructData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf endpoint, const RunMod& mod):XYData(heData,mod),istrue(true),mstartpoint(startpoint),mendpoint(endpoint){
 	std::vector<std::string> headerlist = autoHeaderInfo();
 	int res = (startpoint == endpoint);
@@ -93,7 +105,10 @@ StructData::StructData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf endpoin
 	}
 
 }
-
+/**
+* @brief StructData::loadPoint  加载点位信息
+* @return bool 
+*/
 bool StructData::loadPoint()
 {
 	switch (_ctype)
@@ -106,7 +121,10 @@ bool StructData::loadPoint()
 		return loadPoint_cartesian();
 	}
 }
-
+/**
+* @brief StructData::loadPoint_cartesian 加载点位-cartesian坐标系
+* @return bool 
+*/
 bool StructData::loadPoint_cartesian()
 {
 	Data::ListValuesPtr listValues;
@@ -167,7 +185,10 @@ bool StructData::loadPoint_cartesian()
 	}
 	return true;
 }
-
+/**
+* @brief StructData::loadPoint_cylindrical 加载点位-cylindrical坐标系
+* @return bool
+*/
 bool StructData::loadPoint_cylindrical()
 {
 	Data::ListValuesPtr listValues;
@@ -213,7 +234,10 @@ bool StructData::loadPoint_cylindrical()
 	}
 	return true;
 }
-
+/**
+* @brief StructData::loadPoint_polar 加载点位--polar坐标系
+* @return bool
+*/
 bool StructData::loadPoint_polar()
 {
 	Data::ListValuesPtr listValues;
@@ -261,7 +285,10 @@ bool StructData::loadPoint_polar()
 	}
 	return true;
 }
-
+/**
+* @brief StructData::loadroom 获取信息
+* @return bool
+*/
 bool StructData::loadroom()
 {
 	switch (_ctype)
@@ -274,7 +301,10 @@ bool StructData::loadroom()
 		return loadroom_cartesian();
 	}
 }
-
+/**
+* @brief StructData::loadroom_polar 转换成绘制数据-polar坐标系
+* @return bool
+*/
 bool StructData::loadroom_polar(){
 	
 	switch (m_Type)
@@ -286,6 +316,10 @@ bool StructData::loadroom_polar(){
 	}
 	return false;
 }
+/**
+* @brief StructData::loadroom_cylindrical 转换成绘制数据-cylindrical坐标系
+* @return bool
+*/
 bool StructData::loadroom_cylindrical(){
 	switch (m_Type)
 	{
@@ -296,6 +330,10 @@ bool StructData::loadroom_cylindrical(){
 	}
 	return false;
 }
+/**
+* @brief StructData::loadroom_cartesian 转换成绘制数据-cartesian坐标
+* @return bool
+*/
 bool StructData::loadroom_cartesian(){
 	switch (m_Type)
 	{
@@ -308,23 +346,20 @@ bool StructData::loadroom_cartesian(){
 	}
 	return false;
 }
+/**
+* @brief StructData::loadroom_polar_R_Z 转换成绘制数据-polar坐标系-R_Z方向
+* @return bool 
+*/
 bool StructData::loadroom_polar_R_Z()
 {
 	if (pointXSize<2||pointYSize<2)
 		return false;
-	Data::ListValuesPtr listValues;
-	bool ok = autoModGetSourceData(listValues);//获取原始数据
-	if (!ok && !listValues && listValues->size() == 0)
-		return false;
-	auto it = (listValues->begin());
-	//获取全部切割
-	std::vector<QRectF> list= GetAllCurspace_polar_R_Z();
-	//获取datasetKmt的信息
-	std::vector<DaTaKmt> datainfolist = GetdatasetKmt_polar_R_Z();
-	//填充
-	QMap<int, QVector<QRectF>>allKmtInfo=fileproperty_polar_R_Z(list, datainfolist);
-	allcutroom.swap(allKmtInfo);
+	allcutroom = fileproperty_polar_R_Z(GetAllCurspace_polar_R_Z(), GetdatasetKmt_polar_R_Z());
 }
+/**
+* @brief StructData::GetAllCurspace_polar_R_Z 获取所有网格的-polar坐标系-R_Z方向
+* @return std::vector<QRectF>
+*/
 std::vector<QRectF> StructData::GetAllCurspace_polar_R_Z()
 {
 	std::vector<QRectF> list;
@@ -365,6 +400,10 @@ std::vector<QRectF> StructData::GetAllCurspace_polar_R_Z()
 	}
 	return list;
 }
+/**
+* @brief StructData::GetdatasetKmt_polar_R_Z 获取datasetkmt的数据-polar坐标系-R_Z方向
+* @return std::vector<StructData::DaTaKmt>
+*/
 std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_polar_R_Z()
 {
 	std::vector<DaTaKmt> list;
@@ -388,6 +427,12 @@ std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_polar_R_Z()
 	}
 	return list;
 }
+/**
+* @brief StructData::fileproperty_polar_R_Z 跟具不同属性放入字典
+* @param std::vector<QRectF>& list 所有的网格
+* @param std::vector<StructData::DaTaKmt>& datainfo datasetkmt的信息
+* @return QMap<int, QVector<QRectF>>
+*/
 QMap<int, QVector<QRectF>> StructData::fileproperty_polar_R_Z(std::vector<QRectF>& list, std::vector<StructData::DaTaKmt>& datainfo)
 {
 	Data::ListValuesPtr listValues;
@@ -408,20 +453,21 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_polar_R_Z(std::vector<QRectF
 	}
 	return allinfo;
 }
-
+/**
+* @brief StructData::loadroom_polar_R_THETA 转换成绘制信息-polar坐标系-R_THETA方向
+* @return bool
+*/
 bool StructData::loadroom_polar_R_THETA()
 {
 	if (pointXSize < 2 || pointYSize < 2)
 		return false;
-	Data::ListValuesPtr listValues;
-	bool ok = autoModGetSourceData(listValues);//获取原始数据
-	if (!ok && !listValues && listValues->size() == 0)
-		return false;
-	auto it = (listValues->begin());
-	std::map<int, std::vector<CutCir>> temp = filecir_polar_R_THETA();
-	allcutroom_cir.swap(temp);
+	allcutroom_cir= filecir_polar_R_THETA();
 	return true;
 }
+/**
+* @brief StructData::filecir_polar_R_THETA 根据不同属性分类R_THETA信息-polar坐标系-R_THETA方向
+* @return std::map<int, std::vector<StructData::CutCir>>
+*/
 std::map<int, std::vector<StructData::CutCir>> StructData::filecir_polar_R_THETA()
 {
 	std::map<int, std::vector<CutCir>> listcir;
@@ -484,42 +530,39 @@ std::map<int, std::vector<StructData::CutCir>> StructData::filecir_polar_R_THETA
 		}
 	}
 #pragma endregion 
-	/**************************************/
 	return listcir;
 }
+/**
+* @brief StructData::GetdatasetKmt_polar_R_THETA 获取datasetkmt信息-polar坐标系-R_THETA方向
+* @return std::vector<StructData::DaTaKmt>
+*/
 std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_polar_R_THETA(){
 	return GetdatasetKmt_polar_R_Z();
 }
+/**
+* @brief StructData::loadroom_cylindrical_r_z 转换成绘制信息-cylindrical坐标系-R_Z方向
+* @return bool
+*/
 bool StructData::loadroom_cylindrical_r_z(){
 	if (pointXSize < 2 || pointYSize < 2)
 		return false;
-	Data::ListValuesPtr listValues;
-	bool ok = autoModGetSourceData(listValues);//获取原始数据
-	if (!ok && !listValues && listValues->size() == 0)
-		return false;
-	auto it = (listValues->begin());
-	//获取全部切割
-	std::vector<QRectF> list = GetAllCurspace_cylindrical_R_Z();
-	//获取datasetKmt的信息
-	std::vector<DaTaKmt> datainfolist = GetdatasetKmt_cylindrical_R_Z();
-	//填充
-	QMap<int, QVector<QRectF>>allKmtInfo = fileproperty_cylindrical_R_Z(list, datainfolist);
-	allcutroom.swap(allKmtInfo);
+	allcutroom = fileproperty_cylindrical_R_Z(GetAllCurspace_cylindrical_R_Z(), GetdatasetKmt_cylindrical_R_Z());
 	return true;
 }
+/**
+* @brief StructData::loadroom_cylindrical_r_theta 获取绘制信息-cylindrical坐标系-R_THETA方向
+* @return bool
+*/
 bool StructData::loadroom_cylindrical_r_theta(){
 	if (pointXSize < 2 || pointYSize < 2)
 		return false;
-	Data::ListValuesPtr listValues;
-	bool ok = autoModGetSourceData(listValues);//获取原始数据
-	if (!ok && !listValues && listValues->size() == 0)
-		return false;
-	auto it = (listValues->begin());
-	std::map<int, std::vector<CutCir>> temp = filecir_cylindrical_R_THETA();
-	allcutroom_cir.swap(temp);
+	allcutroom_cir = filecir_cylindrical_R_THETA();
 	return true;
 }
-
+/**
+* @brief StructData::GetAllCurspace_cylindrical_R_Z 获取网格数据-cylindrical坐标系-R_Z方向
+* @return std::vector<QRectF>
+*/
 std::vector<QRectF> StructData::GetAllCurspace_cylindrical_R_Z()
 {
 	std::vector<QRectF> list;
@@ -560,6 +603,10 @@ std::vector<QRectF> StructData::GetAllCurspace_cylindrical_R_Z()
 	}
 	return list;
 }
+/**
+* @brief StructData::GetdatasetKmt_cylindrical_R_Z 获取datasetkmt信息-cylindrical坐标系-R_Z方向
+* @return std::vector<StructData::DaTaKmt>
+*/
 std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_cylindrical_R_Z(){
 	std::vector<DaTaKmt> list;
 	Data::ListValuesPtr listValues;
@@ -582,6 +629,12 @@ std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_cylindrical_R_Z(){
 	}
 	return list;
 }
+/**
+* @brief StructData::fileproperty_cylindrical_R_Z 根据属性分类信息-cylindrical坐标系-R_Z方向
+* @param std::vector<QRectF>& list
+* @param std::vector<DaTaKmt>& datainfo
+* @return QMap<int, QVector<QRectF>>
+*/
 QMap<int, QVector<QRectF>> StructData::fileproperty_cylindrical_R_Z(std::vector<QRectF>& list, std::vector<DaTaKmt>& datainfo){
 	Data::ListValuesPtr listValues;
 	autoModGetSourceData(listValues);//获取原始数据
@@ -601,6 +654,10 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_cylindrical_R_Z(std::vector<
 	}
 	return allinfo;
 }
+/**
+* @brief StructData::filecir_cylindrical_R_THETA 填充圆柱坐标系的数据-cylindrial坐标系-R_THETA方向
+* @return std::map<int, std::vector<StructData::CutCir>>
+*/
 std::map<int, std::vector<StructData::CutCir>> StructData::filecir_cylindrical_R_THETA()
 {
 	std::map<int, std::vector<CutCir>> listcir;
@@ -666,46 +723,47 @@ std::map<int, std::vector<StructData::CutCir>> StructData::filecir_cylindrical_R
 	/**************************************/
 	return listcir;
 }
-
+/**
+* @brief StructData::GetdatasetKmt_cylindrical_R_THETA 获取datasetkmt的信息-cylindrical坐标系-R_THETA方向
+* @return std::vector<StructData::DaTaKmt>
+*/
 std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_cylindrical_R_THETA(){
 	return GetdatasetKmt_cylindrical_R_Z();
 }
+/**
+* @brief StructData::loadroom_cartesian_x_y 转换绘制信息-cartesian坐标系-X_Y方向
+* @return bool
+*/
 bool StructData::loadroom_cartesian_x_y(){
 	if (pointXSize < 2 || pointYSize < 2)
 		return false;
-	//获取全部切割
-	std::vector<QRectF> list = GetAllCurspace_cartesian_x_y();
-	//获取datasetKmt的信息
-	std::vector<DaTaKmt> datainfolist = GetdatasetKmt_cartesian_x_y();
-	//填充
-	QMap<int, QVector<QRectF>>allKmtInfo = fileproperty_cartesian_x_y(list, datainfolist);
-	allcutroom.swap(allKmtInfo);
+	allcutroom = fileproperty_cartesian_x_y(GetAllCurspace_cartesian_x_y(), GetdatasetKmt_cartesian_x_y());
 	return true;
 }
+/**
+* @brief StructData::loadroom_cartesian_x_z 获取绘制信息-cartesian坐标系-X_Z方向
+* @return bool
+*/
 bool StructData::loadroom_cartesian_x_z(){
 	if (pointXSize < 2 || pointYSize < 2)
 		return false;
-	//获取全部切割
-	std::vector<QRectF> list = GetAllCurspace_cartesian_x_z();
-	//获取datasetKmt的信息
-	std::vector<DaTaKmt> datainfolist = GetdatasetKmt_cartesian_x_z();
-	//填充
-	QMap<int, QVector<QRectF>>allKmtInfo = fileproperty_cartesian_x_z(list, datainfolist);
-	allcutroom.swap(allKmtInfo);
+	allcutroom = fileproperty_cartesian_x_z(GetAllCurspace_cartesian_x_z(), GetdatasetKmt_cartesian_x_z());
 	return true;
 }
+/**
+* @brief StructData::loadroom_cartesian_y_z 获取绘制信息-caryesian坐标系-Y_Z方向
+* @return bool
+*/
 bool StructData::loadroom_cartesian_y_z(){
 	if (pointXSize < 2 || pointYSize < 2)
 		return false;
-	//获取全部切割
-	std::vector<QRectF> list = GetAllCurspace_cartesian_y_z();
-	//获取datasetKmt的信息
-	std::vector<DaTaKmt> datainfolist = GetdatasetKmt_cartesian_y_z();
-	//填充
-	QMap<int, QVector<QRectF>>allKmtInfo = fileproperty_cartesian_y_z(list, datainfolist);
-	allcutroom.swap(allKmtInfo);
+	allcutroom = fileproperty_cartesian_y_z(GetAllCurspace_cartesian_y_z(), GetdatasetKmt_cartesian_y_z());
 	return true;
 }
+/**
+* @brief StructData::GetAllCurspace_cartesian_x_y 获取网格-cartesian坐标系-X_Y方向
+* @retrun std::vector<QRectF>
+*/
 std::vector<QRectF> StructData::GetAllCurspace_cartesian_x_y()
 {
 	std::vector<QRectF> list;
@@ -746,6 +804,10 @@ std::vector<QRectF> StructData::GetAllCurspace_cartesian_x_y()
 	}
 	return list;
 }
+/**
+* @brief StructData::GetdatasetKmt_cartesian_x_y 获取datasetkmt数据-cartesian坐标系-X_Y方向
+* @return std::vector<StructData::DaTaKmt>
+*/
 std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_cartesian_x_y()
 {
 	std::vector<DaTaKmt> list;
@@ -769,6 +831,12 @@ std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_cartesian_x_y()
 	}
 	return list;
 }
+/**
+* @brief StructData::fileproperty_cartesian_x_y 根据属性分类-cartesian坐标系-X_Y方向
+* @param std::vector<QRectF>& list
+* @param std::vector<StructData::DaTaKmt>& datainfo
+* @return QMap<int, QVector<QRectF>>
+*/
 QMap<int, QVector<QRectF>> StructData::fileproperty_cartesian_x_y(std::vector<QRectF>& list, std::vector<StructData::DaTaKmt>& datainfo)
 {
 	Data::ListValuesPtr listValues;
@@ -789,6 +857,10 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_cartesian_x_y(std::vector<QR
 	}
 	return allinfo;
 }
+/**
+* @brief StructData::GetAllCurspace_cartesian_y_z 获取所有网格数据-Cartesian坐标系-y_z方向
+* @return std::vector<QRectF>
+*/
 std::vector<QRectF> StructData::GetAllCurspace_cartesian_y_z()
 {
 	std::vector<QRectF> list;
@@ -829,6 +901,10 @@ std::vector<QRectF> StructData::GetAllCurspace_cartesian_y_z()
 	}
 	return list;
 }
+/**
+* @brief StructData::GetdatasetKmt_cartesian_y_z 获取datasetkmt信息-cartesian坐标系-y_z方向
+* @return 
+*/
 std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_cartesian_y_z()
 {
 	return GetdatasetKmt_cartesian_x_y();

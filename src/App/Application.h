@@ -81,6 +81,7 @@ public:
 	//新建一个文本编辑器工程
 	App::Document* newDocument(Document* doc,const char * Name = 0l, const char * UserName = 0l);
 	App::Document* newDocumentM3dText(const char * Name = 0l, const char * UserName = 0l);
+	//DocumentManager* newDocumentM3dText(const char * Name = 0l, const char * UserName = 0l);
 	App::Document* newDocumentM2dText(const char * Name = 0l, const char * UserName = 0l);
 	App::Document* newDocumentM3dMode(const char * Name = 0l, const char * UserName = 0l);
 	App::Document* newDocumentM2dMod(const char * Name = 0l, const char * UserName = 0l);

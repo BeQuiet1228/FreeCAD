@@ -26,7 +26,7 @@ void FileFormatH5::openOnce(const QString& fileList, App::Document* doc)
 	DocumentManager* docManager = static_cast<DocumentManager*> (doc);
 	if (!docManager)
 		return;
-	CanvasItem::registerMetaTye();
+	
 	//创建树控件，和plot窗口
 	//Gui::PlotMDIView* plot = new Gui::PlotMDIView(*doc);
 	//Gui::MainWindow::getInstance()->addWindow(plot);

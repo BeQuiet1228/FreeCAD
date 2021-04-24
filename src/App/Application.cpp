@@ -431,6 +431,10 @@ App::Document* App::Application::newDocument(Document* doc, const char * Name /*
 
 	return _pActiveDoc;
 }
+//DocumentManager* App::Application::newDocumentManager(DocumentManager* doc, const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
+//{
+//	
+//}
 
 /**
 * @brief App::Application::newDocumentM3dText  往工程管理器里添加一个文本编辑器工程  用于编辑M2d文件  以及 M3d文件 
@@ -445,6 +449,12 @@ App::Document* App::Application::newDocumentM3dText(const char * Name /*= 0l*/, 
 	python.runString("Gui.activateWorkbench(\"StartWorkbench\")");
 	return newDocument(new DocumentM3dText(), Name, UserName);
 }
+//DocumentManager* App::Application::newDocumentM2dText(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
+//{
+//	Base::InterpreterSingleton python;
+//	python.runString("Gui.activateWorkbench(\"StartWorkbench\")");
+//	return newDocument(new DocumentM3dText(), Name, UserName);
+//}
 App::Document* App::Application::newDocumentH5(const char* Name/* = 01*/, const char* UserName/* = 01*/)
 {
 	//return newDocument(new DocumentManager(),Name,UserName);
