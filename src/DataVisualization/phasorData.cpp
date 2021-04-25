@@ -325,19 +325,12 @@ bool phasorData::initVectorData2(){
 			len_coef.push_back(QPointF(x_coef,y_coef));
 			float _p2Len = sqrt(x_coef*x_coef + y_coef*y_coef);
 			float rotation = _p2Len / Svector;
-			//printf("\n rotation:%f\n", rotation);
 			QPointF _p2;
-//#define _DEBUG_
-#ifdef _DEBUG_
-			QPointF _p1 = p1[i];
-			float _X = MaxRectLen*rotation*(x_coef / _p2Len);
-			float _Y = MaxRectLen*rotation*(y_coef / _p2Len);
-			printf("X:%f,Y:%f,MAX_LEN:%f\n", _X, _Y, MaxRectLen);
-#endif
-			_p2.setX(p1[i].x() + MaxRectLen*rotation*(x_coef / _p2Len));
-			_p2.setY(p1[i].y() + MaxRectLen*rotation*(y_coef / _p2Len));
-			//printf("p1.x:%f,p2.x:%f\n",p1[i].x(),_p2.x());
-			//printf("p1.y:%f,p2.y:%f\n", p1[i].y(), _p2.y());
+			//之前得计算方法--暂时保留
+			//_p2.setX(p1[i].x() + MaxRectLen*rotation*(x_coef / _p2Len));
+			//_p2.setY(p1[i].y() + MaxRectLen*rotation*(y_coef / _p2Len));
+			_p2.setX(p1[i].x() + Width*rotation*(x_coef / _p2Len)*0.95);
+			_p2.setY(p1[i].y() + Height*rotation*(y_coef / _p2Len)*0.95);
 			p2.push_back(_p2);
 		}
 		

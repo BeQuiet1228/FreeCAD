@@ -3,9 +3,8 @@
 #define _DOCUMENTMANAGER_H_
 #include "Document.h"
 #include <QString>
-//class DataSourceManage;
-//class ListTreeWidget;
 #include "DataVisualization/Dataresource.h"
+//class DataSourceManage;
 class AppExport DocumentManager :public App::Document
 {
 public:

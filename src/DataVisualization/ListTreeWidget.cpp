@@ -17,6 +17,10 @@ std::string Structdirection[3] = { "Phi-Z",
 "Z-R",
 "R*cos(Phi)-R*sin(Phi)" };
 std::string Structdirection_cartesian[3] = { "X_Y", "Y_Z", "X_Z" };
+/**
+* @brief ListTreeWidget::ListTreeWidget 构造函数
+* @param QWidget* parent
+*/
 ListTreeWidget::ListTreeWidget(QWidget* parent) :QWidget(parent)
 {
 	//初始化TreeView的风格
@@ -142,6 +146,11 @@ void ListTreeWidget::on_doubleclick(const QModelIndex &index)
 {
 	double_clicked_event(index);
 }
+/**
+* @brief ListTreeWidget::GetType 获取数据类型
+* @param std::string name 
+* @return std::string
+*/
 std::string ListTreeWidget::GetType(std::string name)
 {
 	int index = -1;
@@ -169,22 +178,21 @@ std::string ListTreeWidget::GetType(std::string name)
 		return "未知图";
 	}
 }
+/**
+* @brief ListTreeWidget::double_clicked_event 树控件双击事件(可重写)
+* @param const QModelIndex &index
+* @return void
+*/
 void ListTreeWidget::double_clicked_event(const QModelIndex &index)
 {
-	//qDebug() << index;
-	//获取到对应的控件
-	//通过QStandardItemModel的itemFromIndex函数即可得到QModelIndex对应的QStandardItem。
 	QStandardItem* currenitem = goodsModel->itemFromIndex(index);
 	//寻找对应的hdf数据
 	auto iter = datainfor.find(currenitem);
-	//QModelIndex _parent=index.parent();//获取父节点
 	if (iter != datainfor.end())
 	{
 		//传入hdf5数据
 		std::string name = (index.data().toString()).toStdString();
 		printf("%s", name.c_str());
-		//std::shared_ptr<Hdf5Data> data =iter->second;
-		//DataSourceManage::Getinstance()->tranfromRenderer(name, data);
 		emit _transfromRenderer(name, iter->second);
 	}
 }

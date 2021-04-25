@@ -98,7 +98,10 @@ void StructRender::transitionPoint(QPointF& point, const float& xScale, const Da
 	point.setX(transitionX(point.x(), xScale, xr));
 	point.setY(transitionY(point.y(), yScale, yr));
 }
-
+/**
+* @brief StructRender::drawImage 绘制
+* @return bool
+*/
 bool StructRender::drawImage(){
 	std::shared_ptr<StructData> d = std::dynamic_pointer_cast<StructData>(data);
 	C_TYPE ctype = d->GetC_TYPE();
@@ -115,6 +118,10 @@ bool StructRender::drawImage(){
 bool StructRender::addListRang(std::list<Data::Rang> listRang){
 	return true;
 }
+/**
+* @brief StructRender::drawPointImage 取点
+* @return bool 
+*/
 bool StructRender::drawPointImage(){
 	std::shared_ptr<StructData> d = std::dynamic_pointer_cast<StructData>(data);
 	C_TYPE ctype = d->GetC_TYPE();
@@ -128,6 +135,10 @@ bool StructRender::drawPointImage(){
 		return drawPointImage_cartesian();
 	}
 }
+/**
+* @brief StructRender::setDefaultRang 设置默认刻度区间
+* @return bool
+*/
 bool StructRender::setDefaultRang(){
 	auto d = std::dynamic_pointer_cast<StructData>(data);
 	if (!d)
@@ -136,6 +147,10 @@ bool StructRender::setDefaultRang(){
 	setYRang(d->getYRang());
 	return true;
 }
+/**
+* @brief StructRender::dataInit 初始化数据
+* @return void
+*/
 void StructRender::dataInit(){
 	Renderer::dataInit();
 	auto d = std::dynamic_pointer_cast<StructData>(data);
@@ -145,7 +160,10 @@ void StructRender::dataInit(){
 		d->loadroom();
 	}
 }
-
+/**
+* @brief StructRender::drawImage_polar 绘制-polar坐标系
+* @return bool
+*/
 bool StructRender::drawImage_polar()
 {
 	std::shared_ptr<StructData> d = std::dynamic_pointer_cast<StructData>(data);
@@ -158,6 +176,10 @@ bool StructRender::drawImage_polar()
 		return drawImage_polar_r_theta();
 	}
 }
+/**
+* @brief StructRender::drawImage_polar 绘制-cylindrical坐标系
+* @return bool
+*/
 bool StructRender::drawImage_cylindrical()
 {
 	std::shared_ptr<StructData> d = std::dynamic_pointer_cast<StructData>(data);
@@ -171,6 +193,10 @@ bool StructRender::drawImage_cylindrical()
 	}
 	return true;
 }
+/**
+* @brief StructRender::drawImage_polar 绘制-cartesian坐标系
+* @return bool
+*/
 bool StructRender::drawImage_cartesian()
 {
 	std::shared_ptr<StructData> d = std::dynamic_pointer_cast<StructData>(data);
@@ -186,13 +212,29 @@ bool StructRender::drawImage_cartesian()
 	}
 	return true;
 }
-
+/**
+* @brief StructRender::drawImage_polar 绘制-polar坐标系-rz方向
+* @return bool
+*/
 bool StructRender::drawImage_polar_r_z(){
 	return drawImage_rect_space();
 }
+/**
+* @brief StructRender::drawImage_polar 绘制-polar坐标系-r_theta方向
+* @return bool
+*/
 bool StructRender::drawImage_polar_r_theta(){
 	return drawImage_rand_space();
 }
+/**
+* @brief StructRender::GetPath 获取绘制路径
+* @param std::vector<StructData::CutCir>& _vector 圆柱坐标系数据
+* @param const Data::Rang& xr 
+* @param const Data::Rang& yr
+* @param const float& xScale
+* @param const float& yScale
+* @return QVector<QPainterPath>
+*/
 QVector<QPainterPath> StructRender::GetPath(std::vector<StructData::CutCir>& _vector, const Data::Rang& xr, const Data::Rang& yr, const float& xScale, const float& yScale)
 {
 	qreal pi = 3.141592653589793;
@@ -233,13 +275,24 @@ QVector<QPainterPath> StructRender::GetPath(std::vector<StructData::CutCir>& _ve
 	}
 	return pathlist;
 }
-
+/**
+* @brief StructRender::drawImage_cylindrical_r_z 绘制-cylindrical坐标系-rz方向
+* @return bool
+*/
 bool StructRender::drawImage_cylindrical_r_z(){
 	return drawImage_rect_space();
 }
+/**
+* @brief StructRender::drawImage_cylindrical_r_theta 绘制-cylindrical坐标系-r_theta方向
+* @return bool
+*/
 bool StructRender::drawImage_cylindrical_r_theta(){
 	return drawImage_rand_space();
 }
+/**
+* @brief StructRender::drawImage_rect_space 绘制-矩形空间
+* @return bool
+*/
 bool StructRender::drawImage_rect_space(){
 	float yScale(0.0), xScale(0.0);
 	if (!getTransitionScale(xScale, yScale))
@@ -282,6 +335,10 @@ bool StructRender::drawImage_rect_space(){
 	setImage(nImg);
 	return true;
 }
+/**
+* @brief StructRender::drawImage_rand_space 绘制-扇形空间
+* @return bool
+*/
 bool StructRender::drawImage_rand_space(){
 	float yScale(0.0), xScale(0.0);
 	if (!getTransitionScale(xScale, yScale))
@@ -315,17 +372,33 @@ bool StructRender::drawImage_rand_space(){
 	setImage(nImg);
 	return true;
 }
+/**
+* @brief StructRender::drawImage_cartesian_x_y 绘制-cartesian坐标系-xy方向
+* @return bool
+*/
 bool StructRender::drawImage_cartesian_x_y(){
 	return drawImage_rect_space();
 }
+/**
+* @brief StructRender::drawImage_cartesian_y_z 绘制-cartesian坐标系-yz方向
+* @return bool
+*/
 bool StructRender::drawImage_cartesian_y_z()
 {
 	return drawImage_rect_space();
 }
+/**
+* @brief StructRender::drawImage_cartesian_x_z 绘制-cartesian坐标系-xz方向
+* @return bool
+*/
 bool StructRender::drawImage_cartesian_x_z()
 {
 	return drawImage_rect_space();
 }
+/**
+* @brief StructRender::drawPointImage_polar 绘制-polar坐标系
+* @return bool
+*/
 bool StructRender::drawPointImage_polar(){
 	std::shared_ptr<StructData> d = std::dynamic_pointer_cast<StructData>(data);
 	DirectionType _type = d->GetDirectionType();
@@ -337,6 +410,10 @@ bool StructRender::drawPointImage_polar(){
 		return drawPointImage_polar_r_theta();
 	}
 }
+/**
+* @brief StructRender::drawPointImage_cylindrical 绘制-cylindrical坐标系
+* @return bool
+*/
 bool StructRender::drawPointImage_cylindrical(){
 	std::shared_ptr<StructData> d = std::dynamic_pointer_cast<StructData>(data);
 	DirectionType _type = d->GetDirectionType();
@@ -348,26 +425,52 @@ bool StructRender::drawPointImage_cylindrical(){
 		return drawPointImage_cylindrical_r_theta();
 	}
 }
+/**
+* @brief StructRender::drawPointImage_cartesian 绘制-cartesian坐标系
+* @return bool
+*/
 bool StructRender::drawPointImage_cartesian(){
 	return drawPointImage_cartesian_x_y_z();
 }
-
+/**
+* @brief StructRender::drawPointImage_polar_r_z 绘制-polar坐标系-rz方向
+* @return bool
+*/
 bool StructRender::drawPointImage_polar_r_z(){
 	return drawPointRect();
 }
+/**
+* @brief StructRender::drawPointImage_polar_r_theta 绘制取点-polar坐标系-R_THETA方向
+* @return bool
+*/
 bool StructRender::drawPointImage_polar_r_theta(){
 	return drawPointCir();
 }
+/**
+* @brief StructRender::drawPointImage_cylindrical_r_z 绘制取点-cylindrical坐标系-rz方向
+* @return bool
+*/
 bool StructRender::drawPointImage_cylindrical_r_z(){
 	return drawPointRect();
 }
+/**
+* @brief StructRender::drawPointImage_cylindrical_r_theta 绘制取点-cylindrical坐标系-r_theta方向
+* @return bool
+*/
 bool StructRender::drawPointImage_cylindrical_r_theta(){
 	return drawPointCir();
 }
+/**
+* @brief StructRender::drawPointImage_cartesian_x_y_z 绘制取点-Cartesian坐标系
+* @return bool
+*/
 bool StructRender::drawPointImage_cartesian_x_y_z(){
 	return drawPointRect();
 }
-
+/**
+* @brief StructRender::findApoint_Z_R 查找最近的点-ZR方向
+* @return StructData::structpoint
+*/
 StructData::structpoint StructRender::findApoint_Z_R(QPointF _curpostion){
 	StructData::structpoint mpoint;
 	//获取屏幕与数据的比例
@@ -454,7 +557,12 @@ StructData::structpoint StructRender::findApoint_Z_R(QPointF _curpostion){
 #endif
 	return mpoint;
 }
-
+/**
+* @brief StructRender::GetDistance 获取距离
+* @param QPointF p1
+* @param QPointF p2
+* @return float
+*/
 float StructRender::GetDistance(QPointF p1, QPointF p2)
 {
 	float distance;
@@ -463,7 +571,13 @@ float StructRender::GetDistance(QPointF p1, QPointF p2)
 	return sqrt(distance);
 
 }
-
+/**
+* @brief StructRender::drawDisplayPoint 绘制点位
+* @param QPainter& painter 
+* @param const QPointF& position 屏幕上的点位
+* @param const QPointF& d 真实点位信息
+* @return void
+*/
 void StructRender::drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d)
 {
 	//设置画笔的颜色
@@ -503,6 +617,10 @@ void StructRender::drawDisplayPoint(QPainter& painter, const QPointF& position, 
 		QString("Y:%1").arg(d.y(), 0, 'E', 2)
 		);
 }
+/**
+* @brief StructRender::drawPointRect 绘制点位-矩形
+* @return bool
+*/
 bool StructRender::drawPointRect(){
 	QImage img(getSize(), QImage::Format_ARGB32);
 	img.fill(qRgba(0, 0, 0, 0));
@@ -528,6 +646,9 @@ bool StructRender::drawPointRect(){
 	setImage(img);
 	return true;
 }
+/**
+* @brief StructRender::drawPointCir 绘制点位-圆
+*/
 bool StructRender::drawPointCir(){
 	//新建画布 画笔
 	QImage img(getSize(), QImage::Format_ARGB32);
@@ -551,6 +672,10 @@ bool StructRender::drawPointCir(){
 	setImage(img);
 	return true;
 }
+/**
+* @brief StructRender::findApoint_Cylindrical 查找最近的点-cylindrical坐标系
+* @return StructData::structpoint
+*/
 StructData::structpoint StructRender::findApoint_Cylindrical(QPointF _curpoint)
 {
 	StructData::structpoint mpoint;
@@ -563,12 +688,6 @@ StructData::structpoint StructRender::findApoint_Cylindrical(QPointF _curpoint)
 	//获取所有的点，只能一个一个对比
 	std::shared_ptr<StructData> d = std::dynamic_pointer_cast<StructData>(data);
 	//获取起始点,因为图表的刻度不一定是从零开始的。
-	//QVector<qreal> _R_list = d->Get_R_val();
-	//QVector<qreal> _rand_list = d->Get_rand_val();
-	//获取矩形
-	//QVector<QRectF> _rl = GetCylindricalRect(_R_list);
-	//获取原始的切割数据
-	//QVector<QLineF> a_lines = Getlines(QPointF(0.0, 0.0), _rl, _rand_list);
 	std::map<int, std::vector<StructData::CutCir>> map = d->GetAllcurInfo_cir();
 	QVector<QPointF> pointlist;
 	//查找方式还待优化

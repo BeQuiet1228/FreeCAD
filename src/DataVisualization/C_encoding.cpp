@@ -1,6 +1,12 @@
 #include "C_encoding.h"
 #include <QString>
 #include <QTextCodec>
+/**
+* @brief GetEncodingstr 获取响应的编码的字符串
+* @param const char* str 原始编码的字符串
+* @param unsigned int type 需要转换的编码类型
+* @return QString
+*/
 QString GetEncodingstr(const char* str, unsigned int type)
 {
 	switch (type)

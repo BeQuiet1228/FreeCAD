@@ -9,12 +9,23 @@
 #include "Gui/PlotMDIView.h"
 #include "Gui/MainWindow.h"
 #include "Gui/Application.h"
+/**
+* @brief DocumentManager::loadfile 加载h5文件
+* @param const QString& filePath 传入路径
+* @return bool
+*/
 bool DocumentManager::loadfile(const QString& filePath)
 {
 	std::string _filePath = filePath.toStdString();
 	m_DataSourceManage->loadhdffile(_filePath);
 	return true;
 }
+/**
+* @brief DocumentManager::bindTreeContrue 绑定控制控件
+* @param ListTreeWidget* ptr
+* @param Plot* plotptr
+* @return bool
+*/
 bool DocumentManager::bindTreeContrue(ListTreeWidget* ptr,Plot* plotptr)
 {
 	if (ptr||plotptr)
@@ -24,11 +35,17 @@ bool DocumentManager::bindTreeContrue(ListTreeWidget* ptr,Plot* plotptr)
 	}
 	return false;
 }
+/**
+* @brief DocumentManager::DocumentManager 构造函数
+*/
 DocumentManager::DocumentManager(){
 	//构造数据管理
 	CanvasItem::registerMetaTye();
 	m_DataSourceManage = new DataSourceManage();
 }
+/**
+* @brief DocumentManager::~DocumentManager 析构函数
+*/
 DocumentManager::~DocumentManager(){
 	if (m_DataSourceManage)
 	{
@@ -36,43 +53,47 @@ DocumentManager::~DocumentManager(){
 		m_DataSourceManage = nullptr;
 	}
 }
+/**
+* @brief DocumentManager::Save
+* @param Base::Writer &write
+* @return void
+*/
 void DocumentManager::Save(Base::Writer &write) const
 {
 
 }
+/**
+* @brief DocumentManager::save 保存
+* @return bool
+*/
 bool DocumentManager::save(){
 	return true;
 }
+/**
+* @brief DocumentManager::ToStructHdf5 传入结构图数据
+* @param Hdf5Data data
+* @return void
+*/
 void DocumentManager::ToStructHdf5(Hdf5Data data){
 	if (m_DataSourceManage)
 		m_DataSourceManage->initStructData(data);
 }
+/**
+* @brief DocumentManager::DisplatPlot 送显
+* @param Hdf5Data data
+* @param int _type
+* @return void
+*/
 void DocumentManager::DisplatPlot(Hdf5Data data, int _type)
 { 
-
 	m_DataSourceManage->DisPlayPlot(data, _type);
-	/*std::list<Gui::MDIView*> list=Gui::Application().activeDocument()->getMDIViews();
-	Gui::PlotMDIView* ptr=nullptr;
-	for each (Gui::MDIView* var in list)
-	{
-	ptr=dynamic_cast<Gui::PlotMDIView*> (var);
-	if (ptr)break;
-	}
-	if (ptr!=nullptr)
-	{
-	if (m_DataSourceManage)
-	m_DataSourceManage->DisPlayPlot(data, _type);
-	}
-	else
-	{
-	Gui::PlotMDIView* plot = new Gui::PlotMDIView(Gui::Application().activeDocument()->getDocument());
-	Gui::MainWindow::getInstance()->addWindow(plot);
-	bindTreeContrue(nullptr, (Plot*)plot->GetViewPtr());
-	m_DataSourceManage->DisPlayPlot(data, _type);
-	}*/
-	
 }
-
+/**
+* @brief DocumentManager::_ToRenderer 送显
+* @param std::string name
+* @param int index
+* @return void 
+*/
 void DocumentManager::_ToRenderer(std::string name, int index)
 {
 	if (m_DataSourceManage)
