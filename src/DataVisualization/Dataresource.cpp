@@ -125,7 +125,7 @@ void DataSourceManage::loadhdffile(std::string filepath)
 /**
 * @brief DataSourceManage::DataSourceManage 数据管理构造
 */
-DataSourceManage::DataSourceManage(){
+DataSourceManage::DataSourceManage():factoryptr(nullptr){
 	RendererManger.clear();
 }
 /**
@@ -143,17 +143,20 @@ void DataSourceManage::init(ListTreeWidget* ptr,Plot* _plot){
 	/*p = new Plot();
 	p->resize(400, 300);
 	p->show();*/
-	p = _plot;
-	if (p)
+	if (_plot)
 	{
-		void _reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender);
-		connect(this, SIGNAL(_reRendererEvent(const std::list<std::shared_ptr<Renderer>>&)), p, SLOT(reRendererEvent(const std::list<std::shared_ptr<Renderer>>&)));
+		/*void _reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender);*/
+		connect(this, SIGNAL(_reRendererEvent(const std::list<std::shared_ptr<Renderer>>&)), _plot, SLOT(reRendererEvent(const std::list<std::shared_ptr<Renderer>>&)));
 		//p->show();
+		p = _plot;
 	}
 }
 void DataSourceManage::initStructData(Hdf5Data data)
 {
-	factoryptr = new RendererFactory(data);
+	if (factoryptr)
+		factoryptr->setStructData(data);
+	else
+		factoryptr = new RendererFactory(data);
 }
 DataSourceManage::~DataSourceManage(){
 	RendererManger.clear();

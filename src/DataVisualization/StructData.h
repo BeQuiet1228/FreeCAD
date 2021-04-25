@@ -174,5 +174,7 @@ private:
 	//
 	Rang xRang, yRang;
 	std::mutex xRangMutex, yRangMutex;
+	//确定面的索引
+	float _face_point_index;
 };
 #endif

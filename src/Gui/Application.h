@@ -260,6 +260,7 @@ private:
 
 	public:
 		static void DisplatPlot(Hdf5Data data, int _type = 0);
+		static void ToStruct(Hdf5Data data);
 };
 
 } //namespace Gui

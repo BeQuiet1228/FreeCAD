@@ -25,6 +25,8 @@ bool DocumentManager::bindTreeContrue(ListTreeWidget* ptr,Plot* plotptr)
 	return false;
 }
 DocumentManager::DocumentManager(){
+	//构造数据管理
+	CanvasItem::registerMetaTye();
 	m_DataSourceManage = new DataSourceManage();
 }
 DocumentManager::~DocumentManager(){
@@ -69,4 +71,10 @@ void DocumentManager::DisplatPlot(Hdf5Data data, int _type)
 	m_DataSourceManage->DisPlayPlot(data, _type);
 	}*/
 	
+}
+
+void DocumentManager::_ToRenderer(std::string name, int index)
+{
+	if (m_DataSourceManage)
+		m_DataSourceManage->tranfromRenderer(name,index);
 }
