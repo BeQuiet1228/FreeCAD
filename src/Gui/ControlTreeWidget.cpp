@@ -19,10 +19,7 @@
 #include <iostream>
 #include "Contorl/ContorlInterface.h"
 #include <QFileInfo>
-#include "App/Document.h"
-#include "Gui/Document.h"
-#include "App/DocumentDataManager.h"
-#include <QString>
+#include "Gui/Application.h"
 ControlTreeWidget::ControlTreeWidget(QWidget* parent)
 	:QTreeWidget(parent)
 {
@@ -287,7 +284,7 @@ void ControlTreeWidget::outputStructFile(unsigned long threadID)
 	auto structData = tempIO.hdf5DataList.begin();
 	auto newStructData = Hdf5IO::copyToHdf5IO(tempHdf5IO, *structData);
 	init(newStructData);
-
+	Gui::Application::ToStruct(newStructData);
 }
 
 void ControlTreeWidget::outputTempFile(unsigned long threadID)
@@ -305,7 +302,7 @@ void ControlTreeWidget::outputTempFile(unsigned long threadID)
 	
 	auto structData = tempIO.hdf5DataList.begin();
 	auto newStructData = Hdf5IO::copyToHdf5IO(tempHdf5IO, *structData);
-
+	Gui::Application::DisplatPlot(newStructData);
 }
 
 
