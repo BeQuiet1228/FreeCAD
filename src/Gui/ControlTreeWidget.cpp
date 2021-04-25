@@ -265,7 +265,8 @@ QString ControlTreeWidget::makeFilePath(unsigned long threadID)
 
 void ControlTreeWidget::itemDouble_clicke(QTreeWidgetItem* item, int column)
 {
-
+//#define _TEST_
+#ifdef _TEST_
 	std::string path = "D:/MILO_P.h5";
 	Hdf5IO io(path);
 	io.initHdf5Data();
@@ -273,7 +274,10 @@ void ControlTreeWidget::itemDouble_clicke(QTreeWidgetItem* item, int column)
 	Hdf5Data structData = *(io.hdf5DataList.begin());
 	Gui::Application::ToStruct(structData);
 	Gui::Application::DisplatPlot(structData);
-//	sendControlMsg(item);
+#undef _TEST_
+#else 
+	sendControlMsg(item);
+#endif
 }
 
 

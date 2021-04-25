@@ -186,7 +186,10 @@ void Plot::initGUI()
 	
 	
 }
-
+/**
+* @brief Plot::initData 初始化数据
+* @return void 
+*/
 void Plot::initData()
 {
 	renderManager.reset(new RenderThreadManager);
@@ -330,6 +333,11 @@ void Plot::keyReleaseEvent(QKeyEvent *event)
 	}
 	
 }
+/**
+* @brief Plot::reRendererEvent 重绘槽函数
+* @param const std::list<std::shared_ptr<Renderer>>& listRender 渲染器列表
+* @return void  
+*/
 void Plot::reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender)
 {
 	addRenderer(listRender);

@@ -903,12 +903,18 @@ std::vector<QRectF> StructData::GetAllCurspace_cartesian_y_z()
 }
 /**
 * @brief StructData::GetdatasetKmt_cartesian_y_z 获取datasetkmt信息-cartesian坐标系-y_z方向
-* @return 
+* @return std::vector<StructData::DaTaKmt>
 */
 std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_cartesian_y_z()
 {
 	return GetdatasetKmt_cartesian_x_y();
 }
+/**
+* @brief StructData::fileproperty_cartesian_y_z 跟具不同属性分类-cartesian坐标系-yz方向
+* @param std::vector<QRectF>& list 网格信息
+* @param std::vector<StructData::DaTaKmt>& datainfo datasetkmt数据
+* @return QMap<int, QVector<QRectF>>
+*/
 QMap<int, QVector<QRectF>> StructData::fileproperty_cartesian_y_z(std::vector<QRectF>& list, std::vector<StructData::DaTaKmt>& datainfo)
 {
 	Data::ListValuesPtr listValues;
@@ -929,6 +935,10 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_cartesian_y_z(std::vector<QR
 	}
 	return allinfo;
 }
+/**
+* @brief StructData::GetAllCurspace_cartesian_x_z  获取网格信息-cartesian坐标系xz方向
+* @return std::vector<QRectF>
+*/
 std::vector<QRectF> StructData::GetAllCurspace_cartesian_x_z()
 {
 	std::vector<QRectF> list;
@@ -969,10 +979,20 @@ std::vector<QRectF> StructData::GetAllCurspace_cartesian_x_z()
 	}
 	return list;
 }
+/**
+* @brief StructData::GetdatasetKmt_cartesian_x_z 获取datasetkmt信息-cartesian坐标系-xz方向
+* @return std::vector<StructData::DaTaKmt>
+*/
 std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_cartesian_x_z()
 {
 	return GetdatasetKmt_cartesian_x_y();
 }
+/**
+* @brief StructData::fileproperty_cartesian_x_z 根据不同属性分类-cartesian坐标系-xz方向
+* @param std::vector<QRectF>& list 网格信息
+* @param std::vector<StructData::DaTaKmt>& datainfo datasetkmt数据
+* @return QMap<int, QVector<QRectF>>
+*/
 QMap<int, QVector<QRectF>> StructData::fileproperty_cartesian_x_z(std::vector<QRectF>& list, std::vector<StructData::DaTaKmt>& datainfo){
 	Data::ListValuesPtr listValues;
 	autoModGetSourceData(listValues);//获取原始数据

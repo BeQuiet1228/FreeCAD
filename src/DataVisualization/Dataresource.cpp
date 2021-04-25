@@ -1,7 +1,6 @@
 #include "Dataresource.h"
 #include "RendererFactory.h"
 #include "Plot.h"
-//#include "ListTreeWidget.h"
 //结构图的方向
 enum stru_dir
 {
@@ -31,10 +30,6 @@ void DataSourceManage::tranfromRenderer(std::string name,int index){
 	}
 	else
 	{
-		//如果是结构图需要另外处理
-		//int structindex = RendererFactory::findStructDataIndex(hdfDatelist);
-		/*if (index==structindex)
-		{*/
 		DirectionType type=R_Z;
 		int index_dir = -1;
 		for (auto i = 0; i < 6;i++)
@@ -75,7 +70,12 @@ void DataSourceManage::tranfromRenderer(std::string name,int index){
 		emit _reRendererEvent(renderer);
 	}
 }
-
+/**
+* @brief DataSourceManage::CreateRenderer 创建渲染器
+* @param Hdf5Data data h5数据
+* @param int _type 方向
+* @return Renderers 
+*/
 Renderers DataSourceManage::CreateRenderer(Hdf5Data data, int _type)
 {
 	Renderers rds = factoryptr->creatRenderers(data, (DirectionType)_type);
@@ -88,7 +88,6 @@ Renderers DataSourceManage::CreateRenderer(Hdf5Data data, int _type)
 */
 Renderers DataSourceManage::CreateRendererList(Hdf5Data data){
 	//从工厂获取到相关的渲染器
-	//RendererPtr rd = RendererFactory::creatRenderer(data);
 	Hdf5Data _data(data);
 	Renderers rd=factoryptr->creatRenderers(data);
 	return rd;
@@ -140,17 +139,17 @@ void DataSourceManage::init(ListTreeWidget* ptr,Plot* _plot){
 		connect(this, SIGNAL(_loadhdflist(std::vector<Hdf5Data>&)), ptr, SLOT(loadHdflist(std::vector<Hdf5Data>&)));
 		connect(ptr, SIGNAL(_transfromRenderer(std::string, int)), this, SLOT(tranfromRenderer(std::string, int)));
 	}
-	/*p = new Plot();
-	p->resize(400, 300);
-	p->show();*/
 	if (_plot)
 	{
-		/*void _reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender);*/
 		connect(this, SIGNAL(_reRendererEvent(const std::list<std::shared_ptr<Renderer>>&)), _plot, SLOT(reRendererEvent(const std::list<std::shared_ptr<Renderer>>&)));
-		//p->show();
 		p = _plot;
 	}
 }
+/**
+* @brief DataSourceManage::initStructData 传入结构体数据
+* @param Hdf5Data data 结构图数据
+* @return void
+*/
 void DataSourceManage::initStructData(Hdf5Data data)
 {
 	if (factoryptr)
@@ -161,10 +160,15 @@ void DataSourceManage::initStructData(Hdf5Data data)
 DataSourceManage::~DataSourceManage(){
 	RendererManger.clear();
 }
+/**
+* @brief DataSourceManage::DisPlayPlot 送显
+* @oaram Hdf5Data data 送显数据
+* @param int _type 方向
+* @return void
+*/
 void DataSourceManage::DisPlayPlot(Hdf5Data data, int _type)
 {
 	Renderers rds = factoryptr->creatRenderers(data, (DirectionType)_type);
 	emit _reRendererEvent(rds);
 }
-//std::map<Hdf5Data, Renderer*> RendererManger;
 #include "moc_Dataresource.cpp"
