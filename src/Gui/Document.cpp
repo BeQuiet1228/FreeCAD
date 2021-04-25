@@ -202,7 +202,6 @@ Document::~Document()
     std::list<Gui::BaseView*> temp = d->baseViews;
     for(std::list<Gui::BaseView*>::iterator it=temp.begin();it!=temp.end();++it)
         (*it)->deleteSelf();
-
     std::map<const App::DocumentObject*,ViewProviderDocumentObject*>::iterator jt;
     for (jt = d->_ViewProviderMap.begin();jt != d->_ViewProviderMap.end(); ++jt)
         delete jt->second;

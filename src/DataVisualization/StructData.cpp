@@ -7,22 +7,26 @@
 */
 StructData::StructData(Hdf5Data& heData, DirectionType _type, const RunMod& mod):XYData(heData,mod),istrue(false){
 	
-	std::vector<std::string> headerlist = autoHeaderInfo();
-	auto headeriter = headerlist.end() - 1;
-	if (headeriter->find("polar") != std::string::npos)
+	//std::vector<std::string> headerlist = autoHeaderInfo();
+	//auto headeriter = headerlist.begin() +3;
+	switch (heData.coordinateSystem)
 	{
-		//当前为polar
-		_ctype = C_TYPE::POLAR;
+	case Hdf5Data::CARTESIAN:
+	{
+		//当前为cartexian
+		_ctype = C_TYPE::CARTESIAN;
 		switch (_type)
 		{
-		case R_Z:
-		case R_THETA:
-			m_Type = _type;break;
+		case X_Y:
+		case X_Z:
+		case Y_Z:
+			m_Type = _type; break;
 		default:
-			m_Type = R_Z; break;
+			m_Type = X_Y; break;
 		}
 	}
-	else if (headeriter->find("cylindrical") != std::string::npos)
+		break;
+	case Hdf5Data::CYLINDER:
 	{
 		//当前为cylindrical
 		_ctype = C_TYPE::CYLINDRICAL;
@@ -36,20 +40,34 @@ StructData::StructData(Hdf5Data& heData, DirectionType _type, const RunMod& mod)
 
 		}
 	}
-	else if (headeriter->find("cartesian") != std::string::npos)
+		break;
+	case Hdf5Data::POLAR:
 	{
-		//当前为cartexian
-		_ctype = C_TYPE::CARTESIAN; 
+		//当前为polar
+		_ctype = C_TYPE::POLAR;
 		switch (_type)
 		{
-		case X_Y:
-		case X_Z:
-		case Y_Z:
+		case R_Z:
+		case R_THETA:
 			m_Type = _type; break;
 		default:
-			m_Type = X_Y; break;
+			m_Type = R_Z; break;
 		}
 	}
+		break;
+	}
+	/*if (headeriter->find("polar") != std::string::npos)
+	{
+		
+	}
+	else if (headeriter->find("cylindrical") != std::string::npos)
+	{
+		
+	}
+	else if (headeriter->find("cartesian") != std::string::npos)
+	{
+	
+	}*/
 }
 /**
 * @brief StructData::StructData 构造函数
@@ -59,13 +77,14 @@ StructData::StructData(Hdf5Data& heData, DirectionType _type, const RunMod& mod)
 * @parame const RunMod& mod
 */
 StructData::StructData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf endpoint, const RunMod& mod):XYData(heData,mod),istrue(true),mstartpoint(startpoint),mendpoint(endpoint){
-	std::vector<std::string> headerlist = autoHeaderInfo();
+	//std::vector<std::string> headerlist = autoHeaderInfo();
 	int res = (startpoint == endpoint);
 	_face_point_index = startpoint[res];
-	auto headeriter = headerlist.end() - 1;
-	if (headeriter->find("polar") != std::string::npos)
+	//auto headeriter = headerlist.begin()+3;
+	switch (heData.coordinateSystem)
 	{
-		//当前为polar
+	case Hdf5Data::POLAR:
+	{
 		_ctype = C_TYPE::POLAR;
 		//极坐标系  R pin Z
 		switch (res)
@@ -76,8 +95,8 @@ StructData::StructData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf endpoin
 		case 3:
 			m_Type = R_THETA; break;
 		}
-	}
-	else if (headeriter->find("cylindrical") != std::string::npos)
+	}break;
+	case  Hdf5Data::CARTESIAN:
 	{
 		//当前为cylindrical
 		_ctype = C_TYPE::CYLINDRICAL;//z_R_the
@@ -89,21 +108,35 @@ StructData::StructData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf endpoin
 		case 3:
 			m_Type = R_Z; break;
 		}
-	}
-	else if (headeriter->find("cartesian") != std::string::npos)
+	}break;
+	case Hdf5Data::CYLINDER:
 	{
 		//当前为cartexian
 		_ctype = C_TYPE::CARTESIAN;//X_Y_Z
 		switch (res)
 		{
 		case 1:
-			m_Type = Y_Z;break;
+			m_Type = Y_Z; break;
 		case 2:
 			m_Type = X_Z; break;
 		case 3:
 			m_Type = X_Y; break;
 		}
+	}break;
 	}
+	//if (/*headeriter->find("polar") != std::string::npos*/)
+	//{
+	//	//当前为polar
+	//
+	//}
+	//else if (headeriter->find("cylindrical") != std::string::npos)
+	//{
+	//	
+	//}
+	//else if (headeriter->find("cartesian") != std::string::npos)
+	//{
+	//
+	//}
 
 }
 /**
