@@ -23,6 +23,8 @@ public:
 	virtual QwtMatrixRasterData* getQwtMatrixRasterData();
 	//寻找一个网格
 	Grid findGrid(const float& x, const float& y);
+	//获取对应的结构体面
+	std::vector<float> getStructFace();
 public:
 	void setValueRang(const Rang& r){
 		std::lock_guard<std::mutex> am(ValueRangMutex);

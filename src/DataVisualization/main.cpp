@@ -30,7 +30,7 @@
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
-#if 1
+#if 0 //测试hdf5Reader模块中的数据复制接口
 	std::string path = "D:/MILO_P.h5";
 	Hdf5IO IO(path);
 	IO.initHdf5Data();
@@ -45,24 +45,27 @@ int main(int argc, char *argv[])
 	QWidget w;
 	w.show();
 #endif
-#if 0
+#if 1
 	CanvasItem::registerMetaTye();
 
 	ListTreeWidget m_tree;
 	DataSourceManage dataMannage;
 	std::string path = "D:/MILO_P.h5";
-	dataMannage.init(&m_tree);
+	Plot plot;
+	dataMannage.init(&m_tree,&plot);
 	dataMannage.loadhdffile(path);
 	m_tree.resize(400, 300);
 	m_tree.show();
+	plot.show();
+#endif
 
+#if 0
 	auto cg = Config::GetInstance();
 	auto group = cg->getRootGroup();
 	group.setSetting("value", "test");
 	auto group1 = group.getGroup("group");
 	group1.addSetting("config", "ttt");
 #endif
-
 	
 #if 0
 	//std::string path = "E:/lingshiwenjianjia/MILO_C/MILO_C.h5";

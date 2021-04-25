@@ -1,5 +1,6 @@
 #include "ContourData.h"
 #include <qvector.h>
+#include <QRegExp>
 ContourData::ContourData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
 	:XYData(h5Data, mod), height(0), width(0)
 {
@@ -187,4 +188,58 @@ ContourData::Grid ContourData::findGrid(const float& x, const float& y)
 	}
 #endif
 	return grids.at(index);
+}
+
+std::vector<float> ContourData::getStructFace()
+{
+	if (headList.size() < 17)
+		return std::vector<float>();
+	
+	QString qstr = QString::fromStdString(headList[16]);
+	QStringList sl = qstr.split("TO");
+	if (sl.size() != 2)
+		return std::vector<float>();
+	QString point1 = sl[0];
+	QString point2 = sl[1];
+
+	sl = point1.split("(");
+	if (sl.size() != 2)
+		return std::vector<float>();
+	point1 = sl[1];
+
+	sl = point1.split(")");
+	if (sl.size() != 2)
+		return std::vector<float>();
+	point1 = sl[0];
+
+	sl = point1.split(",");
+	if (sl.size() != 3)
+		return std::vector<float>();
+
+	std::vector<float> values;
+	for (auto iter = sl.begin(); iter != sl.end(); iter++)
+	{
+		values.push_back(iter->toFloat());
+	}
+
+	sl = point2.split("(");
+	if (sl.size() != 2)
+		return std::vector<float>();
+	point2 = sl[1];
+
+	sl = point2.split(")");
+	if (sl.size() != 2)
+		return std::vector<float>();
+	point2 = sl[0];
+
+	sl = point2.split(",");
+	if (sl.size() != 3)
+		return std::vector<float>();
+
+	for (auto iter = sl.begin(); iter != sl.end(); iter++)
+	{
+		values.push_back(iter->toFloat());
+	}
+
+	return values;
 }

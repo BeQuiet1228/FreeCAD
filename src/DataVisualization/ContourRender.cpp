@@ -117,6 +117,16 @@ Data::Rang ContourRender::getValueRange()
 }
 
 /**
+* @brief ContourRender::getStructFace
+* @return std::vector<float>
+*/
+std::vector<float> ContourRender::getStructFace()
+{
+	auto d = std::dynamic_pointer_cast<ContourData>(Renderer::data);
+	return d->getStructFace();
+}
+
+/**
 * @brief ContourRender::drawDisplayPoint 显示点提示框
 * @param QPainter & painter 画笔
 * @param const QPointF & position 位置

@@ -17,6 +17,8 @@ public:
 	void dataInit() override;
 	//获取value范围
 	Data::Rang getValueRange();
+	//获取对应的结构体面
+	std::vector<float> getStructFace();
 private:
 	//绘制提示框
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const ContourData::Grid& grid);
