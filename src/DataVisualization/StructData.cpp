@@ -61,6 +61,7 @@ StructData::StructData(Hdf5Data& heData, DirectionType _type, const RunMod& mod)
 StructData::StructData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf endpoint, const RunMod& mod):XYData(heData,mod),istrue(true),mstartpoint(startpoint),mendpoint(endpoint){
 	std::vector<std::string> headerlist = autoHeaderInfo();
 	int res = (startpoint == endpoint);
+	_face_point_index = startpoint[res];
 	auto headeriter = headerlist.end() - 1;
 	if (headeriter->find("polar") != std::string::npos)
 	{
@@ -435,6 +436,7 @@ std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_polar_R_Z()
 */
 QMap<int, QVector<QRectF>> StructData::fileproperty_polar_R_Z(std::vector<QRectF>& list, std::vector<StructData::DaTaKmt>& datainfo)
 {
+	int index = 1;
 	Data::ListValuesPtr listValues;
 	autoModGetSourceData(listValues);//获取原始数据
 	//获取dataSetKmt里的全部数据
@@ -443,10 +445,26 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_polar_R_Z(std::vector<QRectF
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr IM1X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
+	if (istrue)
+	{
+		int index_min = 1;
+		float distancemin = 10000.0f;
+		_face_point_index;
+		for (auto i = 0; i < IM3X->size();i++)
+		{
+			float curdistance = abs(*(IM3X->begin() + i) - _face_point_index);
+			if (curdistance<distancemin)
+			{
+				distancemin = curdistance;
+				index_min = i+1;
+			}
+		}
+		index = index_min;
+	}
 	QMap<int, QVector<QRectF>> allinfo;
 	for each (DaTaKmt var in datainfo)
 	{
-		if (var.point3==1&&var.point1<pointXSize-1)
+		if (var.point3==index&&var.point1<pointXSize-1)
 		{
 			allinfo[var.pointproperty].push_back(list[(var.point1 - 1)*(pointYSize - 1) + var.point2 - 1]);
 		}
@@ -470,6 +488,7 @@ bool StructData::loadroom_polar_R_THETA()
 */
 std::map<int, std::vector<StructData::CutCir>> StructData::filecir_polar_R_THETA()
 {
+	int index = 1;
 	std::map<int, std::vector<CutCir>> listcir;
 	std::vector<float> r_val;
 	std::vector<float> rand_val;
@@ -520,11 +539,27 @@ std::map<int, std::vector<StructData::CutCir>> StructData::filecir_polar_R_THETA
 	}
 #pragma endregion
 #pragma region 筛选属性
+	if (istrue)
+	{
+		int index_min = 1;
+		float distancemin = 10000.0f;
+		_face_point_index;
+		for (auto i = 0; i < IM1X->size(); i++)
+		{
+			float curdistance = abs(*(IM1X->begin() + i) - _face_point_index);
+			if (curdistance < distancemin)
+			{
+				distancemin = curdistance;
+				index_min = i+1;
+			}
+		}
+		index = index_min;
+	}
 	int CutNum = rand_val.size() - 1;
 	std::vector<DaTaKmt> datakmtinfo =GetdatasetKmt_polar_R_THETA();
 	for each (DaTaKmt var in datakmtinfo)
 	{
-		if (var.point1==1&&var.point3<rand_val.size())
+		if (var.point1==index&&var.point3<rand_val.size())
 		{
 			listcir[var.pointproperty].push_back(_CutCirlist[(var.point2 - 1)*CutNum + (var.point3 - 1)]);
 		}
@@ -645,9 +680,26 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_cylindrical_R_Z(std::vector<
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
 	QMap<int, QVector<QRectF>> allinfo;
+	int index = 1;
+	if (istrue)
+	{
+		int index_min = 1;
+		float distancemin = 10000.0f;
+		_face_point_index;
+		for (auto i = 0; i < IM3X->size(); i++)
+		{
+			float curdistance = abs(*(IM3X->begin() + i) - _face_point_index);
+			if (curdistance < distancemin)
+			{
+				distancemin = curdistance;
+				index_min = i+1;
+			}
+		}
+		index = index_min;
+	}
 	for each (DaTaKmt var in datainfo)
 	{
-		if (var.point3 == 1 && var.point1 < pointXSize - 1)
+		if (var.point3 == index && var.point1 < pointXSize - 1)
 		{
 			allinfo[var.pointproperty].push_back(list[(var.point1 - 1)*(pointYSize - 1) + var.point2 - 1]);
 		}
@@ -710,11 +762,28 @@ std::map<int, std::vector<StructData::CutCir>> StructData::filecir_cylindrical_R
 	}
 #pragma endregion
 #pragma region 筛选属性
+	int index = 1;
+	if (istrue)
+	{
+		int index_min = 1;
+		float distancemin = 10000.0f;
+		_face_point_index;
+		for (auto i = 0; i < IM1X->size(); i++)
+		{
+			float curdistance = abs(*(IM1X->begin() + i) - _face_point_index);
+			if (curdistance < distancemin)
+			{
+				distancemin = curdistance;
+				index_min = i+1;
+			}
+		}
+		index = index_min;
+	}
 	int CutNum = rand_val.size() - 1;
 	std::vector<DaTaKmt> datakmtinfo = GetdatasetKmt_cylindrical_R_THETA();
 	for each (DaTaKmt var in datakmtinfo)
 	{
-		if (var.point1 == 1 && var.point3 < rand_val.size())
+		if (var.point1 == index && var.point3 < rand_val.size())
 		{
 			listcir[var.pointproperty].push_back(_CutCirlist[(var.point2 - 1)*CutNum + (var.point3 - 1)]);
 		}
@@ -847,10 +916,27 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_cartesian_x_y(std::vector<QR
 	Data::ValuesPtr IM2X = *it; it++;
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
+	int index = IM3X->size() / 2;
+	if (istrue)
+	{
+		int index_min = 1;
+		float distancemin = 10000.0f;
+		_face_point_index;
+		for (auto i = 0; i < IM3X->size(); i++)
+		{
+			float curdistance = abs(*(IM3X->begin() + i) - _face_point_index);
+			if (curdistance < distancemin)
+			{
+				distancemin = curdistance;
+				index_min = i+1;
+			}
+		}
+		index = index_min;
+	}
 	QMap<int, QVector<QRectF>> allinfo;
 	for each (DaTaKmt var in datainfo)
 	{
-		if (var.point3 == IM3X->size()/2 && var.point1 < pointXSize - 1)
+		if (var.point3 == index && var.point1 < pointXSize - 1)
 		{
 			allinfo[var.pointproperty].push_back(list[(var.point1 - 1)*(pointYSize - 1) + var.point2 - 1]);
 		}
@@ -926,9 +1012,26 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_cartesian_y_z(std::vector<QR
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
 	QMap<int, QVector<QRectF>> allinfo;
+	int index = IM1X->size() / 2;
+	if (istrue)
+	{
+		int index_min = 1;
+		float distancemin = 10000.0f;
+		_face_point_index;
+		for (auto i = 0; i < IM1X->size(); i++)
+		{
+			float curdistance = abs(*(IM1X->begin() + i) - _face_point_index);
+			if (curdistance < distancemin)
+			{
+				distancemin = curdistance;
+				index_min = i+1;
+			}
+		}
+		index = index_min;
+	}
 	for each (DaTaKmt var in datainfo)
 	{
-		if (var.point1 == IM1X->size()/2 && var.point2 < pointXSize - 1)
+		if (var.point1 == index && var.point2 < pointXSize - 1)
 		{
 			allinfo[var.pointproperty].push_back(list[(var.point2 - 1)*(pointYSize - 1) + var.point3 - 1]);
 		}
@@ -1003,9 +1106,26 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_cartesian_x_z(std::vector<QR
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
 	QMap<int, QVector<QRectF>> allinfo;
+	int index = IM2X->size() / 2;
+	if (istrue)
+	{
+		int index_min = 1;
+		float distancemin = 10000.0f;
+		_face_point_index;
+		for (auto i = 0; i < IM2X->size(); i++)
+		{
+			float curdistance = abs(*(IM2X->begin() + i) - _face_point_index);
+			if (curdistance < distancemin)
+			{
+				distancemin = curdistance;
+				index_min = i+1;
+			}
+		}
+		index = index_min;
+	}
 	for each (DaTaKmt var in datainfo)
 	{
-		if (var.point2 == IM2X->size()/2 && var.point1 < pointXSize - 1)
+		if (var.point2 == index && var.point1 < pointXSize - 1)
 		{
 			allinfo[var.pointproperty].push_back(list[(var.point1 - 1)*(pointYSize - 1) + var.point3 - 1]);
 		}
