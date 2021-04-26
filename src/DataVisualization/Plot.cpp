@@ -8,8 +8,73 @@
 #include "qwt/qwt_scale_widget.h"
 #include "qwt/qwt_scale_engine.h"
 #include "ContourRender.h"
+#include <stack>
+struct UndoRedoData
+{
+	UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
+		:xr(xr), yr(yr) {};
+	UndoRedoData() = default;
+	Data::Rang xr, yr;
+};
+class UndoRedoStack {
+public:
+	UndoRedoStack() = default;
+	~UndoRedoStack() = default;
+
+	/**
+	* @brief UndoRedoStack::undo 撤销之前的操作
+	* @param UndoRedoData & data 返回渲染范围
+	* @return bool false 代表操作失败
+	*/
+	bool undo(UndoRedoData& data) {
+		if (undoStack.size() < 2)
+			return false;
+		data = undoStack.top();
+		redoStack.push(data);
+		undoStack.pop();
+	};
+	/**
+	* @brief UndoRedoStack::redo 恢复之前的撤销
+	* @param UndoRedoData & data 返回渲染数据
+	* @return bool false 代表操作失败
+	*/
+	bool redo(UndoRedoData& data) {
+		if (redoStack.empty())
+			return false;
+		data = redoStack.top();
+		undoStack.push(data);
+		redoStack.pop();
+	};
+	/**
+	* @brief UndoRedoStack::push 压入操作，如放大缩小操作的数据
+	* @param const UndoRedoData & data
+	* @return void
+	*/
+	void push(const UndoRedoData& data) {
+		undoStack.push(data);
+		clearStack(redoStack);
+	};
+	/**
+	* @brief UndoRedoStack::clear 清空数据
+	* @return void
+	*/
+	void clear() {
+		clearStack(redoStack);
+		clearStack(undoStack);
+	}
+private:
+	std::stack<UndoRedoData> undoStack, redoStack;
+private:
+	void clearStack(std::stack<UndoRedoData>& stack) {
+		while (!stack.empty())
+		{
+			stack.pop();
+		}
+	}
+};
+
 Plot::Plot(QWidget* parent /*= 0*/)
-	:QWidget(parent)
+	:QWidget(parent),URStack(new UndoRedoStack)
 {
 	initGUI();
 	initData();
@@ -81,6 +146,11 @@ void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
 	AxisL->setAxisRange(yr.min, yr.max);
 	AxisB->setAxisRange(xr.min, xr.max);
 	updateAxis();
+
+	//清空撤销恢复栈，将新的操作压入
+	URStack->clear();
+	UndoRedoData URData(xr, yr);
+	URStack->push(URData);
 }
 
 /**
@@ -160,6 +230,32 @@ void Plot::updateAxis()
 }
 
 /**
+* @brief Plot::undo
+* @return void
+*/
+void Plot::undo()
+{
+	UndoRedoData data;
+	if (!URStack->undo(data))
+		return;
+	Data::Rang& xr = data.xr;
+	Data::Rang& yr = data.yr;
+	setRenderRange(xr.min, xr.max, yr.min, yr.max);
+	updateAxis();
+}
+
+void Plot::redo()
+{
+	UndoRedoData data;
+	if (!URStack->redo(data))
+		return;
+	Data::Rang& xr = data.xr;
+	Data::Rang& yr = data.yr;
+	setRenderRange(xr.min, xr.max, yr.min, yr.max);
+	updateAxis();
+}
+
+/**
 * @brief Plot::initGUI 初始化布局
 * @return void
 */
@@ -227,6 +323,27 @@ void Plot::findPointRender(const float& x, const float& y)
 }
 
 /**
+* @brief Plot::setRenderRange 设置所有渲染器的渲染范围
+* @param const float & xMin
+* @param const float xMax
+* @param const float & yMin
+* @param const float & yMax
+* @return void
+*/
+void Plot::setRenderRange(const float& xMin, const float xMax, const float& yMin, const float& yMax)
+{
+	Data::Rang xr(xMin, xMax), yr(yMin, yMax);
+	mainRenderer->setXRang(xr);
+	mainRenderer->setYRang(yr);
+	//设置其他渲染器的范围
+	for (auto iter = subRenderers.begin(); iter != subRenderers.end(); iter++)
+	{
+		(*iter)->setYRang(yr);
+		(*iter)->setXRang(xr);
+	}
+}
+
+/**
 * @brief Plot::renderFinished 渲染完成槽
 * @return void
 */
@@ -276,21 +393,11 @@ void Plot::canvasSelectRect(QRect rect)
 	yr.max = yMax*yScale + yr.min;
 	yr.min = yMin*yScale + yr.min;
 
-	mainRenderer->setXRang(xr);
-	mainRenderer->setYRang(yr);
-	AxisL->setAxisRange(yr.min, yr.max);
-	AxisL->_update();
-	AxisB->setAxisRange(xr.min, xr.max);
-	AxisB->_update();
-	//设置其他渲染器的范围
-	for (auto iter = subRenderers.begin(); iter != subRenderers.end(); iter++)
-	{
-		(*iter)->setYRang(yr);
-		(*iter)->setXRang(xr);
-	}
-
+	//设置渲染范围
+	setRenderRange(xr.min, xr.max, yr.min, yr.max);
 	//重绘
 	reRender(); 
+	//跟新坐标轴
 	updateAxis();
 }
 
@@ -333,11 +440,12 @@ void Plot::keyReleaseEvent(QKeyEvent *event)
 			(*i)->setXRang(xr);
 			(*i)->setYRang(yr);
 		}
-		//改变坐标轴的范围
+
 		AxisL->setAxisRange(yr.min, yr.max);
 		AxisB->setAxisRange(xr.min, xr.max);
 		AxisL->_update();
 		AxisB->_update();
+
 
 		//清理点取点图层
 		canvas->removeItem(1);

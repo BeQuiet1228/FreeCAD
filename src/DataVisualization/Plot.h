@@ -15,6 +15,7 @@ class RenderThreadManager;
 class Axis;
 class QwtScaleEngine;
 class QwtScaleWidget;
+class UndoRedoStack;
 class DATA_VISUALIZATION_EXPORT Plot:public QWidget{
 	Q_OBJECT
 public:
@@ -44,6 +45,8 @@ private:
 	QwtScaleEngine *scaleEngine;
 	//图例是否可用
 	bool axisRightEnabled;
+	//撤销恢复栈
+	std::shared_ptr<UndoRedoStack> URStack;
 public:
 	//重渲染
 	void reRender();
@@ -57,6 +60,9 @@ public:
 	void setAxisRightEnabled(const bool& e);
 	//更新坐标轴
 	void updateAxis();
+	//撤销恢复
+	void undo();
+	void redo();
 	//清理从渲染器
 	void clearSubRenderer(){
 		subRenderers.clear();
@@ -68,6 +74,8 @@ private:
 	void initData();
 	//点渲染
 	void findPointRender(const float& x, const float& y);
+	//设置渲染范围
+	void setRenderRange(const float& xMin, const float xMax, const float& yMin, const float& yMax);
 public Q_SLOTS:
 	//渲染完成
 	void renderFinished();
