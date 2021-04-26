@@ -29,9 +29,10 @@ public:
 	bool undo(UndoRedoData& data) {
 		if (undoStack.size() < 2)
 			return false;
-		data = undoStack.top();
-		redoStack.push(data);
+		redoStack.push(undoStack.top());
 		undoStack.pop();
+		data = undoStack.top();
+		
 	};
 	/**
 	* @brief UndoRedoStack::redo 恢复之前的撤销
@@ -242,6 +243,7 @@ void Plot::undo()
 	Data::Rang& yr = data.yr;
 	setRenderRange(xr.min, xr.max, yr.min, yr.max);
 	updateAxis();
+	reRender();
 }
 
 void Plot::redo()
@@ -253,6 +255,7 @@ void Plot::redo()
 	Data::Rang& yr = data.yr;
 	setRenderRange(xr.min, xr.max, yr.min, yr.max);
 	updateAxis();
+	reRender();
 }
 
 /**
@@ -393,6 +396,10 @@ void Plot::canvasSelectRect(QRect rect)
 	yr.max = yMax*yScale + yr.min;
 	yr.min = yMin*yScale + yr.min;
 
+	//将操作压入栈
+	UndoRedoData unData(xr, yr);
+	URStack->push(unData);
+
 	//设置渲染范围
 	setRenderRange(xr.min, xr.max, yr.min, yr.max);
 	//重绘
@@ -435,22 +442,20 @@ void Plot::keyReleaseEvent(QKeyEvent *event)
 		auto xr = mainRenderer->getXRang();
 		auto yr = mainRenderer->getYRang();
 
-		for (auto i = subRenderers.begin(); i != subRenderers.end(); i++)
-		{
-			(*i)->setXRang(xr);
-			(*i)->setYRang(yr);
-		}
+		setRenderRange(xr.min, xr.max, yr.min, yr.max);
 
-		AxisL->setAxisRange(yr.min, yr.max);
-		AxisB->setAxisRange(xr.min, xr.max);
-		AxisL->_update();
-		AxisB->_update();
-
+		updateAxis();
 
 		//清理点取点图层
 		canvas->removeItem(1);
 
 		reRender();
+/**************测试撤销恢复的代码 ****************/
+	}
+	else if (event->key() == Qt::Key_Left) {
+		this->undo();
+	}else if (event->key() == Qt::Key_Right) {
+		this->redo();
 	}
 	
 }
