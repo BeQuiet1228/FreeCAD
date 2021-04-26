@@ -13,7 +13,7 @@ Plot::Plot(QWidget* parent /*= 0*/)
 {
 	initGUI();
 	initData();
-	
+	setAxisRightEnabled(true);
 }
 
 Plot::~Plot()
@@ -80,6 +80,7 @@ void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
 	auto yr = mainRenderer->getYRang();
 	AxisL->setAxisRange(yr.min, yr.max);
 	AxisB->setAxisRange(xr.min, xr.max);
+	updateAxis();
 }
 
 /**
@@ -128,11 +129,24 @@ void Plot::updateAxis()
 	xr = mainRenderer->getXRang();
 	yr = mainRenderer->getYRang();
 
-//	AxisL->setAxisRange(yr.min, yr.max);
-//	AxisL->_update();
-//	AxisB->setAxisRange(xr.min, xr.max);
-//	AxisB->_update();
+	AxisL->setAxisRange(yr.min, yr.max);
+	AxisB->setAxisRange(xr.min, xr.max);
+	
 
+	//设置横纵坐标单位
+		//获取横纵坐标单位
+	auto d = std::dynamic_pointer_cast<XYData>(mainRenderer->data);
+	if (d)
+	{
+		AxisL->setAxisText(QString::fromStdString(d->getYTag()));
+		AxisB->setAxisText(QString::fromStdString(d->getXTag()));
+	}
+	AxisB->_update();
+	AxisL->_update();
+
+
+
+	//显示图例
 	if (!axisRightEnabled)
 		return;
 	auto contourRender = std::dynamic_pointer_cast<ContourRender>(mainRenderer);
@@ -161,11 +175,9 @@ void Plot::initGUI()
 	AxisL = new Axis();
 	AxisL->setAxixStyle(Axisleft);
 	AxisL->SetAxisNumber(6);
-	AxisL->setAxisRange(-100, 100);
 	AxisB = new Axis();
 	AxisB->setAxixStyle(AxisBottom);
 	AxisB->SetAxisNumber(6);
-	AxisB->setAxisRange(-100, 100);
 
 	scaleWIdget = new QwtScaleWidget(QwtScaleDraw::RightScale, this);
 	scaleWIdget->setColorBarEnabled(true);
@@ -279,6 +291,7 @@ void Plot::canvasSelectRect(QRect rect)
 
 	//重绘
 	reRender(); 
+	updateAxis();
 }
 
 void Plot::canvasSelectPoint(QPoint point)

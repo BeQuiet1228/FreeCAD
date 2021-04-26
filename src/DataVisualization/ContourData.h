@@ -36,7 +36,7 @@ public:
 	}
 private:
 	//ªÒ»°∂•µ„
-	std::vector<Grid> getVertex(const double& x,const double& y) const;
+	void setXYRange();
 protected:
 	std::vector<Grid> grids;
 

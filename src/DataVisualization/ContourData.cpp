@@ -1,6 +1,7 @@
 #include "ContourData.h"
 #include <qvector.h>
 #include <QRegExp>
+#include <math.h>
 ContourData::ContourData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
 	:XYData(h5Data, mod), height(0), width(0)
 {
@@ -97,6 +98,7 @@ bool ContourData::loadPoint()
 	setXRang(xr);
 	setYRang(yr);
 	
+	setXYRange();
 }
 
 /**
@@ -242,4 +244,69 @@ std::vector<float> ContourData::getStructFace()
 	}
 
 	return values;
+}
+
+/**
+* @brief ContourData::setXYRange 设置数据渲染范围，这里的范围能从数据中读取，会有误差，得从观测面中读取
+* @return void
+*/
+void ContourData::setXYRange()
+{
+	std::vector<float> structFace = getStructFace();
+
+	Data::Rang xr, yr;
+	switch (getDirectionType())
+	{
+	default:
+		break;
+	case X_Y:
+		xr.min = std::min(structFace[0], structFace[3]);
+		xr.max = std::max(structFace[0], structFace[3]);
+		yr.min = std::min(structFace[1], structFace[4]);
+		yr.max = std::max(structFace[1], structFace[4]);
+		break;
+	case X_Z:
+		xr.min = std::min(structFace[0], structFace[3]);
+		xr.max = std::max(structFace[0], structFace[3]);
+		yr.min = std::min(structFace[2], structFace[5]);
+		yr.max = std::max(structFace[2], structFace[5]);
+		break;
+	case Y_Z:
+		xr.min = std::min(structFace[1], structFace[4]);
+		xr.max = std::max(structFace[1], structFace[4]);
+		yr.min = std::min(structFace[2], structFace[5]);
+		yr.max = std::max(structFace[2], structFace[5]);
+		break;
+	case R_Z:
+		if (Data::h5Data.coordinateSystem == Hdf5Data::CYLINDER)
+		{
+			yr.min = std::min(structFace[0], structFace[3]);
+			yr.max = std::max(structFace[0], structFace[3]);
+			xr.min = std::min(structFace[1], structFace[4]);
+			xr.max = std::max(structFace[1], structFace[4]);
+		}else {
+			xr.min = std::min(structFace[0], structFace[3]);
+			xr.max = std::max(structFace[0], structFace[3]);
+			yr.min = std::min(structFace[2], structFace[5]);
+			yr.max = std::max(structFace[2], structFace[5]);
+		}
+		break;
+	case R_THETA:
+		if (Data::h5Data.coordinateSystem == Hdf5Data::CYLINDER)
+		{
+			xr.min = std::min(structFace[1], structFace[4]);
+			xr.max = std::max(structFace[1], structFace[4]);
+			yr.min = std::min(structFace[2], structFace[5]);
+			yr.max = std::max(structFace[2], structFace[5]);
+		}else{
+			xr.min = std::min(structFace[0], structFace[3]);
+			xr.max = std::max(structFace[0], structFace[3]);
+			yr.min = std::min(structFace[1], structFace[4]);
+			yr.max = std::max(structFace[1], structFace[4]);
+		}
+		break;
+	}
+	setXRang(xr);
+	setYRang(yr);
+
 }
