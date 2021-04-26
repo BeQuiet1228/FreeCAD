@@ -255,58 +255,63 @@ void ContourData::setXYRange()
 	std::vector<float> structFace = getStructFace();
 
 	Data::Rang xr, yr;
-	switch (getDirectionType())
-	{
-	default:
-		break;
-	case X_Y:
-		xr.min = std::min(structFace[0], structFace[3]);
-		xr.max = std::max(structFace[0], structFace[3]);
-		yr.min = std::min(structFace[1], structFace[4]);
-		yr.max = std::max(structFace[1], structFace[4]);
-		break;
-	case X_Z:
-		xr.min = std::min(structFace[0], structFace[3]);
-		xr.max = std::max(structFace[0], structFace[3]);
-		yr.min = std::min(structFace[2], structFace[5]);
-		yr.max = std::max(structFace[2], structFace[5]);
-		break;
-	case Y_Z:
-		xr.min = std::min(structFace[1], structFace[4]);
-		xr.max = std::max(structFace[1], structFace[4]);
-		yr.min = std::min(structFace[2], structFace[5]);
-		yr.max = std::max(structFace[2], structFace[5]);
-		break;
-	case R_Z:
-		if (Data::h5Data.coordinateSystem == Hdf5Data::CYLINDER)
-		{
-			yr.min = std::min(structFace[0], structFace[3]);
-			yr.max = std::max(structFace[0], structFace[3]);
-			xr.min = std::min(structFace[1], structFace[4]);
-			xr.max = std::max(structFace[1], structFace[4]);
-		}else {
-			xr.min = std::min(structFace[0], structFace[3]);
-			xr.max = std::max(structFace[0], structFace[3]);
-			yr.min = std::min(structFace[2], structFace[5]);
-			yr.max = std::max(structFace[2], structFace[5]);
-		}
-		break;
-	case R_THETA:
-		if (Data::h5Data.coordinateSystem == Hdf5Data::CYLINDER)
-		{
-			xr.min = std::min(structFace[1], structFace[4]);
-			xr.max = std::max(structFace[1], structFace[4]);
-			yr.min = std::min(structFace[2], structFace[5]);
-			yr.max = std::max(structFace[2], structFace[5]);
-		}else{
-			xr.min = std::min(structFace[0], structFace[3]);
-			xr.max = std::max(structFace[0], structFace[3]);
-			yr.min = std::min(structFace[1], structFace[4]);
-			yr.max = std::max(structFace[1], structFace[4]);
-		}
-		break;
-	}
+	xr = getAxisRangeFromName(xAxisName);
+	yr = getAxisRangeFromName(yAxisName);
 	setXRang(xr);
 	setYRang(yr);
 
+}
+
+Data::Rang ContourData::getAxisRangeFromName(const std::string& name)
+{
+	std::vector<float> structFace = getStructFace();
+	Data::Rang r;
+	switch (stringToDirection(name))
+	{
+	default:
+		return r;
+		break;
+	case X:
+		r.min = std::min(structFace[0], structFace[3]);
+		r.max = std::max(structFace[0], structFace[3]);
+		break;
+	case Y:
+		r.min = std::min(structFace[1], structFace[4]);
+		r.max = std::max(structFace[1], structFace[4]);
+		break;
+	case Z:
+		if (h5Data.coordinateSystem != Hdf5Data::CYLINDER)
+		{
+			r.min = std::min(structFace[2], structFace[5]);
+			r.max = std::max(structFace[2], structFace[5]);
+		}else {
+			r.min = std::min(structFace[0], structFace[3]);
+			r.max = std::max(structFace[0], structFace[3]);
+		}
+		break;
+	case R:
+		if (h5Data.coordinateSystem != Hdf5Data::CYLINDER)
+		{
+			r.min = std::min(structFace[0], structFace[3]);
+			r.max = std::max(structFace[0], structFace[3]);
+		}
+		else {
+			r.min = std::min(structFace[1], structFace[4]);
+			r.max = std::max(structFace[1], structFace[4]);
+		}
+		break;
+	case THETA:
+		if (h5Data.coordinateSystem != Hdf5Data::CYLINDER)
+		{
+			r.min = std::min(structFace[1], structFace[4]);
+			r.max = std::max(structFace[1], structFace[4]);
+		}
+		else {
+			r.min = std::min(structFace[2], structFace[5]);
+			r.max = std::max(structFace[2], structFace[5]);
+		}
+		break;
+
+	}
+	return r;
 }

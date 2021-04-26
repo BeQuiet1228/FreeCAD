@@ -194,6 +194,8 @@ private:
 	//xy数据的单位
 	std::string xTag, yTag;
 	std::mutex xTagMute, yTagMutex;
+protected:
+	std::string xAxisName, yAxisName;
 public:
 	virtual void initDiretion();
 	void initInformation() override;

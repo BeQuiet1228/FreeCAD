@@ -211,7 +211,9 @@ void XYData::initDiretion()
 		return;
 	QString xd = xt.split('(').at(0).simplified();
 	QString yd = yt.split('(').at(0).simplified();
-	directionTyp = DirectionType(stringToDirection(xd.toStdString()) | stringToDirection(yd.toStdString()));
+	xAxisName = xd.toStdString();
+	yAxisName = yd.toStdString();
+	directionTyp = DirectionType(stringToDirection(xAxisName) | stringToDirection(yAxisName));
 	if (directionTyp == NONE)
 		mapType = NEEDLESS_STRUCT;
 	else

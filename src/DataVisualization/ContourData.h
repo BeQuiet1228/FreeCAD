@@ -35,8 +35,9 @@ public:
 		return valueRang;
 	}
 private:
-	//获取顶点
 	void setXYRange();
+	//根据坐标轴的名称 获取范围
+	Data::Rang getAxisRangeFromName(const std::string& name);
 protected:
 	std::vector<Grid> grids;
 
