@@ -35,6 +35,7 @@ public:
 	void AxisCanvans(QSizeF);
 	void SetCanvas(QWidget* mCanvas);
 	void AxisResize(bool, QSize _size = QSize(0, 0));
+	void autoMinAndMAxSize();
 private:
 	QVector<QLineF> Getlines(Axisstyle, QRectF);
 	QVector<AXISVAL> getAxisVal(Axisstyle, QRectF);
@@ -59,4 +60,11 @@ private:
 	AXISVAL Axisunit;
 	QSizeF* CanvasSize;
 	QWidget* CanvasWidget;
+	//设置最小宽高
+	float minWidth;
+	float minHeight;
+	//之前的最小宽高
+	float lastminWidth;
+	float lastminHeight;
+
 };

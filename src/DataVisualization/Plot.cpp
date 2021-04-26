@@ -80,6 +80,8 @@ void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
 	auto yr = mainRenderer->getYRang();
 	AxisL->setAxisRange(yr.min, yr.max);
 	AxisB->setAxisRange(xr.min, xr.max);
+	AxisL->_update();
+	AxisB->_update();
 }
 
 /**
@@ -161,12 +163,13 @@ void Plot::initGUI()
 	AxisL = new Axis();
 	AxisL->setAxixStyle(Axisleft);
 	AxisL->SetAxisNumber(6);
+	AxisL->autoMinAndMAxSize();
 	AxisL->setAxisRange(-100, 100);
 	AxisB = new Axis();
 	AxisB->setAxixStyle(AxisBottom);
 	AxisB->SetAxisNumber(6);
 	AxisB->setAxisRange(-100, 100);
-
+	AxisB->autoMinAndMAxSize();
 	scaleWIdget = new QwtScaleWidget(QwtScaleDraw::RightScale, this);
 	scaleWIdget->setColorBarEnabled(true);
 	scaleWIdget->setColorBarWidth(20);
