@@ -140,13 +140,13 @@ DirectionType Data::stringToDirection(const std::string& str)
 
 	DirectionType direction;
 
-	if (str == "X ")
+	if (str == "X")
 		direction = X;
-	else if (str == "Y ")
+	else if (str == "Y")
 		direction = Y;
-	else if (str == "Z ")
+	else if (str == "Z")
 		direction = Z;
-	else if (str == "R ")
+	else if (str == "R")
 		direction = R;
 	else if (str == "R*cos")
 		direction = R;
@@ -209,8 +209,8 @@ void XYData::initDiretion()
 
 	if (xt.indexOf('(') < 0 || yt.indexOf('(') < 0)
 		return;
-	QString xd = xt.split('(').at(0);
-	QString yd = yt.split('(').at(0);
+	QString xd = xt.split('(').at(0).simplified();
+	QString yd = yt.split('(').at(0).simplified();
 	directionTyp = DirectionType(stringToDirection(xd.toStdString()) | stringToDirection(yd.toStdString()));
 	if (directionTyp == NONE)
 		mapType = NEEDLESS_STRUCT;
