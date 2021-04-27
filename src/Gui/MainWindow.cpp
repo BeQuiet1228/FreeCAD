@@ -270,6 +270,7 @@ void MainWindow::showContorlUI()
 	*/
 	contorlDockWidget->setVisible(true);
 	contorlDockWidget->show();
+    showControlTree();
 }
 
 void MainWindow::hideContorlUI()
@@ -281,6 +282,7 @@ void MainWindow::hideContorlUI()
 	contorlButtonToolBar->hide();
 	*/
 	contorlDockWidget->close();
+    hideControlTree();
 }
 
 void MainWindow::inintContorlUI()
@@ -316,6 +318,61 @@ void MainWindow::addTitleAction(QAction* action)
 	mainWindowDef->addTitleShortcutAction(action);
 }
 
+void MainWindow::hideControlTree()
+{
+
+    DockWindowManager* pDockMgr = DockWindowManager::instance();
+    CombiView* pcCombiView = dynamic_cast<CombiView*>(pDockMgr->getDockWindow("Combo View"));
+    if (!pcCombiView)
+        return;
+    auto tab = pcCombiView->getTabPanel();
+    int index = tab->indexOf(controlTreeWidget);
+    if (index < 0)
+        return;
+    tab->removeTab(index);
+    
+}
+
+void MainWindow::showControlTree()
+{
+	DockWindowManager* pDockMgr = DockWindowManager::instance();
+    CombiView* pcCombiView = dynamic_cast<CombiView*>(pDockMgr->getDockWindow("Combo View"));
+	if (!pcCombiView)
+		return;
+	auto tab = pcCombiView->getTabPanel();
+	int index = tab->indexOf(controlTreeWidget);
+	if (index >= 0)
+		return;
+    tab->addTab(controlTreeWidget, QString::fromLocal8Bit("control"));
+}
+
+void MainWindow::hideVisualizationTree()
+{
+	DockWindowManager* pDockMgr = DockWindowManager::instance();
+	CombiView* pcCombiView = dynamic_cast<CombiView*>(pDockMgr->getDockWindow("Combo View"));
+	if (!pcCombiView)
+		return;
+	auto tab = pcCombiView->getTabPanel();
+	int index = tab->indexOf(mTreeWidget);
+	if (index < 0)
+		return;
+	tab->removeTab(index);
+
+}
+
+void MainWindow::showVisualizationTree()
+{
+	DockWindowManager* pDockMgr = DockWindowManager::instance();
+	CombiView* pcCombiView = dynamic_cast<CombiView*>(pDockMgr->getDockWindow("Combo View"));
+	if (!pcCombiView)
+		return;
+	auto tab = pcCombiView->getTabPanel();
+	int index = tab->indexOf(mTreeWidget);
+	if (index >= 0)
+		return;
+	tab->addTab(mTreeWidget, QString::fromLocal8Bit("resualt"));
+}
+
 } // namespace Gui
 
 
@@ -336,6 +393,11 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
 	mainWindowDef = new MainWindowDef();
 	mainWindowDef->addCenterWidget(this);
 	this->menuBar()->setVisible(false);
+
+
+    mTreeWidget = new Gui::TreeViewCtrl();
+    controlTreeWidget = new ControlTreeWidget;
+
     // Create the layout containing the workspace and a tab bar
     d->mdiArea = new QMdiArea();
 #if QT_VERSION >= 0x040500
@@ -450,9 +512,6 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
         pcCombiView->setObjectName(QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget","Combo View")));
         pcCombiView->setMinimumWidth(150);
         pDockMgr->registerDockWindow("Std_CombiView", pcCombiView);
-		inittreeContor((void*)pcCombiView);
-        controlTreeWidget = new ControlTreeWidget;
-        pcCombiView->getTabPanel()->addTab(controlTreeWidget,QString::fromLocal8Bit("control"));
     }
 	//inittreeContor();
 #if QT_VERSION < 0x040500
@@ -540,7 +599,6 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
 	this->smartContorlInterface = new SmartContorlInterface;
 	this->smartContorlInterface->init();
 	inintContorlUI();
-
 }
 
 MainWindow::~MainWindow()
@@ -549,6 +607,8 @@ MainWindow::~MainWindow()
     delete d;
     instance = 0;
 	delete smartContorlInterface;
+    delete controlTreeWidget;
+    delete mTreeWidget;
 }
 
 MainWindow* MainWindow::getInstance()
@@ -1919,7 +1979,6 @@ void MainWindow::inittreeContor(void* _combiview)
 {
 	CombiView* pCombiview = (CombiView*)_combiview;
 	QTabWidget* _tabwidget = pCombiview->getTabPanel();
-	mTreeWidget = new Gui::TreeViewCtrl();
 	int curindex = _tabwidget->count();
 	_tabwidget->insertTab(curindex, mTreeWidget, tr("获取结果")/*GetEncodingstr("获取结果", ENCODING_GB2312)*/);
 }

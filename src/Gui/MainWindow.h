@@ -305,6 +305,11 @@ public:
 	void inittreeContor();
 	void inittreeContor(void*);
 	void addTitleAction(QAction* action);
+    //显示和隐藏树控件
+    void hideControlTree();
+    void showControlTree();
+    void hideVisualizationTree();
+    void showVisualizationTree();
 	//void DisplatPlot(Hdf5Data data,DocumentManager* ptr,int _type=0);
 };
 
