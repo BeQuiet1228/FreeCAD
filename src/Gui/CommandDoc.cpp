@@ -72,6 +72,7 @@
 #include <Contorl/ContorlInterface.h>
 #include <memory>
 #include "SmartContorl/SmartContorlInterface.h"
+#include "MyParameter.h"
 using namespace Gui;
 
 
@@ -2084,6 +2085,35 @@ bool StdCmdRunSuperTube::isActive(void)
 {
 	return true;
 }
+//===========================================================================
+// Std_MY_PARAMETER
+//===========================================================================
+
+DEF_STD_CMD_A(StdCmdMyParameter);
+
+StdCmdMyParameter::StdCmdMyParameter()
+    : Command("Std_My_Parameter")
+{
+    // setting the
+    sGroup = QT_TR_NOOP("open");
+    sMenuText = QT_TR_NOOP("SuperTube");
+    sToolTipText = QT_TR_NOOP("open SuperTube");
+    sWhatsThis = "Std_Open_Command_book";
+    sStatusTip = QT_TR_NOOP("Std_Run_Super_Tube");
+    sPixmap = "help-supertube";
+}
+
+void StdCmdMyParameter::activated(int iMsg)
+{
+    Q_UNUSED(iMsg);
+    MyParameter* dialog = new MyParameter();
+    dialog->show();
+}
+bool StdCmdMyParameter::isActive(void)
+{
+    return true;
+}
+
 namespace Gui {
 
 void CreateDocCommands(void)
@@ -2133,6 +2163,10 @@ void CreateDocCommands(void)
     rcCmdMgr.addCommand(new StdCmdTransformManip());
     rcCmdMgr.addCommand(new StdCmdAlignment());
     rcCmdMgr.addCommand(new StdCmdEdit());
+    /*lzg*/
+    //自定义变量
+    rcCmdMgr.addCommand(new StdCmdMyParameter());
+    
 }
 
 } // namespace Gui
