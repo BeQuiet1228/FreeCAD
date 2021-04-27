@@ -46,6 +46,8 @@ public:
 	};
 	struct Rang{
 		Rang() :max(0), min(0){};
+		Rang(const float& _min, const float& _max)
+			:max(_max), min(_min) {};
 		float length(){
 			return max - min;
 		}
@@ -192,6 +194,8 @@ private:
 	//xy数据的单位
 	std::string xTag, yTag;
 	std::mutex xTagMute, yTagMutex;
+protected:
+	std::string xAxisName, yAxisName;
 public:
 	virtual void initDiretion();
 	void initInformation() override;

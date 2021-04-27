@@ -3,6 +3,9 @@
 #include<QSize>
 #include<QPainter>
 #include<QMouseEvent>
+#include <QRegExp>
+#include <QValidator>
+#include <QRegExpValidator>
 #define ZERO_F (0.000000000001f)	//定义浮点数的零
 //局部函数--只限当前cpp内部使用
 int getIntegerBits(__int64 data);
@@ -18,11 +21,29 @@ QWidget(parent)/*,horizontalAxis(0),verticalAxis(0),isstart(false)*/, CanvasWidg
 	mAxisstyle = AxisBottom;
 	axisvalrange.min = 0;
 	axisvalrange.max = 100;
-	//设置范围
+	//正则表达式---只能输入数值
+	QRegExp rx_ip("^(-?|\\d)(\\d+)?(\\.\\d+)?$");
+	QValidator * validator = new QRegExpValidator(rx_ip, this);
 	minLineedit=new QLineEdit(this);
+	minLineedit->setValidator(validator);
 	minLineedit->setVisible(false);
 	maxLineedit=new QLineEdit(this);
+	maxLineedit->setValidator(validator);
 	maxLineedit->setVisible(false);
+	//设置样式
+	minLineedit->setObjectName("minLineEdit");
+	minLineedit->setStyleSheet(
+		"QLineEdit#minLineEdit{"
+		"color:blue;"
+		"border-radius:6px;"
+		"}");
+	maxLineedit->setObjectName("maxLineEdit");
+	maxLineedit->setStyleSheet(
+		"QLineEdit#maxLineEdit{"
+		"color:red;"
+		"border-radius:6px;"
+		"}"
+		);
 	minRectf=new QRectF();
 	maxRectf=new QRectF();
 	curAxisRang=axisvalrange;
@@ -244,7 +265,6 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 		/***************************************************************/
 		//获取左边的方向的刻度数值和位置
 		auto func = [&](int number,int maxnumber)->void{
-
 			AXISVAL mmaxisval;
 			mmaxisval.valsize = _axisval[number]; /*QString("%1").arg(startval + number*interval)*/;
 			QRect rect = fm.boundingRect(mmaxisval.valsize);
@@ -257,7 +277,7 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 			{
 				mmaxisval.postion = QPointF(startposition.x() - mwidth, startposition.y() - number*Axisinterval - 5);
 				//获取最小数据的左边范围
-				minRectf->setLeft(startposition.x() - mwidth);
+				minRectf->setLeft(mmaxisval.postion.x() - mwidth);
 				minRectf->setRight(minRectf->left()+mwidth*2);
 				minRectf->setBottom(_rect.bottom()-1);
 				minRectf->setTop(minRectf->bottom() - rect.height()*2);
@@ -366,9 +386,7 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 		qreal startval = axisvalrange.min;
 		QPointF startposition = QPointF(_rect.left() + 1, _rect.top() + 20);
 		QPointF nextPosition = startposition;
-
 		/*************************************************************************/
-		//存储AxisBottom方向的刻度值以及坐标
 		auto func = [&](int number,int maxnumber)->void{
 			nextPosition.setX(startposition.x() + number*Axisinterval);
 			AXISVAL mmaxisval;
@@ -402,7 +420,6 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 		{
 			func(i, Axisnumber);
 		}
-		//第一刻度和最后一个刻度需要移动位置
 		QRect rect = fm.boundingRect(_axisval[0]);
 		minHeight = minHeight + rect.height()+10;
 	}
@@ -700,6 +717,7 @@ void Axis::mouseDoubleClickEvent(QMouseEvent *event){
 			minLineedit->move(QPoint(minRectf->left(),minRectf->top()));
 			minLineedit->setText(QString("%1").arg(axisvalrange.min));
 			minLineedit->setVisible(true);
+			minLineedit->setFocus();
 		}
 		else if (maxRectf->contains(event->posF()))
 		{
@@ -707,21 +725,36 @@ void Axis::mouseDoubleClickEvent(QMouseEvent *event){
 			maxLineedit->move(QPoint(maxRectf->left(),maxRectf->top()));
 			maxLineedit->setText(QString("%1").arg(axisvalrange.max));
 			maxLineedit->setVisible(true);
+			maxLineedit->setFocus();
 		}
 		else
-		{
-			if (minLineedit->isVisible())
-			{
-				//获取数据
-				minLineedit->setVisible(false);
-			}
-			if (maxLineedit->isVisible())
-			{
-				maxLineedit->setVisible(false);
-			}
-			
-			
-		}
+			axisRangeChange();
+	}
+}
+void Axis::keyReleaseEvent(QKeyEvent *event)
+{
+	QWidget::keyPressEvent(event);
+	//按下enter键
+	if (event->key() == Qt::Key_Return||event->key()==Qt::Key_Enter)
+		axisRangeChange();
+}
+void Axis::axisRangeChange()
+{
+	if (minLineedit->isVisible())
+	{
+		curAxisRang.min = minLineedit->text().toFloat();
+		minLineedit->setVisible(false);
+	}
+	if (maxLineedit->isVisible())
+	{
+		curAxisRang.max = maxLineedit->text().toFloat();
+		maxLineedit->setVisible(false);
+	}
+	if (curAxisRang != axisvalrange)
+	{
+		emit sendAxisRang(curAxisRang.min, curAxisRang.max);
+		axisvalrange = curAxisRang;
+		_update();
 	}
 }
 #include "moc_Axis.cpp"

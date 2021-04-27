@@ -29,11 +29,24 @@ Renderers RendererFactory::creatRenderers(Hdf5Data h5d, DirectionType type /*= X
 
 	Renderers renderers;
 	renderers.push_back(renderer);
-	if (renderer->getNeedStrucuType() == Data::NEED_STRUCT)
+	if (renderer->getNeedStrucuType() != Data::NEED_STRUCT)
+		return renderers;
+
+	//如果是等位图，那么必须使用观测面初始化结构图
+	auto contourRender = std::dynamic_pointer_cast<ContourRender>(renderer);
+	if (contourRender)
 	{
-		RendererPtr structRenderer = creatRenderer(structData, renderer->getDirection());
-		renderers.push_back(structRenderer);
+		auto sRender = creatContourStructRender(contourRender);
+		if (sRender)
+		{
+			renderers.push_back(sRender);
+			return renderers;
+		}
 	}
+
+	RendererPtr structRenderer = creatRenderer(structData, renderer->getDirection());
+	renderers.push_back(structRenderer);
+
 	return renderers;
 }
 
@@ -136,6 +149,42 @@ RendererPtr RendererFactory::creatStructRender(Hdf5Data h5d, DirectionType type)
 	/*_StructureRenderer->dataInit();
 	_StructureRenderer->setDefaultRang();*/
 }
+
+/**
+* @brief RendererFactory::creatStructRender 根据面的两个带你创建结构图
+* @param Hdf5Data h5d
+* @param const _3DPointf & start
+* @param const _3DPointf & end
+* @return RendererPtr
+*/
+RendererPtr RendererFactory::creatStructRender(Hdf5Data h5d, const _3DPointf& start, const _3DPointf& end)
+{
+	std::shared_ptr<StructData> _structdata(new StructData(h5d, start,end));
+	StructRender* _StructureRenderer = new StructRender(_structdata);
+	return RendererPtr(_StructureRenderer);
+}
+
+
+
+
+RendererPtr RendererFactory::creatContourStructRender(std::shared_ptr<ContourRender>& contourRender)
+{
+	_3DPointf start, end;
+	auto v = contourRender->getStructFace();
+	if (v.size() < 6)
+		return RendererPtr();
+
+	start._1st = v[0];
+	start._2rd = v[1];
+	start._3th = v[2];
+	end._1st = v[3];
+	end._2rd = v[4];
+	end._3th = v[5];
+
+	RendererPtr structRenderer = creatStructRender(structData, start, end);
+	return structRenderer;
+}
+
 RendererPtr RendererFactory::creatVectorRender(Hdf5Data h5d)
 {
 	std::shared_ptr<phasorData> r(new phasorData(h5d));

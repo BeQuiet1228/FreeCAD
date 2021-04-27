@@ -4,8 +4,10 @@
 #include <vector>
 #include <list>
 #include "Data.h"
+#include "StructData.h"
 class Data;
 class Renderer;
+class ContourRender;
 using RendererPtr = std::shared_ptr<Renderer>;
 using Renderers = std::list<RendererPtr>;
 using DataPtr = std::shared_ptr<Data>;
@@ -16,6 +18,7 @@ public:
 
 public:
 	Renderers creatRenderers(Hdf5Data h5d,DirectionType type = X_Y);
+	RendererPtr creatContourStructRender(std::shared_ptr<ContourRender>& contourRender);
 	static RendererPtr creatRenderer(Hdf5Data h5d,DirectionType type = X_Y);
 	static RendererPtr creatRenderer(DataPtr data);
 	static DataPtr creatData(Hdf5Data h5d);
@@ -26,6 +29,7 @@ public:
 	static DataPtr creatInterspaceData(Hdf5Data h5d);
 
 	static RendererPtr creatStructRender(Hdf5Data h5d, DirectionType type = X_Y);
+	static RendererPtr creatStructRender(Hdf5Data h5d, const _3DPointf& start,const _3DPointf& end);
 	static RendererPtr creatVectorRender(Hdf5Data h5d);
 
 	//Ѱ�ҽṹͼ

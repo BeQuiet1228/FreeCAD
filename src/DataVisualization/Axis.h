@@ -22,6 +22,10 @@ typedef struct valrange{
 		this->max = that.max;
 		return *this;
 	}
+	bool operator !=(const valrange& that)
+	{
+		return !((this->min == that.min) && (this->max == that.max));
+	}
 }VARRANGE;
 
 class Axis : public QWidget
@@ -47,13 +51,15 @@ private:
 	QVector<QLineF> Getlines(Axisstyle, QRectF);
 	QVector<AXISVAL> getAxisVal(Axisstyle, QRectF);
 	AXISVAL GetAxisUnit(Axisstyle _Axisstyle, QRectF _rect);
+	void axisRangeChange();
 public:
 	void paintEvent(QPaintEvent* event);
 Q_SIGNALS:
-	void sendAxisRang();
+	void sendAxisRang(const float& min,const float& max);
 protected:
 	virtual void resizeEvent(QResizeEvent* event)override;
 	virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
+	virtual void keyReleaseEvent(QKeyEvent *event) override;
 		//获取科学计数法的字符串
 	QVector<QString> GetScientific_notation();
 private:

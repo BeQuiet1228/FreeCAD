@@ -104,6 +104,8 @@ SET(SRC main.cpp
 	RendererFactory.h
 	RendererFactory.cpp
 	exportConfig.hpp
+	RenderGrid.cpp
+	RenderGrid.h
 	)
 SET(SRC_TOOL ""
 	#Doublesilder.h

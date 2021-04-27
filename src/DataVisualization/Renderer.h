@@ -13,6 +13,7 @@ public:
 	Renderer(std::shared_ptr<Data> data);
 	virtual ~Renderer();
 
+	friend class Plot;
 public:
 	//²Ù×÷äÖÈ¾Í¼
 	void setImage(const QImage& map);

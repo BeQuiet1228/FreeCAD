@@ -1,5 +1,7 @@
 #include "ContourData.h"
 #include <qvector.h>
+#include <QRegExp>
+#include <math.h>
 ContourData::ContourData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
 	:XYData(h5Data, mod), height(0), width(0)
 {
@@ -96,6 +98,7 @@ bool ContourData::loadPoint()
 	setXRang(xr);
 	setYRang(yr);
 	
+	setXYRange();
 }
 
 /**
@@ -187,4 +190,128 @@ ContourData::Grid ContourData::findGrid(const float& x, const float& y)
 	}
 #endif
 	return grids.at(index);
+}
+
+std::vector<float> ContourData::getStructFace()
+{
+	if (headList.size() < 17)
+		return std::vector<float>();
+	
+	QString qstr = QString::fromStdString(headList[16]);
+	QStringList sl = qstr.split("TO");
+	if (sl.size() != 2)
+		return std::vector<float>();
+	QString point1 = sl[0];
+	QString point2 = sl[1];
+
+	sl = point1.split("(");
+	if (sl.size() != 2)
+		return std::vector<float>();
+	point1 = sl[1];
+
+	sl = point1.split(")");
+	if (sl.size() != 2)
+		return std::vector<float>();
+	point1 = sl[0];
+
+	sl = point1.split(",");
+	if (sl.size() != 3)
+		return std::vector<float>();
+
+	std::vector<float> values;
+	for (auto iter = sl.begin(); iter != sl.end(); iter++)
+	{
+		values.push_back(iter->toFloat());
+	}
+
+	sl = point2.split("(");
+	if (sl.size() != 2)
+		return std::vector<float>();
+	point2 = sl[1];
+
+	sl = point2.split(")");
+	if (sl.size() != 2)
+		return std::vector<float>();
+	point2 = sl[0];
+
+	sl = point2.split(",");
+	if (sl.size() != 3)
+		return std::vector<float>();
+
+	for (auto iter = sl.begin(); iter != sl.end(); iter++)
+	{
+		values.push_back(iter->toFloat());
+	}
+
+	return values;
+}
+
+/**
+* @brief ContourData::setXYRange 设置数据渲染范围，这里的范围能从数据中读取，会有误差，得从观测面中读取
+* @return void
+*/
+void ContourData::setXYRange()
+{
+	std::vector<float> structFace = getStructFace();
+
+	Data::Rang xr, yr;
+	xr = getAxisRangeFromName(xAxisName);
+	yr = getAxisRangeFromName(yAxisName);
+	setXRang(xr);
+	setYRang(yr);
+
+}
+
+Data::Rang ContourData::getAxisRangeFromName(const std::string& name)
+{
+	std::vector<float> structFace = getStructFace();
+	Data::Rang r;
+	switch (stringToDirection(name))
+	{
+	default:
+		return r;
+		break;
+	case X:
+		r.min = std::min(structFace[0], structFace[3]);
+		r.max = std::max(structFace[0], structFace[3]);
+		break;
+	case Y:
+		r.min = std::min(structFace[1], structFace[4]);
+		r.max = std::max(structFace[1], structFace[4]);
+		break;
+	case Z:
+		if (h5Data.coordinateSystem != Hdf5Data::CYLINDER)
+		{
+			r.min = std::min(structFace[2], structFace[5]);
+			r.max = std::max(structFace[2], structFace[5]);
+		}else {
+			r.min = std::min(structFace[0], structFace[3]);
+			r.max = std::max(structFace[0], structFace[3]);
+		}
+		break;
+	case R:
+		if (h5Data.coordinateSystem != Hdf5Data::CYLINDER)
+		{
+			r.min = std::min(structFace[0], structFace[3]);
+			r.max = std::max(structFace[0], structFace[3]);
+		}
+		else {
+			r.min = std::min(structFace[1], structFace[4]);
+			r.max = std::max(structFace[1], structFace[4]);
+		}
+		break;
+	case THETA:
+		if (h5Data.coordinateSystem != Hdf5Data::CYLINDER)
+		{
+			r.min = std::min(structFace[1], structFace[4]);
+			r.max = std::max(structFace[1], structFace[4]);
+		}
+		else {
+			r.min = std::min(structFace[2], structFace[5]);
+			r.max = std::max(structFace[2], structFace[5]);
+		}
+		break;
+
+	}
+	return r;
 }

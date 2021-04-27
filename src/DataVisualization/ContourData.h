@@ -23,6 +23,8 @@ public:
 	virtual QwtMatrixRasterData* getQwtMatrixRasterData();
 	//寻找一个网格
 	Grid findGrid(const float& x, const float& y);
+	//获取对应的结构体面
+	std::vector<float> getStructFace();
 public:
 	void setValueRang(const Rang& r){
 		std::lock_guard<std::mutex> am(ValueRangMutex);
@@ -33,8 +35,9 @@ public:
 		return valueRang;
 	}
 private:
-	//获取顶点
-	std::vector<Grid> getVertex(const double& x,const double& y) const;
+	void setXYRange();
+	//根据坐标轴的名称 获取范围
+	Data::Rang getAxisRangeFromName(const std::string& name);
 protected:
 	std::vector<Grid> grids;
 
