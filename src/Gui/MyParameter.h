@@ -28,6 +28,8 @@ public:
 	QLineEdit* le1;
 	QLineEdit* le2;
 	QLineEdit* le3;
+	QGridLayout* gl;
+	QVBoxLayout* vbl;
 
 	//Base::Unit impliedUnit;
 	//Gui::PropertyEditor::PropesrtyEditor* myEidt;

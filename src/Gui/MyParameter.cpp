@@ -32,15 +32,19 @@ MyParameter::MyParameter(QWidget* parent) : QDialog(parent){
                                               << QString::fromStdString("type")
                                               << QString::fromStdString("description"));
     tableWidget->setHorizontalHeaderLabels(headerLabels);
+    tableWidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
 
     QObject::connect(this->tableWidget, SIGNAL(cellChanged(int, int)), this, SLOT(cellDoubleClicked(int, int)));
 
     this->addNewLine(0);
-    
-    
-    //this->cellDoubleClicked(0, 0);
-    //mySpinBox->setGeometry(QRect(80, 80, 40, 40));
-    //mySpinBox->show();
+
+    gl = new QGridLayout(this);
+    gl->setObjectName(QString::fromUtf8("gridLayout"));
+    vbl = new QVBoxLayout();
+    vbl->setObjectName(QString::fromUtf8("verticalLayout"));
+
+    vbl->addWidget(tableWidget);
+    gl->addLayout(vbl, 0, 0, 1, 1);
 }
 
 MyParameter::~MyParameter()
@@ -48,76 +52,6 @@ MyParameter::~MyParameter()
     //delete ui;
     delete tableWidget;
 }
-
-//void MyParameter::textChanged(const QString& text){
-//    le2->setText(le1->text());
-//    DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("param");
-//    App::ObjectIdentifier p(ObjectIdentifier::parse(docObj, "t1"));
-//
-//    try {
-//        //now handle expression
-//        boost::shared_ptr<Expression> expr(ExpressionParser::parse(p.getDocumentObject(), text.toStdString().c_str()));
-//
-//        if (expr) {
-//            std::string error = p.getDocumentObject()->ExpressionEngine.validateExpression(p, expr);
-//
-//            if (error.size() > 0)
-//                throw Base::RuntimeError(error.c_str());
-//
-//            PropertyQuantity* qprop = Base::freecad_dynamic_cast<PropertyQuantity>(p.getProperty());
-//            //impliedUnit = Base::Unit(qprop->getUnit());
-//            Base::Unit impliedUnit;
-//            if (qprop != 0)
-//                impliedUnit = qprop->getUnit();
-//            else
-//                impliedUnit = Base::Unit();
-//
-//            std::unique_ptr<Expression> result(expr->eval());
-//
-//            boost::shared_ptr<App::Expression> expression = expr;
-//            //ui->okBtn->setEnabled(true);
-//            //ui->msg->clear();
-//
-//            NumberExpression* n = Base::freecad_dynamic_cast<NumberExpression>(result.get());
-//            if (n) {
-//                Base::Quantity value = n->getQuantity();
-//                if (value.isDimensionless()) {
-//                    le3->setText(QString::fromStdString("Number"));
-//                }
-//                else {
-//                    le3->setText(value.getUnit().getTypeString());
-//                }
-//                if (!value.getUnit().isEmpty() && value.getUnit() != impliedUnit)
-//                    throw Base::UnitsMismatchError("Unit mismatch between result and required unit");
-//
-//                //if (false/*!value.getUnit().isEmpty() && value.getUnit() != impliedUnit*/)
-//                //    throw Base::UnitsMismatchError("Unit mismatch between result and required unit");
-//                //// 结果和所需单位不匹配
-//                //if (value.getUnit() == Base::Unit(0, 0, 0, 0, 0, 0, 0, 0)/* && impliedUnit == Base::Unit(1, 0, 0, 0, 0, 0, 0, 0)*/) {
-//                //    value.setValue(value.getValue() * 1.0);
-//                //}
-//                //value.setUnit(impliedUnit);
-//
-//                //ui->msg->setText(value.getUserString());
-//            }
-//            else
-//                ;
-//            //ui->msg->setText(Base::Tools::fromStdString(result->toString()));
-//
-//        ////set default palette as we may have read text right now
-//        //ui->msg->setPalette(ui->okBtn->palette());
-//        }
-//    }
-//    catch (Base::Exception& e) {
-//        le2->setText(QString::fromUtf8(e.what()));
-//        le3->clear();
-//        //QPalette p(ui->msg->palette());
-//        //p.setColor(QPalette::WindowText, Qt::red);
-//        //ui->msg->setPalette(p);
-//        //ui->okBtn->setDisabled(true);
-//    }
-//}
-
 
 void MyParameter::textChanged(const QString& text) {
    param_type _type = this->typeAnalysis(text); //  表达式的类型
@@ -141,40 +75,6 @@ void MyParameter::textChanged(const QString& text) {
        break;
    }
 }
-
-//void MyParameter::cellDoubleClicked(int row, int column){
-//    mySpinBox = new Gui::IntSpinBox(this);
-//    //DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("param");
-//    //App::ObjectIdentifier p(ObjectIdentifier::parse(docObj, "t1"));
-//    char* temp_exp = "1";
-//    //mySpinBox->bind(p);
-//    //mySpinBox->setGeometry(QRect(80, 80, 100, 40));
-//
-//    le1 = new QLineEdit(this);
-//    le1->setGeometry(QRect(80, 0, 200, 40));
-//    QObject::connect(le1, SIGNAL(textChanged(const QString&)), this, SLOT(textChanged(const QString&)));
-//    //QObject::connect(le1, SIGNAL(textChanged(const QString&)), this, SLOT(typeAnalysis(const QString&)));
-//    le2 = new QLineEdit(this);
-//    le2->setGeometry(QRect(80, 60, 200, 40));
-//
-//    le3 = new QLineEdit(this);
-//    le3->setGeometry(QRect(80, 120, 200, 40));
-//
-//    //PropertyQuantity* qprop = Base::freecad_dynamic_cast<PropertyQuantity>(p.getProperty());
-//    //Base::Unit unit;
-//    //unit = qprop->getUnit();
-//    //Gui::Dialog::DlgExpressionInput* box = new Gui::Dialog::DlgExpressionInput(p, docObj->getExpression(p).expression, unit, this);
-//    //box->show();
-//
-//    //now handle expression
-//    //docObj->getExpression(p).expression
-//    //boost::shared_ptr<Expression> expr(ExpressionParser::parse(docObj, temp_exp));
-//    //cell被双击之后的槽函数
-//    //Gui::Dialog::DlgExpressionInput* box = new Gui::Dialog::DlgExpressionInput(getPath(), getExpression(), unit, this);
-//}
-//Gui::Dialog::DlgExpressionInput* box = new Gui::Dialog::DlgExpressionInput(getPath(), getExpression(), unit, this);
-//connect(box, SIGNAL(finished(int)), this, SLOT(finishFormulaDialog()));
-//box->show();
 
 // 表格内容发生变化时的槽函数
 void MyParameter::cellDoubleClicked(int row, int column) {
@@ -290,13 +190,15 @@ void MyParameter::makeLineEnabled(int row) {
     tableWidget->item(row, 4)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable);
 }
 
-// 添加一个新的属性
+// 添加一个空的属性，主要应用与添加新变量的时候
 void MyParameter::addEmptyProperty(const QString& name) {
     this->addProperty(param_type::type_float, name);
 }
 
-// 修改属性类型以及表达式
+// 修改property 
 bool MyParameter::changeProperty(param_type cur_type, const QString& name, const QString& expression) {
+    //1.如果类型不一致首先修改类型 
+    //2.修改表达式的值
     if (expression.isEmpty()) {
         return false;
     }
@@ -305,7 +207,6 @@ bool MyParameter::changeProperty(param_type cur_type, const QString& name, const
     if (old_type != cur_type) {
         // 移除当前属性，添加对应类型的属性
         // 移除当前属性时，是否应该考虑该属性是否发被调用过
-        
         App::Property* prop = docObj->getPropertyByName(name.toStdString().c_str());
         if (prop){
             docObj->removeDynamicProperty(name.toStdString().c_str());
@@ -313,15 +214,17 @@ bool MyParameter::changeProperty(param_type cur_type, const QString& name, const
         this->addProperty(cur_type, name);
     }
     App::ObjectIdentifier p(ObjectIdentifier::parse(docObj, name.toStdString()));
-    boost::shared_ptr<Expression> expr(ExpressionParser::parse(p.getDocumentObject(), expression.toStdString().c_str()));
-    p.getDocumentObject()->setExpression(p, expr);
-
     if (cur_type == param_type::type_other || cur_type == param_type::type_error) {
-        p.setValue("adsasdasd");
+        p.setValue(expression.toStdString());
+    }
+    else {
+        boost::shared_ptr<Expression> expr(ExpressionParser::parse(p.getDocumentObject(), expression.toStdString().c_str()));
+        p.getDocumentObject()->setExpression(p, expr);
     }
     return true;
 }
 
+// 获取名为name的变量的类型
 param_type MyParameter::getPropertyType(const QString& name) {
     DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("param");
     App::ObjectIdentifier p(ObjectIdentifier::parse(docObj, name.toStdString()));
@@ -340,6 +243,7 @@ param_type MyParameter::getPropertyType(const QString& name) {
     }
 }
 
+// 添加名为name，类型为_type的property
 void MyParameter::addProperty(param_type _type, const QString& name) {
     DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("param");
     App::Property* prop = 0;
@@ -374,36 +278,21 @@ void MyParameter::addProperty(param_type _type, const QString& name) {
     }
 }
 
+// 将row行变量的值填写到该行的第3列
 void MyParameter::setValueToItem(param_type cur_type, const QString& name, int row) {
     DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("param");
     App::ObjectIdentifier p(ObjectIdentifier::parse(docObj, name.toStdString()));
-    std::unique_ptr<Expression> result(docObj->getExpression(p).expression->eval());
-    NumberExpression* value = Base::freecad_dynamic_cast<NumberExpression>(result.get());
-    QString temp = value->getQuantity().getUserString();
-    try {
-        switch (cur_type) {
-        case param_type::type_float:
-            tableWidget->item(row, 2)->setText(temp);
-            break;
-        case param_type::type_angle:
-            tableWidget->item(row, 2)->setText(temp);
-            break;
-        case param_type::type_length:
-            tableWidget->item(row, 2)->setText(temp);
-            break;
-        case param_type::type_other:
-            tableWidget->item(row, 2)->setText(temp);
-            break;
-        case param_type::type_error:
-            tableWidget->item(row, 2)->setText(temp);
-            break;
-        default:
-            break;
-        }
+    QString temp;
+    if (cur_type == param_type::type_float || cur_type == param_type::type_length || cur_type == param_type::type_angle) {
+        std::unique_ptr<Expression> result(docObj->getExpression(p).expression->eval());
+        NumberExpression* value = Base::freecad_dynamic_cast<NumberExpression>(result.get());
+        temp = value->getQuantity().getUserString();
     }
-    catch (const Base::Exception& e) {
-        throw Py::RuntimeError(e.what());
+    else {
+        App::PropertyString* param_str = dynamic_cast<App::PropertyString*>(p.getProperty());
+        temp = QString::fromStdString(std::string(param_str->getValue()));
     }
+    tableWidget->item(row, 2)->setText(temp);
 }
 
 
