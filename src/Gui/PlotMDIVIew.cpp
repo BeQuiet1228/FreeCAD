@@ -6,13 +6,14 @@ namespace Gui{
 	* @param App::Document &_doc
 	* @param QWidget* parent
 	*/
-	PlotMDIView::PlotMDIView(App::Document &_doc, QWidget* parent) :MDIView(0, parent, 0)
+	PlotMDIView::PlotMDIView(Gui::Document &_doc, QWidget* parent) :MDIView(&_doc, parent, 0)
 	{
 		plot = new Plot(this);
 		plot->resize(this->size());
+		//bIsPassive = false;
 	}
 	PlotMDIView::~PlotMDIView(){
-
+		printf("析构\n");
 	}
 	/**
 	* @brief PlotMDIView::GetViewPtr 获取plot控件的指针
@@ -30,6 +31,14 @@ namespace Gui{
 	void PlotMDIView::resizeEvent(QResizeEvent* _event)
 	{
 		plot->resize(this->size());
+	}
+	/**
+	* @brief PlotMDIView::canClose
+	* @return bool
+	*/
+	bool PlotMDIView::canClose()
+	{
+		return true;
 	}
 }
 #include "moc_PlotMDIView.cpp"

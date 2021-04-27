@@ -4,16 +4,21 @@
 #include<QPainter>
 
 #define ZERO_F (0.000000000001f)	//定义浮点数的零
+//局部函数--只限当前cpp内部使用
+int getIntegerBits(__int64 data);
+
 Axis::Axis(QWidget *parent) :
-QWidget(parent)/*,horizontalAxis(0),verticalAxis(0),isstart(false)*/, CanvasWidget(nullptr)
+QWidget(parent)/*,horizontalAxis(0),verticalAxis(0),isstart(false)*/, CanvasWidget(nullptr), minWidth(0.0f), minHeight(0.0f), lastminWidth(0.0f), lastminHeight(0.0f)
 {
 	lines.clear();
 	m_axisval.clear();
 	CanvasSize = new QSizeF(this->width(), this->height());
-	Axisnumber = 7;
+	Axisnumber = 5;
 	mAxisunit = "X(x)";
 	Axisunitfontsize = 20;
 	mAxisstyle = AxisBottom;
+	axisvalrange.min = 0;
+	axisvalrange.max = 100;
 }
 Axis::~Axis()
 {
@@ -26,9 +31,6 @@ Axis::~Axis()
 */
 void Axis::paintEvent(QPaintEvent* event)
 {
-	//获取窗口的大小
-	//QSize clientsize = this->size();
-	//获取客户区的长宽
 	QPainter mPainter(this);
 	if (!lines.empty())
 		mPainter.drawLines(lines);
@@ -54,7 +56,7 @@ void Axis::paintEvent(QPaintEvent* event)
 	{
 		mPainter.save();
 		mPainter.translate(Axisunit.postion);
-		mPainter.rotate(-90);
+		mPainter.rotate(90);
 		mPainter.drawText(QPointF(0, 0), Axisunit.valsize);
 		mPainter.restore();
 	}
@@ -80,7 +82,6 @@ void Axis::_update()
 {
 	//是否需要调整大小
 	lines = Getlines(mAxisstyle, AxisRect);
-
 	getAxisVal(mAxisstyle, AxisRect);
 	GetAxisUnit(mAxisstyle, AxisRect);
 	update();
@@ -141,10 +142,11 @@ QVector<QLineF> Axis::Getlines(Axisstyle _Axisstyle, QRectF _rect){
 		{
 			QLineF line;
 			nextpoint.setY(startpoint.y() - i*interval);
-			(i % 5 == 0) ? (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x() - 10, nextpoint.y())) : (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x() - 6, nextpoint.y()));
+			(i % 5 == 0) ? (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x() - 10, nextpoint.y())) : (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x() - 5, nextpoint.y()));
 			lines.push_back(line);
 		}
 		lines.push_back(QLineF(_rect.right() - 1, _rect.top() + 1, _rect.right() - 1, _rect.bottom() - 1));
+		minWidth = 11;
 	}
 		break;
 	case AxisRight:
@@ -157,41 +159,46 @@ QVector<QLineF> Axis::Getlines(Axisstyle _Axisstyle, QRectF _rect){
 		{
 			QLineF line;
 			nextpoint.setY(startpoint.y() - interval*i);
-			(i % 5 == 0) ? (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x() + 10, nextpoint.y())) : (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x() + 6, nextpoint.y()));
+			(i % 5 == 0) ? (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x() + 10, nextpoint.y())) : (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x() + 5, nextpoint.y()));
 			lines.push_back(line);
 		}
 		lines.push_back(QLineF(_rect.left() + 1, _rect.top() + 1, _rect.left() + 1, _rect.bottom() - 1));
+		minWidth = 11;
 	}
 		break;
 
 	case AxisTop:
 	{
 		qreal interval = (_rect.width() - 2) / (Axisnumber * 5);
+		//设置刻度单位得显示门限
 		QPointF startpoint = QPointF(_rect.left() + 1, _rect.bottom() - 1);
 		QPointF nextpoint = startpoint;
 		for (auto i = 0; i <= Axisnumber * 5; i++)
 		{
 			nextpoint.setX(startpoint.x() + i*interval);
 			QLineF line;
-			(i % 5 == 0) ? (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x(), nextpoint.y() - 10)) : (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x(), nextpoint.y() - 6));
+			(i % 5 == 0) ? (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x(), nextpoint.y() - 10)) : (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x(), nextpoint.y() - 5));
 			lines.push_back(line);
 		}
 		lines.push_back(QLineF(_rect.left() + 1, _rect.bottom() - 1, _rect.right() - 1, _rect.bottom() - 1));
+		minHeight = 11;
 	}
 		break;
 	case AxisBottom:
 	{
 		qreal interval = (_rect.width() - 2) / (Axisnumber * 5);
+		//设置刻度单位得显示门限
 		QPointF startpoint = QPointF(_rect.left() + 1, _rect.top() + 1);
 		QPointF nextpoint = startpoint;
 		for (auto i = 0; i <= Axisnumber * 5; i++)
 		{
 			nextpoint.setX(startpoint.x() + i*interval);
 			QLineF line;
-			(i % 5 == 0) ? (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x(), nextpoint.y() + 10)) : (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x(), nextpoint.y() + 6));
+			(i % 5 == 0) ? (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x(), nextpoint.y() + 10)) : (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x(), nextpoint.y() + 5));
 			lines.push_back(line);
 		}
 		lines.push_back(QLineF(_rect.left() + 1, _rect.top() + 1, _rect.right() - 1, _rect.top() + 1));
+		minHeight = 11;
 	}
 		break;
 	}
@@ -205,10 +212,23 @@ QVector<QLineF> Axis::Getlines(Axisstyle _Axisstyle, QRectF _rect){
 */
 QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 {
+	//获取宽高
+	int maxlenaxisval = 0;
+	QString max_val;
+	QFont wordfont;
+	//wordfont.setFamily(“宋体”);
+	wordfont.setPointSize(10);
+	QFontMetrics fm(wordfont);
+	//m_pLabel->setText(“名称不合法”);
+	//QRect rec = fm.boundingRect(m_pLabel->text());
+	//int ii = rec.width();//这个就获得了字符串所占的像素宽度
+
 	m_axisval.clear();
 	qreal interval = (axisvalrange.max - axisvalrange.min) / (Axisnumber);
 	qreal Axisinterval;
 	QVector<QString> _axisval = GetScientific_notation();
+	
+	//获取最大的刻度字符
 	switch (_Axisstyle)
 	{
 	case Axisleft:
@@ -221,27 +241,37 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 		/***************************************************************/
 		//获取左边的方向的刻度数值和位置
 		auto func = [&](int number,int maxnumber)->void{
+
 			AXISVAL mmaxisval;
 			mmaxisval.valsize = _axisval[number]; /*QString("%1").arg(startval + number*interval)*/;
+			QRect rect = fm.boundingRect(mmaxisval.valsize);
+			int mwidth = rect.width() + 10;
 			if (number>0&&number<maxnumber)
 			{
-				mmaxisval.postion = QPointF(startposition.x() - mmaxisval.valsize.length() * 10, startposition.y() - number*Axisinterval);
+				mmaxisval.postion = QPointF(startposition.x()-mwidth, startposition.y() - number*Axisinterval);
 			}
 			else if (0==number)
 			{
-				mmaxisval.postion = QPointF(startposition.x() - mmaxisval.valsize.length() * 10, startposition.y() - number*Axisinterval - 5);
+				mmaxisval.postion = QPointF(startposition.x() - mwidth, startposition.y() - number*Axisinterval - 5);
 			}
 			else{
-				mmaxisval.postion = QPointF(startposition.x() - mmaxisval.valsize.length() * 10, startposition.y() - number*Axisinterval+5);
+				mmaxisval.postion = QPointF(startposition.x() - mwidth, startposition.y() - number*Axisinterval+5);
 			}
 			m_axisval.push_back(mmaxisval);
 		};
 		/***************************************************************/
-		
 		for (auto i = 0; i <= Axisnumber; i++)
-			func(i,Axisnumber);
-		//刻度开始的地方---需要往右挪动
-
+		{
+			func(i, Axisnumber);
+			if (_axisval[i].length()>maxlenaxisval)
+			{
+				maxlenaxisval = _axisval[i].length();
+				max_val = _axisval[i];
+			}
+		}
+		//获取到最大的像素
+		QRect rect = fm.boundingRect(max_val);
+		minWidth = minWidth+rect.width() + 10;
 	}
 		break;
 	case AxisRight:
@@ -249,27 +279,35 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 		Axisinterval = (_rect.height() - 2) / (Axisnumber);
 		qreal startval = axisvalrange.min;
 		qreal nextval = startval;
-		QPointF startposition = QPointF(_rect.left() + 11, _rect.bottom() + 4);
+		QPointF startposition = QPointF(_rect.left() + 11, _rect.bottom()+4);
 		QPointF nextPosition = startposition;
 		/**************************************************************************/
 		//lambda(记录刻度文字与相对的布局的坐标位置)
 		auto func = [&](int number,int maxnumber)->void{
 			AXISVAL mmaxisval;
 			mmaxisval.valsize = _axisval[number];/*QString("%1").arg(startval + number*interval)*/;
+			QRect rect = fm.boundingRect(mmaxisval.valsize);
 			if (number > 0 && number < maxnumber)
 				mmaxisval.postion = QPointF(startposition.x(), startposition.y() - number*Axisinterval);
 			else if (0 == number)
 				mmaxisval.postion = QPointF(startposition.x(), startposition.y() - number*Axisinterval - 5);
 			else
-				mmaxisval.postion = QPointF(startposition.x(), startposition.y() - number*Axisinterval - 5);
+				mmaxisval.postion = QPointF(startposition.x(), startposition.y() - number*Axisinterval +5);
 			m_axisval.push_back(mmaxisval);
 		};
 		/**************************************************************************/
 
 		for (auto i = 0; i <= Axisnumber; i++)
-			func(i,Axisnumber);
-		//第一个刻度和最后的一个刻度需要移动位置
-
+		{
+			func(i, Axisnumber);
+			if (_axisval[i].length()>maxlenaxisval)
+			{
+				max_val = _axisval[i];
+				maxlenaxisval = _axisval[i].length();
+			}
+		}
+		QRect rect = fm.boundingRect(max_val);
+		minWidth = minWidth + rect.width() + 10;
 	}
 		break;
 	case AxisTop:
@@ -285,9 +323,11 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 			nextPosition.setX(startposition.x() + number*Axisinterval);
 			AXISVAL mmaxisval;
 			mmaxisval.valsize =_axisval[number] /*QString("%1").arg(startval + number*interval)*/;
+			QRect rect = fm.boundingRect(mmaxisval.valsize);
+			float width = rect.width()+10;
 			if (number<maxNumber&& number>0)
 			{
-				mmaxisval.postion = QPointF(nextPosition.x() - mmaxisval.valsize.length() * 10 / 4, startposition.y());
+				mmaxisval.postion = QPointF(nextPosition.x() - width/2, startposition.y());
 			}
 			else if (number==0)
 			{
@@ -295,7 +335,7 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 			}
 			else
 			{
-				mmaxisval.postion = QPointF(nextPosition.x() - mmaxisval.valsize.length() * 7 - mmaxisval.valsize.length(), startposition.y());
+				mmaxisval.postion = QPointF(nextPosition.x() - width, startposition.y());
 			}
 			m_axisval.push_back(mmaxisval);
 		};
@@ -304,6 +344,8 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 		for (auto i = 0; i <= Axisnumber; i++)
 			func(i,Axisnumber);
 		//第一个刻度和最后一个刻度需要移动位置
+		QRect rect = fm.boundingRect(_axisval[0]);
+		minHeight = minHeight + rect.height()+10;
 	}
 		break;
 	case AxisBottom:
@@ -319,9 +361,11 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 			nextPosition.setX(startposition.x() + number*Axisinterval);
 			AXISVAL mmaxisval;
 			mmaxisval.valsize = _axisval[number]; /*QString("%1").arg(startval + number*interval)*/;
+			QRect rect = fm.boundingRect(mmaxisval.valsize);
+			int width = rect.width()+10;
 			if (number>0 &&number<maxnumber)
 			{
-				mmaxisval.postion = QPointF(nextPosition.x() - mmaxisval.valsize.length() * 10 / 4, startposition.y());
+				mmaxisval.postion = QPointF(nextPosition.x() -width/2, startposition.y());
 			}
 			else if (0==number)
 			{
@@ -329,15 +373,18 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 			}
 			else
 			{
-				mmaxisval.postion = QPointF(nextPosition.x() - mmaxisval.valsize.length() * 7 - mmaxisval.valsize.length(), startposition.y());
+				mmaxisval.postion = QPointF(nextPosition.x() - width, startposition.y());
 			}
 			m_axisval.push_back(mmaxisval);
 		};
 		/************************************************************************/
-
 		for (auto i = 0; i <= Axisnumber; i++)
-			func(i,Axisnumber);
+		{
+			func(i, Axisnumber);
+		}
 		//第一刻度和最后一个刻度需要移动位置
+		QRect rect = fm.boundingRect(_axisval[0]);
+		minHeight = minHeight + rect.height()+10;
 	}
 		break;
 	}
@@ -350,57 +397,78 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 * @return AXISVAL 返回重绘刻度单位的相关信息
 */
 AXISVAL Axis::GetAxisUnit(Axisstyle _Axisstyle, QRectF _rect){
+	
+	QFont wordfont;
+	//wordfont.setFamily(“宋体”);
+	wordfont.setPointSize(Axisunitfontsize);
+	QFontMetrics fm(wordfont);
 	QRectF __rect;
 	switch (_Axisstyle)
 	{
 	case Axisleft:
 	{
-		__rect.setLeft(_rect.left() + Axisunitfontsize);
-		__rect.setRight(__rect.left() + Axisunitfontsize*mAxisunit.length() / 2);
-		__rect.setBottom((_rect.top() + _rect.height() / 2) + Axisunitfontsize*mAxisunit.length() / 4);
-		__rect.setTop(__rect.bottom() - Axisunitfontsize);
+		QRect rect = fm.boundingRect(mAxisunit);
+		float width = rect.width();
+		float height = rect.height();	
+		__rect.setLeft(_rect.right()-minWidth-20);
+		__rect.setRight(__rect.left()+rect.width());
+		__rect.setTop((_rect.top() + _rect.bottom()) / 2 - width / 2);
+		__rect.setBottom(__rect.top()+height);
 		AXISVAL mmaxisval;
 		mmaxisval.valsize = mAxisunit;
 		mmaxisval.postion = QPointF(__rect.left(), __rect.bottom());
 		Axisunit = mmaxisval;
+		minWidth = minWidth + rect.height();
 	}
 		break;
 	case AxisRight:
 	{
-		__rect.setRight(_rect.right() - Axisunitfontsize);
-		__rect.setLeft(__rect.right() - Axisunitfontsize*mAxisunit.length() / 2);
-		__rect.setBottom((_rect.top() + _rect.height() / 2) + Axisunitfontsize*mAxisunit.length() / 4);
-		__rect.setTop(__rect.bottom() - Axisunitfontsize);
+		QRect rect = fm.boundingRect(mAxisunit);	
+		__rect.setLeft(_rect.left()+minWidth);
+		__rect.setRight(__rect.left()+rect.width());
+		__rect.setTop((_rect.top()+_rect.bottom())/2-rect.width()/2);
+		__rect.setBottom(__rect.top()+rect.height());
 		AXISVAL mmaxisval;
 		mmaxisval.valsize = mAxisunit;
-		mmaxisval.postion = QPointF(__rect.right(), __rect.bottom());
+		mmaxisval.postion = QPointF(__rect.left(), __rect.bottom());
 		Axisunit = mmaxisval;
+		minWidth = minWidth + rect.height();
 	}
 		break;
 	case AxisTop:
 	{
-		__rect.setTop(_rect.top());
-		__rect.setBottom(__rect.top() + Axisunitfontsize);
-		__rect.setLeft((_rect.left() + _rect.width() / 2) - Axisunitfontsize*mAxisunit.length() / 4);
-		__rect.setRight(__rect.left() + Axisunitfontsize*mAxisunit.length() / 2);
+		QRect rect = fm.boundingRect(mAxisunit);
+		__rect.setBottom(_rect.bottom()-minHeight); 
+		__rect.setTop(__rect.bottom()-rect.height());
+		__rect.setLeft((_rect.left() + _rect.right())/2-rect.width()/2);
+		__rect.setRight(__rect.left()+rect.width());
 		AXISVAL mmaxisval;
 		mmaxisval.valsize = mAxisunit;
 		mmaxisval.postion = QPointF(__rect.left(), __rect.bottom());
 		Axisunit = mmaxisval;
+		minHeight = minHeight + rect.height();
 	}
 		break;
 	case AxisBottom:
 	{
-		__rect.setBottom(_rect.bottom());
-		__rect.setTop(__rect.bottom() - Axisunitfontsize);
-		__rect.setLeft((_rect.left() + _rect.width() / 2) - Axisunitfontsize*mAxisunit.length() / 4);
-		__rect.setRight(__rect.left() + Axisunitfontsize*mAxisunit.length() / 2);
+		QRect rect = fm.boundingRect(mAxisunit);
+		__rect.setTop(_rect.top()+minHeight+10);
+		__rect.setBottom(__rect.top()+rect.height());
+		__rect.setLeft((_rect.left()+_rect.right())/2-rect.width()/2);
+		__rect.setRight(__rect.left()+rect.width());
 		AXISVAL mmaxisval;
 		mmaxisval.valsize = mAxisunit;
-		mmaxisval.postion = QPointF(__rect.left(), __rect.bottom());
+		mmaxisval.postion = QPointF(__rect.left(), __rect.top());
 		Axisunit = mmaxisval;
+		minHeight = minHeight + rect.height();
 	}
 		break;
+	}
+	if (minHeight!=lastminHeight ||minWidth!=lastminWidth)
+	{
+		this->setMinimumSize(QSize(minWidth,minHeight));
+		lastminHeight = minHeight;
+		lastminWidth = minWidth;
 	}
 	return Axisunit;
 }
@@ -412,43 +480,10 @@ AXISVAL Axis::GetAxisUnit(Axisstyle _Axisstyle, QRectF _rect){
 */
 void Axis::AxisResize(bool ada, QSize _size)
 {
-	if (CanvasSize != nullptr&& ada)
-	{
-		switch (mAxisstyle)
-		{
-		case Axisleft:
-		case AxisRight:
-		{
-			//            this->resize(Axisunitfontsize + 50, CanvasSize->height());
-			//AxisRect.setLeft(0);
-			//AxisRect.setRight(this->size().width());
-			//AxisRect.setTop(10);
-			//AxisRect.setBottom(this->size().height() - 10);
-		}
-			break;
-		case AxisTop:
-		case AxisBottom:
-		{
-			//this->resize(CanvasSize->width(), Axisunitfontsize + 50);
-			//AxisRect.setLeft(10);
-			//AxisRect.setRight(this->size().width() - 10);
-			//AxisRect.setTop(0);
-			//AxisRect.setBottom(this->size().height());
-		}
-			break;
-		}
-
-	}
-	else
-		this->resize(_size);
-
-		AxisRect.setLeft(0);
-		AxisRect.setTop(0);
-		AxisRect.setRight(this->size().width());
-		AxisRect.setBottom(this->size().height());
-
-	//	AxisRect.setTopLeft(QPointF(0,0));
-	//	AxisRect.setBottomRight(QPointF(this->size().width(),this->size().height()));
+	AxisRect.setLeft(0);
+	AxisRect.setTop(0);
+	AxisRect.setRight(this->size().width());
+	AxisRect.setBottom(this->size().height());
 }
 /**
 * @brief Axis::AxisCanvas 传入画布的大小
@@ -475,6 +510,7 @@ void Axis::SetCanvas(QWidget* mCanvas)
 */
 QVector<QString> Axis::GetScientific_notation()
 {
+	//这里增加获取宽高
 	QVector<QString> valstr_list;
 	//获取数值区间
 	qreal max = axisvalrange.max;
@@ -483,11 +519,11 @@ QVector<QString> Axis::GetScientific_notation()
 	qreal interval = (max - min) / (qreal)Axisnumber;
 	QVector<qreal> rang_f;
 #pragma region 计算方式
-	if (/*interval>ZERO_F*/true)//间值大于0
+	if (interval>ZERO_F)//间值大于0
 	{
 		int index = 0;
-		qreal temp_interval = interval;
-		int _interval_i=interval;
+		double temp_interval = interval;
+		__int64 _interval_i=interval;
 		//获取整数部分
 		while (_interval_i<=0)
 		{
@@ -495,11 +531,11 @@ QVector<QString> Axis::GetScientific_notation()
 			{
 				break;
 			}
-			_interval_i = int(temp_interval*=10);
+			_interval_i = __int64(temp_interval*=10);
 			index++;
 		}
 		//获取至少要保留的位数index
-		if (index<=3)
+		if (index>0&&index<=3)
 		{
 			//直接装填
 			QString _str;
@@ -513,13 +549,13 @@ QVector<QString> Axis::GetScientific_notation()
 			_str = QString::number(max,'f',index);
 			valstr_list.push_back(_str);
 		}
-		else
+		else if (index>3)
 		{
 			//当位数大于三位时
 			int min_i = (int)min;
-			qreal min_f = min;
+			qreal min_f = abs(min);
 			int minindex = 0;
-			while (min_i==0)
+			while (min_i == 0 || (min_f>-ZERO_F&&min_f<ZERO_F))
 			{
 				min_i = int(min_f *= 10);
 				minindex++;
@@ -537,16 +573,86 @@ QVector<QString> Axis::GetScientific_notation()
 			_str = QString("%1").arg(max, 0, 'E', index-minindex);
 			valstr_list.push_back(_str);
 		}
+		else
+		{
+			//间值大于0，需要进行判断
+			int interval_bit = getIntegerBits((__int64)interval);
+			int min_bit = getIntegerBits((__int64)min);
+			QString _str;
+			(min_bit>interval_bit) ? (_str = QString("%1").arg(min, min_bit - interval_bit, 'E', 2)) : (_str=QString("%1").arg(min));
+			valstr_list.push_back(_str);
+			for (auto i = 1; i < Axisnumber; i++)
+			{
+				float curval = min + interval*i;
+				int curval_bit = getIntegerBits((__int64)curval);
+				_str = QString("%1").arg((min + interval*i),curval_bit-interval_bit, 'E',2);
+				valstr_list.push_back(_str);
+			}
+			_str = QString("%1").arg(max,2,'E',1);
+			valstr_list.push_back(_str);
+		}
+	}
+	else
+	{
+		int min_int = getIntegerBits((__int64)min);
+		QString str;
+		if (min_int < 4)
+			str = QString("%1").arg(min);
+		else
+			str = QString("%1").arg(min,0,'E',2);
+		for (auto i = 0; i < Axisnumber+1;i++)
+			valstr_list.push_back(str);
 	}
 #pragma endregion
 	return valstr_list;
 }
-
 void Axis::resizeEvent(QResizeEvent* event)
 {
 	CanvasSize->setWidth(this->width());
 	CanvasSize->setHeight(this->height());
 	AxisResize(true);
 	_update();
+}
+void Axis::autoMinAndMAxSize()
+{
+	QFont wordfont;
+	wordfont.setPointSize(Axisunitfontsize);
+	QFontMetrics fm(wordfont);
+	QRect rect = fm.boundingRect(mAxisunit);
+	switch (mAxisstyle)
+	{
+	case Axisleft:
+	case AxisRight:
+	{
+		minHeight = rect.width()*Axisnumber;
+		minWidth = 100;
+	}
+		break;
+	case AxisTop:
+	case AxisBottom:
+	{
+		minWidth = rect.width()*Axisnumber;
+		minHeight = 60;
+	}
+		
+		break;
+	}
+	this->setMaximumSize(QSize(16777215, 16777215));
+	this->setMinimumSize(QSize(minWidth, minHeight));
+}
+/**
+* @brief getIntegerBits 获取整数的位数
+* @param __int64& data 数据
+* @return int
+*/
+int getIntegerBits(__int64 data)
+{
+	__int64  tempdata = abs(data);
+	int index;
+	for (index = 0;tempdata>0;index++)
+	{
+		tempdata /= 10;
+	}
+	return index;
 }
 #include "moc_Axis.cpp"
