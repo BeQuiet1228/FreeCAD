@@ -1122,7 +1122,6 @@ Gui::MDIView* Document::cloneView(Gui::MDIView* oldview)
 
     if (oldview->getTypeId() == View3DInventor::getClassTypeId()) {
         View3DInventor* view3D = new View3DInventor(this, getMainWindow());
-
         // attach the viewprovider
         std::map<const App::DocumentObject*,ViewProviderDocumentObject*>::const_iterator It1;
         for (It1=d->_ViewProviderMap.begin();It1!=d->_ViewProviderMap.end();++It1)

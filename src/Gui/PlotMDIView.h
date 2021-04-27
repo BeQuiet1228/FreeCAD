@@ -14,9 +14,10 @@ namespace Gui{
 	{
 		Q_OBJECT
 	public:
-		PlotMDIView(App::Document &_doc, QWidget* parent = 0);
+		PlotMDIView(Gui::Document &_doc, QWidget* parent = 0);
 		~PlotMDIView();
 		void* GetViewPtr();
+		bool canClose() override;
 	protected:
 		void resizeEvent(QResizeEvent*);
 	private:

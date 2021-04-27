@@ -307,9 +307,9 @@ void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
 	}
 	else
 	{
-		Gui::PlotMDIView* plot = new Gui::PlotMDIView(*(doc->getDocument()));
+		Gui::PlotMDIView* plot = new Gui::PlotMDIView(*doc);
 		Gui::MainWindow::getInstance()->addWindow(plot);
-		doc->attachView(plot,false);
+		//doc->attachView(plot,false);
 		((DocumentManager*)(doc->getDocument()))->bindTreeContrue(nullptr, (Plot*)plot->GetViewPtr());
 		((DocumentManager*)(doc->getDocument()))->DisplatPlot(data, _type);
 	}
