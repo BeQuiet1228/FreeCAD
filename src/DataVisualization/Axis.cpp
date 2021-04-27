@@ -635,11 +635,10 @@ void Axis::resizeEvent(QResizeEvent* event)
 	CanvasSize->setHeight(this->height());
 	AxisResize(true);
 	_update();
-	if (minLineedit->isVisible())
-	{
-		minLineedit->resize(QSize(minRectf->width(),minRectf->height()));
-		minLineedit->move(QPoint(minRectf->left(),minRectf->top()));
-	}
+	minLineedit->resize(QSize(minRectf->width(),minRectf->height()));
+	minLineedit->move(QPoint(minRectf->left(),minRectf->top()));
+	maxLineedit->resize(QSize(maxRectf->width(),maxRectf->height()));
+	maxLineedit->move(QPoint(maxRectf->left(),maxRectf->top()));
 }
 void Axis::autoMinAndMAxSize()
 {
@@ -713,6 +712,7 @@ void Axis::mouseDoubleClickEvent(QMouseEvent *event){
 		{
 			if (minLineedit->isVisible())
 			{
+				//获取数据
 				minLineedit->setVisible(false);
 			}
 			if (maxLineedit->isVisible())

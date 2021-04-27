@@ -49,6 +49,8 @@ private:
 	AXISVAL GetAxisUnit(Axisstyle _Axisstyle, QRectF _rect);
 public:
 	void paintEvent(QPaintEvent* event);
+Q_SIGNALS:
+	void sendAxisRang();
 protected:
 	virtual void resizeEvent(QResizeEvent* event)override;
 	virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
@@ -81,6 +83,4 @@ private:
 	QLineEdit* maxLineedit;
 	QRectF* minRectf;
 	QRectF* maxRectf;
-
-
 };

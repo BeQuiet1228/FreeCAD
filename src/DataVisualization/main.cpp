@@ -5,13 +5,13 @@
 #include "Plot.h"
 #include "StructRender.h"
 #include "StructData.h"
-#include "DoubleSilder.h"
+//#include "DoubleSilder.h"
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 	CanvasItem::registerMetaTye();
 #if 1
-	std::string path = "D:/MILO_P.h5";
+	std::string path = "D:/wandaotongProject/MILO_P.h5";
 	Hdf5IO io(path);
 	io.initHdf5Data();
 	Hdf5Data data = *(io.hdf5DataList.begin());
