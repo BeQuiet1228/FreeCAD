@@ -2,14 +2,13 @@
 #include<QRect>
 #include<QSize>
 #include<QPainter>
-
+#include<QMouseEvent>
 #define ZERO_F (0.000000000001f)	//定义浮点数的零
 //局部函数--只限当前cpp内部使用
 int getIntegerBits(__int64 data);
 
 Axis::Axis(QWidget *parent) :
-QWidget(parent)/*,horizontalAxis(0),verticalAxis(0),isstart(false)*/, CanvasWidget(nullptr), minWidth(0.0f), minHeight(0.0f), lastminWidth(0.0f), lastminHeight(0.0f)
-{
+QWidget(parent)/*,horizontalAxis(0),verticalAxis(0),isstart(false)*/, CanvasWidget(nullptr), minWidth(0.0f), minHeight(0.0f), lastminWidth(0.0f), lastminHeight(0.0f){
 	lines.clear();
 	m_axisval.clear();
 	CanvasSize = new QSizeF(this->width(), this->height());
@@ -19,6 +18,14 @@ QWidget(parent)/*,horizontalAxis(0),verticalAxis(0),isstart(false)*/, CanvasWidg
 	mAxisstyle = AxisBottom;
 	axisvalrange.min = 0;
 	axisvalrange.max = 100;
+	//设置范围
+	minLineedit=new QLineEdit(this);
+	minLineedit->setVisible(false);
+	maxLineedit=new QLineEdit(this);
+	maxLineedit->setVisible(false);
+	minRectf=new QRectF();
+	maxRectf=new QRectF();
+	curAxisRang=axisvalrange;
 }
 Axis::~Axis()
 {
@@ -114,6 +121,7 @@ void Axis::setAxisText(QString AxisUnitText, int fontsize){
 void Axis::setAxisRange(double min, double max){
 	axisvalrange.min = min;
 	axisvalrange.max = max;
+	curAxisRang = axisvalrange;
 }
 /**
 * @brief Axis::SetAxisNumber 设置大刻度个数
@@ -216,13 +224,8 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 	int maxlenaxisval = 0;
 	QString max_val;
 	QFont wordfont;
-	//wordfont.setFamily(“宋体”);
 	wordfont.setPointSize(10);
 	QFontMetrics fm(wordfont);
-	//m_pLabel->setText(“名称不合法”);
-	//QRect rec = fm.boundingRect(m_pLabel->text());
-	//int ii = rec.width();//这个就获得了字符串所占的像素宽度
-
 	m_axisval.clear();
 	qreal interval = (axisvalrange.max - axisvalrange.min) / (Axisnumber);
 	qreal Axisinterval;
@@ -253,9 +256,18 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 			else if (0==number)
 			{
 				mmaxisval.postion = QPointF(startposition.x() - mwidth, startposition.y() - number*Axisinterval - 5);
+				//获取最小数据的左边范围
+				minRectf->setLeft(startposition.x() - mwidth);
+				minRectf->setRight(minRectf->left()+mwidth*2);
+				minRectf->setBottom(_rect.bottom()-1);
+				minRectf->setTop(minRectf->bottom() - rect.height()*2);
 			}
 			else{
 				mmaxisval.postion = QPointF(startposition.x() - mwidth, startposition.y() - number*Axisinterval+5);
+				maxRectf->setLeft(mmaxisval.postion.x()-mwidth);
+				maxRectf->setRight(maxRectf->left()+2*mwidth);
+				maxRectf->setBottom(mmaxisval.postion.y()+rect.height());
+				maxRectf->setTop(1);
 			}
 			m_axisval.push_back(mmaxisval);
 		};
@@ -370,10 +382,18 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 			else if (0==number)
 			{
 				mmaxisval.postion = QPointF(nextPosition.x(), startposition.y());
+				minRectf->setLeft(mmaxisval.postion.x());
+				minRectf->setRight(minRectf->left()+width*2);
+				minRectf->setBottom(mmaxisval.postion.y()+rect.height());
+				minRectf->setTop(minRectf->bottom()-rect.height()*2);
 			}
 			else
 			{
 				mmaxisval.postion = QPointF(nextPosition.x() - width, startposition.y());
+				maxRectf->setRight(nextPosition.x());
+				maxRectf->setLeft(maxRectf->right() - width * 2);
+				maxRectf->setBottom(mmaxisval.postion.y() + rect.height());
+				maxRectf->setTop(minRectf->bottom() - rect.height() * 2);
 			}
 			m_axisval.push_back(mmaxisval);
 		};
@@ -555,10 +575,13 @@ QVector<QString> Axis::GetScientific_notation()
 			int min_i = (int)min;
 			qreal min_f = abs(min);
 			int minindex = 0;
-			while (min_i == 0 || (min_f>-ZERO_F&&min_f<ZERO_F))
+			if (min_f!=0.0f)
 			{
-				min_i = int(min_f *= 10);
-				minindex++;
+				while (min_i == 0)
+				{
+					min_i = int(min_f *= 10);
+					minindex++;
+				}
 			}
 			QString _str;
 			//获取最小值的有效位
@@ -612,6 +635,11 @@ void Axis::resizeEvent(QResizeEvent* event)
 	CanvasSize->setHeight(this->height());
 	AxisResize(true);
 	_update();
+	if (minLineedit->isVisible())
+	{
+		minLineedit->resize(QSize(minRectf->width(),minRectf->height()));
+		minLineedit->move(QPoint(minRectf->left(),minRectf->top()));
+	}
 }
 void Axis::autoMinAndMAxSize()
 {
@@ -654,5 +682,46 @@ int getIntegerBits(__int64 data)
 		tempdata /= 10;
 	}
 	return index;
+}
+/**
+* @brief Axis::mouseDoubleClickEvent 鼠标双击
+* @param QMouseEvent *event
+* @return void
+*/
+void Axis::mouseDoubleClickEvent(QMouseEvent *event){
+	QWidget::mouseDoubleClickEvent(event);
+	printf("x=%f,y=%f\n",event->posF().x(),event->posF().y());
+	printf("minRectf\n");
+	printf("left=%f,top=%f,right=%f,bottom=%f",minRectf->left(),minRectf->top(),minRectf->right(),minRectf->bottom());
+	if (event->button()==Qt::LeftButton)
+	{
+		if (minRectf->contains(event->posF()))
+		{
+			minLineedit->resize(QSize(minRectf->width(),minRectf->height()));
+			minLineedit->move(QPoint(minRectf->left(),minRectf->top()));
+			minLineedit->setText(QString("%1").arg(axisvalrange.min));
+			minLineedit->setVisible(true);
+		}
+		else if (maxRectf->contains(event->posF()))
+		{
+			maxLineedit->resize(QSize(maxRectf->width(), maxRectf->height()));
+			maxLineedit->move(QPoint(maxRectf->left(),maxRectf->top()));
+			maxLineedit->setText(QString("%1").arg(axisvalrange.max));
+			maxLineedit->setVisible(true);
+		}
+		else
+		{
+			if (minLineedit->isVisible())
+			{
+				minLineedit->setVisible(false);
+			}
+			if (maxLineedit->isVisible())
+			{
+				maxLineedit->setVisible(false);
+			}
+			
+			
+		}
+	}
 }
 #include "moc_Axis.cpp"

@@ -24,7 +24,8 @@ SET(MY_MOC_HDR RenderThread.h
 	Canvas.h
 	Axis.h
 	ListTreeWidget.h
-	Dataresource.h)
+	Dataresource.h
+	DoubleSilder.h)
 
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
@@ -104,7 +105,10 @@ SET(SRC main.cpp
 	RendererFactory.cpp
 	exportConfig.hpp
 	)
-
+SET(SRC_TOOL Doublesilder.h
+	Doublesilder.cpp
+	AxisValChangeCtl.h
+	AxisValChangeCtl.cpp)
 #处理ui和qrc文件
 if (BUILD_QT5)
     QT5_ADD_RESOURCES(Gui_QRC_SRCS ${QRC_SRC})
@@ -128,6 +132,7 @@ SET(DataVisualization_src
 	${LISTTREE_SRC}
 	${CONFIG_SRC}
 	${CHAR_ENCODE}
+	${SRC_TOOL}
 )
 add_definitions(-DMY_DEBUG -D_DATA_VISUALIZATION_)
 if(DataVisualizationDll)
@@ -157,6 +162,7 @@ SOURCE_GROUP("struct2d" FILES ${STRUCT2D_SRC})
 SOURCE_GROUP("dataManage" FILES ${LISTTREE_SRC})
 SOURCE_GROUP("config" FILES ${CONFIG_SRC})
 SOURCE_GROUP("character_encoding" FILES ${CHAR_ENCODE})
+SOURCE_GROUP("tool" FILES ${SRC_TOOL})
 #增加包含目录
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}

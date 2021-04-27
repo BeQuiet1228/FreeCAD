@@ -1,6 +1,7 @@
 #pragma  once
 #include <QWidget>
 #include<QVector>
+#include <QLineEdit>
 enum Axisstyle
 {
 	Axisleft,
@@ -12,10 +13,16 @@ typedef struct{
 	QString valsize;
 	QPointF postion;
 }AXISVAL;
-typedef struct{
+typedef struct valrange{
 	double min;
 	double max;
-}valrange;
+	valrange& operator =(const valrange& that)
+	{
+		this->min = that.min;
+		this->max = that.max;
+		return *this;
+	}
+}VARRANGE;
 
 class Axis : public QWidget
 {
@@ -44,7 +51,8 @@ public:
 	void paintEvent(QPaintEvent* event);
 protected:
 	virtual void resizeEvent(QResizeEvent* event)override;
-	//获取科学计数法的字符串
+	virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
+		//获取科学计数法的字符串
 	QVector<QString> GetScientific_notation();
 private:
 	bool isstart;
@@ -66,5 +74,13 @@ private:
 	//之前的最小宽高
 	float lastminWidth;
 	float lastminHeight;
+private:
+	valrange curAxisRang;
+	//增加实时取值功能2021/4/27
+	QLineEdit* minLineedit;
+	QLineEdit* maxLineedit;
+	QRectF* minRectf;
+	QRectF* maxRectf;
+
 
 };
