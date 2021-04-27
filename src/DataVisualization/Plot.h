@@ -95,6 +95,8 @@ private:
 	void findPointRender(const float& x, const float& y);
 	//ÉèÖÃäÖÈ¾·¶Î§
 	void setRenderRange(const float& xMin, const float xMax, const float& yMin, const float& yMax);
+	void setRenderXRange(const float& min, const float& max);
+	void setRenderYRange(const float& min, const float& max);
 	//äÖÈ¾Íø¸ñ
 	void creatGridRenderTask();
 public Q_SLOTS:

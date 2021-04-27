@@ -229,7 +229,11 @@ void Plot::updateAxis()
 		return;
 	auto contourRender = std::dynamic_pointer_cast<ContourRender>(mainRenderer);
 	if (!contourRender)
+	{
+		scaleWIdget->hide();
 		return;
+	}
+
 	Data::Rang vr = contourRender->getValueRange();
 	QwtInterval interval(vr.min, vr.max);
 	scaleWIdget->setColorMap(interval, new ColorMap);
@@ -377,6 +381,22 @@ void Plot::setRenderRange(const float& xMin, const float xMax, const float& yMin
 		(*iter)->setYRang(yr);
 		(*iter)->setXRang(xr);
 	}
+}
+
+void Plot::setRenderXRange(const float& min, const float& max)
+{
+	if (!mainRenderer)
+		return;
+	auto yr = mainRenderer->getYRang();
+	setRenderRange(min, max, yr.min, yr.max);
+}
+
+void Plot::setRenderYRange(const float& min, const float& max)
+{
+	if (!mainRenderer)
+		return;
+	auto xr = mainRenderer->getXRang();
+	setRenderRange(xr.min, xr.max, min, max);
 }
 
 void Plot::creatGridRenderTask()
