@@ -35,12 +35,14 @@ QWidget(parent)/*,horizontalAxis(0),verticalAxis(0),isstart(false)*/, CanvasWidg
 	minLineedit->setStyleSheet(
 		"QLineEdit#minLineEdit{"
 		"color:blue;"
+		"border:1px solid #0000ff;"
 		"border-radius:6px;"
 		"}");
 	maxLineedit->setObjectName("maxLineEdit");
 	maxLineedit->setStyleSheet(
 		"QLineEdit#maxLineEdit{"
 		"color:red;"
+		"border:1px solid #ff0000;"
 		"border-radius:6px;"
 		"}"
 		);
@@ -143,6 +145,8 @@ void Axis::setAxisRange(double min, double max){
 	axisvalrange.min = min;
 	axisvalrange.max = max;
 	curAxisRang = axisvalrange;
+	minLineedit->setVisible(false);
+	maxLineedit->setVisible(false);
 }
 /**
 * @brief Axis::SetAxisNumber 设置大刻度个数
@@ -277,15 +281,15 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 			{
 				mmaxisval.postion = QPointF(startposition.x() - mwidth, startposition.y() - number*Axisinterval - 5);
 				//获取最小数据的左边范围
-				minRectf->setLeft(mmaxisval.postion.x() - mwidth);
-				minRectf->setRight(minRectf->left()+mwidth*2);
+				minRectf->setRight(_rect.right() - 11);
+				minRectf->setLeft(_rect.left()+1);
 				minRectf->setBottom(_rect.bottom()-1);
 				minRectf->setTop(minRectf->bottom() - rect.height()*2);
 			}
 			else{
 				mmaxisval.postion = QPointF(startposition.x() - mwidth, startposition.y() - number*Axisinterval+5);
-				maxRectf->setLeft(mmaxisval.postion.x()-mwidth);
-				maxRectf->setRight(maxRectf->left()+2*mwidth);
+				maxRectf->setLeft(_rect.left()+1);
+				maxRectf->setRight(_rect.right()-11);
 				maxRectf->setBottom(mmaxisval.postion.y()+rect.height());
 				maxRectf->setTop(1);
 			}
@@ -706,9 +710,11 @@ int getIntegerBits(__int64 data)
 */
 void Axis::mouseDoubleClickEvent(QMouseEvent *event){
 	QWidget::mouseDoubleClickEvent(event);
+#ifdef MY_DEBUG
 	printf("x=%f,y=%f\n",event->posF().x(),event->posF().y());
 	printf("minRectf\n");
 	printf("left=%f,top=%f,right=%f,bottom=%f",minRectf->left(),minRectf->top(),minRectf->right(),minRectf->bottom());
+#endif
 	if (event->button()==Qt::LeftButton)
 	{
 		if (minRectf->contains(event->posF()))

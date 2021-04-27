@@ -17,7 +17,7 @@ include_directories(
 	./qwt/polar
 )
 SET(QRC_SRC "")
-SET(UI_SRC "")
+SET(UI_SRC ConfigWidget.ui)
 SET(MY_MOC_HDR RenderThread.h
 	RenderThreadManager.h
 	Plot.h
@@ -25,7 +25,8 @@ SET(MY_MOC_HDR RenderThread.h
 	Axis.h
 	ListTreeWidget.h
 	Dataresource.h
-	DoubleSilder.h)
+	DoubleSilder.h
+	ConfigWidget.h)
 
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
@@ -107,7 +108,8 @@ SET(SRC main.cpp
 	RenderGrid.cpp
 	RenderGrid.h
 	)
-SET(SRC_TOOL ""
+SET(SRC_TOOL ConfigWidget.h
+	ConfigWidget.cpp
 	#Doublesilder.h
 	#Doublesilder.cpp
 	#AxisValChangeCtl.h
@@ -167,6 +169,7 @@ SOURCE_GROUP("dataManage" FILES ${LISTTREE_SRC})
 SOURCE_GROUP("config" FILES ${CONFIG_SRC})
 SOURCE_GROUP("character_encoding" FILES ${CHAR_ENCODE})
 SOURCE_GROUP("tool" FILES ${SRC_TOOL})
+SOURCE_GROUP("uifile" FILES ${UI_SRC})
 #增加包含目录
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}

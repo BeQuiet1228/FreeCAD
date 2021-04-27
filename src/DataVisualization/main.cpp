@@ -5,12 +5,14 @@
 #include "Plot.h"
 #include "StructRender.h"
 #include "StructData.h"
-//#include "DoubleSilder.h"
+#include "Dataresource.h"
+#include "ListTreeWidget.h"
+#include "ConfigWidget.h"
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 	CanvasItem::registerMetaTye();
-#if 1
+#if 0
 	std::string path = "D:/wandaotongProject/MILO_P.h5";
 	Hdf5IO io(path);
 	io.initHdf5Data();
@@ -22,9 +24,17 @@ int main(int argc, char *argv[])
 	p.setMainRenderer(rd);
 	p.show();
 #endif
-#if 0
-	/*DoubleSilder b(DoubleSilder::DoubelSilderDir::HORIZONTAL);
-	b.showMaximized();*/
+#if 1
+	std::string path = "D:/wandaotongProject/MILO_P.h5";
+	Plot p;
+	DataSourceManage manager;
+	ListTreeWidget treectrl;
+	manager.init(&treectrl, &p);
+	manager.loadhdffile(path);
+	p.show();
+	treectrl.show();
+	ConfigWidget m_configwidget;
+	m_configwidget.show();
 #endif
 	return a.exec();
 }
