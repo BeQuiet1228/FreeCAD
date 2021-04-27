@@ -5,7 +5,8 @@
 Canvas::Canvas(QWidget* parent /*= 0*/)
 	:QWidget(parent)
 {
-	
+	selectRect.setWidth(0);
+	selectRect.setHeight(0);
 }
 
 Canvas::~Canvas()
@@ -101,6 +102,8 @@ void Canvas::mouseReleaseEvent(QMouseEvent *event)
 	mouseLeftPress = false;
 	update();
 	emitSelectRect(selectRect);
+	selectRect.setWidth(0);
+	selectRect.setHeight(0);
 }
 
 void Canvas::initData()

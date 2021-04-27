@@ -9,6 +9,7 @@
 #include "qwt/qwt_scale_engine.h"
 #include "ContourRender.h"
 #include <stack>
+#include "RenderGrid.h"
 struct UndoRedoData
 {
 	UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
@@ -77,9 +78,9 @@ private:
 Plot::Plot(QWidget* parent /*= 0*/)
 	:QWidget(parent),URStack(new UndoRedoStack)
 {
-	initGUI();
 	initData();
 	setAxisRightEnabled(true);
+	initGUI();
 }
 
 Plot::~Plot()
@@ -98,6 +99,12 @@ Plot::~Plot()
 */
 void Plot::reRender()
 {
+	//清理寻点的画布
+	clearFindPoint();
+	//创建坐标轴网格渲染任务
+	creatGridRenderTask();
+
+
 	if (mainRenderer)
 	{
 		std::cerr << "reRender" << std::endl;
@@ -105,7 +112,7 @@ void Plot::reRender()
 		RenderTask task(mainRenderer);
 		renderManager->addTask(task);
 	}
-	unsigned int rank = subRenderStartRank;
+	unsigned int rank = SUB_RENDER_START_RANK;
 	for (auto rdIter = subRenderers.begin(); rdIter != subRenderers.end(); rdIter++)
 	{
 		(*rdIter)->setSize(canvas->size());
@@ -231,6 +238,15 @@ void Plot::updateAxis()
 }
 
 /**
+* @brief Plot::clearFindPoint 清理取点图层
+* @return void
+*/
+void Plot::clearFindPoint()
+{
+	canvas->removeItem(FIND_POINT_RENDER_RANK);
+}
+
+/**
 * @brief Plot::undo
 * @return void
 */
@@ -259,6 +275,16 @@ void Plot::redo()
 }
 
 /**
+* @brief Plot::updateGridLine 刷新网格线显示
+* @return void
+*/
+void Plot::updateGridLine()
+{
+	creatGridRenderTask();
+	renderManager->start();
+}
+
+/**
 * @brief Plot::initGUI 初始化布局
 * @return void
 */
@@ -273,10 +299,10 @@ void Plot::initGUI()
 
 	AxisL = new Axis();
 	AxisL->setAxixStyle(Axisleft);
-	AxisL->SetAxisNumber(6);
+	AxisL->SetAxisNumber(yAxisLevel);
 	AxisB = new Axis();
 	AxisB->setAxixStyle(AxisBottom);
-	AxisB->SetAxisNumber(6);
+	AxisB->SetAxisNumber(xAxisLevel);
 
 	scaleWIdget = new QwtScaleWidget(QwtScaleDraw::RightScale, this);
 	scaleWIdget->setColorBarEnabled(true);
@@ -308,6 +334,13 @@ void Plot::initData()
 
 	scaleEngine = new QwtLinearScaleEngine;
 	axisRightEnabled = false;
+
+	xAxisLevel = 7;
+	yAxisLevel = 7;
+	RenderGrid* r = new RenderGrid(xAxisLevel, yAxisLevel);
+	gridRender.reset(r);
+
+	gridLineEnabled = false;
 }
 
 /**
@@ -320,7 +353,7 @@ void Plot::findPointRender(const float& x, const float& y)
 {
 	mainRenderer->setSize(canvas->size());
 	mainRenderer->setFindPosition(QPointF(x, y));
-	RenderTask task(mainRenderer,RenderTask::FIND_POINT,1);
+	RenderTask task(mainRenderer,RenderTask::FIND_POINT, FIND_POINT_RENDER_RANK);
 	renderManager->addTask(task);
 	renderManager->start();
 }
@@ -345,6 +378,26 @@ void Plot::setRenderRange(const float& xMin, const float xMax, const float& yMin
 		(*iter)->setXRang(xr);
 	}
 }
+
+void Plot::creatGridRenderTask()
+{
+	const unsigned int GRID_RENDER_RANK = FIND_POINT_RENDER_RANK - 1;
+
+	canvas->removeItem(GRID_RENDER_RANK);
+
+	if (!gridLineEnabled)
+		return;
+
+	std::shared_ptr<RenderGrid> gr = std::dynamic_pointer_cast<RenderGrid>(gridRender);
+	gr->setXLevel(xAxisLevel);
+	gr->setYLevel(yAxisLevel);
+
+	gridRender->setSize(canvas->size());
+	RenderTask task(gridRender);
+	task.rank = GRID_RENDER_RANK;
+	renderManager->addTask(task);
+}
+
 
 /**
 * @brief Plot::renderFinished 渲染完成槽
@@ -445,9 +498,6 @@ void Plot::keyReleaseEvent(QKeyEvent *event)
 		setRenderRange(xr.min, xr.max, yr.min, yr.max);
 
 		updateAxis();
-
-		//清理点取点图层
-		canvas->removeItem(1);
 
 		reRender();
 /**************测试撤销恢复的代码 ****************/

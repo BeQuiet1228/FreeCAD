@@ -103,6 +103,8 @@ SET(SRC main.cpp
 	RendererFactory.h
 	RendererFactory.cpp
 	exportConfig.hpp
+	RenderGrid.cpp
+	RenderGrid.h
 	)
 
 #处理ui和qrc文件

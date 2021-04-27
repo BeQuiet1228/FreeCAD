@@ -39,7 +39,8 @@ private:
 	//主渲染器
 	std::shared_ptr<Renderer> mainRenderer;
 	//从渲染器起始层级
-	const unsigned int subRenderStartRank = 10;
+	const unsigned int SUB_RENDER_START_RANK = 10;
+	const unsigned int FIND_POINT_RENDER_RANK = SUB_RENDER_START_RANK + 20;
 	//颜色图例
 	QwtScaleWidget *scaleWIdget;
 	QwtScaleEngine *scaleEngine;
@@ -47,6 +48,12 @@ private:
 	bool axisRightEnabled;
 	//撤销恢复栈
 	std::shared_ptr<UndoRedoStack> URStack;
+	//图表网格线渲染器
+	std::shared_ptr<Renderer> gridRender;
+	//坐标轴网格等级
+	unsigned int xAxisLevel, yAxisLevel;
+	//是否显示网格线
+	bool gridLineEnabled;
 public:
 	//重渲染
 	void reRender();
@@ -60,12 +67,24 @@ public:
 	void setAxisRightEnabled(const bool& e);
 	//更新坐标轴
 	void updateAxis();
+	//清理取点提示图层
+	void clearFindPoint();
 	//撤销恢复
 	void undo();
 	void redo();
+	//刷新网格线
+	void updateGridLine();
 	//清理从渲染器
 	void clearSubRenderer(){
 		subRenderers.clear();
+	}
+	//设置是否显示网格线
+	void setGridLineEnabled(const bool& e) {
+		gridLineEnabled = e;
+		updateGridLine();
+	};
+	bool getGridLineEnabled() {
+		return gridLineEnabled;
 	}
 private:
 	//初始化界面
@@ -76,6 +95,8 @@ private:
 	void findPointRender(const float& x, const float& y);
 	//设置渲染范围
 	void setRenderRange(const float& xMin, const float xMax, const float& yMin, const float& yMax);
+	//渲染网格
+	void creatGridRenderTask();
 public Q_SLOTS:
 	//渲染完成
 	void renderFinished();
