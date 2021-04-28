@@ -170,8 +170,12 @@ bool Renderer::getTransitionScale(float& xScale, float& yScale)
 #endif
 		return false;
 	}
-	xScale = size.width() / xLength;
-	yScale = size.height() / yLength;
+	xScale = yScale = 0.0;
+	if(xLength != 0.0)
+		xScale = size.width() / xLength;
+	if(yLength != 0.0)
+		yScale = size.height() / yLength;
+
 	return true;
 }
 
