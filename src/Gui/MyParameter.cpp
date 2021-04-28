@@ -10,6 +10,7 @@
 #include <Base/BaseClass.h>
 #include <DlgExpressionInput.h>
 #include <QString.h>
+#include <regex>
 
 //#include "DlgExpressionInput.h"
 
@@ -83,8 +84,8 @@ void MyParameter::cellDoubleClicked(int row, int column) {
             this->makeLineEnabled(row);
             this->addNewLine(row);
             this->addEmptyProperty(tableWidget->item(row, 0)->text());
-            if (tableWidget->item(row, 0)->flags() != Qt::NoItemFlags) {
-                tableWidget->item(row, 0)->setFlags(Qt::NoItemFlags);
+            if (tableWidget->item(row, 0)->flags() != Qt::ItemIsSelectable | Qt::ItemIsEnabled) {
+                tableWidget->item(row, 0)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
             }
         }
     }
@@ -100,13 +101,21 @@ void MyParameter::cellDoubleClicked(int row, int column) {
 
 // 判断该行变量名是否符合规范
 bool MyParameter::isValidWithName(int row) {
-    QString param_name = tableWidget->item(row, 0)->text();
-    if (param_name.isEmpty()) {
-        return false;
+    bool res = false;
+    std::string param_name = tableWidget->item(row, 0)->text().toStdString();
+    std::regex r("^[A-Za-z]\\w*$");
+    bool temp1 = !param_name.empty();
+    bool temp2 = std::regex_match(param_name, r);
+    if ((!param_name.empty()) && (std::regex_match(param_name, r))) {
+        std::set<std::string> name_set;
+        for (int i = 0; i <= row - 1; ++i) {
+            name_set.insert(tableWidget->item(i, 0)->text().toStdString());
+        }
+        if (name_set.find(param_name) == name_set.end()) {
+            res = true;
+        }
     }
-    else {
-        return true;
-    }
+    return res;
 }
 
 //分析表达式_expression的类型
@@ -114,6 +123,7 @@ param_type MyParameter::typeAnalysis(const QString& text) {
     DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("param");
     App::ObjectIdentifier p(ObjectIdentifier::parse(docObj, "justForAnalysis"));
     try {
+        this->error_message.clear();    // 每次分析表达式类型都先清空error_message
         //now handle expression
         boost::shared_ptr<Expression> expr(ExpressionParser::parse(p.getDocumentObject(), text.toStdString().c_str()));
 
@@ -156,6 +166,7 @@ param_type MyParameter::typeAnalysis(const QString& text) {
         }
     }
     catch (Base::Exception& e) {
+        this->error_message = e.what();
         return param_type::type_error;
     }
 }
@@ -174,10 +185,10 @@ void MyParameter::addNewLine(int row) {
     QTableWidgetItem* item_type = new QTableWidgetItem();
     QTableWidgetItem* item_description = new QTableWidgetItem();
     // 使新建行无法编辑
-    item_expression->setFlags(Qt::ItemFlag::NoItemFlags);
-    item_value->setFlags(Qt::ItemFlag::NoItemFlags);
-    item_type->setFlags(Qt::ItemFlag::NoItemFlags);
-    item_description->setFlags(Qt::ItemFlag::NoItemFlags);
+    item_expression->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    item_value->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    item_type->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    item_description->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     // 将item添加到tableWidget
     tableWidget->setItem(current_row, 0, item_name);
     tableWidget->setItem(current_row, 1, item_expression);
@@ -189,7 +200,7 @@ void MyParameter::addNewLine(int row) {
 // 使第row行可以编辑
 void MyParameter::makeLineEnabled(int row) {
     tableWidget->item(row, 1)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable);
-    tableWidget->item(row, 3)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable);
+    tableWidget->item(row, 3)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     tableWidget->item(row, 4)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable);
 }
 
@@ -281,7 +292,7 @@ void MyParameter::addProperty(param_type _type, const QString& name) {
     }
 }
 
-// 将row行变量的值填写到该行的第3列
+// 将row行变量的值填写到该行的第3列，类型填写到该行的第4列
 void MyParameter::setValueToItem(param_type cur_type, const QString& name, int row) {
     DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("param");
     App::ObjectIdentifier p(ObjectIdentifier::parse(docObj, name.toStdString()));
@@ -296,6 +307,31 @@ void MyParameter::setValueToItem(param_type cur_type, const QString& name, int r
         temp = QString::fromStdString(std::string(param_str->getValue()));
     }
     tableWidget->item(row, 2)->setText(temp);
+
+    switch (cur_type) {
+    case param_type::type_float:
+        tableWidget->item(row, 3)->setText(QString::fromUtf8("float"));
+        break;
+    case param_type::type_angle:
+        tableWidget->item(row, 3)->setText(QString::fromUtf8("angle"));
+        break;
+    case param_type::type_length:
+        tableWidget->item(row, 3)->setText(QString::fromUtf8("length"));
+        break;
+    case param_type::type_other:
+        tableWidget->item(row, 3)->setText(QString::fromUtf8("string"));
+        break;
+    case param_type::type_error:
+        if (!this->error_message.empty()) {
+            tableWidget->item(row, 3)->setText(QString::fromStdString(this->error_message));
+        }
+        else {
+            tableWidget->item(row, 3)->setText(QString::fromUtf8("string"));
+        }
+        break;
+    default:
+        break;
+    }
 }
 
 

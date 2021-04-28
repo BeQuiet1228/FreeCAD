@@ -30,6 +30,7 @@ public:
 	QLineEdit* le3;
 	QGridLayout* gl;
 	QVBoxLayout* vbl;
+	std::string error_message;
 
 	//Base::Unit impliedUnit;
 	//Gui::PropertyEditor::PropesrtyEditor* myEidt;
