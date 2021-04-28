@@ -6,6 +6,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/signals.hpp>
 #include <boost/signals2.hpp>
+#include "DataVisualization/ContourRenderStateGetter.h"
 class Plot;
 namespace Gui{
 	
@@ -18,10 +19,15 @@ namespace Gui{
 		~PlotMDIView();
 		void* GetViewPtr();
 		bool canClose() override;
+
+		virtual bool onMsg(const char* pMsg, const char** ppReturn) override;
+		virtual bool onHasMsg(const char* pMsg) const override;
 	protected:
 		void resizeEvent(QResizeEvent*);
 	private:
 		Plot* plot;
+		//等位图状态获取其
+		ContourRenderStateGetter* contourStateGetter;
 	};
 }
 #endif

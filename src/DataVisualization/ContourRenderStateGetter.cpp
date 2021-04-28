@@ -74,6 +74,8 @@ void ContourRenderStateGetter::setDisplayMode(const DisplayMod& mod)
 	case IMAGE_AND_CONTOUR:
 		rd->setDisplayMode(QwtPlotSpectrogram::DisplayMode::ImageMode, true);
 		rd->setDisplayMode(QwtPlotSpectrogram::DisplayMode::ContourMode, true);
+		pen.setStyle(Qt::SolidLine);
+		rd->setDefaultContourPen(pen);
 		break;
 	}
 }

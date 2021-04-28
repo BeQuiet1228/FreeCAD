@@ -11,11 +11,8 @@ ContourRender::ContourRender(std::shared_ptr<ContourData> data)
 	setRenderThreadCount(0);
 	setColorMap(new ColorMap);
 
-	//setDisplayMode(DisplayMode::ImageMode, false);
+	setDisplayMode(DisplayMode::ImageMode, true);
 	setDisplayMode(DisplayMode::ContourMode, true);
-	QPen pen;
-	pen.setStyle(Qt::NoPen);
-	setDefaultContourPen(pen);
 }
 
 ContourRender::~ContourRender()
