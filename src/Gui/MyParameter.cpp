@@ -79,10 +79,13 @@ void MyParameter::textChanged(const QString& text) {
 // 表格内容发生变化时的槽函数
 void MyParameter::cellDoubleClicked(int row, int column) {
     if (column == 0) {
-        if (isValidWithName(row)) {
+        if (isValidWithName(row) && row == tableWidget->rowCount() - 1) {
             this->makeLineEnabled(row);
             this->addNewLine(row);
             this->addEmptyProperty(tableWidget->item(row, 0)->text());
+            if (tableWidget->item(row, 0)->flags() != Qt::NoItemFlags) {
+                tableWidget->item(row, 0)->setFlags(Qt::NoItemFlags);
+            }
         }
     }
     else if (column == 1){
