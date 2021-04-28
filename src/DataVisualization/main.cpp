@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 	QWidget w;
 	w.show();
 #endif
-#if 1
+#if 0
 	CanvasItem::registerMetaTye();
 
 	ListTreeWidget m_tree;
@@ -59,10 +59,10 @@ int main(int argc, char *argv[])
 	plot.show();
 #endif
 
-#if 0
+#if 1
 	auto cg = Config::GetInstance();
 	auto group = cg->getRootGroup();
-	group.setSetting("value", "test");
+	group.setSetting("value", "test3");
 	auto group1 = group.getGroup("group");
 	group1.addSetting("config", "ttt");
 #endif
