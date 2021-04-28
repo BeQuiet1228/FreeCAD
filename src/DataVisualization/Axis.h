@@ -47,6 +47,7 @@ public:
 	void SetCanvas(QWidget* mCanvas);
 	void AxisResize(bool, QSize _size = QSize(0, 0));
 	void autoMinAndMAxSize();
+	void loadconfig();
 private:
 	QVector<QLineF> Getlines(Axisstyle, QRectF);
 	QVector<AXISVAL> getAxisVal(Axisstyle, QRectF);
@@ -89,4 +90,6 @@ private:
 	QLineEdit* maxLineedit;
 	QRectF* minRectf;
 	QRectF* maxRectf;
+	QColor penColor;
+	int UnitSize;
 };

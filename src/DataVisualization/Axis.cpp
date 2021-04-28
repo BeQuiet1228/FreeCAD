@@ -6,6 +6,8 @@
 #include <QRegExp>
 #include <QValidator>
 #include <QRegExpValidator>
+#include "CustomConfig.h"
+#include "C_encoding.h"
 #define ZERO_F (0.000000000001f)	//定义浮点数的零
 //局部函数--只限当前cpp内部使用
 int getIntegerBits(__int64 data);
@@ -49,6 +51,7 @@ QWidget(parent)/*,horizontalAxis(0),verticalAxis(0),isstart(false)*/, CanvasWidg
 	minRectf=new QRectF();
 	maxRectf=new QRectF();
 	curAxisRang=axisvalrange;
+	penColor=Qt::black;
 }
 Axis::~Axis()
 {
@@ -62,8 +65,13 @@ Axis::~Axis()
 void Axis::paintEvent(QPaintEvent* event)
 {
 	QPainter mPainter(this);
+	QPen pen(penColor);
+	pen.setWidth(1);
+	QPen lastPen = mPainter.pen();
+	mPainter.setPen(pen);
 	if (!lines.empty())
 		mPainter.drawLines(lines);
+	mPainter.setPen(lastPen);
 	//画刻度数值
 	foreach(AXISVAL i, m_axisval)
 		mPainter.drawText(i.postion, i.valsize);
@@ -111,6 +119,7 @@ void Axis::paintEvent(QPaintEvent* event)
 void Axis::_update()
 {
 	//是否需要调整大小
+	loadconfig();
 	lines = Getlines(mAxisstyle, AxisRect);
 	getAxisVal(mAxisstyle, AxisRect);
 	GetAxisUnit(mAxisstyle, AxisRect);
@@ -762,5 +771,16 @@ void Axis::axisRangeChange()
 		axisvalrange = curAxisRang;
 		_update();
 	}
+}
+void Axis::loadconfig()
+{
+	Config::GetInstance()->loadConfig();
+	auto Group = Config::GetInstance()->getRootGroup();
+	auto axisGroup = Group.getGroup("axis");
+	//获取刻度颜色
+	QColor axisColor = QStringToQColor(QString::fromStdString(axisGroup.getValue("axisColor")));
+	int UnitSoze = atoi(axisGroup.getValue("axisSize").c_str());
+	penColor = axisColor;
+	Axisunitfontsize = UnitSize;
 }
 #include "moc_Axis.cpp"

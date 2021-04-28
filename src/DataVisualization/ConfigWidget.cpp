@@ -29,7 +29,7 @@ void ConfigWidget::initUI()
 	this->SetAllreRender(ui->vacuoColor);
 	this->SetAllreRender(ui->vecColor);
 	this->SetAllreRender(ui->lineColor);
-	this->SetAllreRender(ui->fontColor);
+	this->SetAllreRender(ui->axisColor);
 	//时间图
 	connect(ui->lineColor, SIGNAL(clicked()), this, SLOT(linecolorClicked()));
 	//矢量图
@@ -37,7 +37,7 @@ void ConfigWidget::initUI()
 	//保存
 	connect(ui->applicButtom, SIGNAL(clicked()), this, SLOT(saveclicked()));
 	//刻度
-	connect(ui->fontColor, SIGNAL(clicked()), this, SLOT(fontColorclicked()));
+	connect(ui->axisColor, SIGNAL(clicked()), this, SLOT(fontColorclicked()));
 }
 void ConfigWidget::perfectconductorClicked(){
 #ifdef MY_DEBUG
@@ -83,21 +83,20 @@ void ConfigWidget::structInfoClicked(int _property, QPushButton* button)
 	switch (_property)
 	{
 	case Mas::Conductor_New:
-		structColor["Conductor_New"] =QColorToQstring(color);
+		structColor["Conductor_New"] = QColorToQstring(color); break;
 	case Mas::Diolectric:
-		structColor["Diolectric"] = QColorToQstring(color);
+		structColor["Diolectric"] = QColorToQstring(color); break;
 	case Mas::Perfect_Conductor:
-		structColor["Perfect_Conductor"] = QColorToQstring(color);
+		structColor["Perfect_Conductor"] = QColorToQstring(color); break;
 	case Mas::Permeability:
-		structColor["Permeability"] = QColorToQstring(color);
+		structColor["Permeability"] = QColorToQstring(color); break;
 	case Mas::Vacuo:
-		structColor["Vacuo"] = QColorToQstring(color);
+		structColor["Vacuo"] = QColorToQstring(color); break;
 	}
 }
 void ConfigWidget::saveclicked()
 {
 	ui->applicButtom->setEnabled(false);
-	
 	Config::GetInstance()->loadConfig();
 	ConfigGroup Group = Config::GetInstance()->getRootGroup();
 	//结构图参数
@@ -155,7 +154,7 @@ void ConfigWidget::SetAllreRender(QPushButton* buttom)
 	buttom->setFlat(true);
 }
 void ConfigWidget::fontColorclicked(){
-	QColor color = setbuttomColor(ui->fontColor);
+	QColor color = setbuttomColor(ui->axisColor);
 	axisinfo._3th = QColorToQstring(color);
 }
 QColor ConfigWidget::setbuttomColor(QPushButton* button)
