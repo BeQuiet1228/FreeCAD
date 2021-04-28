@@ -37,7 +37,7 @@ public:
 private:
 public:
 	//添加功能函数
-	void setAxisText(QString, int fontsize=20);
+	void setAxisText(QString);
 	void setAxisRange(double min, double max);
 	//设置大刻度个数
 	void SetAxisNumber(int);
@@ -63,6 +63,7 @@ protected:
 	virtual void keyReleaseEvent(QKeyEvent *event) override;
 		//获取科学计数法的字符串
 	QVector<QString> GetScientific_notation();
+	QPen GetPen(QColor& rgba,int width);
 private:
 	bool isstart;
 	unsigned int Axisnumber;//大刻度个数
@@ -90,6 +91,7 @@ private:
 	QLineEdit* maxLineedit;
 	QRectF* minRectf;
 	QRectF* maxRectf;
-	QColor penColor;
+	QColor axisColor;
+	QColor axisvalColor;
 	int UnitSize;
 };

@@ -316,11 +316,24 @@ bool StructRender::drawImage_rect_space(){
 	for (auto iter = _map.begin(); iter != _map.end(); iter++)
 	{
 		auto itercolor = color_tab.find(iter.key());
+		auto itercolorpen = color_pen.find(iter.key());
 		if (itercolor != color_tab.end())
 		{
 			//½øÐÐËõ·Å
 			for (auto iterrecct = iter.value().begin(); iterrecct != iter.value().end(); iterrecct++)
 				transitionRectF(*iterrecct, xScale, xr, yScale, yr);
+			if (itercolorpen!=color_pen.end())
+			{
+				QPen pen(itercolorpen.value());
+				pen.setWidth(1);
+				painter.setPen(pen);
+			}
+			else
+			{
+				QPen pen(Qt::black);
+				pen.setWidth(1);
+				painter.setPen(pen);
+			}
 			QBrush m_brush(itercolor.value());
 			painter.setBrush(m_brush);
 			painter.drawRects(iter.value());
@@ -361,8 +374,21 @@ bool StructRender::drawImage_rand_space(){
 	for (auto iter = _map.begin(); iter != _map.end(); iter++)
 	{
 		auto itercolor = color_tab.find(iter->first);
+		auto itercolorpen = color_pen.find(iter->first);
 		if (itercolor != color_tab.end())
 		{
+			if (itercolorpen!=color_pen.end())
+			{
+				QPen pen(itercolorpen.value());
+				pen.setWidth(1);
+				painter.setPen(pen);
+			}
+			else
+			{
+				QPen pen(Qt::black);
+				pen.setWidth(1);
+				painter.setPen(pen);
+			}
 			QBrush m_brush(itercolor.value());
 			painter.setBrush(m_brush);
 			QVector<QPainterPath> _path = GetPath(iter->second, xr, yr, xScale, yScale);
@@ -797,4 +823,11 @@ void StructRender::loadconfig()
 	color_tab[Diolectric] = QStringToQColor(QString::fromStdString(structConfig.getValue("Diolectric")));
 	color_tab[Permeability] = QStringToQColor(QString::fromStdString(structConfig.getValue("Permeability")));
 	color_tab[Vacuo] = QStringToQColor(QString::fromStdString(structConfig.getValue("Vacuo")));
+	//
+	color_pen[Perfect_Conductor] = QStringToQColor(QString::fromStdString(structConfig.getValue("Perfect_Conductorline")));
+	color_pen[Conductor_New] = QStringToQColor(QString::fromStdString(structConfig.getValue("Conductor_Newline")));
+	color_pen[Diolectric] = QStringToQColor(QString::fromStdString(structConfig.getValue("Diolectricline")));
+	color_pen[Permeability] = QStringToQColor(QString::fromStdString(structConfig.getValue("Permeabilityline")));
+	color_pen[Vacuo] = QStringToQColor(QString::fromStdString(structConfig.getValue("Vacuoline")));
+
 }

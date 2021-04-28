@@ -2,10 +2,8 @@
 #ifndef CONFIG_WIDGET_H_
 #define CONFIG_WIDGET_H_
 #include <QWidget>
-#include <QModelIndex>
-#include <QStandardItemModel>
 #include <map>
-#include <QPushButton>
+class QPushButton;
 namespace Mas{
 	enum structTexture
 	{
@@ -25,7 +23,8 @@ namespace Mas{
 		QString _1st;
 		QString _2nd;
 		QString _3th;
-		Setconfig() :_1st("1"), _2nd("1"), _3th("1")
+		QString _4th;
+		Setconfig() :_1st("1"), _2nd("1"), _3th("1"), _4th("1")
 		{}
 	};
 }
@@ -46,28 +45,42 @@ public Q_SLOTS:
 	//保存
 	void saveclicked();
 	//刻度标
-	void fontColorclicked();
+	void axisColorclicked();
+	void axisValColorclicked();
 	//结构图
 	void perfectconductorClicked();
 	void conductornewClicked();
 	void diolectricClicked();
 	void permeabilityClicked();
 	void vacuoClicked();
+	void perfectconductorlineClicked();
+	void conductornewlineClicked();
+	void diolectriclineClicked();
+	void permeabilitylineClicked();
+	void vacuolineClicked();
 	//时间图
 	void linecolorClicked();
 	//矢量图
 	void veccolorClicked();
+	//相空间图
+	void partcleColorclicked();
 private:
+	void loadxmlConfig();
 	void SetAllreRender(QPushButton*);
+	void fileeButtom(QPushButton*, std::string);
 	QColor setbuttomColor(QPushButton*);
 private:
 	void structInfoClicked(int _property,QPushButton*);
+	void structinfolineClicked(int _property, QPushButton*);
 	//结构图
 	std::map<QString, QString> structColor;
+	std::map<QString, QString>structlineColor;
 	//向量
 	Mas::Setconfig vecconfig;
 	//时间图
 	Mas::Setconfig timeConfig;
+	//相空间图
+	Mas::Setconfig partcleConfig;
 	//刻度相关的参数
 	Mas::Setconfig axisinfo;
 private:

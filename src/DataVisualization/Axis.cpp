@@ -24,8 +24,8 @@ QWidget(parent)/*,horizontalAxis(0),verticalAxis(0),isstart(false)*/, CanvasWidg
 	axisvalrange.min = 0;
 	axisvalrange.max = 100;
 	//正则表达式---只能输入数值
-	QRegExp rx_ip("^(-?|\\d)(\\d+)?(\\.\\d+)?$");
-	QValidator * validator = new QRegExpValidator(rx_ip, this);
+	QRegExp rx("^(-?|\\d)(\\d+)?(\\.\\d+)?$");
+	QValidator * validator = new QRegExpValidator(rx, this);
 	minLineedit=new QLineEdit(this);
 	minLineedit->setValidator(validator);
 	minLineedit->setVisible(false);
@@ -51,7 +51,9 @@ QWidget(parent)/*,horizontalAxis(0),verticalAxis(0),isstart(false)*/, CanvasWidg
 	minRectf=new QRectF();
 	maxRectf=new QRectF();
 	curAxisRang=axisvalrange;
-	penColor=Qt::black;
+	//新增读取配置
+	axisColor = Qt::black;
+	axisvalColor = Qt::black;
 }
 Axis::~Axis()
 {
@@ -65,14 +67,12 @@ Axis::~Axis()
 void Axis::paintEvent(QPaintEvent* event)
 {
 	QPainter mPainter(this);
-	QPen pen(penColor);
-	pen.setWidth(1);
-	QPen lastPen = mPainter.pen();
-	mPainter.setPen(pen);
+	QPen lastpen = mPainter.pen();
+	mPainter.setPen(GetPen(axisColor, 1));
 	if (!lines.empty())
 		mPainter.drawLines(lines);
-	mPainter.setPen(lastPen);
 	//画刻度数值
+	mPainter.setPen(GetPen(axisvalColor, 1));
 	foreach(AXISVAL i, m_axisval)
 		mPainter.drawText(i.postion, i.valsize);
 	//画单位
@@ -140,9 +140,8 @@ void Axis::setAxixStyle(Axisstyle _Axisstyle)
 * @param int fontsize 单位的字体大小
 * @return void
 */
-void Axis::setAxisText(QString AxisUnitText, int fontsize){
+void Axis::setAxisText(QString AxisUnitText){
 	mAxisunit = AxisUnitText;//单位
-	Axisunitfontsize = fontsize;//字体大小
 }
 /**
 * @brief Axis::setAxisRange 设置刻度的数值区间
@@ -778,9 +777,19 @@ void Axis::loadconfig()
 	auto Group = Config::GetInstance()->getRootGroup();
 	auto axisGroup = Group.getGroup("axis");
 	//获取刻度颜色
-	QColor axisColor = QStringToQColor(QString::fromStdString(axisGroup.getValue("axisColor")));
-	int UnitSoze = atoi(axisGroup.getValue("axisSize").c_str());
-	penColor = axisColor;
+	axisColor = QStringToQColor(QString::fromStdString(axisGroup.getValue("axisColor")));
+	int UnitSize = atoi(axisGroup.getValue("axisSize").c_str());
+#ifdef MY_DEBUG
+	printf("UnitSize---%d\n",UnitSize);
+#endif // MY_DEBUG
+
+	axisvalColor = QStringToQColor(QString::fromStdString(axisGroup.getValue("axisvalColor")));
 	Axisunitfontsize = UnitSize;
+}
+QPen Axis::GetPen(QColor& rgba,int width)
+{
+	QPen pen(rgba);
+	pen.setWidth(width);
+	return pen;
 }
 #include "moc_Axis.cpp"

@@ -164,7 +164,6 @@ void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
 	auto xr = mainRenderer->getXRang();
 	auto yr = mainRenderer->getYRang();
 	setRenderRange(xr.min, xr.max, yr.min, yr.max);
-
 	//清空撤销恢复栈，将新的操作压入
 	URStack->clear();
 	UndoRedoData URData(xr, yr);

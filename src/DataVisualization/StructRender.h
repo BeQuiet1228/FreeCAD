@@ -75,6 +75,7 @@ private:
 	StructData::structpoint findApoint_Cylindrical(QPointF _curpoint);
 private:
 	QMap<int, QColor> color_tab;
+	QMap<int, QColor> color_pen;
 	Data::Rang xRang, yRang;
 	std::mutex xRangMutex, yRangMutex;
 };
