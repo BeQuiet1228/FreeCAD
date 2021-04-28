@@ -28,6 +28,33 @@ bool ContourRenderPolar::drawImage()
 	QRectF rect(0, 0, getSize().width(), getSize().height());
 
 
+
+
+	//ÐÂ½¨»­²¼ »­±Ê
+	QImage img(getSize(), QImage::Format_ARGB32);
+	img.fill(qRgba(0, 0, 0, 0));
+
+	if (testDisplayMode(DisplayMode::ImageMode))
+	{
+		img = renderImage(xmap, ymap, rect, getSize());
+	}
+	if (testDisplayMode(DisplayMode::ContourMode))
+	{
+		QPainter painter(&img);
+		painter.setRenderHint(QPainter::Antialiasing, true);
+
+
+
+		QRectF area = QwtScaleMap::invTransform(xmap, ymap, rect);
+		QwtRasterData::ContourLines lines = renderContourLines(area, rect.toRect().size());
+		drawContourLines(&painter, xmap, ymap, lines);
+	}
+
+	setImage(img.mirrored(false, true));
+
+	return true;
+
+/*
 	QImage img = renderImage(xmap, ymap, rect, getSize());
 	QPainter painter(&img);
 	painter.setRenderHint(QPainter::Antialiasing, true);
@@ -40,7 +67,7 @@ bool ContourRenderPolar::drawImage()
 
 	setImage(img.mirrored(false, true));
 
-	return true;
+	return true; */
 }
 
 bool ContourRenderPolar::addListRang(std::list<Data::Rang> listRang)
