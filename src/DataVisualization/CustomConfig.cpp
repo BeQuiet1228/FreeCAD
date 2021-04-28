@@ -37,7 +37,10 @@ ConfigGroup::ConfigGroup()
 */
 void ConfigGroup::addSetting(const std::string& key, const std::string& value)
 {
-	setSetting(key, value);
+	if (empty())
+		return;
+	node.append_attribute(key.c_str()) = value.c_str();
+	Config::GetInstance()->saveFile();
 }
 
 void ConfigGroup::setSetting(const std::string& key, const std::string& value)
