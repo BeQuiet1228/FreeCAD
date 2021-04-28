@@ -131,6 +131,7 @@
 #include "DataVisualization/Plot.h"
 #include "PlotMDIView.h"
 #include "App/DocumentDataManager.h"
+#include "DataVisualization/C_encoding.h"
 #if defined(Q_OS_WIN32)
 #define slots
 //#include <private/qmainwindowlayout_p.h>
@@ -343,7 +344,7 @@ void MainWindow::showControlTree()
 	int index = tab->indexOf(controlTreeWidget);
 	if (index >= 0)
 		return;
-    tab->addTab(controlTreeWidget, QString::fromLocal8Bit("control"));
+    tab->addTab(controlTreeWidget, GetEncodingstr("观测列表",ENCODING_UTF8));
 }
 
 void MainWindow::hideVisualizationTree()
@@ -370,7 +371,7 @@ void MainWindow::showVisualizationTree()
 	int index = tab->indexOf(mTreeWidget);
 	if (index >= 0)
 		return;
-	tab->addTab(mTreeWidget, QString::fromLocal8Bit("resualt"));
+	tab->addTab(mTreeWidget, GetEncodingstr("文件数据", ENCODING_UTF8));
 }
 
 } // namespace Gui

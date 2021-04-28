@@ -20,9 +20,11 @@
 #include "Contorl/ContorlInterface.h"
 #include <QFileInfo>
 #include "Gui/Application.h"
+#include "DataVisualization/C_encoding.h"
 ControlTreeWidget::ControlTreeWidget(QWidget* parent)
 	:QTreeWidget(parent)
 {
+	QTreeWidget::setHeaderLabel(GetEncodingstr(" ", ENCODING_GB2312));
 	initItem();
 	connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(itemDouble_clicke(QTreeWidgetItem*, int)));
 	
@@ -30,6 +32,7 @@ ControlTreeWidget::ControlTreeWidget(QWidget* parent)
 	auto chipicManager = control->getChipicManager();
 	connect(chipicManager, SIGNAL(outputStructFileSignal(unsigned long)), this, SLOT(outputStructFile(unsigned long)));
 	connect(chipicManager, SIGNAL(newResultFIleSignal(unsigned long)), this, SLOT(outputTempFile(unsigned long)));
+	
 }
 
 ControlTreeWidget::~ControlTreeWidget()
@@ -68,19 +71,19 @@ void ControlTreeWidget::initItem()
 	}
 	
 	contourItem = items.at(0);
-	contourItem->setText(0,tr("contour"));
+	contourItem->setText(0,GetEncodingstr("等位图", ENCODING_GB2312));
 
 	phaseSpaceItem = items.at(1);
-	phaseSpaceItem->setText(0,tr("phaseSpace"));
+	phaseSpaceItem->setText(0, GetEncodingstr("相空间图", ENCODING_GB2312));
 
 	observeItem = items.at(2);
-	observeItem->setText(0,tr("observe"));
+	observeItem->setText(0,GetEncodingstr("时间观测图", ENCODING_GB2312));
 
 	rangeItem = items.at(3);
-	rangeItem->setText(0,tr("range"));
+	rangeItem->setText(0, GetEncodingstr("控件观测图", ENCODING_GB2312));
 
 	vectorItem = items.at(4);
-	vectorItem->setText(0,tr("vector"));
+	vectorItem->setText(0, GetEncodingstr("矢量图", ENCODING_GB2312));
 
 	for each (QTreeWidgetItem* item in items)
 	{
@@ -206,7 +209,7 @@ bool ControlTreeWidget::addVectorItem(const std::string& str)
 */
 bool ControlTreeWidget::analysisType(const std::string& str, const QString& typeName, QString& name, QString& rank)
 {
-	QString qstr = QString::fromStdString(str);
+	QString qstr = GetEncodingstr(str.c_str(), ENCODING_GB2312);
 	auto lists = qstr.split(tr("="));
 
 	if (lists.size() != 2)
@@ -219,6 +222,7 @@ bool ControlTreeWidget::analysisType(const std::string& str, const QString& type
 		return false;
 	rank = qstr.remove(temp);
 	name = lists.at(1);
+	name = name.simplified();
 	return true;
 }
 
