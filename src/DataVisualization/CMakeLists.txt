@@ -69,6 +69,8 @@ SET(CONTOUR_SRC ContourData.h
 	ContourRenderPolar.h
 	ContourDataPolar.cpp
 	ContourDataPolar.h
+	ContourRenderStateGetter.cpp
+	ContourRenderStateGetter.h
 )
 SET(PHASOR_SRC phasorData.h
 	phasorData.cpp

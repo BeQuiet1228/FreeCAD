@@ -22,26 +22,22 @@ void ConfigWidget::initUI()
 	connect(ui->diolectricColor, SIGNAL(clicked()), this, SLOT(diolectricClicked()));
 	connect(ui->permeabilityColor, SIGNAL(clicked()), this, SLOT(permeabilityClicked()));
 	connect(ui->vacuoColor, SIGNAL(clicked()), this, SLOT(vacuoClicked()));
-	ui->perfectconductorColor->setAutoFillBackground(true);
-	ui->perfectconductorColor->setFlat(true);
-	ui->conductorNewColor->setAutoFillBackground(true);
-	ui->conductorNewColor->setFlat(true);
-	ui->diolectricColor->setAutoFillBackground(true);
-	ui->diolectricColor->setFlat(true);
-	ui->permeabilityColor->setAutoFillBackground(true);
-	ui->permeabilityColor->setFlat(true);
-	ui->vacuoColor->setAutoFillBackground(true);
-	ui->vacuoColor->setFlat(true);
+	this->SetAllreRender(ui->perfectconductorColor);
+	this->SetAllreRender(ui->conductorNewColor);
+	this->SetAllreRender(ui->diolectricColor);
+	this->SetAllreRender(ui->permeabilityColor);
+	this->SetAllreRender(ui->vacuoColor);
+	this->SetAllreRender(ui->vecColor);
+	this->SetAllreRender(ui->lineColor);
+	this->SetAllreRender(ui->fontColor);
 	//时间图
 	connect(ui->lineColor, SIGNAL(clicked()), this, SLOT(linecolorClicked()));
-	ui->lineColor->setAutoFillBackground(true);
-	ui->lineColor->setFlat(true);
 	//矢量图
 	connect(ui->vecColor, SIGNAL(clicked()), this, SLOT(veccolorClicked()));
-	ui->vecColor->setAutoFillBackground(true);
-	ui->vecColor->setFlat(true);
 	//保存
 	connect(ui->applicButtom, SIGNAL(clicked()), this, SLOT(saveclicked()));
+	//刻度
+	connect(ui->fontColor, SIGNAL(clicked()), this, SLOT(fontColorclicked()));
 }
 void ConfigWidget::perfectconductorClicked(){
 #ifdef MY_DEBUG
@@ -110,41 +106,30 @@ void ConfigWidget::saveclicked()
 		for (auto iter = structColor.begin(); iter != structColor.end(); iter++)
 		{
 			std::string resstr = StructGroup.getValue(iter->first.toStdString());
-			if (StructGroup.getValue(iter->first.toStdString()) != "")
-				StructGroup.setSetting(iter->first.toStdString(), iter->second.toStdString());
-			else
-				StructGroup.addSetting(iter->first.toStdString(), iter->second.toStdString());
+			StructGroup.setSetting(iter->first.toStdString(), iter->second.toStdString());
 		}
 	}
 	//时间图
 	{
 		auto timeGroup = Group.getGroup("observe");
-		//获取当前大小
 		QString pensize = ui->linesSizeEdit->itemText(ui->linesSizeEdit->currentIndex());
-		if (timeGroup.getValue("lineSize") != "")
-			timeGroup.setSetting("lineSize", pensize.toStdString());
-		else
-			timeGroup.addSetting("lineSize", pensize.toStdString());
-
-		if (timeGroup.getValue("lineColor") != "")
-			timeGroup.setSetting("lineColor", timeConfig._2nd.toStdString());
-		else
-			timeGroup.addSetting("lineColor", timeConfig._2nd.toStdString());
+		timeGroup.setSetting("lineSize", pensize.toStdString());
+		timeGroup.setSetting("lineColor", timeConfig._2nd.toStdString());
 	}
 	//矢量图
 	{
 		auto vectorGroup = Group.getGroup("vector");
 		auto vecsizestr = (ui->vectorSize->itemText(ui->vectorSize->currentIndex())).toStdString();
-		if (vectorGroup.getValue("vectorsize")!="") 
-			vectorGroup.setSetting("vectorsize", vecsizestr);
-		else 
-			vectorGroup.addSetting("vectorsize", vecsizestr);
-		if (vectorGroup.getValue("vectorColor") != "")
-			vectorGroup.setSetting("vectorColor", vecconfig._2nd.toStdString());
-		else
-			vectorGroup.addSetting("vectorColor", vecconfig._2nd.toStdString());
+		vectorGroup.setSetting("vectorsize", vecsizestr);
+		vectorGroup.setSetting("vectorColor", vecconfig._2nd.toStdString());
 	}
-	
+	//刻度
+	{
+		auto Axisgroup = Group.getGroup("axis");
+		auto AxisSize = (ui->fontSize->itemText(ui->vectorSize->currentIndex())).toStdString();
+		Axisgroup.setSetting("axisSize", AxisSize);
+		Axisgroup.setSetting("axisColor", axisinfo._3th.toStdString());
+	}
 	Config::GetInstance()->saveFile();
 	ui->applicButtom->setEnabled(true);
 
@@ -155,29 +140,31 @@ void ConfigWidget::saveclicked()
 //时间图
 void ConfigWidget::linecolorClicked()
 {
-	QColor color = QColorDialog::getColor(Qt::white, this);
-#ifdef MY_DEBUG
-	printf("linecolorClicked\n");
-	qDebug() << color;
-#endif // MY_DEBUG
-	QPalette qpalette = ui->lineColor->palette();
-	qpalette.setColor(QPalette::Button, color);
-	ui->lineColor->setPalette(qpalette);
-	ui->lineColor->setText(QString("#%1").arg(QColorToQstring(color)));
+	QColor color = setbuttomColor(ui->lineColor);
 	timeConfig._2nd = QColorToQstring(color);
 }
 //矢量图
 void ConfigWidget::veccolorClicked()
 {
-	QColor color = QColorDialog::getColor(Qt::white, this);
-#ifdef MY_DEBUG
-	printf("linecolorClicked\n");
-	qDebug() << color;
-#endif // MY_DEBUG
-	QPalette qpalette = ui->vecColor->palette();
-	qpalette.setColor(QPalette::Button, color);
-	ui->vecColor->setPalette(qpalette);
-	ui->vecColor->setText(QString("#%1").arg(QColorToQstring(color)));
+	QColor color=setbuttomColor(ui->vecColor);
 	vecconfig._2nd = QColorToQstring(color);
+}
+void ConfigWidget::SetAllreRender(QPushButton* buttom)
+{
+	buttom->setAutoFillBackground(true);
+	buttom->setFlat(true);
+}
+void ConfigWidget::fontColorclicked(){
+	QColor color = setbuttomColor(ui->fontColor);
+	axisinfo._3th = QColorToQstring(color);
+}
+QColor ConfigWidget::setbuttomColor(QPushButton* button)
+{
+	QColor color = QColorDialog::getColor(Qt::white, this);
+	QPalette qpalette =button->palette();
+	qpalette.setColor(QPalette::Button, color);
+	button->setPalette(qpalette);
+	button->setText(QString("#%1").arg(QColorToQstring(color)));
+	return color;
 }
 #include "moc_ConfigWidget.cpp"

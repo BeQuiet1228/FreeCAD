@@ -29,7 +29,6 @@ namespace Mas{
 		{}
 	};
 }
-
 namespace Ui{
 	class ConfigWidget;
 }
@@ -46,6 +45,8 @@ protected:
 public Q_SLOTS:
 	//保存
 	void saveclicked();
+	//刻度标
+	void fontColorclicked();
 	//结构图
 	void perfectconductorClicked();
 	void conductornewClicked();
@@ -57,6 +58,9 @@ public Q_SLOTS:
 	//矢量图
 	void veccolorClicked();
 private:
+	void SetAllreRender(QPushButton*);
+	QColor setbuttomColor(QPushButton*);
+private:
 	void structInfoClicked(int _property,QPushButton*);
 	//结构图
 	std::map<QString, QString> structColor;
@@ -64,6 +68,8 @@ private:
 	Mas::Setconfig vecconfig;
 	//时间图
 	Mas::Setconfig timeConfig;
+	//刻度相关的参数
+	Mas::Setconfig axisinfo;
 private:
 	Ui::ConfigWidget *ui;
 };

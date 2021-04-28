@@ -21,6 +21,7 @@ class DATA_VISUALIZATION_EXPORT Plot:public QWidget{
 public:
 	Plot(QWidget* parent = 0);
 	~Plot();
+	friend class ContourRenderStateGetter;
 public:
 	void addCanvasItem(const CanvasItem& item){
 		canvas->addIteam(item);

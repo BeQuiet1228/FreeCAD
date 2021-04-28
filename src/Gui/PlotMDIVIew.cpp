@@ -1,3 +1,4 @@
+#include "PreCompiled.h"
 #include "PlotMDIView.h"
 #include "DataVisualization/Plot.h"
 namespace Gui{
@@ -10,6 +11,7 @@ namespace Gui{
 	{
 		plot = new Plot(this);
 		plot->resize(this->size());
+		contourStateGetter = new ContourRenderStateGetter(plot);
 		//bIsPassive = false;
 	}
 	PlotMDIView::~PlotMDIView(){
@@ -40,5 +42,69 @@ namespace Gui{
 	{
 		return true;
 	}
+
+	bool PlotMDIView::onMsg(const char* pMsg, const char** ppReturn)
+	{
+		if (strcmp("Undo", pMsg) == 0)
+		{
+			plot->undo();
+			return true;
+		}else if (strcmp("Redo", pMsg) == 0)
+		{
+			plot->redo();
+			return true;
+		}else if (strcmp("ContourImageMod", pMsg) == 0)
+		{
+			ContourRenderStateGetter::DisplayMod mod = contourStateGetter->getDisplayMod();
+			mod = ContourRenderStateGetter::DisplayMod(mod ^ ContourRenderStateGetter::IMAGE);
+			contourStateGetter->setDisplayMode(mod);
+			mod = contourStateGetter->getDisplayMod();
+			if ((mod & ContourRenderStateGetter::IMAGE) == ContourRenderStateGetter::IMAGE)
+			{
+				*ppReturn = "on";
+			}else {
+				*ppReturn = "off";
+			}
+			plot->reRender();
+		}else if (strcmp("ContourLineMod", pMsg) == 0) {
+			ContourRenderStateGetter::DisplayMod mod = contourStateGetter->getDisplayMod();
+			mod = ContourRenderStateGetter::DisplayMod(mod ^ ContourRenderStateGetter::CONTOUR);
+			contourStateGetter->setDisplayMode(mod);
+			mod = contourStateGetter->getDisplayMod();
+			if ((mod & ContourRenderStateGetter::CONTOUR) == ContourRenderStateGetter::CONTOUR)
+			{
+				*ppReturn = "on";
+			}
+			else {
+				*ppReturn = "off";
+			}
+			plot->reRender();
+		}
+		return false;
+	}
+
+	bool PlotMDIView::onHasMsg(const char* pMsg) const
+	{
+		if (strcmp("Undo", pMsg) == 0)
+		{
+			return true;
+		}
+		else if (strcmp("Redo", pMsg) == 0)
+		{
+			return true;
+		}
+		else if (strcmp("ContourImageMod", pMsg) == 0)
+		{
+			if (contourStateGetter->enabled())
+				return true;
+		}
+		else if (strcmp("ContourLineMod", pMsg) == 0)
+		{
+			if (contourStateGetter->enabled())
+				return true;
+		}
+		return false;
+	}
+
 }
 #include "moc_PlotMDIView.cpp"

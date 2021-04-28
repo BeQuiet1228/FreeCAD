@@ -42,6 +42,7 @@ DocumentManager::DocumentManager(){
 	//构造数据管理
 	CanvasItem::registerMetaTye();
 	m_DataSourceManage = new DataSourceManage();
+	classID = 5;
 }
 /**
 * @brief DocumentManager::~DocumentManager 析构函数

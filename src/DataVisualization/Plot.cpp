@@ -133,8 +133,19 @@ void Plot::reRender()
 void Plot::addSubRenderer(const std::shared_ptr<Renderer>& rd)
 {
 	rd->dataInit();
-	rd->setDefaultRang();
 	rd->loadconfig();
+
+	if (mainRenderer)
+	{
+		Data::Rang xr, yr;
+		xr = mainRenderer->getXRang();
+		yr = mainRenderer->getYRang();
+		rd->setXRang(xr);
+		rd->setYRang(yr);
+	}else {
+		rd->setDefaultRang();
+	}
+
 	subRenderers.push_back(rd);
 }
 
@@ -152,9 +163,7 @@ void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
 	this->mainRenderer = rd;
 	auto xr = mainRenderer->getXRang();
 	auto yr = mainRenderer->getYRang();
-	AxisL->setAxisRange(yr.min, yr.max);
-	AxisB->setAxisRange(xr.min, xr.max);
-	updateAxis();
+	setRenderRange(xr.min, xr.max, yr.min, yr.max);
 
 	//清空撤销恢复栈，将新的操作压入
 	URStack->clear();
@@ -384,6 +393,12 @@ void Plot::setRenderRange(const float& xMin, const float xMax, const float& yMin
 		(*iter)->setYRang(yr);
 		(*iter)->setXRang(xr);
 	}
+
+
+	//设置坐标轴刻度
+	AxisL->setAxisRange(yr.min, yr.max);
+	AxisB->setAxisRange(xr.min, xr.max);
+	updateAxis();
 	reRender();
 }
 

@@ -1794,6 +1794,89 @@ void StdCmdRunM3d::updataActionIcon()
 		this->className(), sMenuText).arg(exe));
 }
 
+class StdCmdContourImageMod :public StdCmdRunM3d {
+public:
+    StdCmdContourImageMod();
+    ~StdCmdContourImageMod() = default;
+	const char* className() const override {
+		return "StdCmdContourImageMod";
+	}
+protected:
+	virtual void activated(int iMsg);
+	virtual bool isActive(void);
+};
+
+StdCmdContourImageMod::StdCmdContourImageMod()
+    :StdCmdRunM3d("Std_Contour_Image_Mod")
+{
+	sGroup = QT_TR_NOOP("File");
+	sMenuText = QT_TR_NOOP("Image(on)");
+	sToolTipText = QT_TR_NOOP("ContourImageMod");
+	sWhatsThis = "Std_Contour_Image_Mod";
+	sStatusTip = QT_TR_NOOP("ContourImageMod");
+	sPixmap = "local";
+}
+
+void StdCmdContourImageMod::activated(int iMsg)
+{
+    const char* ret;
+    getGuiApplication()->sendMsgToActiveView("ContourImageMod",&ret);
+    if (strcmp(ret, "on") == 0)
+    {
+        sMenuText = QT_TR_NOOP("Image(on)");
+    }else {
+        sMenuText = QT_TR_NOOP("Image(off)");
+    }
+    updataActionIcon();
+}
+
+bool StdCmdContourImageMod::isActive(void)
+{
+    return getGuiApplication()->sendHasMsgToActiveView("ContourImageMod");
+}
+class StdCmdContourLineMod :public StdCmdRunM3d {
+public:
+    StdCmdContourLineMod();
+	~StdCmdContourLineMod() = default;
+	const char* className() const override {
+		return "StdCmdContourImageMod";
+	}
+protected:
+	virtual void activated(int iMsg);
+	virtual bool isActive(void);
+};
+
+StdCmdContourLineMod::StdCmdContourLineMod()
+    :StdCmdRunM3d("Std_Contour_Line_Mod")
+{
+	sGroup = QT_TR_NOOP("File");
+	sMenuText = QT_TR_NOOP("Line(on)");
+	sToolTipText = QT_TR_NOOP("ContourLineMod");
+	sWhatsThis = "Std_Contour_Line_Mod";
+	sStatusTip = QT_TR_NOOP("ContourLineMod");
+	sPixmap = "local";
+}
+
+
+void StdCmdContourLineMod::activated(int iMsg)
+{
+	const char* ret;
+	getGuiApplication()->sendMsgToActiveView("ContourLineMod", &ret);
+	if (strcmp(ret, "on") == 0)
+	{
+		sMenuText = QT_TR_NOOP("Line(on)");
+	}
+	else {
+		sMenuText = QT_TR_NOOP("Line(off)");
+	}
+	updataActionIcon();
+}
+
+bool StdCmdContourLineMod::isActive(void)
+{
+    return getGuiApplication()->sendHasMsgToActiveView("ContourLineMod");
+}
+
 class StdCmdConnectWay :public StdCmdRunM3d{
 public:
 	StdCmdConnectWay();
@@ -2027,6 +2110,8 @@ void CreateDocCommands(void)
 	rcCmdMgr.addCommand(new StdCmdOpenCommandBook);
 	rcCmdMgr.addCommand(new StdCmdOpenUserBook);
 	rcCmdMgr.addCommand(new StdCmdRunSuperTube);
+    rcCmdMgr.addCommand(new StdCmdContourImageMod);
+    rcCmdMgr.addCommand(new StdCmdContourLineMod);
 
     rcCmdMgr.addCommand(new StdCmdSave());
     rcCmdMgr.addCommand(new StdCmdSaveAs());

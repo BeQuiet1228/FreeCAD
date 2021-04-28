@@ -743,7 +743,11 @@ void Application::slotNewDocument(const App::Document& Doc)
 		LuaEditView *edit = new LuaEditView(pDoc);
 		auto mainWindow = Gui::MainWindow::getInstance();
 		mainWindow->addWindow(edit);
-	}else{
+    }
+   /* else if (Doc.classID == 5) {
+        //什么都不做 打开结果数据工程
+    }*/
+    else {
 		pDoc->createView(View3DInventor::getClassTypeId());
 	}
     qApp->processEvents(); // make sure to show the window stuff on the right place

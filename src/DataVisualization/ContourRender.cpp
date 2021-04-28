@@ -10,6 +10,9 @@ ContourRender::ContourRender(std::shared_ptr<ContourData> data)
 {
 	setRenderThreadCount(0);
 	setColorMap(new ColorMap);
+
+	setDisplayMode(DisplayMode::ImageMode, true);
+	setDisplayMode(DisplayMode::ContourMode, true);
 }
 
 ContourRender::~ContourRender()
