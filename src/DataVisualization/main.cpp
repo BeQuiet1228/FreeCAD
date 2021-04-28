@@ -12,7 +12,34 @@ int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 	CanvasItem::registerMetaTye();
+#if 1
+<<<<<<< .mine
+
+
+
+
+
+
+
+
+
+
+
+
+=======
+	auto cg = Config::GetInstance();
+	auto group = cg->getRootGroup();
+	group.setSetting("value", "test3");
+	auto group1 = group.getGroup("group");
+	group1.addSetting("config", "ttt");
+#endif
+	
 #if 0
+	//std::string path = "E:/lingshiwenjianjia/MILO_C/MILO_C.h5";
+	//std::string path = "D:\RBWO_CY.h5";
+	//std::string path = "D:\MILO_P.h5";
+	//std::string path = "E:/tt/TEST.h5";
+>>>>>>> .theirs
 	std::string path = "D:/MILO_P.h5";
 	Hdf5IO io(path);
 	io.initHdf5Data();
