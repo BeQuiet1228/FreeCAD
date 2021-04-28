@@ -9,10 +9,13 @@
 #include <math.h>
 #include <QRectF>
 #include <QBrush>
+#include "CustomConfig.h"
+#include "C_encoding.h"
 TimeRenderer::TimeRenderer(std::shared_ptr<TimeData> data)
 	:Renderer(std::dynamic_pointer_cast<Data>(data))
 {
-
+	pensize = 1;
+	penColor = Qt::red;
 }
 
 TimeRenderer::~TimeRenderer()
@@ -49,8 +52,8 @@ bool TimeRenderer::drawImage()
 	//ÐÂ½¨»­²¼ »­±Ê
 	QImage img(getSize(), QImage::Format_ARGB32);
 	img.fill(qRgba(0, 0, 0, 0));
-	QPen pen(Qt::red);
-	pen.setWidth(1);
+	QPen pen(penColor);
+	pen.setWidth(pensize);
 	QPainter painter(&img);
 	//painter.setRenderHint(QPainter::Antialiasing, true);;
 	painter.setPen(pen);
@@ -356,4 +359,13 @@ void TimeRenderer::drawDisplayPoint(QPainter& painter, const QPointF& position, 
 		);
 
 }
-
+void TimeRenderer::loadconfig()
+{
+	Config::GetInstance()->loadConfig();
+	auto mGroup = Config::GetInstance()->getRootGroup();
+	auto timeconfig = mGroup.getGroup("observe");
+	unsigned __int32 _pensize = atoi(timeconfig.getValue("lineSize").c_str());
+	QColor _penColor = QStringToQColor(QString::fromStdString(timeconfig.getValue("lineColor")));
+	(_penColor != Qt::white) ? (penColor = _penColor):(penColor=Qt::red);
+	(_pensize > 0 && _pensize < 6) ? (pensize = _pensize) :(pensize) ;
+}

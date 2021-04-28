@@ -34,12 +34,12 @@ public:
 			color_tab.erase(iter);
 		}
 	}
+	virtual void loadconfig()override;
 	virtual bool drawImage() override;
 	virtual bool addListRang(std::list<Data::Rang> listRang) override;
 	virtual bool drawPointImage() override;
 	virtual bool setDefaultRang() override;
 	virtual void dataInit() override;
-
 private:
 	bool drawImage_rect_space();
 	bool drawImage_rand_space();

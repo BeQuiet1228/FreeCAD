@@ -67,4 +67,5 @@ public:
 	virtual bool setDefaultRang() = 0;
 	//初始化数据
 	virtual void dataInit();
+	virtual void loadconfig(){};
 };

@@ -134,6 +134,7 @@ void Plot::addSubRenderer(const std::shared_ptr<Renderer>& rd)
 {
 	rd->dataInit();
 	rd->setDefaultRang();
+	rd->loadconfig();
 	subRenderers.push_back(rd);
 }
 
@@ -147,7 +148,7 @@ void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
 	//初始化数据
 	rd->dataInit();
 	rd->setDefaultRang();
-
+	rd->loadconfig();
 	this->mainRenderer = rd;
 	auto xr = mainRenderer->getXRang();
 	auto yr = mainRenderer->getYRang();

@@ -12,5 +12,8 @@
 #define	ENCODING_UTF8	0x02u
 
 class QString;
+class QColor;
 QString EXTERN_C DATA_VISUALIZATION_EXPORT GetEncodingstr(const char*,unsigned int);
+QString QColorToQstring(QColor&);
+QColor QStringToQColor(QString colorstr);
 #endif

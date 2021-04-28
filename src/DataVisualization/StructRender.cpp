@@ -1,6 +1,8 @@
 #include "StructRender.h"
 #include <Qpen>
 #include <QPainter>
+#include "CustomConfig.h"
+#include "C_encoding.h"
 StructRender::StructRender(std::shared_ptr<StructData> data) :Renderer(std::dynamic_pointer_cast<Data>(data)){		
 	color_tab[StructTexture::Perfect_Conductor] = QColor(125, 125, 125, 255);
 }
@@ -783,4 +785,16 @@ StructData::structpoint StructRender::findApoint_Cylindrical(QPointF _curpoint)
 		break;
 	}
 	return mpoint;
+}
+void StructRender::loadconfig()
+{
+	Config::GetInstance()->loadConfig();
+	ConfigGroup mGroup = Config::GetInstance()->getRootGroup();
+	ConfigGroup structConfig = mGroup.getGroup("struct");
+	//开始设置颜色
+	color_tab[Perfect_Conductor] = QStringToQColor(QString::fromStdString(structConfig.getValue("Perfect_Conductor")));
+	color_tab[Conductor_New] = QStringToQColor(QString::fromStdString(structConfig.getValue("Conductor_New")));
+	color_tab[Diolectric] = QStringToQColor(QString::fromStdString(structConfig.getValue("Diolectric")));
+	color_tab[Permeability] = QStringToQColor(QString::fromStdString(structConfig.getValue("Permeability")));
+	color_tab[Vacuo] = QStringToQColor(QString::fromStdString(structConfig.getValue("Vacuo")));
 }
