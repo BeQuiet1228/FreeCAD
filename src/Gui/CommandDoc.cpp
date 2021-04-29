@@ -73,6 +73,8 @@
 #include <memory>
 #include "SmartContorl/SmartContorlInterface.h"
 #include "MyParameter.h"
+#include "App/DocumentObject.h"
+#include "Gui\DockWindowManager.h"
 using namespace Gui;
 
 
@@ -2095,23 +2097,35 @@ StdCmdMyParameter::StdCmdMyParameter()
     : Command("Std_My_Parameter")
 {
     // setting the
-    sGroup = QT_TR_NOOP("open");
-    sMenuText = QT_TR_NOOP("SuperTube");
-    sToolTipText = QT_TR_NOOP("open SuperTube");
-    sWhatsThis = "Std_Open_Command_book";
-    sStatusTip = QT_TR_NOOP("Std_Run_Super_Tube");
+    sGroup = QT_TR_NOOP("My_Parameter");
+    sMenuText = QT_TR_NOOP("My_Parameter");
+    sToolTipText = QT_TR_NOOP("My_Parameter");
+    sWhatsThis = "Std_My_Parameter";
+    sStatusTip = QT_TR_NOOP("Std_My_Parameter");
     sPixmap = "help-supertube";
 }
 
 void StdCmdMyParameter::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
-    MyParameter* dialog = new MyParameter();
-    dialog->show();
+    App::DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("Param");
+    if (docObj == nullptr || docObj == NULL) {
+        docObj = App::GetApplication().getActiveDocument()->addObject("Part::FeaturePython", "Param", true);
+        docObj->addDynamicProperty("App::PropertyFloat", "justForAnalysis");
+    }
+    if (Gui::DockWindowManager::instance()->getDockWindow("custom_param")) {
+        Gui::DockWindowManager::instance()->getDockWindow("custom_param")->show();
+    }
+    else {
+        MyParameter* p = new MyParameter();
+        Gui::DockWindowManager::instance()->addDockWindow("custom_param", p, Qt::DockWidgetArea::RightDockWidgetArea)->show();
+    }
 }
 bool StdCmdMyParameter::isActive(void)
 {
-    return true;
+    if (App::GetApplication().getActiveDocument())
+        return true;
+    return false;
 }
 
 namespace Gui {
