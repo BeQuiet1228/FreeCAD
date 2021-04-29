@@ -36,6 +36,7 @@ MyParameter::MyParameter(QWidget* parent) : QWidget(parent){
                                               << QString::fromStdString("description"));
     tableWidget->setHorizontalHeaderLabels(headerLabels);
     tableWidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    this->recoveryData();
 
     QObject::connect(this->tableWidget, SIGNAL(cellChanged(int, int)), this, SLOT(cellDoubleClicked(int, int)));
 
@@ -445,9 +446,33 @@ void MyParameter::importText() {
         this->tableWidget->item(cur_row - 1 + i, 1)->setText(QString::fromStdString(p[i][1]));
         endTime = clock();
         all = all + (double)(endTime - startTime) / CLOCKS_PER_SEC;
-        std::cerr << (double)(endTime - startTime) / CLOCKS_PER_SEC << std::endl;
+        //std::cerr << (double)(endTime - startTime) / CLOCKS_PER_SEC << std::endl;
     }
     std::cerr << all << std::endl;
+}
+
+void MyParameter::recoveryData() {
+    std::string text = App::GetApplication().getActiveDocument()->Company.getStrValue();
+    if (text.empty()) {
+        return;
+    }
+    std::vector<std::vector<std::string>> p = this->batchProcessing(text);
+    for (int i = 0; i < p.size(); ++i) {
+        this->addNewLine(i);
+        this->tableWidget->item(i, 0)->setText(QString::fromStdString(p[i][0]));
+        this->makeLineEnabled(i);
+        this->tableWidget->item(i, 1)->setText(QString::fromStdString(p[i][1]));
+    }
+    // 更新结果
+    int max_row = this->tableWidget->rowCount();
+    for (int i = 0 ; i < max_row; ++i) {
+        QString name = tableWidget->item(i, 0)->text();
+        QString expression = tableWidget->item(i, 1)->text();
+        param_type _type = typeAnalysis(expression);
+        if (this->changeProperty(_type, name, expression)) {
+            this->setValueToItem(_type, name, i);
+        }
+    }
 }
 
 

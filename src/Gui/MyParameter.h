@@ -58,6 +58,7 @@ public:
 public:
 	void updateFromRowToEnd(int row);
 	std::vector<std::vector<std::string>> batchProcessing(std::string text);
+	void recoveryData();
 
 private Q_SLOTS:
 	void cellDoubleClicked(int row, int column);
