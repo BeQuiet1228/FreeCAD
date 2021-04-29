@@ -285,6 +285,7 @@ void MainWindow::hideContorlUI()
 	contorlDockWidget->close();
     hideControlTree();
     hideVisualizationTree();
+    ClearVisualizationTree();
 }
 
 void MainWindow::inintContorlUI()
