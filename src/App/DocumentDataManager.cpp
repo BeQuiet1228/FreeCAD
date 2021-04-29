@@ -100,3 +100,8 @@ void DocumentManager::_ToRenderer(std::string name, int index)
 	if (m_DataSourceManage)
 		m_DataSourceManage->tranfromRenderer(name,index);
 }
+void DocumentManager::dataclear()
+{
+	if (m_DataSourceManage)
+		m_DataSourceManage->DataClear();
+}

@@ -138,6 +138,7 @@ void DataSourceManage::init(ListTreeWidget* ptr,Plot* _plot){
 		//进行连接
 		connect(this, SIGNAL(_loadhdflist(std::vector<Hdf5Data>&)), ptr, SLOT(loadHdflist(std::vector<Hdf5Data>&)));
 		connect(ptr, SIGNAL(_transfromRenderer(std::string, int)), this, SLOT(tranfromRenderer(std::string, int)));
+		connect(this, SIGNAL(toTreeNewData(Hdf5Data&, int)), ptr, SLOT(fromdataManageNewData(Hdf5Data& , int )));
 	}
 	if (_plot)
 	{
@@ -169,6 +170,15 @@ DataSourceManage::~DataSourceManage(){
 void DataSourceManage::DisPlayPlot(Hdf5Data data, int _type)
 {
 	Renderers rds = factoryptr->creatRenderers(data, (DirectionType)_type);
+	//保存当前的hdf5Data
+	hdfDatelist.push_back(data);
+	emit toTreeNewData(data, hdfDatelist.size() - 1);
 	emit _reRendererEvent(rds);
+}
+
+void DataSourceManage::DataClear()
+{
+	RendererManger.clear();
+	hdfDatelist.clear();
 }
 #include "moc_Dataresource.cpp"

@@ -336,8 +336,8 @@ void Plot::initGUI()
 	AxisB = new Axis();
 	AxisB->setAxixStyle(AxisBottom);
 	AxisB->SetAxisNumber(xAxisLevel);
-	connect(AxisL, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(setRenderYRange(const float&, const float&)));
-	connect(AxisB, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(setRenderXRange(const float&, const float&)));
+	connect(AxisL, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererYRang(const float&, const float&)));
+	connect(AxisB, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererXRang(const float&, const float&)));
 	scaleWIdget = new QwtScaleWidget(QwtScaleDraw::RightScale, this);
 	scaleWIdget->setColorBarEnabled(true);
 	scaleWIdget->setColorBarWidth(20);
@@ -417,7 +417,6 @@ void Plot::setRenderRange(const float& xMin, const float xMax, const float& yMin
 	AxisL->setAxisRange(yr.min, yr.max);
 	AxisB->setAxisRange(xr.min, xr.max);
 	updateAxis();
-	reRender();
 }
 
 void Plot::setRenderXRange(const float& min, const float& max)
@@ -564,6 +563,16 @@ void Plot::keyReleaseEvent(QKeyEvent *event)
 void Plot::reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender)
 {
 	addRenderer(listRender);
+	reRender();
+}
+
+void Plot::reRendererXRang(const float& min, const float& max){
+	setRenderXRange(min,max);
+	reRender();
+	
+}
+void Plot::reRendererYRang(const float& min, const float& max){
+	setRenderYRange(min,max);
 	reRender();
 }
 #include "moc_Plot.cpp"

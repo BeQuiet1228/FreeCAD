@@ -310,6 +310,7 @@ public:
     void showControlTree();
     void hideVisualizationTree();
     void showVisualizationTree();
+	void ClearVisualizationTree();
 	//void DisplatPlot(Hdf5Data data,DocumentManager* ptr,int _type=0);
 };
 

@@ -47,10 +47,7 @@ ListTreeWidget::~ListTreeWidget(){
 void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 {
 	//需要清空所有节点信息
-	if (goodsModel->hasChildren()>0)
-	{
-		goodsModel->removeRows(0, goodsModel->rowCount());
-	}
+	
 	//开始实现
 	std::map<std::string, std::vector<std::string>> itemlist;
 	std::map<std::string, std::map<std::string, int>> datalist;
@@ -109,12 +106,18 @@ void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 	std::map<QStandardItem*, int> _datainfo;
 	for (auto iter = itemlist.begin(); iter != itemlist.end();iter++)
 	{
-		//添加完父节点
-		//QString str = QString::fromStdString(iter->first);
-		//QStandardItem* item = new QStandardItem(QString::fromLocal8Bit((iter->first).c_str()));
-		QStandardItem* item = new QStandardItem(GetEncodingstr((iter->first).c_str(),ENCODING_GB2312));
+		//查找父节点
+		auto iterparent=parentnode.find(iter->first);
+		QStandardItem* item;
 		int row = goodsModel->rowCount();
-		goodsModel->setItem(row,item);
+		if (iterparent != parentnode.end()){
+			item = iterparent->second;
+		}	
+		else { 
+			item = new QStandardItem(GetEncodingstr((iter->first).c_str(), ENCODING_GB2312)); 
+			parentnode[iter->first] = item;
+			goodsModel->setItem(row, item);
+		}
 		//添加子节点
 		for (auto subiter = iter->second.begin(); subiter != iter->second.end();subiter++)
 		{
@@ -198,5 +201,37 @@ void ListTreeWidget::double_clicked_event(const QModelIndex &index)
 		printf("%s", name.c_str());
 		emit _transfromRenderer(name, iter->second);
 	}
+}
+void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
+#ifdef MY_DEBUG
+	printf("fromdataManageNewData-index:%d\n",index);
+#endif
+	//开始做处理
+	std::string daTaType = GetType(data.name);
+	auto iter = parentnode.find(daTaType);
+	QStandardItem* item;
+	if (iter!=parentnode.end())
+		item = iter->second;
+	else
+	{
+		item = new QStandardItem(GetEncodingstr(daTaType.c_str(), ENCODING_GB2312));
+		int row = goodsModel->rowCount();
+		goodsModel->setItem(row, item);
+		parentnode[daTaType] = item;
+	}
+	//添加子节点
+	int subrow = item->rowCount();
+	QStandardItem* subitem = new QStandardItem(QString("save_%1_%2").arg(GetEncodingstr(daTaType.c_str(),ENCODING_GB2312)).arg(subrow));
+	datainfor[subitem] = index;
+	item->setChild(subrow, subitem);
+}
+void ListTreeWidget::clear()
+{
+	if (goodsModel->hasChildren() > 0)
+	{
+		goodsModel->removeRows(0, goodsModel->rowCount());
+	}
+	datainfor.clear();
+	parentnode.clear();
 }
 #include "moc_ListTreeWidget.cpp"

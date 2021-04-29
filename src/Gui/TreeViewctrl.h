@@ -8,6 +8,7 @@ namespace Gui{
 	public:
 		 explicit TreeViewCtrl(QWidget* parent = nullptr);
 		~TreeViewCtrl();
+		void upClear();
 	public:
 		virtual void double_clicked_event(const QModelIndex &index);
 	};

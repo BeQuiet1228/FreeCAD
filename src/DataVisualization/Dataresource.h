@@ -27,9 +27,11 @@ public:
 	void init(ListTreeWidget* ptr,Plot* p);
 	void initStructData(Hdf5Data data);
 	void DisPlayPlot(Hdf5Data data,int _type=0);
+	void DataClear();
 Q_SIGNALS:
 	void _loadhdflist(std::vector<Hdf5Data>& Hdf5Data);
 	void _reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender);
+	void toTreeNewData(Hdf5Data& data,int index);
 public Q_SLOTS :
 	void tranfromRenderer(std::string name, int index);
 	void clearMap();
