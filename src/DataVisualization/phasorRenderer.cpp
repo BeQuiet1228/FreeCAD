@@ -1,6 +1,9 @@
 #include "phasorRenderer.h"
 #include <qpen.h>
 #include <QPainter>
+#include "CustomConfig.h"
+#include "C_encoding.h"
+#include <QDebug>
 #define  M_PI_ (3.141592653589793)
 //按像素来
 #define  HORI_GRID (30.0f)
@@ -8,7 +11,8 @@
 phasorRenderer::phasorRenderer(std::shared_ptr<phasorData> data)
 	:Renderer(std::dynamic_pointer_cast<Data>(data))
 {
-
+	penSize=1;
+	penColor=Qt::red;
 }
 phasorRenderer::~phasorRenderer(){
 
@@ -282,8 +286,8 @@ bool phasorRenderer::drawImage_Coord(){
 	for (auto iter = CutRoomlist.begin(); iter != CutRoomlist.end(); iter++)
 	transitionRectF(*iter, xScale, yScale, xr, yr);
 	painter.drawRects(CutRoomlist);*/
-	QPen pen2(Qt::red);
-	pen2.setWidth(2);
+	QPen pen2(penColor);
+	pen2.setWidth(penSize);
 	painter.setPen(pen2);
 	//绘制向量
 	QVector<QPointF> p1 = d->Getp1Point();
@@ -464,4 +468,14 @@ void phasorRenderer::drawDisplayPoint(QPainter& painter, QPointF& postion, QPoin
 	painter.drawText(displatRect.x() + 10, displatRect.y() + 40, QString("Y:%1").arg(p1.y(), 0, 'E', 2));
 	painter.drawText(displatRect.x() + 10, displatRect.y() + 60, QString("X_COEF:%1").arg(len_coef.x(),0,'E',2));
 	painter.drawText(displatRect.x() + 10, displatRect.y() + 80, QString("Y_COEF:%1").arg(len_coef.y(),0,'E',2));
+}
+
+void phasorRenderer::loadconfig()
+{
+	Config::GetInstance()->loadConfig();
+	auto group = Config::GetInstance()->getRootGroup();
+	auto vectorGroup = group.getGroup("vector");
+	penSize =atoi(vectorGroup.getValue("vectorsize").c_str());
+	penColor = QStringToQColor(QString::fromStdString(vectorGroup.getValue("vectorColor")));
+	qDebug() << penSize << penColor;
 }

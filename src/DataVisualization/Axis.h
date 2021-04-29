@@ -1,6 +1,7 @@
 #pragma  once
 #include <QWidget>
 #include<QVector>
+#include <QLineEdit>
 enum Axisstyle
 {
 	Axisleft,
@@ -12,10 +13,20 @@ typedef struct{
 	QString valsize;
 	QPointF postion;
 }AXISVAL;
-typedef struct{
+typedef struct valrange{
 	double min;
 	double max;
-}valrange;
+	valrange& operator =(const valrange& that)
+	{
+		this->min = that.min;
+		this->max = that.max;
+		return *this;
+	}
+	bool operator !=(const valrange& that)
+	{
+		return !((this->min == that.min) && (this->max == that.max));
+	}
+}VARRANGE;
 
 class Axis : public QWidget
 {
@@ -26,7 +37,7 @@ public:
 private:
 public:
 	//添加功能函数
-	void setAxisText(QString, int fontsize=20);
+	void setAxisText(QString);
 	void setAxisRange(double min, double max);
 	//设置大刻度个数
 	void SetAxisNumber(int);
@@ -36,16 +47,23 @@ public:
 	void SetCanvas(QWidget* mCanvas);
 	void AxisResize(bool, QSize _size = QSize(0, 0));
 	void autoMinAndMAxSize();
+	void loadconfig();
 private:
 	QVector<QLineF> Getlines(Axisstyle, QRectF);
 	QVector<AXISVAL> getAxisVal(Axisstyle, QRectF);
 	AXISVAL GetAxisUnit(Axisstyle _Axisstyle, QRectF _rect);
+	void axisRangeChange();
 public:
 	void paintEvent(QPaintEvent* event);
+Q_SIGNALS:
+	void sendAxisRang(const float& min,const float& max);
 protected:
 	virtual void resizeEvent(QResizeEvent* event)override;
-	//获取科学计数法的字符串
+	virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
+	virtual void keyReleaseEvent(QKeyEvent *event) override;
+		//获取科学计数法的字符串
 	QVector<QString> GetScientific_notation();
+	QPen GetPen(QColor& rgba,int width);
 private:
 	bool isstart;
 	unsigned int Axisnumber;//大刻度个数
@@ -66,5 +84,14 @@ private:
 	//之前的最小宽高
 	float lastminWidth;
 	float lastminHeight;
-
+private:
+	valrange curAxisRang;
+	//增加实时取值功能2021/4/27
+	QLineEdit* minLineedit;
+	QLineEdit* maxLineedit;
+	QRectF* minRectf;
+	QRectF* maxRectf;
+	QColor axisColor;
+	QColor axisvalColor;
+	int UnitSize;
 };

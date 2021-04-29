@@ -133,6 +133,8 @@ void Plot::reRender()
 void Plot::addSubRenderer(const std::shared_ptr<Renderer>& rd)
 {
 	rd->dataInit();
+	rd->loadconfig();
+
 	if (mainRenderer)
 	{
 		Data::Rang xr, yr;
@@ -143,6 +145,7 @@ void Plot::addSubRenderer(const std::shared_ptr<Renderer>& rd)
 	}else {
 		rd->setDefaultRang();
 	}
+
 	subRenderers.push_back(rd);
 }
 
@@ -156,12 +159,11 @@ void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
 	//初始化数据
 	rd->dataInit();
 	rd->setDefaultRang();
-
+	rd->loadconfig();
 	this->mainRenderer = rd;
 	auto xr = mainRenderer->getXRang();
 	auto yr = mainRenderer->getYRang();
 	setRenderRange(xr.min, xr.max, yr.min, yr.max);
-
 	//清空撤销恢复栈，将新的操作压入
 	URStack->clear();
 	UndoRedoData URData(xr, yr);
@@ -311,10 +313,12 @@ void Plot::initGUI()
 	AxisL = new Axis();
 	AxisL->setAxixStyle(Axisleft);
 	AxisL->SetAxisNumber(yAxisLevel);
+	
 	AxisB = new Axis();
 	AxisB->setAxixStyle(AxisBottom);
 	AxisB->SetAxisNumber(xAxisLevel);
-
+	connect(AxisL, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(setRenderYRange(const float&, const float&)));
+	connect(AxisB, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(setRenderXRange(const float&, const float&)));
 	scaleWIdget = new QwtScaleWidget(QwtScaleDraw::RightScale, this);
 	scaleWIdget->setColorBarEnabled(true);
 	scaleWIdget->setColorBarWidth(20);
@@ -389,10 +393,12 @@ void Plot::setRenderRange(const float& xMin, const float xMax, const float& yMin
 		(*iter)->setXRang(xr);
 	}
 
+
 	//设置坐标轴刻度
 	AxisL->setAxisRange(yr.min, yr.max);
 	AxisB->setAxisRange(xr.min, xr.max);
 	updateAxis();
+	reRender();
 }
 
 void Plot::setRenderXRange(const float& min, const float& max)

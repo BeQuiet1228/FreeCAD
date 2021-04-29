@@ -6,7 +6,6 @@ class TimeRenderer:public Renderer{
 public:
 	TimeRenderer(std::shared_ptr<TimeData> data);
 	~TimeRenderer();
-
 public:
 	//渲染
 	virtual bool drawImage() override;
@@ -14,7 +13,8 @@ public:
 	virtual bool drawPointImage() override;
 	virtual bool setDefaultRang() override;
 	virtual void dataInit() override;
-
+	//加载配置
+	virtual void loadconfig() override;
 private:
 	//将数据坐标转换为图片上的坐标
 	float transitionX(const float& x,const float& xScale,const Data::Rang& xr);
@@ -25,4 +25,8 @@ private:
 	QPointF findPoint(const QPointF& point);
 	//绘制显示信息
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d);
+private:
+	//新增--画笔大小,颜色
+	unsigned __int32 pensize;
+	QColor penColor;
 };

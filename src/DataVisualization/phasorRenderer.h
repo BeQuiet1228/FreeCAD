@@ -3,7 +3,7 @@
 #define _PHASORRENDERERE_H_
 #include "Renderer.h"
 #include "phasorData.h"
-
+#include <QColor>
 class phasorRenderer :public Renderer{
 public:
 	phasorRenderer(std::shared_ptr<phasorData> data);
@@ -17,7 +17,7 @@ public:
 	virtual bool drawPointImage() override;
 	virtual bool setDefaultRang() override;
 	virtual void dataInit() override;
-	
+	virtual void loadconfig() override;
 private:
 	QPointF GetarrowTop(QPointF endpoint,QPointF startpoint);
 	QPointF GetarrowBottom(QPointF endpoint,QPointF startpoint);
@@ -44,7 +44,8 @@ private:
 	bool drawImage_Coord();
 	int findApoint(QPointF A_point);
 	void drawDisplayPoint(QPainter& painter,QPointF& position,QPointF& p1,QPointF& len_coef);
-	/*float pix_hori;
-	float pix_ver;*/
+private:
+	unsigned __int32 penSize;
+	QColor penColor;
 };
 #endif

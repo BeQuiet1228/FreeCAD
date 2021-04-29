@@ -2,10 +2,13 @@
 #include "ParticleData.h"
 #include <QPen>
 #include <QPainter>
+#include "C_encoding.h"
+#include "CustomConfig.h"
 ParticleRenderer::ParticleRenderer(std::shared_ptr<ParticleData> data)
 	:Renderer(std::dynamic_pointer_cast<Data>(data))
 {
-
+	particleColor=Qt::red;
+	particleSize = 1;
 }
 
 ParticleRenderer::~ParticleRenderer()
@@ -40,8 +43,8 @@ bool ParticleRenderer::drawImage()
 	//ÐÂ½¨»­²¼ »­±Ê
 	QImage img(getSize(), QImage::Format_ARGB32);
 	img.fill(qRgba(0, 0, 0, 0));
-	QPen pen(Qt::red);
-	pen.setWidth(1);
+	QPen pen(particleColor);
+	pen.setWidth(particleSize);
 	QPainter painter(&img);
 	painter.setPen(pen);
 
@@ -261,4 +264,11 @@ QPointF ParticleRenderer::transitionPoint(const QPointF& point)
 	QPointF po(x, y);
 	return po;
 }
-
+void ParticleRenderer::loadconfig()
+{
+	Config::GetInstance()->loadConfig();
+	auto Group = Config::GetInstance()->getRootGroup();
+	auto particleGroup = Group.getGroup("particle");
+	particleColor = QStringToQColor(QString::fromStdString(particleGroup.getValue("color")));
+	particleSize = atoi(particleGroup.getValue("size").c_str());
+}

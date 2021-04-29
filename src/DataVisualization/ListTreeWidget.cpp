@@ -3,7 +3,7 @@
 #include <vector>
 #include "Dataresource.h"
 #include "C_encoding.h"
-#define  MAX_TYPE_NUMBER 5
+#define  MAX_TYPE_NUMBER 6
 enum emType
 {
 	CONTOUR=0,
@@ -11,8 +11,9 @@ enum emType
 	RANGE,
 	VECTOR,
 	STRUCT,
+	OBSERVE,
 };
-std::string Type[MAX_TYPE_NUMBER] = { "CONTOUR", "PHASESPACE", "RANGE", "VECTOR", "struct" };
+std::string Type[MAX_TYPE_NUMBER] = { "CONTOUR", "PHASESPACE", "RANGE", "VECTOR", "struct" ,"OBSERVE"};
 std::string Structdirection[3] = { "Phi-Z",
 "Z-R",
 "R*cos(Phi)-R*sin(Phi)" };
@@ -174,6 +175,8 @@ std::string ListTreeWidget::GetType(std::string name)
 		return "结构图";
 	case emType::VECTOR:
 		return "矢量图";
+	case emType::OBSERVE:
+		return "时间图";
 	default:
 		return "未知图";
 	}

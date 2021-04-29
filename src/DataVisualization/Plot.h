@@ -96,8 +96,6 @@ private:
 	void findPointRender(const float& x, const float& y);
 	//…Ë÷√‰÷»æ∑∂Œß
 	void setRenderRange(const float& xMin, const float xMax, const float& yMin, const float& yMax);
-	void setRenderXRange(const float& min, const float& max);
-	void setRenderYRange(const float& min, const float& max);
 	//‰÷»æÕ¯∏Ò
 	void creatGridRenderTask();
 public Q_SLOTS:
@@ -107,8 +105,9 @@ public Q_SLOTS:
 	void canvasSelectRect(QRect rect);
 	//ª≠≤º»°µ„
 	void canvasSelectPoint(QPoint point);
-	//
 	void reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender);
+	void setRenderXRange(const float& min, const float& max);
+	void setRenderYRange(const float& min, const float& max);
 protected:
 	void resizeEvent(QResizeEvent *event) override;
 protected:

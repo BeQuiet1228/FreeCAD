@@ -41,7 +41,6 @@ void RenderThread::renderMap(RenderTask& task)
 	CanvasItem item;
 	item.rank = task.rank;
 	item.setImage(renderer->getImage());
-
 	Q_EMIT renderFinished(item);
 }
 
