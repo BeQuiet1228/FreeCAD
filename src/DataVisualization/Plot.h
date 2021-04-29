@@ -75,6 +75,8 @@ public:
 	void redo();
 	//刷新网格线
 	void updateGridLine();
+	//以默认大小渲染
+	void autoMaxRender();
 	//清理从渲染器
 	void clearSubRenderer(){
 		subRenderers.clear();

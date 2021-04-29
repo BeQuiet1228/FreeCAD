@@ -298,6 +298,25 @@ void Plot::updateGridLine()
 }
 
 /**
+* @brief Plot::autoMaxRender 自动调整渲染范围 以最大范围渲染
+* @return void
+*/
+void Plot::autoMaxRender()
+{
+	if (!mainRenderer)
+		return;
+	mainRenderer->setDefaultRang();
+	auto xr = mainRenderer->getXRang();
+	auto yr = mainRenderer->getYRang();
+
+	setRenderRange(xr.min, xr.max, yr.min, yr.max);
+
+	updateAxis();
+
+	reRender();
+}
+
+/**
 * @brief Plot::initGUI 初始化布局
 * @return void
 */
@@ -527,17 +546,7 @@ void Plot::keyReleaseEvent(QKeyEvent *event)
 	QWidget::keyReleaseEvent(event);
 	if (event->key() == Qt::Key_Space)
 	{
-		if (!mainRenderer)
-			return;
-		mainRenderer->setDefaultRang();
-		auto xr = mainRenderer->getXRang();
-		auto yr = mainRenderer->getYRang();
-
-		setRenderRange(xr.min, xr.max, yr.min, yr.max);
-
-		updateAxis();
-
-		reRender();
+		autoMaxRender();
 /**************测试撤销恢复的代码 ****************/
 	}
 	else if (event->key() == Qt::Key_Left) {

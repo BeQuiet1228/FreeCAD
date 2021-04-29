@@ -1878,6 +1878,48 @@ bool StdCmdContourLineMod::isActive(void)
     return getGuiApplication()->sendHasMsgToActiveView("ContourLineMod");
 }
 
+class StdCmdDataVisualizationPlotDisplayGridMod :public StdCmdRunM3d {
+public:
+    StdCmdDataVisualizationPlotDisplayGridMod();
+	~StdCmdDataVisualizationPlotDisplayGridMod() = default;
+	const char* className() const override {
+		return "StdCmdDataVisualizationPlotDisplayGridMod";
+	}
+protected:
+	virtual void activated(int iMsg);
+	virtual bool isActive(void);
+};
+
+StdCmdDataVisualizationPlotDisplayGridMod::StdCmdDataVisualizationPlotDisplayGridMod()
+    :StdCmdRunM3d("Std_Data_Visualization_Plot_Display_Grid_Mod")
+{
+	sGroup = QT_TR_NOOP("File");
+	sMenuText = QT_TR_NOOP("Grid(off)");
+	sToolTipText = QT_TR_NOOP("plot grid display mod");
+	sWhatsThis = "Std_Data_Visualization_Plot_Display_Grid_Mod";
+	sStatusTip = QT_TR_NOOP("plot grid display mod");
+	sPixmap = "local";
+}
+
+void StdCmdDataVisualizationPlotDisplayGridMod::activated(int iMsg)
+{
+	const char* ret;
+	getGuiApplication()->sendMsgToActiveView("PlotDisplayMod", &ret);
+	if (strcmp(ret, "on") == 0)
+	{
+		sMenuText = QT_TR_NOOP("Line(on)");
+	}
+	else {
+		sMenuText = QT_TR_NOOP("Line(off)");
+	}
+	updataActionIcon();
+}
+
+bool StdCmdDataVisualizationPlotDisplayGridMod::isActive(void)
+{
+    return getGuiApplication()->sendHasMsgToActiveView("PlotDisplayMod");
+}
+
 class StdCmdConnectWay :public StdCmdRunM3d{
 public:
 	StdCmdConnectWay();
@@ -2112,6 +2154,27 @@ bool StdCmdOpenDataVisualizationConfig::isActive()
     return true;
 }
 
+DEF_STD_CMD_A(StdCmdDataVisualizationAutoMax);
+StdCmdDataVisualizationAutoMax::StdCmdDataVisualizationAutoMax()
+	: Command("Std_Data_Visualization_Auto_Max")
+{
+	sGroup = QT_TR_NOOP("open");
+	sMenuText = QT_TR_NOOP("AutoMax");
+	sToolTipText = QT_TR_NOOP("Data visualization plot auto max renderer!");
+	sWhatsThis = "Std_Data_Visualization_Auto_Max";
+	sStatusTip = QT_TR_NOOP("Std_Data_Visualization_Auto_Max");
+	sPixmap = "help-supertube";
+}
+void StdCmdDataVisualizationAutoMax::activated(int iMsg)
+{
+    getGuiApplication()->sendMsgToActiveView("AutoMax");
+}
+
+bool StdCmdDataVisualizationAutoMax::isActive()
+{
+	return getGuiApplication()->sendHasMsgToActiveView("AutoMax");
+}
+
 namespace Gui {
 
 void CreateDocCommands(void)
@@ -2137,6 +2200,8 @@ void CreateDocCommands(void)
     rcCmdMgr.addCommand(new StdCmdContourImageMod);
     rcCmdMgr.addCommand(new StdCmdContourLineMod);
     rcCmdMgr.addCommand(new StdCmdOpenDataVisualizationConfig);
+    rcCmdMgr.addCommand(new StdCmdDataVisualizationAutoMax);
+    rcCmdMgr.addCommand(new StdCmdDataVisualizationPlotDisplayGridMod);
 
     rcCmdMgr.addCommand(new StdCmdSave());
     rcCmdMgr.addCommand(new StdCmdSaveAs());
