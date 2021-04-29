@@ -310,7 +310,8 @@ void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
 		Gui::PlotMDIView* plot = new Gui::PlotMDIView(*doc);
 		Gui::MainWindow::getInstance()->addWindow(plot);
 		//doc->attachView(plot,false);
-		((DocumentManager*)(doc->getDocument()))->bindTreeContrue(nullptr, (Plot*)plot->GetViewPtr());
+		Gui::TreeViewCtrl* m_lisTreeWidget = Gui::MainWindow::getInstance()->mTreeWidget;
+		((DocumentManager*)(doc->getDocument()))->bindTreeContrue((ListTreeWidget*)m_lisTreeWidget, (Plot*)plot->GetViewPtr());
 		((DocumentManager*)(doc->getDocument()))->DisplatPlot(data, _type);
 	}
 

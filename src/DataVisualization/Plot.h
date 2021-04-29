@@ -66,6 +66,8 @@ public:
 	void addRenderer(const std::list<std::shared_ptr<Renderer>>& listRender);
 	//设置图例是否可用
 	void setAxisRightEnabled(const bool& e);
+	void setRenderXRange(const float& min, const float& max);
+	void setRenderYRange(const float& min, const float& max);
 	//更新坐标轴
 	void updateAxis();
 	//清理取点提示图层
@@ -106,8 +108,8 @@ public Q_SLOTS:
 	//画布取点
 	void canvasSelectPoint(QPoint point);
 	void reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender);
-	void setRenderXRange(const float& min, const float& max);
-	void setRenderYRange(const float& min, const float& max);
+	void reRendererXRang(const float& min, const float& max);
+	void reRendererYRang(const float& min, const float& max);
 protected:
 	void resizeEvent(QResizeEvent *event) override;
 protected:

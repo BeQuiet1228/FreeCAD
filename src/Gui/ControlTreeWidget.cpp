@@ -1,5 +1,5 @@
 #include "PreCompiled.h"
-
+#include "MainWindow.h"
 #ifndef _PreComp_
 # include <boost/signals.hpp>
 # include <boost/bind.hpp>
@@ -262,19 +262,33 @@ QString ControlTreeWidget::makeFilePath(unsigned long threadID)
 void ControlTreeWidget::itemDouble_clicke(QTreeWidgetItem* item, int column)
 {
 
-//#define _TEST_
+#define _TEST_
 #ifdef _TEST_
-	std::string path = "D:/MILO_P.h5";
-	Hdf5IO io(path);
-	io.initHdf5Data();
-	//获取结构图
-	Hdf5Data structData = *(io.hdf5DataList.begin());
-	Gui::Application::ToStruct(structData);
-	Gui::Application::DisplatPlot(structData);
-#undef _TEST_
+	//std::string path = "D:/MILO_P.h5";
+	//Hdf5IO io(path);
+	//io.initHdf5Data();
+	////获取结构图
+	//Hdf5Data structData = *(io.hdf5DataList.begin());
+	//Gui::Application::ToStruct(structData);
+	//Gui::Application::DisplatPlot(structData);
+	static bool istest=true;
+	if (istest)
+	{
+		Gui::MainWindow::getInstance()->showVisualizationTree();
+		istest = false;
+	}
+	sendControlMsg(item);
+	static int i = 0;
+	if (i%5==4)
+	{
+		Gui::MainWindow::getInstance()->ClearVisualizationTree();
+	}
+	i++;
+#undef _TEST_	
 #else 
 	sendControlMsg(item);
 #endif
+	
 }
 
 

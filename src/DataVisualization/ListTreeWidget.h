@@ -14,6 +14,7 @@ class DATA_VISUALIZATION_EXPORT ListTreeWidget:public QWidget
 public:
 	explicit ListTreeWidget(QWidget* parent=nullptr);
 	~ListTreeWidget();
+	
 protected:
 	virtual void resizeEvent(QResizeEvent * event) override;
 	std::string GetType(std::string name);
@@ -22,11 +23,14 @@ protected:
 public Q_SLOTS:
 	void loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist);
 	void on_doubleclick(const QModelIndex &index);
+	void fromdataManageNewData(Hdf5Data& data,int index);	
 public:
 	virtual void double_clicked_event(const QModelIndex &index);
+	void clear();
 protected:
 	QTreeView* m_TreeView;
 	QStandardItemModel *goodsModel;
 	std::map <QStandardItem*, int> datainfor;
+	std::map<std::string, QStandardItem*> parentnode;
 };
 #endif

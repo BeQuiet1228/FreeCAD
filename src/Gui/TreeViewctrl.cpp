@@ -51,4 +51,13 @@ namespace Gui{
 			docM->_ToRenderer(name, iter->second);
 		}
 	}
+	void TreeViewCtrl::upClear()
+	{
+		clear();
+		//获取当前活跃的Document;
+		App::Document *doc = App::GetApplication().getActiveDocument();
+		DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
+		if (docM)
+			docM->dataclear();
+	}
 };
