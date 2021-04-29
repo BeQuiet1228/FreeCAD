@@ -284,6 +284,7 @@ void MainWindow::hideContorlUI()
 	*/
 	contorlDockWidget->close();
     hideControlTree();
+    hideVisualizationTree();
 }
 
 void MainWindow::inintContorlUI()
@@ -373,6 +374,15 @@ void MainWindow::showVisualizationTree()
 		return;
 	tab->addTab(mTreeWidget, GetEncodingstr("文件数据", ENCODING_UTF8));
 }
+
+void MainWindow::ClearVisualizationTree()
+{
+	if (mTreeWidget)
+	{
+		mTreeWidget->upClear();
+	}
+}
+
 
 } // namespace Gui
 
