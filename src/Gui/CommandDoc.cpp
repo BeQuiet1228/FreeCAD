@@ -72,6 +72,7 @@
 #include <Contorl/ContorlInterface.h>
 #include <memory>
 #include "SmartContorl/SmartContorlInterface.h"
+#include "DataVisualization/ConfigWidget.h"
 using namespace Gui;
 
 
@@ -2088,6 +2089,29 @@ bool StdCmdRunSuperTube::isActive(void)
 {
 	return true;
 }
+DEF_STD_CMD_A(StdCmdOpenDataVisualizationConfig);
+StdCmdOpenDataVisualizationConfig::StdCmdOpenDataVisualizationConfig()
+    : Command("Std_Open_Data_Visualization_Config")
+{
+	sGroup = QT_TR_NOOP("open");
+	sMenuText = QT_TR_NOOP("VisualizationConfig");
+	sToolTipText = QT_TR_NOOP("Open Data Visualization Config");
+	sWhatsThis = "Std_Open_Data_Visualization_Config";
+	sStatusTip = QT_TR_NOOP("Std_Open_Data_Visualization_Config");
+	sPixmap = "help-supertube";
+}
+void StdCmdOpenDataVisualizationConfig::activated(int iMsg)
+{
+    ConfigWidget* configWidget = new ConfigWidget();
+    configWidget->setAttribute(Qt::WA_DeleteOnClose);
+    configWidget->show();
+}
+
+bool StdCmdOpenDataVisualizationConfig::isActive()
+{
+    return true;
+}
+
 namespace Gui {
 
 void CreateDocCommands(void)
@@ -2112,6 +2136,7 @@ void CreateDocCommands(void)
 	rcCmdMgr.addCommand(new StdCmdRunSuperTube);
     rcCmdMgr.addCommand(new StdCmdContourImageMod);
     rcCmdMgr.addCommand(new StdCmdContourLineMod);
+    rcCmdMgr.addCommand(new StdCmdOpenDataVisualizationConfig);
 
     rcCmdMgr.addCommand(new StdCmdSave());
     rcCmdMgr.addCommand(new StdCmdSaveAs());
