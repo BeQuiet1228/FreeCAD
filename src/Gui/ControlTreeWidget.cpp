@@ -80,7 +80,7 @@ void ControlTreeWidget::initItem()
 	observeItem->setText(0,GetEncodingstr("时间观测图", ENCODING_GB2312));
 
 	rangeItem = items.at(3);
-	rangeItem->setText(0, GetEncodingstr("控件观测图", ENCODING_GB2312));
+	rangeItem->setText(0, GetEncodingstr("空间观测图", ENCODING_GB2312));
 
 	vectorItem = items.at(4);
 	vectorItem->setText(0, GetEncodingstr("矢量图", ENCODING_GB2312));
