@@ -64,7 +64,7 @@ void RenderThread::findPoint(RenderTask& task)
 void RenderThread::run()
 {
 #ifdef MY_DEBUG
-	std::cerr << "Thread start successd,threadID:" << currentThreadId() << std::endl;
+	//std::cerr << "Thread start successd,threadID:" << currentThreadId() << std::endl;
 #endif
 	setFinishedFlag(false);
 

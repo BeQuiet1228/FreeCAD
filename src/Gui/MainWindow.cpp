@@ -131,6 +131,7 @@
 #include "DataVisualization/Plot.h"
 #include "PlotMDIView.h"
 #include "App/DocumentDataManager.h"
+#include "DataVisualization/C_encoding.h"
 #if defined(Q_OS_WIN32)
 #define slots
 //#include <private/qmainwindowlayout_p.h>
@@ -146,240 +147,245 @@ MainWindow* MainWindow::instance = 0L;
 
 namespace Gui {
 
-	// Pimpl class
-	struct MainWindowP
-	{
-		QLabel* sizeLabel;
-		QLabel* actionLabel;
-		QTimer* actionTimer;
-		QTimer* activityTimer;
-		QTimer* visibleTimer;
-		QMdiArea* mdiArea;
-		QPointer<MDIView> activeView;
-		QSignalMapper* windowMapper;
-		QSplashScreen* splashscreen;
-		StatusBarObserver* status;
-		bool whatsthis;
-		QString whatstext;
-		Assistant* assistant;
-	};
+// Pimpl class
+struct MainWindowP
+{
+    QLabel* sizeLabel;
+    QLabel* actionLabel;
+    QTimer* actionTimer;
+    QTimer* activityTimer;
+    QTimer* visibleTimer;
+    QMdiArea* mdiArea;
+    QPointer<MDIView> activeView;
+    QSignalMapper* windowMapper;
+    QSplashScreen* splashscreen;
+    StatusBarObserver* status;
+    bool whatsthis;
+    QString whatstext;
+    Assistant* assistant;
+};
 
-	class MDITabbar : public QTabBar
-	{
-	public:
-		MDITabbar(QWidget * parent = 0) : QTabBar(parent)
-		{
-			menu = new QMenu(this);
-			// For Qt 4.2.x the tabs might be very wide
+class MDITabbar : public QTabBar
+{
+public:
+    MDITabbar( QWidget * parent = 0 ) : QTabBar(parent)
+    {
+        menu = new QMenu(this);
+        // For Qt 4.2.x the tabs might be very wide
 #if QT_VERSION >= 0x040200
-			setDrawBase(false);
-			setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+        setDrawBase(false);
+        setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
 #endif
-		}
+    }
 
-		~MDITabbar()
-		{
-			delete menu;
-		}
+    ~MDITabbar()
+    {
+        delete menu;
+    }
 
-	protected:
-		void contextMenuEvent(QContextMenuEvent * e)
-		{
-			menu->clear();
-			CommandManager& cMgr = Application::Instance->commandManager();
-			if (tabRect(currentIndex()).contains(e->pos()))
-				cMgr.getCommandByName("Std_CloseActiveWindow")->addTo(menu);
-			cMgr.getCommandByName("Std_CloseAllWindows")->addTo(menu);
-			menu->addSeparator();
-			cMgr.getCommandByName("Std_CascadeWindows")->addTo(menu);
-			cMgr.getCommandByName("Std_ArrangeIcons")->addTo(menu);
-			cMgr.getCommandByName("Std_TileWindows")->addTo(menu);
-			menu->addSeparator();
-			cMgr.getCommandByName("Std_Windows")->addTo(menu);
-			menu->popup(e->globalPos());
-		}
+protected:
+    void contextMenuEvent ( QContextMenuEvent * e )
+    {
+        menu->clear();
+        CommandManager& cMgr = Application::Instance->commandManager();
+        if (tabRect(currentIndex()).contains(e->pos()))
+            cMgr.getCommandByName("Std_CloseActiveWindow")->addTo(menu);
+        cMgr.getCommandByName("Std_CloseAllWindows")->addTo(menu);
+        menu->addSeparator();
+        cMgr.getCommandByName("Std_CascadeWindows")->addTo(menu);
+        cMgr.getCommandByName("Std_ArrangeIcons")->addTo(menu);
+        cMgr.getCommandByName("Std_TileWindows")->addTo(menu);
+        menu->addSeparator();
+        cMgr.getCommandByName("Std_Windows")->addTo(menu);
+        menu->popup(e->globalPos());
+    }
 
-	private:
-		QMenu* menu;
-	};
+private:
+    QMenu* menu;
+};
 
 #if defined(Q_OS_WIN32)
-	class MainWindowTabBar : public QTabBar
-	{
-	public:
-		MainWindowTabBar(QWidget *parent) : QTabBar(parent)
-		{
-			setExpanding(false);
-		}
-	protected:
-		bool event(QEvent *e)
-		{
-			// show the tooltip if tab is too small to fit label
-			if (e->type() != QEvent::ToolTip)
-				return QTabBar::event(e);
-			QSize size = this->size();
-			QSize hint = sizeHint();
-			if (shape() == QTabBar::RoundedWest || shape() == QTabBar::RoundedEast) {
-				size.transpose();
-				hint.transpose();
-			}
-			if (size.width() < hint.width())
-				return QTabBar::event(e);
-			e->accept();
-			return true;
-		}
-		void tabInserted(int index)
-		{
-			// get all dock windows
-			QList<QDockWidget*> dw = getMainWindow()->findChildren<QDockWidget*>();
-			for (QList<QDockWidget*>::iterator it = dw.begin(); it != dw.end(); ++it) {
-				// compare tab text and window title to get the right dock window
-				if (this->tabText(index) == (*it)->windowTitle()) {
-					QWidget* dock = (*it)->widget();
-					if (dock) {
-						QIcon icon = dock->windowIcon();
-						if (!icon.isNull())
-							setTabIcon(index, icon);
-					}
-					break;
-				}
-			}
-		}
-	};
+class MainWindowTabBar : public QTabBar
+{
+public:
+    MainWindowTabBar(QWidget *parent) : QTabBar(parent)
+    {
+        setExpanding(false);
+    }
+protected:
+    bool event(QEvent *e)
+    {
+        // show the tooltip if tab is too small to fit label
+        if (e->type() != QEvent::ToolTip)
+            return QTabBar::event(e);
+        QSize size = this->size();
+        QSize hint = sizeHint();
+        if (shape() == QTabBar::RoundedWest || shape() == QTabBar::RoundedEast) {
+            size.transpose();
+            hint.transpose();
+        }
+        if (size.width() < hint.width())
+            return QTabBar::event(e);
+        e->accept();
+        return true;
+    }
+    void tabInserted (int index)
+    {
+        // get all dock windows
+        QList<QDockWidget*> dw = getMainWindow()->findChildren<QDockWidget*>();
+        for (QList<QDockWidget*>::iterator it = dw.begin(); it != dw.end(); ++it) {
+            // compare tab text and window title to get the right dock window
+            if (this->tabText(index) == (*it)->windowTitle()) {
+                QWidget* dock = (*it)->widget();
+                if (dock) {
+                    QIcon icon = dock->windowIcon();
+                    if (!icon.isNull())
+                        setTabIcon(index, icon);
+                }
+                break;
+            }
+        }
+    }
+};
 #endif
 
-	/**
-	* @brief Gui::MainWindow::setContorlUI 将主界面上的控制ui设置到控制器中
-	* @return void
+/**
+* @brief Gui::MainWindow::setContorlUI 将主界面上的控制ui设置到控制器中
+* @return void
+*/
+void MainWindow::setContorlUI()
+{
+	auto  contorl = ContorlInterface::GetInstance();
+	contorl->setButtonBar(contorlButtonBar);
+	contorl->setDataBar(contorlDataBar);
+}
+
+void MainWindow::showContorlUI()
+{
+	/*
+	addToolBarBreak(Qt::TopToolBarArea);
+	addToolBar(contorlButtonToolBar);
+	addToolBar(contorlDataToolBar);
+	contorlButtonToolBar->show();
+	contorlDataToolBar->show();
 	*/
-	void MainWindow::setContorlUI()
-	{
-		auto  contorl = ContorlInterface::GetInstance();
-		contorl->setButtonBar(contorlButtonBar);
-		contorl->setDataBar(contorlDataBar);
-	}
+	contorlDockWidget->setVisible(true);
+	contorlDockWidget->show();
+    showControlTree();
+}
 
-	void MainWindow::showContorlUI()
-	{
-		/*
-		addToolBarBreak(Qt::TopToolBarArea);
-		addToolBar(contorlButtonToolBar);
-		addToolBar(contorlDataToolBar);
-		contorlButtonToolBar->show();
-		contorlDataToolBar->show();
-		*/
-		contorlDockWidget->setVisible(true);
-		contorlDockWidget->show();
-		showControlTree();
-	}
+void MainWindow::hideContorlUI()
+{
+	/*
+	removeToolBar(contorlButtonToolBar);
+	removeToolBar(contorlDataToolBar);
+	contorlDataToolBar->hide();
+	contorlButtonToolBar->hide();
+	*/
+	contorlDockWidget->close();
+    hideControlTree();
+    hideVisualizationTree();
+    ClearVisualizationTree();
+}
 
-	void MainWindow::hideContorlUI()
-	{
-		/*
-		removeToolBar(contorlButtonToolBar);
-		removeToolBar(contorlDataToolBar);
-		contorlDataToolBar->hide();
+void MainWindow::inintContorlUI()
+{
+	static std::once_flag flag;
+	std::call_once(flag, [&](){
+		contorlDataBar = new ContorlDataBar();
+		contorlButtonBar = new ContorlButtonBar();
+
+		contorlButtonToolBar = new QToolBar();
+		contorlDataToolBar = new QToolBar();
+
+		/*contorlDataToolBar->setFixedSize(contorlDataBar->size());
+		contorlDataToolBar->addWidget(contorlDataBar);
+		contorlButtonToolBar->setFixedSize(QSize(70, contorlButtonBar->size().height()));
+		contorlButtonToolBar->addWidget(contorlButtonBar);
+
 		contorlButtonToolBar->hide();
-		*/
-		contorlDockWidget->close();
-		hideControlTree();
-	}
+		contorlDataToolBar->hide();*/
+		QVBoxLayout *layout = new QVBoxLayout;
+		QWidget* wd = new QWidget;
+		wd->setLayout(layout);
+		layout->addWidget(contorlButtonBar);
+		layout->addWidget(contorlDataBar);
+		contorlDockWidget = DockWindowManager::instance()->addDockWindow("contorl", wd,Qt::DockWidgetArea::RightDockWidgetArea);
+		//contorlDockWidget->setVisible(true);
+		layout->addStretch();
+	});
+}
 
-	void MainWindow::inintContorlUI()
+void MainWindow::addTitleAction(QAction* action)
+{
+	mainWindowDef->addTitleShortcutAction(action);
+}
+
+void MainWindow::hideControlTree()
+{
+
+    DockWindowManager* pDockMgr = DockWindowManager::instance();
+    CombiView* pcCombiView = dynamic_cast<CombiView*>(pDockMgr->getDockWindow("Combo View"));
+    if (!pcCombiView)
+        return;
+    auto tab = pcCombiView->getTabPanel();
+    int index = tab->indexOf(controlTreeWidget);
+    if (index < 0)
+        return;
+    tab->removeTab(index);
+    
+}
+
+void MainWindow::showControlTree()
+{
+	DockWindowManager* pDockMgr = DockWindowManager::instance();
+    CombiView* pcCombiView = dynamic_cast<CombiView*>(pDockMgr->getDockWindow("Combo View"));
+	if (!pcCombiView)
+		return;
+	auto tab = pcCombiView->getTabPanel();
+	int index = tab->indexOf(controlTreeWidget);
+	if (index >= 0)
+		return;
+    tab->addTab(controlTreeWidget, GetEncodingstr("观测列表",ENCODING_UTF8));
+}
+
+void MainWindow::hideVisualizationTree()
+{
+	DockWindowManager* pDockMgr = DockWindowManager::instance();
+	CombiView* pcCombiView = dynamic_cast<CombiView*>(pDockMgr->getDockWindow("Combo View"));
+	if (!pcCombiView)
+		return;
+	auto tab = pcCombiView->getTabPanel();
+	int index = tab->indexOf(mTreeWidget);
+	if (index < 0)
+		return;
+	tab->removeTab(index);
+
+}
+
+void MainWindow::showVisualizationTree()
+{
+	DockWindowManager* pDockMgr = DockWindowManager::instance();
+	CombiView* pcCombiView = dynamic_cast<CombiView*>(pDockMgr->getDockWindow("Combo View"));
+	if (!pcCombiView)
+		return;
+	auto tab = pcCombiView->getTabPanel();
+	int index = tab->indexOf(mTreeWidget);
+	if (index >= 0)
+		return;
+	tab->addTab(mTreeWidget, GetEncodingstr("文件数据", ENCODING_UTF8));
+}
+
+void MainWindow::ClearVisualizationTree()
+{
+	if (mTreeWidget)
 	{
-		static std::once_flag flag;
-		std::call_once(flag, [&](){
-			contorlDataBar = new ContorlDataBar();
-			contorlButtonBar = new ContorlButtonBar();
-
-			contorlButtonToolBar = new QToolBar();
-			contorlDataToolBar = new QToolBar();
-
-			/*contorlDataToolBar->setFixedSize(contorlDataBar->size());
-			contorlDataToolBar->addWidget(contorlDataBar);
-			contorlButtonToolBar->setFixedSize(QSize(70, contorlButtonBar->size().height()));
-			contorlButtonToolBar->addWidget(contorlButtonBar);
-
-			contorlButtonToolBar->hide();
-			contorlDataToolBar->hide();*/
-			QVBoxLayout *layout = new QVBoxLayout;
-			QWidget* wd = new QWidget;
-			wd->setLayout(layout);
-			layout->addWidget(contorlButtonBar);
-			layout->addWidget(contorlDataBar);
-			contorlDockWidget = DockWindowManager::instance()->addDockWindow("contorl", wd, Qt::DockWidgetArea::RightDockWidgetArea);
-			//contorlDockWidget->setVisible(true);
-			layout->addStretch();
-		});
+		mTreeWidget->upClear();
 	}
+}
 
-	void MainWindow::addTitleAction(QAction* action)
-	{
-		mainWindowDef->addTitleShortcutAction(action);
-	}
 
-	void MainWindow::hideControlTree()
-	{
-
-		DockWindowManager* pDockMgr = DockWindowManager::instance();
-		CombiView* pcCombiView = dynamic_cast<CombiView*>(pDockMgr->getDockWindow("Combo View"));
-		if (!pcCombiView)
-			return;
-		auto tab = pcCombiView->getTabPanel();
-		int index = tab->indexOf(controlTreeWidget);
-		if (index < 0)
-			return;
-		tab->removeTab(index);
-
-	}
-
-	void MainWindow::showControlTree()
-	{
-		DockWindowManager* pDockMgr = DockWindowManager::instance();
-		CombiView* pcCombiView = dynamic_cast<CombiView*>(pDockMgr->getDockWindow("Combo View"));
-		if (!pcCombiView)
-			return;
-		auto tab = pcCombiView->getTabPanel();
-		int index = tab->indexOf(controlTreeWidget);
-		if (index >= 0)
-			return;
-		tab->addTab(controlTreeWidget, QString::fromLocal8Bit("control"));
-	}
-
-	void MainWindow::hideVisualizationTree()
-	{
-		DockWindowManager* pDockMgr = DockWindowManager::instance();
-		CombiView* pcCombiView = dynamic_cast<CombiView*>(pDockMgr->getDockWindow("Combo View"));
-		if (!pcCombiView)
-			return;
-		auto tab = pcCombiView->getTabPanel();
-		int index = tab->indexOf(mTreeWidget);
-		if (index < 0)
-			return;
-		tab->removeTab(index);
-
-	}
-
-	void MainWindow::showVisualizationTree()
-	{
-		DockWindowManager* pDockMgr = DockWindowManager::instance();
-		CombiView* pcCombiView = dynamic_cast<CombiView*>(pDockMgr->getDockWindow("Combo View"));
-		if (!pcCombiView)
-			return;
-		auto tab = pcCombiView->getTabPanel();
-		int index = tab->indexOf(mTreeWidget);
-		if (index >= 0)
-			return;
-		tab->addTab(mTreeWidget, QString::fromLocal8Bit("resualt"));
-	}
-	void MainWindow::ClearVisualizationTree()
-	{
-		if (mTreeWidget)
-		{
-			mTreeWidget->upClear();
-		}
-	}
-};// namespace Gui
+} // namespace Gui
 
 
 /* TRANSLATOR Gui::MainWindow */

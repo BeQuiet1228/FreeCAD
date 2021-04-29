@@ -621,7 +621,7 @@ ToolBarItem* StdWorkbench::setupToolBars() const
 	ToolBarItem* edit = new ToolBarItem(root);
 	edit->setCommand("edit");
 	*edit << "Std_Cut"<< "Std_Copy" << "Std_Paste" << "Std_Findm" << "Std_Undo" << "Std_Redo" << "Std_Contour_Image_Mod"
-        << "Std_Contour_Line_Mod";
+        << "Std_Contour_Line_Mod" << "Std_Open_Data_Visualization_Config"<< "Std_Data_Visualization_Auto_Max" << "Std_Data_Visualization_Plot_Display_Grid_Mod";
 
 
 	ToolBarItem* run = new ToolBarItem(root);

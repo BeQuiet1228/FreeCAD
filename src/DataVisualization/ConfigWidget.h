@@ -6,7 +6,7 @@
 #include "exportConfig.hpp"
 class QPushButton;
 namespace Mas{
-	enum structTexture
+	enum DATA_VISUALIZATION_EXPORT structTexture
 	{
 		//理想导体
 		Perfect_Conductor = 3,
@@ -19,14 +19,13 @@ namespace Mas{
 		//真空
 		Vacuo = 1024,
 	};
-	struct Setconfig
+	struct DATA_VISUALIZATION_EXPORT Setconfig
 	{
 		QString _1st;
 		QString _2nd;
 		QString _3th;
 		QString _4th;
-		Setconfig() :_1st("1"), _2nd("1"), _3th("1"), _4th("1")
-		{}
+		Setconfig();
 	};
 }
 namespace Ui{

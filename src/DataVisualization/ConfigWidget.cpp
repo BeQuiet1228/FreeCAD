@@ -298,4 +298,11 @@ void ConfigWidget::fileeButtom(QPushButton* button, std::string color)
 	button->setPalette(qpalette);
 	button->setText(QString("#%1").arg(QString::fromStdString(color)));
 }
+Mas::Setconfig::Setconfig()
+	:_1st("1"), _2nd("1"), _3th("1"), _4th("1")
+{
+
+}
+
 #include "moc_ConfigWidget.cpp"
+

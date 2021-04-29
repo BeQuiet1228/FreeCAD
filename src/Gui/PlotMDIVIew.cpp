@@ -79,6 +79,18 @@ namespace Gui{
 				*ppReturn = "off";
 			}
 			plot->reRender();
+		}else if (strcmp("PlotDisplayMod", pMsg) == 0) {
+			plot->setGridLineEnabled(!plot->getGridLineEnabled());
+			if (plot->getGridLineEnabled())
+			{
+				*ppReturn = "on";
+			}
+			else {
+				*ppReturn = "off";
+			}
+		}
+		else if (strcmp("AutoMax", pMsg) == 0) {
+			plot->autoMaxRender();
 		}
 		return false;
 	}
@@ -102,6 +114,12 @@ namespace Gui{
 		{
 			if (contourStateGetter->enabled())
 				return true;
+		}
+		else if (strcmp("PlotDisplayMod", pMsg) == 0) {
+			return true;
+		}
+		else if (strcmp("AutoMax", pMsg) == 0) {
+			return true;
 		}
 		return false;
 	}
