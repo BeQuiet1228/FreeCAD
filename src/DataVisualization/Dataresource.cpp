@@ -21,7 +21,8 @@ std::string StructDirection[] = { "Phi-Z",
 * @return void
 */
 void DataSourceManage::tranfromRenderer(std::string name,int index){
-	
+	if (index > hdfDatelist.size())
+		return;
 	auto iter = RendererManger.find(name);
 	if (iter!=RendererManger.end())
 	{
@@ -125,6 +126,7 @@ void DataSourceManage::loadhdffile(std::string filepath)
 * @brief DataSourceManage::DataSourceManage 数据管理构造
 */
 DataSourceManage::DataSourceManage():factoryptr(nullptr){
+	istrue = false;
 	RendererManger.clear();
 }
 /**
@@ -153,10 +155,14 @@ void DataSourceManage::init(ListTreeWidget* ptr,Plot* _plot){
 */
 void DataSourceManage::initStructData(Hdf5Data data)
 {
+	hdfDatelist.push_back(data);
+	structData = data;
+	structindex=hdfDatelist.size()-1;
 	if (factoryptr)
 		factoryptr->setStructData(data);
 	else
 		factoryptr = new RendererFactory(data);
+	istrue = true;
 }
 DataSourceManage::~DataSourceManage(){
 	RendererManger.clear();
@@ -169,6 +175,11 @@ DataSourceManage::~DataSourceManage(){
 */
 void DataSourceManage::DisPlayPlot(Hdf5Data data, int _type)
 {
+	if (istrue)
+	{
+		istrue = false;
+		emit toTreeNewData(structData, structindex);
+	}
 	Renderers rds = factoryptr->creatRenderers(data, (DirectionType)_type);
 	//保存当前的hdf5Data
 	hdfDatelist.push_back(data);

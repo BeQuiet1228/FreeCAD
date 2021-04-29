@@ -220,10 +220,42 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 		parentnode[daTaType] = item;
 	}
 	//添加子节点
-	int subrow = item->rowCount();
-	QStandardItem* subitem = new QStandardItem(QString("save_%1_%2").arg(GetEncodingstr(daTaType.c_str(),ENCODING_GB2312)).arg(subrow));
-	datainfor[subitem] = index;
-	item->setChild(subrow, subitem);
+	if (data.name.find("struct")==std::string::npos)
+	{
+		int subrow = item->rowCount();
+		QStandardItem* subitem = new QStandardItem(QString("save_%1_%2").arg(GetEncodingstr(daTaType.c_str(), ENCODING_GB2312)).arg(subrow));
+		datainfor[subitem] = index;
+		item->setChild(subrow, subitem);
+	}
+	else
+	{
+		switch (data.coordinateSystem)
+		{
+		case Hdf5Data::CARTESIAN:
+		{
+			for each (std::string var in Structdirection_cartesian)
+			{
+				int subrow = item->rowCount();
+				QStandardItem* subitem = new QStandardItem(QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
+				datainfor[subitem] = index;
+				item->setChild(subrow, subitem);
+			}
+		}
+			break;
+		case Hdf5Data::POLAR:
+		case Hdf5Data::CYLINDER:
+		{
+			for each(std::string var in Structdirection)
+			{
+				int subrow = item->rowCount();
+				QStandardItem* subitem = new QStandardItem(QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
+				datainfor[subitem] = index;
+				item->setChild(subrow, subitem);
+			}
+		}
+			break;
+		}
+	}
 }
 void ListTreeWidget::clear()
 {
