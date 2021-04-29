@@ -42,6 +42,9 @@ private:
 private:
 	std::map<std::string,Renderers> RendererManger;
 	std::vector<Hdf5Data> hdfDatelist;
+	Hdf5Data structData;
+	int structindex;
+	bool istrue;
 	Plot* p;
 	RendererFactory* factoryptr;
 	Hdf5IO _hdf5io;

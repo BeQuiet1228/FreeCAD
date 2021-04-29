@@ -614,15 +614,15 @@ QVector<QString> Axis::GetScientific_notation()
 			}
 			QString _str;
 			//获取最小值的有效位
-			_str = QString("%1").arg(min, 0, 'E', index-minindex);
+			_str = QString("%1").arg(min, 0, 'E', abs(index - minindex));
 			valstr_list.push_back(_str);
 			for (auto i = 1; i < Axisnumber;i++)
 			{
 				qreal nexf = min + interval*i;
-				_str = QString("%1").arg(nexf,0,'E',index-minindex);
+				_str = QString("%1").arg(nexf, 0, 'E', abs(index - minindex));
 				valstr_list.push_back(_str);
 			}
-			_str = QString("%1").arg(max, 0, 'E', index-minindex);
+			_str = QString("%1").arg(max, 0, 'E', abs(index - minindex));
 			valstr_list.push_back(_str);
 		}
 		else
