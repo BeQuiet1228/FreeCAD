@@ -3,6 +3,7 @@
 #define CONFIG_WIDGET_H_
 #include <QWidget>
 #include <map>
+#include "exportConfig.hpp"
 class QPushButton;
 namespace Mas{
 	enum structTexture
@@ -31,7 +32,7 @@ namespace Mas{
 namespace Ui{
 	class ConfigWidget;
 }
-class ConfigWidget:public QWidget
+class DATA_VISUALIZATION_EXPORT ConfigWidget :public QWidget
 {
 	Q_OBJECT
 public:
