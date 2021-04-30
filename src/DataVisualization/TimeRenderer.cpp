@@ -119,10 +119,10 @@ bool TimeRenderer::drawPointImage()
 	tPoint.setY(getSize().height() - tPoint.y());
 	//绘制点
 	painter.drawPoint(tPoint);
-
-	//绘制信息显示
-	drawDisplayPoint(painter, tPoint, point);
-
+	std::map<QString, float> list;
+	list["X"] = point.x();
+	list["Y"] = point.y();
+	displayPointInformation(&painter, &tPoint,list);
 	setImage(img);
 	return true;
 }
@@ -319,6 +319,7 @@ QPointF TimeRenderer::findPoint(const QPointF& point)
 * @param const QPointF & d 点的数据
 * @return void
 */
+//注：暂时保留，未使用
 void TimeRenderer::drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d)
 {
 	//设置画笔的颜色

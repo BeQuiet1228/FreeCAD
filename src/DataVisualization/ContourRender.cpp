@@ -79,7 +79,11 @@ bool ContourRender::drawPointImage()
 	QPointF point(x, y);
 	painter.drawPoint(point);
 
-	drawDisplayPoint(painter, point, grid);
+	std::map<QString, float> list;
+	list["X"] = grid.x;
+	list["Y"] = grid.y;
+	list["Value"] = grid.value;
+	displayPointInformation(&painter,&point,list);
 	setImage(img);
 	return true;
 }

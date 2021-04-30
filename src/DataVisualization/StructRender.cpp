@@ -317,7 +317,7 @@ bool StructRender::drawImage_rect_space(){
 	{
 		auto itercolor = color_tab.find(iter.key());
 		auto itercolorpen = color_pen.find(iter.key());
-		if (itercolor != color_tab.end())
+		if (itercolor != color_tab.end() && itercolor.value() != Qt::white);
 		{
 			//进行缩放
 			for (auto iterrecct = iter.value().begin(); iterrecct != iter.value().end(); iterrecct++)
@@ -375,7 +375,7 @@ bool StructRender::drawImage_rand_space(){
 	{
 		auto itercolor = color_tab.find(iter->first);
 		auto itercolorpen = color_pen.find(iter->first);
-		if (itercolor != color_tab.end())
+		if (itercolor != color_tab.end()&&itercolor.value()!=Qt::white)
 		{
 			if (itercolorpen!=color_pen.end())
 			{
@@ -606,6 +606,7 @@ float StructRender::GetDistance(QPointF p1, QPointF p2)
 * @param const QPointF& d 真实点位信息
 * @return void
 */
+//该方法以没有使用，暂时保留，后续会去除
 void StructRender::drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d)
 {
 	//设置画笔的颜色
@@ -660,17 +661,13 @@ bool StructRender::drawPointRect(){
 	QPointF A_pos;//原始坐标
 	//获取当前点位
 	StructData::structpoint _point = findApoint_Z_R(this->getFindPosition());
-	//painter.drawPoint(this->getFindPosition());
-	//#define _DEBUG_
-#ifdef _DEBUG_
-	printf("获取绘制的点的结果:x=%f,y=%f\n", _point.x(), _point.y());
-#undef _DEBUG_
-#endif
 	//坐标翻转
 	_point.y = getSize().height() - _point.y;
 	painter.drawPoint(QPointF(_point.x, _point.y));
-	drawDisplayPoint(painter, QPointF(_point.x, _point.y), QPointF(_point.d1, _point.d2));
-	//auto nImg = img.mirrored(false, true);
+	std::map<QString, float> list;
+	list["X"] = _point.d1;
+	list["Y"] = _point.d2;
+	displayPointInformation(&painter, &QPointF(_point.x, _point.y), list);
 	setImage(img);
 	return true;
 }
@@ -695,8 +692,10 @@ bool StructRender::drawPointCir(){
 	//坐标翻转
 	_point.y = getSize().height() - _point.y;
 	painter.drawPoint(QPointF(_point.x, _point.y));
-	drawDisplayPoint(painter, QPointF(_point.x, _point.y), QPointF(_point.d1, _point.d2));
-	//auto nImg = img.mirrored(false, true);
+	std::map<QString, float> list;
+	list["X"] = _point.d1;
+	list["Y"] = _point.d2;
+	displayPointInformation(&painter, &QPointF(_point.x, _point.y), list);
 	setImage(img);
 	return true;
 }

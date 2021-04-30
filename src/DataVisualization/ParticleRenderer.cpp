@@ -115,10 +115,10 @@ bool ParticleRenderer::drawPointImage()
 	tPoint.setY(getSize().height() - tPoint.y());
 	//绘制点
 	painter.drawPoint(tPoint);
-
-	//绘制信息显示
-	drawDisplayPoint(painter, tPoint, QPointF(partical.d1,partical.d2));
-
+	std::map<QString, float> list;
+	list["X"] = partical.d1;
+	list["Y"] = partical.d2;
+	displayPointInformation(&painter, &tPoint, list);
 	setImage(img);
 	return true;
 }

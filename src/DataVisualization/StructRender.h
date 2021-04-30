@@ -69,6 +69,8 @@ private:
 	bool drawPointImage_cartesian_x_y_z();
 	StructData::structpoint findApoint_Z_R(QPointF _curpostion);
 	float GetDistance(QPointF p1, QPointF p2);
+
+	//目前先暂时保留，改方法没有使用
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d);
 	bool drawPointRect();
 	bool drawPointCir();

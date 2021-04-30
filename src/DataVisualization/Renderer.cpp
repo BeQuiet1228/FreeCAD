@@ -1,5 +1,7 @@
 #include "Renderer.h"
 #include <iostream>
+#include <QPen>
+#include <QPainter>
 Renderer::Renderer(std::shared_ptr<Data> data)
 {
 	this->data = data;
@@ -189,4 +191,66 @@ bool Renderer::getTransitionScale(float& xScale, float& yScale)
 float Renderer::transitionDataToScreen(const float& d, const float scale, Data::Rang rang)
 {
 	return (d - rang.min)*scale;
+}
+
+/**
+* @brief Renderer::displayPointInformation 绘制点位信息
+* @param QPainter* painter
+* @param QPointF* point
+* @param std::map<QString, float> list 绘制列表
+* @return void
+*/
+void Renderer::displayPointInformation(QPainter* painter, QPointF* point , std::map<QString, float> list)
+{
+	//设置画笔的颜色
+	QPen pen;
+	pen.setColor(QColor(102, 205, 170));
+	pen.setWidth(2);
+	painter->setPen(pen);
+	painter->setBrush(QBrush(QColor(255, 250, 240)));
+	//显示信息
+	std::vector<QString> varstrlist;
+	for(auto iter = list.begin(); iter != list.end();iter++)
+	{
+		QString varstr = QString("%1:%2").arg(iter->first).arg(iter->second, 0, 'E', 2);
+		varstrlist.push_back(varstr);
+	}
+	QFont f;
+	f.setPixelSize(17);
+	QFontMetrics fm(f);
+	int maxWidth = 0;
+	int perHeight = 0;
+	for each (QString var in varstrlist)
+	{
+		QRect rect = fm.boundingRect(var);
+		if (rect.width() > maxWidth)
+		{
+			maxWidth = rect.width();
+			perHeight = rect.height();
+		}
+	}
+	//获取到最大长度,总高度
+	QRect displayRect;
+	displayRect.setX(point->x());
+	displayRect.setY(point->y());
+	auto size = getSize();
+	//获取对话框的宽高
+	int displayRectWidth = maxWidth + 20;
+	int displayRectHeight = (perHeight + 3)*varstrlist.size() + 3;
+	if (displayRect.y() > size.height() - displayRectHeight)
+	{
+		displayRect.setY(displayRect.y() - displayRectHeight);
+	}
+	if (displayRect.x() > size.width() - displayRectWidth)
+	{
+		displayRect.setX(displayRect.x() - displayRectWidth);
+	}
+	displayRect.setWidth(displayRectWidth);
+	displayRect.setHeight(displayRectHeight);
+	painter->drawRect(displayRect);
+	//绘制信息
+	painter->setFont(f);
+	//for each (QString var in varstrlist)
+	for (auto i = 0; i < varstrlist.size(); i++)
+		painter->drawText(displayRect.x() + 10, displayRect.y() + (perHeight + 3)*(i + 1), varstrlist[i]);
 }

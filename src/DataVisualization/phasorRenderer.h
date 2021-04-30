@@ -43,6 +43,7 @@ private:
 	bool drawImage_Scence();
 	bool drawImage_Coord();
 	int findApoint(QPointF A_point);
+	//点位显示的方法，暂时保留
 	void drawDisplayPoint(QPainter& painter,QPointF& position,QPointF& p1,QPointF& len_coef);
 private:
 	unsigned __int32 penSize;
