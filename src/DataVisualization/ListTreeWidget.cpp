@@ -206,7 +206,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 		item = iter->second;
 	else
 	{
-		item = new QStandardItem(GetEncodingstr(daTaType.c_str(), ENCODING_GB2312));
+		item = new QStandardItem(QIcon(Treeicon[0]),GetEncodingstr(daTaType.c_str(), ENCODING_GB2312));
 		int row = goodsModel->rowCount();
 		goodsModel->setItem(row, item);
 		parentnode[daTaType] = item;
@@ -215,7 +215,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 	if (data.name.find("struct")==std::string::npos)
 	{
 		int subrow = item->rowCount();
-		QStandardItem* subitem = new QStandardItem(QString("save_%1_%2").arg(GetEncodingstr(daTaType.c_str(), ENCODING_GB2312)).arg(subrow));
+		QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]),QString("save_%1_%2").arg(GetEncodingstr(daTaType.c_str(), ENCODING_GB2312)).arg(subrow));
 		datainfor[subitem] = index;
 		item->setChild(subrow, subitem);
 	}
@@ -228,7 +228,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 			for each (std::string var in Structdirection_cartesian)
 			{
 				int subrow = item->rowCount();
-				QStandardItem* subitem = new QStandardItem(QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
+				QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[0]),QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
 				datainfor[subitem] = index;
 				item->setChild(subrow, subitem);
 			}
@@ -240,7 +240,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 			for each(std::string var in Structdirection)
 			{
 				int subrow = item->rowCount();
-				QStandardItem* subitem = new QStandardItem(QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
+				QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1])),QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
 				datainfor[subitem] = index;
 				item->setChild(subrow, subitem);
 			}
