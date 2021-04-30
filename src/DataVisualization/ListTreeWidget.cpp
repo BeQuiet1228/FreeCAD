@@ -13,6 +13,8 @@ enum emType
 	STRUCT,
 	OBSERVE,
 };
+//ͼ�꣺
+QString Treeicon[] = { ":/Tree/TreeFile1.png", ":/Tree/TreeFile2.png" };
 std::string Type[MAX_TYPE_NUMBER] = { "CONTOUR", "PHASESPACE", "RANGE", "VECTOR", "struct" ,"OBSERVE"};
 std::string Structdirection[3] = { "Phi-Z",
 "Z-R",
@@ -84,16 +86,6 @@ void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 						datalist[_str][var] = i;
 					}
 				}
-				
-				//std::string str1 = "Phi-Z";
-				//std::string str2 = "Z-R";
-				//std::string str3 = "R*cos(Phi)-R*sin(Phi)";
-				//itemlist[_str].push_back(str1);
-				//itemlist[_str].push_back(str2);
-				//itemlist[_str].push_back(str3);
-				//datalist[_str][str1] = i;
-				//datalist[_str][str2] = i;
-				//datalist[_str][str3] = i;
 				continue;
 			}
 			std::string str = Hdf5Datalist[i].name + "_0";
@@ -114,7 +106,7 @@ void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 			item = iterparent->second;
 		}	
 		else { 
-			item = new QStandardItem(GetEncodingstr((iter->first).c_str(), ENCODING_GB2312)); 
+			item = new QStandardItem(QIcon(Treeicon[0]), GetEncodingstr((iter->first).c_str(), ENCODING_GB2312));
 			parentnode[iter->first] = item;
 			goodsModel->setItem(row, item);
 		}
@@ -122,7 +114,7 @@ void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 		for (auto subiter = iter->second.begin(); subiter != iter->second.end();subiter++)
 		{
 			int subrow = item->rowCount();
-			QStandardItem* subitem = new QStandardItem(QString::fromStdString(*subiter));
+			QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]), QString::fromStdString(*subiter));
 			_datainfo[subitem] = datalist[iter->first][*subiter];
 			item->setChild(subrow, subitem);
 		}
