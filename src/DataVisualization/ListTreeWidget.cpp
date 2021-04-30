@@ -228,7 +228,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 			for each (std::string var in Structdirection_cartesian)
 			{
 				int subrow = item->rowCount();
-				QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[0]),QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
+				QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]),QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
 				datainfor[subitem] = index;
 				item->setChild(subrow, subitem);
 			}
@@ -240,9 +240,10 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 			for each(std::string var in Structdirection)
 			{
 				int subrow = item->rowCount();
-				QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1])),QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
-				datainfor[subitem] = index;
-				item->setChild(subrow, subitem);
+				QStandardItem* subItem = new QStandardItem(QIcon(Treeicon[1]), QString("%1").arg(GetEncodingstr(var.c_str(),ENCODING_GB2312)));
+				/*QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1])),QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)))*/;
+				datainfor[subItem] = index;
+				item->setChild(subrow, subItem);
 			}
 		}
 			break;
