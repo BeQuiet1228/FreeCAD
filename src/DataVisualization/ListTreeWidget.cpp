@@ -38,6 +38,10 @@ ListTreeWidget::ListTreeWidget(QWidget* parent) :QWidget(parent)
 	m_TreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	connect(m_TreeView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(on_doubleclick(const QModelIndex&)));
 }
+/**
+* @brief  ListTreeWidget::~ListTreeWidget 析构
+* @return   
+*/
 ListTreeWidget::~ListTreeWidget(){
 	//datainfor.clear();
 }
@@ -194,6 +198,12 @@ void ListTreeWidget::double_clicked_event(const QModelIndex &index)
 		emit _transfromRenderer(name, iter->second);
 	}
 }
+/**
+* @brief  ListTreeWidget::fromdataManageNewData 接收来自manager的信息
+* @param  Hdf5Data & data  
+* @param  int index  
+* @return void  
+*/
 void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 #ifdef MY_DEBUG
 	printf("fromdataManageNewData-index:%d\n",index);
@@ -250,6 +260,10 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 		}
 	}
 }
+/**
+* @brief  ListTreeWidget::clear 清除树控件
+* @return void  
+*/
 void ListTreeWidget::clear()
 {
 	if (goodsModel->hasChildren() > 0)

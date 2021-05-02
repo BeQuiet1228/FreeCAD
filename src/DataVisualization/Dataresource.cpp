@@ -187,6 +187,10 @@ void DataSourceManage::DisPlayPlot(Hdf5Data data, int _type)
 	emit _reRendererEvent(rds);
 }
 
+/**
+* @brief  DataSourceManage::DataClear Çå³ýÊý¾Ý
+* @return void  
+*/
 void DataSourceManage::DataClear()
 {
 	RendererManger.clear();

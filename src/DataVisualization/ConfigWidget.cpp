@@ -8,15 +8,28 @@
 #include "CustomConfig.h"
 #include<QPushButton>
 #include <QRegExp>
+/**
+* @brief ConfigWidget::ConfigWidget
+* @param QWidget* panter
+*/
 ConfigWidget::ConfigWidget(QWidget* panter) :QWidget(panter), ui(new Ui::ConfigWidget)
 {
 	ui->setupUi(this);
 	initUI();
 	loadxmlConfig();
 }
+/**
+* @brief ConfigWidget::~ConfigWidget
+*/
 ConfigWidget::~ConfigWidget(){
 
 }
+
+
+/*
+* @brief  ConfigWidget::initUI 初始化UI
+* @return void  
+*/
 void ConfigWidget::initUI()
 {
 	//结构图
@@ -61,14 +74,42 @@ void ConfigWidget::initUI()
 	QValidator * validator = new QRegExpValidator(rx, this);
 	ui->partcleEdit->setValidator(validator);
 }
+
+/**
+* @brief  ConfigWidget::perfectconductorClicked
+* @return void  
+*/
 void ConfigWidget::perfectconductorClicked(){ structInfoClicked(Mas::Perfect_Conductor, ui->perfectconductorColor); }
+/**
+* @brief  ConfigWidget::conductornewClicked
+* @return void  
+*/
 void ConfigWidget::conductornewClicked(){structInfoClicked(Mas::Conductor_New, ui->conductorNewColor);}
+/**
+* @brief  ConfigWidget::diolectricClicked
+* @return void  
+*/
 void ConfigWidget::diolectricClicked(){	structInfoClicked(Mas::Diolectric, ui->diolectricColor);}
+/**
+* @brief  ConfigWidget::permeabilityClicked
+* @return void  
+*/
 void ConfigWidget::permeabilityClicked(){structInfoClicked(Mas::Permeability, ui->permeabilityColor);}
+/**
+* @brief  ConfigWidget::vacuoClicked
+* @return void  
+*/
 void ConfigWidget::vacuoClicked(){ structInfoClicked(Mas::Vacuo, ui->vacuoColor); }
+/**
+* @brief  ConfigWidget::structInfoClicked
+* @param  int _property  
+* @param  QPushButton * button  
+* @return void  
+*/
 void ConfigWidget::structInfoClicked(int _property, QPushButton* button)
 {
-	QColor color = QColorDialog::getColor(Qt::white, this);
+	
+	QColor color= QColorDialog::getColor(Qt::white, this, "pick Color", QColorDialog::ShowAlphaChannel);
 	QPalette qpalette = button->palette();
 	qpalette.setColor(QPalette::Button,color);
 	button->setPalette(qpalette);
@@ -87,6 +128,10 @@ void ConfigWidget::structInfoClicked(int _property, QPushButton* button)
 		structColor["Vacuo"] = QColorToQstring(color); break;
 	}
 }
+/*
+* @brief  saveclicked 应用按钮
+* @return void  
+*/
 void ConfigWidget::saveclicked()
 {
 	ui->applicButtom->setEnabled(false);
@@ -138,47 +183,104 @@ void ConfigWidget::saveclicked()
 #endif
 }
 //时间图
+
+/**
+* @brief  ConfigWidget::linecolorClicked 时间图颜色选择
+* @return void  
+*/
 void ConfigWidget::linecolorClicked()
 {
 	QColor color = setbuttomColor(ui->lineColor);
 	timeConfig._2nd = QColorToQstring(color);
 }
-//矢量图
+/**
+* @brief ConfigWidget::veccolorClicked 矢量图颜色选择
+* @return void
+*/
 void ConfigWidget::veccolorClicked()
 {
 	QColor color=setbuttomColor(ui->vecColor);
 	vecconfig._2nd = QColorToQstring(color);
 }
-void ConfigWidget::SetAllreRender(QPushButton* buttom)
+/**
+* @brief  ConfigWidget::SetAllreRender
+* @param  QPushButton * buttom  
+* @return void  
+*/void ConfigWidget::SetAllreRender(QPushButton* buttom)
 {
 	buttom->setAutoFillBackground(true);
 	buttom->setFlat(true);
 }
+
+
+
+/**
+* @brief  ConfigWidget::axisColorclicked 刻度相关的
+* @return void  
+*/
 void ConfigWidget::axisColorclicked(){
 	QColor color = setbuttomColor(ui->axisColor);
 	axisinfo._3th = QColorToQstring(color);
 }
+
+/**
+* @brief  ConfigWidget::setbuttomColor 刻度颜色选择
+* @param  QPushButton * button  
+* @return QT_NAMESPACE::QColor  
+*/
+
 QColor ConfigWidget::setbuttomColor(QPushButton* button)
 {
-	QColor color = QColorDialog::getColor(Qt::white, this);
+	QColor color=QColorDialog::getColor(Qt::white, this, "pick Color", QColorDialog::ShowAlphaChannel);
 	QPalette qpalette =button->palette();
 	qpalette.setColor(QPalette::Button, color);
 	button->setPalette(qpalette);
 	button->setText(QString("#%1").arg(QColorToQstring(color)));
 	return color;
 }
+
+/**
+* @brief  ConfigWidget::axisValColorclicked 刻度数值颜色选择
+* @return void  
+*/
 void ConfigWidget::axisValColorclicked()
 {
 	QColor color = setbuttomColor(ui->axisvalColor);
 	axisinfo._4th = QColorToQstring(color);
 }
-void ConfigWidget::perfectconductorlineClicked(){ structinfolineClicked(Mas::Perfect_Conductor, ui->perfectconductorlineColor); }
-void ConfigWidget::conductornewlineClicked(){ structinfolineClicked(Mas::Conductor_New, ui->conductorNewlineColor); }
-void ConfigWidget::diolectriclineClicked(){ structinfolineClicked(Mas::Diolectric, ui->diolectriclineColor); }
+
+/**
+* @brief  ConfigWidget::perfectconductorlineClicked 
+* @return void  
+*/void ConfigWidget::perfectconductorlineClicked(){ structinfolineClicked(Mas::Perfect_Conductor, ui->perfectconductorlineColor); }
+
+/**
+* @brief  ConfigWidget::conductornewlineClicked
+* @return void  
+*/void ConfigWidget::conductornewlineClicked(){ structinfolineClicked(Mas::Conductor_New, ui->conductorNewlineColor); }
+
+/**
+* @brief  ConfigWidget::diolectriclineClicked
+* @return void  
+*/void ConfigWidget::diolectriclineClicked(){ structinfolineClicked(Mas::Diolectric, ui->diolectriclineColor); }
+/**
+* @brief  ConfigWidget::permeabilitylineClicked
+* @return void  
+*/
 void ConfigWidget::permeabilitylineClicked(){ structinfolineClicked(Mas::Permeability, ui->permeabilitylineColor); }
+/**
+* @brief  ConfigWidget::vacuolineClicked
+* @return void  
+*/
 void ConfigWidget::vacuolineClicked(){ structinfolineClicked(Mas::Vacuo, ui->vacuolineColor); }
+/**
+* @brief  ConfigWidget::structinfolineClicked
+* @param  int _property  
+* @param  QPushButton * button  
+* @return void  
+*/
 void ConfigWidget::structinfolineClicked(int _property, QPushButton* button){
-	QColor color = QColorDialog::getColor(Qt::white, this);
+	QColor color = QColorDialog::getColor(Qt::white, this, "pick Color", QColorDialog::ShowAlphaChannel);
 	QPalette qpalette = button->palette();
 	qpalette.setColor(QPalette::Button, color);
 	button->setPalette(qpalette);
@@ -198,10 +300,18 @@ void ConfigWidget::structinfolineClicked(int _property, QPushButton* button){
 
 	}
 }
+/**
+* @brief  ConfigWidget::partcleColorclicked
+* @return void  
+*/
 void ConfigWidget::partcleColorclicked(){
 	QColor color=setbuttomColor(ui->partcleColor);
 	partcleConfig._2nd = QColorToQstring(color);
 }
+/**
+* @brief  ConfigWidget::loadxmlConfig 读取xml配置信息
+* @return void  
+*/
 void ConfigWidget::loadxmlConfig(){
 	Config::GetInstance()->loadConfig();
 	auto Group = Config::GetInstance()->getRootGroup();
@@ -280,7 +390,6 @@ void ConfigWidget::loadxmlConfig(){
 			}
 		}
 	}
-	//相空间图
 	{
 		auto particlegroup = Group.getGroup("particle");
 		fileeButtom(ui->partcleColor, particlegroup.getValue("color"));
@@ -290,6 +399,12 @@ void ConfigWidget::loadxmlConfig(){
 		ui->partcleEdit->setText(QString::number(size));
 	}
 }
+/**
+* @brief  ConfigWidget::fileeButtom 按钮填充
+* @param  QPushButton * button  
+* @param  std::string color  
+* @return void  
+*/
 void ConfigWidget::fileeButtom(QPushButton* button, std::string color) 
 {
 	QColor rgba = QStringToQColor(QString::fromStdString(color));
@@ -298,6 +413,10 @@ void ConfigWidget::fileeButtom(QPushButton* button, std::string color)
 	button->setPalette(qpalette);
 	button->setText(QString("#%1").arg(QString::fromStdString(color)));
 }
+/**
+* @brief  Mas::Setconfig::Setconfig
+* @return   
+*/
 Mas::Setconfig::Setconfig()
 	:_1st("1"), _2nd("1"), _3th("1"), _4th("1")
 {

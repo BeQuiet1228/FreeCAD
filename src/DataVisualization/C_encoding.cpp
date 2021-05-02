@@ -27,13 +27,28 @@ QString GetEncodingstr(const char* str, unsigned int type)
 
 QString QColorToQstring(QColor& color)
 {
-	QRgb mRgb = qRgb(color.red(), color.green(), color.blue());
-	QColor mColor = QColor(mRgb);
-	QString mRgbStr = QString::number(mRgb, 16);
-	return mRgbStr;
+	return QString().sprintf("%02X%02X%02X%02X", color.alpha(),color.red(),color.green(),color.blue());
 }
+
+/**
+* @brief  QStringToQColor ×Ö·û´®×ªÑÕÉ«
+* @param  QString colorstr  
+* @return QT_NAMESPACE::QColor  
+*/
+#include <QDebug>
 QColor QStringToQColor(QString colorstr)
 {
-	QColor color2(colorstr.toUInt(NULL, 16));
-	return color2;
+	//QColor color2(colorstr.toUInt(NULL, 16));
+	std::string color=colorstr.toStdString();
+	unsigned int colorR=0,colorG=0,colorB=0,colorA=0;
+	int len = color.length();
+	if (color.length()>=8)
+	{
+		colorA = stoi(color.substr(0,2),0,16);
+		colorR = stoi(color.substr(2,2),0,16);
+		colorG = stoi(color.substr(4, 2),0,16);
+		colorB = stoi(color.substr(6,2),0,16);
+	}
+	QColor colorargb(colorG,colorG,colorB,colorA);
+	return colorargb;
 }
