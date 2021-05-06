@@ -1,6 +1,7 @@
 #include"ListTreeWidget.h"
 #include <map>
 #include <vector>
+#include <sstream>
 #include "Dataresource.h"
 #include "C_encoding.h"
 #define  MAX_TYPE_NUMBER 6
@@ -205,60 +206,79 @@ void ListTreeWidget::double_clicked_event(const QModelIndex &index)
 * @return void  
 */
 void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
-#ifdef MY_DEBUG
-	printf("fromdataManageNewData-index:%d\n",index);
-#endif
-	//开始做处理
-	std::string daTaType = GetType(data.name);
-	auto iter = parentnode.find(daTaType);
-	QStandardItem* item;
-	if (iter!=parentnode.end())
-		item = iter->second;
-	else
+	std::string observingstr;
+	//获取观测面
+	int _type = -1;
+	for (auto i = 0; i < MAX_TYPE_NUMBER;i++)
 	{
-		item = new QStandardItem(QIcon(Treeicon[0]),GetEncodingstr(daTaType.c_str(), ENCODING_GB2312));
-		int row = goodsModel->rowCount();
-		goodsModel->setItem(row, item);
-		parentnode[daTaType] = item;
-	}
-	//添加子节点
-	if (data.name.find("struct")==std::string::npos)
-	{
-		int subrow = item->rowCount();
-		QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]),QString("save_%1_%2").arg(GetEncodingstr(daTaType.c_str(), ENCODING_GB2312)).arg(subrow));
-		datainfor[subitem] = index;
-		item->setChild(subrow, subitem);
-	}
-	else
-	{
-		switch (data.coordinateSystem)
+		if (data.name.find(Type[i])!=std::string::npos)
 		{
-		case Hdf5Data::CARTESIAN:
-		{
-			for each (std::string var in Structdirection_cartesian)
-			{
-				int subrow = item->rowCount();
-				QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]),QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
-				datainfor[subitem] = index;
-				item->setChild(subrow, subitem);
-			}
-		}
-			break;
-		case Hdf5Data::POLAR:
-		case Hdf5Data::CYLINDER:
-		{
-			for each(std::string var in Structdirection)
-			{
-				int subrow = item->rowCount();
-				QStandardItem* subItem = new QStandardItem(QIcon(Treeicon[1]), QString("%1").arg(GetEncodingstr(var.c_str(),ENCODING_GB2312)));
-				/*QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1])),QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)))*/;
-				datainfor[subItem] = index;
-				item->setChild(subrow, subItem);
-			}
-		}
+			_type = i;
 			break;
 		}
 	}
+	std::stringstream ss;
+	auto getSStr = [&](std::string str)->std::string{
+		std::string res;
+		res = str;
+		res.erase(std::remove_if(res.begin(),res.end(),isspace),res.end());
+		int pos = res.find("=");
+		res.erase(0, pos + 1);
+		return res;
+	};
+	//字符串拼接
+	switch (_type)
+	{
+	case emType::CONTOUR:	
+		ss << getSStr(data.headList[2]) << getSStr(data.headList[14]);
+		break;
+	case emType::PHASEPACE:
+		ss << getSStr(data.headList[2]);
+		break;
+	case emType::RANGE:
+		ss << getSStr(data.headList[2]) << getSStr(data.headList[13]);
+		break;
+	case emType::VECTOR:
+		ss << getSStr(data.headList[2]) << getSStr(data.headList[11]);
+		break;
+	case emType::OBSERVE:
+		ss << getSStr(data.headList[2]) << getSStr(data.headList[13]);
+		break;
+	}
+	observingstr = ss.str();
+	auto iter = parentnode.find(observingstr);
+	QStandardItem* observeItem;
+	//没有记录该观测面
+	if (iter==parentnode.end())
+	{
+		//查看是否有上层的分类
+		std::string dataType = GetType(data.name);
+		iter = parentnode.find(dataType);
+		QStandardItem* parentItem;
+		if (iter != parentnode.end())
+			parentItem = iter->second;
+		else
+		{
+			parentItem = new QStandardItem(QIcon(Treeicon[0]),GetEncodingstr(dataType.c_str(),ENCODING_GB2312));
+			int row = goodsModel->rowCount();
+			goodsModel->setItem(row, parentItem);
+			parentnode[dataType] = parentItem;
+		}
+		//新增观测面选项
+		observeItem = new QStandardItem(QIcon(Treeicon[0]),GetEncodingstr(observingstr.c_str(),ENCODING_GB2312));
+		int row = parentItem->rowCount();
+		parentItem->setChild(row,observeItem);
+		parentnode[observingstr] = observeItem;
+	}
+	else
+	{
+		observeItem = iter->second;
+	}
+	int row = observeItem->rowCount();
+	ss<<"_"<<row;
+	QStandardItem* childItem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(ss.str().c_str(),ENCODING_GB2312));
+	datainfor[childItem] = index;
+	observeItem->setChild(row, childItem);
 }
 /**
 * @brief  ListTreeWidget::clear 清除树控件
@@ -272,5 +292,57 @@ void ListTreeWidget::clear()
 	}
 	datainfor.clear();
 	parentnode.clear();
+}
+
+/**
+* @brief  ListTreeWidget::toStructh5df 传入结构图数据
+* @param  Hdf5Data data  
+* @param  int index  
+* @return void  
+*/
+void ListTreeWidget::toStructh5df(Hdf5Data data, int index)
+{
+	if (data.name.find("struct") == std::string::npos)
+		return;
+	std::string dataType = GetType(data.name);
+	auto iter = parentnode.find(dataType);
+	QStandardItem* item;
+	if (iter != parentnode.end())
+		item = iter->second;
+	else
+	{
+		item = new QStandardItem(QIcon(Treeicon[0]),GetEncodingstr(dataType.c_str(),ENCODING_GB2312));
+		int row = goodsModel->rowCount();
+		goodsModel->setItem(row,item);
+		parentnode[dataType] = item;
+	}
+	//添加结构图--方向
+	switch (data.coordinateSystem)
+	{
+	case Hdf5Data::CARTESIAN:
+	{
+		for each (std::string var in Structdirection_cartesian)
+		{
+			int subrow = item->rowCount();
+			QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]), QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
+			datainfor[subitem] = index;
+			item->setChild(subrow, subitem);
+		}
+	}
+		break;
+	case Hdf5Data::POLAR:
+	case Hdf5Data::CYLINDER:
+	{
+		for each(std::string var in Structdirection)
+		{
+			int subrow = item->rowCount();
+			QStandardItem* subItem = new QStandardItem(QIcon(Treeicon[1]), QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
+			/*QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1])),QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)))*/;
+			datainfor[subItem] = index;
+			item->setChild(subrow, subItem);
+		}
+	}
+		break;
+	}
 }
 #include "moc_ListTreeWidget.cpp"
