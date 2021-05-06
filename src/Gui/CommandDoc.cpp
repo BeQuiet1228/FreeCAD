@@ -2114,7 +2114,12 @@ void StdCmdMyParameter::activated(int iMsg)
         docObj->addDynamicProperty("App::PropertyFloat", "justForAnalysis");
     }
     if (Gui::DockWindowManager::instance()->getDockWindow("custom_param")) {
-        Gui::DockWindowManager::instance()->getDockWindow("custom_param")->show();
+        if (!Gui::DockWindowManager::instance()->getDockWindow("custom_param")->isVisible()) {
+            Gui::DockWindowManager::instance()->getDockWindow("custom_param")->show();
+        }
+        else {
+            Gui::DockWindowManager::instance()->getDockWindow("custom_param")->close();
+        }
     }
     else {
         MyParameter* p = new MyParameter();

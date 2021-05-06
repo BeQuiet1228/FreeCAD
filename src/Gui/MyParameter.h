@@ -14,6 +14,8 @@
 
 enum param_type {type_int = 0, type_float, type_length, type_angle, type_other, type_error};
 
+class InsertParamDialog;
+
 class MyParameter : public QWidget {
 	Q_OBJECT
 
@@ -34,7 +36,9 @@ public:
 	std::string error_message;
 	neb::CJsonObject* param_m3d;
 	QPushButton* batch_btn;
+	QPushButton* insert_btn;
 	QWidget* text_import;
+	InsertParamDialog* insert_param_dlg;
 
 	//Base::Unit impliedUnit;
 	//Gui::PropertyEditor::PropesrtyEditor* myEidt;
@@ -44,11 +48,15 @@ public:
 	void addNewLine(int row);
 	void makeLineEnabled(int row);
 	bool isValidWithName(int row);
+	bool isValidWithName(const std::string& param_name, int row);
 	void addEmptyProperty(const QString& name);
 	bool changeProperty(param_type _type, const QString& name, const QString& expression);
 	void addProperty(param_type _type, const QString& name);
 	param_type getPropertyType(const QString& name);
 	void setValueToItem(param_type cur_type, const QString& name, int row);
+
+	void cellChangedWithZerothColumn(int row);
+	void cellChangedWithFirstColumn(int row);
 
 // ”Îm3dœ‡πÿ
 public:
@@ -65,6 +73,7 @@ private Q_SLOTS:
 	void textChanged(const QString& text);
 	void importTextInterFace();
 	void importText();
+	void insertParam();
 };
 
 
@@ -123,7 +132,6 @@ public:
 	QPushButton* returnBtn();
 	QString returnStr();
 
-private:
 	Ui::Widget* ui;
 };
 #endif // GUI_MYPARAMETER_H

@@ -1248,13 +1248,27 @@ if(MSVC)
     ADD_MSVC_PRECOMPILED_HEADER(FreeCADGui PreCompiled.h PreCompiled.cpp FreeCADGui_CPP_SRCS)
 endif(MSVC)
 
-fc_wrap_cpp(MyParameter_MOC MyParameter.h )
-add_library(FreeCADGui SHARED ${FreeCADGui_SRCS} MyParameter.h MyParameter.cpp 
-    cJSON.c
+fc_wrap_cpp(MyParameter_MOC MyParameter.h  DlgInsertParamImp.h)
+set(lzg_src DlgInsertParamImp.h
+	DlgInsertParamImp.cpp
+	cJSON.c
 	cJSON.h
 	CJsonObject.cpp
 	CJsonObject.hpp
-    ${MyParameter_MOC})
+	MyParameter.h 
+	MyParameter.cpp 
+	${MyParameter_MOC}
+)
+if (BUILD_QT5)
+    QT5_WRAP_UI(lzg_ui DlgInsertParam.ui)
+else()
+    QT4_WRAP_UI(lzg_ui DlgInsertParam.ui)
+endif()
+
+source_group("lzg" FILES ${lzg_src})	
+
+add_library(FreeCADGui SHARED ${FreeCADGui_SRCS} 
+    ${MyParameter_MOC} ${lzg_src} )
 
 if (FREECAD_USE_QT_FILEDIALOG)
     set_source_files_properties(FileDialog.cpp PROPERTIES COMPILE_FLAGS -DUSE_QT_FILEDIALOG)

@@ -12,6 +12,7 @@
 #include <QString.h>
 #include <regex>
 #include "time.h"
+#include "DlgInsertParamImp.h"
 
 //#include "DlgExpressionInput.h"
 
@@ -48,14 +49,20 @@ MyParameter::MyParameter(QWidget* parent) : QWidget(parent){
     vbl->setObjectName(QString::fromUtf8("verticalLayout"));
 
     vbl->addWidget(tableWidget);
-    gl->addLayout(vbl, 0, 0, 1, 1);
+    gl->addLayout(vbl, 0, 0, 1, 2);
 
     batch_btn = new QPushButton(this);
     batch_btn->setObjectName(QString::fromUtf8("batch_btn"));
     batch_btn->setText(QString::fromUtf8("batch processing"));
     QObject::connect(this->batch_btn, SIGNAL(clicked(bool)), this, SLOT(importTextInterFace()));
 
+    insert_btn = new QPushButton(this);
+    insert_btn->setObjectName(QString::fromUtf8("insert_btn"));
+    insert_btn->setText(QString::fromUtf8("insert param"));
+    QObject::connect(this->insert_btn, SIGNAL(clicked(bool)), this, SLOT(insertParam()));
+
     gl->addWidget(batch_btn, 1, 0, 1, 1);
+    gl->addWidget(insert_btn, 1, 1, 1, 1);
 }
 
 MyParameter::~MyParameter()
@@ -89,27 +96,54 @@ void MyParameter::textChanged(const QString& text) {
 
 // 表格内容发生变化时的槽函数
 void MyParameter::cellDoubleClicked(int row, int column) {
+    this->tableWidget->blockSignals(true);
     if (column == 0) {
-        if (isValidWithName(row) && row == tableWidget->rowCount() - 1) {
-            this->makeLineEnabled(row);
-            this->addNewLine(row);
-            this->addEmptyProperty(tableWidget->item(row, 0)->text());
-            if (tableWidget->item(row, 0)->flags() != Qt::ItemIsSelectable | Qt::ItemIsEnabled) {
-                tableWidget->item(row, 0)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-            }
-            tableWidget->item(row, 1)->setText(QString::fromUtf8("0"));
-        }
+        this->cellChangedWithZerothColumn(row);
     }
     else if (column == 1){
-        QString name = tableWidget->item(row, 0)->text();
-        QString expression = tableWidget->item(row, 1)->text();
-        param_type _type = typeAnalysis(expression);
-        if (this->changeProperty(_type, name, expression)) {
-            this->setValueToItem(_type, name, row);
-        }
-        this->updateFromRowToEnd(row);
+        this->cellChangedWithFirstColumn(row);
     }
-    this->createParamM3D();
+    if (column < 2) {
+        this->createParamM3D();
+    }
+    this->tableWidget->blockSignals(false);
+}
+
+// 第零列数据发生变化时
+void MyParameter::cellChangedWithZerothColumn(int row) {
+    if (!this->isValidWithName(row)) {
+        return;
+    }
+	if (row == tableWidget->rowCount() - 1) {
+		this->makeLineEnabled(row);
+		this->addNewLine(row);
+		this->addEmptyProperty(tableWidget->item(row, 0)->text());
+		if (tableWidget->item(row, 0)->flags() != Qt::ItemIsSelectable | Qt::ItemIsEnabled) {
+			tableWidget->item(row, 0)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+		}
+		this->tableWidget->item(row, 1)->setText(QString::fromUtf8("0"));
+        this->cellChangedWithFirstColumn(row);
+	}
+	else if (row >= 0 && row < tableWidget->rowCount() - 1) {
+		this->makeLineEnabled(row);
+		this->addEmptyProperty(tableWidget->item(row, 0)->text());
+		if (tableWidget->item(row, 0)->flags() != Qt::ItemIsSelectable | Qt::ItemIsEnabled) {
+			tableWidget->item(row, 0)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+		}
+		this->tableWidget->item(row, 1)->setText(QString::fromUtf8("0"));
+        this->cellChangedWithFirstColumn(row);
+	}
+}
+
+// 第一列数据发生变化时
+void MyParameter::cellChangedWithFirstColumn(int row) {
+    QString name = tableWidget->item(row, 0)->text();
+    QString expression = tableWidget->item(row, 1)->text();
+    param_type _type = typeAnalysis(expression);
+    if (this->changeProperty(_type, name, expression)) {
+        this->setValueToItem(_type, name, row);
+    }
+    this->updateFromRowToEnd(row);
 }
 
 // 判断该行变量名是否符合规范
@@ -119,6 +153,23 @@ bool MyParameter::isValidWithName(int row) {
     std::regex r("^[A-Za-z]\\w*$");
     bool temp1 = !param_name.empty();
     bool temp2 = std::regex_match(param_name, r);
+    if ((!param_name.empty()) && (std::regex_match(param_name, r))) {
+        std::set<std::string> name_set;
+        for (int i = 0; i <= row - 1; ++i) {
+            name_set.insert(tableWidget->item(i, 0)->text().toStdString());
+        }
+        if (name_set.find(param_name) == name_set.end()) {
+            res = true;
+        }
+    }
+    return res;
+}
+
+bool MyParameter::isValidWithName(const std::string& param_name, int row) {
+    bool res = false;
+    std::regex r("^[A-Za-z]\\w*$");
+    //bool temp1 = !param_name.empty();
+    //bool temp2 = std::regex_match(param_name, r);
     if ((!param_name.empty()) && (std::regex_match(param_name, r))) {
         std::set<std::string> name_set;
         for (int i = 0; i <= row - 1; ++i) {
@@ -212,8 +263,11 @@ void MyParameter::addNewLine(int row) {
 
 // 使第row行可以编辑
 void MyParameter::makeLineEnabled(int row) {
-    tableWidget->item(row, 1)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable);
-    tableWidget->item(row, 3)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    if(tableWidget->item(row, 1))
+        tableWidget->item(row, 1)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable);
+    if(tableWidget->item(row, 3))
+        tableWidget->item(row, 3)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    if(tableWidget->item(row, 4))
     tableWidget->item(row, 4)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable);
 }
 
@@ -357,8 +411,13 @@ void MyParameter::createParamM3D() {
     std::vector<std::string> param_expression;
     std::string _m3d;
     for (int i = 0; i < row - 1; ++i) {
-        param_name.push_back(this->tableWidget->item(i, 0)->text().toStdString());
-        param_expression.push_back(this->tableWidget->item(i, 1)->text().toStdString());
+        if (this->tableWidget->item(i, 0) && this->tableWidget->item(i, 1)) {
+            param_name.push_back(this->tableWidget->item(i, 0)->text().toStdString());
+            param_expression.push_back(this->tableWidget->item(i, 1)->text().toStdString());
+        }
+        else {
+            return;
+        }
     }
     if (param_name.size() != 0 && param_name.size() == param_expression.size()) {
         for (int i = 0; i < param_name.size(); ++i) {
@@ -422,7 +481,6 @@ std::vector<std::vector<std::string>> MyParameter::batchProcessing(std::string t
 void MyParameter::importTextInterFace() {
     text_import = new Widget();
     text_import->show();
-    
     QObject::connect(dynamic_cast<Widget*>(text_import)->returnBtn(), SIGNAL(clicked(bool)),
                      this, SLOT(importText()));
 }
@@ -472,6 +530,45 @@ void MyParameter::recoveryData() {
         if (this->changeProperty(_type, name, expression)) {
             this->setValueToItem(_type, name, i);
         }
+    }
+}
+
+void MyParameter::insertParam() {
+    this->insert_param_dlg = new InsertParamDialog();
+    this->insert_param_dlg->exec();
+    QString name = this->insert_param_dlg->getName();
+    int row = this->insert_param_dlg->getRow();
+    if (!this->isValidWithName(name.toStdString(), row)) {
+        // 变量名无效，无法插入变量，将错误信息反馈给用户
+        return;
+    }
+    if (row >= 0 && row < this->tableWidget->rowCount() - 1) {
+        this->tableWidget->insertRow(row);
+        // 创建新的item对象
+        QTableWidgetItem* item_name = new QTableWidgetItem();
+
+        QTableWidgetItem* item_expression = new QTableWidgetItem();
+        QTableWidgetItem* item_value = new QTableWidgetItem();
+        QTableWidgetItem* item_type = new QTableWidgetItem();
+        QTableWidgetItem* item_description = new QTableWidgetItem();
+        /* 在此处添加名字的主要原因是因为更新m3d需要读取item的内容，
+           最后一行再次设置名称是为了更新该行的编辑状态 */
+        //item_name->setText(name);
+        // 使新建行无法编辑
+        item_expression->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        item_value->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        item_type->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        item_description->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        // 将item添加到tableWidget
+        this->tableWidget->blockSignals(true);
+        tableWidget->setItem(row, 0, item_name);
+        tableWidget->setItem(row, 1, item_expression);
+        tableWidget->setItem(row, 2, item_value);
+        tableWidget->setItem(row, 3, item_type);
+        tableWidget->setItem(row, 4, item_description);
+        this->tableWidget->blockSignals(false);
+
+        tableWidget->item(row, 0)->setText(name);
     }
 }
 
