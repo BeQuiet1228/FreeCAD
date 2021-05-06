@@ -12,6 +12,11 @@
 //局部函数--只限当前cpp内部使用
 int getIntegerBits(__int64 data);
 
+/**
+* @brief  Axis::Axis 构造
+* @param  QWidget * parent  
+* @return   
+*/
 Axis::Axis(QWidget *parent) :
 QWidget(parent)/*,horizontalAxis(0),verticalAxis(0),isstart(false)*/, CanvasWidget(nullptr), minWidth(0.0f), minHeight(0.0f), lastminWidth(0.0f), lastminHeight(0.0f){
 	lines.clear();
@@ -55,6 +60,10 @@ QWidget(parent)/*,horizontalAxis(0),verticalAxis(0),isstart(false)*/, CanvasWidg
 	axisColor = Qt::black;
 	axisvalColor = Qt::black;
 }
+/**
+* @brief  Axis::~Axis 析构
+* @return   
+*/
 Axis::~Axis()
 {
 
@@ -658,6 +667,11 @@ QVector<QString> Axis::GetScientific_notation()
 #pragma endregion
 	return valstr_list;
 }
+/**
+* @brief  Axis::resizeEvent 自适应函数
+* @param  QResizeEvent * event  
+* @return void  
+*/
 void Axis::resizeEvent(QResizeEvent* event)
 {
 	CanvasSize->setWidth(this->width());
@@ -669,6 +683,10 @@ void Axis::resizeEvent(QResizeEvent* event)
 	maxLineedit->resize(QSize(maxRectf->width(),maxRectf->height()));
 	maxLineedit->move(QPoint(maxRectf->left(),maxRectf->top()));
 }
+/**
+* @brief  Axis::autoMinAndMAxSize 设置自动填充大小
+* @return void  
+*/
 void Axis::autoMinAndMAxSize()
 {
 	QFont wordfont;
@@ -745,6 +763,11 @@ void Axis::mouseDoubleClickEvent(QMouseEvent *event){
 			axisRangeChange();
 	}
 }
+/**
+* @brief  Axis::keyReleaseEvent 按键事件
+* @param  QKeyEvent * event  
+* @return void  
+*/
 void Axis::keyReleaseEvent(QKeyEvent *event)
 {
 	QWidget::keyPressEvent(event);
@@ -752,6 +775,10 @@ void Axis::keyReleaseEvent(QKeyEvent *event)
 	if (event->key() == Qt::Key_Return||event->key()==Qt::Key_Enter)
 		axisRangeChange();
 }
+/**
+* @brief  Axis::axisRangeChange 刻度区间变化
+* @return void  
+*/
 void Axis::axisRangeChange()
 {
 	if (minLineedit->isVisible())
@@ -771,6 +798,10 @@ void Axis::axisRangeChange()
 		_update();
 	}
 }
+/**
+* @brief  Axis::loadconfig 读取配置
+* @return void  
+*/
 void Axis::loadconfig()
 {
 	Config::GetInstance()->loadConfig();
@@ -786,6 +817,12 @@ void Axis::loadconfig()
 	axisvalColor = QStringToQColor(QString::fromStdString(axisGroup.getValue("axisvalColor")));
 	Axisunitfontsize = UnitSize;
 }
+/**
+* @brief  Axis::GetPen 获取画笔
+* @param  QColor & rgba  
+* @param  int width  
+* @return QT_NAMESPACE::QPen  
+*/
 QPen Axis::GetPen(QColor& rgba,int width)
 {
 	QPen pen(rgba);

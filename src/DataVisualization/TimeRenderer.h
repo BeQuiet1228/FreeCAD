@@ -23,7 +23,7 @@ private:
 	void transitionPoint(QPointF& point, const float& xScale, const Data::Rang& xr, const float& yScale, Data::Rang& yr);
 	//在原始数据中寻找点
 	QPointF findPoint(const QPointF& point);
-	//绘制显示信息
+	//绘制显示信息---目前没有使用，重新实现在Renderer中的通用方法--暂时保留
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d);
 private:
 	//新增--画笔大小,颜色

@@ -13,6 +13,8 @@ enum emType
 	STRUCT,
 	OBSERVE,
 };
+//图标：
+QString Treeicon[] = { ":/Tree/TreeFile1.png", ":/Tree/TreeFile2.png" };
 std::string Type[MAX_TYPE_NUMBER] = { "CONTOUR", "PHASESPACE", "RANGE", "VECTOR", "struct" ,"OBSERVE"};
 std::string Structdirection[3] = { "Phi-Z",
 "Z-R",
@@ -36,6 +38,10 @@ ListTreeWidget::ListTreeWidget(QWidget* parent) :QWidget(parent)
 	m_TreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	connect(m_TreeView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(on_doubleclick(const QModelIndex&)));
 }
+/**
+* @brief  ListTreeWidget::~ListTreeWidget 析构
+* @return   
+*/
 ListTreeWidget::~ListTreeWidget(){
 	//datainfor.clear();
 }
@@ -84,16 +90,6 @@ void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 						datalist[_str][var] = i;
 					}
 				}
-				
-				//std::string str1 = "Phi-Z";
-				//std::string str2 = "Z-R";
-				//std::string str3 = "R*cos(Phi)-R*sin(Phi)";
-				//itemlist[_str].push_back(str1);
-				//itemlist[_str].push_back(str2);
-				//itemlist[_str].push_back(str3);
-				//datalist[_str][str1] = i;
-				//datalist[_str][str2] = i;
-				//datalist[_str][str3] = i;
 				continue;
 			}
 			std::string str = Hdf5Datalist[i].name + "_0";
@@ -114,7 +110,7 @@ void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 			item = iterparent->second;
 		}	
 		else { 
-			item = new QStandardItem(GetEncodingstr((iter->first).c_str(), ENCODING_GB2312)); 
+			item = new QStandardItem(QIcon(Treeicon[0]), GetEncodingstr((iter->first).c_str(), ENCODING_GB2312));
 			parentnode[iter->first] = item;
 			goodsModel->setItem(row, item);
 		}
@@ -122,7 +118,7 @@ void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 		for (auto subiter = iter->second.begin(); subiter != iter->second.end();subiter++)
 		{
 			int subrow = item->rowCount();
-			QStandardItem* subitem = new QStandardItem(QString::fromStdString(*subiter));
+			QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]), QString::fromStdString(*subiter));
 			_datainfo[subitem] = datalist[iter->first][*subiter];
 			item->setChild(subrow, subitem);
 		}
@@ -202,6 +198,12 @@ void ListTreeWidget::double_clicked_event(const QModelIndex &index)
 		emit _transfromRenderer(name, iter->second);
 	}
 }
+/**
+* @brief  ListTreeWidget::fromdataManageNewData 接收来自manager的信息
+* @param  Hdf5Data & data  
+* @param  int index  
+* @return void  
+*/
 void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 #ifdef MY_DEBUG
 	printf("fromdataManageNewData-index:%d\n",index);
@@ -214,7 +216,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 		item = iter->second;
 	else
 	{
-		item = new QStandardItem(GetEncodingstr(daTaType.c_str(), ENCODING_GB2312));
+		item = new QStandardItem(QIcon(Treeicon[0]),GetEncodingstr(daTaType.c_str(), ENCODING_GB2312));
 		int row = goodsModel->rowCount();
 		goodsModel->setItem(row, item);
 		parentnode[daTaType] = item;
@@ -223,7 +225,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 	if (data.name.find("struct")==std::string::npos)
 	{
 		int subrow = item->rowCount();
-		QStandardItem* subitem = new QStandardItem(QString("save_%1_%2").arg(GetEncodingstr(daTaType.c_str(), ENCODING_GB2312)).arg(subrow));
+		QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]),QString("save_%1_%2").arg(GetEncodingstr(daTaType.c_str(), ENCODING_GB2312)).arg(subrow));
 		datainfor[subitem] = index;
 		item->setChild(subrow, subitem);
 	}
@@ -236,7 +238,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 			for each (std::string var in Structdirection_cartesian)
 			{
 				int subrow = item->rowCount();
-				QStandardItem* subitem = new QStandardItem(QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
+				QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]),QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
 				datainfor[subitem] = index;
 				item->setChild(subrow, subitem);
 			}
@@ -248,15 +250,20 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 			for each(std::string var in Structdirection)
 			{
 				int subrow = item->rowCount();
-				QStandardItem* subitem = new QStandardItem(QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
-				datainfor[subitem] = index;
-				item->setChild(subrow, subitem);
+				QStandardItem* subItem = new QStandardItem(QIcon(Treeicon[1]), QString("%1").arg(GetEncodingstr(var.c_str(),ENCODING_GB2312)));
+				/*QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1])),QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)))*/;
+				datainfor[subItem] = index;
+				item->setChild(subrow, subItem);
 			}
 		}
 			break;
 		}
 	}
 }
+/**
+* @brief  ListTreeWidget::clear 清除树控件
+* @return void  
+*/
 void ListTreeWidget::clear()
 {
 	if (goodsModel->hasChildren() > 0)

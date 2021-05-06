@@ -469,7 +469,7 @@ std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_polar_R_Z()
 */
 QMap<int, QVector<QRectF>> StructData::fileproperty_polar_R_Z(std::vector<QRectF>& list, std::vector<StructData::DaTaKmt>& datainfo)
 {
-	int index = 1;
+	
 	Data::ListValuesPtr listValues;
 	autoModGetSourceData(listValues);//获取原始数据
 	//获取dataSetKmt里的全部数据
@@ -478,6 +478,7 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_polar_R_Z(std::vector<QRectF
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr IM1X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
+	int index = IM3X->size()/2;
 	if (istrue)
 	{
 		int index_min = 1;
@@ -521,7 +522,7 @@ bool StructData::loadroom_polar_R_THETA()
 */
 std::map<int, std::vector<StructData::CutCir>> StructData::filecir_polar_R_THETA()
 {
-	int index = 1;
+	
 	std::map<int, std::vector<CutCir>> listcir;
 	std::vector<float> r_val;
 	std::vector<float> rand_val;
@@ -572,6 +573,7 @@ std::map<int, std::vector<StructData::CutCir>> StructData::filecir_polar_R_THETA
 	}
 #pragma endregion
 #pragma region 筛选属性
+	int index = IM1X->size()/2;
 	if (istrue)
 	{
 		int index_min = 1;
@@ -713,7 +715,7 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_cylindrical_R_Z(std::vector<
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
 	QMap<int, QVector<QRectF>> allinfo;
-	int index = 1;
+	int index = IM3X->size()/2;
 	if (istrue)
 	{
 		int index_min = 1;
@@ -795,7 +797,7 @@ std::map<int, std::vector<StructData::CutCir>> StructData::filecir_cylindrical_R
 	}
 #pragma endregion
 #pragma region 筛选属性
-	int index = 1;
+	int index = IM1X->size()/2;
 	if (istrue)
 	{
 		int index_min = 1;

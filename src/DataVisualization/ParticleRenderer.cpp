@@ -58,6 +58,13 @@ bool ParticleRenderer::drawImage()
 	}
 	//因为qpainter的屏幕坐标系原点在左上角，所以需要翻转图片才能得到我们想要的结果
 	auto nImg = img.mirrored(false, true);
+//#define _Debug
+#ifdef _Debug
+	static int index = 0;
+	QString _path = QString("C:/Users/ASUS/Desktop/save/savepmg_%1.png").arg(index++);
+	bool res = nImg.save(_path);
+#undef _Debug
+#endif
 	setImage(nImg);
 
 }
@@ -108,10 +115,10 @@ bool ParticleRenderer::drawPointImage()
 	tPoint.setY(getSize().height() - tPoint.y());
 	//绘制点
 	painter.drawPoint(tPoint);
-
-	//绘制信息显示
-	drawDisplayPoint(painter, tPoint, QPointF(partical.d1,partical.d2));
-
+	std::map<QString, float> list;
+	list["X"] = partical.d1;
+	list["Y"] = partical.d2;
+	displayPointInformation(&painter, &tPoint, list);
 	setImage(img);
 	return true;
 }

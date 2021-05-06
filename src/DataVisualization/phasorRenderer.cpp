@@ -74,7 +74,13 @@ bool phasorRenderer::drawPointImage(){
 	//坐标翻转
 	A_pos.setY(getSize().height() - A_pos.y());
 	painter.drawPoint(A_pos);
-	drawDisplayPoint(painter, A_pos, p1, len_coef);
+
+	std::map<QString, float> list;
+	list["X"] = p1.x();
+	list["Y"] = p1.y();
+	list["X_COEF"] = len_coef.x();
+	list["Y_COEF"] = len_coef.y();
+	displayPointInformation(&painter, &A_pos, list);
 	setImage(img);
 	return true;
 }
@@ -435,6 +441,7 @@ int phasorRenderer::findApoint(QPointF A_point)
 * @param QPointF& len_coef
 * @return void
 */
+//注，以增加Rendeer中的点位显示方法，这个暂时保留，后续删除
 void phasorRenderer::drawDisplayPoint(QPainter& painter, QPointF& postion, QPointF& p1, QPointF& len_coef)
 {
 	//设置画笔的颜色

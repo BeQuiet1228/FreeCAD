@@ -6,13 +6,13 @@
 #include <memory>
 #include <list>
 #include <QImage>
+#include <map>
 class Renderer{
 public:
 	using AutoMutex = std::lock_guard<std::mutex>;
 public: 
 	Renderer(std::shared_ptr<Data> data);
 	virtual ~Renderer();
-
 	friend class Plot;
 public:
 	//操作渲染图
@@ -38,7 +38,8 @@ public:
 	DirectionType getDirection(){
 		return data->getDirectionType();
 	}
-	
+	//绘制取点信息
+	void displayPointInformation(QPainter*, QPointF*, std::map<QString, float>);
 private:
 	//渲染图
 	QImage image;

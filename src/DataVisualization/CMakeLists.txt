@@ -16,7 +16,7 @@ include_directories(
 	./qwt
 	./qwt/polar
 )
-SET(QRC_SRC "")
+SET(QRC_SRC resource/rce.qrc)
 SET(UI_SRC ConfigWidget.ui)
 SET(MY_MOC_HDR RenderThread.h
 	RenderThreadManager.h
@@ -141,7 +141,8 @@ SET(DataVisualization_src
 	${CONFIG_SRC}
 	${CHAR_ENCODE}
 	${SRC_TOOL}
-)
+	${Gui_QRC_SRCS}
+	)
 add_definitions(-DMY_DEBUG -D_DATA_VISUALIZATION_)
 if(DataVisualizationDll)
 add_definitions(-DDATA_VISUALIZATIONG_DLL)
@@ -172,6 +173,7 @@ SOURCE_GROUP("config" FILES ${CONFIG_SRC})
 SOURCE_GROUP("character_encoding" FILES ${CHAR_ENCODE})
 SOURCE_GROUP("tool" FILES ${SRC_TOOL})
 SOURCE_GROUP("uifile" FILES ${UI_SRC})
+SOURCE_GROUP("qrcfile" FILES ${QRC_SRC})
 #增加包含目录
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}

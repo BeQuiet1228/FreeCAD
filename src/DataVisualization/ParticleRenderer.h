@@ -17,7 +17,7 @@ public:
 	virtual void loadconfig() override;
 private:
 	ParticleData::Particle findParticle(const QPointF& point);
-	//绘制显示信息
+	//绘制显示信息，暂时保留，未使用了
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d);
 	//将数据转换为屏幕坐标
 	QPointF transitionPoint(const QPointF& point);
