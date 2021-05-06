@@ -215,7 +215,7 @@ std::vector<float> ContourData::getStructFace()
 	point1 = sl[0];
 
 	sl = point1.split(",");
-	if (sl.size() != 3)
+	if (sl.size() < 2)
 		return std::vector<float>();
 
 	std::vector<float> values;
@@ -235,7 +235,7 @@ std::vector<float> ContourData::getStructFace()
 	point2 = sl[0];
 
 	sl = point2.split(",");
-	if (sl.size() != 3)
+	if (sl.size() < 2)
 		return std::vector<float>();
 
 	for (auto iter = sl.begin(); iter != sl.end(); iter++)
@@ -255,8 +255,19 @@ void ContourData::setXYRange()
 	std::vector<float> structFace = getStructFace();
 
 	Data::Rang xr, yr;
-	xr = getAxisRangeFromName(xAxisName);
-	yr = getAxisRangeFromName(yAxisName);
+
+	//建通2d等位图数据
+	if (structFace.size() == 4) {
+		xr.max = std::max(structFace[0], structFace[2]);
+		xr.min = std::min(structFace[0], structFace[2]);
+		yr.max = std::max(structFace[1], structFace[3]);
+		yr.min = std::min(structFace[1], structFace[3]);
+	}else {
+		xr = getAxisRangeFromName(xAxisName);
+		yr = getAxisRangeFromName(yAxisName);
+	}
+
+
 	setXRang(xr);
 	setYRang(yr);
 

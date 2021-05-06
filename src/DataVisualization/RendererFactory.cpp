@@ -171,15 +171,23 @@ RendererPtr RendererFactory::creatContourStructRender(std::shared_ptr<ContourRen
 {
 	_3DPointf start, end;
 	auto v = contourRender->getStructFace();
-	if (v.size() < 6)
+	if (v.size() < 4)
 		return RendererPtr();
 
-	start._1st = v[0];
-	start._2rd = v[1];
-	start._3th = v[2];
-	end._1st = v[3];
-	end._2rd = v[4];
-	end._3th = v[5];
+	//让数据兼容2d等位图数据
+	if (v.size() == 4)
+	{
+	/*2d不分结构图方向，所以这里什么也不需要做 */
+	}else {
+		start._1st = v[0];
+		start._2rd = v[1];
+		start._3th = v[2];
+		end._1st = v[3];
+		end._2rd = v[4];
+		end._3th = v[5];
+	}
+
+	
 
 	RendererPtr structRenderer = creatStructRender(structData, start, end);
 	return structRenderer;
