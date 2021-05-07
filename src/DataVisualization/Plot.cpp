@@ -160,14 +160,8 @@ void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
 	rd->dataInit();
 	rd->setDefaultRang();
 	rd->loadconfig();
-	this->mainRenderer = rd;
-	auto xr = mainRenderer->getXRang();
-	auto yr = mainRenderer->getYRang();
-	setRenderRange(xr.min, xr.max, yr.min, yr.max);
-	//清空撤销恢复栈，将新的操作压入
-	URStack->clear();
-	UndoRedoData URData(xr, yr);
-	URStack->push(URData);
+	mainRenderer = rd;
+	autoMaxRender();
 }
 
 /**
@@ -181,13 +175,13 @@ void Plot::addRenderer(const std::list<std::shared_ptr<Renderer>>& listRender)
 		return;
 	clearSubRenderer();
 	auto iter = listRender.begin();
-	setMainRenderer(*iter);
+	auto mRedner = *iter;
 	iter++;
 	for (; iter != listRender.end(); iter++)
 	{
 		addSubRenderer(*iter); 
 	}
-
+	setMainRenderer(mRedner);
 	canvas->clearIteam();
 }
 
@@ -305,15 +299,34 @@ void Plot::autoMaxRender()
 {
 	if (!mainRenderer)
 		return;
+	//获取渲染器中最大的默认渲染范围
 	mainRenderer->setDefaultRang();
 	auto xr = mainRenderer->getXRang();
 	auto yr = mainRenderer->getYRang();
+
+	for (auto rder = subRenderers.begin(); rder != subRenderers.end(); rder++)
+	{
+		(*rder)->setDefaultRang();
+		Data::Rang sxr = (*rder)->getXRang();
+		Data::Rang syr = (*rder)->getYRang();
+
+		xr.max = sxr.max > xr.max ? sxr.max : xr.max;
+		xr.min = sxr.min < xr.min ? sxr.min : xr.min;
+
+		yr.max = syr.max > yr.max ? syr.max : yr.max;
+		yr.min = syr.min < yr.min ? syr.min : yr.min;
+	}
 
 	setRenderRange(xr.min, xr.max, yr.min, yr.max);
 
 	updateAxis();
 
 	reRender();
+
+	//清空撤销恢复栈，将新的操作压入
+	URStack->clear();
+	UndoRedoData URData(xr, yr);
+	URStack->push(URData);
 }
 
 /**
