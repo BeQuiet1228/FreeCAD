@@ -5,8 +5,10 @@
 #include <QImage>
 #include "Data.h"
 #include <memory.h>
+#include <qmath.h>
 ContourRender::ContourRender(std::shared_ptr<ContourData> data)
-	:Renderer(std::dynamic_pointer_cast<Data>(data))
+	:Renderer(std::dynamic_pointer_cast<Data>(data)),contourLevelsMod(EQUAL_DIFFERENCE)
+	,contourLevel(10)
 {
 	setRenderThreadCount(0);
 	setColorMap(new ColorMap);
@@ -99,12 +101,8 @@ bool ContourRender::setDefaultRang()
 	setXRang(xr);
 	setYRang(yr);
 
-	Data::Rang vr = cd->getVlaueRange();
+	initContourLevels();
 
-	QList<double> contourLevels;
-	for (double level = (vr.length()/10 + vr.min); level < vr.max; level += vr.length()/10)
-		contourLevels += level;
-	setContourLevels(contourLevels);
 	return true;
 }
 
@@ -182,4 +180,31 @@ void ContourRender::drawDisplayPoint(QPainter& painter, const QPointF& position,
 		displayRect.y() + 60,
 		QString("Value:%1").arg(grid.value, 0, 'E', 2)
 		);
+}
+
+void ContourRender::initContourLevels()
+{
+	auto cd = std::dynamic_pointer_cast<ContourData>(Renderer::data);
+
+	Data::Rang vr = cd->getVlaueRange();
+
+	if (contourLevelsMod == EQUAL_DIFFERENCE)
+	{
+		QList<double> contourLevels;
+		for (double level = (vr.length() / contourLevel + vr.min); level < vr.max; level += vr.length() / contourLevel)
+			contourLevels += level;
+		setContourLevels(contourLevels);
+	}else if (contourLevelsMod == PROPORTIONAL)
+	{
+		QList<double> contourLevels;
+		double m = 1.0/contourLevel;
+		m =  pow(vr.length(), m);
+		for (int i = 1; i <= contourLevel; i++)
+		{
+			double vl =vr.min +  pow(m,i);
+			contourLevels += vl;
+		}
+		setContourLevels(contourLevels);
+	}
+
 }

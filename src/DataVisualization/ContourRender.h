@@ -9,6 +9,10 @@ public:
 	ContourRender(std::shared_ptr<ContourData> data);
 	~ContourRender();
 
+	enum ContourLevelsMod{
+		EQUAL_DIFFERENCE = 0,//等差模式
+		PROPORTIONAL		//等比
+	};
 public:
 	bool drawImage() override;
 	bool addListRang(std::list<Data::Rang> listRang) override;
@@ -22,6 +26,13 @@ public:
 private:
 	//绘制提示框
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const ContourData::Grid& grid);
+	//初始化等值线等级
+	void initContourLevels();
+
+private:
+	ContourLevelsMod contourLevelsMod;
+	//等值线等级
+	unsigned int contourLevel;
 };
 
 //测试用
