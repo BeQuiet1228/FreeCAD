@@ -17,6 +17,11 @@ namespace Gui{
 	{
 
 	}
+	/**
+	* @brief  Gui::TreeViewCtrl::double_clicked_event 双击事件
+	* @param  const QModelIndex & index  
+	* @return void  
+	*/
 	void TreeViewCtrl::double_clicked_event(const QModelIndex &index)
 	{
 		App::Document *doc = App::GetApplication().getActiveDocument();
@@ -51,6 +56,10 @@ namespace Gui{
 			docM->_ToRenderer(name, iter->second);
 		}
 	}
+	/**
+	* @brief  Gui::TreeViewCtrl::upClear 数据清除
+	* @return void  
+	*/
 	void TreeViewCtrl::upClear()
 	{
 		clear();

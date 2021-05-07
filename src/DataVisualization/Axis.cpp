@@ -781,14 +781,27 @@ void Axis::keyReleaseEvent(QKeyEvent *event)
 */
 void Axis::axisRangeChange()
 {
-	if (minLineedit->isVisible())
+	//新增大小值判断
+	if (minLineedit->isVisible()&&maxLineedit->isVisible())
 	{
-		curAxisRang.min = minLineedit->text().toFloat();
+		if (minLineedit->text().toFloat()<maxLineedit->text().toFloat())
+		{
+			curAxisRang.max = maxLineedit->text().toFloat();
+			curAxisRang.min = minLineedit->text().toFloat();
+		}
+		minLineedit->setVisible(false);
+		maxLineedit->setVisible(false);
+	}
+	else if (minLineedit->isVisible())
+	{
+		if (minLineedit->text().toFloat()<curAxisRang.max)
+			curAxisRang.min = minLineedit->text().toFloat();
 		minLineedit->setVisible(false);
 	}
-	if (maxLineedit->isVisible())
+	else if (maxLineedit->isVisible())
 	{
-		curAxisRang.max = maxLineedit->text().toFloat();
+		if (maxLineedit->text().toFloat()>curAxisRang.min)
+			curAxisRang.max = maxLineedit->text().toFloat();
 		maxLineedit->setVisible(false);
 	}
 	if (curAxisRang != axisvalrange)

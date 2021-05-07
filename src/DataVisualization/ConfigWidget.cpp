@@ -163,10 +163,12 @@ void ConfigWidget::saveclicked()
 	//øÃ∂»
 	{
 		auto Axisgroup = Group.getGroup("axis");
-		auto AxisSize = (ui->fontSize->itemText(ui->fontSize->currentIndex())).toStdString();
-		Axisgroup.setSetting("axisSize", AxisSize);
+		auto AxisUnitSize = (ui->fontSize->itemText(ui->fontSize->currentIndex())).toStdString();
+		Axisgroup.setSetting("axisSize", AxisUnitSize);
 		Axisgroup.setSetting("axisColor", axisinfo._3th.toStdString());
 		Axisgroup.setSetting("axisvalColor",axisinfo._4th.toStdString());
+		auto axisvalSize = (ui->axisvalSize->itemText(ui->axisvalSize->currentIndex())).toStdString();
+		Axisgroup.setSetting("axisvalSize",axisvalSize);
 	}
 	//œ‡ø’º‰Õº
 	{
