@@ -22,11 +22,12 @@ public:
 		return "hdf5";
 	}
 	void dataclear();
+	bool iSbind();
 public:
 	//‘ÿ»ÎŒƒ±æ
 	bool loadfile(const QString& filePath);
 	bool bindTreeContrue(ListTreeWidget* ptr,Plot* plotptr);
-	void ToStructHdf5(Hdf5Data data);
+	int ToStructHdf5(Hdf5Data data);
 	void DisplatPlot(Hdf5Data data,int _type=0);
 	void _ToRenderer(std::string name,int index);
 protected:

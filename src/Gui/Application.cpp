@@ -132,6 +132,7 @@
 #include <LuaEditView.h>
 #include "PlotMDIView.h"
 #include "MainWindow.h"
+#include "TreeViewctrl.h"
 using namespace Gui;
 using namespace Gui::DockWnd;
 using namespace std;
@@ -303,6 +304,12 @@ void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
 	}
 	if (ptr != nullptr)
 	{
+		
+		if (!((DocumentManager*)(doc->getDocument()))->iSbind())
+		{
+			Gui::TreeViewCtrl* m_lisTreeWidget = Gui::MainWindow::getInstance()->mTreeWidget;
+			((DocumentManager*)(doc->getDocument()))->bindTreeContrue((ListTreeWidget*)m_lisTreeWidget, nullptr);
+		}
 		((DocumentManager*)(doc->getDocument()))->DisplatPlot(data, _type);
 	}
 	else
@@ -320,7 +327,12 @@ void Application::ToStruct(Hdf5Data data)
 {
 	auto doc = Gui::Application::Instance->activeDocument();
 	if (doc)
-		((DocumentManager*)(doc->getDocument()))->ToStructHdf5(data);
+	{
+		int structindex=((DocumentManager*)(doc->getDocument()))->ToStructHdf5(data);
+		Gui::TreeViewCtrl* m_lisTreeWidget = Gui::MainWindow::getInstance()->mTreeWidget;
+		m_lisTreeWidget->toStructh5df(data, structindex);
+	}
+		
 }
 } // namespace Gui
 

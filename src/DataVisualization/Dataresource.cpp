@@ -125,8 +125,7 @@ void DataSourceManage::loadhdffile(std::string filepath)
 /**
 * @brief DataSourceManage::DataSourceManage 数据管理构造
 */
-DataSourceManage::DataSourceManage():factoryptr(nullptr){
-	istrue = false;
+DataSourceManage::DataSourceManage():factoryptr(nullptr),p(nullptr),treePtr(nullptr){
 	RendererManger.clear();
 }
 /**
@@ -137,13 +136,18 @@ DataSourceManage::DataSourceManage():factoryptr(nullptr){
 void DataSourceManage::init(ListTreeWidget* ptr,Plot* _plot){
 	if (ptr)
 	{
+		//先进行断开链接
+		disconnect(this,0);
+		disconnect(ptr, 0);
 		//进行连接
 		connect(this, SIGNAL(_loadhdflist(std::vector<Hdf5Data>&)), ptr, SLOT(loadHdflist(std::vector<Hdf5Data>&)));
 		connect(ptr, SIGNAL(_transfromRenderer(std::string, int)), this, SLOT(tranfromRenderer(std::string, int)));
 		connect(this, SIGNAL(toTreeNewData(Hdf5Data&, int)), ptr, SLOT(fromdataManageNewData(Hdf5Data& , int )));
+		treePtr = ptr;
 	}
 	if (_plot)
 	{
+		disconnect(this, 0);
 		connect(this, SIGNAL(_reRendererEvent(const std::list<std::shared_ptr<Renderer>>&)), _plot, SLOT(reRendererEvent(const std::list<std::shared_ptr<Renderer>>&)));
 		p = _plot;
 	}
@@ -153,7 +157,7 @@ void DataSourceManage::init(ListTreeWidget* ptr,Plot* _plot){
 * @param Hdf5Data data 结构图数据
 * @return void
 */
-void DataSourceManage::initStructData(Hdf5Data data)
+int DataSourceManage::initStructData(Hdf5Data data)
 {
 	hdfDatelist.push_back(data);
 	structData = data;
@@ -162,7 +166,7 @@ void DataSourceManage::initStructData(Hdf5Data data)
 		factoryptr->setStructData(data);
 	else
 		factoryptr = new RendererFactory(data);
-	istrue = true;
+	return structindex;
 }
 DataSourceManage::~DataSourceManage(){
 	RendererManger.clear();
@@ -175,11 +179,6 @@ DataSourceManage::~DataSourceManage(){
 */
 void DataSourceManage::DisPlayPlot(Hdf5Data data, int _type)
 {
-	if (istrue)
-	{
-		istrue = false;
-		emit toTreeNewData(structData, structindex);
-	}
 	Renderers rds = factoryptr->creatRenderers(data, (DirectionType)_type);
 	//保存当前的hdf5Data
 	hdfDatelist.push_back(data);
@@ -195,5 +194,16 @@ void DataSourceManage::DataClear()
 {
 	RendererManger.clear();
 	hdfDatelist.clear();
+}
+/**
+* @brief  DataSourceManage::isbind 是否绑定
+* @return bool  
+*/
+bool DataSourceManage::isbind()
+{
+	if (p == nullptr || treePtr == nullptr)
+		return false;
+	else
+		return true;
 }
 #include "moc_Dataresource.cpp"

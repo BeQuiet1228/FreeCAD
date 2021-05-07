@@ -25,9 +25,10 @@ public:
 	~DataSourceManage();
 public:
 	void init(ListTreeWidget* ptr,Plot* p);
-	void initStructData(Hdf5Data data);
+	int initStructData(Hdf5Data data);
 	void DisPlayPlot(Hdf5Data data,int _type=0);
 	void DataClear();
+	bool isbind();
 Q_SIGNALS:
 	void _loadhdflist(std::vector<Hdf5Data>& Hdf5Data);
 	void _reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender);
@@ -44,8 +45,8 @@ private:
 	std::vector<Hdf5Data> hdfDatelist;
 	Hdf5Data structData;
 	int structindex;
-	bool istrue;
 	Plot* p;
+	ListTreeWidget* treePtr;
 	RendererFactory* factoryptr;
 	Hdf5IO _hdf5io;
 };

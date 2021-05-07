@@ -73,11 +73,13 @@ bool DocumentManager::save(){
 /**
 * @brief DocumentManager::ToStructHdf5 传入结构图数据
 * @param Hdf5Data data
-* @return void
+* @return int
 */
-void DocumentManager::ToStructHdf5(Hdf5Data data){
+int DocumentManager::ToStructHdf5(Hdf5Data data){
 	if (m_DataSourceManage)
-		m_DataSourceManage->initStructData(data);
+		return m_DataSourceManage->initStructData(data);
+	else
+		return -1;
 }
 /**
 * @brief DocumentManager::DisplatPlot 送显
@@ -100,8 +102,24 @@ void DocumentManager::_ToRenderer(std::string name, int index)
 	if (m_DataSourceManage)
 		m_DataSourceManage->tranfromRenderer(name,index);
 }
+/**
+* @brief  DocumentManager::dataclear 删除数据
+* @return void  
+*/
 void DocumentManager::dataclear()
 {
 	if (m_DataSourceManage)
 		m_DataSourceManage->DataClear();
+}
+/**
+* @brief  DocumentManager::iSbind 是否绑定
+* @return bool  
+*/
+bool DocumentManager::iSbind()
+{
+	if (m_DataSourceManage)
+	{
+		return m_DataSourceManage->isbind();
+	}
+	return false;
 }

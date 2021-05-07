@@ -567,7 +567,7 @@ void Plot::reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRende
 	addRenderer(listRender);
 	reRender();
 }
-
+ 
 void Plot::reRendererXRang(const float& min, const float& max){
 	setRenderXRange(min,max);
 	reRender();
