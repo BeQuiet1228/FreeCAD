@@ -9,10 +9,10 @@
 #include "ParticleRenderer.h"
 #include "ContourRender.h"
 #include "ContourRenderPolar.h"
-//#include "structureData.h"
-//#include "StructRenderer.h"
 #include "StructData.h"
 #include "StructRender.h"
+#include "Struct2dData.h"
+#include "Struct2dRenderer.h"
 #include "phasorData.h"
 #include "phasorRenderer.h"
 #include "Renderer.h"
@@ -129,25 +129,19 @@ DataPtr RendererFactory::creatInterspaceData(Hdf5Data h5d)
 }
 RendererPtr RendererFactory::creatStructRender(Hdf5Data h5d, DirectionType type)
 {
-	std::shared_ptr<StructData> _structdata(new StructData(h5d,type));
-	StructRender* _StructureRenderer = new StructRender(_structdata);
-	/*switch (type)
+	//需要判断结构图是2维的还是3维的
+	if (h5d.listDataSet.size()>3)
 	{
-	case X_Y:
-	case R_Z:
-	{
-		_StructureRenderer->SetCoordinateDir(Coordinate_Dir::Z_R_coordinater);
+		std::shared_ptr<StructData> _structdata(new StructData(h5d, type));
+		StructRender* _StructureRenderer = new StructRender(_structdata);
+		return RendererPtr(_StructureRenderer);
 	}
-		break;
-	case R_THETA:
+	else
 	{
-		_StructureRenderer->SetCoordinateDir(Coordinate_Dir::cylindrical_coordinate);
+		std::shared_ptr<Struct2dData> _structdata(new Struct2dData(h5d));
+		Struct2DRenderer* _struct2drenderer = new Struct2DRenderer(_structdata);
+		return RendererPtr(_struct2drenderer);
 	}
-		break;
-	}*/
-	return RendererPtr(_StructureRenderer);
-	/*_StructureRenderer->dataInit();
-	_StructureRenderer->setDefaultRang();*/
 }
 
 /**

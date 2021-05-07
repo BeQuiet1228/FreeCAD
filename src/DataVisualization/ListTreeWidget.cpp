@@ -52,79 +52,24 @@ ListTreeWidget::~ListTreeWidget(){
 * @return void
 */
 void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
-{
-	//需要清空所有节点信息
-	
-	//开始实现
-	std::map<std::string, std::vector<std::string>> itemlist;
-	std::map<std::string, std::map<std::string, int>> datalist;
-	itemlist.clear();
-	for (auto i = 0; i < Hdf5Datalist.size();i++)
+{	
+	//获取到全部信息
+	std::string varString;
+	for (auto index = 0; index < Hdf5Datalist.size();index++)
 	{
-		std::string _str = GetType(Hdf5Datalist[i].name);
-		auto iter=itemlist.find(_str);
-		if (iter!=itemlist.end())
+#pragma region 处理结构图
+		if (Hdf5Datalist[index].name.find("struct")!=std::string::npos)
 		{
-			std::string str = Hdf5Datalist[i].name+"_"+std::to_string(itemlist[_str].size());
-			itemlist[_str].push_back(str);
-			datalist[_str][str]=i;
+			toStructh5df(Hdf5Datalist[index], index);
+			continue;
 		}
-		else
-		{
-			//当获取到图表信息是结构图时
-			if (Hdf5Datalist[i].name.find("struct")!=std::string::npos)
-			{
-				std::string coord_type = *(Hdf5Datalist[i].headList.end() - 1);
-				if (coord_type.find("cartesian") != std::string::npos)
-				{
-					for each (std::string var in Structdirection_cartesian)
-					{
-						itemlist[_str].push_back(var);
-						datalist[_str][var] = i;
-					}
-				}
-				else
-				{
-					for each (std::string var in Structdirection)
-					{
-						itemlist[_str].push_back(var);
-						datalist[_str][var] = i;
-					}
-				}
-				continue;
-			}
-			std::string str = Hdf5Datalist[i].name + "_0";
-			itemlist[_str].push_back(str);
-			datalist[_str][str] =i;
-		}
-	}
+#pragma endregion
 
-	//开始创建树控件
-	std::map<QStandardItem*, int> _datainfo;
-	for (auto iter = itemlist.begin(); iter != itemlist.end();iter++)
-	{
-		//查找父节点
-		auto iterparent=parentnode.find(iter->first);
-		QStandardItem* item;
-		int row = goodsModel->rowCount();
-		if (iterparent != parentnode.end()){
-			item = iterparent->second;
-		}	
-		else { 
-			item = new QStandardItem(QIcon(Treeicon[0]), GetEncodingstr((iter->first).c_str(), ENCODING_GB2312));
-			parentnode[iter->first] = item;
-			goodsModel->setItem(row, item);
-		}
-		//添加子节点
-		for (auto subiter = iter->second.begin(); subiter != iter->second.end();subiter++)
-		{
-			int subrow = item->rowCount();
-			QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]), QString::fromStdString(*subiter));
-			_datainfo[subitem] = datalist[iter->first][*subiter];
-			item->setChild(subrow, subitem);
-		}
+#pragma region 其他图
+		fromdataManageNewData(Hdf5Datalist[index],index);
+#pragma endregion
+
 	}
-	datainfor.swap(_datainfo);
 }
 /**
 * @brief ListTreeWidget::resizeEvent 窗口大小变化事件
@@ -316,33 +261,46 @@ void ListTreeWidget::toStructh5df(Hdf5Data data, int index)
 		goodsModel->setItem(row,item);
 		parentnode[dataType] = item;
 	}
-	//添加结构图--方向
-	switch (data.coordinateSystem)
+	//判断结构图的是2维的还是3维的
+	if (data.listDataSet.size()>3)
 	{
-	case Hdf5Data::CARTESIAN:
-	{
-		for each (std::string var in Structdirection_cartesian)
+		switch (data.coordinateSystem)
 		{
-			int subrow = item->rowCount();
-			QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]), QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
-			datainfor[subitem] = index;
-			item->setChild(subrow, subitem);
+		case Hdf5Data::CARTESIAN:
+		{
+			for each (std::string var in Structdirection_cartesian)
+			{
+				int subrow = item->rowCount();
+				QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]), QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
+				datainfor[subitem] = index;
+				item->setChild(subrow, subitem);
+			}
+		}
+			break;
+		case Hdf5Data::POLAR:
+		case Hdf5Data::CYLINDER:
+		{
+			for each(std::string var in Structdirection)
+			{
+				int subrow = item->rowCount();
+				QStandardItem* subItem = new QStandardItem(QIcon(Treeicon[1]), QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
+				datainfor[subItem] = index;
+				item->setChild(subrow, subItem);
+			}
+		}
+			break;
 		}
 	}
-		break;
-	case Hdf5Data::POLAR:
-	case Hdf5Data::CYLINDER:
+	else
 	{
-		for each(std::string var in Structdirection)
-		{
-			int subrow = item->rowCount();
-			QStandardItem* subItem = new QStandardItem(QIcon(Treeicon[1]), QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
-			/*QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1])),QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)))*/;
-			datainfor[subItem] = index;
-			item->setChild(subrow, subItem);
-		}
-	}
-		break;
+		std::string structstr = *(data.headList.begin() + 2);
+		structstr.erase(std::remove_if(structstr.begin(), structstr.end(), isspace), structstr.end());
+		int _j = structstr.find("=");
+		structstr.erase(0, _j + 1);
+		QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(structstr.c_str(), ENCODING_GB2312));
+		int row = item->rowCount();
+		item->setChild(row, subitem);
+		datainfor[subitem] = index;
 	}
 }
 #include "moc_ListTreeWidget.cpp"
