@@ -24,6 +24,7 @@ public:
 	void sendControlMsg(QTreeWidgetItem* item);
 	//根据item，获取类型，和图索引
 	bool getTypeAndIndex(QTreeWidgetItem* item, MsgType& type, int& index);
+	void clearSubItem();
 private:
 	QTreeWidgetItem* contourItem,*phaseSpaceItem,*observeItem,*rangeItem,*vectorItem;
 	const unsigned int itemCount = 5;

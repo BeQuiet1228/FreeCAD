@@ -37,11 +37,17 @@ ControlTreeWidget::ControlTreeWidget(QWidget* parent)
 
 ControlTreeWidget::~ControlTreeWidget()
 {
-
+	for each (QTreeWidgetItem * item in items)
+	{
+		delete item;
+	}
 }
 
 void ControlTreeWidget::init(const Hdf5Data& data)
 {
+	//初始化之前，先清理之前的子选项
+	clearSubItem();
+
 	auto listHead = data.headList;
 
 	for each (std::string str in listHead)
@@ -135,6 +141,15 @@ bool ControlTreeWidget::getTypeAndIndex(QTreeWidgetItem* item, MsgType& type, in
 	if (type == NONE)
 		return false;
 	return true;
+}
+
+void ControlTreeWidget::clearSubItem()
+{
+	for each (QTreeWidgetItem * item in items)
+	{
+		auto childs = item->takeChildren();
+	}
+	update();
 }
 
 bool ControlTreeWidget::addContourItem(const std::string& str)

@@ -362,9 +362,7 @@ void Hdf5IO::getStructData()
 	DataSet dataSet1, dataSet2, dataSet3, dataSet4;
 		//获取数据库
 	if (!(getDataSet(group, "I1MX", dataSet1)
-		&& getDataSet(group, "I2MX", dataSet2)
-		&& getDataSet(group, "I3MX", dataSet3)
-		&& getDataSet(group, "datasetKmt", dataSet4)))
+		&& getDataSet(group, "I2MX", dataSet2)))
 		return;	
 
 	std::vector<std::string> headList = getHeadValue(group);
@@ -373,10 +371,14 @@ void Hdf5IO::getStructData()
 	if (!headList.empty())
 	{
 		Hdf5Data data(this->Hdf5File);
-		data.listDataSet.push_back(dataSet1);
-		data.listDataSet.push_back(dataSet2);
-		data.listDataSet.push_back(dataSet3);
-		data.listDataSet.push_back(dataSet4);
+		if (getDataSet(group, "I1MX", dataSet1))
+			data.listDataSet.push_back(dataSet1);
+		if(getDataSet(group, "I2MX", dataSet2))
+			data.listDataSet.push_back(dataSet2);
+		if(getDataSet(group, "I3MX", dataSet3))
+			data.listDataSet.push_back(dataSet3);
+		if(getDataSet(group, "datasetKmt", dataSet4))
+			data.listDataSet.push_back(dataSet4);
 		data.group = group;
 		data.name = "struct";
 		data.headList = headList;

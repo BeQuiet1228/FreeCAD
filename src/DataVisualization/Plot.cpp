@@ -323,6 +323,8 @@ void Plot::autoMaxRender()
 void Plot::initGUI()
 {
 	gridLayout = new QGridLayout;
+	//调整画布与坐标轴的间距
+	//gridLayout->setSpacing(0);
 	this->setLayout(gridLayout);
 
 	canvas = new Canvas();
