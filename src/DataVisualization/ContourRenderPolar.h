@@ -7,7 +7,6 @@ class ContourRenderPolar :public ContourRender{
 public:
 	ContourRenderPolar(std::shared_ptr<ContourData> data);
 	~ContourRenderPolar();
-
 public:
 	bool drawImage() override;
 	bool addListRang(std::list<Data::Rang> listRang) override;
@@ -21,5 +20,4 @@ private:
 	//ªÊ÷∆Ã· æøÚ
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const ContourData::Grid& grid);
 	ContourParam contourPolarparam;
-
 };

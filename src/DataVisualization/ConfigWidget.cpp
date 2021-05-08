@@ -455,6 +455,8 @@ void ConfigWidget::loadxmlConfig(){
 	{
 		auto contourGroup = Group.getGroup("Contour");
 		ui->concheckBox->setCheckState(((QString::fromStdString(contourGroup.getValue("isAlis")).toInt() )==1) ?Qt::Checked:Qt::Unchecked);
+		//设置数值类型
+
 	}
 }
 /**
