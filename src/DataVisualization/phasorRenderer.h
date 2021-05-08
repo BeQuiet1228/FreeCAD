@@ -48,5 +48,6 @@ private:
 private:
 	unsigned __int32 penSize;
 	QColor penColor;
+	bool isAA;
 };
 #endif

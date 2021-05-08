@@ -58,6 +58,12 @@ public Q_SLOTS:
 	void diolectriclineClicked();
 	void permeabilitylineClicked();
 	void vacuolineClicked();
+	//2维结构图
+	void perfectconductorClicked_2();
+	void conductornewClicked_2();
+	void diolectricClicked_2();
+	void permeabilityClicked_2();
+	void vacuoClicked_2();
 	//时间图
 	void linecolorClicked();
 	//矢量图
@@ -72,9 +78,11 @@ private:
 private:
 	void structInfoClicked(int _property,QPushButton*);
 	void structinfolineClicked(int _property, QPushButton*);
+	void struct_2D_clicked(int _property,QPushButton*);
 	//结构图
 	std::map<QString, QString> structColor;
 	std::map<QString, QString>structlineColor;
+	std::map<int, QString> struct2dinfo;
 	//向量
 	Mas::Setconfig vecconfig;
 	//时间图

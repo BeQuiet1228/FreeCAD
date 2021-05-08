@@ -4,6 +4,13 @@
 #include "qwt/qwt_plot_spectrogram.h"
 #include "ContourData.h"
 #include "qwt/qwt_color_map.h"
+typedef struct ContourParam
+{
+	//抗锯齿属性
+	bool isAA;
+	ContourParam();
+}CONTOURPARAM;
+
 class ContourRender:public Renderer,public QwtPlotSpectrogram{
 public:
 	ContourRender(std::shared_ptr<ContourData> data);
@@ -19,6 +26,7 @@ public:
 	bool drawPointImage() override;
 	bool setDefaultRang() override;
 	void dataInit() override;
+	virtual void loadconfig() override;
 	//获取value范围
 	Data::Rang getValueRange();
 	//获取对应的结构体面
@@ -33,6 +41,8 @@ private:
 	ContourLevelsMod contourLevelsMod;
 	//等值线等级
 	unsigned int contourLevel;
+	ContourParam contourParam;
+
 };
 
 //测试用

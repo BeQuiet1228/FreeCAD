@@ -13,6 +13,7 @@ phasorRenderer::phasorRenderer(std::shared_ptr<phasorData> data)
 {
 	penSize=1;
 	penColor=Qt::red;
+	isAA = true;
 }
 phasorRenderer::~phasorRenderer(){
 
@@ -285,7 +286,7 @@ bool phasorRenderer::drawImage_Coord(){
 	QPen pen(Qt::black);
 	pen.setWidth(1);
 	QPainter painter(&img);
-	painter.setRenderHint(QPainter::Antialiasing, true);
+	painter.setRenderHint(QPainter::Antialiasing, isAA);
 	painter.setPen(pen);
 	//开始绘制图表
 	/*QVector<QRectF> CutRoomlist = d->getAllCutRoom();
@@ -484,5 +485,6 @@ void phasorRenderer::loadconfig()
 	auto vectorGroup = group.getGroup("vector");
 	penSize =atoi(vectorGroup.getValue("vectorsize").c_str());
 	penColor = QStringToQColor(QString::fromStdString(vectorGroup.getValue("vectorColor")));
+	isAA = atoi(vectorGroup.getValue("isAlis").c_str());
 	qDebug() << penSize << penColor;
 }

@@ -33,16 +33,27 @@ ConfigWidget::~ConfigWidget(){
 void ConfigWidget::initUI()
 {
 	//结构图
-	connect(ui->perfectconductorColor, SIGNAL(clicked()), this, SLOT(perfectconductorClicked()));
-	connect(ui->conductorNewColor, SIGNAL(clicked()),this,SLOT(conductornewClicked()));
-	connect(ui->diolectricColor, SIGNAL(clicked()), this, SLOT(diolectricClicked()));
-	connect(ui->permeabilityColor, SIGNAL(clicked()), this, SLOT(permeabilityClicked()));
-	connect(ui->vacuoColor, SIGNAL(clicked()), this, SLOT(vacuoClicked()));
-	connect(ui->perfectconductorlineColor, SIGNAL(clicked()), this, SLOT(perfectconductorlineClicked()));
-	connect(ui->conductorNewlineColor, SIGNAL(clicked()), this, SLOT(conductornewlineClicked()));
-	connect(ui->diolectriclineColor, SIGNAL(clicked()), this, SLOT(diolectriclineClicked()));
-	connect(ui->permeabilitylineColor, SIGNAL(clicked()), this, SLOT(permeabilitylineClicked()));
-	connect(ui->vacuolineColor, SIGNAL(clicked()), this, SLOT(vacuolineClicked()));
+	{
+		connect(ui->perfectconductorColor, SIGNAL(clicked()), this, SLOT(perfectconductorClicked()));
+		connect(ui->conductorNewColor, SIGNAL(clicked()), this, SLOT(conductornewClicked()));
+		connect(ui->diolectricColor, SIGNAL(clicked()), this, SLOT(diolectricClicked()));
+		connect(ui->permeabilityColor, SIGNAL(clicked()), this, SLOT(permeabilityClicked()));
+		connect(ui->vacuoColor, SIGNAL(clicked()), this, SLOT(vacuoClicked()));
+		connect(ui->perfectconductorlineColor, SIGNAL(clicked()), this, SLOT(perfectconductorlineClicked()));
+		connect(ui->conductorNewlineColor, SIGNAL(clicked()), this, SLOT(conductornewlineClicked()));
+		connect(ui->diolectriclineColor, SIGNAL(clicked()), this, SLOT(diolectriclineClicked()));
+		connect(ui->permeabilitylineColor, SIGNAL(clicked()), this, SLOT(permeabilitylineClicked()));
+		connect(ui->vacuolineColor, SIGNAL(clicked()), this, SLOT(vacuolineClicked()));
+	}
+	
+	//2维结构图
+	{
+		connect(ui->perfectconductorColor_2, SIGNAL(clicked()), this, SLOT(perfectconductorClicked_2()));
+		connect(ui->conductorNewColor_2, SIGNAL(clicked()), this, SLOT(conductornewClicked_2()));
+		connect(ui->diolectricColor_2, SIGNAL(clicked()), this, SLOT(diolectricClicked_2()));
+		connect(ui->permeabilityColor_2, SIGNAL(clicked()), this, SLOT(permeabilityClicked_2()));
+		connect(ui->vacuoColor_2, SIGNAL(clicked()), this, SLOT(vacuoClicked_2()));
+	}
 	this->SetAllreRender(ui->perfectconductorColor);
 	this->SetAllreRender(ui->conductorNewColor);
 	this->SetAllreRender(ui->diolectricColor);
@@ -58,6 +69,11 @@ void ConfigWidget::initUI()
 	this->SetAllreRender(ui->axisColor);
 	this->SetAllreRender(ui->axisvalColor);
 	this->SetAllreRender(ui->partcleColor);
+	this->SetAllreRender(ui->perfectconductorColor_2);
+	this->SetAllreRender(ui->conductorNewColor_2);
+	this->SetAllreRender(ui->diolectricColor_2);
+	this->SetAllreRender(ui->permeabilityColor_2);
+	this->SetAllreRender(ui->vacuoColor_2);
 	//时间图
 	connect(ui->lineColor, SIGNAL(clicked()), this, SLOT(linecolorClicked()));
 	//矢量图
@@ -142,9 +158,32 @@ void ConfigWidget::saveclicked()
 		auto StructGroup = Group.getGroup("struct");
 		for (auto iter = structColor.begin(); iter != structColor.end(); iter++)
 			StructGroup.setSetting(iter->first.toStdString(), iter->second.toStdString());
-		//auto StructGroup2 = Group.getGroup("structline");
 		for (auto iter = structlineColor.begin(); iter != structlineColor.end();iter++)
 			StructGroup.setSetting(iter->first.toStdString(), iter->second.toStdString());
+		(ui->structcheckBox->checkState() == Qt::Checked)?StructGroup.setSetting("isAlis", "1"):StructGroup.setSetting("isAlis", "0");
+	}
+	//2维结构图参数
+	{
+		auto Struct2DGroup = Group.getGroup("struct2D");
+#define SetSeting(x,y,z,w) (x):\
+										{\
+			Struct2DGroup.setSetting((#x+5),(y));\
+		Struct2DGroup.setSetting(#x "type" + 5, (z->itemText(z->currentIndex())).toStdString());\
+		Struct2DGroup.setSetting(#x "width" + 5, (w->itemText(w->currentIndex())).toStdString());\
+				}\
+		break
+		for (auto iter = struct2dinfo.begin(); iter != struct2dinfo.end(); iter++)
+		{
+			switch (iter->first)
+			{
+				case SetSeting(Mas::Conductor_New, iter->second.toStdString(), ui->conductorNewtype, ui->conductorNewWidth);
+				case SetSeting(Mas::Diolectric, iter->second.toStdString(), ui->diolectrictype, ui->diolectricWidth);
+				case SetSeting(Mas::Perfect_Conductor, iter->second.toStdString(), ui->perfectconducttype, ui->perfectconductorWidth);
+				case SetSeting(Mas::Vacuo, iter->second.toStdString(), ui->vacuotype, ui->vacuoWidth);
+				case SetSeting(Mas::Permeability, iter->second.toStdString(), ui->permeabilitytype, ui->permeabilityWidth);
+			}
+#undef SetSeting(x,y)
+		}
 	}
 	//时间图
 	{
@@ -152,6 +191,8 @@ void ConfigWidget::saveclicked()
 		QString pensize = ui->linesSizeEdit->itemText(ui->linesSizeEdit->currentIndex());
 		timeGroup.setSetting("lineSize", pensize.toStdString());
 		timeGroup.setSetting("lineColor", timeConfig._2nd.toStdString());
+		//抗锯齿
+		(ui->linescheckBox->checkState() == Qt::Checked)?timeGroup.setSetting("isAlis", "1"):timeGroup.setSetting("isAlis", "0");
 	}
 	//矢量图
 	{
@@ -159,14 +200,17 @@ void ConfigWidget::saveclicked()
 		auto vecsizestr = (ui->vectorSize->itemText(ui->vectorSize->currentIndex())).toStdString();
 		vectorGroup.setSetting("vectorsize", vecsizestr);
 		vectorGroup.setSetting("vectorColor", vecconfig._2nd.toStdString());
+		(ui->veccheckBox->checkState() == Qt::Checked)?vectorGroup.setSetting("isAlis", "1"):vectorGroup.setSetting("isAlis", "0");
 	}
 	//刻度
 	{
 		auto Axisgroup = Group.getGroup("axis");
-		auto AxisSize = (ui->fontSize->itemText(ui->fontSize->currentIndex())).toStdString();
-		Axisgroup.setSetting("axisSize", AxisSize);
+		auto AxisUnitSize = (ui->fontSize->itemText(ui->fontSize->currentIndex())).toStdString();
+		Axisgroup.setSetting("axisSize", AxisUnitSize);
 		Axisgroup.setSetting("axisColor", axisinfo._3th.toStdString());
 		Axisgroup.setSetting("axisvalColor",axisinfo._4th.toStdString());
+		auto axisvalSize = (ui->axisvalSize->itemText(ui->axisvalSize->currentIndex())).toStdString();
+		Axisgroup.setSetting("axisvalSize",axisvalSize);
 	}
 	//相空间图
 	{
@@ -174,16 +218,19 @@ void ConfigWidget::saveclicked()
 		auto particleSize = ui->partcleEdit->text().toStdString();
 		particlegroup.setSetting("size",particleSize);
 		particlegroup.setSetting("color", partcleConfig._2nd.toStdString());
+		(ui->partclecheckBox->checkState() == Qt::Checked)?particlegroup.setSetting("isAlis", "1"):particlegroup.setSetting("isAlis", "0");
+	}
+	//等位图
+	{
+		auto contourGroup = Group.getGroup("Contour");
+		(ui->concheckBox->checkState() == Qt::Checked) ? contourGroup.setSetting("isAlis", "1") : contourGroup.setSetting("isAlis", "0");
 	}
 	Config::GetInstance()->saveFile();
 	ui->applicButtom->setEnabled(true);
-
 #ifdef MY_DEBUG
 	printf("saveclicked\n");
 #endif
 }
-//时间图
-
 /**
 * @brief  ConfigWidget::linecolorClicked 时间图颜色选择
 * @return void  
@@ -206,14 +253,12 @@ void ConfigWidget::veccolorClicked()
 * @brief  ConfigWidget::SetAllreRender
 * @param  QPushButton * buttom  
 * @return void  
-*/void ConfigWidget::SetAllreRender(QPushButton* buttom)
+*/
+void ConfigWidget::SetAllreRender(QPushButton* buttom)
 {
 	buttom->setAutoFillBackground(true);
 	buttom->setFlat(true);
 }
-
-
-
 /**
 * @brief  ConfigWidget::axisColorclicked 刻度相关的
 * @return void  
@@ -315,6 +360,16 @@ void ConfigWidget::partcleColorclicked(){
 void ConfigWidget::loadxmlConfig(){
 	Config::GetInstance()->loadConfig();
 	auto Group = Config::GetInstance()->getRootGroup();
+	auto toComboxIndex = [&](QComboBox* combox,QString& str){
+		for (int i = 0; i < combox->count(); i++)
+		{
+			if (combox->itemText(i) == str)
+			{
+				combox->setCurrentIndex(i);
+				break;
+			}
+		}
+	};
 	//结构图
 	{
 		auto StructGroup = Group.getGroup("struct");
@@ -339,6 +394,23 @@ void ConfigWidget::loadxmlConfig(){
 		structlineColor["Diolectricline"] = QString::fromStdString(StructGroup.getValue("Diolectricline"));
 		fileeButtom(ui->conductorNewlineColor, StructGroup.getValue("Conductor_Newline"));
 		structlineColor["Conductor_Newline"] = QString::fromStdString(StructGroup.getValue("Conductor_Newline"));
+		ui->structcheckBox->setCheckState((QString::fromStdString(StructGroup.getValue("isAlis")).toInt() == 1) ? Qt::Checked:Qt::Unchecked);
+	}
+	//2维结构图
+	{
+#define loadStruct2D(x,y,z,w)\
+	fileeButtom(y,StructGroup.getValue(#x+5));\
+	struct2dinfo[x] = QString::fromStdString(StructGroup.getValue(#x+5));\
+	toComboxIndex(z,QString::fromStdString(StructGroup.getValue(#x "type"+5)));\
+	toComboxIndex(w,QString::fromStdString(StructGroup.getValue(#x "width"+5)));
+
+		auto StructGroup = Group.getGroup("struct2D");
+		loadStruct2D(Mas::Diolectric,ui->diolectricColor_2,ui->diolectrictype,ui->diolectricWidth);
+		loadStruct2D(Mas::Vacuo,ui->vacuoColor_2,ui->vacuotype,ui->vacuoWidth);
+		loadStruct2D(Mas::Permeability,ui->permeabilityColor_2,ui->permeabilitytype,ui->permeabilityWidth);
+		loadStruct2D(Mas::Perfect_Conductor,ui->perfectconductorColor_2,ui->perfectconducttype,ui->perfectconductorWidth);
+		loadStruct2D(Mas::Conductor_New,ui->conductorNewColor_2,ui->conductorNewtype,ui->conductorNewWidth);
+#undef loadStruct2D(x,y,z,w)
 	}
 	//时间图
 	{
@@ -346,15 +418,8 @@ void ConfigWidget::loadxmlConfig(){
 		fileeButtom(ui->lineColor, timeGroup.getValue("lineColor"));
 		timeConfig._2nd = QString::fromStdString(timeGroup.getValue("lineColor"));
 		QString linesize = QString::fromStdString(timeGroup.getValue("lineSize"));
-		int index = -1;
-		for (int i = 0; i < ui->linesSizeEdit->count(); i++)
-		{
-			if (ui->linesSizeEdit->itemText(i)==linesize)
-			{
-				ui->linesSizeEdit->setCurrentIndex(i);
-				break;
-			}
-		}
+		toComboxIndex(ui->linesSizeEdit,linesize);
+		ui->linescheckBox->setCheckState((QString::fromStdString(timeGroup.getValue("isAlis")).toInt() == 1) ? Qt::Checked : Qt::Unchecked);
 	}
 	//矢量图
 	{
@@ -362,15 +427,8 @@ void ConfigWidget::loadxmlConfig(){
 		fileeButtom(ui->vecColor, vectorGroup.getValue("vectorColor"));
 		vecconfig._2nd = QString::fromStdString(vectorGroup.getValue("vectorColor"));
 		QString vectorsize = QString::fromStdString(vectorGroup.getValue("vectorsize"));
-		int index = -1;
-		for (int i = 0; i < ui->vectorSize->count(); i++)
-		{
-			if (ui->vectorSize->itemText(i) == vectorsize)
-			{
-				ui->vectorSize->setCurrentIndex(i);
-				break;
-			}
-		}
+		toComboxIndex(ui->vectorSize, vectorsize);
+		ui->veccheckBox->setCheckState((QString::fromStdString(vectorGroup.getValue("isAlis")).toInt())?Qt::Checked:Qt::Unchecked);
 	}
 	//刻度
 	{
@@ -380,16 +438,10 @@ void ConfigWidget::loadxmlConfig(){
 		fileeButtom(ui->axisvalColor, Axisgroup.getValue("axisvalColor"));
 		axisinfo._4th = QString::fromStdString(Axisgroup.getValue("axisvalColor"));
 		QString axisSize = QString::fromStdString(Axisgroup.getValue("axisSize"));
-		int index = -1;
-		for (int i = 0; i < ui->fontSize->count(); i++)
-		{
-			if (ui->fontSize->itemText(i) == axisSize)
-			{
-				ui->fontSize->setCurrentIndex(i);
-				break;
-			}
-		}
+		toComboxIndex(ui->fontSize,axisSize);
+		toComboxIndex(ui->axisvalSize,QString::fromStdString(Axisgroup.getValue("axisvalSize")));
 	}
+	//粒子图
 	{
 		auto particlegroup = Group.getGroup("particle");
 		fileeButtom(ui->partcleColor, particlegroup.getValue("color"));
@@ -397,6 +449,12 @@ void ConfigWidget::loadxmlConfig(){
 		auto size = atoi(particlegroup.getValue("size").c_str());
 		if (0 == size)size = 1;
 		ui->partcleEdit->setText(QString::number(size));
+		ui->partclecheckBox->setCheckState((QString::fromStdString(particlegroup.getValue("isAlis")).toInt())?Qt::Checked:Qt::Unchecked);
+	}
+	//等位图
+	{
+		auto contourGroup = Group.getGroup("Contour");
+		ui->concheckBox->setCheckState(((QString::fromStdString(contourGroup.getValue("isAlis")).toInt() )==1) ?Qt::Checked:Qt::Unchecked);
 	}
 }
 /**
@@ -414,14 +472,64 @@ void ConfigWidget::fileeButtom(QPushButton* button, std::string color)
 	button->setText(QString("#%1").arg(QString::fromStdString(color)));
 }
 /**
+* @brief  ConfigWidget::perfectconductorClicked_2
+* @return void  
+*/
+void ConfigWidget::perfectconductorClicked_2(){ struct_2D_clicked(Mas::Perfect_Conductor, ui->perfectconductorColor_2); }
+/**
+* @brief  ConfigWidget::conductornewClicked_2
+* @return void  
+*/
+void ConfigWidget::conductornewClicked_2(){ struct_2D_clicked(Mas::Conductor_New, ui->conductorNewColor_2); }
+/**
+* @brief  ConfigWidget::diolectricClicked_2
+* @return void  
+*/
+void ConfigWidget::diolectricClicked_2(){ struct_2D_clicked(Mas::Diolectric, ui->diolectricColor_2); }
+/**
+* @brief  ConfigWidget::permeabilityClicked_2
+* @return void  
+*/
+void ConfigWidget::permeabilityClicked_2(){ struct_2D_clicked(Mas::Permeability, ui->permeabilityColor_2); }
+/**
+* @brief  ConfigWidget::vacuoClicked_2
+* @return void  
+*/
+void ConfigWidget::vacuoClicked_2(){ struct_2D_clicked(Mas::Vacuo, ui->vacuoColor_2);}
+
+/**
+* @brief  ConfigWidget::struct_2D_clicked 
+* @param  int _property  
+* @param  QPushButton *  
+* @return void  
+*/
+void ConfigWidget::struct_2D_clicked(int _property, QPushButton* button){
+	QColor color = QColorDialog::getColor(Qt::white, this, "pick Color", QColorDialog::ShowAlphaChannel);
+	QPalette qpalette = button->palette();
+	qpalette.setColor(QPalette::Button, color);
+	button->setPalette(qpalette);
+	button->setText(QString("#%1").arg(QColorToQstring(color)));
+	struct2dinfo[_property] = QColorToQstring(color);
+	/*switch (_property)
+	{
+	case Mas::Conductor_New:
+		struct2dinfo[Mas::Conductor_New] = QColorToQstring(color); break;
+	case Mas::Diolectric:
+		struct2dinfo[Mas::Diolectric] = QColorToQstring(color); break;
+	case Mas::Perfect_Conductor:
+		struct2dinfo[Mas::Perfect_Conductor] = QColorToQstring(color); break;
+	case Mas::Permeability:
+		struct2dinfo[Mas::Permeability] = QColorToQstring(color); break;
+	case Mas::Vacuo:
+		struct2dinfo[Mas::Vacuo] = QColorToQstring(color); break;
+	}*/
+}
+/**
 * @brief  Mas::Setconfig::Setconfig
 * @return   
 */
 Mas::Setconfig::Setconfig()
 	:_1st("1"), _2nd("1"), _3th("1"), _4th("1")
-{
-
-}
-
+{}
 #include "moc_ConfigWidget.cpp"
 

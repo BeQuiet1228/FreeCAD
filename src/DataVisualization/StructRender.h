@@ -80,6 +80,7 @@ private:
 	QMap<int, QColor> color_pen;
 	Data::Rang xRang, yRang;
 	std::mutex xRangMutex, yRangMutex;
+	bool isAA;
 };
 
 #endif

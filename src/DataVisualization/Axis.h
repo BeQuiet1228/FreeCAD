@@ -63,12 +63,10 @@ protected:
 	virtual void keyReleaseEvent(QKeyEvent *event) override;
 		//获取科学计数法的字符串
 	QVector<QString> GetScientific_notation();
-	QPen GetPen(QColor& rgba,int width);
 private:
 	bool isstart;
 	unsigned int Axisnumber;//大刻度个数
 	QString mAxisunit;//单位
-	int Axisunitfontsize;//单位字体大小
 	valrange axisvalrange;//刻度数值区间
 	QRectF AxisRect;
 	Axisstyle mAxisstyle;
@@ -89,9 +87,8 @@ private:
 	//增加实时取值功能2021/4/27
 	QLineEdit* minLineedit;
 	QLineEdit* maxLineedit;
+	QLineEdit* AxisUnitedit;
 	QRectF* minRectf;
 	QRectF* maxRectf;
-	QColor axisColor;
-	QColor axisvalColor;
-	int UnitSize;
+	QRectF* AxisUnitRectf;
 };

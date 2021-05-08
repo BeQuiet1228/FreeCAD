@@ -25,6 +25,7 @@ public:
 	virtual bool drawPointImage() override;
 	virtual bool setDefaultRang() override;
 	virtual void dataInit() override;
+	virtual void loadconfig() override;
 public:
 	void SetColor(int,QColor);
 	void SetPen(int ,QPen);
@@ -51,6 +52,8 @@ private:
 	QVector<QLineF> GetCutLine_y();
 private:
 	QMap<int, QColor> color_tab;
+	QMap<int, QColor> color_line;
 	QMap<int, QPen> pen_tab;
+	bool isAA;
 };
 #endif

@@ -29,4 +29,5 @@ private:
 	//新增--画笔大小,颜色
 	unsigned __int32 pensize;
 	QColor penColor;
+	bool isAA;
 };

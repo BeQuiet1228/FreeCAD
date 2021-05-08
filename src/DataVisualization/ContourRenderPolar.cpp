@@ -6,6 +6,8 @@
 #include <QtConcurrentRun>
 #include <QRectF>
 #include <QImage>
+#include "CustomConfig.h"
+
 ContourRenderPolar::ContourRenderPolar(std::shared_ptr<ContourData> data)
 	:ContourRender(data)
 {
@@ -41,7 +43,7 @@ bool ContourRenderPolar::drawImage()
 	if (testDisplayMode(DisplayMode::ContourMode))
 	{
 		QPainter painter(&img);
-		painter.setRenderHint(QPainter::Antialiasing, true);
+		painter.setRenderHint(QPainter::Antialiasing, contourPolarparam.isAA);
 
 
 
@@ -108,6 +110,13 @@ void ContourRenderPolar::dataInit()
 	cd->loadPoint();
 	setData(cd->getQwtMatrixRasterData());
 }
-
+void ContourRenderPolar::loadconfig()
+{
+	Config::GetInstance()->loadConfig();
+	ConfigGroup mGroup = Config::GetInstance()->getRootGroup();
+	ConfigGroup contourGroup = mGroup.getGroup("Contour");
+	//ªÒ»°øπæ‚≥› Ù–‘
+	contourPolarparam.isAA = atoi(contourGroup.getValue("isAlis").c_str());
+}
 
 

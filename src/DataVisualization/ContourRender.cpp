@@ -6,6 +6,7 @@
 #include "Data.h"
 #include <memory.h>
 #include <qmath.h>
+#include "CustomConfig.h"
 ContourRender::ContourRender(std::shared_ptr<ContourData> data)
 	:Renderer(std::dynamic_pointer_cast<Data>(data)),contourLevelsMod(EQUAL_DIFFERENCE)
 	,contourLevel(10)
@@ -35,7 +36,7 @@ bool ContourRender::drawImage()
 	QImage img(getSize(), QImage::Format_ARGB32);
 	img.fill(qRgba(0, 0, 0, 0));
 	QPainter painter(&img);
-	painter.setRenderHint(QPainter::Antialiasing, true);
+	painter.setRenderHint(QPainter::Antialiasing, contourParam.isAA);
 	draw(&painter, xmap, ymap, rect);
 
 	//renderImage(xmap, ymap, rect, getSize());
@@ -206,5 +207,20 @@ void ContourRender::initContourLevels()
 		}
 		setContourLevels(contourLevels);
 	}
+
+}
+/**
+* @brief  ContourRender::loadconfig ∂¡»°≈‰÷√
+* @return void  
+*/
+void ContourRender::loadconfig(){
+	Config::GetInstance()->loadConfig();
+	ConfigGroup mGroup = Config::GetInstance()->getRootGroup();
+	ConfigGroup contourGroup = mGroup.getGroup("Contour");
+	//ªÒ»°øπæ‚≥› Ù–‘
+	contourParam.isAA = atoi(contourGroup.getValue("isAlis").c_str());
+}
+
+ContourParam::ContourParam() :isAA(true){
 
 }

@@ -5,6 +5,7 @@
 #include "C_encoding.h"
 StructRender::StructRender(std::shared_ptr<StructData> data) :Renderer(std::dynamic_pointer_cast<Data>(data)){		
 	color_tab[StructTexture::Perfect_Conductor] = QColor(125, 125, 125, 255);
+	isAA = true;
 }
 StructRender::~StructRender(){
 
@@ -310,7 +311,7 @@ bool StructRender::drawImage_rect_space(){
 	QPen pen(Qt::black);
 	pen.setWidth(1);
 	QPainter painter(&img);
-	painter.setRenderHint(QPainter::Antialiasing, true);;
+	painter.setRenderHint(QPainter::Antialiasing, isAA);;
 	painter.setPen(pen);
 	QMap<int, QVector<QRectF>> _map = d->GetAllcutInfo();
 	for (auto iter = _map.begin(); iter != _map.end(); iter++)
@@ -367,7 +368,7 @@ bool StructRender::drawImage_rand_space(){
 	QPen pen(Qt::black);
 	pen.setWidth(1);
 	QPainter painter(&img);
-	painter.setRenderHint(QPainter::Antialiasing, true);;
+	painter.setRenderHint(QPainter::Antialiasing, isAA);;
 	painter.setPen(pen);
 	//»æÖÆÔ²Öù
 	std::map<int, std::vector<StructData::CutCir>> _map = d->GetAllcurInfo_cir();
@@ -811,6 +812,10 @@ StructData::structpoint StructRender::findApoint_Cylindrical(QPointF _curpoint)
 	}
 	return mpoint;
 }
+/**
+* @brief  StructRender::loadconfig ¶ÁÈ¡ÅäÖÃ
+* @return void  
+*/
 void StructRender::loadconfig()
 {
 	Config::GetInstance()->loadConfig();
@@ -828,5 +833,5 @@ void StructRender::loadconfig()
 	color_pen[Diolectric] = QStringToQColor(QString::fromStdString(structConfig.getValue("Diolectricline")));
 	color_pen[Permeability] = QStringToQColor(QString::fromStdString(structConfig.getValue("Permeabilityline")));
 	color_pen[Vacuo] = QStringToQColor(QString::fromStdString(structConfig.getValue("Vacuoline")));
-
+	isAA = atoi(structConfig.getValue("isAlis").c_str());
 }
