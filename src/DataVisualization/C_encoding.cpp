@@ -38,7 +38,7 @@ QString QColorToQstring(QColor& color)
 #include <QDebug>
 QColor QStringToQColor(QString colorstr)
 {
-	//QColor color2(colorstr.toUInt(NULL, 16));
+	//qDebug() << colorstr;
 	std::string color=colorstr.toStdString();
 	unsigned int colorR=0,colorG=0,colorB=0,colorA=0;
 	int len = color.length();
@@ -49,6 +49,6 @@ QColor QStringToQColor(QString colorstr)
 		colorG = stoi(color.substr(4, 2),0,16);
 		colorB = stoi(color.substr(6,2),0,16);
 	}
-	QColor colorargb(colorG,colorG,colorB,colorA);
+	QColor colorargb(colorR,colorG,colorB,colorA);
 	return colorargb;
 }
