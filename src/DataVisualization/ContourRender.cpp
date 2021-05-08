@@ -6,8 +6,6 @@
 #include "Data.h"
 #include <memory.h>
 #include "CustomConfig.h"
-//该源文件下的全局参数
-ContourParam contourParam;
 ContourRender::ContourRender(std::shared_ptr<ContourData> data)
 	:Renderer(std::dynamic_pointer_cast<Data>(data))
 {
@@ -196,4 +194,8 @@ void ContourRender::loadconfig(){
 	ConfigGroup contourGroup = mGroup.getGroup("Contour");
 	//获取抗锯齿属性
 	contourParam.isAA = atoi(contourGroup.getValue("isAlis").c_str());
+}
+
+ContourParam::ContourParam() :isAA(true){
+
 }

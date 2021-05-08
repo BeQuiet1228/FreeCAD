@@ -20,6 +20,6 @@ public:
 private:
 	//»æÖÆÌáÊ¾¿ò
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const ContourData::Grid& grid);
-
+	ContourParam contourPolarparam;
 
 };

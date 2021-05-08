@@ -7,7 +7,7 @@
 #include <QRectF>
 #include <QImage>
 #include "CustomConfig.h"
-ContourParam contourPolarparam;
+
 ContourRenderPolar::ContourRenderPolar(std::shared_ptr<ContourData> data)
 	:ContourRender(data)
 {

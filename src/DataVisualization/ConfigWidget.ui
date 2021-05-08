@@ -395,7 +395,7 @@ background-color: rgb(255, 255, 255);
       <enum>QTabWidget::Triangular</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -853,6 +853,31 @@ background-color: rgb(255, 255, 255);
        <property name="text">
         <string>抗锯齿</string>
        </property>
+      </widget>
+      <widget class="QComboBox" name="comboBox">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>60</y>
+         <width>87</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <item>
+        <property name="text">
+         <string>等值</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>等比</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>自定义</string>
+        </property>
+       </item>
       </widget>
      </widget>
      <widget class="QWidget" name="tab_4">

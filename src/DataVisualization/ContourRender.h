@@ -8,7 +8,7 @@ typedef struct ContourParam
 {
 	//抗锯齿属性
 	bool isAA;
-	ContourParam():isAA(true){}
+	ContourParam();
 }CONTOURPARAM;
 
 class ContourRender:public Renderer,public QwtPlotSpectrogram{
@@ -30,6 +30,7 @@ public:
 private:
 	//绘制提示框
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const ContourData::Grid& grid);
+	ContourParam contourParam;
 };
 
 //测试用
