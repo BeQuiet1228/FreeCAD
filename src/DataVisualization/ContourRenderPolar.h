@@ -14,6 +14,7 @@ public:
 	bool drawPointImage() override;
 	bool setDefaultRang() override;
 	void dataInit() override;
+	virtual void loadconfig() override;
 	//ªÒ»°value∑∂Œß
 	Data::Rang getValueRange();
 private:

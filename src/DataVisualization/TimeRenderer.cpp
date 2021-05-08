@@ -16,6 +16,7 @@ TimeRenderer::TimeRenderer(std::shared_ptr<TimeData> data)
 {
 	pensize = 1;
 	penColor = Qt::red;
+	isAA = true;
 }
 
 TimeRenderer::~TimeRenderer()
@@ -55,7 +56,7 @@ bool TimeRenderer::drawImage()
 	QPen pen(penColor);
 	pen.setWidth(pensize);
 	QPainter painter(&img);
-	//painter.setRenderHint(QPainter::Antialiasing, true);;
+	painter.setRenderHint(QPainter::Antialiasing, isAA);
 	painter.setPen(pen);
 	
 	//获取边界索引
@@ -369,4 +370,5 @@ void TimeRenderer::loadconfig()
 	QColor _penColor = QStringToQColor(QString::fromStdString(timeconfig.getValue("lineColor")));
 	(_penColor != Qt::white) ? (penColor = _penColor):(penColor=Qt::red);
 	(_pensize > 0 && _pensize < 6) ? (pensize = _pensize) :(pensize) ;
+	isAA = atoi(timeconfig.getValue("isAlis").c_str());
 }

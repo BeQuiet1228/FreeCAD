@@ -9,6 +9,7 @@ ParticleRenderer::ParticleRenderer(std::shared_ptr<ParticleData> data)
 {
 	particleColor=Qt::red;
 	particleSize = 1;
+	isAA = true;
 }
 
 ParticleRenderer::~ParticleRenderer()
@@ -47,7 +48,7 @@ bool ParticleRenderer::drawImage()
 	pen.setWidth(particleSize);
 	QPainter painter(&img);
 	painter.setPen(pen);
-
+	painter.setRenderHint(QPainter::Antialiasing, isAA);
 	ParticleData::Particle p;
 	for (int index = startIndex + 1; index < endIndex; index++)
 	{
@@ -278,4 +279,5 @@ void ParticleRenderer::loadconfig()
 	auto particleGroup = Group.getGroup("particle");
 	particleColor = QStringToQColor(QString::fromStdString(particleGroup.getValue("color")));
 	particleSize = atoi(particleGroup.getValue("size").c_str());
+	isAA = atoi(particleGroup.getValue("isAlis").c_str());
 }

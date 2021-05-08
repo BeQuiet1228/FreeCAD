@@ -5,6 +5,9 @@
 #include <QImage>
 #include "Data.h"
 #include <memory.h>
+#include "CustomConfig.h"
+//该源文件下的全局参数
+ContourParam contourParam;
 ContourRender::ContourRender(std::shared_ptr<ContourData> data)
 	:Renderer(std::dynamic_pointer_cast<Data>(data))
 {
@@ -33,7 +36,7 @@ bool ContourRender::drawImage()
 	QImage img(getSize(), QImage::Format_ARGB32);
 	img.fill(qRgba(0, 0, 0, 0));
 	QPainter painter(&img);
-	painter.setRenderHint(QPainter::Antialiasing, true);
+	painter.setRenderHint(QPainter::Antialiasing, contourParam.isAA);
 	draw(&painter, xmap, ymap, rect);
 
 	//renderImage(xmap, ymap, rect, getSize());
@@ -182,4 +185,15 @@ void ContourRender::drawDisplayPoint(QPainter& painter, const QPointF& position,
 		displayRect.y() + 60,
 		QString("Value:%1").arg(grid.value, 0, 'E', 2)
 		);
+}
+/**
+* @brief  ContourRender::loadconfig 读取配置
+* @return void  
+*/
+void ContourRender::loadconfig(){
+	Config::GetInstance()->loadConfig();
+	ConfigGroup mGroup = Config::GetInstance()->getRootGroup();
+	ConfigGroup contourGroup = mGroup.getGroup("Contour");
+	//获取抗锯齿属性
+	contourParam.isAA = atoi(contourGroup.getValue("isAlis").c_str());
 }

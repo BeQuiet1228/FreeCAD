@@ -1,12 +1,15 @@
 ﻿#include "Struct2dRenderer.h"
 #include <qpen.h>
 #include <QPainter>
-
+#include "CustomConfig.h"
+#include "C_encoding.h"
+#include "StructRender.h"
+#include <QDebug>
 Struct2DRenderer::Struct2DRenderer(std::shared_ptr<Struct2dData> data):
 Renderer(std::dynamic_pointer_cast<Data> (data)){
 
 	color_tab[1]=QColor(125,125,125,255);
-	color_tab[3]=QColor(255,255,125,255);
+	color_tab[3]=QColor(255,0,255,0);
 	color_tab[4]=QColor(255,125,125,255);
 	color_tab[5]=QColor(125,125,255,255);
 	color_tab[9]=QColor(255,255,0,255);
@@ -317,15 +320,6 @@ bool Struct2DRenderer::getPloy_grid(){
 	}
 	/**********************************************/
 	auto nImg = img1.mirrored(false, true);
-//#define  _Debug
-#ifdef _Debug
-	static int index = 0;
-	QString _path = QString("D:/savepmg_%1.png").arg(index++);
-	//qDebug() << _path;
-	bool res = nImg2.save(_path);
-#undef _Debug
-#endif
-
 	setImage(nImg);
 	return true;
 }
@@ -468,4 +462,32 @@ QVector<QLineF> Struct2DRenderer::GetCutLine_y(){
 		lines.push_back(QLineF(top,bottom));
 	}
 	return lines;
+}
+
+/**
+* @brief  Struct2DRenderer::loadconfig 加载配置
+* @return void  
+*/
+void Struct2DRenderer::loadconfig(){
+//获取配置
+	Config::GetInstance()->loadConfig();
+	auto mGroup = Config::GetInstance()->getRootGroup();
+	auto structGroup = mGroup.getGroup("struct");
+	auto struct2DGroup = mGroup.getGroup("struct2D");
+#define GETCONFIG(x)\
+	color_tab[x]=QStringToQColor(QString::fromStdString(structGroup.getValue(#x)));\
+	color_line[x]=QStringToQColor(QString::fromStdString(structGroup.getValue(#x "line")));\
+			{QPen pen(QStringToQColor(QString::fromStdString(struct2DGroup.getValue(#x))));\
+	pen.setStyle((struct2DGroup.getValue(#x "type").find("solid")!=std::string::npos)?(Qt::SolidLine):(Qt::DashLine));\
+	pen.setWidth(atoi((struct2DGroup.getValue(#x "width")).c_str()));\
+	pen_tab[x]=pen;\
+	qDebug()<<x<<color_tab[x];\
+	}
+	GETCONFIG(Perfect_Conductor);
+	GETCONFIG(Conductor_New);
+	GETCONFIG(Diolectric);
+	GETCONFIG(Permeability);
+	GETCONFIG(Vacuo);
+#undef GETCONFIG(x)
+	isAA = atoi(structGroup.getValue("isAlis").c_str());
 }

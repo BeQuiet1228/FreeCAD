@@ -24,4 +24,5 @@ private:
 private:
 	QColor particleColor;
 	int particleSize;
+	bool isAA;
 };
