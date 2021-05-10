@@ -3,4 +3,7 @@
 	<file>TreeFile1.png</file>
 	<file>TreeFile2.png</file>
     </qresource>
+	<qresource prefix="/Arrow">
+	<file>arrow1.png</file>
+	</qresource>
 </RCC>
