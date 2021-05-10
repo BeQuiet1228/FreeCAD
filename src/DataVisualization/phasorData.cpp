@@ -1,5 +1,5 @@
 #include"phasorData.h"
-phasorData::phasorData(Hdf5Data& heData, const RunMod& mod) :XYData(heData,mod)
+phasorData::phasorData(Hdf5Data& heData, const RunMod& mod) :DirData(heData,mod)
 {
 
 }
@@ -30,75 +30,16 @@ bool phasorData::loadPoint()
 	auto xtag = getXTag();
 	auto ytag = getYTag();
 	//获取横坐标的个数
-
-	switch (directionTyp)
+	if (isTruedir())
 	{
-	case X_Y:
-	{
-		if (xtag.find("X") != std::string::npos && ytag.find("Y") != std::string::npos)
-		{
-			posySize = (*it)->size(); it++;
-			posxSize = (*it)->size();
-		}
-		else
-		{
-			posxSize = (*it)->size(); it++;
-			posySize = (*it)->size();
-		}
+		posySize = (*it)->size(); it++;
+		posxSize = (*it)->size();
 	}
-		break;
-	case X_Z:
-	{
-		if (xtag.find("X") != std::string::npos && ytag.find("Z") != std::string::npos)
-		{
-			posySize = (*it)->size(); it++;
-			posxSize = (*it)->size();
-		}
-		else
-		{
-			posxSize = (*it)->size(); it++;
-			posySize = (*it)->size();
-		}
-	}
-		
-		break;
-	case Y_Z:
-	{
-		if (xtag.find("Y") != std::string::npos && ytag.find("Z") != std::string::npos)
-		{
-			posySize = (*it)->size(); it++;
-			posxSize = (*it)->size();
-		}
-		else
-		{
-			posxSize = (*it)->size(); it++;
-			posySize = (*it)->size();
-		}
-	}
-		break;
-	case R_Z:
-	{
-		if (xtag.find("R") != std::string::npos && ytag.find("Z") != std::string::npos)
-		{
-			posySize = (*it)->size(); it++;
-			posxSize = (*it)->size();
-		}
-		else
-		{
-			posxSize = (*it)->size(); it++;
-			posySize = (*it)->size();
-		}
-	}
-		break;
-	case R_THETA:
+	else
 	{
 		posxSize = (*it)->size(); it++;
 		posySize = (*it)->size();
 	}
-		break;
-	}
-	//有不同方向
-	
 	
 	//初始化范围
 	initXYRang();
@@ -126,126 +67,18 @@ bool phasorData::initXYRang(){
 	auto it = ListValues->begin();
 	Data::ValuesPtr datasetEmA = *it; it++;
 	Data::ValuesPtr datasetEmB = *it;
-
-	switch (directionTyp)
+	if (isTruedir())
 	{
-	case X_Y:
-	{
-		if (getXTag().find("X") != std::string::npos && getYTag().find("Y") != std::string::npos)
-		{
-			//x
-			xr.min = 0;
-			xr.max = *(datasetEmB->end() - 1);
-			setXRang(xr);
-			//y
-			yr.min = 0;
-			yr.max = *(datasetEmA->end() - 1);
-			setYRang(yr);
-		}
-		else
-		{
-			auto itx = datasetEmA->begin();
-			xr.min = 0;
-			itx = datasetEmA->end() - 1;
-			xr.max = *itx;
-			setXRang(xr);
-			//y
-			auto ity = datasetEmB->begin();
-			yr.min = 0;
-			ity = datasetEmB->end() - 1;
-			yr.max = *ity;
-			setYRang(yr);
-		}
+		//x
+		xr.min = 0;
+		xr.max = *(datasetEmB->end() - 1);
+		setXRang(xr);
+		//y
+		yr.min = 0;
+		yr.max = *(datasetEmA->end() - 1);
+		setYRang(yr);
 	}
-		break;
-	case X_Z:
-	{
-		if (getXTag().find("X") != std::string::npos && getYTag().find("Z") != std::string::npos)
-		{
-			//x
-			xr.min = 0;
-			xr.max = *(datasetEmB->end() - 1);
-			setXRang(xr);
-			//y
-			yr.min = 0;
-			yr.max = *(datasetEmA->end() - 1);
-			setYRang(yr);
-		}
-		else
-		{
-			auto itx = datasetEmA->begin();
-			xr.min = 0;
-			itx = datasetEmA->end() - 1;
-			xr.max = *itx;
-			setXRang(xr);
-			//y
-			auto ity = datasetEmB->begin();
-			yr.min = 0;
-			ity = datasetEmB->end() - 1;
-			yr.max = *ity;
-			setYRang(yr);
-		}
-	}
-		break;
-	case Y_Z:
-	{
-		if (getXTag().find("Y") != std::string::npos && getYTag().find("Z") != std::string::npos)
-		{
-			//x
-			xr.min = 0;
-			xr.max = *(datasetEmB->end() - 1);
-			setXRang(xr);
-			//y
-			yr.min = 0;
-			yr.max = *(datasetEmA->end() - 1);
-			setYRang(yr);
-		}
-		else
-		{
-			auto itx = datasetEmA->begin();
-			xr.min = 0;
-			itx = datasetEmA->end() - 1;
-			xr.max = *itx;
-			setXRang(xr);
-			//y
-			auto ity = datasetEmB->begin();
-			yr.min = 0;
-			ity = datasetEmB->end() - 1;
-			yr.max = *ity;
-			setYRang(yr);
-		}
-	}
-		break;
-	case R_Z:
-	{
-		if (getXTag().find("R") != std::string::npos && getYTag().find("Z") != std::string::npos)
-		{
-			//x
-			xr.min = 0;
-			xr.max = *(datasetEmB->end() - 1);
-			setXRang(xr);
-			//y
-			yr.min = 0;
-			yr.max = *(datasetEmA->end() - 1);
-			setYRang(yr);
-		}
-		else
-		{
-			auto itx = datasetEmA->begin();
-			xr.min = 0;
-			itx = datasetEmA->end() - 1;
-			xr.max = *itx;
-			setXRang(xr);
-			//y
-			auto ity = datasetEmB->begin();
-			yr.min = 0;
-			ity = datasetEmB->end() - 1;
-			yr.max = *ity;
-			setYRang(yr);
-		}
-	}
-		break;
-	case R_THETA:
+	else
 	{
 		auto itx = datasetEmA->begin();
 		xr.min = 0;
@@ -259,13 +92,6 @@ bool phasorData::initXYRang(){
 		yr.max = *ity;
 		setYRang(yr);
 	}
-		break;
-	default:
-		break;
-	}
-	//因为datasetEmA和datasetEmB的数据都是连续的，所以直接取首尾端即可
-	
-	
 	return true;
 }
 /**
@@ -301,11 +127,6 @@ bool phasorData::initData()
 			_rectf.setTop(valueB_list[valueB+1]);
 			_rectf.setBottom(valueB_list[valueB]);
 			mPiflist_rect.push_back(_rectf);
-//#define _DEBUG_
-#ifdef _DEBUG_
-			printf("left=%f,right=%f,top=%f.bottom=%f,\tx=%d,y=%d\n",_rectf.left(),_rectf.right(),_rectf.top(),_rectf.bottom(),valueA,valueB);
-#undef _DEBUG_
-#endif
 		}
 	}
 #pragma endregion
@@ -324,40 +145,10 @@ std::vector<qreal> phasorData::getaxis_x()
 		return axis_xlist;
 	//获取EMA的全部数据
 	auto iter = ListValues->begin();
-	switch (directionTyp)
+	if (isTruedir())
 	{
-	case X_Y:
-	{
-		if (getXTag().find("X") != std::string::npos && getYTag().find("Y") != std::string::npos)
-			iter++;
+		iter++;
 	}
-		break;
-	case X_Z:
-	{
-		if (getXTag().find("X") != std::string::npos && getYTag().find("Z") != std::string::npos)
-			iter++;
-	}
-		break;
-	case Y_Z:
-	{
-		if (getXTag().find("Y") != std::string::npos && getYTag().find("Z") != std::string::npos)
-			iter++;
-	}
-		break;
-	case R_Z:
-	{
-		if (getXTag().find("R") != std::string::npos && getYTag().find("Z") != std::string::npos)
-			iter++;
-	}
-		break;
-	case R_THETA:
-	{
-	}
-		break;
-	default:
-		break;
-	}
-	
 	Data::ValuesPtr datasetEmA = *iter;
 	axis_xlist.push_back(0);
 	for (auto iter_A = datasetEmA->begin(); iter_A != datasetEmA->end();iter_A++)
@@ -378,43 +169,10 @@ std::vector<qreal> phasorData::getaxis_y()
 	if (!ok&& !ListValues&& ListValues->size() == 0)
 		return axis_ylist;
 	auto iter = ListValues->begin();
-	switch (directionTyp)
+	if (!isTruedir())
 	{
-	case X_Y:
-	{
-		if (getXTag().find("X") != std::string::npos && getYTag().find("Y") != std::string::npos);
-		else
-			iter++;
-	}
-		break;
-	case X_Z:
-	{
-		if (getXTag().find("X") != std::string::npos && getYTag().find("Z") != std::string::npos);
-		else
-			iter++;
-	}
-		break;
-	case Y_Z:
-	{
-		if (getXTag().find("Y") != std::string::npos && getYTag().find("Z") != std::string::npos);
-		else
-			iter++;
-	}
-		break;
-	case R_Z:
-	{
-		if (getXTag().find("R") != std::string::npos && getYTag().find("Z") != std::string::npos);
-		else
-			iter++;
-	}
-		break;
-	case R_THETA:
 		iter++;
-		break;
-	default:
-		break;
 	}
-	
 	Data::ValuesPtr datasetEmB = *iter;
 	axis_ylist.push_back(0);
 	for (auto iterb = datasetEmB->begin(); iterb != datasetEmB->end();iterb++)
@@ -547,82 +305,19 @@ bool phasorData::initVectorData2(){
 	Data::ValuesPtr datasetEmA;
 	Data::ValuesPtr datasetEmB;
 	Data::ValuesPtr datasetEmC;
-	switch (directionTyp)
+	if (isTruedir())
 	{
-	case X_Y:
-	{
-		if (getXTag().find("X") != std::string::npos && getYTag().find("Y") != std::string::npos)
-		{
-			datasetEmB = *iter; iter++;
-			datasetEmA = *iter; iter++;
-			datasetEmC = *iter;
-		}
-		else
-		{
-			datasetEmA = *iter; iter++;
-			datasetEmB = *iter; iter++;
-			datasetEmC = *iter;
-		}
+		datasetEmB = *iter; iter++;
+		datasetEmA = *iter; iter++;
+		datasetEmC = *iter;
 	}
-		break;
-	case X_Z:
-	{
-		if (getXTag().find("X") != std::string::npos && getYTag().find("Z") != std::string::npos)
-		{
-			datasetEmB = *iter; iter++;
-			datasetEmA = *iter; iter++;
-			datasetEmC = *iter;
-		}
-		else
-		{
-			datasetEmA = *iter; iter++;
-			datasetEmB = *iter; iter++;
-			datasetEmC = *iter;
-		}
-	}
-		break;
-	case Y_Z:
-	{
-		if (getXTag().find("Y") != std::string::npos && getYTag().find("Z") != std::string::npos)
-		{
-			datasetEmB = *iter; iter++;
-			datasetEmA = *iter; iter++;
-			datasetEmC = *iter;
-		}
-		else
-		{
-			datasetEmA = *iter; iter++;
-			datasetEmB = *iter; iter++;
-			datasetEmC = *iter;
-		}
-	}
-		break;
-	case R_Z:
-	{
-		if (getXTag().find("R") != std::string::npos && getYTag().find("Z") != std::string::npos)
-		{
-			datasetEmB = *iter; iter++;
-			datasetEmA = *iter; iter++;
-			datasetEmC = *iter;
-		}
-		else
-		{
-			datasetEmA = *iter; iter++;
-			datasetEmB = *iter; iter++;
-			datasetEmC = *iter;
-		}
-	}
-		break;
-	case R_THETA:
+	else
 	{
 		datasetEmA = *iter; iter++;
 		datasetEmB = *iter; iter++;
 		datasetEmC = *iter;
 	}
-		break;
-	default:
-		break;
-	}
+
 	if (mPiflist_rect.empty())
 		return false;
 	//获取起点p1
@@ -632,7 +327,6 @@ bool phasorData::initVectorData2(){
 	for (auto i = 0; i < mPiflist_rect.size(); i++)
 	{
 		p1.push_back(QPointF(mPiflist_rect[i].left(), mPiflist_rect[i].bottom()));
-	//	printf("x:%f,y:%f\n",p1[i].x(),p1[i].y());
 	}	
 	Data::Rang xr = getXRang();
 	Data::Rang yr = getYRang();
