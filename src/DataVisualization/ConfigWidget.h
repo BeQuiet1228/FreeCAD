@@ -35,7 +35,6 @@ class DATA_VISUALIZATION_EXPORT ConfigWidget :public QWidget
 {
 	Q_OBJECT
 public:
-	
 public:
 	explicit ConfigWidget(QWidget* panter = nullptr);
 	~ConfigWidget();
@@ -70,6 +69,8 @@ public Q_SLOTS:
 	void veccolorClicked();
 	//相空间图
 	void partcleColorclicked();
+	//等位图
+	void changeUser_defined(int);
 private:
 	void loadxmlConfig();
 	void SetAllreRender(QPushButton*);

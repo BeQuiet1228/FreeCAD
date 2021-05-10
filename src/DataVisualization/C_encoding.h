@@ -10,10 +10,9 @@
 
 #define	ENCODING_GB2312 0x01u
 #define	ENCODING_UTF8	0x02u
-
 class QString;
 class QColor;
 QString EXTERN_C DATA_VISUALIZATION_EXPORT GetEncodingstr(const char*,unsigned int);
-QString QColorToQstring(QColor&);
-QColor QStringToQColor(QString colorstr);
+QString EXTERN_C DATA_VISUALIZATION_EXPORT QColorToQstring(QColor&);
+QColor EXTERN_C DATA_VISUALIZATION_EXPORT QStringToQColor(QString colorstr);
 #endif
