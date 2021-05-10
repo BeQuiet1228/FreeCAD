@@ -9,6 +9,9 @@
 #include<QPushButton>
 #include <QRegExp>
 #include<QStringList>
+#include "qwt/qwt_scale_widget.h"
+#include"qwt/qwt_scale_engine.h";
+#include "ContourRender.h"
 /**
 * @brief ConfigWidget::ConfigWidget
 * @param QWidget* panter
@@ -101,6 +104,19 @@ void ConfigWidget::initUI()
 		ui->user_definedtableWidget->setHorizontalHeaderLabels(header);
 		ui->user_definedtableWidget->resizeColumnsToContents();
 		ui->user_definedtableWidget->setShowGrid(false);
+		//µÈÎ»Í¼Ê¾Àý
+		//gridLayout = new QGridLayout(ui->colorscale);
+		boxLayout = new QBoxLayout(QBoxLayout::Direction::BottomToTop,ui->colorscale);
+		scaleWIdget = new QwtScaleWidget(QwtScaleDraw::BottomScale, ui->colorscale);
+		scaleWIdget->setColorBarEnabled(true);
+		scaleWIdget->setColorBarWidth(20);
+		scaleEngine = new QwtLinearScaleEngine;
+		QwtInterval interval(0, 1);
+		scaleWIdget->setColorMap(interval,new ColorMap);
+		scaleWIdget->setScaleDiv(scaleEngine->divideScale(0,1,5,6,0));
+		ui->colorscale->setLayout(boxLayout);
+		boxLayout->addWidget(scaleWIdget);
+		boxLayout->addWidget(new QWidget(ui->colorscale));
 	}
 }
 

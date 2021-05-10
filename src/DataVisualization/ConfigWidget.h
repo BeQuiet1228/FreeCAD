@@ -5,6 +5,10 @@
 #include <map>
 #include "exportConfig.hpp"
 class QPushButton;
+//class QGridLayout;
+class QBoxLayout;
+class QwtScaleWidget;
+class QwtScaleEngine;
 namespace Mas{
 	enum DATA_VISUALIZATION_EXPORT structTexture
 	{
@@ -92,6 +96,11 @@ private:
 	Mas::Setconfig partcleConfig;
 	//刻度相关的参数
 	Mas::Setconfig axisinfo;
+	//等位图相关
+	//QGridLayout* gridLayout;
+	QBoxLayout* boxLayout;
+	QwtScaleWidget *scaleWIdget;
+	QwtScaleEngine *scaleEngine;
 private:
 	Ui::ConfigWidget *ui;
 };

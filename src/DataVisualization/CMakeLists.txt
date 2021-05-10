@@ -114,10 +114,8 @@ SET(SRC main.cpp
 	)
 SET(SRC_TOOL ConfigWidget.h
 	ConfigWidget.cpp
-	#Doublesilder.h
-	#Doublesilder.cpp
-	#AxisValChangeCtl.h
-	#AxisValChangeCtl.cpp
+	Arrowctrl.h
+	Arrowctrl.cpp
 	)
 #处理ui和qrc文件
 if (BUILD_QT5)
