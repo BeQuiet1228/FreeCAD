@@ -23,3 +23,4 @@ void ArrowCtrl::mouseReleaseEvent(QMouseEvent* event)
 {
 	printf(" Û±Í Õ∑≈");
 }
+#include"moc_Arrowctrl.cpp"

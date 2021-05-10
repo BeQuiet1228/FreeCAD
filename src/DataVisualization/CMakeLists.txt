@@ -26,7 +26,8 @@ SET(MY_MOC_HDR RenderThread.h
 	ListTreeWidget.h
 	Dataresource.h
 	DoubleSilder.h
-	ConfigWidget.h)
+	ConfigWidget.h
+	Arrowctrl.h)
 
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
