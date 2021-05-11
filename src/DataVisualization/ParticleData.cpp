@@ -1,7 +1,7 @@
 #include "ParticleData.h"
 
 ParticleData::ParticleData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
-	:XYData(h5Data, mod), isLoadPoint(false)
+	:DirData(h5Data, mod), isLoadPoint(false)
 {
 
 }
@@ -62,12 +62,23 @@ bool ParticleData::loadPointHard()
 	//预分配vector的空间
 	particles.reserve(listValues->size() / 3 + 10);
 
+	//判断数据方向与结构图方向是否一致、不一致对数据位置进行一定调整
+	unsigned int xIndex, yIndex;
+	if (!isTruedir())
+	{
+		xIndex = 1;
+		yIndex = 2;
+	}else {
+		xIndex = 2;
+		yIndex = 1;
+	}
+	//获取粒子数据
 	Particle p;
 	Data::ValuesPtr values = *(listValues->begin());
 	for (unsigned int i = 2; i < values->size(); i = i + 3)
 	{
-		p.d2 = values->at(i - 2);
-		p.d1 = values->at(i - 1);
+		p.d2 = values->at(i - yIndex);
+		p.d1 = values->at(i - xIndex);
 		p.type = values->at(i);
 		particles.push_back(p);
 	}
@@ -154,8 +165,8 @@ void ParticleData::transitionData()
 	{
 		for (auto part = particles.begin(); part != particles.end(); part++)
 		{
-			part->x = part->d1*sin(part->d2);
-			part->y = part->d1*cos(part->d2);
+			part->x = part->d2*sin(part->d1);
+			part->y = part->d2*cos(part->d1);
 		}
 	}else{
 		for (auto part = particles.begin(); part != particles.end(); part++)

@@ -3,8 +3,8 @@
 #include <mutex>
 #include <memory>
 #include <vector>
-
-class ParticleData :public XYData{
+#include "DirData.h"
+class ParticleData :public DirData{
 public:
 	struct Particle{
 		Particle():x(0.0), y(0.0), type(0),d1(0.0),d2(0.0){};
