@@ -254,3 +254,12 @@ void Renderer::displayPointInformation(QPainter* painter, QPointF* point , std::
 	for (auto i = 0; i < varstrlist.size(); i++)
 		painter->drawText(displayRect.x() + 10, displayRect.y() + (perHeight + 3)*(i + 1), varstrlist[i]);
 }
+
+/**
+* @brief  Renderer::setDefaultRang 设置坐标系默认取值范围
+* @param  QSize & size  
+* @return bool  
+*/
+bool Renderer::setDefaultRang(QSize& size){
+	return setDefaultRang(); 
+}

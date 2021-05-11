@@ -66,7 +66,7 @@ public:
 	virtual bool drawPointImage() = 0;
 	//设置为默认渲染范围
 	virtual bool setDefaultRang() = 0;
-	virtual bool setDefaultRang(QSize&){ return true; }
+	virtual bool setDefaultRang(QSize&);
 	//初始化数据
 	virtual void dataInit();
 	virtual void loadconfig(){};

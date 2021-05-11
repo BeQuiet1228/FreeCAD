@@ -40,6 +40,7 @@ public:
 	virtual bool drawPointImage() override;
 	virtual bool setDefaultRang() override;
 	virtual void dataInit() override;
+	virtual bool setDefaultRang(QSize&) override;
 private:
 	bool drawImage_rect_space();
 	bool drawImage_rand_space();

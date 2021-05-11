@@ -272,6 +272,10 @@ QPointF ParticleRenderer::transitionPoint(const QPointF& point)
 	QPointF po(x, y);
 	return po;
 }
+/**
+* @brief  ParticleRenderer::loadconfig 加载配置
+* @return void  
+*/
 void ParticleRenderer::loadconfig()
 {
 	Config::GetInstance()->loadConfig();
@@ -280,4 +284,37 @@ void ParticleRenderer::loadconfig()
 	particleColor = QStringToQColor(QString::fromStdString(particleGroup.getValue("color")));
 	particleSize = atoi(particleGroup.getValue("size").c_str());
 	isAA = atoi(particleGroup.getValue("isAlis").c_str());
+}
+
+/**
+* @brief  ParticleRenderer::setDefaultRang 设置坐标系默认取值范围
+* @param  QSize & size  
+* @return bool  
+*/
+bool ParticleRenderer::setDefaultRang(QSize& size)
+{
+	auto pData = std::dynamic_pointer_cast<ParticleData>(data);
+	auto type = pData->getDirectionType();
+	switch (type)
+	{
+	case R_THETA:
+	{
+		auto xr = pData->getXRang();
+		auto yr = pData->getYRang();
+		float scale_x = (float)size.width() / (float)size.height();
+		float xWidth = (xr.max - xr.min)*scale_x;
+		xr.min = -xWidth / 2;
+		xr.max = xWidth / 2;
+		setXRang(xr);
+		setYRang(yr);
+		return true;
+	}
+		break;
+	default:
+	{
+		return setDefaultRang();
+	}
+		break;
+	}
+	
 }
