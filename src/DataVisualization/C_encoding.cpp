@@ -35,10 +35,8 @@ QString QColorToQstring(QColor& color)
 * @param  QString colorstr  
 * @return QT_NAMESPACE::QColor  
 */
-#include <QDebug>
 QColor QStringToQColor(QString colorstr)
 {
-	//qDebug() << colorstr;
 	std::string color=colorstr.toStdString();
 	unsigned int colorR=0,colorG=0,colorB=0,colorA=0;
 	int len = color.length();

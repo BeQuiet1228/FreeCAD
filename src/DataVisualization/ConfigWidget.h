@@ -5,6 +5,10 @@
 #include <map>
 #include "exportConfig.hpp"
 class QPushButton;
+//class QGridLayout;
+class QBoxLayout;
+class QwtScaleWidget;
+class QwtScaleEngine;
 namespace Mas{
 	enum DATA_VISUALIZATION_EXPORT structTexture
 	{
@@ -35,7 +39,6 @@ class DATA_VISUALIZATION_EXPORT ConfigWidget :public QWidget
 {
 	Q_OBJECT
 public:
-	
 public:
 	explicit ConfigWidget(QWidget* panter = nullptr);
 	~ConfigWidget();
@@ -70,6 +73,8 @@ public Q_SLOTS:
 	void veccolorClicked();
 	//相空间图
 	void partcleColorclicked();
+	//等位图
+	void changeUser_defined(int);
 private:
 	void loadxmlConfig();
 	void SetAllreRender(QPushButton*);
@@ -91,6 +96,11 @@ private:
 	Mas::Setconfig partcleConfig;
 	//刻度相关的参数
 	Mas::Setconfig axisinfo;
+	//等位图相关
+	//QGridLayout* gridLayout;
+	QBoxLayout* boxLayout;
+	QwtScaleWidget *scaleWIdget;
+	QwtScaleEngine *scaleEngine;
 private:
 	Ui::ConfigWidget *ui;
 };

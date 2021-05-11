@@ -1,7 +1,7 @@
 #pragma once
 #ifndef _PHASORDATA_H_
 #define _PHASORDATA_H_
-#include "Data.h"
+#include "DirData.h"
 #include <QRectF>
 #include <QVector>
 typedef struct phasorinfo 
@@ -18,7 +18,7 @@ public:
 	}
 }PIF;
 
-class phasorData :public XYData
+class phasorData :public DirData
 {
 public:
 	phasorData(Hdf5Data& heData,const RunMod& mod=SINGLE_THREAD);

@@ -8,6 +8,10 @@
 #include "CustomConfig.h"
 #include<QPushButton>
 #include <QRegExp>
+#include<QStringList>
+#include "qwt/qwt_scale_widget.h"
+#include"qwt/qwt_scale_engine.h";
+#include "ContourRender.h"
 /**
 * @brief ConfigWidget::ConfigWidget
 * @param QWidget* panter
@@ -24,8 +28,6 @@ ConfigWidget::ConfigWidget(QWidget* panter) :QWidget(panter), ui(new Ui::ConfigW
 ConfigWidget::~ConfigWidget(){
 
 }
-
-
 /*
 * @brief  ConfigWidget::initUI 初始化UI
 * @return void  
@@ -89,6 +91,33 @@ void ConfigWidget::initUI()
 	QRegExp rx("^(\\d{0,2})$");
 	QValidator * validator = new QRegExpValidator(rx, this);
 	ui->partcleEdit->setValidator(validator);
+	{
+		//等位图
+		ui->equal_ratiovaltableWidget;
+		ui->epuivalencevaltableWidget;
+		ui->user_definedtableWidget;
+		connect(ui->levelnumber, SIGNAL(currentIndexChanged(int)), this, SLOT(changeUser_defined(int)));
+		ui->user_definedtableWidget->setEditTriggers(QAbstractItemView::CurrentChanged);
+		ui->user_definedtableWidget->setColumnCount(1);
+		QStringList header;
+		header << GetEncodingstr("自定义取值区间",ENCODING_GB2312);
+		ui->user_definedtableWidget->setHorizontalHeaderLabels(header);
+		ui->user_definedtableWidget->resizeColumnsToContents();
+		ui->user_definedtableWidget->setShowGrid(false);
+		//等位图示例
+		//gridLayout = new QGridLayout(ui->colorscale);
+		boxLayout = new QBoxLayout(QBoxLayout::Direction::BottomToTop,ui->colorscale);
+		scaleWIdget = new QwtScaleWidget(QwtScaleDraw::BottomScale, ui->colorscale);
+		scaleWIdget->setColorBarEnabled(true);
+		scaleWIdget->setColorBarWidth(20);
+		scaleEngine = new QwtLinearScaleEngine;
+		QwtInterval interval(0, 1);
+		scaleWIdget->setColorMap(interval,new ColorMap);
+		scaleWIdget->setScaleDiv(scaleEngine->divideScale(0,1,5,6,0));
+		ui->colorscale->setLayout(boxLayout);
+		boxLayout->addWidget(scaleWIdget);
+		boxLayout->addWidget(new QWidget(ui->colorscale));
+	}
 }
 
 /**
@@ -224,6 +253,34 @@ void ConfigWidget::saveclicked()
 	{
 		auto contourGroup = Group.getGroup("Contour");
 		(ui->concheckBox->checkState() == Qt::Checked) ? contourGroup.setSetting("isAlis", "1") : contourGroup.setSetting("isAlis", "0");
+		contourGroup.setSetting("valtype",ui->contourvalType->itemText(ui->contourvalType->currentIndex()).toStdString());
+		contourGroup.setSetting("vallevel", ui->levelnumber->itemText(ui->levelnumber->currentIndex()).toStdString());
+		//等比
+		auto equl_ratioGroup = contourGroup.getGroup("equl_ratio");
+		equl_ratioGroup.setSetting("equal_ratioval", ui->equal_ratioval->text().toStdString());
+		equl_ratioGroup.setSetting("equal_ratiosval", ui->equal_ratio_sval->text().toStdString());
+		equl_ratioGroup.setSetting(QString("equal_ratiolevel_0").toStdString(), QString("%1").arg(ui->equal_ratio_sval->text().toFloat()).toStdString());
+		for (auto index = 1; index < ui->levelnumber->itemText(ui->levelnumber->currentIndex()).toInt()+1;index++)
+		{
+			equl_ratioGroup.setSetting(QString("equal_ratiolevel_%1").arg(index).toStdString(), QString("%1").
+				arg(ui->equal_ratio_sval->text().toFloat()*index*ui->equal_ratioval->text().toFloat()).toStdString());
+		}
+		//等值
+		auto epuivalenceGroup = contourGroup.getGroup("epuivalence");
+		epuivalenceGroup.setSetting("epuivalenceval", ui->epuivalenceval->text().toStdString());
+		epuivalenceGroup.setSetting("epuivalencesval", ui->epuivalence_sval->text().toStdString());
+		for (auto index = 0; index < ui->levelnumber->itemText(ui->levelnumber->currentIndex()).toInt() + 1; index++)
+		{
+			epuivalenceGroup.setSetting(QString("epuivalenceslevel_%1").arg(index).toStdString(), QString("%1").
+				arg(ui->epuivalence_sval->text().toFloat() + index*ui->epuivalenceval->text().toFloat()).toStdString());
+		}
+		//自定义
+		auto user_definedGroup = contourGroup.getGroup("user_defined");
+		for (auto index = 0; index < ui->user_definedtableWidget->rowCount();index++)
+		{
+			QTableWidgetItem* item = ui->user_definedtableWidget->item(index, 0);
+			user_definedGroup.setSetting(QString("user_defined_%1").arg(index).toStdString(),item->text().toStdString());
+		}
 	}
 	Config::GetInstance()->saveFile();
 	ui->applicButtom->setEnabled(true);
@@ -453,10 +510,26 @@ void ConfigWidget::loadxmlConfig(){
 	}
 	//等位图
 	{
+		auto cleartableWidget = [&](QTableWidget* qtablewidget){
+			int row = qtablewidget->rowCount();
+			for (auto index = row - 1; index >= 0; index--)
+				qtablewidget->removeRow(index);
+		};
 		auto contourGroup = Group.getGroup("Contour");
 		ui->concheckBox->setCheckState(((QString::fromStdString(contourGroup.getValue("isAlis")).toInt() )==1) ?Qt::Checked:Qt::Unchecked);
-		//设置数值类型
-
+		toComboxIndex(ui->contourvalType, QString::fromStdString(contourGroup.getValue("valtype")));
+		toComboxIndex(ui->levelnumber, QString::fromStdString(contourGroup.getValue("vallevel")));
+		{
+			auto user_definedGroup = contourGroup.getGroup("user_defined");
+			cleartableWidget(ui->user_definedtableWidget);
+			for (auto index = 0; index < atoi(contourGroup.getValue("vallevel").c_str())+1;index++)
+			{
+				ui->user_definedtableWidget->insertRow(index);
+				//user_defined_0;
+				QString levelval = QString("user_defined_%1").arg(index);
+				ui->user_definedtableWidget->setItem(index, 0, new QTableWidgetItem( QString::fromStdString( user_definedGroup.getValue(levelval.toStdString()) ) ));
+			}
+		}
 	}
 }
 /**
@@ -512,19 +585,37 @@ void ConfigWidget::struct_2D_clicked(int _property, QPushButton* button){
 	button->setPalette(qpalette);
 	button->setText(QString("#%1").arg(QColorToQstring(color)));
 	struct2dinfo[_property] = QColorToQstring(color);
-	/*switch (_property)
+}
+
+/**
+* @brief  ConfigWidget::changeUser_defined 自定义列表修改
+* @param  int index  
+* @return void  
+*/
+void ConfigWidget::changeUser_defined(int index)
+{
+	int rowold=ui->user_definedtableWidget->rowCount();
+	int rownew=ui->levelnumber->itemText(index).toInt()+1;
+	if (rownew>rowold)
 	{
-	case Mas::Conductor_New:
-		struct2dinfo[Mas::Conductor_New] = QColorToQstring(color); break;
-	case Mas::Diolectric:
-		struct2dinfo[Mas::Diolectric] = QColorToQstring(color); break;
-	case Mas::Perfect_Conductor:
-		struct2dinfo[Mas::Perfect_Conductor] = QColorToQstring(color); break;
-	case Mas::Permeability:
-		struct2dinfo[Mas::Permeability] = QColorToQstring(color); break;
-	case Mas::Vacuo:
-		struct2dinfo[Mas::Vacuo] = QColorToQstring(color); break;
-	}*/
+		for (auto i = 0; i < rownew - rowold;i++)
+		{
+			int row = ui->user_definedtableWidget->rowCount();
+			ui->user_definedtableWidget->insertRow(row);
+			QTableWidgetItem* item = new QTableWidgetItem(QString("123456"));
+			ui->user_definedtableWidget->setItem(row, 0, item);
+		}
+		ui->user_definedtableWidget->resizeRowsToContents();
+	}
+	else if (rowold>rownew)
+	{
+		for (auto  i = rowold; i >=0; i--)
+		{
+			int row = ui->user_definedtableWidget->rowCount();
+			if (row==rownew) break;
+			ui->user_definedtableWidget->removeRow(row-1);
+		}
+	}
 }
 /**
 * @brief  Mas::Setconfig::Setconfig

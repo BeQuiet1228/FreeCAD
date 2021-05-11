@@ -76,6 +76,8 @@ SET(PHASOR_SRC phasorData.h
 	phasorData.cpp
 	phasorRenderer.h
 	phasorRenderer.cpp
+	DirData.cpp
+	DirData.h
 )
 SET(CONFIG_SRC CustomConfig.cpp
 	CustomConfig.h

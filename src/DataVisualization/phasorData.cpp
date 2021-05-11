@@ -1,5 +1,5 @@
 #include"phasorData.h"
-phasorData::phasorData(Hdf5Data& heData, const RunMod& mod) :XYData(heData,mod)
+phasorData::phasorData(Hdf5Data& heData, const RunMod& mod) :DirData(heData,mod)
 {
 
 }
@@ -27,9 +27,20 @@ bool phasorData::loadPoint()
 	if (!ok && !ListValues &&ListValues->size() == 0)
 		return false;
 	auto it = (ListValues->begin());
+	auto xtag = getXTag();
+	auto ytag = getYTag();
 	//获取横坐标的个数
-	posxSize = (*it)->size(); it++;
-	posySize = (*it)->size();
+	if (isTruedir())
+	{
+		posySize = (*it)->size(); it++;
+		posxSize = (*it)->size();
+	}
+	else
+	{
+		posxSize = (*it)->size(); it++;
+		posySize = (*it)->size();
+	}
+	
 	//初始化范围
 	initXYRang();
 	//初始化图形数据
@@ -56,19 +67,31 @@ bool phasorData::initXYRang(){
 	auto it = ListValues->begin();
 	Data::ValuesPtr datasetEmA = *it; it++;
 	Data::ValuesPtr datasetEmB = *it;
-	//因为datasetEmA和datasetEmB的数据都是连续的，所以直接取首尾端即可
-	//x
-	auto itx = datasetEmA->begin();
-	xr.min = 0;
-	itx = datasetEmA->end() - 1;
-	xr.max = *itx;
-	setXRang(xr);
-	//y
-	auto ity = datasetEmB->begin();
-	yr.min = 0;
-	ity = datasetEmB->end() - 1;
-	yr.max = *ity;
-	setYRang(yr);
+	if (isTruedir())
+	{
+		//x
+		xr.min = 0;
+		xr.max = *(datasetEmB->end() - 1);
+		setXRang(xr);
+		//y
+		yr.min = 0;
+		yr.max = *(datasetEmA->end() - 1);
+		setYRang(yr);
+	}
+	else
+	{
+		auto itx = datasetEmA->begin();
+		xr.min = 0;
+		itx = datasetEmA->end() - 1;
+		xr.max = *itx;
+		setXRang(xr);
+		//y
+		auto ity = datasetEmB->begin();
+		yr.min = 0;
+		ity = datasetEmB->end() - 1;
+		yr.max = *ity;
+		setYRang(yr);
+	}
 	return true;
 }
 /**
@@ -104,11 +127,6 @@ bool phasorData::initData()
 			_rectf.setTop(valueB_list[valueB+1]);
 			_rectf.setBottom(valueB_list[valueB]);
 			mPiflist_rect.push_back(_rectf);
-//#define _DEBUG_
-#ifdef _DEBUG_
-			printf("left=%f,right=%f,top=%f.bottom=%f,\tx=%d,y=%d\n",_rectf.left(),_rectf.right(),_rectf.top(),_rectf.bottom(),valueA,valueB);
-#undef _DEBUG_
-#endif
 		}
 	}
 #pragma endregion
@@ -127,6 +145,10 @@ std::vector<qreal> phasorData::getaxis_x()
 		return axis_xlist;
 	//获取EMA的全部数据
 	auto iter = ListValues->begin();
+	if (isTruedir())
+	{
+		iter++;
+	}
 	Data::ValuesPtr datasetEmA = *iter;
 	axis_xlist.push_back(0);
 	for (auto iter_A = datasetEmA->begin(); iter_A != datasetEmA->end();iter_A++)
@@ -146,7 +168,11 @@ std::vector<qreal> phasorData::getaxis_y()
 	bool ok = autoModGetSourceData(ListValues);
 	if (!ok&& !ListValues&& ListValues->size() == 0)
 		return axis_ylist;
-	auto iter = ListValues->begin(); iter++;
+	auto iter = ListValues->begin();
+	if (!isTruedir())
+	{
+		iter++;
+	}
 	Data::ValuesPtr datasetEmB = *iter;
 	axis_ylist.push_back(0);
 	for (auto iterb = datasetEmB->begin(); iterb != datasetEmB->end();iterb++)
@@ -276,9 +302,22 @@ bool phasorData::initVectorData2(){
 	if (!ok&& !DataValueslist&& DataValueslist->size() == 0)
 		return false;
 	auto iter = DataValueslist->begin();
-	Data::ValuesPtr datasetEmA = *iter; iter++;
-	Data::ValuesPtr datasetEmB = *iter; iter++;
-	Data::ValuesPtr datasetEmC = *iter;
+	Data::ValuesPtr datasetEmA;
+	Data::ValuesPtr datasetEmB;
+	Data::ValuesPtr datasetEmC;
+	if (isTruedir())
+	{
+		datasetEmB = *iter; iter++;
+		datasetEmA = *iter; iter++;
+		datasetEmC = *iter;
+	}
+	else
+	{
+		datasetEmA = *iter; iter++;
+		datasetEmB = *iter; iter++;
+		datasetEmC = *iter;
+	}
+
 	if (mPiflist_rect.empty())
 		return false;
 	//获取起点p1
@@ -288,7 +327,6 @@ bool phasorData::initVectorData2(){
 	for (auto i = 0; i < mPiflist_rect.size(); i++)
 	{
 		p1.push_back(QPointF(mPiflist_rect[i].left(), mPiflist_rect[i].bottom()));
-	//	printf("x:%f,y:%f\n",p1[i].x(),p1[i].y());
 	}	
 	Data::Rang xr = getXRang();
 	Data::Rang yr = getYRang();
