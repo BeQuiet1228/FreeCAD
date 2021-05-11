@@ -1,5 +1,5 @@
 #include "TimeData.h"
-
+#include "DataInformationGetter.h"
 TimeData::TimeData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
 	:XYData(h5Data, mod)
 {
@@ -33,7 +33,20 @@ bool TimeData::loadPoint()
 	initXYRang();
 
 	return true;
-}/**
+}
+
+std::string TimeData::getInformationTitle()
+{
+	std::string title;
+	title += "观察分量:";
+	title += DataInformationGetter::getObserveObejct(headList.at(2)) + "\n";
+	title += "观测面:\n";
+	title += DataInformationGetter::getObserveFace(headList.at(15)) + "\n";
+
+	return title;
+}
+
+/**
 * @brief TimeData::getPoint 根据索引给出一个点
 * @param const int & index
 * @return QPointF

@@ -18,6 +18,8 @@ public:
 	unsigned int findIndexFromXValueL(const float& x) override;
 	//载入点数据
 	bool loadPoint() override;
+	//获取信息
+	std::string getInformationTitle();
 protected:
 	//初始化xy的范围
 	bool initXYRang() override;

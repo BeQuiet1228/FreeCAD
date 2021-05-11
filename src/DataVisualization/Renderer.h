@@ -69,4 +69,6 @@ public:
 	//初始化数据
 	virtual void dataInit();
 	virtual void loadconfig(){};
+	//获取图表信息
+	virtual std::string getInformationTitile();
 };

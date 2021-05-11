@@ -1,5 +1,5 @@
 #include "ParticleData.h"
-
+#include "DataInformationGetter.h"
 ParticleData::ParticleData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
 	:DirData(h5Data, mod), isLoadPoint(false)
 {
@@ -122,6 +122,17 @@ ParticleData::Particle ParticleData::getParticle(const unsigned int& index)
 ParticleData::Particle ParticleData::getParticleHard(const unsigned int& index)
 {
 	return particles.at(index);
+}
+
+std::string ParticleData::getInformationTitle()
+{
+	std::string title;
+	title += "观察时间:";
+	title += DataInformationGetter::getObserveTime(headList.at(11)) + "\n";
+	title += "观察分量:";
+	title += DataInformationGetter::getObserveObejct(headList.at(2)) + "\n";
+
+	return title;
 }
 
 /**

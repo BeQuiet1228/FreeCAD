@@ -40,6 +40,8 @@ public:
 	//根据索引获取一个粒子数据
 	Particle getParticle(const unsigned int& index);
 	Particle getParticleHard(const unsigned int& index);
+	//获取图表信息
+	std::string getInformationTitle() override;
 protected:
 	bool initXYRang() override;
 	virtual void restorDeriveData(){};
