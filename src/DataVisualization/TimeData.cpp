@@ -72,7 +72,7 @@ unsigned int TimeData::findIndexFromXValueL(const float& x)
 	unsigned int index = x / step;
 	//如果索引超出范围则返回0
 	if (index > getPointSize())
-		return 0;
+		return getPointSize();
 	return index;
 }
 
