@@ -70,24 +70,24 @@ bool phasorData::initXYRang(){
 	if (isTruedir())
 	{
 		//x
-		xr.min = 0;
+		xr.min = *(datasetEmB->begin());
 		xr.max = *(datasetEmB->end() - 1);
 		setXRang(xr);
 		//y
-		yr.min = 0;
+		yr.min = *(datasetEmA->begin());
 		yr.max = *(datasetEmA->end() - 1);
 		setYRang(yr);
 	}
 	else
 	{
 		auto itx = datasetEmA->begin();
-		xr.min = 0;
+		xr.min = *(datasetEmA->begin());
 		itx = datasetEmA->end() - 1;
 		xr.max = *itx;
 		setXRang(xr);
 		//y
 		auto ity = datasetEmB->begin();
-		yr.min = 0;
+		yr.min = *ity;
 		ity = datasetEmB->end() - 1;
 		yr.max = *ity;
 		setYRang(yr);

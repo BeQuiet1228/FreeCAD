@@ -148,6 +148,12 @@ DirectionType Data::stringToDirection(const std::string& str)
 		direction = Z;
 	else if (str == "R")
 		direction = R;
+	else if (str == "X1")
+		direction = X;
+	else if (str == "X2")
+		direction = Y;
+	else if (str == "X3")
+		direction = Z;
 	else if (str == "R*cos")
 		direction = R;
 	else if (str == "R*sin")

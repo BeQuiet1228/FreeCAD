@@ -158,6 +158,7 @@ void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
 {
 	//初始化数据
 	rd->dataInit();
+	//rd->setDefaultRang(canvas->size());
 	rd->setDefaultRang();
 	rd->loadconfig();
 	this->mainRenderer = rd;
