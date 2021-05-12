@@ -25,7 +25,7 @@ public:
 	~DataSourceManage();
 public:
 	void init(ListTreeWidget* ptr,Plot* p);
-	int initStructData(Hdf5Data data);
+	int initStructData(Hdf5Data& data);
 	void DisPlayPlot(Hdf5Data data,int _type=0);
 	void DataClear();
 	bool isbind();
@@ -38,8 +38,8 @@ public Q_SLOTS :
 	void clearMap();
 	void loadhdffile(std::string filepath);
 private:
-	Renderers CreateRendererList(Hdf5Data data);
-	Renderers CreateRenderer(Hdf5Data data, int _type);
+	Renderers CreateRendererList(Hdf5Data& data);
+	Renderers CreateRenderer(Hdf5Data& data, int _type);
 private:
 	std::map<std::string,Renderers> RendererManger;
 	std::vector<Hdf5Data> hdfDatelist;

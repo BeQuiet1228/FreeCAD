@@ -332,7 +332,7 @@ void ControlTreeWidget::outputStructFile(unsigned long threadID)
 	
 	Gui::MainWindow::getInstance()->ClearVisualizationTree();
 	Gui::MainWindow::getInstance()->showVisualizationTree();
-
+ 
 	Gui::Application::ToStruct(newStructData);
 }
 

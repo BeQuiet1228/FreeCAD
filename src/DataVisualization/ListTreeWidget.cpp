@@ -245,7 +245,7 @@ void ListTreeWidget::clear()
 * @param  int index  
 * @return void  
 */
-void ListTreeWidget::toStructh5df(Hdf5Data data, int index)
+void ListTreeWidget::toStructh5df(Hdf5Data& data, int index)
 {
 	if (data.name.find("struct") == std::string::npos)
 		return;
