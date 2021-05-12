@@ -96,7 +96,7 @@ StructData::StructData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf endpoin
 			m_Type = R_THETA; break;
 		}
 	}break;
-	case  Hdf5Data::CARTESIAN:
+	case  Hdf5Data::CYLINDER:
 	{
 		//当前为cylindrical
 		_ctype = C_TYPE::CYLINDRICAL;//z_R_the
@@ -109,10 +109,10 @@ StructData::StructData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf endpoin
 			m_Type = R_Z; break;
 		}
 	}break;
-	case Hdf5Data::CYLINDER:
+	case Hdf5Data::CARTESIAN:
 	{
 		//当前为cartexian
-		_ctype = C_TYPE::CARTESIAN;//X_Y_Z
+		_ctype = C_TYPE::CARTESIAN;
 		switch (res)
 		{
 		case 1:

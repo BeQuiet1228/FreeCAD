@@ -333,12 +333,11 @@ bool Struct2DRenderer::getPloy_grid(){
 			}
 		}
 	}
-//#define _Debug
-#ifdef _Debug
+
+#ifdef MY_DEBUG
 	static int index = 0;
 	QString _path = QString("C:/Users/ASUS/Desktop/save/savepmg_%1.png").arg(index++);
-	bool res = nImg.save(_path);
-#undef _Debug
+	nImg.save(_path);
 #endif
 	setImage(nImg);
 	return true;

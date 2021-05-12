@@ -21,8 +21,8 @@ int main(int argc, char *argv[])
 	ListTreeWidget treectrl;
 	manager.init(&treectrl, &p);
 	manager.loadhdffile(path);
-	p.showMaximized();
-	treectrl.show();
+	//p.showMaximized();
+	//treectrl.show();
 	ConfigWidget m_configwidget;
 	m_configwidget.show();
 #endif

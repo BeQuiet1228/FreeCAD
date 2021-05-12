@@ -12,6 +12,7 @@
 #include "qwt/qwt_scale_widget.h"
 #include"qwt/qwt_scale_engine.h";
 #include "ContourRender.h"
+#include "Arrowctrl.h"
 /**
 * @brief ConfigWidget::ConfigWidget
 * @param QWidget* panter
@@ -116,7 +117,8 @@ void ConfigWidget::initUI()
 		scaleWIdget->setScaleDiv(scaleEngine->divideScale(0,1,5,6,0));
 		ui->colorscale->setLayout(boxLayout);
 		boxLayout->addWidget(scaleWIdget);
-		boxLayout->addWidget(new QWidget(ui->colorscale));
+		arrowCtrl = new ArrowCtrl( ArrowCtrl::Direction::TopToBottom,ui->colorscale);
+		boxLayout->addWidget(arrowCtrl);
 	}
 }
 
@@ -595,7 +597,9 @@ void ConfigWidget::struct_2D_clicked(int _property, QPushButton* button){
 void ConfigWidget::changeUser_defined(int index)
 {
 	int rowold=ui->user_definedtableWidget->rowCount();
+	
 	int rownew=ui->levelnumber->itemText(index).toInt()+1;
+	arrowCtrl->setlevel(rownew);
 	if (rownew>rowold)
 	{
 		for (auto i = 0; i < rownew - rowold;i++)
