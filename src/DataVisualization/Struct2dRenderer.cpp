@@ -320,6 +320,26 @@ bool Struct2DRenderer::getPloy_grid(){
 	}
 	/**********************************************/
 	auto nImg = img1.mirrored(false, true);
+	//替换白色为透明色
+	QColor srColor(255, 255, 255, 255);
+	QColor desAlpha(0, 0, 0, 0);
+	for (int w = 0; w < nImg.width();++w)
+	{
+		for (int h = 0; h < nImg.height();++h)
+		{
+			if (nImg.pixel(w,h)==srColor.rgb())
+			{
+				nImg.setPixel(w, h, desAlpha.rgba());
+			}
+		}
+	}
+//#define _Debug
+#ifdef _Debug
+	static int index = 0;
+	QString _path = QString("C:/Users/ASUS/Desktop/save/savepmg_%1.png").arg(index++);
+	bool res = nImg.save(_path);
+#undef _Debug
+#endif
 	setImage(nImg);
 	return true;
 }

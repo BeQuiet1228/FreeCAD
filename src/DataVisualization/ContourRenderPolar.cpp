@@ -119,4 +119,31 @@ void ContourRenderPolar::loadconfig()
 	contourPolarparam.isAA = atoi(contourGroup.getValue("isAlis").c_str());
 }
 
+/**
+* @brief  ContourRenderPolar::setDefaultRang 设置坐标系默认取值范围
+* @param  QSize &  
+* @return bool  
+*/
+bool ContourRenderPolar::setDefaultRang(QSize& size){
+	Data::Rang xr, yr;
+	auto cd = std::dynamic_pointer_cast<ContourData>(Renderer::data);
+	xr = cd->getXRang();
+	yr = cd->getXRang();
+	yr.min = -yr.max;
+	setYRang(yr);
+	float width = size.width();
+	float height = size.height();
+	float scale_w = width / height;
+	xr.min = -xr.max;
+	float xWidth=(xr.max - xr.min) * scale_w;
+	xr.min = -xWidth / 2;
+	xr.max = xWidth / 2;
+	setXRang(xr);
+	Data::Rang vr = cd->getVlaueRange();
+	QList<double> contourLevels;
+	for (double level = (vr.length() / 10 + vr.min); level < vr.max; level += vr.length() / 10)
+		contourLevels += level;
+	setContourLevels(contourLevels);
+	return true;
+}
 

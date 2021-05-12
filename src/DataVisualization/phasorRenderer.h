@@ -18,6 +18,7 @@ public:
 	virtual bool setDefaultRang() override;
 	virtual void dataInit() override;
 	virtual void loadconfig() override;
+	virtual bool setDefaultRang(QSize& ) override;
 private:
 	QPointF GetarrowTop(QPointF endpoint,QPointF startpoint);
 	QPointF GetarrowBottom(QPointF endpoint,QPointF startpoint);

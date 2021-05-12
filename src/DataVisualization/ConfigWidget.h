@@ -9,6 +9,7 @@ class QPushButton;
 class QBoxLayout;
 class QwtScaleWidget;
 class QwtScaleEngine;
+class ArrowCtrl;
 namespace Mas{
 	enum DATA_VISUALIZATION_EXPORT structTexture
 	{
@@ -101,6 +102,7 @@ private:
 	QBoxLayout* boxLayout;
 	QwtScaleWidget *scaleWIdget;
 	QwtScaleEngine *scaleEngine;
+	ArrowCtrl* arrowCtrl;
 private:
 	Ui::ConfigWidget *ui;
 };

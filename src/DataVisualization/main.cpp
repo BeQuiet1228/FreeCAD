@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
 #if 1
 	std::string path = "C:/PICGUIC_L/Example/3d/MILO_C/MILO_C.h5";
 	//std::string path = "D:/MILO_D(1).h5";
+	//std::string path="D:/TEMP2.H5" ;
 	Plot p;
 	DataSourceManage manager;
 	ListTreeWidget treectrl;

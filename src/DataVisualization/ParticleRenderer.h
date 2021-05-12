@@ -15,6 +15,7 @@ public:
 	bool drawPointImage() override;
 	//新增加
 	virtual void loadconfig() override;
+	virtual bool setDefaultRang(QSize&) override;
 private:
 	ParticleData::Particle findParticle(const QPointF& point);
 	//绘制显示信息，暂时保留，未使用了

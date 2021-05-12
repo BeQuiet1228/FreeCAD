@@ -220,7 +220,6 @@ void ContourRender::loadconfig(){
 	//ªÒ»°øπæ‚≥› Ù–‘
 	contourParam.isAA = atoi(contourGroup.getValue("isAlis").c_str());
 }
-
 ContourParam::ContourParam() :isAA(true){
 
 }

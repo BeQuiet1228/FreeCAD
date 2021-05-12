@@ -146,7 +146,8 @@ void Plot::addSubRenderer(const std::shared_ptr<Renderer>& rd)
 		rd->setXRang(xr);
 		rd->setYRang(yr);
 	}else {
-		rd->setDefaultRang();
+		rd->setDefaultRang(canvas->size());
+		//rd->setDefaultRang();
 	}
 
 	subRenderers.push_back(rd);
@@ -161,7 +162,8 @@ void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
 {
 	//初始化数据
 	rd->dataInit();
-	rd->setDefaultRang();
+	rd->setDefaultRang(canvas->size());
+	//rd->setDefaultRang();
 	rd->loadconfig();
 	mainRenderer = rd;
 	autoMaxRender();
@@ -302,8 +304,9 @@ void Plot::autoMaxRender()
 {
 	if (!mainRenderer)
 		return;
+
 	//获取渲染器中最大的默认渲染范围
-	mainRenderer->setDefaultRang();
+	mainRenderer->setDefaultRang(canvas->size());
 	auto xr = mainRenderer->getXRang();
 	auto yr = mainRenderer->getYRang();
 
@@ -580,6 +583,11 @@ void Plot::canvasSelectPoint(QPoint point)
 	findPointRender(x, y);
 }
 
+/**
+* @brief  Plot::resizeEvent 大小变化
+* @param  QResizeEvent * event  
+* @return void  
+*/
 void Plot::resizeEvent(QResizeEvent *event)
 {
 	QWidget::resizeEvent(event);

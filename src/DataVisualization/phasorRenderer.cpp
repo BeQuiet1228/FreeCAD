@@ -478,6 +478,10 @@ void phasorRenderer::drawDisplayPoint(QPainter& painter, QPointF& postion, QPoin
 	painter.drawText(displatRect.x() + 10, displatRect.y() + 80, QString("Y_COEF:%1").arg(len_coef.y(),0,'E',2));
 }
 
+/**
+* @brief  phasorRenderer::loadconfig 读取配置
+* @return void  
+*/
 void phasorRenderer::loadconfig()
 {
 	Config::GetInstance()->loadConfig();
@@ -486,5 +490,13 @@ void phasorRenderer::loadconfig()
 	penSize =atoi(vectorGroup.getValue("vectorsize").c_str());
 	penColor = QStringToQColor(QString::fromStdString(vectorGroup.getValue("vectorColor")));
 	isAA = atoi(vectorGroup.getValue("isAlis").c_str());
-	qDebug() << penSize << penColor;
+}
+
+/**
+* @brief  phasorRenderer::setDefaultRang 设置默认坐标取值范围
+* @param  QSize & size  
+* @return bool  
+*/
+bool phasorRenderer::setDefaultRang(QSize& size){
+	return setDefaultRang();
 }

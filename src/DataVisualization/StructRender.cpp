@@ -835,3 +835,35 @@ void StructRender::loadconfig()
 	color_pen[Vacuo] = QStringToQColor(QString::fromStdString(structConfig.getValue("Vacuoline")));
 	isAA = atoi(structConfig.getValue("isAlis").c_str());
 }
+
+/**
+* @brief  StructRender::setDefaultRang 设置默认坐标取值范围
+* @param  QSize & size  
+* @return bool  
+*/
+bool StructRender::setDefaultRang(QSize& size){
+	std::shared_ptr<StructData> d = std::dynamic_pointer_cast<StructData>(data);
+	DirectionType _type = d->GetDirectionType();
+	switch (_type)
+	{
+	case R_THETA:
+	{
+		auto xr=d->getXRang();
+		auto yr=d->getYRang();
+		float scale_x = (float)size.width() / (float)size.height();
+		float xwidth = (xr.max - xr.min)*scale_x;
+		xr.min = -xwidth / 2;
+		xr.max = xwidth / 2;
+		setXRang(xr);
+		setYRang(yr);
+		return true;
+	}
+		break;
+	default:
+	{
+		return setDefaultRang();
+	}
+		break;
+	}
+	
+}

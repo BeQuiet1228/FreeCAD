@@ -12,6 +12,7 @@ public:
 	bool addListRang(std::list<Data::Rang> listRang) override;
 	bool drawPointImage() override;
 	bool setDefaultRang() override;
+	virtual bool setDefaultRang(QSize& ) override;
 	void dataInit() override;
 	virtual void loadconfig() override;
 	//ªÒ»°value∑∂Œß
