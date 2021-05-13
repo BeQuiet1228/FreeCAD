@@ -129,6 +129,11 @@ void ArrowCtrl::setlevel(int number)
 	}
 	drawImage();
 }
+/**
+* @brief  ArrowCtrl::resizeEvent 
+* @param  QResizeEvent * event  
+* @return void  
+*/
 void ArrowCtrl::resizeEvent(QResizeEvent * event)
 {
 	QSize pngsize(this->height(), this->height());
@@ -141,7 +146,11 @@ void ArrowCtrl::resizeEvent(QResizeEvent * event)
 	}
 	drawImage();
 }
-
+/**
+* @brief  ArrowCtrl::setimg 设置图像
+* @param  QImage & img  
+* @return void  
+*/
 void ArrowCtrl::setimg(QImage& img){
 	std::lock_guard<std::mutex> am(imgmutex);
 	if (nimg)
@@ -152,8 +161,38 @@ void ArrowCtrl::setimg(QImage& img){
 	else
 		nimg = new QImage(img);
 }
+/**
+* @brief  ArrowCtrl::getimg 获取图像
+* @return QT_NAMESPACE::QImage*  
+*/
 QImage* ArrowCtrl::getimg(){
 	std::lock_guard<std::mutex> am(imgmutex);
 	return nimg;
+}
+/**
+* @brief  ArrowCtrl::setVal 设置等级范围
+* @param  std::vector<float> &  
+* @return void  
+*/
+void ArrowCtrl::setVal(std::vector<float>& a){
+	val.clear();
+	val.reserve(a.size());
+	val = a;
+	for (auto index = 0; index < a.size();index++)
+	{
+		pos[index].moveCenter(QPointF(val[index] * this->size().width(), pos[index].center().y()));
+	}
+}
+/**
+* @brief  ArrowCtrl::getVal 获取等级范围
+* @return std::vector<float>  
+*/
+std::vector<float> ArrowCtrl::getVal(){
+	for (auto index = 0; index < pos.size();index++)
+	{
+		val[index] = pos[index].center().x() / (float)this->size().width();
+	}
+	std::sort(val.begin(), val.end());
+	return val;
 }
 #include"moc_Arrowctrl.cpp"

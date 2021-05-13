@@ -24,6 +24,8 @@ public:
 	void paintEvent(QPaintEvent * event);
 	void setlevel(int number);
 	void resizeEvent(QResizeEvent * event);
+	void setVal(std::vector<float>&);
+	std::vector<float> getVal();
 protected:
 	bool drawImage();
 	void setimg(QImage& img);
