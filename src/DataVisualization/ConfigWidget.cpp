@@ -83,6 +83,8 @@ void ConfigWidget::initUI()
 	connect(ui->vecColor, SIGNAL(clicked()), this, SLOT(veccolorClicked()));
 	//保存
 	connect(ui->applicButtom, SIGNAL(clicked()), this, SLOT(saveclicked()));
+	//取消
+	connect(ui->cancleButtom, SIGNAL(clicked()), this, SLOT(canclelicked()));
 	//刻度
 	connect(ui->axisColor, SIGNAL(clicked()), this, SLOT(axisColorclicked()));
 	connect(ui->axisvalColor, SIGNAL(clicked()), this,SLOT(axisValColorclicked()));
@@ -435,9 +437,10 @@ void ConfigWidget::loadxmlConfig(){
 			if (combox->itemText(i) == str)
 			{
 				combox->setCurrentIndex(i);
-				break;
+				return;
 			}
 		}
+		combox->setCurrentIndex(0);
 	};
 	//结构图
 	{
@@ -531,7 +534,7 @@ void ConfigWidget::loadxmlConfig(){
 		ui->concheckBox->setCheckState(((QString::fromStdString(contourGroup.getValue("isAlis")).toInt() )==1) ?Qt::Checked:Qt::Unchecked);
 		toComboxIndex(ui->contourvalType, QString::fromStdString(contourGroup.getValue("valtype")));
 		toComboxIndex(ui->levelnumber, QString::fromStdString(contourGroup.getValue("vallevel")));
-		int levelNumber = atoi(contourGroup.getValue("vallevel").c_str());
+		int levelNumber = ui->levelnumber->itemText(ui->levelnumber->currentIndex()).toInt();
 		{
 			auto user_definedGroup = contourGroup.getGroup("user_defined");
 			cleartableWidget(ui->user_definedtableWidget);
@@ -542,13 +545,29 @@ void ConfigWidget::loadxmlConfig(){
 				ui->user_definedtableWidget->setItem(index, 0, new QTableWidgetItem( QString::fromStdString(user_definedGroup.getValue(levelval.toStdString()))));
 			}
 		}
+		{
+			//等比
+			auto equl_ratioGroup = contourGroup.getGroup("equl_ratio");
+			ui->equal_ratioval->setText(QString::fromStdString(equl_ratioGroup.getValue("equal_ratioval")));
+			ui->equal_ratio_sval->setText(QString::fromStdString(equl_ratioGroup.getValue("equal_ratiosval")));
+		}
+		{
+			//等值
+			auto epuivalenceGroup = contourGroup.getGroup("epuivalence");
+			ui->epuivalenceval->setText(QString::fromStdString( epuivalenceGroup.getValue("epuivalenceval") ));
+			ui->epuivalence_sval->setText(QString::fromStdString(epuivalenceGroup.getValue("epuivalencesval")));
+		}
 		auto levelColorval = contourGroup.getGroup("levelColorVal");
+		arrowCtrl->setlevel(levelNumber+1);
 		std::vector<float> val;
 		val.reserve(levelNumber+1);
 		for (auto index = 0; index < levelNumber + 1;++index)
 		{
 			std::string s_val = levelColorval.getValue(QString("level_%1").arg(index).toStdString());
-			val.push_back(atof(s_val.c_str()));
+			if (s_val!="")
+			{
+				val.push_back(atof(s_val.c_str()));
+			}
 		}
 		arrowCtrl->setVal(val);
 	}
@@ -639,6 +658,9 @@ void ConfigWidget::changeUser_defined(int index)
 			ui->user_definedtableWidget->removeRow(row-1);
 		}
 	}
+}
+void ConfigWidget::canclelicked()
+{
 }
 /**
 * @brief  Mas::Setconfig::Setconfig

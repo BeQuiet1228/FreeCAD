@@ -153,9 +153,19 @@ RendererPtr RendererFactory::creatStructRender(Hdf5Data h5d, DirectionType type)
 */
 RendererPtr RendererFactory::creatStructRender(Hdf5Data h5d, const _3DPointf& start, const _3DPointf& end)
 {
-	std::shared_ptr<StructData> _structdata(new StructData(h5d, start,end));
-	StructRender* _StructureRenderer = new StructRender(_structdata);
-	return RendererPtr(_StructureRenderer);
+	if (!(start == end))
+	{
+		std::shared_ptr<StructData> _structdata(new StructData(h5d, start, end));
+		StructRender* _StructureRenderer = new StructRender(_structdata);
+		return RendererPtr(_StructureRenderer);
+	}
+	else
+	{
+		//增加2d结构图的接口
+		std::shared_ptr<Struct2dData> _structdata(new Struct2dData(h5d));
+		Struct2DRenderer* struct2drenderer = new Struct2DRenderer(_structdata);
+		return RendererPtr(struct2drenderer);
+	}
 }
 
 
@@ -172,6 +182,7 @@ RendererPtr RendererFactory::creatContourStructRender(std::shared_ptr<ContourRen
 	if (v.size() == 4)
 	{
 	/*2d不分结构图方向，所以这里什么也不需要做 */
+
 	}else {
 		start._1st = v[0];
 		start._2rd = v[1];
@@ -179,6 +190,7 @@ RendererPtr RendererFactory::creatContourStructRender(std::shared_ptr<ContourRen
 		end._1st = v[3];
 		end._2rd = v[4];
 		end._3th = v[5];
+
 	}
 
 	

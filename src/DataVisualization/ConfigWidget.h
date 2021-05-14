@@ -48,6 +48,7 @@ protected:
 public Q_SLOTS:
 	//±£´æ
 	void saveclicked();
+	void canclelicked();
 	//¿Ì¶È±ê
 	void axisColorclicked();
 	void axisValColorclicked();

@@ -5,10 +5,20 @@
 #include <QPainter>
 #include <QPixmap>
 QString pngresource[] = { ":/Arrow/arrow1.png" };
+/**
+* @brief  ArrowCtrl::ArrowCtrl
+* @param  Direction direction  
+* @param  QWidget * parent  
+* @return   
+*/
 ArrowCtrl::ArrowCtrl(Direction direction, QWidget* parent) :QWidget(parent), mdirection(direction), nimg(nullptr)
 {
 
 }
+/**
+* @brief  ArrowCtrl::~ArrowCtrl
+* @return   
+*/
 ArrowCtrl::~ArrowCtrl(){
 	marrowmap.clear();
 	pos.clear();
@@ -175,6 +185,8 @@ QImage* ArrowCtrl::getimg(){
 * @return void  
 */
 void ArrowCtrl::setVal(std::vector<float>& a){
+	if (a.empty())
+		return;
 	val.clear();
 	val.reserve(a.size());
 	val = a;
