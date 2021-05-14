@@ -23,7 +23,12 @@ class phasorData :public DirData
 public:
 	phasorData(Hdf5Data& heData,const RunMod& mod=SINGLE_THREAD);
 	~phasorData();
+	enum DISMODE{
+		sizeToLen,
+		sizeToColor = 1,
+	};
 protected:
+
 	virtual void restorDeriveData() override;
 	//初始化xy的取值范围
 	virtual bool initXYRang();
@@ -67,6 +72,15 @@ public:
 	QVector<QPointF> Getp2Point();
 	float GetVecXScale();
 	float GetVecYScale();
+	DISMODE GetdisMode(){
+		return disMode;
+	}
+	std::vector<float> getScaleVal(){
+		return sizeScale;
+	}
+	void setdisMode(DISMODE a){
+		disMode = a;
+	}
 private:
 	//xy的范围
 	Rang xRang, yRang;
@@ -79,8 +93,10 @@ private:
 	QVector<QPointF> p1;//箭头起点
 	QVector <QPointF> p2;//箭头终点
 	QVector<QPointF> len_coef;//长度系数
+	std::vector<float> sizeScale;//大小系数
 	//获取x,y的缩放
 	float m_xScale;
 	float m_yScale;
+	DISMODE disMode;
 };
 #endif

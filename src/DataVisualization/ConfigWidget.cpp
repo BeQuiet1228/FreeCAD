@@ -234,6 +234,7 @@ void ConfigWidget::saveclicked()
 		vectorGroup.setSetting("vectorsize", vecsizestr);
 		vectorGroup.setSetting("vectorColor", vecconfig._2nd.toStdString());
 		(ui->veccheckBox->checkState() == Qt::Checked)?vectorGroup.setSetting("isAlis", "1"):vectorGroup.setSetting("isAlis", "0");
+		(ui->disMode->checkState() == Qt::Checked) ? vectorGroup.setSetting("disMode", "1") : vectorGroup.setSetting("disMode", "0");
 	}
 	//¿Ì¶È
 	{
@@ -501,6 +502,7 @@ void ConfigWidget::loadxmlConfig(){
 		QString vectorsize = QString::fromStdString(vectorGroup.getValue("vectorsize"));
 		toComboxIndex(ui->vectorSize, vectorsize);
 		ui->veccheckBox->setCheckState((QString::fromStdString(vectorGroup.getValue("isAlis")).toInt())?Qt::Checked:Qt::Unchecked);
+		ui->disMode->setCheckState((QString::fromStdString(vectorGroup.getValue("disMode")).toInt()) ? Qt::Checked : Qt::Unchecked);
 	}
 	//¿Ì¶È
 	{

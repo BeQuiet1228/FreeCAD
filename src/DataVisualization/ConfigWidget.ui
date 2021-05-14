@@ -69,7 +69,7 @@
       <enum>QTabWidget::Triangular</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -350,20 +350,20 @@
              <property name="minimumSize">
               <size>
                <width>0</width>
-               <height>58</height>
+               <height>100</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
                <width>16777215</width>
-               <height>58</height>
+               <height>100</height>
               </size>
              </property>
              <property name="title">
               <string>矢量图：</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_4">
-              <item row="0" column="0">
+              <item row="1" column="0">
                <layout class="QHBoxLayout" name="horizontalLayout_13">
                 <item>
                  <widget class="QLabel" name="label_8">
@@ -427,20 +427,7 @@
                 </item>
                </layout>
               </item>
-              <item row="0" column="3">
-               <spacer name="horizontalSpacer_5">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>626</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="0" column="1">
+              <item row="1" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_12">
                 <item>
                  <widget class="QLabel" name="label_9">
@@ -482,10 +469,30 @@
                 </item>
                </layout>
               </item>
-              <item row="0" column="2">
+              <item row="1" column="2">
                <widget class="QCheckBox" name="veccheckBox">
                 <property name="text">
                  <string>抗锯齿</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="3">
+               <spacer name="horizontalSpacer_5">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>626</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="0" column="0">
+               <widget class="QCheckBox" name="disMode">
+                <property name="text">
+                 <string>颜色表示大小</string>
                 </property>
                </widget>
               </item>
