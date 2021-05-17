@@ -126,7 +126,7 @@
 #include <Gui/Quarter/Quarter.h>
 #include "View3DViewerPy.h"
 #include <Gui/GuiInitScript.h>
-
+#include "PlotMDIView.h"
 #include <windows.h>
 #include <dbghelp.h>
 #include <LuaEditView.h>
@@ -308,7 +308,7 @@ void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
 		if (!((DocumentManager*)(doc->getDocument()))->iSbind())
 		{
 			Gui::TreeViewCtrl* m_lisTreeWidget = Gui::MainWindow::getInstance()->mTreeWidget;
-			((DocumentManager*)(doc->getDocument()))->bindTreeContrue((ListTreeWidget*)m_lisTreeWidget, nullptr);
+			((DocumentManager*)(doc->getDocument()))->bindTreeContrue((ListTreeWidget*)m_lisTreeWidget, (Plot*)ptr->GetViewPtr());
 		}
 		((DocumentManager*)(doc->getDocument()))->DisplatPlot(data, _type);
 	}
@@ -757,9 +757,9 @@ void Application::slotNewDocument(const App::Document& Doc)
 		auto mainWindow = Gui::MainWindow::getInstance();
 		mainWindow->addWindow(edit);
     }
-   /* else if (Doc.classID == 5) {
-        //什么都不做 打开结果数据工程
-    }*/
+	 else if (Doc.classID == 5) {
+		 pDoc->createView(PlotMDIView::getClassTypeId());
+		 }
     else {
 		pDoc->createView(View3DInventor::getClassTypeId());
 	}
@@ -1657,6 +1657,7 @@ void Application::initTypes(void)
     Gui::BaseView                               ::init();
     Gui::MDIView                                ::init();
     Gui::View3DInventor                         ::init();
+	Gui::PlotMDIView							::init();
     Gui::AbstractSplitView                      ::init();
     Gui::SplitView3DInventor                    ::init();
     // View Provider

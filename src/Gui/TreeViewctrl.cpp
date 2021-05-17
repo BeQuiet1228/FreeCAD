@@ -49,6 +49,10 @@ namespace Gui{
 			(DocumentManager*)(docM)->bindTreeContrue(nullptr, (Plot*)plot->GetViewPtr());
 			
 		}
+		else
+		{
+			(DocumentManager*)(docM)->bindTreeContrue(nullptr, (Plot*)ptr->GetViewPtr());
+		}
 		if (iter != datainfor.end())
 		{
 			//传入hdf5数据

@@ -43,7 +43,7 @@ void FileFormatH5::openOnce(const QString& fileList, App::Document* doc)
 	Gui::TreeViewCtrl* m_lisTreeWidget = Gui::MainWindow::getInstance()->mTreeWidget;
 	docManager->bindTreeContrue((ListTreeWidget*)m_lisTreeWidget,/*(Plot*)plot->GetViewPtr()*/nullptr);
 	docManager->loadfile(fileList);
-
+ 
 	mw->showVisualizationTree();
 
 }

@@ -1,13 +1,14 @@
 #include "PreCompiled.h"
 #include "PlotMDIView.h"
 #include "DataVisualization/Plot.h"
+TYPESYSTEM_SOURCE_ABSTRACT(Gui::PlotMDIView, Gui::MDIView);
 namespace Gui{
 	/**
 	* @brief PlotMDIView::PlotMDIView ¹¹Ôìº¯Êý
 	* @param App::Document &_doc
 	* @param QWidget* parent
 	*/
-	PlotMDIView::PlotMDIView(Gui::Document &_doc, QWidget* parent) :MDIView(&_doc, parent, 0)
+	PlotMDIView::PlotMDIView(Gui::Document &_doc, QWidget* parent, Qt::WindowFlags wflags) :MDIView(&_doc, parent, wflags)
 	{
 		plot = new Plot(this);
 		plot->resize(this->size());
