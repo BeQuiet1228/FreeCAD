@@ -2,6 +2,7 @@
 #include <QMetaType>
 #include <mutex>
 #include <QPoint>
+#include <iostream>
 Canvas::Canvas(QWidget* parent /*= 0*/)
 	:QWidget(parent)
 {
@@ -47,6 +48,12 @@ void Canvas::paintEvent(QPaintEvent *event)
 	QPainter painter(this);
 	for (auto item = items.begin(); item != items.end(); item++)
 	{
+#if 1
+		std::cerr << "canvas width:" << this->size().width()
+			<< ",canvas height:" << this->size().height() << ",image width:" << this->size().width()
+			<< ",image height:" << this->size().height() 
+			<< ",draw pos:(" << item->second.pos.x() << "," << item->second.pos.y() << ")" << std::endl;
+#endif
 		painter.setPen(item->second.pen);
 		painter.drawImage(item->second.pos, *(item->second.image.get()));
 	}
@@ -54,7 +61,7 @@ void Canvas::paintEvent(QPaintEvent *event)
 	{
 		painter.drawRect(selectRect);
 	}
-//	painter.drawRect(0, 0, this->width()-2, this->height()-2);
+	painter.drawRect(0, 0, this->width()-2, this->height()-2);
 }
 
 /**
@@ -104,6 +111,12 @@ void Canvas::mouseReleaseEvent(QMouseEvent *event)
 	emitSelectRect(selectRect);
 	selectRect.setWidth(0);
 	selectRect.setHeight(0);
+}
+
+void Canvas::resizeEvent(QResizeEvent* event)
+{
+	QWidget::resizeEvent(event);
+	emitResize(event->size());
 }
 
 void Canvas::initData()

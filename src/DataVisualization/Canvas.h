@@ -76,11 +76,12 @@ protected:
 	void mouseMoveEvent(QMouseEvent *event) override;
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseReleaseEvent(QMouseEvent *event) override;
-
+	void resizeEvent(QResizeEvent* event) override;
 private:
 	void initData();
 
 Q_SIGNALS:
 	void emitSelectRect(QRect);
 	void emitSelectPoint(QPoint);
+	void emitResize(QSize);
 };

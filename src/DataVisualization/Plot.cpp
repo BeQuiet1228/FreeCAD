@@ -103,24 +103,29 @@ Plot::~Plot()
 */
 void Plot::reRender()
 {
+	reRender(this->canvas->size());
+}
+
+void Plot::reRender(const QSize& size)
+{
 	//清理寻点的画布
 	clearFindPoint();
 	//创建坐标轴网格渲染任务
 	creatGridRenderTask();
-
+	//更新信息显示label
 	updateInformationLabel();
 
 	if (mainRenderer)
 	{
 		std::cerr << "reRender" << std::endl;
-		mainRenderer->setSize(canvas->size());
+		mainRenderer->setSize(size);
 		RenderTask task(mainRenderer);
 		renderManager->addTask(task);
 	}
 	unsigned int rank = SUB_RENDER_START_RANK;
 	for (auto rdIter = subRenderers.begin(); rdIter != subRenderers.end(); rdIter++)
 	{
-		(*rdIter)->setSize(canvas->size());
+		(*rdIter)->setSize(size);
 		RenderTask task(*rdIter, RenderTask::MAP, rank);
 		renderManager->addTask(task);
 		rank++;
@@ -364,6 +369,7 @@ void Plot::initGUI()
 	canvas = new Canvas();
 	connect(canvas, SIGNAL(emitSelectRect(QRect)), this, SLOT(canvasSelectRect(QRect)));
 	connect(canvas, SIGNAL(emitSelectPoint(QPoint)), this, SLOT(canvasSelectPoint(QPoint)));
+	connect(canvas, SIGNAL(emitResize(QSize)), this, SLOT(canvasResize(QSize)));
 
 	AxisL = new Axis();
 	AxisL->setAxixStyle(Axisleft);
@@ -632,4 +638,10 @@ void Plot::reRendererYRang(const float& min, const float& max){
 	setRenderYRange(min,max);
 	reRender();
 }
+
+void Plot::canvasResize(QSize size)
+{
+	reRender(size);
+}
+
 #include "moc_Plot.cpp"

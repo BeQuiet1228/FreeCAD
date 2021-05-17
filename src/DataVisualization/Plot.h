@@ -61,6 +61,7 @@ private:
 public:
 	//重渲染
 	void reRender();
+	void reRender(const QSize& size);
 	//添加从渲染器
 	void addSubRenderer(const std::shared_ptr<Renderer>& rd);
 	//设置主渲染器
@@ -119,6 +120,8 @@ public Q_SLOTS:
 	void reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender);
 	void reRendererXRang(const float& min, const float& max);
 	void reRendererYRang(const float& min, const float& max);
+	//画布改变大小
+	void canvasResize(QSize size);
 protected:
 	void resizeEvent(QResizeEvent *event) override;
 protected:
