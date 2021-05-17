@@ -8,7 +8,7 @@ namespace Gui{
 	* @param App::Document &_doc
 	* @param QWidget* parent
 	*/
-	PlotMDIView::PlotMDIView(Gui::Document &_doc, QWidget* parent, Qt::WindowFlags wflags) :MDIView(&_doc, parent, wflags)
+	PlotMDIView::PlotMDIView(Gui::Document &_doc, QWidget* parent) :MDIView(&_doc, parent, 0)
 	{
 		plot = new Plot(this);
 		plot->resize(this->size());

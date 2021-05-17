@@ -16,7 +16,7 @@ namespace Gui{
 		Q_OBJECT
 			TYPESYSTEM_HEADER();
 	public:
-		PlotMDIView(Gui::Document &_doc, QWidget* parent=0,Qt::WindowFlags wflags=0);
+		PlotMDIView(Gui::Document &_doc, QWidget* parent = 0);
 		~PlotMDIView();
 		void* GetViewPtr();
 		bool canClose() override;

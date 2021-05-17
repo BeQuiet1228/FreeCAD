@@ -134,20 +134,17 @@ DataSourceManage::DataSourceManage():factoryptr(nullptr),p(nullptr),treePtr(null
 * @void
 */
 void DataSourceManage::init(ListTreeWidget* ptr,Plot* _plot){
-	if (ptr)
+	if (ptr && treePtr!=ptr)
 	{
 		//先进行断开链接
-		disconnect(this,0);
-		disconnect(ptr, 0);
 		//进行连接
 		connect(this, SIGNAL(_loadhdflist(std::vector<Hdf5Data>&)), ptr, SLOT(loadHdflist(std::vector<Hdf5Data>&)));
 		connect(ptr, SIGNAL(_transfromRenderer(std::string, int)), this, SLOT(tranfromRenderer(std::string, int)));
 		connect(this, SIGNAL(toTreeNewData(Hdf5Data&, int)), ptr, SLOT(fromdataManageNewData(Hdf5Data& , int )));
 		treePtr = ptr;
 	}
-	if (_plot)
+	if (_plot&& p!=_plot)
 	{
-		disconnect(this, 0);
 		connect(this, SIGNAL(_reRendererEvent(const std::list<std::shared_ptr<Renderer>>&)), _plot, SLOT(reRendererEvent(const std::list<std::shared_ptr<Renderer>>&)));
 		p = _plot;
 	}

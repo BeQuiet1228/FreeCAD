@@ -309,6 +309,7 @@ void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
 		{
 			Gui::TreeViewCtrl* m_lisTreeWidget = Gui::MainWindow::getInstance()->mTreeWidget;
 			((DocumentManager*)(doc->getDocument()))->bindTreeContrue((ListTreeWidget*)m_lisTreeWidget, (Plot*)ptr->GetViewPtr());
+			//((DocumentManager*)(doc->getDocument()))->bindTreeContrue((ListTreeWidget*)m_lisTreeWidget, nullptr);
 		}
 		((DocumentManager*)(doc->getDocument()))->DisplatPlot(data, _type);
 	}
@@ -757,7 +758,7 @@ void Application::slotNewDocument(const App::Document& Doc)
 		auto mainWindow = Gui::MainWindow::getInstance();
 		mainWindow->addWindow(edit);
     }
-	 else if (Doc.classID == 5) {
+	else if (Doc.classID == 5) {
 		 pDoc->createView(PlotMDIView::getClassTypeId());
 		 }
     else {
