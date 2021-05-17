@@ -94,6 +94,9 @@ public:
 	void setRunMod(const RunMod& mod);
 	//初始化基本信息
 	virtual void initInformation();
+	//返回图表信息文字介绍
+	virtual std::string getInformationTitle();
+
 	//数据是否已载入
 	bool isLoad(){
 		return sourceDataIsLoad;

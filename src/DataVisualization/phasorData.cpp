@@ -1,4 +1,5 @@
 #include"phasorData.h"
+#include "DataInformationGetter.h"
 phasorData::phasorData(Hdf5Data& heData, const RunMod& mod) :DirData(heData,mod)
 {
 	disMode = sizeToColor;
@@ -473,4 +474,15 @@ QPointF phasorData::findindexP1(int index)
 		return *iter;
 	}
 	return QPointF(0.0,0.0);
+}
+
+std::string phasorData::getInformationTitle()
+{
+	std::string title;
+	title += "观察时间";
+	title += DataInformationGetter::getObserveTime(headList.at(13)) + "\n";
+	title += "观察分量:";
+	title += DataInformationGetter::getObserveObejct(headList.at(2)) + "\n";
+
+	return title;
 }

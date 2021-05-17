@@ -25,6 +25,8 @@ public:
 	Grid findGrid(const float& x, const float& y);
 	//获取对应的结构体面
 	std::vector<float> getStructFace();
+	//获取图表信息
+	std::string getInformationTitle() override;
 public:
 	void setValueRang(const Rang& r){
 		std::lock_guard<std::mutex> am(ValueRangMutex);

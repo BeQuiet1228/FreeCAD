@@ -130,6 +130,12 @@ void Data::initInformation()
 	std::cerr << "Can't call Data::initInformation()" << std::endl;
 }
 
+std::string Data::getInformationTitle()
+{
+	std::cerr << "Data::getInformationTitle() can not call!" << std::endl;
+	return " ";
+}
+
 /**
 * @brief Data::stringToDirection 将坐标tile转换为方向
 * @param const std::string & str

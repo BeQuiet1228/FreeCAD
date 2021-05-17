@@ -128,9 +128,11 @@ void Contorl::closePlot()
 	return;
 #endif
 #ifdef _CONTORL_DLL_
+#if 0
 	Base::InterpreterSingleton python;
 	python.runString("import Visualization");
 	python.runString("Visualization.VisualizationCommand.VisualizationPlot.vPlot.closePlot()");
+#endif
 #endif // _CONTORL_DLL_
 
 }
@@ -160,16 +162,12 @@ void Contorl::buttonClinked(int buttonType)
 	switch (ContorlButtonBar::ButtonType(buttonType))
 	{
 	case ContorlButtonBar::RUN:
-		//获取m3d路径
-		getM3dPathForRunPython();
 		//运行m3d
 		chipicManager.runButtonClicked(m3dPath);
 		//显示树控件
 		showTreeWidget();
 		break;
 	case ContorlButtonBar::PARALLE_RUN:
-		//获取m3d路径
-		getM3dPathForRunPython();
 		//运行m3d
 		if(chipicManager.ButtonParalleRunClicked(m3dPath))
 			showTreeWidget();

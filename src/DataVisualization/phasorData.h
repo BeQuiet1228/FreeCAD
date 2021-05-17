@@ -46,6 +46,10 @@ public:
 	virtual unsigned int findIndexFromXValueL(const float& x) override;
 	QPointF findindexlen_coef(int index);
 	QPointF findindexP1(int index);
+	
+	//获取信息
+	std::string getInformationTitle();
+
 	//获取取值范围
 	Rang getXRang()
 	{

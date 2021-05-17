@@ -108,6 +108,8 @@ SET(SRC main.cpp
 	exportConfig.hpp
 	RenderGrid.cpp
 	RenderGrid.h
+	DataInformationGetter.cpp
+	DataInformationGetter.h
 	)
 SET(SRC_TOOL ConfigWidget.h
 	ConfigWidget.cpp

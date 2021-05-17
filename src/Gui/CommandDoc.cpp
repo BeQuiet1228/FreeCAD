@@ -1746,8 +1746,27 @@ void StdCmdRunM3d::activated(int iMsg)
 	auto contorl = ContorlInterface::GetInstance();
 	if (!runState)
 	{
+        //设置主界面上的ui
 		auto mw = Gui::MainWindow::getInstance();
 		mw->setContorlUI();
+
+        //设置运行路
+        auto guiDoc = Gui::Application::Instance->activeDocument();
+        auto appDoc = guiDoc->getDocument();
+		std::string path = appDoc->FileName.getValue();
+		if (appDoc->classID == 2)
+		{
+			QString temp = QString::fromUtf8(path.c_str());
+			temp = temp.left(temp.length() - 6) + QString::fromLocal8Bit(".m3d");
+			path = temp.toStdString();
+		}
+		else if (appDoc->classID == 3) {
+			QString temp = QString::fromUtf8(path.c_str());
+			temp = temp.left(temp.length() - 9) + QString::fromLocal8Bit(".m2d");
+			path = temp.toStdString();
+		}
+		std::cerr << path << std::endl;
+		contorl->setM3dPath(path);
 	}
 	contorl->buttonClicked(0);
 }

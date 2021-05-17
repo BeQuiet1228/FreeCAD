@@ -100,6 +100,11 @@ void Renderer::dataInit()
 	data->loadSourceData();
 }
 
+std::string Renderer::getInformationTitile()
+{
+	return data->getInformationTitle();
+}
+
 /**
 * @brief Renderer::setXRang ÉèÖÃxÖáµÄäÖÈ¾·¶Î§
 * @param const Data::Rang & rang

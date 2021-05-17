@@ -10,6 +10,8 @@
 #include "ContourRender.h"
 #include <stack>
 #include "RenderGrid.h"
+#include <QFont>
+#include "C_encoding.h"
 struct UndoRedoData
 {
 	UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
@@ -104,6 +106,7 @@ void Plot::reRender()
 	//创建坐标轴网格渲染任务
 	creatGridRenderTask();
 
+	updateInformationLabel();
 
 	if (mainRenderer)
 	{
@@ -334,6 +337,19 @@ void Plot::autoMaxRender()
 }
 
 /**
+* @brief Plot::updateInformationLabel 刷新图表信息显示
+* @return void
+*/
+void Plot::updateInformationLabel()
+{
+	if (!mainRenderer)
+		return;
+	if (!informationLabel)
+		return;
+	informationLabel->setText(GetEncodingstr(mainRenderer->getInformationTitile().c_str(),ENCODING_GB2312));
+}
+
+/**
 * @brief Plot::initGUI 初始化布局
 * @return void
 */
@@ -361,10 +377,20 @@ void Plot::initGUI()
 	scaleWIdget->setColorBarEnabled(true);
 	scaleWIdget->setColorBarWidth(20);
 
+	informationLabel = new QLabel();
+	informationLabel->setMargin(40);
+	informationLabel->setAlignment(Qt::AlignTop);
+	initInformationLabelFont();
+
 	gridLayout->addWidget(canvas, 0, 1, 1, 1);
 	gridLayout->addWidget(AxisL, 0, 0, 1, 1);
 	gridLayout->addWidget(AxisB, 1, 1, 1, 1);
 	gridLayout->addWidget(scaleWIdget, 0, 2, 1, 1);
+	gridLayout->addWidget(informationLabel, 0, 3, 2, 1);
+
+	/*******测试代码*********/
+	informationLabel->setText("ceeeeeeeeee\n aaaaaaaaaaaaaaa\n");
+
 
 	gridLayout->setRowStretch(0, 9);
 	gridLayout->setRowStretch(1, 1);
@@ -473,6 +499,17 @@ void Plot::creatGridRenderTask()
 	renderManager->addTask(task);
 }
 
+
+/**
+* @brief Plot::initInformationLabelFont 设置信息框的字体
+* @return void
+*/
+void Plot::initInformationLabelFont()
+{
+	QFont font;
+	font.setPointSize(12);
+	informationLabel->setFont(font);
+}
 
 /**
 * @brief Plot::renderFinished 渲染完成槽

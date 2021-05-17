@@ -3,8 +3,8 @@
 #include <mutex>
 #include <memory>
 #include <vector>
-
-class ParticleData :public XYData{
+#include "DirData.h"
+class ParticleData :public DirData{
 public:
 	struct Particle{
 		Particle():x(0.0), y(0.0), type(0),d1(0.0),d2(0.0){};
@@ -40,6 +40,8 @@ public:
 	//根据索引获取一个粒子数据
 	Particle getParticle(const unsigned int& index);
 	Particle getParticleHard(const unsigned int& index);
+	//获取图表信息
+	std::string getInformationTitle() override;
 protected:
 	bool initXYRang() override;
 	virtual void restorDeriveData(){};

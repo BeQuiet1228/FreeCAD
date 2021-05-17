@@ -2,6 +2,8 @@
 #include <qvector.h>
 #include <QRegExp>
 #include <math.h>
+#include <QRegExp>
+#include <DataInformationGetter.h>
 ContourData::ContourData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
 	:XYData(h5Data, mod), height(0), width(0)
 {
@@ -244,6 +246,19 @@ std::vector<float> ContourData::getStructFace()
 	}
 
 	return values;
+}
+
+std::string ContourData::getInformationTitle()
+{
+	std::string title;
+	title += "观察时间:";
+	title += DataInformationGetter::getObserveTime(headList.at(12)) + "\n";
+	title += "观察分量:";
+	title += DataInformationGetter::getObserveObejct(headList.at(2)) + "\n";
+	title += "观测面:\n";
+	title += DataInformationGetter::getObserveFace(headList.at(16)) + "\n";
+
+	return title;
 }
 
 /**

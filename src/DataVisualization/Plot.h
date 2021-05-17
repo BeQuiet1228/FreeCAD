@@ -9,6 +9,7 @@
 #include <QKeyEvent>
 #include "exportConfig.hpp"
 #include "Canvas.h"
+#include <QLabel>
 class Canvas;
 class Renderer;
 class RenderThreadManager;
@@ -33,6 +34,8 @@ private:
 	Canvas *canvas;
 	//坐标轴
 	Axis *AxisL, *AxisB;
+	//图表信息label
+	QLabel* informationLabel;
 	//渲染管理器
 	std::shared_ptr<RenderThreadManager> renderManager;
 	//从渲染器
@@ -79,6 +82,8 @@ public:
 	void updateGridLine();
 	//以默认大小渲染
 	void autoMaxRender();
+	//刷新label显示
+	void updateInformationLabel();
 	//清理从渲染器
 	void clearSubRenderer(){
 		subRenderers.clear();
@@ -102,6 +107,8 @@ private:
 	void setRenderRange(const float& xMin, const float xMax, const float& yMin, const float& yMax);
 	//渲染网格
 	void creatGridRenderTask();
+	//初始化信息框字体
+	void initInformationLabelFont();
 public Q_SLOTS:
 	//渲染完成
 	void renderFinished();

@@ -1,0 +1,15 @@
+#pragma  once
+#include <string>
+class DataInformationGetter {
+public:
+	DataInformationGetter() = default;
+	~DataInformationGetter() = default;
+
+public:
+	//获取观测分量
+	static std::string getObserveObejct(const std::string& head);
+	//获取观测面
+	static std::string getObserveFace(const std::string& head);
+	//获取观测时间
+	static std::string getObserveTime(const std::string& head);
+};
