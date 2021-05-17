@@ -80,6 +80,7 @@ private:
 Plot::Plot(QWidget* parent /*= 0*/)
 	:QWidget(parent),URStack(new UndoRedoStack)
 {
+	setObjectName("visualizationPlot");
 	initData();
 	setAxisRightEnabled(true);
 	initGUI();
@@ -92,6 +93,7 @@ Plot::~Plot()
 	delete AxisL;
 	delete scaleWIdget;
 	delete scaleEngine;
+	delete informationLabel;
 }
 
 
@@ -100,6 +102,11 @@ Plot::~Plot()
 * @return void
 */
 void Plot::reRender()
+{
+	reRender(this->canvas->size());
+}
+
+void Plot::reRender(const QSize& size)
 {
 	//清理寻点的画布
 	clearFindPoint();
@@ -111,21 +118,20 @@ void Plot::reRender()
 	if (mainRenderer)
 	{
 		std::cerr << "reRender" << std::endl;
-		mainRenderer->setSize(canvas->size());
+		mainRenderer->setSize(size);
 		RenderTask task(mainRenderer);
 		renderManager->addTask(task);
 	}
 	unsigned int rank = SUB_RENDER_START_RANK;
 	for (auto rdIter = subRenderers.begin(); rdIter != subRenderers.end(); rdIter++)
 	{
-		(*rdIter)->setSize(canvas->size());
+		(*rdIter)->setSize(size);
 		RenderTask task(*rdIter, RenderTask::MAP, rank);
 		renderManager->addTask(task);
 		rank++;
 	}
 
 	renderManager->start();
-
 }
 
 /**
@@ -145,7 +151,7 @@ void Plot::addSubRenderer(const std::shared_ptr<Renderer>& rd)
 		yr = mainRenderer->getYRang();
 		rd->setXRang(xr);
 		rd->setYRang(yr);
-	}else {
+	}else{
 		//rd->setDefaultRang(canvas->size());
 		rd->setDefaultRang();
 	}
@@ -161,9 +167,8 @@ void Plot::addSubRenderer(const std::shared_ptr<Renderer>& rd)
 void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
 {
 	//初始化数据
-	
-	rd->dataInit();
 	rd->loadconfig();
+	rd->dataInit();
 	//rd->setDefaultRang(canvas->size());
 	rd->setDefaultRang();
 	mainRenderer = rd;
@@ -364,6 +369,7 @@ void Plot::initGUI()
 	canvas = new Canvas();
 	connect(canvas, SIGNAL(emitSelectRect(QRect)), this, SLOT(canvasSelectRect(QRect)));
 	connect(canvas, SIGNAL(emitSelectPoint(QPoint)), this, SLOT(canvasSelectPoint(QPoint)));
+	connect(canvas, SIGNAL(emitResize(QSize)), this, SLOT(canvasResize(QSize)));
 
 	AxisL = new Axis();
 	AxisL->setAxixStyle(Axisleft);
@@ -389,10 +395,6 @@ void Plot::initGUI()
 	gridLayout->addWidget(scaleWIdget, 0, 2, 1, 1);
 	gridLayout->addWidget(informationLabel, 0, 3, 2, 1);
 
-	/*******测试代码*********/
-	informationLabel->setText("ceeeeeeeeee\n aaaaaaaaaaaaaaa\n");
-
-
 	gridLayout->setRowStretch(0, 9);
 	gridLayout->setRowStretch(1, 1);
 	gridLayout->setColumnStretch(0, 1);
@@ -400,7 +402,6 @@ void Plot::initGUI()
 	gridLayout->setColumnStretch(2, 0);
 
 	scaleWIdget->hide();
-	
 	
 }
 /**
@@ -626,7 +627,6 @@ void Plot::reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRende
 {
 	addRenderer(listRender);
 	reRender();
-	//autoMaxRender();
 }
  
 void Plot::reRendererXRang(const float& min, const float& max){
@@ -638,4 +638,10 @@ void Plot::reRendererYRang(const float& min, const float& max){
 	setRenderYRange(min,max);
 	reRender();
 }
+
+void Plot::canvasResize(QSize size)
+{
+	reRender(size);
+}
+
 #include "moc_Plot.cpp"

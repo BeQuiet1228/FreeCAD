@@ -2,6 +2,7 @@
 #include <QMetaType>
 #include <mutex>
 #include <QPoint>
+#include <iostream>
 Canvas::Canvas(QWidget* parent /*= 0*/)
 	:QWidget(parent)
 {
@@ -54,7 +55,7 @@ void Canvas::paintEvent(QPaintEvent *event)
 	{
 		painter.drawRect(selectRect);
 	}
-//	painter.drawRect(0, 0, this->width()-2, this->height()-2);
+	painter.drawRect(0, 0, this->width()-2, this->height()-2);
 }
 
 /**
@@ -104,6 +105,12 @@ void Canvas::mouseReleaseEvent(QMouseEvent *event)
 	emitSelectRect(selectRect);
 	selectRect.setWidth(0);
 	selectRect.setHeight(0);
+}
+
+void Canvas::resizeEvent(QResizeEvent* event)
+{
+	QWidget::resizeEvent(event);
+	emitResize(event->size());
 }
 
 void Canvas::initData()
