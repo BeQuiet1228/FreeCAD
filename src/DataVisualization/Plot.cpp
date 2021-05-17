@@ -594,7 +594,7 @@ void Plot::canvasSelectPoint(QPoint point)
 void Plot::resizeEvent(QResizeEvent *event)
 {
 	QWidget::resizeEvent(event);
-	reRender();
+	//reRender();
 }
 
 /**
@@ -626,7 +626,6 @@ void Plot::keyReleaseEvent(QKeyEvent *event)
 void Plot::reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender)
 {
 	addRenderer(listRender);
-	reRender();
 }
  
 void Plot::reRendererXRang(const float& min, const float& max){
@@ -641,6 +640,10 @@ void Plot::reRendererYRang(const float& min, const float& max){
 
 void Plot::canvasResize(QSize size)
 {
+	if (!mainRenderer)
+		return;
+	if (mainRenderer->getSize() == size)
+		return;
 	reRender(size);
 }
 

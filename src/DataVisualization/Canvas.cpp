@@ -48,7 +48,7 @@ void Canvas::paintEvent(QPaintEvent *event)
 	QPainter painter(this);
 	for (auto item = items.begin(); item != items.end(); item++)
 	{
-#if 1
+#if 0
 		std::cerr << "canvas width:" << this->size().width()
 			<< ",canvas height:" << this->size().height() << ",image width:" << this->size().width()
 			<< ",image height:" << this->size().height() 
