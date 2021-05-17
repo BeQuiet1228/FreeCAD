@@ -80,6 +80,7 @@ private:
 Plot::Plot(QWidget* parent /*= 0*/)
 	:QWidget(parent),URStack(new UndoRedoStack)
 {
+	setObjectName("visualizationPlot");
 	initData();
 	setAxisRightEnabled(true);
 	initGUI();
@@ -92,6 +93,7 @@ Plot::~Plot()
 	delete AxisL;
 	delete scaleWIdget;
 	delete scaleEngine;
+	delete informationLabel;
 }
 
 
@@ -387,10 +389,6 @@ void Plot::initGUI()
 	gridLayout->addWidget(scaleWIdget, 0, 2, 1, 1);
 	gridLayout->addWidget(informationLabel, 0, 3, 2, 1);
 
-	/*******²âÊÔ´úÂë*********/
-	informationLabel->setText("ceeeeeeeeee\n aaaaaaaaaaaaaaa\n");
-
-
 	gridLayout->setRowStretch(0, 9);
 	gridLayout->setRowStretch(1, 1);
 	gridLayout->setColumnStretch(0, 1);
@@ -398,7 +396,6 @@ void Plot::initGUI()
 	gridLayout->setColumnStretch(2, 0);
 
 	scaleWIdget->hide();
-	
 	
 }
 /**
