@@ -25,7 +25,7 @@ struct _3DPointf
 			return 2;
 		else if (this->_3th == that._3th&&this->_1st != that._1st&&this->_2rd != that._2rd)
 			return 3;
-		return -1;
+		return 0;
 	}
 	float operator [](int index)
 	{

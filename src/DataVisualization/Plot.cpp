@@ -161,8 +161,9 @@ void Plot::addSubRenderer(const std::shared_ptr<Renderer>& rd)
 void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
 {
 	//初始化数据
-	rd->loadconfig();
+	
 	rd->dataInit();
+	rd->loadconfig();
 	//rd->setDefaultRang(canvas->size());
 	rd->setDefaultRang();
 	mainRenderer = rd;
@@ -625,6 +626,7 @@ void Plot::reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRende
 {
 	addRenderer(listRender);
 	reRender();
+	//autoMaxRender();
 }
  
 void Plot::reRendererXRang(const float& min, const float& max){
