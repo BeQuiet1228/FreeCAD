@@ -112,7 +112,7 @@ void Plot::reRender(const QSize& size)
 	clearFindPoint();
 	//创建坐标轴网格渲染任务
 	creatGridRenderTask();
-
+	//更新信息显示label
 	updateInformationLabel();
 
 	if (mainRenderer)
