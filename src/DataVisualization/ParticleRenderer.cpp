@@ -59,15 +59,12 @@ bool ParticleRenderer::drawImage()
 	}
 	//因为qpainter的屏幕坐标系原点在左上角，所以需要翻转图片才能得到我们想要的结果
 	auto nImg = img.mirrored(false, true);
-//#define _Debug
-#ifdef _Debug
+#ifdef MY_DEBUG
 	static int index = 0;
 	QString _path = QString("C:/Users/ASUS/Desktop/save/savepmg_%1.png").arg(index++);
-	bool res = nImg.save(_path);
-#undef _Debug
+	nImg.save(_path);
 #endif
 	setImage(nImg);
-
 }
 
 /**

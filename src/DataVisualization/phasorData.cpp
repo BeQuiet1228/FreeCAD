@@ -2,7 +2,7 @@
 #include "DataInformationGetter.h"
 phasorData::phasorData(Hdf5Data& heData, const RunMod& mod) :DirData(heData,mod)
 {
-
+	disMode = sizeToColor;
 }
 phasorData::~phasorData(){
 }
@@ -46,9 +46,19 @@ bool phasorData::loadPoint()
 	initXYRang();
 	//初始化图形数据
 	initData();
-	//初始化向量数据
-	//initVectorData();
-	initVectorData2();
+	switch (disMode)
+	{
+	case phasorData::sizeToLen:
+	{
+		initVectorData2();
+	}
+		break;
+	case phasorData::sizeToColor:
+	{
+		initVectorData();
+	}
+		break;
+	}
 	return true;
 }
 /**
@@ -198,71 +208,93 @@ bool phasorData::initVectorData()
 {
 	Data::ListValuesPtr DataValueslist;
 	bool ok = autoModGetSourceData(DataValueslist);
-	if (!ok && !DataValueslist && DataValueslist->size()==0)
+	if (!ok&& !DataValueslist&& DataValueslist->size() == 0)
 		return false;
 	auto iter = DataValueslist->begin();
-	Data::ValuesPtr datasetEmA = *iter; iter++;
-	Data::ValuesPtr datasetEmB = *iter; iter++;
-	Data::ValuesPtr datasetEmC = *iter;
+	Data::ValuesPtr datasetEmA;
+	Data::ValuesPtr datasetEmB;
+	Data::ValuesPtr datasetEmC;
+	if (isTruedir())
+	{
+		datasetEmB = *iter; iter++;
+		datasetEmA = *iter; iter++;
+		datasetEmC = *iter;
+	}
+	else
+	{
+		datasetEmA = *iter; iter++;
+		datasetEmB = *iter; iter++;
+		datasetEmC = *iter;
+	}
+
 	if (mPiflist_rect.empty())
 		return false;
 	//获取起点p1
 	QVector<qreal> dataC;
-	for (auto iterC = datasetEmC->begin(); iterC != datasetEmC->end();iterC++)
+	for (auto iterC = datasetEmC->begin(); iterC != datasetEmC->end(); iterC++)
 		dataC.push_back(*iterC);
-	for (auto i = 0; i < mPiflist_rect.size();i++)
-		p1.push_back(QPointF(mPiflist_rect[i].left(), mPiflist_rect[i].bottom()));
-	//获取终点p2(真实的点位)
-	//获取缩放比例
-	qreal Srect = mPiflist_rect[0].width()*mPiflist_rect[0].height();
-	int index_rectmin = 0;
-	qreal SVector=0;
-	qreal Widmin=mPiflist_rect[0].width(), HeightMin=mPiflist_rect[0].height(), Xmax=0, yMax=0;
-	int index_vector = 0;
-	//获取x和y的缩放
-	for (auto i = 0; i < mPiflist_rect.size();i++)
+	for (auto i = 0; i < mPiflist_rect.size(); i++)
 	{
-		qreal curlen = sqrt(dataC[i] * dataC[i] + dataC[i + mPiflist_rect.size()] * dataC[i + mPiflist_rect.size()]);
-		if (SVector<curlen)
+		p1.push_back(QPointF(mPiflist_rect[i].left(), mPiflist_rect[i].bottom()));
+	}
+	Data::Rang xr = getXRang();
+	Data::Rang yr = getYRang();
+	float Width = (xr.max - xr.min) / datasetEmA->size();
+	float Height = (yr.max - yr.min) / datasetEmB->size();
+	//获取最大的x,y系数
+	float Svector = 0;//最大系数
+	unsigned int index_vector = 0;//
+	for (auto i = 0; i < mPiflist_rect.size(); i++)
+	{
+		float curlen = sqrt(dataC[i] * dataC[i] + dataC[i + mPiflist_rect.size()] * dataC[i + mPiflist_rect.size()]);
+		if (Svector < curlen)
 		{
-			SVector = curlen;
+			Svector = curlen;
 			index_vector = i;
 		}
 	}
-	//此处获取到缩放的比例
-	m_xScale =abs(dataC[index_vector]);
-	m_yScale =abs(dataC[index_vector+mPiflist_rect.size()]);
+	//获取到x,y的最大系数
+	float MaxRectLen = sqrt(Width*Width + Height*Height);
+	//获取p2的数据
+	sizeScale.clear();
+	sizeScale.reserve(mPiflist_rect.size());
 	for (auto i = 0; i < mPiflist_rect.size(); i++)
 	{
-		qreal x_scal = dataC[i];
-		qreal y_scal = dataC[i+mPiflist_rect.size()];
-#define _PROJECT_CHANGE_
-#ifndef _PROJECT_CHANGE_
-		p2.push_back(QPointF(x_scal, y_scal));
-#else
-		qreal x = p1[i].x() + abs(mPiflist_rect[i].width())*x_scal;
-		qreal y = p1[i].y() + abs(mPiflist_rect[i].height())*y_scal;
-		p2.push_back(QPointF(x,y));
-	//	printf("%d___p0(%f,%f)->p1(%f,%f)\n",i,p1[i].x(),p1[i].y(),p2[i].x(),p2[i].y());	
-#endif
+		float x_coef = dataC[i];
+		float y_coef = dataC[i + mPiflist_rect.size()];
+		//printf("x_coef=%f,y_coef=%f\n", x_coef, y_coef);
+		if (x_coef<0.0000001&&x_coef>-0.0000001&&
+			y_coef<0.0000001&&y_coef>-0.0000001)
+		{
+			p2.push_back(p1[i]);
+			len_coef.push_back(QPointF(0.0, 0.0));
+			sizeScale.push_back(0);
+		}
+		else
+		{
+			len_coef.push_back(QPointF(x_coef, y_coef));
+			float _p2Len = sqrt(x_coef*x_coef + y_coef*y_coef);
+			float rotation = _p2Len / Svector;
+			sizeScale.push_back(rotation);
+			QPointF _p2;
+			_p2.setX(p1[i].x() + Width*(x_coef / _p2Len)*0.5);
+			_p2.setY(p1[i].y() + Height*(y_coef / _p2Len)*0.5);
+			p2.push_back(_p2);
+		}
+
 	}
-	//这里删除长度为0的线段
-	for (auto i = p1.size() - 1; i >= 0;i--)
+	//去除不必要的向量
+	for (auto i = p1.size() - 1; i >= 0; i--)
 	{
-#ifndef _PROJECT_CHANGE_
-		if (p2[i].x()<0.0000001&&p2[i].x()>-0.0000001&&
-			p2[i].y()<0.0000001&&p2[i].y()>-0.0000001)
-#else
-		if (p1[i]==p2[i])
-#endif
+		if (p1[i].x() - p2[i].x() > -0.000001&&p1[i].x() - p2[i].x() < 0.000001&&
+			p1[i].y() - p2[i].y() > -0.000001&&p1[i].y() - p2[i].y() < 0.000001)
 		{
 			p1.erase(p1.begin() + i);
+			len_coef.erase(len_coef.begin() + i);
 			p2.erase(p2.begin() + i);
+			sizeScale.erase(sizeScale.begin()+i);
 		}
 	}
-#ifdef _PROJECT_CHANGE_
-#undef _PROJECT_CHANGE_
-#endif // _PROJECT_CHANGE_
 	return true;
 }
 /**

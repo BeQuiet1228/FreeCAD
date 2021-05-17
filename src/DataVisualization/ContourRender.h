@@ -8,6 +8,9 @@ typedef struct ContourParam
 {
 	//øπæ‚≥› Ù–‘
 	bool isAA;
+	int levelnumber;
+	std::vector<float> val;
+	std::vector<QColor> valColor;
 	ContourParam();
 }CONTOURPARAM;
 

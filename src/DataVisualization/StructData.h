@@ -17,7 +17,7 @@ struct _3DPointf
 	float _2rd;
 	float _3th;
 	_3DPointf() :_1st(0.0f), _2rd(0.0f), _3th(0.0f){}
-	int operator ==(const _3DPointf& that)
+	int operator ==(const _3DPointf& that) const
 	{
 		if (this->_1st == that._1st&&this->_2rd != that._2rd&&this->_3th != that._3th)
 			return 1;

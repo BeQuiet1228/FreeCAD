@@ -7,7 +7,7 @@
 #include <QRectF>
 #include <QImage>
 #include "CustomConfig.h"
-
+#include "C_encoding.h"
 ContourRenderPolar::ContourRenderPolar(std::shared_ptr<ContourData> data)
 	:ContourRender(data)
 {
@@ -117,6 +117,36 @@ void ContourRenderPolar::loadconfig()
 	ConfigGroup contourGroup = mGroup.getGroup("Contour");
 	//获取抗锯齿属性
 	contourPolarparam.isAA = atoi(contourGroup.getValue("isAlis").c_str());
+	//获取默认等级数
+	contourPolarparam.levelnumber = atoi(contourGroup.getValue("vallevel").c_str());
+	//获取取值类型
+	std::string valtype = contourGroup.getValue("valtype");
+	ConfigGroup* subGroup = nullptr;
+	if (valtype.find("epuivalence") != std::string::npos)
+		subGroup = new ConfigGroup(contourGroup.getGroup("epuivalence"));
+	else if (valtype.find("equal-ratio") != std::string::npos)
+		subGroup = new ConfigGroup(contourGroup.getGroup("equl_ratio"));
+	else if (valtype.find("user-defined") != std::string::npos)
+		subGroup = new  ConfigGroup(contourGroup.getGroup("user_defined"));
+	else
+		return;
+	auto colorGroup = contourGroup.getGroup("levelColor");
+	//获取各等级之间的范围
+	contourPolarparam.val.clear();
+	contourPolarparam.val.reserve(contourPolarparam.levelnumber + 1);
+	contourPolarparam.valColor.clear();
+	contourPolarparam.valColor.reserve(contourPolarparam.levelnumber + 1);
+	for (auto index = 0; index < contourPolarparam.levelnumber + 1; index++)
+	{
+		std::string s_val = subGroup->getValue(QString("level_%1").arg(index).toStdString());
+		contourPolarparam.val.push_back(atof(s_val.c_str()));
+		contourPolarparam.valColor.push_back(QStringToQColor(QString::fromStdString(colorGroup.getValue(QString("level_%1").arg(index).toStdString()))));
+	}
+	if (subGroup)
+	{
+		delete subGroup;
+		subGroup = nullptr;
+	}
 }
 
 /**

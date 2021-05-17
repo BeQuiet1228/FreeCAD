@@ -4,6 +4,7 @@
 #include "CustomConfig.h"
 #include "C_encoding.h"
 #include <QDebug>
+#include "ContourRender.h"
 #define  M_PI_ (3.141592653589793)
 //按像素来
 #define  HORI_GRID (30.0f)
@@ -23,18 +24,14 @@ phasorRenderer::~phasorRenderer(){
 * @return bool
 */
 bool phasorRenderer::drawImage(){
-#define _PROJECT_CHANGE_	
-#ifndef _PROJECT_CHANGE_
-	return drawImage_Scence();
-#else
-	return drawImage_Coord();
-#endif
-
-#ifdef _PROJECT_CHANGE_
-#undef _PROJECT_CHANGE_
-#endif
-
-
+	std::shared_ptr<phasorData> d = std::dynamic_pointer_cast<phasorData>(data);
+	switch (d->GetdisMode())
+	{
+	case phasorData::DISMODE::sizeToColor:
+		return drawImage_Scence();
+	case phasorData::DISMODE::sizeToLen:
+		return drawImage_Coord();
+	}
 }
 /**
 * @brief phasorRenderer::addListRang 
@@ -188,53 +185,35 @@ bool phasorRenderer::drawImage_Scence(){
 	float xScale(0.0), yScale(0.0);
 	if (!getTransitionScale(xScale, yScale))
 		return false;
-	//获取data数据
 	std::shared_ptr<phasorData> d = std::dynamic_pointer_cast<phasorData>(data);
-	//获取x,y的范围
+	//获取x,y的取值范围
 	auto xr = getXRang();
 	auto yr = getYRang();
 	//开始绘制
 	QImage img(getSize(), QImage::Format_ARGB32);
 	img.fill(qRgba(0, 0, 0, 0));
-	QPen pen(Qt::black);
-	pen.setWidth(1);
 	QPainter painter(&img);
-	painter.setRenderHint(QPainter::Antialiasing, true);
-	painter.setPen(pen);
-	//获取屏幕网格按像素来
-	QVector<QRectF> CutRect = GetRectF_Scene();
-	/*for (auto iter = CutRect.begin(); iter != CutRect.end(); iter++)
-		transitionRectF(*iter, xScale, yScale, xr, yr);*/
-	//painter.drawRects(CutRect);
-	//寻找向量
-	QPen pen2(Qt::red);
-	pen2.setWidth(2);
-	painter.setPen(pen2);
+	painter.setRenderHint(QPainter::Antialiasing, isAA);
+	std::vector<float> scaleval = d->getScaleVal();
+	ColorMap* map = new ColorMap();
+	std::vector<QColor> colorMap; colorMap.reserve(scaleval.size());
+	for (auto iter = scaleval.begin(); iter != scaleval.end();iter++)
+		colorMap.push_back(map->color(QwtInterval(0.0, 1.0), *iter));
+	//绘制向量
 	QVector<QPointF> p1 = d->Getp1Point();
 	QVector<QPointF> p2 = d->Getp2Point();
-	QVector<QLineF> lines = findVecLines(CutRect,p1,p2);
-#pragma region 先画出传统的向量
-	//{
-	//	//获取缩放的比例
-	//	QVector<qreal> rations;//比例系数
-	//	for (auto i = 0; i < p1.size();i++)
-	//	{
-	//		qreal ration=
-	//		sqrt(p2[i].x()*p2[i].x()+p2[i].y()*p2[i].y())/sqrt(d->GetVecXScale()*d->GetVecXScale()+d->GetVecYScale()*d->GetVecYScale());
-	//		rations.push_back(ration);
-	//		transitionpointF(p1[i], xScale, yScale, xr, yr);
-	//	}
-	//	for (auto i = 0; i < p2.size();i++)
-	//	{
-	//		p2[i].setX(p1[i].x() + HORI_GRID*rations[i] * (p2[i].x() / sqrt(p2[i].x()*p2[i].x() + p2[i].y()*p2[i].y())));
-	//		p2[i].setY(p1[i].y() + VERT_GRID*rations[i] * (p2[i].y() / sqrt(p2[i].x()*p2[i].x() + p2[i].y()*p2[i].y())));
-	//		painter.drawLine(p1[i], p2[i]);
-	//		painter.drawLine(p2[i], GetarrowTop(p2[i], p1[i]));
-	//		painter.drawLine(p2[i], GetarrowBottom(p2[i], p1[i]));
-	//	}
-	//}
-#pragma endregion
-	painter.drawLines(lines);
+	//向量可能太小，需要缩放
+	for (auto i = 0; i < p1.size(); i++)
+	{
+		QPen pen(colorMap[i]);
+		pen.setWidth(penSize);
+		painter.setPen(pen);
+		transitionpointF(p1[i], xScale, yScale, xr, yr);
+		transitionpointF(p2[i], xScale, yScale, xr, yr);
+		painter.drawLine(p1[i], p2[i]);
+		painter.drawLine(p2[i], GetarrowTop(p2[i], p1[i]));
+		painter.drawLine(p2[i], GetarrowBottom(p2[i], p1[i]));
+	}
 	auto nImg = img.mirrored(false, true);
 	setImage(nImg);
 	return true;
@@ -288,11 +267,6 @@ bool phasorRenderer::drawImage_Coord(){
 	QPainter painter(&img);
 	painter.setRenderHint(QPainter::Antialiasing, isAA);
 	painter.setPen(pen);
-	//开始绘制图表
-	/*QVector<QRectF> CutRoomlist = d->getAllCutRoom();
-	for (auto iter = CutRoomlist.begin(); iter != CutRoomlist.end(); iter++)
-	transitionRectF(*iter, xScale, yScale, xr, yr);
-	painter.drawRects(CutRoomlist);*/
 	QPen pen2(penColor);
 	pen2.setWidth(penSize);
 	painter.setPen(pen2);
@@ -490,6 +464,13 @@ void phasorRenderer::loadconfig()
 	penSize =atoi(vectorGroup.getValue("vectorsize").c_str());
 	penColor = QStringToQColor(QString::fromStdString(vectorGroup.getValue("vectorColor")));
 	isAA = atoi(vectorGroup.getValue("isAlis").c_str());
+	//矢量展示模式
+	bool isSizeToColor = atoi(vectorGroup.getValue("disMode").c_str());
+	std::shared_ptr<phasorData> d = std::dynamic_pointer_cast<phasorData>(data);
+	if (isSizeToColor)
+		d->setdisMode(phasorData::DISMODE::sizeToColor);
+	else
+		d->setdisMode(phasorData::DISMODE::sizeToLen);
 }
 
 /**

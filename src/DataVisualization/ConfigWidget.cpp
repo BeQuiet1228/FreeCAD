@@ -12,6 +12,7 @@
 #include "qwt/qwt_scale_widget.h"
 #include"qwt/qwt_scale_engine.h";
 #include "ContourRender.h"
+#include "Arrowctrl.h"
 /**
 * @brief ConfigWidget::ConfigWidget
 * @param QWidget* panter
@@ -82,6 +83,8 @@ void ConfigWidget::initUI()
 	connect(ui->vecColor, SIGNAL(clicked()), this, SLOT(veccolorClicked()));
 	//保存
 	connect(ui->applicButtom, SIGNAL(clicked()), this, SLOT(saveclicked()));
+	//取消
+	connect(ui->cancleButtom, SIGNAL(clicked()), this, SLOT(canclelicked()));
 	//刻度
 	connect(ui->axisColor, SIGNAL(clicked()), this, SLOT(axisColorclicked()));
 	connect(ui->axisvalColor, SIGNAL(clicked()), this,SLOT(axisValColorclicked()));
@@ -116,7 +119,8 @@ void ConfigWidget::initUI()
 		scaleWIdget->setScaleDiv(scaleEngine->divideScale(0,1,5,6,0));
 		ui->colorscale->setLayout(boxLayout);
 		boxLayout->addWidget(scaleWIdget);
-		boxLayout->addWidget(new QWidget(ui->colorscale));
+		arrowCtrl = new ArrowCtrl( ArrowCtrl::Direction::TopToBottom,ui->colorscale);
+		boxLayout->addWidget(arrowCtrl);
 	}
 }
 
@@ -230,6 +234,7 @@ void ConfigWidget::saveclicked()
 		vectorGroup.setSetting("vectorsize", vecsizestr);
 		vectorGroup.setSetting("vectorColor", vecconfig._2nd.toStdString());
 		(ui->veccheckBox->checkState() == Qt::Checked)?vectorGroup.setSetting("isAlis", "1"):vectorGroup.setSetting("isAlis", "0");
+		(ui->disMode->checkState() == Qt::Checked) ? vectorGroup.setSetting("disMode", "1") : vectorGroup.setSetting("disMode", "0");
 	}
 	//刻度
 	{
@@ -259,10 +264,10 @@ void ConfigWidget::saveclicked()
 		auto equl_ratioGroup = contourGroup.getGroup("equl_ratio");
 		equl_ratioGroup.setSetting("equal_ratioval", ui->equal_ratioval->text().toStdString());
 		equl_ratioGroup.setSetting("equal_ratiosval", ui->equal_ratio_sval->text().toStdString());
-		equl_ratioGroup.setSetting(QString("equal_ratiolevel_0").toStdString(), QString("%1").arg(ui->equal_ratio_sval->text().toFloat()).toStdString());
+		equl_ratioGroup.setSetting(QString("level_0").toStdString(), QString("%1").arg(ui->equal_ratio_sval->text().toFloat()).toStdString());
 		for (auto index = 1; index < ui->levelnumber->itemText(ui->levelnumber->currentIndex()).toInt()+1;index++)
 		{
-			equl_ratioGroup.setSetting(QString("equal_ratiolevel_%1").arg(index).toStdString(), QString("%1").
+			equl_ratioGroup.setSetting(QString("level_%1").arg(index).toStdString(), QString("%1").
 				arg(ui->equal_ratio_sval->text().toFloat()*index*ui->equal_ratioval->text().toFloat()).toStdString());
 		}
 		//等值
@@ -271,7 +276,7 @@ void ConfigWidget::saveclicked()
 		epuivalenceGroup.setSetting("epuivalencesval", ui->epuivalence_sval->text().toStdString());
 		for (auto index = 0; index < ui->levelnumber->itemText(ui->levelnumber->currentIndex()).toInt() + 1; index++)
 		{
-			epuivalenceGroup.setSetting(QString("epuivalenceslevel_%1").arg(index).toStdString(), QString("%1").
+			epuivalenceGroup.setSetting(QString("level_%1").arg(index).toStdString(), QString("%1").
 				arg(ui->epuivalence_sval->text().toFloat() + index*ui->epuivalenceval->text().toFloat()).toStdString());
 		}
 		//自定义
@@ -279,7 +284,17 @@ void ConfigWidget::saveclicked()
 		for (auto index = 0; index < ui->user_definedtableWidget->rowCount();index++)
 		{
 			QTableWidgetItem* item = ui->user_definedtableWidget->item(index, 0);
-			user_definedGroup.setSetting(QString("user_defined_%1").arg(index).toStdString(),item->text().toStdString());
+			user_definedGroup.setSetting(QString("level_%1").arg(index).toStdString(),item->text().toStdString());
+		}
+		auto levelColorVal = contourGroup.getGroup("levelColorVal");
+		auto levelColor = contourGroup.getGroup("levelColor");
+		std::vector<float> val = arrowCtrl->getVal();
+		const QwtColorMap* xmap = scaleWIdget->colorMap();
+		for (auto index = 0; index < val.size();index++)
+		{
+			levelColorVal.setSetting(QString("level_%1").arg(index).toStdString(),QString("%1").arg(val[index]).toStdString());
+			QColor color = xmap->color(QwtInterval(0.0,1.0),val[index]);
+			levelColor.setSetting(QString("level_%1").arg(index).toStdString(),QColorToQstring(color).toStdString());
 		}
 	}
 	Config::GetInstance()->saveFile();
@@ -423,9 +438,10 @@ void ConfigWidget::loadxmlConfig(){
 			if (combox->itemText(i) == str)
 			{
 				combox->setCurrentIndex(i);
-				break;
+				return;
 			}
 		}
+		combox->setCurrentIndex(0);
 	};
 	//结构图
 	{
@@ -486,6 +502,7 @@ void ConfigWidget::loadxmlConfig(){
 		QString vectorsize = QString::fromStdString(vectorGroup.getValue("vectorsize"));
 		toComboxIndex(ui->vectorSize, vectorsize);
 		ui->veccheckBox->setCheckState((QString::fromStdString(vectorGroup.getValue("isAlis")).toInt())?Qt::Checked:Qt::Unchecked);
+		ui->disMode->setCheckState((QString::fromStdString(vectorGroup.getValue("disMode")).toInt()) ? Qt::Checked : Qt::Unchecked);
 	}
 	//刻度
 	{
@@ -519,17 +536,42 @@ void ConfigWidget::loadxmlConfig(){
 		ui->concheckBox->setCheckState(((QString::fromStdString(contourGroup.getValue("isAlis")).toInt() )==1) ?Qt::Checked:Qt::Unchecked);
 		toComboxIndex(ui->contourvalType, QString::fromStdString(contourGroup.getValue("valtype")));
 		toComboxIndex(ui->levelnumber, QString::fromStdString(contourGroup.getValue("vallevel")));
+		int levelNumber = ui->levelnumber->itemText(ui->levelnumber->currentIndex()).toInt();
 		{
 			auto user_definedGroup = contourGroup.getGroup("user_defined");
 			cleartableWidget(ui->user_definedtableWidget);
-			for (auto index = 0; index < atoi(contourGroup.getValue("vallevel").c_str())+1;index++)
+			for (auto index = 0; index < levelNumber+1;index++)
 			{
 				ui->user_definedtableWidget->insertRow(index);
-				//user_defined_0;
-				QString levelval = QString("user_defined_%1").arg(index);
-				ui->user_definedtableWidget->setItem(index, 0, new QTableWidgetItem( QString::fromStdString( user_definedGroup.getValue(levelval.toStdString()) ) ));
+				QString levelval = QString("level_%1").arg(index);
+				ui->user_definedtableWidget->setItem(index, 0, new QTableWidgetItem( QString::fromStdString(user_definedGroup.getValue(levelval.toStdString()))));
 			}
 		}
+		{
+			//等比
+			auto equl_ratioGroup = contourGroup.getGroup("equl_ratio");
+			ui->equal_ratioval->setText(QString::fromStdString(equl_ratioGroup.getValue("equal_ratioval")));
+			ui->equal_ratio_sval->setText(QString::fromStdString(equl_ratioGroup.getValue("equal_ratiosval")));
+		}
+		{
+			//等值
+			auto epuivalenceGroup = contourGroup.getGroup("epuivalence");
+			ui->epuivalenceval->setText(QString::fromStdString( epuivalenceGroup.getValue("epuivalenceval") ));
+			ui->epuivalence_sval->setText(QString::fromStdString(epuivalenceGroup.getValue("epuivalencesval")));
+		}
+		auto levelColorval = contourGroup.getGroup("levelColorVal");
+		arrowCtrl->setlevel(levelNumber+1);
+		std::vector<float> val;
+		val.reserve(levelNumber+1);
+		for (auto index = 0; index < levelNumber + 1;++index)
+		{
+			std::string s_val = levelColorval.getValue(QString("level_%1").arg(index).toStdString());
+			if (s_val!="")
+			{
+				val.push_back(atof(s_val.c_str()));
+			}
+		}
+		arrowCtrl->setVal(val);
 	}
 }
 /**
@@ -595,7 +637,9 @@ void ConfigWidget::struct_2D_clicked(int _property, QPushButton* button){
 void ConfigWidget::changeUser_defined(int index)
 {
 	int rowold=ui->user_definedtableWidget->rowCount();
+	
 	int rownew=ui->levelnumber->itemText(index).toInt()+1;
+	arrowCtrl->setlevel(rownew);
 	if (rownew>rowold)
 	{
 		for (auto i = 0; i < rownew - rowold;i++)
@@ -616,6 +660,9 @@ void ConfigWidget::changeUser_defined(int index)
 			ui->user_definedtableWidget->removeRow(row-1);
 		}
 	}
+}
+void ConfigWidget::canclelicked()
+{
 }
 /**
 * @brief  Mas::Setconfig::Setconfig

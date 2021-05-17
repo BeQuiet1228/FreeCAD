@@ -127,7 +127,6 @@ void Plot::reRender()
 	}
 
 	renderManager->start();
-
 }
 
 /**
@@ -147,9 +146,9 @@ void Plot::addSubRenderer(const std::shared_ptr<Renderer>& rd)
 		yr = mainRenderer->getYRang();
 		rd->setXRang(xr);
 		rd->setYRang(yr);
-	}else {
-		rd->setDefaultRang(canvas->size());
-		//rd->setDefaultRang();
+	}else{
+		//rd->setDefaultRang(canvas->size());
+		rd->setDefaultRang();
 	}
 
 	subRenderers.push_back(rd);
@@ -163,10 +162,10 @@ void Plot::addSubRenderer(const std::shared_ptr<Renderer>& rd)
 void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
 {
 	//初始化数据
-	rd->dataInit();
-	rd->setDefaultRang(canvas->size());
-	//rd->setDefaultRang();
 	rd->loadconfig();
+	rd->dataInit();
+	//rd->setDefaultRang(canvas->size());
+	rd->setDefaultRang();
 	mainRenderer = rd;
 	autoMaxRender();
 }
@@ -308,7 +307,8 @@ void Plot::autoMaxRender()
 		return;
 
 	//获取渲染器中最大的默认渲染范围
-	mainRenderer->setDefaultRang(canvas->size());
+	//mainRenderer->setDefaultRang(canvas->size());
+	mainRenderer->setDefaultRang();
 	auto xr = mainRenderer->getXRang();
 	auto yr = mainRenderer->getYRang();
 

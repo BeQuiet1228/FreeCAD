@@ -77,7 +77,7 @@ void DataSourceManage::tranfromRenderer(std::string name,int index){
 * @param int _type 方向
 * @return Renderers 
 */
-Renderers DataSourceManage::CreateRenderer(Hdf5Data data, int _type)
+Renderers DataSourceManage::CreateRenderer(Hdf5Data& data, int _type)
 {
 	Renderers rds = factoryptr->creatRenderers(data, (DirectionType)_type);
 	return rds;
@@ -87,10 +87,10 @@ Renderers DataSourceManage::CreateRenderer(Hdf5Data data, int _type)
 * @param Hdf5Data data
 * @return RendererPtr
 */
-Renderers DataSourceManage::CreateRendererList(Hdf5Data data){
+Renderers DataSourceManage::CreateRendererList(Hdf5Data& data){
 	//从工厂获取到相关的渲染器
 	Hdf5Data _data(data);
-	Renderers rd=factoryptr->creatRenderers(data);
+	Renderers rd=factoryptr->creatRenderers(_data);
 	return rd;
 }
 /**
@@ -157,7 +157,7 @@ void DataSourceManage::init(ListTreeWidget* ptr,Plot* _plot){
 * @param Hdf5Data data 结构图数据
 * @return void
 */
-int DataSourceManage::initStructData(Hdf5Data data)
+int DataSourceManage::initStructData(Hdf5Data& data)
 {
 	hdfDatelist.push_back(data);
 	structData = data;

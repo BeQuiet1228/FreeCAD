@@ -128,7 +128,7 @@ void Axis::paintEvent(QPaintEvent* event)
 	{
 		mPainter.save();
 		mPainter.translate(Axisunit.postion);
-		mPainter.rotate(90);
+		mPainter.rotate(-90);
 		mPainter.drawText(QPointF(0, 0), Axisunit.valsize);
 		mPainter.restore();
 	}
@@ -507,18 +507,18 @@ AXISVAL Axis::GetAxisUnit(Axisstyle _Axisstyle, QRectF _rect){
 		float height = rect.height();	
 		__rect.setLeft(_rect.right()-minWidth-rect.height());
 		__rect.setRight(__rect.left()+rect.width());
-		__rect.setTop((_rect.top() + _rect.bottom()) / 2 - width / 2);
-		__rect.setBottom(__rect.top()+height);
+		__rect.setBottom((_rect.top() + _rect.bottom())/2+width/2);
+		__rect.setTop(__rect.bottom()-height);
 		AXISVAL mmaxisval;
 		mmaxisval.valsize = mAxisunit;
 		mmaxisval.postion = QPointF(__rect.left(), __rect.bottom());
 		Axisunit = mmaxisval;
 		minWidth = minWidth + rect.height();
 		//
-		AxisUnitRectf->setLeft(__rect.left());
+		AxisUnitRectf->setLeft(__rect.left()-height);
 		AxisUnitRectf->setRight(AxisUnitRectf->left()+height);
-		AxisUnitRectf->setTop(__rect.bottom());
-		AxisUnitRectf->setBottom(AxisUnitRectf->top()+width);
+		AxisUnitRectf->setBottom(__rect.bottom());
+		AxisUnitRectf->setTop(AxisUnitRectf->bottom()-width);
 	}
 		break;
 	case AxisRight:
