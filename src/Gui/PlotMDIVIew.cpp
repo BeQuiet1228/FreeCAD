@@ -1,6 +1,7 @@
 #include "PreCompiled.h"
 #include "PlotMDIView.h"
 #include "DataVisualization/Plot.h"
+TYPESYSTEM_SOURCE_ABSTRACT(Gui::PlotMDIView, Gui::MDIView);
 namespace Gui{
 	/**
 	* @brief PlotMDIView::PlotMDIView ¹¹Ôìº¯Êý

@@ -14,6 +14,7 @@ namespace Gui{
 	class GuiExport PlotMDIView :public MDIView
 	{
 		Q_OBJECT
+			TYPESYSTEM_HEADER();
 	public:
 		PlotMDIView(Gui::Document &_doc, QWidget* parent = 0);
 		~PlotMDIView();

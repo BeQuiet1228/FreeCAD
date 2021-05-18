@@ -153,7 +153,9 @@ RendererPtr RendererFactory::creatStructRender(Hdf5Data h5d, DirectionType type)
 */
 RendererPtr RendererFactory::creatStructRender(Hdf5Data h5d, const _3DPointf& start, const _3DPointf& end)
 {
-	if (!(start == end))
+	//auto res = (start == end);
+	//if (0!=res)
+	if ((start == end))
 	{
 		std::shared_ptr<StructData> _structdata(new StructData(h5d, start, end));
 		StructRender* _StructureRenderer = new StructRender(_structdata);

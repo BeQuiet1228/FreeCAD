@@ -66,6 +66,7 @@
 #include "WaitCursor.h"
 #include "Thumbnail.h"
 #include "Contorl/ContorlInterface.h"
+#include "PlotMDIView.h"
 
 using namespace Gui;
 
@@ -1113,6 +1114,12 @@ void Document::createView(const Base::Type& typeId)
         view3D->resize(400, 300);
         getMainWindow()->addWindow(view3D);
     }
+	//添加Plot窗口
+	if (typeId == PlotMDIView::getClassTypeId())
+	{
+		PlotMDIView* plot = new PlotMDIView(*this);
+		getMainWindow()->addWindow(plot);
+	}
 }
 
 Gui::MDIView* Document::cloneView(Gui::MDIView* oldview)

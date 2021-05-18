@@ -127,19 +127,39 @@ bool phasorData::initData()
 	std::vector<qreal> valueB_list=getaxis_y();
 	//获取全部的切割空间
 #pragma region 
-	for (auto valueB = 0; valueB < valueB_list.size()-1;valueB++)
+	if (isTruedir())
 	{
-		for (auto valueA = 0; valueA < valuesA_list.size() - 1;valueA++)
+		for (auto valueA = 0; valueA < valuesA_list.size() - 1; valueA++)
 		{
-			//获取切割矩形
-			QRectF _rectf;
-			_rectf.setLeft(valuesA_list[valueA]);
-			_rectf.setRight(valuesA_list[valueA+1]);
-			_rectf.setTop(valueB_list[valueB+1]);
-			_rectf.setBottom(valueB_list[valueB]);
-			mPiflist_rect.push_back(_rectf);
+			for (auto valueB = 0; valueB < valueB_list.size() - 1; valueB++)
+			{
+				//获取切割矩形
+				QRectF _rectf;
+				_rectf.setLeft(valuesA_list[valueA]);
+				_rectf.setRight(valuesA_list[valueA + 1]);
+				_rectf.setTop(valueB_list[valueB + 1]);
+				_rectf.setBottom(valueB_list[valueB]);
+				mPiflist_rect.push_back(_rectf);
+			}
+		}	
+	}
+	else
+	{
+		for (auto valueB = 0; valueB < valueB_list.size() - 1; valueB++)
+		{
+			for (auto valueA = 0; valueA < valuesA_list.size() - 1; valueA++)
+			{
+				//获取切割矩形
+				QRectF _rectf;
+				_rectf.setLeft(valuesA_list[valueA]);
+				_rectf.setRight(valuesA_list[valueA + 1]);
+				_rectf.setTop(valueB_list[valueB + 1]);
+				_rectf.setBottom(valueB_list[valueB]);
+				mPiflist_rect.push_back(_rectf);
+			}
 		}
 	}
+		
 #pragma endregion
 	return true;
 }
@@ -188,7 +208,6 @@ std::vector<qreal> phasorData::getaxis_y()
 	axis_ylist.push_back(0);
 	for (auto iterb = datasetEmB->begin(); iterb != datasetEmB->end();iterb++)
 	{
-		//printf("y=%f\n", *iterb);
 		axis_ylist.push_back(*iterb);
 	}
 	return axis_ylist;
@@ -226,7 +245,7 @@ bool phasorData::initVectorData()
 		datasetEmB = *iter; iter++;
 		datasetEmC = *iter;
 	}
-
+	bool isres = isTruedir();
 	if (mPiflist_rect.empty())
 		return false;
 	//获取起点p1
@@ -260,9 +279,18 @@ bool phasorData::initVectorData()
 	sizeScale.reserve(mPiflist_rect.size());
 	for (auto i = 0; i < mPiflist_rect.size(); i++)
 	{
-		float x_coef = dataC[i];
-		float y_coef = dataC[i + mPiflist_rect.size()];
-		//printf("x_coef=%f,y_coef=%f\n", x_coef, y_coef);
+		float x_coef;
+		float y_coef;
+		if (isres)
+		{
+			y_coef = dataC[i];
+			x_coef = dataC[i + mPiflist_rect.size()];
+		}
+		else
+		{
+			x_coef = dataC[i];
+			y_coef = dataC[i + mPiflist_rect.size()];
+		}
 		if (x_coef<0.0000001&&x_coef>-0.0000001&&
 			y_coef<0.0000001&&y_coef>-0.0000001)
 		{
