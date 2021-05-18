@@ -963,12 +963,12 @@ void StdCmdCopy::activated(int iMsg)
     bool done = getGuiApplication()->sendMsgToActiveView("Copy");
     if (!done) {
 		//暂时兼容3d的复制
-		if (getDocument()->classID == 2)
-		{
-			Base::InterpreterSingleton python;
-			python.runString("FreeCADGui.runCommand('CopyCommand')");
-			return;
-		}
+		//if (getDocument()->classID == 2)
+		//{
+		//	Base::InterpreterSingleton python;
+		//	python.runString("FreeCADGui.runCommand('CopyCommand')");
+		//	return;
+		//}
         QMimeData * mimeData = getMainWindow()->createMimeDataFromSelection();
         QClipboard* cb = QApplication::clipboard();
         cb->setMimeData(mimeData);
@@ -1005,12 +1005,12 @@ void StdCmdPaste::activated(int iMsg)
     bool done = getGuiApplication()->sendMsgToActiveView("Paste");
     if (!done) {
 		//暂时兼容3d的粘贴
-		if (getDocument()->classID == 2)
-		{
-			Base::InterpreterSingleton python;
-			python.runString("FreeCADGui.runCommand('PasteCommand')");
-			return;
-		}
+		//if (getDocument()->classID == 2)
+		//{
+		//	Base::InterpreterSingleton python;
+		//	python.runString("FreeCADGui.runCommand('PasteCommand')");
+		//	return;
+		//}
         QClipboard* cb = QApplication::clipboard();
         const QMimeData* mimeData = cb->mimeData();
         if (mimeData) {

@@ -96,12 +96,19 @@ void MyParameter::textChanged(const QString& text) {
 
 // 表格内容发生变化时的槽函数
 void MyParameter::cellDoubleClicked(int row, int column) {
+    clock_t startTime, endTime;
     this->tableWidget->blockSignals(true);
     if (column == 0) {
+        //startTime = std::clock();
         this->cellChangedWithZerothColumn(row);
+        //endTime = std::clock();
+        //std::cerr << "column:0  ::" << (double)(endTime - startTime) / CLOCKS_PER_SEC << ";\n";
     }
     else if (column == 1){
+        //startTime = std::clock();
         this->cellChangedWithFirstColumn(row);
+        //endTime = std::clock();
+        //std::cerr << "column:1  ::" << (double)(endTime - startTime) / CLOCKS_PER_SEC << ";\n";
     }
     if (column < 2) {
         this->createParamM3D();
@@ -433,9 +440,14 @@ void MyParameter::createParamM3D() {
 // 更新数据
 void MyParameter::updateFromRowToEnd(int row) {
     int max_row = this->tableWidget->rowCount();
+    QString cur_row_name = tableWidget->item(row, 0)->text();    // 当前行表达式的名字
     for (int i = row + 1; i < max_row - 1; ++i) {
         QString name = tableWidget->item(i, 0)->text();
         QString expression = tableWidget->item(i, 1)->text();
+        if (expression.toStdString().find(cur_row_name.toStdString()) == std::string::npos) {
+            //std::cerr << expression.toStdString() << "\t" << cur_row_name.toStdString() << std::endl;;
+            continue;
+        }
         param_type _type = typeAnalysis(expression);
         if (this->changeProperty(_type, name, expression)) {
             this->setValueToItem(_type, name, i);
@@ -504,7 +516,7 @@ void MyParameter::importText() {
         this->tableWidget->item(cur_row - 1 + i, 1)->setText(QString::fromStdString(p[i][1]));
         endTime = clock();
         all = all + (double)(endTime - startTime) / CLOCKS_PER_SEC;
-        //std::cerr << (double)(endTime - startTime) / CLOCKS_PER_SEC << std::endl;
+        std::cerr << p[i][0]  << " :\t" << (double)(endTime - startTime) / CLOCKS_PER_SEC << std::endl;
     }
     std::cerr << all << std::endl;
 }
@@ -551,9 +563,6 @@ void MyParameter::insertParam() {
         QTableWidgetItem* item_value = new QTableWidgetItem();
         QTableWidgetItem* item_type = new QTableWidgetItem();
         QTableWidgetItem* item_description = new QTableWidgetItem();
-        /* 在此处添加名字的主要原因是因为更新m3d需要读取item的内容，
-           最后一行再次设置名称是为了更新该行的编辑状态 */
-        //item_name->setText(name);
         // 使新建行无法编辑
         item_expression->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         item_value->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
