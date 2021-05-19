@@ -3,7 +3,8 @@
 #include <vector>
 #include <mutex>
 #include "qwt/qwt_matrix_raster_data.h"
-class ContourData :public XYData{
+#include "DirData.h"
+class ContourData :public DirData{
 public:
 	struct Grid
 	{

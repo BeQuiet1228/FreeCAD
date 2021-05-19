@@ -5,7 +5,7 @@
 #include <QRegExp>
 #include <DataInformationGetter.h>
 ContourData::ContourData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
-	:XYData(h5Data, mod), height(0), width(0)
+	:DirData(h5Data, mod), height(0), width(0)
 {
 
 }
@@ -40,11 +40,24 @@ bool ContourData::loadPoint()
 	//获取网格数据
 	ValuesPtr xg, yg, vg;
 	auto listValuesIter = listValues->begin();
-	xg = *listValuesIter;
-	listValuesIter++;
-	yg = *listValuesIter;
-	listValuesIter++;
-	vg = *listValuesIter;
+
+	//判断方向是否跟结构图一样
+	//不一样则调整方向
+	if (isTruedir())
+	{
+		xg = *listValuesIter;
+		listValuesIter++;
+		yg = *listValuesIter;
+		listValuesIter++;
+		vg = *listValuesIter;
+	}else {
+		yg = *listValuesIter;
+		listValuesIter++;
+		xg = *listValuesIter;
+		listValuesIter++;
+		vg = *listValuesIter;
+	}
+
 
 	if (xg->size() == 0 || yg->size() == 0 || vg->size() == 0)
 		return false;
@@ -60,29 +73,50 @@ bool ContourData::loadPoint()
 	width = xg->size();
 	height = yg->size();
 
+
 	Rang vr;
 	vr.min = vr.max = *vIter;
 	Grid tempGrid;
-	for (; yIter != yg->end() && vIter != vg->end(); yIter++)
-	{
-		for (xIter = xg->begin(); xIter != xg->end() && vIter != vg->end() ; xIter++)
+	if (isTruedir()) {
+		for (; yIter != yg->end() && vIter != vg->end(); yIter++)
 		{
-			//生成网格信息
-			tempGrid.x = *xIter;
-			tempGrid.y = *yIter;
-			tempGrid.value = *vIter;
-			grids.push_back(tempGrid);
+			for (xIter = xg->begin(); xIter != xg->end() && vIter != vg->end(); xIter++)
+			{
+				//生成网格信息
+				tempGrid.x = *xIter;
+				tempGrid.y = *yIter;
+				tempGrid.value = *vIter;
+				grids.push_back(tempGrid);
 
-			//生成value范围信息
-			if (*vIter > vr.max)
-				vr.max = *vIter;
-			else if (*vIter < vr.min)
-				vr.min = *vIter;
-			vIter++;
+				//生成value范围信息
+				if (*vIter > vr.max)
+					vr.max = *vIter;
+				else if (*vIter < vr.min)
+					vr.min = *vIter;
+				vIter++;
+			}
+
 		}
-	
-	}
+	}else {
+		for (int h = 0; h < yg->size(); h++)
+		{
+			
+			for (int w = 0; w < xg->size(); w++)
+			{
+				//生成网格信息
+				tempGrid.x = xg->at(w);
+				tempGrid.y = yg->at(h);
+				tempGrid.value = vg->at(w*yg->size() + h);
+				grids.push_back(tempGrid);
 
+				//生成value范围信息
+				if (tempGrid.value > vr.max)
+					vr.max = tempGrid.value;
+				else if (tempGrid.value < vr.min)
+					vr.min = tempGrid.value;
+			}
+		}
+	}
 	//初始化数据范围
 	setValueRang(vr);
 	Rang xr, yr;
@@ -282,9 +316,17 @@ void ContourData::setXYRange()
 		yr = getAxisRangeFromName(yAxisName);
 	}
 
+	//判断方向是否正常，不正常则颠倒范围
+	if (isTruedir())
+	{
+		setXRang(xr);
+		setYRang(yr);
+	}else {
+		setXRang(yr);
+		setYRang(xr);
+	}
 
-	setXRang(xr);
-	setYRang(yr);
+
 
 }
 

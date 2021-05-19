@@ -64,7 +64,7 @@ bool ParticleData::loadPointHard()
 
 	//判断数据方向与结构图方向是否一致、不一致对数据位置进行一定调整
 	unsigned int xIndex, yIndex;
-	if (!isTruedir())
+	if (isTruedir())
 	{
 		xIndex = 1;
 		yIndex = 2;
@@ -176,8 +176,8 @@ void ParticleData::transitionData()
 	{
 		for (auto part = particles.begin(); part != particles.end(); part++)
 		{
-			part->x = part->d2*sin(part->d1);
-			part->y = part->d2*cos(part->d1);
+			part->x = part->d1*sin(part->d2);
+			part->y = part->d1*cos(part->d2);
 		}
 	}else{
 		for (auto part = particles.begin(); part != particles.end(); part++)
