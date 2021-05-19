@@ -202,6 +202,14 @@ bool phasorRenderer::drawImage_Scence(){
 	//绘制向量
 	QVector<QPointF> p1 = d->Getp1Point();
 	QVector<QPointF> p2 = d->Getp2Point();
+	//计算网格最大系数
+	float maxCoef;
+	{
+		//计算网格大小
+		float widthgrid = (d->getdefXrang().max - d->getdefXrang().min)*xScale / d->getXsize();
+		float heightrid = (d->getdefYrang().max - d->getdefYrang().min)*yScale / d->getYsize();
+		maxCoef = sqrt(widthgrid*widthgrid + heightrid*heightrid);
+	}
 	//向量可能太小，需要缩放
 	for (auto i = 0; i < p1.size(); i++)
 	{
@@ -209,11 +217,8 @@ bool phasorRenderer::drawImage_Scence(){
 		pen.setWidth(penSize);
 		painter.setPen(pen);
 		transitionpointF(p1[i], xScale, yScale, xr, yr);
-		p2[i].setX(p1[i].x()+p2[i].x()*xScale*0.5);
-		p2[i].setY(p1[i].y() - p2[i].y()*yScale*0.5);
-		//transitionpointF(p2[i], xScale, yScale, xr, yr);
-		//printf("p1的点--(%f,%f)\n", p1[i].x(), p1[i].y());
-		//printf("缩放后向量的长度%f\n", sqrt((p2[i].y() - p1[i].y())*(p2[i].y() - p1[i].y()) + (p1[i].x() - p2[i].x())*(p1[i].x() - p2[i].x())));
+		p2[i].setX(p1[i].x()+p2[i].x()*maxCoef/3);
+		p2[i].setY(p1[i].y() - p2[i].y()*maxCoef/3);
 		painter.drawLine(p1[i], p2[i]);
 		painter.drawLine(p2[i], GetarrowTop(p2[i], p1[i]));
 		painter.drawLine(p2[i], GetarrowBottom(p2[i], p1[i]));
@@ -277,12 +282,20 @@ bool phasorRenderer::drawImage_Coord(){
 	//绘制向量
 	QVector<QPointF> p1 = d->Getp1Point();
 	QVector<QPointF> p2 = d->Getp2Point();
+	std::vector<float> sizeScale = d->getScaleVal();//获取大小系数
 	//向量可能太小，需要缩放
+	float maxCoef;
+	{
+		//计算网格大小
+		float widthgrid = (d->getdefXrang().max - d->getdefXrang().min)*xScale / d->getXsize();
+		float heightrid = (d->getdefYrang().max - d->getdefYrang().min)*yScale / d->getYsize();
+		maxCoef = sqrt(widthgrid*widthgrid + heightrid*heightrid);
+	}
 	for (auto i = 0; i < p1.size(); i++)
 	{
-		//transionVector(p2[i], p1[i], d->GetVecXScale(), d->GetVecYScale());
 		transitionpointF(p1[i], xScale, yScale, xr, yr);
-		transitionpointF(p2[i], xScale, yScale, xr, yr);
+		p2[i].setX(p1[i].x()+p2[i].x()*maxCoef*sizeScale[i]);
+		p2[i].setY(p1[i].y() + p2[i].y()*maxCoef*sizeScale[i]);
 		painter.drawLine(p1[i], p2[i]);
 		painter.drawLine(p2[i], GetarrowTop(p2[i], p1[i]));
 		painter.drawLine(p2[i], GetarrowBottom(p2[i], p1[i]));
