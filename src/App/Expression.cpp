@@ -355,13 +355,13 @@ Expression * OperatorExpression::eval() const
 
     switch (op) {
     case ADD:
-        /*if (v1->getUnit() != v2->getUnit())
-            throw ExpressionError("Incompatible units for + operator");*/
+        if (v1->getUnit() != v2->getUnit())
+            throw ExpressionError("Incompatible units for + operator");
         output = new NumberExpression(owner, v1->getQuantity() + v2->getQuantity());
         break;
     case SUB:
-        /*if (v1->getUnit() != v2->getUnit())
-            throw ExpressionError("Incompatible units for - operator");*/
+        if (v1->getUnit() != v2->getUnit())
+            throw ExpressionError("Incompatible units for - operator");
         output = new NumberExpression(owner, v1->getQuantity()- v2->getQuantity());
         break;
     case MUL:

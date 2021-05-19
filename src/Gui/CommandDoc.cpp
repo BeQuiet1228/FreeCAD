@@ -73,6 +73,10 @@
 #include <memory>
 #include "SmartContorl/SmartContorlInterface.h"
 #include "DataVisualization/ConfigWidget.h"
+#include "MyParameter.h"
+#include "App/DocumentObject.h"
+#include "Gui\DockWindowManager.h"
+
 using namespace Gui;
 
 
@@ -841,7 +845,7 @@ void StdCmdUndo::activated(int iMsg)
     Q_UNUSED(iMsg); 
 //  Application::Instance->slotUndo();
     getGuiApplication()->sendMsgToActiveView("Undo");
-	App::Document* pcDoc=App::GetApplication().getActiveDocument();
+	//App::Document* pcDoc=App::GetApplication().getActiveDocument();
 	//pcDoc->recompute();
 	//pcDoc->flagNeedUpdateBoolean.setValue(0);
 	//doCommand(Command::Gui, "DocumentTools.updateBoolean()");
@@ -972,12 +976,12 @@ void StdCmdCopy::activated(int iMsg)
     bool done = getGuiApplication()->sendMsgToActiveView("Copy");
     if (!done) {
 		//暂时兼容3d的复制
-		if (getDocument()->classID == 2)
-		{
-			Base::InterpreterSingleton python;
-			python.runString("FreeCADGui.runCommand('CopyCommand')");
-			return;
-		}
+		//if (getDocument()->classID == 2)
+		//{
+		//	Base::InterpreterSingleton python;
+		//	python.runString("FreeCADGui.runCommand('CopyCommand')");
+		//	return;
+		//}
         QMimeData * mimeData = getMainWindow()->createMimeDataFromSelection();
         QClipboard* cb = QApplication::clipboard();
         cb->setMimeData(mimeData);
@@ -1014,12 +1018,12 @@ void StdCmdPaste::activated(int iMsg)
     bool done = getGuiApplication()->sendMsgToActiveView("Paste");
     if (!done) {
 		//暂时兼容3d的粘贴
-		if (getDocument()->classID == 2)
-		{
-			Base::InterpreterSingleton python;
-			python.runString("FreeCADGui.runCommand('PasteCommand')");
-			return;
-		}
+		//if (getDocument()->classID == 2)
+		//{
+		//	Base::InterpreterSingleton python;
+		//	python.runString("FreeCADGui.runCommand('PasteCommand')");
+		//	return;
+		//}
         QClipboard* cb = QApplication::clipboard();
         const QMimeData* mimeData = cb->mimeData();
         if (mimeData) {
@@ -1174,164 +1178,254 @@ void StdCmdDelete::activated(int iMsg)
 {
 	Q_UNUSED(iMsg);
 	if (getDocument()->classID == 2){
-	// go through all documents
-	const SelectionSingleton& rSel = Selection();
-	const std::vector<App::Document*> docs = App::GetApplication().getDocuments();
-	for (std::vector<App::Document*>::const_iterator it = docs.begin(); it != docs.end(); ++it) {
-		//删除模型时，得找到最小的order，从改order开始刷新
-		int minOrder = -1;
-		Gui::Document* pGuiDoc = Gui::Application::Instance->getDocument(*it);
-		std::vector<Gui::SelectionObject> sel = rSel.getSelectionEx((*it)->getName());
-		if (!sel.empty()) {
-			bool autoDeletion = true;
+        // go through all documents
+        const SelectionSingleton& rSel = Selection();
+        const std::vector<App::Document*> docs = App::GetApplication().getDocuments();
+        for (std::vector<App::Document*>::const_iterator it = docs.begin(); it != docs.end(); ++it) {
+            Gui::Document* pGuiDoc = Gui::Application::Instance->getDocument(*it);
+            std::vector<Gui::SelectionObject> sel = rSel.getSelectionEx((*it)->getName());
+            if (!sel.empty()) {
+                bool autoDeletion = true;
 
-			// if an object is in edit mode handle only this object even if unselected (#0001838)
-			Gui::ViewProvider* vpedit = pGuiDoc->getInEdit();
-			if (vpedit) {
-				// check if the edited view provider is selected
-				for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
-					Gui::ViewProvider* vp = pGuiDoc->getViewProvider(ft->getObject());
-					if (vp == vpedit) {
-						if (!ft->getSubNames().empty()) {
-							// handle the view provider
-							Gui::getMainWindow()->setUpdatesEnabled(false);
+                // if an object is in edit mode handle only this object even if unselected (#0001838)
+                Gui::ViewProvider* vpedit = pGuiDoc->getInEdit();
+                if (vpedit) {
+                    // check if the edited view provider is selected
+                    for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
+                        Gui::ViewProvider* vp = pGuiDoc->getViewProvider(ft->getObject());
+                        if (vp == vpedit) {
+                            if (!ft->getSubNames().empty()) {
+                                // handle the view provider
+                                Gui::getMainWindow()->setUpdatesEnabled(false);
 
-							(*it)->openTransaction("Delete");
-							vpedit->onDelete(ft->getSubNames());
-							(*it)->commitTransaction();
+                                (*it)->openTransaction("Delete");
+                                vpedit->onDelete(ft->getSubNames());
+                                (*it)->commitTransaction();
 
-							Gui::getMainWindow()->setUpdatesEnabled(true);
-							Gui::getMainWindow()->update();
-						}
-						break;
-					}
-				}
-			}
-			else {
-				// check if we can delete the object
-				std::set<QString> affectedLabels;
-				for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
-					App::DocumentObject* obj = ft->getObject();
-					std::vector<App::DocumentObject*> links = obj->getInList();
-					if (!links.empty()) {
-						// check if the referenced objects are groups or are selected too
-						for (std::vector<App::DocumentObject*>::iterator lt = links.begin(); lt != links.end(); ++lt) {
-							if (!rSel.isSelected(*lt)) {
-								ViewProvider* vp = pGuiDoc->getViewProvider(*lt);
-								if (!vp->canDelete(obj)) {
-									autoDeletion = false;
-									affectedLabels.insert(QString::fromUtf8((*lt)->Label.getValue()));
-								}
-							}
-						}
-					}
-				}
-
-				if (!autoDeletion) {
-					QString bodyMessage;
-					QTextStream bodyMessageStream(&bodyMessage);
-					bodyMessageStream << qApp->translate("Std_Delete",
-						"The following, referencing objects might break.\n\n"
-						"Are you sure you want to continue?\n\n");
-					for (const auto &currentLabel : affectedLabels)
-						bodyMessageStream << currentLabel << '\n';
-
-					int ret = QMessageBox::question(Gui::getMainWindow(),
-						qApp->translate("Std_Delete", "Object dependencies"), bodyMessage,
-						QMessageBox::Yes, QMessageBox::No);
-					if (ret == QMessageBox::Yes)
-						autoDeletion = true;
-				}
-				if (autoDeletion) {
-					Gui::getMainWindow()->setUpdatesEnabled(false);
-					(*it)->openTransaction("Delete");
-                    //开始逐个删除模型
-					for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
-						Gui::ViewProvider* vp = pGuiDoc->getViewProvider(ft->getObject());
-						if (vp) {
-							// ask the ViewProvider if it wants to do some clean up
-							/*@fubiao*/
-							//if (!ft->getTypeName == App::DocumentObjectGroup::getClassTypeId()))
-								if (vp->onDelete(ft->getSubNames())) {
-									//->isDerivedFrom(App::DocumentObjectGroup::getClassTypeId()))
-									if (strcmp(ft->getTypeName(),"App::DocumentObjectGroup")){
-										//fubiao
-										std::vector<App::DocumentObject*> pShapes;
-										std::vector<App::Property*> properties;
-										App::DocumentObject *obj = ft->getObject();
-										if (strcmp(obj->getNameInDocument(), "ResultShape") == 0)
-											//结果模型禁止删除
-											continue;
-										obj->getPropertyList(properties);
-										//std::vector<std::string> propertiesNames;
-										
-                                        //删阵列体基础模型 @pingyue
-                                        bool foundBaseType = false;
-                                        App::DocumentObject *baseObj = 0;
-
-										std::vector<App::Property*>::iterator itProp= properties.begin();
-										for (; itProp != properties.end(); itProp++){
-											const char* name = (*itProp)->getName();
-											if (strcmp((*itProp)->getName(), "Attribute") == 0 && !((App::PropertyEnumeration*)*itProp)->isValue("NotDefine")){
-												int orderOfObj = ((App::PropertyInteger*)(obj)->getPropertyByName("Order"))->getValue();
-												if (orderOfObj < minOrder || minOrder == -1){
-													minOrder = orderOfObj;
-													continue;
-													//break;
-												}
-											}
-											if (strcmp((*itProp)->getName(), "Shapes") == 0){
-												pShapes = ((App::PropertyLinkList*)(obj)->getPropertyByName("Shapes"))->getValues();
-											}
-                                            //找阵列体Base属性
-                                            if (strcmp((*itProp)->getName(), "Base") == 0)
-                                                baseObj = ((App::PropertyLink*)(*itProp))->getValue();
-                                            //BaseType是阵列体专有属性
-                                            if (strcmp((*itProp)->getName(), "BaseType") == 0)
-                                                foundBaseType = true;
-										}									
-										//end
-										if (strcmp(ft->getTypeName(), "Part::CustomFeaturePython") == 0){
-											if (pShapes.size()>0){
-												for (std::vector<App::DocumentObject*>::iterator iter = pShapes.begin(); iter != pShapes.end(); ++iter){
-													doCommand(Doc, "App.getDocument(\"%s\").removeObject(\"%s\")"
-														, (*it)->getName(), (*iter)->getNameInDocument());
-												}
-											}
-										}
-										//如果是阵列体，同时删除基础模型 @pingyue
-										//删除基础模型的操作放在这边，才能正常撤销
-                                        if (baseObj && foundBaseType){
-										    doCommand(Doc, "App.getDocument(\"%s\").removeObject(\"%s\")"
-											    , (*it)->getName(), baseObj->getNameInDocument());
-                                        }
-
-										doCommand(Doc, "App.getDocument(\"%s\").removeObject(\"%s\")"
-											, (*it)->getName(), ft->getFeatName());
-										(*it)->flagNeedUpdateBoolean.setValue(minOrder);
-
-									}
-									
-									
-								}
-							//}
-                            
+                                Gui::getMainWindow()->setUpdatesEnabled(true);
+                                Gui::getMainWindow()->update();
+                            }
+                            break;
                         }
                     }
-                    (*it)->commitTransaction();
+                }
+                else {
+                    // check if we can delete the object
+                    std::set<QString> affectedLabels;
+                    for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
+                        App::DocumentObject* obj = ft->getObject();
+                        std::vector<App::DocumentObject*> links = obj->getInList();
+                        if (!links.empty()) {
+                            // check if the referenced objects are groups or are selected too
+                            for (std::vector<App::DocumentObject*>::iterator lt = links.begin(); lt != links.end(); ++lt) {
+                                if (!rSel.isSelected(*lt)) {
+                                    ViewProvider* vp = pGuiDoc->getViewProvider(*lt);
+                                    if (!vp->canDelete(obj)) {
+                                        autoDeletion = false;
+                                        affectedLabels.insert(QString::fromUtf8((*lt)->Label.getValue()));
+                                    }
+                                }
+                            }
+                        }
+                    }
 
-                    Gui::getMainWindow()->setUpdatesEnabled(true);
-                    Gui::getMainWindow()->update();
+                    if (!autoDeletion) {
+                        QString bodyMessage;
+                        QTextStream bodyMessageStream(&bodyMessage);
+                        bodyMessageStream << qApp->translate("Std_Delete",
+                            "The following, referencing objects might break.\n\n"
+                            "Are you sure you want to continue?\n\n");
+                        for (const auto& currentLabel : affectedLabels)
+                            bodyMessageStream << currentLabel << '\n';
+
+                        int ret = QMessageBox::question(Gui::getMainWindow(),
+                            qApp->translate("Std_Delete", "Object dependencies"), bodyMessage,
+                            QMessageBox::Yes, QMessageBox::No);
+                        if (ret == QMessageBox::Yes)
+                            autoDeletion = true;
+                    }
+                    if (autoDeletion) {
+                        Gui::getMainWindow()->setUpdatesEnabled(false);
+                        (*it)->openTransaction("Delete");
+                        for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
+                            Gui::ViewProvider* vp = pGuiDoc->getViewProvider(ft->getObject());
+                            if (vp) {
+                                // ask the ViewProvider if it wants to do some clean up
+                                if (vp->onDelete(ft->getSubNames())) {
+                                    doCommand(Doc, "App.getDocument(\"%s\").removeObject(\"%s\")"
+                                        , (*it)->getName(), ft->getFeatName());
+                                }
+                            }
+                        }
+                        (*it)->commitTransaction();
+
+                        Gui::getMainWindow()->setUpdatesEnabled(true);
+                        Gui::getMainWindow()->update();
+                    }
                 }
             }
+            doCommand(Doc, "App.getDocument(\"%s\").recompute()", (*it)->getName());
         }
-		doCommand(Doc, "App.getDocument(\"%s\").recompute()", (*it)->getName());
-		doCommand(Gui::Command::Doc, "DocumentTools.updateBoolean()");
-		// 防止删除后粘贴
-		Gui::Application::Instance->commandManager().runCommandByName("ClearClipboardCommand");
+        // 以下代码为卢老师团队修改过后的代码，保留做参考，上述代码为原生代码
+        {/* {
+            // go through all documents
+            const SelectionSingleton& rSel = Selection();
+            const std::vector<App::Document*> docs = App::GetApplication().getDocuments();
+            for (std::vector<App::Document*>::const_iterator it = docs.begin(); it != docs.end(); ++it) {
+                //删除模型时，得找到最小的order，从改order开始刷新
+                int minOrder = -1;
+                Gui::Document* pGuiDoc = Gui::Application::Instance->getDocument(*it);
+                std::vector<Gui::SelectionObject> sel = rSel.getSelectionEx((*it)->getName());
+                if (!sel.empty()) {
+                    bool autoDeletion = true;
 
-    }
+                    // if an object is in edit mode handle only this object even if unselected (#0001838)
+                    Gui::ViewProvider* vpedit = pGuiDoc->getInEdit();
+                    if (vpedit) {
+                        // check if the edited view provider is selected
+                        for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
+                            Gui::ViewProvider* vp = pGuiDoc->getViewProvider(ft->getObject());
+                            if (vp == vpedit) {
+                                if (!ft->getSubNames().empty()) {
+                                    // handle the view provider
+                                    Gui::getMainWindow()->setUpdatesEnabled(false);
 
+                                    (*it)->openTransaction("Delete");
+                                    vpedit->onDelete(ft->getSubNames());
+                                    (*it)->commitTransaction();
+
+                                    Gui::getMainWindow()->setUpdatesEnabled(true);
+                                    Gui::getMainWindow()->update();
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        // check if we can delete the object
+                        std::set<QString> affectedLabels;
+                        for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
+                            App::DocumentObject* obj = ft->getObject();
+                            std::vector<App::DocumentObject*> links = obj->getInList();
+                            if (!links.empty()) {
+                                // check if the referenced objects are groups or are selected too
+                                for (std::vector<App::DocumentObject*>::iterator lt = links.begin(); lt != links.end(); ++lt) {
+                                    if (!rSel.isSelected(*lt)) {
+                                        ViewProvider* vp = pGuiDoc->getViewProvider(*lt);
+                                        if (!vp->canDelete(obj)) {
+                                            autoDeletion = false;
+                                            affectedLabels.insert(QString::fromUtf8((*lt)->Label.getValue()));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (!autoDeletion) {
+                            QString bodyMessage;
+                            QTextStream bodyMessageStream(&bodyMessage);
+                            bodyMessageStream << qApp->translate("Std_Delete",
+                                "The following, referencing objects might break.\n\n"
+                                "Are you sure you want to continue?\n\n");
+                            for (const auto& currentLabel : affectedLabels)
+                                bodyMessageStream << currentLabel << '\n';
+
+                            int ret = QMessageBox::question(Gui::getMainWindow(),
+                                qApp->translate("Std_Delete", "Object dependencies"), bodyMessage,
+                                QMessageBox::Yes, QMessageBox::No);
+                            if (ret == QMessageBox::Yes)
+                                autoDeletion = true;
+                        }
+                        if (autoDeletion) {
+                            Gui::getMainWindow()->setUpdatesEnabled(false);
+                            (*it)->openTransaction("Delete");
+                            //开始逐个删除模型
+                            for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
+                                Gui::ViewProvider* vp = pGuiDoc->getViewProvider(ft->getObject());
+                                if (vp) {
+                                    // ask the ViewProvider if it wants to do some clean up
+                                    //@fubiao
+                                    //if (!ft->getTypeName == App::DocumentObjectGroup::getClassTypeId()))
+                                    if (vp->onDelete(ft->getSubNames())) {
+                                        //->isDerivedFrom(App::DocumentObjectGroup::getClassTypeId()))
+                                        if (strcmp(ft->getTypeName(), "App::DocumentObjectGroup")) {
+                                            //fubiao
+                                            std::vector<App::DocumentObject*> pShapes;
+                                            std::vector<App::Property*> properties;
+                                            App::DocumentObject* obj = ft->getObject();
+                                            if (strcmp(obj->getNameInDocument(), "ResultShape") == 0)
+                                                //结果模型禁止删除
+                                                continue;
+                                            obj->getPropertyList(properties);
+                                            //std::vector<std::string> propertiesNames;
+
+                                            //删阵列体基础模型 @pingyue
+                                            bool foundBaseType = false;
+                                            App::DocumentObject* baseObj = 0;
+
+                                            std::vector<App::Property*>::iterator itProp = properties.begin();
+                                            for (; itProp != properties.end(); itProp++) {
+                                                const char* name = (*itProp)->getName();
+                                                if (strcmp((*itProp)->getName(), "Attribute") == 0 && !((App::PropertyEnumeration*) * itProp)->isValue("NotDefine")) {
+                                                    int orderOfObj = ((App::PropertyInteger*)(obj)->getPropertyByName("Order"))->getValue();
+                                                    if (orderOfObj < minOrder || minOrder == -1) {
+                                                        minOrder = orderOfObj;
+                                                        continue;
+                                                        //break;
+                                                    }
+                                                }
+                                                if (strcmp((*itProp)->getName(), "Shapes") == 0) {
+                                                    pShapes = ((App::PropertyLinkList*)(obj)->getPropertyByName("Shapes"))->getValues();
+                                                }
+                                                //找阵列体Base属性
+                                                if (strcmp((*itProp)->getName(), "Base") == 0)
+                                                    baseObj = ((App::PropertyLink*)(*itProp))->getValue();
+                                                //BaseType是阵列体专有属性
+                                                if (strcmp((*itProp)->getName(), "BaseType") == 0)
+                                                    foundBaseType = true;
+                                            }
+                                            //end
+                                            if (strcmp(ft->getTypeName(), "Part::CustomFeaturePython") == 0) {
+                                                if (pShapes.size() > 0) {
+                                                    for (std::vector<App::DocumentObject*>::iterator iter = pShapes.begin(); iter != pShapes.end(); ++iter) {
+                                                        doCommand(Doc, "App.getDocument(\"%s\").removeObject(\"%s\")"
+                                                            , (*it)->getName(), (*iter)->getNameInDocument());
+                                                    }
+                                                }
+                                            }
+                                            //如果是阵列体，同时删除基础模型 @pingyue
+                                            //删除基础模型的操作放在这边，才能正常撤销
+                                            if (baseObj && foundBaseType) {
+                                                doCommand(Doc, "App.getDocument(\"%s\").removeObject(\"%s\")"
+                                                    , (*it)->getName(), baseObj->getNameInDocument());
+                                            }
+
+                                            doCommand(Doc, "App.getDocument(\"%s\").removeObject(\"%s\")"
+                                                , (*it)->getName(), ft->getFeatName());
+                                            (*it)->flagNeedUpdateBoolean.setValue(minOrder);
+
+                                        }
+
+
+                                    }
+                                    //}
+
+                                }
+                            }
+                            (*it)->commitTransaction();
+
+                            Gui::getMainWindow()->setUpdatesEnabled(true);
+                            Gui::getMainWindow()->update();
+                        }
+                    }
+                }
+                doCommand(Doc, "App.getDocument(\"%s\").recompute()", (*it)->getName());
+                doCommand(Gui::Command::Doc, "DocumentTools.updateBoolean()");
+                // 防止删除后粘贴
+                Gui::Application::Instance->commandManager().runCommandByName("ClearClipboardCommand");
+
+            }
+        }*/}
 	
 		
 	}else if (getDocument()->classID == 3){
@@ -2191,7 +2285,52 @@ void StdCmdDataVisualizationAutoMax::activated(int iMsg)
 
 bool StdCmdDataVisualizationAutoMax::isActive()
 {
-	return getGuiApplication()->sendHasMsgToActiveView("AutoMax");
+    return getGuiApplication()->sendHasMsgToActiveView("AutoMax");
+}
+//===========================================================================
+// Std_MY_PARAMETER
+//===========================================================================
+
+DEF_STD_CMD_A(StdCmdMyParameter);
+
+StdCmdMyParameter::StdCmdMyParameter()
+    : Command("Std_My_Parameter")
+{
+    // setting the
+    sGroup = QT_TR_NOOP("My_Parameter");
+    sMenuText = QT_TR_NOOP("My_Parameter");
+    sToolTipText = QT_TR_NOOP("My_Parameter");
+    sWhatsThis = "Std_My_Parameter";
+    sStatusTip = QT_TR_NOOP("Std_My_Parameter");
+    sPixmap = "help-supertube";
+}
+
+void StdCmdMyParameter::activated(int iMsg)
+{
+    Q_UNUSED(iMsg);
+    App::DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("Param");
+    if (docObj == nullptr || docObj == NULL) {
+        docObj = App::GetApplication().getActiveDocument()->addObject("Part::FeaturePython", "Param", true);
+        docObj->addDynamicProperty("App::PropertyFloat", "justForAnalysis");
+    }
+    if (Gui::DockWindowManager::instance()->getDockWindow("custom_param")) {
+        if (!Gui::DockWindowManager::instance()->getDockWindow("custom_param")->isVisible()) {
+            Gui::DockWindowManager::instance()->getDockWindow("custom_param")->show();
+        }
+        else {
+            Gui::DockWindowManager::instance()->getDockWindow("custom_param")->close();
+        }
+    }
+    else {
+        MyParameter* p = new MyParameter();
+        Gui::DockWindowManager::instance()->addDockWindow("custom_param", p, Qt::DockWidgetArea::RightDockWidgetArea)->show();
+    }
+}
+bool StdCmdMyParameter::isActive(void)
+{
+    if (App::GetApplication().getActiveDocument())
+        return true;
+    return false;
 }
 
 namespace Gui {
@@ -2248,6 +2387,10 @@ void CreateDocCommands(void)
     rcCmdMgr.addCommand(new StdCmdTransformManip());
     rcCmdMgr.addCommand(new StdCmdAlignment());
     rcCmdMgr.addCommand(new StdCmdEdit());
+    /*lzg*/
+    //自定义变量
+    rcCmdMgr.addCommand(new StdCmdMyParameter());
+    
 }
 
 } // namespace Gui
