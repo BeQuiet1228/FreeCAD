@@ -283,9 +283,8 @@ void MainWindow::hideContorlUI()
 	contorlButtonToolBar->hide();
 	*/
 	contorlDockWidget->close();
-    hideControlTree();
     hideVisualizationTree();
-    ClearVisualizationTree();
+    hideControlTree();
 }
 
 void MainWindow::inintContorlUI()
@@ -333,7 +332,7 @@ void MainWindow::hideControlTree()
     if (index < 0)
         return;
     tab->removeTab(index);
-    
+    controlTreeWidget->clear();
 }
 
 void MainWindow::showControlTree()
@@ -360,7 +359,7 @@ void MainWindow::hideVisualizationTree()
 	if (index < 0)
 		return;
 	tab->removeTab(index);
-
+    mTreeWidget->upClear();
 }
 
 void MainWindow::showVisualizationTree()

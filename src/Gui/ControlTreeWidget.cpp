@@ -22,7 +22,7 @@
 #include "Gui/Application.h"
 #include "DataVisualization/C_encoding.h"
 ControlTreeWidget::ControlTreeWidget(QWidget* parent)
-	:QTreeWidget(parent)
+	:QTreeWidget(parent),tempHdf5IO(nullptr)
 {
 	QTreeWidget::setHeaderLabel(GetEncodingstr(" ", ENCODING_GB2312));
 	initItem();
@@ -150,6 +150,15 @@ void ControlTreeWidget::clearSubItem()
 		auto childs = item->takeChildren();
 	}
 	update();
+}
+
+void ControlTreeWidget::clear()
+{
+	clearSubItem();
+	if (tempHdf5IO == nullptr)
+		return;
+	delete tempHdf5IO;
+	tempHdf5IO = nullptr;
 }
 
 bool ControlTreeWidget::addContourItem(const std::string& str)
@@ -280,33 +289,7 @@ QString ControlTreeWidget::makeFilePath(unsigned long threadID)
 
 void ControlTreeWidget::itemDouble_clicke(QTreeWidgetItem* item, int column)
 {
-
-#ifdef _TEST_
-	//std::string path = "D:/MILO_P.h5";
-	//Hdf5IO io(path);
-	//io.initHdf5Data();
-	////获取结构图
-	//Hdf5Data structData = *(io.hdf5DataList.begin());
-	//Gui::Application::ToStruct(structData);
-	//Gui::Application::DisplatPlot(structData);
-	static bool istest=true;
-	if (istest)
-	{
-		Gui::MainWindow::getInstance()->showVisualizationTree();
-		istest = false;
-	}
 	sendControlMsg(item);
-	static int i = 0;
-	if (i%5==4)
-	{
-		Gui::MainWindow::getInstance()->ClearVisualizationTree();
-	}
-	i++;
-#undef _TEST_	
-#else 
-	sendControlMsg(item);
-#endif
-	
 }
 
 
@@ -324,10 +307,12 @@ void ControlTreeWidget::outputStructFile(unsigned long threadID)
 		return;
 
 	//创建一个新的h5文件 存储临时的数据
-	Hdf5IO::creatNewHdf5File(this->tempFilePath.toStdString());
-	tempHdf5IO.setFilePath(this->tempFilePath.toStdString());
+	if (tempHdf5IO != nullptr)
+		delete tempHdf5IO;
+	tempHdf5IO = new Hdf5IO();
+	tempHdf5IO->setFilePath(this->tempFilePath.toStdString(),Hdf5IO::CREAT_NEW_FILE);
 	auto structData = tempIO.hdf5DataList.begin();
-	auto newStructData = Hdf5IO::copyToHdf5IO(tempHdf5IO, *structData);
+	auto newStructData = Hdf5IO::copyToHdf5IO(*tempHdf5IO, *structData);
 	init(newStructData);
 	
 	Gui::MainWindow::getInstance()->ClearVisualizationTree();
@@ -338,6 +323,9 @@ void ControlTreeWidget::outputStructFile(unsigned long threadID)
 
 void ControlTreeWidget::outputTempFile(unsigned long threadID)
 {
+	if (tempHdf5IO == nullptr)
+		return;
+
 	QString filePath = makeFilePath(threadID);
 	if (filePath == tr(""))
 		return;
@@ -348,7 +336,7 @@ void ControlTreeWidget::outputTempFile(unsigned long threadID)
 	if (tempIO.hdf5DataList.size() < 1)
 		return;
 	auto structData = tempIO.hdf5DataList.begin();
-	auto newStructData = Hdf5IO::copyToHdf5IO(tempHdf5IO, *structData);
+	auto newStructData = Hdf5IO::copyToHdf5IO(*tempHdf5IO, *structData);
 	Gui::Application::DisplatPlot(newStructData);
 }
 

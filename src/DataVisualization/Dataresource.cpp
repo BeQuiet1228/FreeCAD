@@ -167,6 +167,8 @@ int DataSourceManage::initStructData(Hdf5Data& data)
 }
 DataSourceManage::~DataSourceManage(){
 	RendererManger.clear();
+	if(factoryptr != nullptr)
+		delete factoryptr;
 }
 /**
 * @brief DataSourceManage::DisPlayPlot кмот
