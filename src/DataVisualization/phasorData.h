@@ -36,8 +36,6 @@ protected:
 	bool initData();
 	//计算出向量数据
 	bool initVectorData();
-	//计算出向量数据2
-	bool initVectorData2();
 	//获取坐标的刻度
 	std::vector<qreal> getaxis_x();
 	std::vector<qreal> getaxis_y();

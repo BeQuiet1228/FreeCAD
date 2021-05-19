@@ -24,14 +24,7 @@ phasorRenderer::~phasorRenderer(){
 * @return bool
 */
 bool phasorRenderer::drawImage(){
-	std::shared_ptr<phasorData> d = std::dynamic_pointer_cast<phasorData>(data);
-	switch (d->GetdisMode())
-	{
-	case phasorData::DISMODE::sizeToColor:
-		return drawImage_Scence();
-	case phasorData::DISMODE::sizeToLen:
-		return drawImage_Coord();
-	}
+	return drawImage_Scence();
 }
 /**
 * @brief phasorRenderer::addListRang 
@@ -210,18 +203,38 @@ bool phasorRenderer::drawImage_Scence(){
 		float heightrid = (d->getdefYrang().max - d->getdefYrang().min)*yScale / d->getYsize();
 		maxCoef = sqrt(widthgrid*widthgrid + heightrid*heightrid);
 	}
-	//向量可能太小，需要缩放
-	for (auto i = 0; i < p1.size(); i++)
+	switch (d->GetdisMode())
 	{
-		QPen pen(colorMap[i]);
-		pen.setWidth(penSize);
-		painter.setPen(pen);
-		transitionpointF(p1[i], xScale, yScale, xr, yr);
-		p2[i].setX(p1[i].x()+p2[i].x()*maxCoef/3);
-		p2[i].setY(p1[i].y() - p2[i].y()*maxCoef/3);
-		painter.drawLine(p1[i], p2[i]);
-		painter.drawLine(p2[i], GetarrowTop(p2[i], p1[i]));
-		painter.drawLine(p2[i], GetarrowBottom(p2[i], p1[i]));
+	case phasorData::DISMODE::sizeToColor:
+	{
+		for (auto i = 0; i < p1.size(); i++)
+		{
+			QPen pen(colorMap[i]);
+			pen.setWidth(penSize);
+			painter.setPen(pen);
+			transitionpointF(p1[i], xScale, yScale, xr, yr);
+			p2[i].setX(p1[i].x() + p2[i].x()*maxCoef / 3);
+			p2[i].setY(p1[i].y() - p2[i].y()*maxCoef / 3);
+			painter.drawLine(p1[i], p2[i]);
+			painter.drawLine(p2[i], GetarrowTop(p2[i], p1[i]));
+			painter.drawLine(p2[i], GetarrowBottom(p2[i], p1[i]));
+		}
+	}
+		break;
+	case phasorData::DISMODE::sizeToLen:
+	{
+		std::vector<float> sizeScale = d->getScaleVal();//获取大小系数
+		for (auto i = 0; i < p1.size(); i++)
+		{
+			transitionpointF(p1[i], xScale, yScale, xr, yr);
+			p2[i].setX(p1[i].x() + p2[i].x()*maxCoef*sizeScale[i]);
+			p2[i].setY(p1[i].y() + p2[i].y()*maxCoef*sizeScale[i]);
+			painter.drawLine(p1[i], p2[i]);
+			painter.drawLine(p2[i], GetarrowTop(p2[i], p1[i]));
+			painter.drawLine(p2[i], GetarrowBottom(p2[i], p1[i]));
+		}
+	}
+		break;
 	}
 	auto nImg = img.mirrored(false, true);
 	setImage(nImg);
@@ -254,55 +267,6 @@ QVector<QRectF> phasorRenderer::GetRectF_Scene(){
 	//网格缩放
 
 	return scene_Rect;
-}
-/**
-* @brief phasorRenderer::drawImage_Coord 依据坐标系进行缩放展示
-* @return bool
-*/
-bool phasorRenderer::drawImage_Coord(){
-	//获取画布缩放
-	float xScale(0.0), yScale(0.0);
-	if (!getTransitionScale(xScale, yScale))
-		return false;
-	std::shared_ptr<phasorData> d = std::dynamic_pointer_cast<phasorData>(data);
-	//获取x,y的取值范围
-	auto xr = getXRang();
-	auto yr = getYRang();
-	//开始绘制
-	QImage img(getSize(), QImage::Format_ARGB32);
-	img.fill(qRgba(0, 0, 0, 0));
-	QPen pen(Qt::black);
-	pen.setWidth(1);
-	QPainter painter(&img);
-	painter.setRenderHint(QPainter::Antialiasing, isAA);
-	painter.setPen(pen);
-	QPen pen2(penColor);
-	pen2.setWidth(penSize);
-	painter.setPen(pen2);
-	//绘制向量
-	QVector<QPointF> p1 = d->Getp1Point();
-	QVector<QPointF> p2 = d->Getp2Point();
-	std::vector<float> sizeScale = d->getScaleVal();//获取大小系数
-	//向量可能太小，需要缩放
-	float maxCoef;
-	{
-		//计算网格大小
-		float widthgrid = (d->getdefXrang().max - d->getdefXrang().min)*xScale / d->getXsize();
-		float heightrid = (d->getdefYrang().max - d->getdefYrang().min)*yScale / d->getYsize();
-		maxCoef = sqrt(widthgrid*widthgrid + heightrid*heightrid);
-	}
-	for (auto i = 0; i < p1.size(); i++)
-	{
-		transitionpointF(p1[i], xScale, yScale, xr, yr);
-		p2[i].setX(p1[i].x()+p2[i].x()*maxCoef*sizeScale[i]);
-		p2[i].setY(p1[i].y() + p2[i].y()*maxCoef*sizeScale[i]);
-		painter.drawLine(p1[i], p2[i]);
-		painter.drawLine(p2[i], GetarrowTop(p2[i], p1[i]));
-		painter.drawLine(p2[i], GetarrowBottom(p2[i], p1[i]));
-	}
-	auto nImg = img.mirrored(false, true);
-	setImage(nImg);
-	return true;
 }
 /**
 * @brief phasorRenderer::findVecLines 索引出需要绘制的向量
