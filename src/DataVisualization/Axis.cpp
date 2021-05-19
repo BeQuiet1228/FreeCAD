@@ -223,8 +223,8 @@ QVector<QLineF> Axis::Getlines(Axisstyle _Axisstyle, QRectF _rect){
 	case Axisleft:
 	{
 		//获取间距
-		qreal interval = (_rect.height() - 2) / (Axisnumber * 5);
-		QPointF startpoint = QPointF(_rect.right() - 1, _rect.bottom() - 1);
+		qreal interval = (_rect.height()) / (Axisnumber * 5);
+		QPointF startpoint = QPointF(_rect.right(), _rect.bottom());
 		QPointF nextpoint = startpoint;
 		for (auto i = 0; i <= Axisnumber * 5; i++)
 		{
@@ -233,15 +233,15 @@ QVector<QLineF> Axis::Getlines(Axisstyle _Axisstyle, QRectF _rect){
 			(i % 5 == 0) ? (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x() - 10, nextpoint.y())) : (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x() - 5, nextpoint.y()));
 			lines.push_back(line);
 		}
-		lines.push_back(QLineF(_rect.right() - 1, _rect.top() + 1, _rect.right() - 1, _rect.bottom() - 1));
-		minWidth = 11;
+		lines.push_back(QLineF(_rect.right(), _rect.top(), _rect.right(), _rect.bottom()));
+		minWidth = 10;
 	}
 		break;
 	case AxisRight:
 	{
 		//获取间距
-		qreal interval = (_rect.height() - 2) / (Axisnumber * 5);
-		QPointF startpoint = QPointF(_rect.left() + 1, _rect.bottom() - 1);
+		qreal interval = (_rect.height()) / (Axisnumber * 5);
+		QPointF startpoint = QPointF(_rect.left(), _rect.bottom());
 		QPointF nextpoint = startpoint;
 		for (auto i = 0; i <= Axisnumber * 5; i++)
 		{
@@ -251,15 +251,15 @@ QVector<QLineF> Axis::Getlines(Axisstyle _Axisstyle, QRectF _rect){
 			lines.push_back(line);
 		}
 		lines.push_back(QLineF(_rect.left() + 1, _rect.top() + 1, _rect.left() + 1, _rect.bottom() - 1));
-		minWidth = 11;
+		minWidth = 10;
 	}
 		break;
 
 	case AxisTop:
 	{
-		qreal interval = (_rect.width() - 2) / (Axisnumber * 5);
+		qreal interval = (_rect.width()) / (Axisnumber * 5);
 		//设置刻度单位得显示门限
-		QPointF startpoint = QPointF(_rect.left() + 1, _rect.bottom() - 1);
+		QPointF startpoint = QPointF(_rect.left(), _rect.bottom());
 		QPointF nextpoint = startpoint;
 		for (auto i = 0; i <= Axisnumber * 5; i++)
 		{
@@ -268,15 +268,15 @@ QVector<QLineF> Axis::Getlines(Axisstyle _Axisstyle, QRectF _rect){
 			(i % 5 == 0) ? (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x(), nextpoint.y() - 10)) : (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x(), nextpoint.y() - 5));
 			lines.push_back(line);
 		}
-		lines.push_back(QLineF(_rect.left() + 1, _rect.bottom() - 1, _rect.right() - 1, _rect.bottom() - 1));
-		minHeight = 11;
+		lines.push_back(QLineF(_rect.left(), _rect.bottom(), _rect.right(), _rect.bottom()));
+		minHeight = 10;
 	}
 		break;
 	case AxisBottom:
 	{
-		qreal interval = (_rect.width() - 2) / (Axisnumber * 5);
+		qreal interval = (_rect.width()) / (Axisnumber * 5);
 		//设置刻度单位得显示门限
-		QPointF startpoint = QPointF(_rect.left() + 1, _rect.top() + 1);
+		QPointF startpoint = QPointF(_rect.left(), _rect.top());
 		QPointF nextpoint = startpoint;
 		for (auto i = 0; i <= Axisnumber * 5; i++)
 		{
@@ -285,8 +285,8 @@ QVector<QLineF> Axis::Getlines(Axisstyle _Axisstyle, QRectF _rect){
 			(i % 5 == 0) ? (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x(), nextpoint.y() + 10)) : (line = QLineF(nextpoint.x(), nextpoint.y(), nextpoint.x(), nextpoint.y() + 5));
 			lines.push_back(line);
 		}
-		lines.push_back(QLineF(_rect.left() + 1, _rect.top() + 1, _rect.right() - 1, _rect.top() + 1));
-		minHeight = 11;
+		lines.push_back(QLineF(_rect.left(), _rect.top(), _rect.right(), _rect.top()));
+		minHeight = 10;
 	}
 		break;
 	}
@@ -597,8 +597,8 @@ void Axis::AxisResize(bool ada, QSize _size)
 {
 	AxisRect.setLeft(0);
 	AxisRect.setTop(0);
-	AxisRect.setRight(this->size().width());
-	AxisRect.setBottom(this->size().height());
+	AxisRect.setRight(this->size().width()-1);
+	AxisRect.setBottom(this->size().height()-1);
 }
 /**
 * @brief Axis::AxisCanvas 传入画布的大小
