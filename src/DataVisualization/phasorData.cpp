@@ -30,8 +30,13 @@ bool phasorData::loadPoint()
 	auto it = (ListValues->begin());
 	auto xtag = getXTag();
 	auto ytag = getYTag();
+	this->istrue = isTruedir();
+	if (directionTyp==R_Z)
+	{
+		this->istrue = !this->istrue;
+	}
 	//获取横坐标的个数
-	if (isTruedir())
+	if (this->istrue)
 	{
 		posySize = (*it)->size(); it++;
 		posxSize = (*it)->size();
@@ -78,7 +83,7 @@ bool phasorData::initXYRang(){
 	auto it = ListValues->begin();
 	Data::ValuesPtr datasetEmA = *it; it++;
 	Data::ValuesPtr datasetEmB = *it;
-	if (isTruedir())
+	if (this->istrue)
 	{
 		//x
 		xr.min = *(datasetEmB->begin());
@@ -127,7 +132,7 @@ bool phasorData::initData()
 	std::vector<qreal> valueB_list=getaxis_y();
 	//获取全部的切割空间
 #pragma region 
-	if (isTruedir())
+	if (this->istrue)
 	{
 		for (auto valueA = 0; valueA < valuesA_list.size() - 1; valueA++)
 		{
@@ -176,7 +181,7 @@ std::vector<qreal> phasorData::getaxis_x()
 		return axis_xlist;
 	//获取EMA的全部数据
 	auto iter = ListValues->begin();
-	if (isTruedir())
+	if (this->istrue)
 	{
 		iter++;
 	}
@@ -200,7 +205,7 @@ std::vector<qreal> phasorData::getaxis_y()
 	if (!ok&& !ListValues&& ListValues->size() == 0)
 		return axis_ylist;
 	auto iter = ListValues->begin();
-	if (!isTruedir())
+	if (!(this->istrue))
 	{
 		iter++;
 	}
@@ -233,7 +238,7 @@ bool phasorData::initVectorData()
 	Data::ValuesPtr datasetEmA;
 	Data::ValuesPtr datasetEmB;
 	Data::ValuesPtr datasetEmC;
-	if (isTruedir())
+	if (this->istrue)
 	{
 		datasetEmB = *iter; iter++;
 		datasetEmA = *iter; iter++;
@@ -245,7 +250,6 @@ bool phasorData::initVectorData()
 		datasetEmB = *iter; iter++;
 		datasetEmC = *iter;
 	}
-	bool isres = isTruedir();
 	if (mPiflist_rect.empty())
 		return false;
 	//获取起点p1
@@ -273,7 +277,7 @@ bool phasorData::initVectorData()
 		}
 	}
 	//获取到x,y的最大系数
-	float MaxRectLen = sqrt(Width*Width + Height*Height);
+	MaxRectLen = sqrt(Width*Width + Height*Height);
 	//获取p2的数据
 	sizeScale.clear();
 	sizeScale.reserve(mPiflist_rect.size());
@@ -281,7 +285,7 @@ bool phasorData::initVectorData()
 	{
 		float x_coef;
 		float y_coef;
-		if (isres)
+		if (this->istrue)
 		{
 			y_coef = dataC[i];
 			x_coef = dataC[i + mPiflist_rect.size()];
@@ -305,8 +309,13 @@ bool phasorData::initVectorData()
 			float rotation = _p2Len / Svector;
 			sizeScale.push_back(rotation);
 			QPointF _p2;
-			_p2.setX(p1[i].x() + Width*(x_coef / _p2Len)*0.5);
-			_p2.setY(p1[i].y() + Height*(y_coef / _p2Len)*0.5);
+			//_p2.setX(p1[i].x() + (x_coef / _p2Len)*Width/2);
+			//_p2.setY(p1[i].y() - (y_coef / _p2Len)*Height/2);
+			_p2.setX(x_coef / _p2Len*(Width));
+			_p2.setY(y_coef / _p2Len*(Height));
+			char buffer[100] = {};
+			/*sprintf_s(buffer, 100, "向量的长度%f\n", sqrt((_p2.y() - p1[i].y())*(_p2.y() - p1[i].y()) + (_p2.x() - p1[i].x())*(_p2.x() - p1[i].x())));
+			printf("%s", buffer);*/
 			p2.push_back(_p2);
 		}
 
@@ -366,7 +375,7 @@ bool phasorData::initVectorData2(){
 	Data::ValuesPtr datasetEmA;
 	Data::ValuesPtr datasetEmB;
 	Data::ValuesPtr datasetEmC;
-	if (isTruedir())
+	if (this->istrue)
 	{
 		datasetEmB = *iter; iter++;
 		datasetEmA = *iter; iter++;
@@ -410,8 +419,18 @@ bool phasorData::initVectorData2(){
 	//获取p2的数据
 	for (auto i = 0; i < mPiflist_rect.size();i++)
 	{
-		float x_coef = dataC[i];
-		float y_coef = dataC[i + mPiflist_rect.size()];
+		float x_coef;
+		float y_coef;
+		if (this->istrue)
+		{
+			y_coef = dataC[i];
+			x_coef = dataC[i + mPiflist_rect.size()];
+		}
+		else
+		{
+			x_coef = dataC[i];
+			y_coef = dataC[i + mPiflist_rect.size()];
+		}
 		//printf("x_coef=%f,y_coef=%f\n", x_coef, y_coef);
 		if (x_coef<0.0000001&&x_coef>-0.0000001&&
 			y_coef<0.0000001&&y_coef>-0.0000001)
@@ -429,19 +448,19 @@ bool phasorData::initVectorData2(){
 			//_p2.setX(p1[i].x() + MaxRectLen*rotation*(x_coef / _p2Len));
 			//_p2.setY(p1[i].y() + MaxRectLen*rotation*(y_coef / _p2Len));
 			_p2.setX(p1[i].x() + Width*rotation*(x_coef / _p2Len)*0.95);
-			_p2.setY(p1[i].y() + Height*rotation*(y_coef / _p2Len)*0.95);
+			_p2.setY(p1[i].y() +Height*rotation*(y_coef / _p2Len)*0.95);
 			p2.push_back(_p2);
 		}
 		
 	}
 	//去除不必要的向量
-	for (auto i = p1.size()-1; i>=0;i--)
+	for (auto i = p1.size() - 1; i >= 0; i--)
 	{
-		if (p1[i].x() - p2[i].x()>-0.000001&&p1[i].x() - p2[i].x() < 0.000001&&
-			p1[i].y() - p2[i].y()>-0.000001&&p1[i].y() - p2[i].y() < 0.000001)
+		if (p1[i].x() - p2[i].x() > -0.000001&&p1[i].x() - p2[i].x() < 0.000001&&
+			p1[i].y() - p2[i].y() > -0.000001&&p1[i].y() - p2[i].y() < 0.000001)
 		{
 			p1.erase(p1.begin() + i);
-			len_coef.erase(len_coef.begin()+i);
+			len_coef.erase(len_coef.begin() + i);
 			p2.erase(p2.begin() + i);
 		}
 	}

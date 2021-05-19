@@ -209,7 +209,11 @@ bool phasorRenderer::drawImage_Scence(){
 		pen.setWidth(penSize);
 		painter.setPen(pen);
 		transitionpointF(p1[i], xScale, yScale, xr, yr);
-		transitionpointF(p2[i], xScale, yScale, xr, yr);
+		p2[i].setX(p1[i].x()+p2[i].x()*xScale*0.5);
+		p2[i].setY(p1[i].y() - p2[i].y()*yScale*0.5);
+		//transitionpointF(p2[i], xScale, yScale, xr, yr);
+		//printf("p1的点--(%f,%f)\n", p1[i].x(), p1[i].y());
+		//printf("缩放后向量的长度%f\n", sqrt((p2[i].y() - p1[i].y())*(p2[i].y() - p1[i].y()) + (p1[i].x() - p2[i].x())*(p1[i].x() - p2[i].x())));
 		painter.drawLine(p1[i], p2[i]);
 		painter.drawLine(p2[i], GetarrowTop(p2[i], p1[i]));
 		painter.drawLine(p2[i], GetarrowBottom(p2[i], p1[i]));

@@ -102,5 +102,7 @@ private:
 	float m_xScale;
 	float m_yScale;
 	DISMODE disMode;
+	bool istrue;
+	float MaxRectLen;
 };
 #endif
