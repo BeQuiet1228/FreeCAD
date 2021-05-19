@@ -14,22 +14,22 @@ bool DirData::isTruedir()
 	{
 	case X_Y:
 	{
-		if (xtag.find("X2") != std::string::npos && ytag.find("X1") != std::string::npos)
+		if (xtag.find("X2") != std::string::npos && xtag.find("Y") != std::string::npos)
 			return true;
 	}break;
 	case X_Z:
 	{
-		if (xtag.find("X3") != std::string::npos && ytag.find("X1") != std::string::npos)
+		if (xtag.find("X3") != std::string::npos && xtag.find("Z") != std::string::npos)
 			return true; 
 	}break;
 	case Y_Z:
 	{
-		if (xtag.find("X3") != std::string::npos && ytag.find("X2") != std::string::npos)
+		if (xtag.find("X3") != std::string::npos && xtag.find("Z") != std::string::npos)
 			return true;
 	}break;
 	case R_Z:
 	{
-		if (xtag.find("R") != std::string::npos && ytag.find("Z") != std::string::npos)
+		if (xtag.find("Z") != std::string::npos && ytag.find("R") != std::string::npos)
 			return true;
 	}break;
 	case R_THETA:
