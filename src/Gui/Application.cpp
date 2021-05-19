@@ -788,6 +788,9 @@ void Application::slotDeleteDocument(const App::Document& Doc)
     // For exception-safety use a smart pointer
     unique_ptr<Document> delDoc (doc->second);
     d->documents.erase(doc);
+    //关闭主窗口上多余的控件
+    auto mw = MainWindow::getInstance();
+    mw->hideContorlUI();
 }
 
 void Application::slotRelabelDocument(const App::Document& Doc)

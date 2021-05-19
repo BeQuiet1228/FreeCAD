@@ -49,11 +49,17 @@ struct CONTROL_EXPORT Hdf5Data
 class CONTROL_EXPORT Hdf5IO
 {
 public:
+	enum FileOpenMod
+	{
+		CREAT_NEW_FILE = 0,
+		OPEN_EXIST
+	};
+public:
 	Hdf5IO();
     Hdf5IO(std::string fileName);
 	~Hdf5IO();
 	//设置文件路径
-	void setFilePath(const std::string& path);
+	void setFilePath(const std::string& path,FileOpenMod mod = OPEN_EXIST);
     void initHdf5Data();
     std::vector<Hdf5Data> hdf5DataList;
 	//获取数据库中的值

@@ -25,6 +25,8 @@ public:
 	//根据item，获取类型，和图索引
 	bool getTypeAndIndex(QTreeWidgetItem* item, MsgType& type, int& index);
 	void clearSubItem();
+	//清除数据
+	void clear();
 private:
 	QTreeWidgetItem* contourItem,*phaseSpaceItem,*observeItem,*rangeItem,*vectorItem;
 	const unsigned int itemCount = 5;
@@ -50,7 +52,7 @@ private:
 	//存储临时文件路径
 	QString tempFilePath;
 	//存储临时h5文件
-	Hdf5IO tempHdf5IO;
+	Hdf5IO *tempHdf5IO;
 	//string类型转换
 	QString tr(const std::string& st) {
 		return QString::fromStdString(st);

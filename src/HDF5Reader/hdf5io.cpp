@@ -18,20 +18,24 @@ Hdf5IO::~Hdf5IO()
 
 }
 
-/**
-* @brief Hdf5IO::setFilePath 设置h5文件路径 路径中如果有中文 必须是utf8格式的 
-* @param const std::string & path
-* @return void
-*/
-void Hdf5IO::setFilePath(const std::string& path)
+void Hdf5IO::setFilePath(const std::string& path, FileOpenMod mod /*= OPEN_EXIST*/)
 {
 	auto gbk = QTextCodec::codecForName("gb2312");
 
 	QString temp = QString::fromUtf8(path.c_str());
 	std::string newPath = gbk->fromUnicode(temp).data();
+	try
+	{
+		if(mod == OPEN_EXIST)
+			Hdf5File.reset(new H5File(newPath, H5F_ACC_RDWR));
+		else
+			Hdf5File.reset(new H5File(newPath, H5F_ACC_TRUNC));
+	}
+	catch (...)
+	{
+		std::cerr << "Hdf5IO::setFilePath open hdf5 file failed!" << std::endl;
+	}
 
-	creatHdf5File(newPath);
-	Hdf5File.reset(new H5File(newPath, H5F_ACC_RDWR));
 }
 
 /*
