@@ -234,21 +234,21 @@ void Renderer::displayPointInformation(QPainter* painter, QPointF* point , std::
 			perHeight = rect.height();
 		}
 	}
-	//获取到最大长度,总高度
+	//获取到最大长度,总高度，设置矩形框偏离点位5个像素点
 	QRect displayRect;
-	displayRect.setX(point->x());
-	displayRect.setY(point->y());
+	displayRect.setX(point->x()+5);
+	displayRect.setY(point->y()+5);
 	auto size = getSize();
 	//获取对话框的宽高
 	int displayRectWidth = maxWidth + 20;
 	int displayRectHeight = (perHeight + 3)*varstrlist.size() + 3;
-	if (displayRect.y() > size.height() - displayRectHeight)
+	if (displayRect.y()+5 > size.height() - displayRectHeight)
 	{
-		displayRect.setY(displayRect.y() - displayRectHeight);
+		displayRect.setY(displayRect.y() - displayRectHeight-10);
 	}
-	if (displayRect.x() > size.width() - displayRectWidth)
+	if (displayRect.x()+5 > size.width() - displayRectWidth)
 	{
-		displayRect.setX(displayRect.x() - displayRectWidth);
+		displayRect.setX(displayRect.x() - displayRectWidth-10);
 	}
 	displayRect.setWidth(displayRectWidth);
 	displayRect.setHeight(displayRectHeight);
