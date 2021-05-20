@@ -30,8 +30,13 @@ bool phasorData::loadPoint()
 	auto it = (ListValues->begin());
 	auto xtag = getXTag();
 	auto ytag = getYTag();
+	this->istrue = isTruedir();
+	if (directionTyp==R_Z)
+	{
+		this->istrue = !this->istrue;
+	}
 	//获取横坐标的个数
-	if (isTruedir())
+	if (this->istrue)
 	{
 		posySize = (*it)->size(); it++;
 		posxSize = (*it)->size();
@@ -44,21 +49,8 @@ bool phasorData::loadPoint()
 	
 	//初始化范围
 	initXYRang();
-	//初始化图形数据
 	initData();
-	switch (disMode)
-	{
-	case phasorData::sizeToLen:
-	{
-		initVectorData2();
-	}
-		break;
-	case phasorData::sizeToColor:
-	{
-		initVectorData();
-	}
-		break;
-	}
+	initVectorData();
 	return true;
 }
 /**
@@ -78,7 +70,7 @@ bool phasorData::initXYRang(){
 	auto it = ListValues->begin();
 	Data::ValuesPtr datasetEmA = *it; it++;
 	Data::ValuesPtr datasetEmB = *it;
-	if (isTruedir())
+	if (this->istrue)
 	{
 		//x
 		xr.min = *(datasetEmB->begin());
@@ -103,6 +95,8 @@ bool phasorData::initXYRang(){
 		yr.max = *ity;
 		setYRang(yr);
 	}
+	defXrang = xr;
+	defYrang = yr;
 	return true;
 }
 /**
@@ -127,7 +121,7 @@ bool phasorData::initData()
 	std::vector<qreal> valueB_list=getaxis_y();
 	//获取全部的切割空间
 #pragma region 
-	if (isTruedir())
+	if (this->istrue)
 	{
 		for (auto valueA = 0; valueA < valuesA_list.size() - 1; valueA++)
 		{
@@ -176,7 +170,7 @@ std::vector<qreal> phasorData::getaxis_x()
 		return axis_xlist;
 	//获取EMA的全部数据
 	auto iter = ListValues->begin();
-	if (isTruedir())
+	if (this->istrue)
 	{
 		iter++;
 	}
@@ -200,7 +194,7 @@ std::vector<qreal> phasorData::getaxis_y()
 	if (!ok&& !ListValues&& ListValues->size() == 0)
 		return axis_ylist;
 	auto iter = ListValues->begin();
-	if (!isTruedir())
+	if (!(this->istrue))
 	{
 		iter++;
 	}
@@ -233,7 +227,7 @@ bool phasorData::initVectorData()
 	Data::ValuesPtr datasetEmA;
 	Data::ValuesPtr datasetEmB;
 	Data::ValuesPtr datasetEmC;
-	if (isTruedir())
+	if (this->istrue)
 	{
 		datasetEmB = *iter; iter++;
 		datasetEmA = *iter; iter++;
@@ -245,7 +239,6 @@ bool phasorData::initVectorData()
 		datasetEmB = *iter; iter++;
 		datasetEmC = *iter;
 	}
-	bool isres = isTruedir();
 	if (mPiflist_rect.empty())
 		return false;
 	//获取起点p1
@@ -256,11 +249,6 @@ bool phasorData::initVectorData()
 	{
 		p1.push_back(QPointF(mPiflist_rect[i].left(), mPiflist_rect[i].bottom()));
 	}
-	Data::Rang xr = getXRang();
-	Data::Rang yr = getYRang();
-	float Width = (xr.max - xr.min) / datasetEmA->size();
-	float Height = (yr.max - yr.min) / datasetEmB->size();
-	//获取最大的x,y系数
 	float Svector = 0;//最大系数
 	unsigned int index_vector = 0;//
 	for (auto i = 0; i < mPiflist_rect.size(); i++)
@@ -272,16 +260,13 @@ bool phasorData::initVectorData()
 			index_vector = i;
 		}
 	}
-	//获取到x,y的最大系数
-	float MaxRectLen = sqrt(Width*Width + Height*Height);
-	//获取p2的数据
 	sizeScale.clear();
 	sizeScale.reserve(mPiflist_rect.size());
 	for (auto i = 0; i < mPiflist_rect.size(); i++)
 	{
 		float x_coef;
 		float y_coef;
-		if (isres)
+		if (this->istrue)
 		{
 			y_coef = dataC[i];
 			x_coef = dataC[i + mPiflist_rect.size()];
@@ -294,7 +279,7 @@ bool phasorData::initVectorData()
 		if (x_coef<0.0000001&&x_coef>-0.0000001&&
 			y_coef<0.0000001&&y_coef>-0.0000001)
 		{
-			p2.push_back(p1[i]);
+			p2.push_back(QPointF(0.0,0.0));
 			len_coef.push_back(QPointF(0.0, 0.0));
 			sizeScale.push_back(0);
 		}
@@ -305,8 +290,8 @@ bool phasorData::initVectorData()
 			float rotation = _p2Len / Svector;
 			sizeScale.push_back(rotation);
 			QPointF _p2;
-			_p2.setX(p1[i].x() + Width*(x_coef / _p2Len)*0.5);
-			_p2.setY(p1[i].y() + Height*(y_coef / _p2Len)*0.5);
+			_p2.setX(x_coef / _p2Len);
+			_p2.setY(y_coef / _p2Len);
 			p2.push_back(_p2);
 		}
 
@@ -314,8 +299,7 @@ bool phasorData::initVectorData()
 	//去除不必要的向量
 	for (auto i = p1.size() - 1; i >= 0; i--)
 	{
-		if (p1[i].x() - p2[i].x() > -0.000001&&p1[i].x() - p2[i].x() < 0.000001&&
-			p1[i].y() - p2[i].y() > -0.000001&&p1[i].y() - p2[i].y() < 0.000001)
+		if (sizeScale[i] > -0.000001&&sizeScale[i] < 0.000001)
 		{
 			p1.erase(p1.begin() + i);
 			len_coef.erase(len_coef.begin() + i);
@@ -338,114 +322,6 @@ QVector<QPointF> phasorData::Getp1Point(){
 */
 QVector<QPointF> phasorData::Getp2Point(){
 	return p2;
-}
-/**
-* @brief phasorData::GetVecXScale 获取横向的缩放
-* @return float
-*/
-float phasorData::GetVecXScale(){
-	return m_xScale;
-}
-/**
-* @brief phasorData::GetVecYScale 获取纵向的缩放
-* @return float
-*/
-float phasorData::GetVecYScale(){
-	return m_yScale;
-}
-/**
-* @brief phasorData::initVectorData2 初始化向量数据（方式2）
-* @return bool
-*/
-bool phasorData::initVectorData2(){
-	Data::ListValuesPtr DataValueslist;
-	bool ok = autoModGetSourceData(DataValueslist);
-	if (!ok&& !DataValueslist&& DataValueslist->size() == 0)
-		return false;
-	auto iter = DataValueslist->begin();
-	Data::ValuesPtr datasetEmA;
-	Data::ValuesPtr datasetEmB;
-	Data::ValuesPtr datasetEmC;
-	if (isTruedir())
-	{
-		datasetEmB = *iter; iter++;
-		datasetEmA = *iter; iter++;
-		datasetEmC = *iter;
-	}
-	else
-	{
-		datasetEmA = *iter; iter++;
-		datasetEmB = *iter; iter++;
-		datasetEmC = *iter;
-	}
-
-	if (mPiflist_rect.empty())
-		return false;
-	//获取起点p1
-	QVector<qreal> dataC;
-	for (auto iterC = datasetEmC->begin(); iterC != datasetEmC->end(); iterC++)
-		dataC.push_back(*iterC);
-	for (auto i = 0; i < mPiflist_rect.size(); i++)
-	{
-		p1.push_back(QPointF(mPiflist_rect[i].left(), mPiflist_rect[i].bottom()));
-	}	
-	Data::Rang xr = getXRang();
-	Data::Rang yr = getYRang();
-	float Width = (xr.max - xr.min)/datasetEmA->size();
-	float Height = (yr.max - yr.min) / datasetEmB->size();
-	//获取最大的x,y系数
-	float Svector = 0;//最大系数
-	unsigned int index_vector=0;
-	for (auto i = 0; i < mPiflist_rect.size();i++)
-	{
-		float curlen = sqrt(dataC[i]*dataC[i]+dataC[i+mPiflist_rect.size()]*dataC[i+mPiflist_rect.size()]);
-		if (Svector<curlen)
-		{
-			Svector = curlen;
-			index_vector = i;
-		}
-	}
-	//获取到x,y的最大系数
-	float MaxRectLen = sqrt(Width*Width+Height*Height);
-	//获取p2的数据
-	for (auto i = 0; i < mPiflist_rect.size();i++)
-	{
-		float x_coef = dataC[i];
-		float y_coef = dataC[i + mPiflist_rect.size()];
-		//printf("x_coef=%f,y_coef=%f\n", x_coef, y_coef);
-		if (x_coef<0.0000001&&x_coef>-0.0000001&&
-			y_coef<0.0000001&&y_coef>-0.0000001)
-		{
-			p2.push_back(p1[i]);
-			len_coef.push_back(QPointF(0.0,0.0));
-		}
-		else
-		{
-			len_coef.push_back(QPointF(x_coef,y_coef));
-			float _p2Len = sqrt(x_coef*x_coef + y_coef*y_coef);
-			float rotation = _p2Len / Svector;
-			QPointF _p2;
-			//之前得计算方法--暂时保留
-			//_p2.setX(p1[i].x() + MaxRectLen*rotation*(x_coef / _p2Len));
-			//_p2.setY(p1[i].y() + MaxRectLen*rotation*(y_coef / _p2Len));
-			_p2.setX(p1[i].x() + Width*rotation*(x_coef / _p2Len)*0.95);
-			_p2.setY(p1[i].y() + Height*rotation*(y_coef / _p2Len)*0.95);
-			p2.push_back(_p2);
-		}
-		
-	}
-	//去除不必要的向量
-	for (auto i = p1.size()-1; i>=0;i--)
-	{
-		if (p1[i].x() - p2[i].x()>-0.000001&&p1[i].x() - p2[i].x() < 0.000001&&
-			p1[i].y() - p2[i].y()>-0.000001&&p1[i].y() - p2[i].y() < 0.000001)
-		{
-			p1.erase(p1.begin() + i);
-			len_coef.erase(len_coef.begin()+i);
-			p2.erase(p2.begin() + i);
-		}
-	}
-	return true;
 }
 /**
 * @brief phasorData::findindexlen_coef 索引向量的长度系数

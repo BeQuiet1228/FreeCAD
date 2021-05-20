@@ -36,8 +36,6 @@ protected:
 	bool initData();
 	//计算出向量数据
 	bool initVectorData();
-	//计算出向量数据2
-	bool initVectorData2();
 	//获取坐标的刻度
 	std::vector<qreal> getaxis_x();
 	std::vector<qreal> getaxis_y();
@@ -71,6 +69,7 @@ public:
 		std::lock_guard<std::mutex> am(yRangMutex);
 		yRang = yr;
 	}
+	
 	QVector<QRectF> getAllCutRoom();
 	QVector<QPointF> Getp1Point();
 	QVector<QPointF> Getp2Point();
@@ -85,6 +84,23 @@ public:
 	void setdisMode(DISMODE a){
 		disMode = a;
 	}
+	//2021年5月19日---新增加
+	Data::Rang getdefXrang()
+	{
+		return defXrang;
+	}
+	Data::Rang getdefYrang()
+	{
+		return defYrang;
+	}
+	int getXsize()
+	{
+		return posxSize;
+	}
+	int getYsize()
+	{
+		return posySize;
+	}
 private:
 	//xy的范围
 	Rang xRang, yRang;
@@ -92,15 +108,14 @@ private:
 	//坐标的个数
 	int posxSize;
 	int posySize;
-	//std::vector<PIF> mPIFlist;
 	QVector<QRectF> mPiflist_rect;
 	QVector<QPointF> p1;//箭头起点
 	QVector <QPointF> p2;//箭头终点
 	QVector<QPointF> len_coef;//长度系数
 	std::vector<float> sizeScale;//大小系数
 	//获取x,y的缩放
-	float m_xScale;
-	float m_yScale;
 	DISMODE disMode;
+	bool istrue;
+	Rang defXrang, defYrang;
 };
 #endif
