@@ -31,6 +31,7 @@ bool phasorData::loadPoint()
 	auto xtag = getXTag();
 	auto ytag = getYTag();
 	this->istrue = isTruedir();
+	//矢量图R_Z轴方向取值反向，这里做特殊处理，将判断后获得得值做取反。
 	if (directionTyp==R_Z)
 	{
 		this->istrue = !this->istrue;
