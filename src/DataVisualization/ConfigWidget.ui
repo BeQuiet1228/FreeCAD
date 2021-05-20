@@ -69,7 +69,7 @@
       <enum>QTabWidget::Triangular</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -1200,7 +1200,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="vacuoColor">
+             <widget class="QPushButton" name="waveGuideportColor">
               <property name="minimumSize">
                <size>
                 <width>87</width>
@@ -1238,7 +1238,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="vacuolineColor">
+             <widget class="QPushButton" name="waveGuideportlineColor">
               <property name="minimumSize">
                <size>
                 <width>87</width>
@@ -2103,7 +2103,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="vacuoColor_2">
+                <widget class="QPushButton" name="waveGuideportColor_2">
                  <property name="minimumSize">
                   <size>
                    <width>87</width>
@@ -2141,7 +2141,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="vacuotype">
+                <widget class="QComboBox" name="waveGuideporttype">
                  <property name="minimumSize">
                   <size>
                    <width>87</width>
@@ -2174,7 +2174,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="vacuoWidth">
+                <widget class="QComboBox" name="waveGuideportWidth">
                  <property name="minimumSize">
                   <size>
                    <width>45</width>

@@ -3,6 +3,7 @@
 #include <QPainter>
 #include "CustomConfig.h"
 #include "C_encoding.h"
+#include <QDebug>
 StructRender::StructRender(std::shared_ptr<StructData> data) :Renderer(std::dynamic_pointer_cast<Data>(data)){		
 	color_tab[StructTexture::Perfect_Conductor] = QColor(125, 125, 125, 255);
 	isAA = true;
@@ -314,6 +315,15 @@ bool StructRender::drawImage_rect_space(){
 	painter.setRenderHint(QPainter::Antialiasing, isAA);;
 	painter.setPen(pen);
 	QMap<int, QVector<QRectF>> _map = d->GetAllcutInfo();
+#ifdef MY_DEBUG
+	//测试打印出全部属性
+	qDebug() << GetEncodingstr("获取当前全部",ENCODING_GB2312);
+	for (auto iter = _map.begin(); iter != _map.end();iter++)
+	{
+		qDebug() << iter.key();
+	}
+	qDebug() << GetEncodingstr("获取结束",ENCODING_GB2312);
+#endif // MY_DEBUG
 	for (auto iter = _map.begin(); iter != _map.end(); iter++)
 	{
 		auto itercolor = color_tab.find(iter.key());
@@ -821,18 +831,39 @@ void StructRender::loadconfig()
 	Config::GetInstance()->loadConfig();
 	ConfigGroup mGroup = Config::GetInstance()->getRootGroup();
 	ConfigGroup structConfig = mGroup.getGroup("struct");
-	//开始设置颜色
-	color_tab[Perfect_Conductor] = QStringToQColor(QString::fromStdString(structConfig.getValue("Perfect_Conductor")));
-	color_tab[Conductor_New] = QStringToQColor(QString::fromStdString(structConfig.getValue("Conductor_New")));
-	color_tab[Diolectric] = QStringToQColor(QString::fromStdString(structConfig.getValue("Diolectric")));
-	color_tab[Permeability] = QStringToQColor(QString::fromStdString(structConfig.getValue("Permeability")));
-	color_tab[Vacuo] = QStringToQColor(QString::fromStdString(structConfig.getValue("Vacuo")));
-	//
-	color_pen[Perfect_Conductor] = QStringToQColor(QString::fromStdString(structConfig.getValue("Perfect_Conductorline")));
-	color_pen[Conductor_New] = QStringToQColor(QString::fromStdString(structConfig.getValue("Conductor_Newline")));
-	color_pen[Diolectric] = QStringToQColor(QString::fromStdString(structConfig.getValue("Diolectricline")));
-	color_pen[Permeability] = QStringToQColor(QString::fromStdString(structConfig.getValue("Permeabilityline")));
-	color_pen[Vacuo] = QStringToQColor(QString::fromStdString(structConfig.getValue("Vacuoline")));
+#define LoadColor(a)\
+	color_tab[(a)] = QStringToQColor(QString::fromStdString(structConfig.getValue(#a)));\
+	color_pen[(a)] = QStringToQColor(QString::fromStdString(structConfig.getValue(#a "line")));
+	LoadColor(Perfect_Conductor);
+	LoadColor(Conductor_New);
+	LoadColor(Diolectric);
+	LoadColor(Permeability);
+	//线段-----PORT 2**8，2**9，2**10
+	//先暂时设值
+	color_tab[256] = QColor(0,255,0);
+	color_tab[512] = QColor(0, 255, 0);
+	color_tab[1024] = QColor(0, 255, 0);
+	color_pen[256] = color_tab[256];
+	color_pen[512] = color_tab[512];
+	color_pen[1024] = color_tab[1024];
+	//DRIVER--2^11,2^12,2^13
+	color_tab[2048] = QColor(255, 0, 0);
+	color_tab[4096] = QColor(255, 0, 0);
+	color_tab[8192] = QColor(255, 0, 0);
+	color_pen[2048] = color_tab[2048];
+	color_pen[4096] = color_tab[4096];
+	color_pen[8192] = color_tab[8192];
+	//INDUCTOR--2^14,2^15,2^16
+	color_tab[16384] = QColor(0,0,255);
+	color_tab[32768] = QColor(0,0,255);
+	color_tab[65536] = QColor(0, 0, 255);
+	color_pen[16384] = color_tab[16384];
+	color_pen[32768] = color_tab[32768];
+	color_pen[65536] = color_tab[65536];
+	//未知
+	color_tab[1027] = QColor(0,0,0);
+	color_pen[1027] = QColor(0,0,0);
+#undef LoadColor(a)
 	isAA = atoi(structConfig.getValue("isAlis").c_str());
 }
 

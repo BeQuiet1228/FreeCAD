@@ -41,32 +41,31 @@ void ConfigWidget::initUI()
 		connect(ui->conductorNewColor, SIGNAL(clicked()), this, SLOT(conductornewClicked()));
 		connect(ui->diolectricColor, SIGNAL(clicked()), this, SLOT(diolectricClicked()));
 		connect(ui->permeabilityColor, SIGNAL(clicked()), this, SLOT(permeabilityClicked()));
-		connect(ui->vacuoColor, SIGNAL(clicked()), this, SLOT(vacuoClicked()));
+		connect(ui->waveGuideportColor, SIGNAL(clicked()), this, SLOT(waveGuideportClicked()));
 		connect(ui->perfectconductorlineColor, SIGNAL(clicked()), this, SLOT(perfectconductorlineClicked()));
 		connect(ui->conductorNewlineColor, SIGNAL(clicked()), this, SLOT(conductornewlineClicked()));
 		connect(ui->diolectriclineColor, SIGNAL(clicked()), this, SLOT(diolectriclineClicked()));
 		connect(ui->permeabilitylineColor, SIGNAL(clicked()), this, SLOT(permeabilitylineClicked()));
-		connect(ui->vacuolineColor, SIGNAL(clicked()), this, SLOT(vacuolineClicked()));
+		connect(ui->waveGuideportlineColor, SIGNAL(clicked()), this, SLOT(waveGuideportlineClicked()));
 	}
-	
 	//2维结构图
 	{
 		connect(ui->perfectconductorColor_2, SIGNAL(clicked()), this, SLOT(perfectconductorClicked_2()));
 		connect(ui->conductorNewColor_2, SIGNAL(clicked()), this, SLOT(conductornewClicked_2()));
 		connect(ui->diolectricColor_2, SIGNAL(clicked()), this, SLOT(diolectricClicked_2()));
 		connect(ui->permeabilityColor_2, SIGNAL(clicked()), this, SLOT(permeabilityClicked_2()));
-		connect(ui->vacuoColor_2, SIGNAL(clicked()), this, SLOT(vacuoClicked_2()));
+		connect(ui->waveGuideportColor_2, SIGNAL(clicked()), this, SLOT(waveGuideportClicked_2()));
 	}
 	this->SetAllreRender(ui->perfectconductorColor);
 	this->SetAllreRender(ui->conductorNewColor);
 	this->SetAllreRender(ui->diolectricColor);
 	this->SetAllreRender(ui->permeabilityColor);
-	this->SetAllreRender(ui->vacuoColor);
-	this->SetAllreRender( ui->perfectconductorlineColor);
-	this->SetAllreRender( ui->conductorNewlineColor);
-	this->SetAllreRender( ui->diolectriclineColor);
-	this->SetAllreRender( ui->permeabilitylineColor);
-	this->SetAllreRender( ui->vacuolineColor);
+	this->SetAllreRender(ui->waveGuideportColor);
+	this->SetAllreRender(ui->perfectconductorlineColor);
+	this->SetAllreRender(ui->conductorNewlineColor);
+	this->SetAllreRender(ui->diolectriclineColor);
+	this->SetAllreRender(ui->permeabilitylineColor);
+	this->SetAllreRender(ui->waveGuideportlineColor);
 	this->SetAllreRender(ui->vecColor);
 	this->SetAllreRender(ui->lineColor);
 	this->SetAllreRender(ui->axisColor);
@@ -76,7 +75,7 @@ void ConfigWidget::initUI()
 	this->SetAllreRender(ui->conductorNewColor_2);
 	this->SetAllreRender(ui->diolectricColor_2);
 	this->SetAllreRender(ui->permeabilityColor_2);
-	this->SetAllreRender(ui->vacuoColor_2);
+	this->SetAllreRender(ui->waveGuideportColor_2);
 	//时间图
 	connect(ui->lineColor, SIGNAL(clicked()), this, SLOT(linecolorClicked()));
 	//矢量图
@@ -108,7 +107,6 @@ void ConfigWidget::initUI()
 		ui->user_definedtableWidget->resizeColumnsToContents();
 		ui->user_definedtableWidget->setShowGrid(false);
 		//等位图示例
-		//gridLayout = new QGridLayout(ui->colorscale);
 		boxLayout = new QBoxLayout(QBoxLayout::Direction::BottomToTop,ui->colorscale);
 		scaleWIdget = new QwtScaleWidget(QwtScaleDraw::BottomScale, ui->colorscale);
 		scaleWIdget->setColorBarEnabled(true);
@@ -145,10 +143,10 @@ void ConfigWidget::diolectricClicked(){	structInfoClicked(Mas::Diolectric, ui->d
 */
 void ConfigWidget::permeabilityClicked(){structInfoClicked(Mas::Permeability, ui->permeabilityColor);}
 /**
-* @brief  ConfigWidget::vacuoClicked
+* @brief  ConfigWidget::waveGuideportClicked
 * @return void  
 */
-void ConfigWidget::vacuoClicked(){ structInfoClicked(Mas::Vacuo, ui->vacuoColor); }
+void ConfigWidget::waveGuideportClicked(){ structInfoClicked(Mas::waveGuideport, ui->waveGuideportColor); }
 /**
 * @brief  ConfigWidget::structInfoClicked
 * @param  int _property  
@@ -173,8 +171,8 @@ void ConfigWidget::structInfoClicked(int _property, QPushButton* button)
 		structColor["Perfect_Conductor"] = QColorToQstring(color); break;
 	case Mas::Permeability:
 		structColor["Permeability"] = QColorToQstring(color); break;
-	case Mas::Vacuo:
-		structColor["Vacuo"] = QColorToQstring(color); break;
+	case Mas::waveGuideport:
+		structColor["waveGuideport"] = QColorToQstring(color); break;
 	}
 }
 /*
@@ -212,7 +210,7 @@ void ConfigWidget::saveclicked()
 				case SetSeting(Mas::Conductor_New, iter->second.toStdString(), ui->conductorNewtype, ui->conductorNewWidth);
 				case SetSeting(Mas::Diolectric, iter->second.toStdString(), ui->diolectrictype, ui->diolectricWidth);
 				case SetSeting(Mas::Perfect_Conductor, iter->second.toStdString(), ui->perfectconducttype, ui->perfectconductorWidth);
-				case SetSeting(Mas::Vacuo, iter->second.toStdString(), ui->vacuotype, ui->vacuoWidth);
+				case SetSeting(Mas::waveGuideport, iter->second.toStdString(), ui->waveGuideporttype, ui->waveGuideportWidth);
 				case SetSeting(Mas::Permeability, iter->second.toStdString(), ui->permeabilitytype, ui->permeabilityWidth);
 			}
 #undef SetSeting(x,y)
@@ -386,10 +384,10 @@ void ConfigWidget::axisValColorclicked()
 */
 void ConfigWidget::permeabilitylineClicked(){ structinfolineClicked(Mas::Permeability, ui->permeabilitylineColor); }
 /**
-* @brief  ConfigWidget::vacuolineClicked
+* @brief  ConfigWidget::waveGuideportlineClicked
 * @return void  
 */
-void ConfigWidget::vacuolineClicked(){ structinfolineClicked(Mas::Vacuo, ui->vacuolineColor); }
+void ConfigWidget::waveGuideportlineClicked(){ structinfolineClicked(Mas::waveGuideport, ui->waveGuideportlineColor); }
 /**
 * @brief  ConfigWidget::structinfolineClicked
 * @param  int _property  
@@ -412,8 +410,8 @@ void ConfigWidget::structinfolineClicked(int _property, QPushButton* button){
 		structlineColor["Perfect_Conductorline"] = QColorToQstring(color); break;
 	case Mas::Permeability:
 		structlineColor["Permeabilityline"] = QColorToQstring(color); break;
-	case Mas::Vacuo:
-		structlineColor["Vacuoline"] = QColorToQstring(color); break;
+	case Mas::waveGuideport:
+		structlineColor["waveGuideportline"] = QColorToQstring(color); break;
 
 	}
 }
@@ -448,8 +446,8 @@ void ConfigWidget::loadxmlConfig(){
 		auto StructGroup = Group.getGroup("struct");
 		fileeButtom(ui->diolectricColor, StructGroup.getValue("Diolectric"));
 		structColor["Diolectric"] = QString::fromStdString(StructGroup.getValue("Diolectric"));
-		fileeButtom(ui->vacuoColor, StructGroup.getValue("Vacuo"));
-		structColor["Vacuo"] = QString::fromStdString(StructGroup.getValue("Vacuo"));
+		fileeButtom(ui->waveGuideportColor, StructGroup.getValue("waveGuideport"));
+		structColor["waveGuideport"] = QString::fromStdString(StructGroup.getValue("waveGuideport"));
 		fileeButtom(ui->permeabilityColor, StructGroup.getValue("Permeability"));
 		structColor["Permeability"] = QString::fromStdString(StructGroup.getValue("Permeability"));
 		fileeButtom(ui->perfectconductorColor, StructGroup.getValue("Perfect_Conductor"));
@@ -457,8 +455,8 @@ void ConfigWidget::loadxmlConfig(){
 		fileeButtom(ui->conductorNewColor, StructGroup.getValue("Conductor_New"));
 		structColor["Conductor_New"] = QString::fromStdString(StructGroup.getValue("Conductor_New"));
 
-		fileeButtom(ui->vacuolineColor, StructGroup.getValue("Vacuoline"));
-		structlineColor["Vacuoline"] = QString::fromStdString(StructGroup.getValue("Vacuoline"));
+		fileeButtom(ui->waveGuideportlineColor, StructGroup.getValue("waveGuideportline"));
+		structlineColor["waveGuideportline"] = QString::fromStdString(StructGroup.getValue("waveGuideportline"));
 		fileeButtom(ui->permeabilitylineColor, StructGroup.getValue("Permeabilityline"));
 		structlineColor["Permeabilityline"] = QString::fromStdString(StructGroup.getValue("Permeabilityline"));
 		fileeButtom(ui->perfectconductorlineColor, StructGroup.getValue("Perfect_Conductorline"));
@@ -479,7 +477,7 @@ void ConfigWidget::loadxmlConfig(){
 
 		auto StructGroup = Group.getGroup("struct2D");
 		loadStruct2D(Mas::Diolectric,ui->diolectricColor_2,ui->diolectrictype,ui->diolectricWidth);
-		loadStruct2D(Mas::Vacuo,ui->vacuoColor_2,ui->vacuotype,ui->vacuoWidth);
+		loadStruct2D(Mas::waveGuideport, ui->waveGuideportColor_2, ui->waveGuideporttype, ui->waveGuideportWidth);
 		loadStruct2D(Mas::Permeability,ui->permeabilityColor_2,ui->permeabilitytype,ui->permeabilityWidth);
 		loadStruct2D(Mas::Perfect_Conductor,ui->perfectconductorColor_2,ui->perfectconducttype,ui->perfectconductorWidth);
 		loadStruct2D(Mas::Conductor_New,ui->conductorNewColor_2,ui->conductorNewtype,ui->conductorNewWidth);
@@ -609,10 +607,10 @@ void ConfigWidget::diolectricClicked_2(){ struct_2D_clicked(Mas::Diolectric, ui-
 */
 void ConfigWidget::permeabilityClicked_2(){ struct_2D_clicked(Mas::Permeability, ui->permeabilityColor_2); }
 /**
-* @brief  ConfigWidget::vacuoClicked_2
+* @brief  ConfigWidget::waveGuideportClicked_2
 * @return void  
 */
-void ConfigWidget::vacuoClicked_2(){ struct_2D_clicked(Mas::Vacuo, ui->vacuoColor_2);}
+void ConfigWidget::waveGuideportClicked_2(){ struct_2D_clicked(Mas::waveGuideport, ui->waveGuideportColor_2); }
 
 /**
 * @brief  ConfigWidget::struct_2D_clicked 

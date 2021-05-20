@@ -12,10 +12,21 @@ enum StructTexture
 	Conductor_New = 8,
 	//介质
 	Diolectric = 4,
+	//电介质和电导
+	DielectirandConductance = 16,
 	//磁导率
-	Permeability = 16,
-	//真空
-	Vacuo = 1024,
+	Permeability = 32,
+	//
+	Freespace = 64,
+	//
+	FOIL = 128,
+	
+	//线段
+	//波导端口
+	waveGuideport = 1024,
+	DRIVER=2048,
+	//感应器
+	Inductor = 16384
 };
 class StructRender :public Renderer
 {

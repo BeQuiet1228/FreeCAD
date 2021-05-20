@@ -56,18 +56,6 @@ StructData::StructData(Hdf5Data& heData, DirectionType _type, const RunMod& mod)
 	}
 		break;
 	}
-	/*if (headeriter->find("polar") != std::string::npos)
-	{
-		
-	}
-	else if (headeriter->find("cylindrical") != std::string::npos)
-	{
-		
-	}
-	else if (headeriter->find("cartesian") != std::string::npos)
-	{
-	
-	}*/
 }
 /**
 * @brief StructData::StructData 构造函数
@@ -124,20 +112,6 @@ StructData::StructData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf endpoin
 		}
 	}break;
 	}
-	//if (/*headeriter->find("polar") != std::string::npos*/)
-	//{
-	//	//当前为polar
-	//
-	//}
-	//else if (headeriter->find("cylindrical") != std::string::npos)
-	//{
-	//	
-	//}
-	//else if (headeriter->find("cartesian") != std::string::npos)
-	//{
-	//
-	//}
-
 }
 /**
 * @brief StructData::loadPoint  加载点位信息
@@ -414,11 +388,12 @@ std::vector<QRectF> StructData::GetAllCurspace_polar_R_Z()
 	auto iterRight = IM1X->begin() + 1;
 	auto iterTop = IM2X->begin();
 	auto iterbottom = IM2X->begin() + 1;
-	for (auto x = 0; x < pointXSize - 1; x++)
+#if 1
+	for (auto x = 0; x < pointXSize-1; x++)
 	{
 		iterTop = IM2X->begin();
 		iterbottom = IM2X->begin() + 1;
-		for (auto y = 0; y < pointYSize - 1; y++)
+		for (auto y = 0; y < pointYSize-1; y++)
 		{
 			QRectF temp;//介值
 			temp.setLeft(*iterleft);
@@ -432,6 +407,7 @@ std::vector<QRectF> StructData::GetAllCurspace_polar_R_Z()
 		iterleft++;
 		iterRight++;
 	}
+#endif
 	return list;
 }
 /**
@@ -469,7 +445,6 @@ std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_polar_R_Z()
 */
 QMap<int, QVector<QRectF>> StructData::fileproperty_polar_R_Z(std::vector<QRectF>& list, std::vector<StructData::DaTaKmt>& datainfo)
 {
-	
 	Data::ListValuesPtr listValues;
 	autoModGetSourceData(listValues);//获取原始数据
 	//获取dataSetKmt里的全部数据
@@ -498,7 +473,7 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_polar_R_Z(std::vector<QRectF
 	QMap<int, QVector<QRectF>> allinfo;
 	for each (DaTaKmt var in datainfo)
 	{
-		if (var.point3==index&&var.point1<pointXSize-1)
+		if (var.point3==index&&var.point1<pointXSize)
 		{
 			allinfo[var.pointproperty].push_back(list[(var.point1 - 1)*(pointYSize - 1) + var.point2 - 1]);
 		}
@@ -590,7 +565,7 @@ std::map<int, std::vector<StructData::CutCir>> StructData::filecir_polar_R_THETA
 		}
 		index = index_min;
 	}
-	int CutNum = rand_val.size() - 1;
+	int CutNum = rand_val.size()-1;
 	std::vector<DaTaKmt> datakmtinfo =GetdatasetKmt_polar_R_THETA();
 	for each (DaTaKmt var in datakmtinfo)
 	{
@@ -734,7 +709,7 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_cylindrical_R_Z(std::vector<
 	}
 	for each (DaTaKmt var in datainfo)
 	{
-		if (var.point3 == index && var.point1 < pointXSize - 1)
+		if (var.point3 == index && var.point1 < pointXSize)
 		{
 			allinfo[var.pointproperty].push_back(list[(var.point1 - 1)*(pointYSize - 1) + var.point2 - 1]);
 		}
@@ -814,7 +789,7 @@ std::map<int, std::vector<StructData::CutCir>> StructData::filecir_cylindrical_R
 		}
 		index = index_min;
 	}
-	int CutNum = rand_val.size() - 1;
+	int CutNum = rand_val.size()-1;
 	std::vector<DaTaKmt> datakmtinfo = GetdatasetKmt_cylindrical_R_THETA();
 	for each (DaTaKmt var in datakmtinfo)
 	{
@@ -971,7 +946,7 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_cartesian_x_y(std::vector<QR
 	QMap<int, QVector<QRectF>> allinfo;
 	for each (DaTaKmt var in datainfo)
 	{
-		if (var.point3 == index && var.point1 < pointXSize - 1)
+		if (var.point3 ==index && var.point1 < pointXSize)
 		{
 			allinfo[var.pointproperty].push_back(list[(var.point1 - 1)*(pointYSize - 1) + var.point2 - 1]);
 		}
@@ -1066,9 +1041,9 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_cartesian_y_z(std::vector<QR
 	}
 	for each (DaTaKmt var in datainfo)
 	{
-		if (var.point1 == index && var.point2 < pointXSize - 1)
+		if (var.point1 ==index && var.point2 < pointXSize)
 		{
-			allinfo[var.pointproperty].push_back(list[(var.point2 - 1)*(pointYSize - 1) + var.point3 - 1]);
+			allinfo[var.pointproperty].push_back(list[(var.point2-1)*(pointYSize-1) + var.point3-1]);
 		}
 	}
 	return allinfo;
@@ -1160,7 +1135,7 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_cartesian_x_z(std::vector<QR
 	}
 	for each (DaTaKmt var in datainfo)
 	{
-		if (var.point2 == index && var.point1 < pointXSize - 1)
+		if (var.point2 == index && var.point1 < pointXSize&& var.point3)
 		{
 			allinfo[var.pointproperty].push_back(list[(var.point1 - 1)*(pointYSize - 1) + var.point3 - 1]);
 		}

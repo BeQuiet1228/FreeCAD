@@ -506,7 +506,7 @@ void Struct2DRenderer::loadconfig(){
 	GETCONFIG(Conductor_New);
 	GETCONFIG(Diolectric);
 	GETCONFIG(Permeability);
-	GETCONFIG(Vacuo);
+	GETCONFIG(waveGuideport);
 #undef GETCONFIG(x)
 	isAA = atoi(structGroup.getValue("isAlis").c_str());
 }
