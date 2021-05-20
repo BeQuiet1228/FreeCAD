@@ -63,7 +63,7 @@
 #include <Base/Interpreter.h>
 #include <Base/Console.h>
 #include <CXX/Objects.hxx>
-
+#include "LuaEditView.h"
 using namespace Gui;
 
 // FCApplication Methods						// Methods structure
@@ -181,6 +181,9 @@ PyMethodDef Application::Methods[] = {
   {"createViewer",               (PyCFunction) Application::sCreateViewer,1,
    "createViewer([int]) -> View3DInventor/SplitView3DInventor\n\n"
    "shows and returns a viewer. If the integer argument is given and > 1: -> splitViewer"},
+   { "displayText",               (PyCFunction)Application::sDisplayText,1,
+    "displayText(string)\n\n"
+    "display m3d/m2d text" },
 
   {NULL, NULL, 0, NULL}		/* Sentinel */
 };
@@ -253,6 +256,30 @@ PyObject* Gui::Application::sSetActiveDocument(PyObject * /*self*/, PyObject *ar
         getMainWindow()->setActiveWindow(view);
     }
     Py_Return;
+}
+PyObject* Application::sDisplayText(PyObject* self, PyObject* args, PyObject* kwd)
+{
+	char* text;
+	if (!PyArg_ParseTuple(args, "s", &text))     // convert args: Python->C
+		return NULL;
+	std::string str = std::string(text);
+    auto guiDoc = Instance->activeDocument();
+    auto views = guiDoc->getMDIViews();
+    for (auto iter = views.begin(); iter != views.end(); iter++) {
+    
+        LuaEditView* textEdit = dynamic_cast<LuaEditView*>(*iter);
+        if (textEdit)
+        {
+            textEdit->setText(QString::fromStdString(text));
+        }     
+    }
+
+    LuaEditView* textEdit = new LuaEditView(guiDoc);
+    textEdit->setReadOnly(true);
+    auto mw = MainWindow::getInstance();
+    mw->addWindow(textEdit);
+    textEdit->setText(QString::fromStdString(text));
+	Py_Return;
 }
 
 PyObject* Application::sGetDocument(PyObject * /*self*/, PyObject *args,PyObject * /*kwd*/)

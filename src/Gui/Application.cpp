@@ -761,7 +761,14 @@ void Application::slotNewDocument(const App::Document& Doc)
 	else if (Doc.classID == 5) {
 		 pDoc->createView(PlotMDIView::getClassTypeId());
 		 }
-    else {
+    else if(Doc.classID == 2 || Doc.classID == 3)
+    {
+		LuaEditView* edit = new LuaEditView(pDoc);
+        edit->setReadOnly(true);
+		auto mainWindow = Gui::MainWindow::getInstance();
+		mainWindow->addWindow(edit);
+        pDoc->createView(View3DInventor::getClassTypeId());
+    }else {
 		pDoc->createView(View3DInventor::getClassTypeId());
 	}
     qApp->processEvents(); // make sure to show the window stuff on the right place

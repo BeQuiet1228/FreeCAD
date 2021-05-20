@@ -194,7 +194,6 @@ private:
 ParameterManager *App::Application::_pcSysParamMngr;
 ParameterManager *App::Application::_pcUserParamMngr;
 
-
 Base::ConsoleObserverStd  *Application::_pConsoleObserverStd =0;
 Base::ConsoleObserverFile *Application::_pConsoleObserverFile =0;
 
