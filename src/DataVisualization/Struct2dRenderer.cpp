@@ -500,10 +500,9 @@ void Struct2DRenderer::loadconfig(){
 	pen.setStyle((struct2DGroup.getValue(#x "type").find("solid")!=std::string::npos)?(Qt::SolidLine):(Qt::DashLine));\
 	pen.setWidth(atoi((struct2DGroup.getValue(#x "width")).c_str()));\
 	pen_tab[x]=pen;\
-	qDebug()<<x<<color_tab[x];\
 	}
-	GETCONFIG(Perfect_Conductor);
-	GETCONFIG(Conductor_New);
+	GETCONFIG(PerfectConductor);
+	GETCONFIG(ConductorNew);
 	GETCONFIG(Diolectric);
 	GETCONFIG(Permeability);
 	GETCONFIG(waveGuideport);

@@ -7,23 +7,24 @@
 enum StructTexture
 {
 	//理想导体
-	Perfect_Conductor = 3,
+	PerfectConductor = 3,
 	//电导新材料
-	Conductor_New = 8,
+	ConductorNew = 8,
 	//介质
 	Diolectric = 4,
 	//电介质和电导
-	DielectirandConductance = 16,
+	dielectirAndconductance = 16,
 	//磁导率
 	Permeability = 32,
-	//
+	//自由空间
 	Freespace = 64,
-	//
+	//电阻
 	FOIL = 128,
 	
 	//线段
 	//波导端口
 	waveGuideport = 1024,
+	//传动
 	DRIVER=2048,
 	//感应器
 	Inductor = 16384

@@ -5,7 +5,7 @@
 #include "C_encoding.h"
 #include <QDebug>
 StructRender::StructRender(std::shared_ptr<StructData> data) :Renderer(std::dynamic_pointer_cast<Data>(data)){		
-	color_tab[StructTexture::Perfect_Conductor] = QColor(125, 125, 125, 255);
+	color_tab[StructTexture::PerfectConductor] = QColor(125, 125, 125, 255);
 	isAA = true;
 }
 StructRender::~StructRender(){
@@ -535,11 +535,6 @@ StructData::structpoint StructRender::findApoint_Z_R(QPointF _curpostion){
 		_centerpoint.setX(transitionX(_centerpoint.x(), xScale, xr));
 		_centerpoint.setY(transitionY(_centerpoint.y(), yScale, yr));
 		Scale_coord.push_back(_centerpoint);
-		//#define _DEBUG_
-#ifdef _DEBUG_
-		printf("中心点point=(x=%f,y=%f)\n", _centerpoint.x(), _centerpoint.y());
-#undef _DEBUG_
-#endif
 	}
 	//获取最接近的中心点（待优化）
 	unsigned int index = 0;
@@ -550,11 +545,6 @@ StructData::structpoint StructRender::findApoint_Z_R(QPointF _curpostion){
 
 		if (distance > _distance)
 		{
-			//#define _DEBUG_
-#ifdef _DEBUG_
-			printf("距离范围为：distance=%f-----%d\n", distance, i);
-#undef _DEBUG_
-#endif
 			distance = _distance;
 			index = i;
 		}
@@ -575,8 +565,6 @@ StructData::structpoint StructRender::findApoint_Z_R(QPointF _curpostion){
 		mpoint.d1
 			= _conduit_list[index].left();
 	}
-	//qreal xpoint = ((abs(_curpostion.x() - _recfCoord.left())) >= (abs(_curpostion.x() - _recfCoord.right()))) ? (_recfCoord.right()) : (_recfCoord.left());
-	//获取最接近的y坐标
 	if ((abs(_curpostion.y() - _recfCoord.top())) >= (abs(_curpostion.y() - _recfCoord.bottom())))
 	{
 		mpoint.y = _recfCoord.bottom();
@@ -587,13 +575,6 @@ StructData::structpoint StructRender::findApoint_Z_R(QPointF _curpostion){
 		mpoint.y = _recfCoord.top();
 		mpoint.d2 = _conduit_list[index].top();
 	}
-	//qreal ypoint = ((abs(_curpostion.y() - _recfCoord.top())) >= (abs(_curpostion.y() - _recfCoord.bottom()))) ? (_recfCoord.bottom()) : (_recfCoord.top());
-#define _DEBUG_
-#ifdef _DEBUG_
-	printf("鼠标点坐标-(x=%f,y=%f)\n", _curpostion.x(), _curpostion.y());
-	//printf("接近的点----(x=%f,y=%f)\n",xpoint,ypoint);
-#undef _DEBUG_
-#endif
 	return mpoint;
 }
 /**
@@ -834,12 +815,14 @@ void StructRender::loadconfig()
 #define LoadColor(a)\
 	color_tab[(a)] = QStringToQColor(QString::fromStdString(structConfig.getValue(#a)));\
 	color_pen[(a)] = QStringToQColor(QString::fromStdString(structConfig.getValue(#a "line")));
-	LoadColor(Perfect_Conductor);
-	LoadColor(Conductor_New);
+	LoadColor(PerfectConductor);
+	LoadColor(ConductorNew);
 	LoadColor(Diolectric);
 	LoadColor(Permeability);
+	LoadColor(dielectirAndconductance);
+	LoadColor(Freespace);
+	LoadColor(FOIL);
 	//线段-----PORT 2**8，2**9，2**10
-	//先暂时设值
 	color_tab[256] = QColor(0,255,0);
 	color_tab[512] = QColor(0, 255, 0);
 	color_tab[1024] = QColor(0, 255, 0);
