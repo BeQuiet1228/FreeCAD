@@ -317,12 +317,12 @@ bool StructRender::drawImage_rect_space(){
 	QMap<int, QVector<QRectF>> _map = d->GetAllcutInfo();
 #ifdef MY_DEBUG
 	//测试打印出全部属性
-	qDebug() << GetEncodingstr("获取当前全部",ENCODING_GB2312);
+	QStringList msg;
 	for (auto iter = _map.begin(); iter != _map.end();iter++)
 	{
-		qDebug() << iter.key();
+		msg << QString::number(iter.key(),10);
 	}
-	qDebug() << GetEncodingstr("获取结束",ENCODING_GB2312);
+	qDebug() <<"getAllProperty:"<< msg;
 #endif // MY_DEBUG
 	for (auto iter = _map.begin(); iter != _map.end(); iter++)
 	{

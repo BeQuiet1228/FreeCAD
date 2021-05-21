@@ -68,10 +68,6 @@ void ConfigWidget::initUI()
 	SETPERPORE(ui->lineColor,linecolorClicked());
 	//矢量图
 	SETPERPORE(ui->vecColor,veccolorClicked());
-	//保存
-	SETPERPORE(ui->applicButtom,saveclicked());
-	//取消
-	SETPERPORE(ui->cancleButtom,canclelicked());
 	//刻度
 	SETPERPORE(ui->axisColor,axisColorclicked());
 	SETPERPORE(ui->axisvalColor,axisValColorclicked());
@@ -109,6 +105,10 @@ void ConfigWidget::initUI()
 		boxLayout->addWidget(arrowCtrl);
 	}
 #undef  SETPERPORE(a,b)
+	//保存
+	connect(ui->applicButtom, SIGNAL(clicked()), this, SLOT(saveclicked()));
+	//取消
+	connect(ui->cancleButtom,SIGNAL(clicked()), this, SLOT(canclelicked()));
 }
 
 /**
@@ -655,6 +655,7 @@ void ConfigWidget::changeUser_defined(int index)
 }
 void ConfigWidget::canclelicked()
 {
+	this->close();
 }
 /**
 * @brief  Mas::Setconfig::Setconfig

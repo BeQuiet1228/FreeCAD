@@ -184,11 +184,7 @@ void Axis::setAxixStyle(Axisstyle _Axisstyle)
 * @return void
 */
 void Axis::setAxisText(QString AxisUnitText){
-	
 	mAxisunit = AxisUnitText;//单位
-#ifdef 	MY_DEBUG
-	qDebug() << mAxisunit;
-#endif
 }
 /**
 * @brief Axis::setAxisRange 设置刻度的数值区间
