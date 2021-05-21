@@ -13,6 +13,7 @@
 #include <regex>
 #include "time.h"
 #include "DlgInsertParamImp.h"
+#include "DlgDeleteParamImp.h"
 
 //#include "DlgExpressionInput.h"
 
@@ -61,8 +62,14 @@ MyParameter::MyParameter(QWidget* parent) : QWidget(parent){
     insert_btn->setText(QString::fromUtf8("insert param"));
     QObject::connect(this->insert_btn, SIGNAL(clicked(bool)), this, SLOT(insertParam()));
 
+    delete_btn = new QPushButton(this);
+    delete_btn->setObjectName(QString::fromUtf8("delete_btn"));
+    delete_btn->setText(QString::fromUtf8("delete param"));
+    QObject::connect(this->delete_btn, SIGNAL(clicked(bool)), this, SLOT(deleteParam()));
+
     gl->addWidget(batch_btn, 1, 0, 1, 1);
     gl->addWidget(insert_btn, 1, 1, 1, 1);
+    gl->addWidget(delete_btn, 2, 1, 1, 1);
 }
 
 MyParameter::~MyParameter()
@@ -438,9 +445,15 @@ void MyParameter::createParamM3D() {
 }
 
 // 更新数据
-void MyParameter::updateFromRowToEnd(int row) {
+void MyParameter::updateFromRowToEnd(int row, std::string param_name) {
     int max_row = this->tableWidget->rowCount();
-    QString cur_row_name = tableWidget->item(row, 0)->text();    // 当前行表达式的名字
+    QString cur_row_name;
+    if (param_name.empty()) {
+        cur_row_name = tableWidget->item(row, 0)->text();    // 当前行表达式的名字
+    }
+    else {
+        cur_row_name = QString::fromStdString(param_name);
+    }
     for (int i = row + 1; i < max_row - 1; ++i) {
         QString name = tableWidget->item(i, 0)->text();
         QString expression = tableWidget->item(i, 1)->text();
@@ -579,6 +592,37 @@ void MyParameter::insertParam() {
 
         tableWidget->item(row, 0)->setText(name);
     }
+    delete this->insert_param_dlg;
+}
+
+// 删除变量
+void MyParameter::deleteParam() {
+    int row = this->tableWidget->rowCount();
+    std::vector<std::string> allParamName = std::vector<std::string>();
+    for (int i = 0; i < row - 1; ++i) {
+        allParamName.push_back(this->tableWidget->item(i, 0)->text().toStdString());
+    }
+    this->delete_param_dlg = new DeleteParamDialog();
+    this->delete_param_dlg->inputAllParamName(allParamName);
+    this->delete_param_dlg->exec();
+    // 判断输入的变量是否有效
+    if (this->delete_param_dlg->isDeleted()) {
+        std::string delete_param = this->delete_param_dlg->getParamName();
+        int p_row = 0;  // param row
+        for (int i = 0; i < allParamName.size(); ++i) {
+            if (delete_param == allParamName[i]) {
+                p_row = i;
+                break;
+            }
+        }
+        this->tableWidget->blockSignals(true);
+        this->tableWidget->removeRow(p_row);
+        this->tableWidget->blockSignals(false);
+        DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("Param");
+        docObj->removeDynamicProperty(delete_param.c_str());
+        this->updateFromRowToEnd(p_row - 1, delete_param);
+    }
+    delete this->delete_param_dlg;
 }
 
 

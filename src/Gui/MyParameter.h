@@ -15,6 +15,7 @@
 enum param_type {type_int = 0, type_float, type_length, type_angle, type_other, type_error};
 
 class InsertParamDialog;
+class DeleteParamDialog;
 
 class MyParameter : public QWidget {
 	Q_OBJECT
@@ -37,11 +38,10 @@ public:
 	neb::CJsonObject* param_m3d;
 	QPushButton* batch_btn;
 	QPushButton* insert_btn;
+	QPushButton* delete_btn;
 	QWidget* text_import;
 	InsertParamDialog* insert_param_dlg;
-
-	//Base::Unit impliedUnit;
-	//Gui::PropertyEditor::PropesrtyEditor* myEidt;
+	DeleteParamDialog* delete_param_dlg;
 
 // 与tableWideget相关的函数
 public:
@@ -64,7 +64,7 @@ public:
 
 //与数据相关
 public:
-	void updateFromRowToEnd(int row);
+	void updateFromRowToEnd(int row, std::string param_name= "");
 	std::vector<std::vector<std::string>> batchProcessing(std::string text);
 	void recoveryData();
 
@@ -74,6 +74,7 @@ private Q_SLOTS:
 	void importTextInterFace();
 	void importText();
 	void insertParam();
+	void deleteParam();
 };
 
 
