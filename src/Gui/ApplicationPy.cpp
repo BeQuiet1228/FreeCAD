@@ -271,6 +271,7 @@ PyObject* Application::sDisplayText(PyObject* self, PyObject* args, PyObject* kw
         if (textEdit)
         {
             textEdit->setText(QString::fromStdString(text));
+            return;
         }     
     }
 
