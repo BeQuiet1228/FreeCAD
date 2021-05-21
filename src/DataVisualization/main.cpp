@@ -26,5 +26,6 @@ int main(int argc, char *argv[])
 	ConfigWidget m_configwidget;
 	m_configwidget.show();
 #endif
+	//pull request test
 	return a.exec();
 }
