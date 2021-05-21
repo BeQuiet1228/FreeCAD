@@ -102,6 +102,17 @@ void DocumentManager::_ToRenderer(std::string name, int index)
 	if (m_DataSourceManage)
 		m_DataSourceManage->tranfromRenderer(name,index);
 }
+
+/**
+* @brief DocumentManager::restoreH5Data 释放h5数据
+* @return void
+*/
+void DocumentManager::restoreH5Data()
+{
+	delete m_DataSourceManage;
+	m_DataSourceManage = new DataSourceManage;
+}
+
 /**
 * @brief  DocumentManager::dataclear 删除数据
 * @return void  

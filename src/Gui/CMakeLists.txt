@@ -1141,6 +1141,7 @@ SET(FreeCADGui_CPP_SRCS
     AutoSaver.cpp
     BitmapFactory.cpp
     Document.cpp
+	DocumentPic.cpp
     DocumentModel.cpp
     DocumentPyImp.cpp
     DocumentObserver.cpp
@@ -1167,6 +1168,7 @@ SET(FreeCADGui_SRCS
     AutoSaver.h
     BitmapFactory.h
     Document.h
+	DocumentPic.h
     DocumentModel.h
     DocumentObserver.h
     ExpressionBinding.cpp

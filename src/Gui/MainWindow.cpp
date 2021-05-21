@@ -276,12 +276,7 @@ void MainWindow::showContorlUI()
 
 void MainWindow::hideContorlUI()
 {
-	/*
-	removeToolBar(contorlButtonToolBar);
-	removeToolBar(contorlDataToolBar);
-	contorlDataToolBar->hide();
-	contorlButtonToolBar->hide();
-	*/
+    //Òþ²Ø½çÃæ
 	contorlDockWidget->close();
     hideVisualizationTree();
     hideControlTree();

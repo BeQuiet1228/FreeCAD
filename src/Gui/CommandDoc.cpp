@@ -73,6 +73,7 @@
 #include <memory>
 #include "SmartContorl/SmartContorlInterface.h"
 #include "DataVisualization/ConfigWidget.h"
+#include "DocumentPic.h"
 using namespace Gui;
 
 
@@ -1765,7 +1766,6 @@ void StdCmdRunM3d::activated(int iMsg)
 			temp = temp.left(temp.length() - 9) + QString::fromLocal8Bit(".m2d");
 			path = temp.toStdString();
 		}
-		std::cerr << path << std::endl;
 		contorl->setM3dPath(path);
 	}
 	contorl->buttonClicked(0);
@@ -1790,6 +1790,11 @@ bool StdCmdRunM3d::isActive(void)
 			mw->hideContorlUI();
 			sMenuText = QT_TR_NOOP("RunM3d");
 			sPixmap = "run";
+            //清空h5文件对象
+            auto doc = Gui::Application::Instance->activeDocument();
+            auto picDoc = dynamic_cast<DocumentPic*>(doc);
+            if (picDoc)
+                picDoc->releaseH5Object();
 		}
 		this->updataActionIcon();
 	}
@@ -2028,7 +2033,6 @@ void StdCmdParalleRun::activated(int iMsg)
 		temp = temp.left(temp.length() - 9) + QString::fromLocal8Bit(".m2d");
 		path = temp.toStdString();
 	}
-	std::cerr << path << std::endl;
 	contorl->setM3dPath(path);
 
 	contorl->buttonClicked(1);
