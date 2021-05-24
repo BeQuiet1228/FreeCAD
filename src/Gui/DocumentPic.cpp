@@ -74,3 +74,29 @@ void DocumentPic::releaseH5Object()
 	dataDoc->restoreH5Data();
 }
 
+/**
+* @brief DocumentPic::getTextPath 获取文本路径
+* @return std::string
+*/
+std::string DocumentPic::getTextPath()
+{
+	//设置运行路
+	auto appDoc = getAppDocument();
+	if (appDoc == nullptr)
+		return "";
+	std::string path = appDoc->FileName.getValue();
+	if (appDoc->classID == 2)
+	{
+		QString temp = QString::fromUtf8(path.c_str());
+		temp = temp.left(temp.length() - 6) + QString::fromLocal8Bit(".m3d");
+		path = temp.toStdString();
+	}
+	else if (appDoc->classID == 3) {
+		QString temp = QString::fromUtf8(path.c_str());
+		temp = temp.left(temp.length() - 9) + QString::fromLocal8Bit(".m2d");
+		path = temp.toStdString();
+	}
+
+	return path;
+}
+

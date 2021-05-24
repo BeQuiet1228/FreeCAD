@@ -1752,20 +1752,11 @@ void StdCmdRunM3d::activated(int iMsg)
 		mw->setContorlUI();
 
         //设置运行路
-        auto guiDoc = Gui::Application::Instance->activeDocument();
-        auto appDoc = guiDoc->getDocument();
-		std::string path = appDoc->FileName.getValue();
-		if (appDoc->classID == 2)
-		{
-			QString temp = QString::fromUtf8(path.c_str());
-			temp = temp.left(temp.length() - 6) + QString::fromLocal8Bit(".m3d");
-			path = temp.toStdString();
-		}
-		else if (appDoc->classID == 3) {
-			QString temp = QString::fromUtf8(path.c_str());
-			temp = temp.left(temp.length() - 9) + QString::fromLocal8Bit(".m2d");
-			path = temp.toStdString();
-		}
+        Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
+        auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
+        if (!picDoc)
+            return;
+		std::string path = picDoc->getTextPath();
 		contorl->setM3dPath(path);
 	}
 	contorl->buttonClicked(0);
@@ -2019,22 +2010,12 @@ void StdCmdParalleRun::activated(int iMsg)
 	auto contorl = ContorlInterface::GetInstance();
 
 	//设置运行路
-	auto guiDoc = Gui::Application::Instance->activeDocument();
-	auto appDoc = guiDoc->getDocument();
-	std::string path = appDoc->FileName.getValue();
-	if (appDoc->classID == 2)
-	{
-		QString temp = QString::fromUtf8(path.c_str());
-		temp = temp.left(temp.length() - 6) + QString::fromLocal8Bit(".m3d");
-		path = temp.toStdString();
-	}
-	else if (appDoc->classID == 3) {
-		QString temp = QString::fromUtf8(path.c_str());
-		temp = temp.left(temp.length() - 9) + QString::fromLocal8Bit(".m2d");
-		path = temp.toStdString();
-	}
+	Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
+	auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
+	if (!picDoc)
+		return;
+	std::string path = picDoc->getTextPath();
 	contorl->setM3dPath(path);
-
 	contorl->buttonClicked(1);
 }
 bool StdCmdParalleRun::isActive(void)
@@ -2062,8 +2043,13 @@ void StdCmdSmartContorl::activated(int iMsg)
 {
 	Q_UNUSED(iMsg);
 	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
-	SmartContorlInterface smartContorl;
-	smartContorl.buttonClicked(7);
+	//设置运行路
+	Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
+	auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
+	if (!picDoc)
+		return;
+	std::string path = picDoc->getTextPath();
+    SmartContorlInterface::showSmartControlUI(path);
 }
 bool StdCmdSmartContorl::isActive(void)
 {

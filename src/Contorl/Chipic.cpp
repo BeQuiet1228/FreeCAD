@@ -12,11 +12,6 @@
 #include <QProcess>
 #include <QMessageBox>
 
-#ifndef SERVICE
-#include <FCConfig.h>
-#include <Base\Interpreter.h>
-#endif // !SERVICE
-
 
 
 Chipic::Chipic(DWORD threadID)
@@ -373,16 +368,7 @@ bool Chipic::disposeStructMapMessage(const Message& msg)
 #ifndef SERVICE
 	if (!getIsAuto())
 	{
-#if 0 //新的后处理模块  不在调用python代码
-		std::string fileName = this->makePath("_Temp.h5");
-		fileName = MessageTransition::utf8StdstringToGbkStdstring(fileName);
-		Base::InterpreterSingleton python;
-		python.runString("import Control.controlCommand.LonelinessCmd");
-		python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
-		python.runStringArg("lonemod.openStruct(\'%s\')", fileName.c_str());
-#else
 		emit outputStructFile(threadID);
-#endif
 	}
 	//刷新一下数据
 	this->refreshButtonClicked();
@@ -410,19 +396,7 @@ bool Chipic::disposResultMapMessage(const Message& msg)
 	{
 		if (msg.wParam != -1000 && msg.lParam != -1000)
 		{
-#if 0	//新的后处理模块，不在调用python
-#ifndef SERVICE
-			std::string fileName = this->makePath("_Temp.h5");
-			fileName = MessageTransition::utf8StdstringToGbkStdstring(fileName);
-			Base::InterpreterSingleton python;
-			python.runString("import Control.controlCommand.LonelinessCmd");
-			python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
-			python.runStringArg("lonemod.openMap(\'%s\',%d,%d)", fileName.c_str(), msg.wParam, msg.lParam);
-#endif // !SERVICE
-			return  true;
-#else
 			emit newResultFile(threadID);
-#endif
 		}
 	}
 
@@ -536,18 +510,6 @@ bool Chipic::disposChipicBusy(const Message& msg)
 	box.setWindowTitle(MessageTransition::gbkStdstringToQstring("提示"));
 	box.setText(MessageTransition::gbkStdstringToQstring("计算程序正在绘制其他图形，请勿频繁点击绘图按钮！"));
 	box.exec();
-
-
-	//清空树控件中显示的正在接收文件
-#ifndef SERVICE
-	std::string fileName = this->makePath("_Temp.h5");
-	fileName = MessageTransition::utf8StdstringToGbkStdstring(fileName);
-	Base::InterpreterSingleton python;
-	python.runString("import Control.controlCommand.LonelinessCmd");
-	python.runString("lonemod = Control.controlCommand.LonelinessCmd.LonelinessCmd()");
-	python.runStringArg("lonemod.clearTree()");
-#endif
-
 	return  true;
 }
 

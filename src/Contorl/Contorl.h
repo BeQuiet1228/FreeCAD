@@ -22,8 +22,6 @@ public:
 	ContorlButtonBar *contorlButtonBar;
 	//信息条
 	ContorlDataBar *contorlDataBar;
-	//运行脚本获取m3d路径
-	void getM3dPathForRunPython();
 	//显示看图的树控件
 	void showTreeWidget();
 	//关闭绘图窗口

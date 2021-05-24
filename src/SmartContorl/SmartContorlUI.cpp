@@ -28,7 +28,7 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	std::string m3dPath = "E:/test/test.m3d";
 	smartContorl->setM3dPath(m3dPath);
 #else
-	smartContorl->setM3dPath(contorlInterface->getDocumentPath());
+	//smartContorl->setM3dPath(contorlInterface->getDocumentPath());
 #endif
 	connect(smartContorl, SIGNAL(addDataBar(QListWidgetItem*, QWidget*)), this, SLOT(addListWidgetItem(QListWidgetItem*, QWidget*)));
 	connect(smartContorl, SIGNAL(smartContorlLog(std::string)), this, SLOT(pringLuaLog(std::string)));
@@ -44,13 +44,21 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	this->ui->pushButton_7->hide();
 	this->ui->textEdit->hide();
 
-	//载入工程配置
-	loadParameterXml();
 }
 
 SmartContorlUI::~SmartContorlUI()
 {
 	
+}
+
+/**
+* @brief SmartContorlUI::setTextPath 设置优化算法的运行路径
+* @param const std::string & path
+* @return void
+*/
+void SmartContorlUI::setTextPath(const std::string& path)
+{
+	smartContorl->setM3dPath(path);
 }
 
 void SmartContorlUI::on_pushButton_clicked()

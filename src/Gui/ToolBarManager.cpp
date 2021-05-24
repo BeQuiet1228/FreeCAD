@@ -189,6 +189,7 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 		return; // empty menu bar
 	
 #ifdef _PICGUI_
+#if 0
 	/*
 	≤‚ ‘ toobaritems
 	*/
@@ -202,6 +203,7 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 			std::cerr << "++++++++" << (*ii)->command() << "++++++++" << std::endl;
 		}
 	}
+#endif
 	CommandManager& cmdManager = Application::Instance->commandManager();
 	auto mainwindow = MainWindow::getInstance();
 	auto tabWidget = mainwindow->mainWindowDef->tabWidgetInterface;

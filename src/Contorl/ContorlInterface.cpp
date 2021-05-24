@@ -66,12 +66,6 @@ void ContorlInterface::senWinMessage(const int& type, const int& wParam, const i
 	}
 }
 
-std::string ContorlInterface::getDocumentPath()
-{
-	contorl->getM3dPathForRunPython();
-	return contorl->m3dPath;
-}
-
 /**
 * @brief ContorlInterface::closeAllChipic 关闭所有的chipic程序
 * @return void

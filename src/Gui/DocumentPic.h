@@ -14,4 +14,6 @@ public:
 	App::Document* getAppDocument();
 	//释放doc中的h5文件对象
 	void releaseH5Object();
+	//获取m3d路径
+	std::string getTextPath();
 };

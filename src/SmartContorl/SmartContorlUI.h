@@ -37,6 +37,12 @@ class SmartContorlUI:public QDialog{
 public:
 	SmartContorlUI(QWidget * parent = 0);
 	~SmartContorlUI();
+
+public:
+	void setTextPath(const std::string& path);
+	//载入优化配置
+	void loadParameterXml();
+
 private:
 	Ui::SmartContorlUI *ui;
 	//组合之后的文件信息
@@ -79,7 +85,6 @@ private:
 	QString replaceVariate();
 	//保存xml文件
 	void saveParameterXml();
-	void loadParameterXml();
 protected:
 	void closeEvent(QCloseEvent *event);
 };
