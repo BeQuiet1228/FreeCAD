@@ -329,7 +329,7 @@ bool StructData::loadroom()
 * @return bool
 */
 bool StructData::loadroom_polar(){
-	
+ 
 	switch (m_Type)
 	{
 	case R_Z:
@@ -377,9 +377,10 @@ bool StructData::loadroom_polar_R_Z()
 {
 	if (pointXSize<2||pointYSize<2)
 		return false;
-#if 0
+#if 1
 	allcutroom = fileproperty_polar_R_Z(GetAllCurspace_polar_R_Z(), GetdatasetKmt_polar_R_Z());
 #else
+	//简化数据处理流程----通过打印处理时间比之前的快，但在绘制等位图时报错，这里先保留，之后会做替换
 	Data::ListValuesPtr listValues;
 	autoModGetSourceData(listValues);//获取原始数据
 	//获取dataSetKmt里的全部数据
@@ -651,9 +652,10 @@ std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_polar_R_THETA(){
 bool StructData::loadroom_cylindrical_r_z(){
 	if (pointXSize < 2 || pointYSize < 2)
 		return false;
-#if 0
+#if 1
 	allcutroom = fileproperty_cylindrical_R_Z(GetAllCurspace_cylindrical_R_Z(), GetdatasetKmt_cylindrical_R_Z());
 #else
+	//简化数据处理流程----通过打印处理时间比之前的快，但在绘制等位图时报错，这里先保留，之后会做替换
 	Data::ListValuesPtr listValues;
 	autoModGetSourceData(listValues);//获取原始数据
 	//获取dataSetKmt里的全部数据
@@ -925,6 +927,7 @@ bool StructData::loadroom_cartesian_x_y(){
 #if 0
 	allcutroom = fileproperty_cartesian_x_y(GetAllCurspace_cartesian_x_y(), GetdatasetKmt_cartesian_x_y());
 #else
+	//简化了数据处理流程,通过打印时间比之前的处理方式快了1/3。后续会做替换
 	Data::ListValuesPtr listValues;
 	autoModGetSourceData(listValues);//获取原始数据
 	//获取dataSetKmt里的全部数据
@@ -980,6 +983,7 @@ bool StructData::loadroom_cartesian_x_z(){
 #if 0
 	allcutroom = fileproperty_cartesian_x_z(GetAllCurspace_cartesian_x_z(), GetdatasetKmt_cartesian_x_z());
 #else
+	//简化了数据处理流程,通过打印时间比之前的处理方式快了1/3。后续会做替换
 	Data::ListValuesPtr listValues;
 	autoModGetSourceData(listValues);//获取原始数据
 	//获取dataSetKmt里的全部数据
@@ -1033,6 +1037,7 @@ bool StructData::loadroom_cartesian_y_z(){
 #if 0
 	allcutroom = fileproperty_cartesian_y_z(GetAllCurspace_cartesian_y_z(), GetdatasetKmt_cartesian_y_z());
 #else
+	//简化了数据处理流程,通过打印时间比之前的处理方式快了1/3。后续会做替换
 	Data::ListValuesPtr listValues;
 	autoModGetSourceData(listValues);//获取原始数据
 	//获取dataSetKmt里的全部数据
