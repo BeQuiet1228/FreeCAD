@@ -143,7 +143,10 @@ void DlgExpressionInput::textChanged(const QString &text){
             NumberExpression * n = Base::freecad_dynamic_cast<NumberExpression>(result.get());
             if (n) {
                 Base::Quantity value = n->getQuantity();
-
+                // fubiao是否在这里修改了代码？
+                //if (!value.getUnit().isEmpty() && value.getUnit() != impliedUnit)
+                //    throw Base::UnitsMismatchError("Unit mismatch between result and required unit");
+                // 上述代码为原生代码
                 if (false/*!value.getUnit().isEmpty() && value.getUnit() != impliedUnit*/)
                     throw Base::UnitsMismatchError("Unit mismatch between result and required unit");
 				if (value.getUnit() == Base::Unit(0, 0, 0, 0, 0, 0, 0, 0) && impliedUnit == Base::Unit(1, 0, 0, 0, 0, 0, 0, 0)){

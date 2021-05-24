@@ -1,0 +1,31 @@
+#ifndef MY_DIALOG_H
+#define MY_DIALOG_H
+
+#include <QDialog>
+#include "ui_DlgInsertParam.h"
+
+//QT_BEGIN_NAMESPACE
+namespace Ui { class Dialog; }
+//QT_END_NAMESPACE
+
+class InsertParamDialog : public QDialog
+{
+    Q_OBJECT
+
+public:
+    InsertParamDialog(QWidget *parent = nullptr);
+    ~InsertParamDialog();
+    QString getName();
+    int getRow();
+
+private:
+    QString name;
+    int row;
+
+public Q_SLOTS:
+    void insertParam();
+
+private:
+    Ui::Dialog *ui;
+};
+#endif // MY_DIALOG_H

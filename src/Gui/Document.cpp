@@ -67,6 +67,7 @@
 #include "Thumbnail.h"
 #include "Contorl/ContorlInterface.h"
 #include "PlotMDIView.h"
+#include "Gui\DockWindowManager.h"
 
 using namespace Gui;
 
@@ -1339,6 +1340,9 @@ bool Document::canClose ()
                 if (this->getInEdit())
                     this->resetEdit();
             }
+        }
+        if (Gui::DockWindowManager::instance()->getDockWindow("custom_param")) {
+            Gui::DockWindowManager::instance()->removeDockWindow("custom_param");
         }
     }
 	//if (ok)

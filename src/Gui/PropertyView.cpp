@@ -243,6 +243,101 @@ void PropertyView::onSelectionChanged(const SelectionChanges& msg)
     std::vector<PropInfo> propViewMap;
     std::vector<SelectionSingleton::SelObj> array = Gui::Selection().getCompleteSelection();
     for (std::vector<SelectionSingleton::SelObj>::const_iterator it = array.begin(); it != array.end(); ++it) {
+        App::DocumentObject* ob = 0;
+        ViewProvider* vp = 0;
+
+        std::vector<App::Property*> dataList;
+        std::map<std::string, App::Property*> viewList;
+        if ((*it).pObject) {
+            (*it).pObject->getPropertyList(dataList);
+            ob = (*it).pObject;
+
+            // get also the properties of the associated view provider
+            Gui::Document* doc = Gui::Application::Instance->getDocument(it->pDoc);
+            vp = doc->getViewProvider((*it).pObject);
+            if (!vp) continue;
+            // get the properties as map here because it doesn't matter to have them sorted alphabetically
+            vp->getPropertyMap(viewList);
+        }
+
+        // store the properties with <name,id> as key in a map
+        std::vector<App::Property*>::iterator pt;
+        if (ob) {
+            for (pt = dataList.begin(); pt != dataList.end(); ++pt) {
+                PropInfo nameType;
+                nameType.propName = ob->getPropertyName(*pt);
+                nameType.propId = (*pt)->getTypeId().getKey();
+
+                if (!ob->isHidden(*pt)) {
+                    std::vector<PropInfo>::iterator pi = std::find_if(propDataMap.begin(), propDataMap.end(), PropFind(nameType));
+                    if (pi != propDataMap.end()) {
+                        pi->propList.push_back(*pt);
+                    }
+                    else {
+                        nameType.propList.push_back(*pt);
+                        propDataMap.push_back(nameType);
+                    }
+                }
+            }
+        }
+        // the same for the view properties
+        if (vp) {
+            std::map<std::string, App::Property*>::iterator pt;
+            for (pt = viewList.begin(); pt != viewList.end(); ++pt) {
+                PropInfo nameType;
+                nameType.propName = pt->first;
+                nameType.propId = pt->second->getTypeId().getKey();
+
+                if (!vp->isHidden(pt->second)) {
+                    std::vector<PropInfo>::iterator pi = std::find_if(propViewMap.begin(), propViewMap.end(), PropFind(nameType));
+                    if (pi != propViewMap.end()) {
+                        pi->propList.push_back(pt->second);
+                    }
+                    else {
+                        nameType.propList.push_back(pt->second);
+                        propViewMap.push_back(nameType);
+                    }
+                }
+            }
+        }
+    }
+
+    // the property must be part of each selected object, i.e. the number
+    // of selected objects is equal to the number of properties with same
+    // name and id
+    std::vector<PropInfo>::const_iterator it;
+    PropertyModel::PropertyList dataProps;
+    for (it = propDataMap.begin(); it != propDataMap.end(); ++it) {
+        if (it->propList.size() == array.size()) {
+            dataProps.push_back(std::make_pair(it->propName, it->propList));
+        }
+    }
+    propertyEditorData->buildUp(dataProps);
+
+    PropertyModel::PropertyList viewProps;
+    for (it = propViewMap.begin(); it != propViewMap.end(); ++it) {
+        if (it->propList.size() == array.size()) {
+            viewProps.push_back(std::make_pair(it->propName, it->propList));
+        }
+    }
+    propertyEditorView->buildUp(viewProps);
+}
+
+// 卢老师团队修改后的代码，已经恢复为上面的FreeCAD原生代码
+#ifdef INVALID_CODE
+void PropertyView::onSelectionChanged(const SelectionChanges& msg)
+{
+    if (msg.Type != SelectionChanges::AddSelection &&
+        msg.Type != SelectionChanges::RmvSelection &&
+        msg.Type != SelectionChanges::SetSelection &&
+        msg.Type != SelectionChanges::ClrSelection)
+        return;
+
+    // group the properties by <name,id>
+    std::vector<PropInfo> propDataMap;
+    std::vector<PropInfo> propViewMap;
+    std::vector<SelectionSingleton::SelObj> array = Gui::Selection().getCompleteSelection();
+    for (std::vector<SelectionSingleton::SelObj>::const_iterator it = array.begin(); it != array.end(); ++it) {
         App::DocumentObject *ob=0;
         ViewProvider *vp=0;
 
@@ -410,6 +505,7 @@ void PropertyView::onSelectionChanged(const SelectionChanges& msg)
     }
     propertyEditorView->buildUp(viewProps);
 }
+#endif
 
 void PropertyView::tabChanged(int index)
 {
@@ -419,6 +515,7 @@ void PropertyView::tabChanged(int index)
         hGrp->SetInt("LastTabIndex", index);
     }
 }
+
 
 void PropertyView::changeEvent(QEvent *e)
 {
