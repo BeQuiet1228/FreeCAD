@@ -305,13 +305,8 @@ void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
 	}
 	if (ptr != nullptr)
 	{
-		
-		if (!((DocumentManager*)(doc->getDocument()))->iSbind())
-		{
-			Gui::TreeViewCtrl* m_lisTreeWidget = Gui::MainWindow::getInstance()->mTreeWidget;
-			((DocumentManager*)(doc->getDocument()))->bindTreeContrue((ListTreeWidget*)m_lisTreeWidget, (Plot*)ptr->GetViewPtr());
-			//((DocumentManager*)(doc->getDocument()))->bindTreeContrue((ListTreeWidget*)m_lisTreeWidget, nullptr);
-		}
+		Gui::TreeViewCtrl* m_lisTreeWidget = Gui::MainWindow::getInstance()->mTreeWidget;
+		((DocumentManager*)(doc->getDocument()))->bindTreeContrue((ListTreeWidget*)m_lisTreeWidget, (Plot*)ptr->GetViewPtr());
 		((DocumentManager*)(doc->getDocument()))->DisplatPlot(data, _type);
 	}
 	else

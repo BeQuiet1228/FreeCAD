@@ -14,15 +14,27 @@ namespace Mas{
 	enum DATA_VISUALIZATION_EXPORT structTexture
 	{
 		//理想导体
-		Perfect_Conductor = 3,
+		PerfectConductor = 3,
 		//电导新材料
-		Conductor_New = 8,
+		ConductorNew = 8,
 		//介质
 		Diolectric = 4,
+		//电介质和电导
+		dielectirAndconductance = 16,
 		//磁导率
-		Permeability = 16,
-		//真空
-		Vacuo = 1024,
+		Permeability = 32,
+		//
+		Freespace = 64,
+		//
+		FOIL = 128,
+
+		//线段
+		//波导端口
+		waveGuideport = 1024,
+		DRIVER = 2048,
+		//感应器
+		Inductor = 16384
+
 	};
 	struct DATA_VISUALIZATION_EXPORT Setconfig
 	{
@@ -53,22 +65,26 @@ public Q_SLOTS:
 	void axisColorclicked();
 	void axisValColorclicked();
 	//结构图
-	void perfectconductorClicked();
-	void conductornewClicked();
-	void diolectricClicked();
-	void permeabilityClicked();
-	void vacuoClicked();
-	void perfectconductorlineClicked();
-	void conductornewlineClicked();
-	void diolectriclineClicked();
-	void permeabilitylineClicked();
-	void vacuolineClicked();
+	void PerfectConductorClicked();
+	void ConductorNewClicked();
+	void DiolectricClicked();
+	void PermeabilityClicked();
+	void dielectirAndconductanceClicked();
+	void PerfectConductorlineClicked();
+	void ConductorNewlineClicked();
+	void DiolectriclineClicked();
+	void PermeabilitylineClicked();
+	void dielectirAndconductancelineClicked();
+	void FreespaceClicked();
+	void Freespacelineclicked();
+	void FOILclicked();
+	void FOILlineclicked();
 	//2维结构图
-	void perfectconductorClicked_2();
-	void conductornewClicked_2();
-	void diolectricClicked_2();
-	void permeabilityClicked_2();
-	void vacuoClicked_2();
+	void PerfectConductorClicked2();
+	void ConductorNewClicked2();
+	void DiolectricClicked2();
+	void PermeabilityClicked2();
+	void dielectirAndconductanceClicked2();
 	//时间图
 	void linecolorClicked();
 	//矢量图

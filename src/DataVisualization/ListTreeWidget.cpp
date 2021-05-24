@@ -140,7 +140,6 @@ void ListTreeWidget::double_clicked_event(const QModelIndex &index)
 	{
 		//传入hdf5数据
 		std::string name = (index.data().toString()).toStdString();
-		printf("%s", name.c_str());
 		emit _transfromRenderer(name, iter->second);
 	}
 }

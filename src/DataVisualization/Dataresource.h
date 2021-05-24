@@ -28,7 +28,7 @@ public:
 	int initStructData(Hdf5Data& data);
 	void DisPlayPlot(Hdf5Data data,int _type=0);
 	void DataClear();
-	bool isbind();
+	//bool isbind();
 Q_SIGNALS:
 	void _loadhdflist(std::vector<Hdf5Data>& Hdf5Data);
 	void _reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender);
@@ -45,9 +45,11 @@ private:
 	std::vector<Hdf5Data> hdfDatelist;
 	Hdf5Data structData;
 	int structindex;
-	Plot* p;
-	ListTreeWidget* treePtr;
-	RendererFactory* factoryptr;
+	//工厂类
+	std::shared_ptr<RendererFactory> factoryptr;
+	//用于保存Plot和ListTreeWidget的地址,仅用于校验使用
+	unsigned long long treePtrsite;
+	unsigned long long plotPtrsite;
 	Hdf5IO _hdf5io;
 };
 #endif

@@ -89,9 +89,6 @@ public:
 	{
 		return _ctype;
 	}
-	QMap<int, QVector<QRectF>> GetAllKMTInfo(){
-		return allkmtInfo;
-	}
 	bool loadroom();
 	void setXRang(const Rang& rg)
 	{
@@ -170,8 +167,6 @@ private:
 	bool istrue;
 	_3DPointf mstartpoint;
 	_3DPointf mendpoint;
-	QMap<int, QVector<QRectF>> allkmtInfo;
-	//
 	Rang xRang, yRang;
 	std::mutex xRangMutex, yRangMutex;
 	//确定面的索引

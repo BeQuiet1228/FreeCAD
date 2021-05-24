@@ -122,15 +122,3 @@ void DocumentManager::dataclear()
 	if (m_DataSourceManage)
 		m_DataSourceManage->DataClear();
 }
-/**
-* @brief  DocumentManager::iSbind ÊÇ·ñ°ó¶¨
-* @return bool  
-*/
-bool DocumentManager::iSbind()
-{
-	if (m_DataSourceManage)
-	{
-		return m_DataSourceManage->isbind();
-	}
-	return false;
-}

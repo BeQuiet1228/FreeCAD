@@ -118,14 +118,14 @@ void DataSourceManage::loadhdffile(std::string filepath)
 	//结构图初始化
 	int structindex = RendererFactory::findStructDataIndex(hdfDatelist);
 	Hdf5Data structDate(hdfDatelist.at(structindex));
-	factoryptr = new RendererFactory(structDate);
+	factoryptr = std::shared_ptr<RendererFactory>(new RendererFactory(structDate));
 	/****************************************************/
 	_hdf5io = io;
 }
 /**
 * @brief DataSourceManage::DataSourceManage 数据管理构造
 */
-DataSourceManage::DataSourceManage():factoryptr(nullptr),p(nullptr),treePtr(nullptr){
+DataSourceManage::DataSourceManage():factoryptr(nullptr),treePtrsite(0),plotPtrsite(0){
 	RendererManger.clear();
 }
 /**
@@ -134,19 +134,20 @@ DataSourceManage::DataSourceManage():factoryptr(nullptr),p(nullptr),treePtr(null
 * @void
 */
 void DataSourceManage::init(ListTreeWidget* ptr,Plot* _plot){
-	if (ptr && treePtr!=ptr)
+
+	unsigned long long treeSite = reinterpret_cast<unsigned long long>(ptr);
+	unsigned long long plotSite = reinterpret_cast<unsigned long long>(_plot);
+	if (treeSite != 0 && treePtrsite!=treeSite)
 	{
-		//先进行断开链接
-		//进行连接
 		connect(this, SIGNAL(_loadhdflist(std::vector<Hdf5Data>&)), ptr, SLOT(loadHdflist(std::vector<Hdf5Data>&)));
 		connect(ptr, SIGNAL(_transfromRenderer(std::string, int)), this, SLOT(tranfromRenderer(std::string, int)));
 		connect(this, SIGNAL(toTreeNewData(Hdf5Data&, int)), ptr, SLOT(fromdataManageNewData(Hdf5Data& , int )));
-		treePtr = ptr;
+		treePtrsite = treeSite;
 	}
-	if (_plot&& p!=_plot)
+	if (plotSite!=0&& plotPtrsite!=plotSite)
 	{
 		connect(this, SIGNAL(_reRendererEvent(const std::list<std::shared_ptr<Renderer>>&)), _plot, SLOT(reRendererEvent(const std::list<std::shared_ptr<Renderer>>&)));
-		p = _plot;
+		plotPtrsite = plotSite;
 	}
 }
 /**
@@ -162,13 +163,11 @@ int DataSourceManage::initStructData(Hdf5Data& data)
 	if (factoryptr)
 		factoryptr->setStructData(data);
 	else
-		factoryptr = new RendererFactory(data);
+		factoryptr = std::shared_ptr<RendererFactory>(new RendererFactory(data));
 	return structindex;
 }
 DataSourceManage::~DataSourceManage(){
 	RendererManger.clear();
-	if(factoryptr != nullptr)
-		delete factoryptr;
 }
 /**
 * @brief DataSourceManage::DisPlayPlot 送显
@@ -194,15 +193,15 @@ void DataSourceManage::DataClear()
 	RendererManger.clear();
 	hdfDatelist.clear();
 }
-/**
-* @brief  DataSourceManage::isbind 是否绑定
-* @return bool  
-*/
-bool DataSourceManage::isbind()
-{
-	if (p == nullptr || treePtr == nullptr)
-		return false;
-	else
-		return true;
-}
+///**
+//* @brief  DataSourceManage::isbind 是否绑定
+//* @return bool  
+//*/
+//bool DataSourceManage::isbind()
+//{
+//	//if (p == nullptr || treePtr == nullptr)
+//	//	return false;
+//	//else
+//		return true;
+//}
 #include "moc_Dataresource.cpp"

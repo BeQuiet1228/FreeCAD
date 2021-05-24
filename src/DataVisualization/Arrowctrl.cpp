@@ -130,7 +130,7 @@ void ArrowCtrl::setlevel(int number)
 	{
 		QPixmap map(pngresource[0]);
 		map = map.scaled(pngsize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-		qDebug() << map.size();
+		//qDebug() << map.size();
 		marrowmap.push_back(map);
 		val.push_back(0 + interval*index);
 		QRectF rectF(val[index]*this->size().width()-marrowmap[index].size().width()/2,

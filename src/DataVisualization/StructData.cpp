@@ -1,4 +1,8 @@
 #include "StructData.h"
+#ifdef MY_DEBUG
+#include<windows.h>
+#include <QDebug>
+#endif
 /**
 * @brief StructData::StructData 构造函数
 * @param Hdf5Data& heData
@@ -6,9 +10,6 @@
 * @param const RunMod& mod
 */
 StructData::StructData(Hdf5Data& heData, DirectionType _type, const RunMod& mod):XYData(heData,mod),istrue(false){
-	
-	//std::vector<std::string> headerlist = autoHeaderInfo();
-	//auto headeriter = headerlist.begin() +3;
 	switch (heData.coordinateSystem)
 	{
 	case Hdf5Data::CARTESIAN:
@@ -56,18 +57,6 @@ StructData::StructData(Hdf5Data& heData, DirectionType _type, const RunMod& mod)
 	}
 		break;
 	}
-	/*if (headeriter->find("polar") != std::string::npos)
-	{
-		
-	}
-	else if (headeriter->find("cylindrical") != std::string::npos)
-	{
-		
-	}
-	else if (headeriter->find("cartesian") != std::string::npos)
-	{
-	
-	}*/
 }
 /**
 * @brief StructData::StructData 构造函数
@@ -124,20 +113,6 @@ StructData::StructData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf endpoin
 		}
 	}break;
 	}
-	//if (/*headeriter->find("polar") != std::string::npos*/)
-	//{
-	//	//当前为polar
-	//
-	//}
-	//else if (headeriter->find("cylindrical") != std::string::npos)
-	//{
-	//	
-	//}
-	//else if (headeriter->find("cartesian") != std::string::npos)
-	//{
-	//
-	//}
-
 }
 /**
 * @brief StructData::loadPoint  加载点位信息
@@ -325,22 +300,36 @@ bool StructData::loadPoint_polar()
 */
 bool StructData::loadroom()
 {
+#ifdef MY_DEBUG
+	//测试数据生成时间
+	LARGE_INTEGER startTime;
+	LARGE_INTEGER endTime;
+	LARGE_INTEGER cpufer;
+	QueryPerformanceFrequency(&cpufer);
+	QueryPerformanceCounter(&startTime);
+#endif
 	switch (_ctype)
 	{
 	case POLAR:
-		return loadroom_polar();
+		loadroom_polar(); break;
 	case CYLINDRICAL:
-		return loadroom_cylindrical();
+		 loadroom_cylindrical();break;
 	case CARTESIAN:
-		return loadroom_cartesian();
+		loadroom_cartesian(); break;
 	}
+#ifdef MY_DEBUG
+	QueryPerformanceCounter(&endTime);
+	auto interval = ((double)endTime.QuadPart - (double)startTime.QuadPart) / (double)cpufer.QuadPart;
+	qDebug() << "processingData(interval):" << interval;
+#endif
+	return true;
 }
 /**
 * @brief StructData::loadroom_polar 转换成绘制数据-polar坐标系
 * @return bool
 */
 bool StructData::loadroom_polar(){
-	
+ 
 	switch (m_Type)
 	{
 	case R_Z:
@@ -388,7 +377,53 @@ bool StructData::loadroom_polar_R_Z()
 {
 	if (pointXSize<2||pointYSize<2)
 		return false;
+#if 0
 	allcutroom = fileproperty_polar_R_Z(GetAllCurspace_polar_R_Z(), GetdatasetKmt_polar_R_Z());
+#else
+	//简化数据处理流程----通过打印处理时间比之前的快1/3
+	Data::ListValuesPtr listValues;
+	autoModGetSourceData(listValues);//获取原始数据
+	//获取dataSetKmt里的全部数据
+	auto it = listValues->begin();
+	Data::ValuesPtr IM1X = *it; it++;
+	Data::ValuesPtr IM2X = *it; it++;
+	Data::ValuesPtr IM3X = *it; it++;
+	Data::ValuesPtr datasetkmt = *it;
+	int index = IM2X->size() / 2;
+	if (istrue)
+	{
+		int index_min = 1;
+		float distancemin = 10000.0f;
+		for (auto i = 0; i < IM3X->size(); i++)
+		{
+			float curdistance = abs(*(IM3X->begin() + i) - _face_point_index);
+			if (curdistance<distancemin)
+			{
+				distancemin = curdistance;
+				index_min = i + 1;
+			}
+		}
+		index = index_min;
+	}
+	QMap<int, QVector<QRectF>> allinfo;
+	for(auto itersetkmt=datasetkmt->begin();itersetkmt!=datasetkmt->end();)
+	{
+		auto x1=*itersetkmt;itersetkmt++;
+		auto x2=*itersetkmt;itersetkmt++;
+		auto x3=*itersetkmt;itersetkmt++;
+		auto proper=*itersetkmt;itersetkmt++;
+		if (x2 == index&&x3<IM3X->size()&&x1<IM1X->size())
+		{
+			QRectF rect;
+			rect.setLeft(*(IM3X->begin() + x3 - 1));
+			rect.setRight(*(IM3X->begin() + x3));
+			rect.setBottom(*(IM1X->begin() + x1 - 1));
+			rect.setTop(*(IM1X->begin() + x1));
+			allinfo[proper].push_back(rect);
+		}
+	}
+	allcutroom.swap(allinfo);
+#endif
 }
 /**
 * @brief StructData::GetAllCurspace_polar_R_Z 获取所有网格的-polar坐标系-R_Z方向
@@ -414,11 +449,12 @@ std::vector<QRectF> StructData::GetAllCurspace_polar_R_Z()
 	auto iterRight = IM1X->begin() + 1;
 	auto iterTop = IM2X->begin();
 	auto iterbottom = IM2X->begin() + 1;
-	for (auto x = 0; x < pointXSize - 1; x++)
+#if 1
+	for (auto x = 0; x < pointXSize-1; x++)
 	{
 		iterTop = IM2X->begin();
 		iterbottom = IM2X->begin() + 1;
-		for (auto y = 0; y < pointYSize - 1; y++)
+		for (auto y = 0; y < pointYSize-1; y++)
 		{
 			QRectF temp;//介值
 			temp.setLeft(*iterleft);
@@ -432,6 +468,7 @@ std::vector<QRectF> StructData::GetAllCurspace_polar_R_Z()
 		iterleft++;
 		iterRight++;
 	}
+#endif
 	return list;
 }
 /**
@@ -469,7 +506,6 @@ std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_polar_R_Z()
 */
 QMap<int, QVector<QRectF>> StructData::fileproperty_polar_R_Z(std::vector<QRectF>& list, std::vector<StructData::DaTaKmt>& datainfo)
 {
-	
 	Data::ListValuesPtr listValues;
 	autoModGetSourceData(listValues);//获取原始数据
 	//获取dataSetKmt里的全部数据
@@ -498,7 +534,7 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_polar_R_Z(std::vector<QRectF
 	QMap<int, QVector<QRectF>> allinfo;
 	for each (DaTaKmt var in datainfo)
 	{
-		if (var.point3==index&&var.point1<pointXSize-1)
+		if (var.point3==index&&var.point1<pointXSize)
 		{
 			allinfo[var.pointproperty].push_back(list[(var.point1 - 1)*(pointYSize - 1) + var.point2 - 1]);
 		}
@@ -590,7 +626,7 @@ std::map<int, std::vector<StructData::CutCir>> StructData::filecir_polar_R_THETA
 		}
 		index = index_min;
 	}
-	int CutNum = rand_val.size() - 1;
+	int CutNum = rand_val.size()-1;
 	std::vector<DaTaKmt> datakmtinfo =GetdatasetKmt_polar_R_THETA();
 	for each (DaTaKmt var in datakmtinfo)
 	{
@@ -616,7 +652,54 @@ std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_polar_R_THETA(){
 bool StructData::loadroom_cylindrical_r_z(){
 	if (pointXSize < 2 || pointYSize < 2)
 		return false;
+#if 0
 	allcutroom = fileproperty_cylindrical_R_Z(GetAllCurspace_cylindrical_R_Z(), GetdatasetKmt_cylindrical_R_Z());
+#else
+	//简化数据处理流程----通过打印处理时间比之前的快1/3
+	Data::ListValuesPtr listValues;
+	autoModGetSourceData(listValues);//获取原始数据
+	//获取dataSetKmt里的全部数据
+	auto it = listValues->begin();
+	Data::ValuesPtr IM1X = *it; it++;
+	Data::ValuesPtr IM2X = *it; it++;
+	Data::ValuesPtr IM3X = *it; it++;
+	Data::ValuesPtr datasetkmt = *it;
+	QMap<int, QVector<QRectF>> allinfo;
+	int index = IM3X->size() / 2;
+	if (istrue)
+	{
+		int index_min = 1;
+		float distancemin = 10000.0f;
+		_face_point_index;
+		for (auto i = 0; i < IM3X->size(); i++)
+		{
+			float curdistance = abs(*(IM3X->begin() + i) - _face_point_index);
+			if (curdistance < distancemin)
+			{
+				distancemin = curdistance;
+				index_min = i + 1;
+			}
+		}
+		index = index_min;
+	}
+	allcutroom.clear();
+	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
+	{
+		auto x1 = *itersetkmt; itersetkmt++;
+		auto x2 = *itersetkmt; itersetkmt++;
+		auto x3 = *itersetkmt; itersetkmt++;
+		auto proper = *itersetkmt; itersetkmt++;
+		if (x3 == index&& x1 < IM1X->size()&&x2<IM2X->size())
+		{
+			QRectF rect;
+			rect.setLeft(*(IM1X->begin()+x1-1));
+			rect.setRight(*(IM1X->begin() + x1));
+			rect.setBottom(*(IM2X->begin()+x2-1));
+			rect.setTop(*(IM2X->begin() + x2));
+			allcutroom[proper].push_back(rect);
+		}
+	}
+#endif
 	return true;
 }
 /**
@@ -734,7 +817,7 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_cylindrical_R_Z(std::vector<
 	}
 	for each (DaTaKmt var in datainfo)
 	{
-		if (var.point3 == index && var.point1 < pointXSize - 1)
+		if (var.point3 == index && var.point1 < pointXSize)
 		{
 			allinfo[var.pointproperty].push_back(list[(var.point1 - 1)*(pointYSize - 1) + var.point2 - 1]);
 		}
@@ -814,7 +897,7 @@ std::map<int, std::vector<StructData::CutCir>> StructData::filecir_cylindrical_R
 		}
 		index = index_min;
 	}
-	int CutNum = rand_val.size() - 1;
+	int CutNum = rand_val.size()-1;
 	std::vector<DaTaKmt> datakmtinfo = GetdatasetKmt_cylindrical_R_THETA();
 	for each (DaTaKmt var in datakmtinfo)
 	{
@@ -841,7 +924,53 @@ std::vector<StructData::DaTaKmt> StructData::GetdatasetKmt_cylindrical_R_THETA()
 bool StructData::loadroom_cartesian_x_y(){
 	if (pointXSize < 2 || pointYSize < 2)
 		return false;
+#if 0
 	allcutroom = fileproperty_cartesian_x_y(GetAllCurspace_cartesian_x_y(), GetdatasetKmt_cartesian_x_y());
+#else
+	//简化了数据处理流程,通过打印时间比之前的处理方式快了1/3。后续会做替换
+	Data::ListValuesPtr listValues;
+	autoModGetSourceData(listValues);//获取原始数据
+	//获取dataSetKmt里的全部数据
+	auto it = listValues->begin();
+	Data::ValuesPtr IM1X = *it; it++;
+	Data::ValuesPtr IM2X = *it; it++;
+	Data::ValuesPtr IM3X = *it; it++;
+	Data::ValuesPtr datasetkmt = *it;
+	int index = IM3X->size() / 2;
+	if (istrue)
+	{
+		int index_min = 1;
+		float distancemin = 10000.0f;
+		for (auto i = 0; i < IM3X->size(); i++)
+		{
+			float curdistance = abs(*(IM3X->begin() + i) - _face_point_index);
+			if (curdistance < distancemin)
+			{
+				distancemin = curdistance;
+				index_min = i + 1;
+			}
+		}
+		index = index_min;
+	}
+	QMap<int, QVector<QRectF>> allinfo;
+	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
+	{
+		auto x1 = *itersetkmt; itersetkmt++;
+		auto x2 = *itersetkmt; itersetkmt++;
+		auto x3 = *itersetkmt; itersetkmt++;
+		auto proper = *itersetkmt; itersetkmt++;
+		if (x3 == index&& x1 < IM1X->size()&& x2<IM2X->size())
+		{
+			QRectF rect;
+			rect.setLeft(*(IM1X->begin() + (x1 - 1)));
+			rect.setRight(*(IM1X->begin() + x1));
+			rect.setBottom(*(IM2X->begin() + (x2 - 1)));
+			rect.setTop(*(IM2X->begin() + x2));
+			allinfo[proper].push_back(rect);
+		}
+	}
+	allcutroom.swap(allinfo);
+#endif
 	return true;
 }
 /**
@@ -851,7 +980,51 @@ bool StructData::loadroom_cartesian_x_y(){
 bool StructData::loadroom_cartesian_x_z(){
 	if (pointXSize < 2 || pointYSize < 2)
 		return false;
+#if 0
 	allcutroom = fileproperty_cartesian_x_z(GetAllCurspace_cartesian_x_z(), GetdatasetKmt_cartesian_x_z());
+#else
+	//简化了数据处理流程,通过打印时间比之前的处理方式快了1/3。后续会做替换
+	Data::ListValuesPtr listValues;
+	autoModGetSourceData(listValues);//获取原始数据
+	//获取dataSetKmt里的全部数据
+	auto it = listValues->begin();
+	Data::ValuesPtr IM1X = *it; it++;
+	Data::ValuesPtr IM2X = *it; it++;
+	Data::ValuesPtr IM3X = *it; it++;
+	Data::ValuesPtr datasetkmt = *it;
+	int index = IM2X->size() / 2;
+	if (istrue)
+	{
+		int index_min = 1;
+		float distancemin = 10000.0f;
+		for (auto i = 0; i < IM2X->size();i++)
+		{
+			float curdistance = abs(*(IM2X->begin()+i)-_face_point_index);
+			if (curdistance<distancemin)
+			{
+				index_min = i + 1;
+				distancemin = curdistance;
+			}
+		}
+	}
+	allcutroom.clear();
+	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
+	{
+		auto x1 = *itersetkmt; itersetkmt++;
+		auto x2 = *itersetkmt; itersetkmt++;
+		auto x3 = *itersetkmt; itersetkmt++;
+		auto proper = *itersetkmt; itersetkmt++;
+		if (x2 == index && x1 < IM1X->size()&&x3<IM3X->size())
+		{
+			QRectF rect;
+			rect.setLeft(*(IM1X->begin() + (x1 - 1)));
+			rect.setRight(*(IM1X->begin() + x1));
+			rect.setBottom(*(IM3X->begin()+(x3-1)));
+			rect.setTop(*(IM3X->begin() + x3));
+			allcutroom[proper].push_back(rect);
+		}
+	}
+#endif
 	return true;
 }
 /**
@@ -861,7 +1034,52 @@ bool StructData::loadroom_cartesian_x_z(){
 bool StructData::loadroom_cartesian_y_z(){
 	if (pointXSize < 2 || pointYSize < 2)
 		return false;
+#if 0
 	allcutroom = fileproperty_cartesian_y_z(GetAllCurspace_cartesian_y_z(), GetdatasetKmt_cartesian_y_z());
+#else
+	//简化了数据处理流程,通过打印时间比之前的处理方式快了1/3。后续会做替换
+	Data::ListValuesPtr listValues;
+	autoModGetSourceData(listValues);//获取原始数据
+	//获取dataSetKmt里的全部数据
+	auto it = listValues->begin();
+	Data::ValuesPtr IM1X = *it; it++;
+	Data::ValuesPtr IM2X = *it; it++;
+	Data::ValuesPtr IM3X = *it; it++;
+	Data::ValuesPtr datasetkmt = *it;
+	int index = IM1X->size() / 2;
+	if (istrue)
+	{
+		int index_min = 1;
+		float distancemin = 10000.0f;
+		for (auto i = 0; i < IM1X->size();i++)
+		{
+			float curdistance = abs(*(IM1X->begin()+i)-_face_point_index);
+			if (curdistance<distancemin)
+			{
+				distancemin = curdistance;
+				index_min = i + 1;
+			}
+		}
+		index = index_min;
+	}
+	allcutroom.clear();
+	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
+	{
+		auto x1 = *itersetkmt; itersetkmt++;
+		auto x2 = *itersetkmt; itersetkmt++;
+		auto x3 = *itersetkmt; itersetkmt++;
+		auto proper = *itersetkmt; itersetkmt++;
+		if (x1 == index &&x2 < IM2X->size()&&x3<IM3X->size())
+		{
+			QRectF rect;
+			rect.setLeft(*(IM2X->begin() + (x2 - 1)));
+			rect.setRight(*(IM2X->begin() + (x2)));
+			rect.setBottom(*(IM3X->begin()+(x3-1)));
+			rect.setTop(*(IM3X->begin()+x3));
+			allcutroom[proper].push_back(rect);
+		}
+	}
+#endif
 	return true;
 }
 /**
@@ -971,7 +1189,7 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_cartesian_x_y(std::vector<QR
 	QMap<int, QVector<QRectF>> allinfo;
 	for each (DaTaKmt var in datainfo)
 	{
-		if (var.point3 == index && var.point1 < pointXSize - 1)
+		if (var.point3 ==index && var.point1 < pointXSize)
 		{
 			allinfo[var.pointproperty].push_back(list[(var.point1 - 1)*(pointYSize - 1) + var.point2 - 1]);
 		}
@@ -1066,9 +1284,9 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_cartesian_y_z(std::vector<QR
 	}
 	for each (DaTaKmt var in datainfo)
 	{
-		if (var.point1 == index && var.point2 < pointXSize - 1)
+		if (var.point1 ==index && var.point2 < pointXSize)
 		{
-			allinfo[var.pointproperty].push_back(list[(var.point2 - 1)*(pointYSize - 1) + var.point3 - 1]);
+			allinfo[var.pointproperty].push_back(list[(var.point2-1)*(pointYSize-1) + var.point3-1]);
 		}
 	}
 	return allinfo;
@@ -1160,7 +1378,7 @@ QMap<int, QVector<QRectF>> StructData::fileproperty_cartesian_x_z(std::vector<QR
 	}
 	for each (DaTaKmt var in datainfo)
 	{
-		if (var.point2 == index && var.point1 < pointXSize - 1)
+		if (var.point2 == index && var.point1 < pointXSize&& var.point3)
 		{
 			allinfo[var.pointproperty].push_back(list[(var.point1 - 1)*(pointYSize - 1) + var.point3 - 1]);
 		}
