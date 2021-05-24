@@ -76,7 +76,7 @@
 #include "MyParameter.h"
 #include "App/DocumentObject.h"
 #include "Gui\DockWindowManager.h"
-
+#include "DocumentPic.h"
 using namespace Gui;
 
 
@@ -1845,21 +1845,11 @@ void StdCmdRunM3d::activated(int iMsg)
 		mw->setContorlUI();
 
         //设置运行路
-        auto guiDoc = Gui::Application::Instance->activeDocument();
-        auto appDoc = guiDoc->getDocument();
-		std::string path = appDoc->FileName.getValue();
-		if (appDoc->classID == 2)
-		{
-			QString temp = QString::fromUtf8(path.c_str());
-			temp = temp.left(temp.length() - 6) + QString::fromLocal8Bit(".m3d");
-			path = temp.toStdString();
-		}
-		else if (appDoc->classID == 3) {
-			QString temp = QString::fromUtf8(path.c_str());
-			temp = temp.left(temp.length() - 9) + QString::fromLocal8Bit(".m2d");
-			path = temp.toStdString();
-		}
-		std::cerr << path << std::endl;
+        Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
+        auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
+        if (!picDoc)
+            return;
+		std::string path = picDoc->getTextPath();
 		contorl->setM3dPath(path);
 	}
 	contorl->buttonClicked(0);
@@ -1884,6 +1874,11 @@ bool StdCmdRunM3d::isActive(void)
 			mw->hideContorlUI();
 			sMenuText = QT_TR_NOOP("RunM3d");
 			sPixmap = "run";
+            //清空h5文件对象
+            auto doc = Gui::Application::Instance->activeDocument();
+            auto picDoc = dynamic_cast<DocumentPic*>(doc);
+            if (picDoc)
+                picDoc->releaseH5Object();
 		}
 		this->updataActionIcon();
 	}
@@ -2106,6 +2101,14 @@ void StdCmdParalleRun::activated(int iMsg)
 	//调用保存
 	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
 	auto contorl = ContorlInterface::GetInstance();
+
+	//设置运行路
+	Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
+	auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
+	if (!picDoc)
+		return;
+	std::string path = picDoc->getTextPath();
+	contorl->setM3dPath(path);
 	contorl->buttonClicked(1);
 }
 bool StdCmdParalleRun::isActive(void)
@@ -2133,8 +2136,13 @@ void StdCmdSmartContorl::activated(int iMsg)
 {
 	Q_UNUSED(iMsg);
 	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
-	SmartContorlInterface smartContorl;
-	smartContorl.buttonClicked(7);
+	//设置运行路
+	Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
+	auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
+	if (!picDoc)
+		return;
+	std::string path = picDoc->getTextPath();
+    SmartContorlInterface::showSmartControlUI(path);
 }
 bool StdCmdSmartContorl::isActive(void)
 {

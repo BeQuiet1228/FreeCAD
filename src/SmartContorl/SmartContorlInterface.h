@@ -4,9 +4,10 @@
 class SMARTCONTORL_EXPORT SmartContorlInterface :public QObject{
 	Q_OBJECT
 public:
-	SmartContorlInterface(){};
-	~SmartContorlInterface(){}
+	SmartContorlInterface()= default;
+	~SmartContorlInterface() = default;
 	void  init();
+	static void showSmartControlUI(const std::string& path);
 public slots:
 	void buttonClicked(int type);
 };

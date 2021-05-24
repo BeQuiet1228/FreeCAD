@@ -41,8 +41,6 @@ public:
 	void senWinMessage(const int& type, const int& wParam, const int& lParam);
 	//获取chipicManager
 	ChipicManager* getChipicManager();
-	//获取freecad中的工程路径
-	std::string getDocumentPath();
 	//关闭所有正在运行的程序
 	void closeAllChipic();
 	//判断是否有chipic正在运行

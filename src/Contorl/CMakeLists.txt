@@ -176,12 +176,10 @@ list(APPEND QT_LIB
 	)
 if(contorl_client_dll)
 	list(APPEND QT_LIB
-	FreeCADBase
 	)
 endif()
 if(contorl_client_exe)
 	list(APPEND QT_LIB
-	FreeCADBase
 	)
 endif()
 #if(smart_contorl_dll)
