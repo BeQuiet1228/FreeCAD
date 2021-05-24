@@ -1141,6 +1141,7 @@ SET(FreeCADGui_CPP_SRCS
     AutoSaver.cpp
     BitmapFactory.cpp
     Document.cpp
+	DocumentPic.cpp
     DocumentModel.cpp
     DocumentPyImp.cpp
     DocumentObserver.cpp
@@ -1167,6 +1168,7 @@ SET(FreeCADGui_SRCS
     AutoSaver.h
     BitmapFactory.h
     Document.h
+	DocumentPic.h
     DocumentModel.h
     DocumentObserver.h
     ExpressionBinding.cpp
@@ -1266,7 +1268,29 @@ fc_wrap_cpp(ControlTreeWidgetMoc ControlTreeWidget.h)
 SOURCE_GROUP("Control" FILES ${Control_SRC})
 
 
-add_library(FreeCADGui SHARED ${FreeCADGui_SRCS} ${Control_SRC} ${ControlTreeWidgetMoc})
+fc_wrap_cpp(MyParameter_MOC MyParameter.h  DlgInsertParamImp.h)
+set(lzg_src DlgInsertParamImp.h
+	DlgInsertParamImp.cpp
+	cJSON.c
+	cJSON.h
+	CJsonObject.cpp
+	CJsonObject.hpp
+	MyParameter.h 
+	MyParameter.cpp
+    DlgInsertParam.ui
+	${MyParameter_MOC}
+)
+if (BUILD_QT5)
+    QT5_WRAP_UI(lzg_ui DlgInsertParam.ui)
+else()
+    QT4_WRAP_UI(lzg_ui DlgInsertParam.ui)
+endif()
+
+source_group("lzg" FILES ${lzg_src})	
+
+add_library(FreeCADGui SHARED ${FreeCADGui_SRCS} 
+    ${MyParameter_MOC} ${lzg_src} ${Control_SRC} ${ControlTreeWidgetMoc})
+
 
 if (FREECAD_USE_QT_FILEDIALOG)
     set_source_files_properties(FileDialog.cpp PROPERTIES COMPILE_FLAGS -DUSE_QT_FILEDIALOG)

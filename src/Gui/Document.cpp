@@ -67,6 +67,7 @@
 #include "Thumbnail.h"
 #include "Contorl/ContorlInterface.h"
 #include "PlotMDIView.h"
+#include "Gui\DockWindowManager.h"
 
 using namespace Gui;
 
@@ -1114,12 +1115,6 @@ void Document::createView(const Base::Type& typeId)
         view3D->resize(400, 300);
         getMainWindow()->addWindow(view3D);
     }
-	//添加Plot窗口
-	if (typeId == PlotMDIView::getClassTypeId())
-	{
-		PlotMDIView* plot = new PlotMDIView(*this);
-		getMainWindow()->addWindow(plot);
-	}
 }
 
 Gui::MDIView* Document::cloneView(Gui::MDIView* oldview)
@@ -1339,6 +1334,9 @@ bool Document::canClose ()
                 if (this->getInEdit())
                     this->resetEdit();
             }
+        }
+        if (Gui::DockWindowManager::instance()->getDockWindow("custom_param")) {
+            Gui::DockWindowManager::instance()->removeDockWindow("custom_param");
         }
     }
 	//if (ok)

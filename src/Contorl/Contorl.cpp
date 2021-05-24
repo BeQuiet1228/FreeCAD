@@ -8,12 +8,6 @@
 #include "LoadingDialog.h"
 #include "NetworkEmitter.h"
 #include "openLog.h"
-
-#ifndef SERVICE
-	#include <FCConfig.h>
-	#include <Base\Interpreter.h>
-#endif
-
 Contorl::Contorl(QWidget *parent)
 	: QMainWindow(parent)
 {
@@ -42,22 +36,6 @@ Contorl::~Contorl()
 {
 	//delete contorlButtonBar;
 	//delete contorlDataBar;
-}
-
-void Contorl::getM3dPathForRunPython()
-{
-#ifndef _CONTORL_EXE_ //判断是否以exe的形式生成模块
-
-#ifndef SERVICE //判断是否是以服务器模式生成模块
-	Base::InterpreterSingleton python;
-	python.runString("FreeCAD.setM3dPath()");
-#if 0
-	python.runString("import Visualization.VisualizationCommand.VisualizationTree as VT");
-	python.runStringArg("VT.showPlotTree(\"%s\")", m3dPath.c_str());
-#endif
-#endif
-
-#endif
 }
 
 /**
@@ -105,17 +83,7 @@ void Contorl::openLog()
 */
 void Contorl::showTreeWidget()
 {
-#ifndef _CONTORL_EXE_ //判断是否以exe的形式生成模块
 
-#ifndef SERVICE //判断是否是以服务器模式生成模块
-#if 0
-	Base::InterpreterSingleton python;
-	python.runString("import Visualization.VisualizationCommand.VisualizationTree as VT");
-	python.runStringArg("VT.showPlotTree(\"%s\")", m3dPath.c_str());
-#endif
-#endif
-
-#endif
 }
 
 /**
@@ -124,16 +92,6 @@ void Contorl::showTreeWidget()
 */
 void Contorl::closePlot()
 {
-#ifdef _SMART_CONTORL_
-	return;
-#endif
-#ifdef _CONTORL_DLL_
-#if 0
-	Base::InterpreterSingleton python;
-	python.runString("import Visualization");
-	python.runString("Visualization.VisualizationCommand.VisualizationPlot.vPlot.closePlot()");
-#endif
-#endif // _CONTORL_DLL_
 
 }
 

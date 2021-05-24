@@ -8,6 +8,15 @@ void SmartContorlInterface::init(){
 	connect(buttonBar, SIGNAL(buttonClicked(int)), this, SLOT(buttonClicked(int)));
 }
 
+void SmartContorlInterface::showSmartControlUI(const std::string& path)
+{
+	auto contorlUi = new SmartContorlUI();
+	contorlUi->setTextPath(path);
+	contorlUi->loadParameterXml();
+	contorlUi->show();
+	contorlUi->setAttribute(Qt::WA_DeleteOnClose);
+}
+
 void SmartContorlInterface::buttonClicked(int type){
 
 	if (ContorlButtonBar::ButtonType(type) == ContorlButtonBar::SMART_CONTORL)
