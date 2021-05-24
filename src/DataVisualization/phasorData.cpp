@@ -355,10 +355,11 @@ QPointF phasorData::findindexP1(int index)
 std::string phasorData::getInformationTitle()
 {
 	std::string title;
+	const std::string end = "  ";
 	title += "观察时间";
-	title += DataInformationGetter::getObserveTime(headList.at(13)) + "\n";
+	title += DataInformationGetter::getObserveTime(headList.at(13)) + end;
 	title += "观察分量:";
-	title += DataInformationGetter::getObserveObejct(headList.at(2)) + "\n";
+	title += DataInformationGetter::getObserveObejct(headList.at(2)) + end;
 
 	return title;
 }

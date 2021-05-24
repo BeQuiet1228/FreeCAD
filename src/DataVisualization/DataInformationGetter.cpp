@@ -7,7 +7,7 @@ std::string DataInformationGetter::getObserveObejct(const std::string& head)
 	QString str = QString::fromStdString(head);
 	QStringList sl = str.split("=");
 	str = sl.at(1);
-	str.simplified();
+	str = str.simplified();
 
 	return str.toStdString();
 }
@@ -28,7 +28,7 @@ std::string DataInformationGetter::getObserveFace(const std::string& head)
 	}
 	for (auto iter = list.begin(); iter != list.end(); iter++)
 	{
-		face += iter->toStdString() + "\n";
+		face += iter->toStdString() + "  ";
 	}
 
 	return face;

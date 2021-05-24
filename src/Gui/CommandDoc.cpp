@@ -156,13 +156,10 @@ void StdCmdOpen::activated(int iMsg)
         formatList += QLatin1String(jt->first.c_str());
         formatList += QLatin1String(";;");
     }
-	qDebug() << formatList;
     formatList += QObject::tr(allFiles);
-	qDebug() << formatList;
     QString selectedFilter;
     QStringList fileList = FileDialog::getOpenFileNames(getMainWindow(),
         QObject::tr("Open document"), QString(), formatList, &selectedFilter);
-	//qDebug() << selectedFilter << fileList;
     if (fileList.isEmpty())
         return;
 	/*
