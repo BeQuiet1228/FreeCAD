@@ -22,7 +22,6 @@ public:
 		return "hdf5";
 	}
 	void dataclear();
-	//bool iSbind();
 public:
 	//ÔØÈëÎÄ±¾
 	bool loadfile(const QString& filePath);

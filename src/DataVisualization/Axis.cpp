@@ -693,7 +693,7 @@ QVector<QString> Axis::GetScientific_notation()
 			int interval_bit = getIntegerBits((__int64)interval);
 			int min_bit = getIntegerBits((__int64)min);
 			QString _str;
-			(min_bit>interval_bit) ? (_str = QString("%1").arg(min, min_bit - interval_bit, 'E', 2)) : (_str=QString("%1").arg(min));
+			(min_bit>=interval_bit) ? (_str = QString("%1").arg(min, min_bit - interval_bit, 'E', 2)) : (_str=QString("%1").arg(min));
 			valstr_list.push_back(_str);
 			for (auto i = 1; i < Axisnumber; i++)
 			{
@@ -812,11 +812,6 @@ int getIntegerBits(__int64 data)
 */
 void Axis::mouseDoubleClickEvent(QMouseEvent *event){
 	QWidget::mouseDoubleClickEvent(event);
-#ifdef MY_DEBUG
-	printf("x=%f,y=%f\n",event->posF().x(),event->posF().y());
-	printf("minRectf\n");
-	printf("left=%f,top=%f,right=%f,bottom=%f",minRectf->left(),minRectf->top(),minRectf->right(),minRectf->bottom());
-#endif
 	if (event->button()==Qt::LeftButton)
 	{
 		if (minRectf->contains(event->posF()))
