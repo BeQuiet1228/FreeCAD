@@ -44,7 +44,6 @@ namespace Gui{
 		if (ptr == nullptr)
 		{
 			Gui::PlotMDIView* plot = new Gui::PlotMDIView(*guidoc);
-			//guidoc->attachView(plot, false);
 			Gui::MainWindow::getInstance()->addWindow(plot);
 			(DocumentManager*)(docM)->bindTreeContrue(nullptr, (Plot*)plot->GetViewPtr());
 			
