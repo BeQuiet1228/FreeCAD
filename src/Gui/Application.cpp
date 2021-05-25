@@ -760,7 +760,7 @@ void Application::slotNewDocument(const App::Document& Doc)
     }
 	else if (Doc.classID == 5) {
 		 pDoc->createView(PlotMDIView::getClassTypeId());
-		 }
+	}
     else if(Doc.classID == 2 || Doc.classID == 3)
     {
 		LuaEditView* edit = new LuaEditView(pDoc);
