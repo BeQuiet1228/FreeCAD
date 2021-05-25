@@ -280,6 +280,23 @@ void MainWindow::hideContorlUI()
 	contorlDockWidget->close();
     hideVisualizationTree();
     hideControlTree();
+    //ÒÆ³ýplot´°¿Ú
+    auto views = this->windows();
+    for (auto iter = views.begin(); iter != views.end(); iter++)
+    {
+        PlotMDIView* plot = dynamic_cast<PlotMDIView*>(*iter);
+        if (plot)
+        {
+            auto subMdi = dynamic_cast<QWidget*>(plot->parent());
+            if (subMdi)
+            {
+                subMdi->close();
+                //d->mdiArea->removeSubWindow(subMdi);
+                //delete subMdi;
+            }
+                
+        }
+    }
 }
 
 void MainWindow::inintContorlUI()
