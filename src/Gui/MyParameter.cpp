@@ -454,17 +454,26 @@ void MyParameter::updateFromRowToEnd(int row, std::string param_name) {
     else {
         cur_row_name = QString::fromStdString(param_name);
     }
+    std::vector<std::string> changed_param = std::vector<std::string>();    // 所有修改的变量
+    changed_param.push_back(cur_row_name.toStdString());
     for (int i = row + 1; i < max_row - 1; ++i) {
+        bool flag_continue = true;
         QString name = tableWidget->item(i, 0)->text();
         QString expression = tableWidget->item(i, 1)->text();
-        if (expression.toStdString().find(cur_row_name.toStdString()) == std::string::npos) {
-            //std::cerr << expression.toStdString() << "\t" << cur_row_name.toStdString() << std::endl;;
+        for (const auto& i : changed_param) {
+            if (expression.toStdString().find(i) != std::string::npos) {
+                flag_continue = false;
+                break;
+            }
+        }
+        if (flag_continue) {
             continue;
         }
         param_type _type = typeAnalysis(expression);
         if (this->changeProperty(_type, name, expression)) {
             this->setValueToItem(_type, name, i);
         }
+        changed_param.push_back(name.toStdString());
     }
 }
 
