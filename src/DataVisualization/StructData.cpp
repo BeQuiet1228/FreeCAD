@@ -405,7 +405,7 @@ bool StructData::loadroom_polar_R_Z()
 		}
 		index = index_min;
 	}
-	QMap<int, QVector<QRectF>> allinfo;
+	std::map<int, std::vector<QRectF>> allinfo;
 	auto intervalV = *(IM3X->begin()+1)-*(IM3X->begin());
 	auto intervalH = *(IM1X->begin() + 1) - *(IM1X->begin());
 	for(auto itersetkmt=datasetkmt->begin();itersetkmt!=datasetkmt->end();)
@@ -1007,7 +1007,8 @@ bool StructData::loadroom_cartesian_x_y(){
 	}
 	auto intervalV = *(IM1X->begin()+1)-*(IM1X->begin());
 	auto intervalH = *(IM2X->begin() + 1) - *(IM2X->begin());
-	QMap<int, QVector<QRectF>> allinfo;
+
+	std::map<int, std::vector<QRectF>> allinfo;
 	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
 	{
 		auto x1 = *itersetkmt; itersetkmt++;

@@ -110,7 +110,7 @@ public:
 		std::lock_guard<std::mutex> am(yRangMutex);
 		return yRang;
 	}
-	QMap<int, QVector<QRectF>> GetAllcutInfo()
+	std::map<int, std::vector<QRectF>>GetAllcutInfo()
 	{
 		return allcutroom;
 	}
@@ -136,7 +136,6 @@ protected:
 	bool loadroom_cartesian_x_y();
 	bool loadroom_cartesian_x_z();
 	bool loadroom_cartesian_y_z();
-	//
 	std::vector<QRectF> GetAllCurspace_polar_R_Z();
 	std::vector<DaTaKmt> GetdatasetKmt_polar_R_Z();
 	QMap<int, QVector<QRectF>> fileproperty_polar_R_Z(std::vector<QRectF>&, std::vector<DaTaKmt>&);
@@ -159,7 +158,7 @@ protected:
 	QMap<int, QVector<QRectF>> fileproperty_cartesian_x_z(std::vector<QRectF>&, std::vector<DaTaKmt>&);
 private:
 	//È«²¿ÇÐ¸î¿Õ¼ä
-	QMap<int, QVector<QRectF>> allcutroom;
+	std::map<int, std::vector<QRectF>>	allcutroom;
 	std::map<int, std::vector<CutCir>> allcutroom_cir;
 	int pointXSize, pointYSize;
 	DirectionType m_Type;
