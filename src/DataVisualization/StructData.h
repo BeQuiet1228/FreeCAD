@@ -83,11 +83,11 @@ public:
 	virtual bool loadPoint();
 	DirectionType GetDirectionType()
 	{
-		return m_Type;
+		return mType;
 	}
 	C_TYPE GetC_TYPE()
 	{
-		return _ctype;
+		return mCtype;
 	}
 	bool loadroom();
 	void setXRang(const Rang& rg)
@@ -116,53 +116,35 @@ public:
 	}
 	std::map<int, std::vector<CutCir>> GetAllcurInfo_cir()
 	{
-		return allcutroom_cir;
+		return allcutroomcir;
 	}
 protected:
 	virtual bool initXYRang(){ return 0; }
 	virtual void restorDeriveData() override{}
-	bool loadPoint_polar();
-	bool loadPoint_cylindrical();
-	bool loadPoint_cartesian();
+	bool loadPointPolar();
+	bool loadPointCylindrical();
+	bool loadPointCartesian();
 	
 	//加载3维空间切割空间
-	bool loadroom_polar();
-	bool loadroom_polar_R_Z();
-	bool loadroom_polar_R_THETA();
-	bool loadroom_cylindrical();
-	bool loadroom_cylindrical_r_z();
-	bool loadroom_cylindrical_r_theta();
-	bool loadroom_cartesian();
-	bool loadroom_cartesian_x_y();
-	bool loadroom_cartesian_x_z();
-	bool loadroom_cartesian_y_z();
-	std::vector<QRectF> GetAllCurspace_polar_R_Z();
-	std::vector<DaTaKmt> GetdatasetKmt_polar_R_Z();
-	QMap<int, QVector<QRectF>> fileproperty_polar_R_Z(std::vector<QRectF>&, std::vector<DaTaKmt>&);
-
-	std::vector<QRectF> GetAllCurspace_cylindrical_R_Z();
-	std::vector<DaTaKmt> GetdatasetKmt_cylindrical_R_Z();
-	QMap<int, QVector<QRectF>> fileproperty_cylindrical_R_Z(std::vector<QRectF>&, std::vector<DaTaKmt>&);
-	std::map<int, std::vector<CutCir>> filecir_polar_R_THETA();
-	std::vector<DaTaKmt> GetdatasetKmt_polar_R_THETA();
-	std::map<int, std::vector<CutCir>> filecir_cylindrical_R_THETA();
-	std::vector<DaTaKmt> GetdatasetKmt_cylindrical_R_THETA();
-	std::vector<QRectF> GetAllCurspace_cartesian_x_y();
-	std::vector<DaTaKmt> GetdatasetKmt_cartesian_x_y();
-	QMap<int, QVector<QRectF>> fileproperty_cartesian_x_y(std::vector<QRectF>&,std::vector<DaTaKmt>&);
-	std::vector<QRectF> GetAllCurspace_cartesian_y_z();
-	std::vector<DaTaKmt> GetdatasetKmt_cartesian_y_z();
-	QMap<int, QVector<QRectF>> fileproperty_cartesian_y_z(std::vector<QRectF>&, std::vector<DaTaKmt>&);
-	std::vector<QRectF> GetAllCurspace_cartesian_x_z();
-	std::vector<DaTaKmt> GetdatasetKmt_cartesian_x_z();
-	QMap<int, QVector<QRectF>> fileproperty_cartesian_x_z(std::vector<QRectF>&, std::vector<DaTaKmt>&);
+	bool loadroomPolar();
+	bool loadroomPolarRz();
+	bool loadroomPolarRtheta();
+	bool loadroomCylindrical();
+	bool loadroomCylindricalRz();
+	bool loadroomCylindricalRtheta();
+	bool loadroomCartesian(); 
+	bool loadroomCartesianXy();
+	bool loadroomCartesianXz();
+	bool loadroomCartesianYz();
+	std::vector<DaTaKmt> GetdatasetKmtPolar();
+	std::vector<DaTaKmt> GetdatasetKmtCylindrical();
 private:
 	//全部切割空间
 	std::map<int, std::vector<QRectF>>	allcutroom;
-	std::map<int, std::vector<CutCir>> allcutroom_cir;
+	std::map<int, std::vector<CutCir>> allcutroomcir;
 	int pointXSize, pointYSize;
-	DirectionType m_Type;
-	C_TYPE _ctype;
+	DirectionType mType;
+	C_TYPE mCtype;
 	bool istrue;
 	_3DPointf mstartpoint;
 	_3DPointf mendpoint;
