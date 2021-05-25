@@ -406,6 +406,8 @@ bool StructData::loadroom_polar_R_Z()
 		index = index_min;
 	}
 	QMap<int, QVector<QRectF>> allinfo;
+	auto intervalV = *(IM3X->begin()+1)-*(IM3X->begin());
+	auto intervalH = *(IM1X->begin() + 1) - *(IM1X->begin());
 	for(auto itersetkmt=datasetkmt->begin();itersetkmt!=datasetkmt->end();)
 	{
 		auto x1=*itersetkmt;itersetkmt++;
@@ -419,6 +421,26 @@ bool StructData::loadroom_polar_R_Z()
 			rect.setRight(*(IM3X->begin() + x3));
 			rect.setBottom(*(IM1X->begin() + x1 - 1));
 			rect.setTop(*(IM1X->begin() + x1));
+			allinfo[proper].push_back(rect);
+		}
+		//增加越界处理
+		else if (x2==index&& x3==IM3X->size()&&x1<IM1X->size())
+		{
+			QRectF rect;
+			rect.setLeft(*(IM3X->begin() + x3 - 1));
+			rect.setBottom(*(IM1X->begin()+x1-1));
+			rect.setRight(rect.left() + intervalV);
+			rect.setTop(*(IM1X->begin() + x1));
+			allinfo[proper].push_back(rect);
+
+		}
+		else if (x2==index&& x3<IM3X->size()&&x1==IM1X->size())
+		{
+			QRectF rect;
+			rect.setLeft(*(IM3X->begin()+x3-1));
+			rect.setRight(*(IM3X->begin()+x3));
+			rect.setBottom(*(IM1X->begin()+x1-1));
+			rect.setTop(rect.bottom()+intervalH);
 			allinfo[proper].push_back(rect);
 		}
 	}
@@ -683,13 +705,15 @@ bool StructData::loadroom_cylindrical_r_z(){
 		index = index_min;
 	}
 	allcutroom.clear();
+	auto intervalV = *(IM1X->begin() + 1) - *(IM1X->begin());
+	auto intervalH = *(IM2X->begin() + 1) - *(IM2X->begin());
 	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
 	{
 		auto x1 = *itersetkmt; itersetkmt++;
 		auto x2 = *itersetkmt; itersetkmt++;
 		auto x3 = *itersetkmt; itersetkmt++;
 		auto proper = *itersetkmt; itersetkmt++;
-		if (x3 == index&& x1 < IM1X->size()&&x2<IM2X->size())
+		if (x3 == index&& x1 <IM1X->size()&&x2<IM2X->size())
 		{
 			QRectF rect;
 			rect.setLeft(*(IM1X->begin()+x1-1));
@@ -698,6 +722,35 @@ bool StructData::loadroom_cylindrical_r_z(){
 			rect.setTop(*(IM2X->begin() + x2));
 			allcutroom[proper].push_back(rect);
 		}
+		else if (x3==index&& x1==IM1X->size()&&x2<IM2X->size())
+		{
+			QRectF rect;
+			rect.setLeft(*(IM1X->begin()+x1-1));
+			rect.setRight(rect.left()+intervalV);
+			rect.setBottom(*(IM2X->begin()+x2-1));
+			rect.setTop(*(IM2X->begin()+x2));
+			allcutroom[proper].push_back(rect);
+		}
+		//增加越界处理
+		else if (x3==index&& x1<IM1X->size()&& x2==IM2X->size())
+		{
+			QRectF rect;
+			rect.setLeft(*(IM1X->begin()+x1-1));
+			rect.setRight(*(IM1X->begin()+x1));
+			rect.setBottom(*(IM2X->begin()+x2-1));
+			rect.setTop(rect.bottom()+intervalH);
+			allcutroom[proper].push_back(rect);
+		}
+		else if (x3==index&& x1==IM1X->size()&& x2<IM2X->size())
+		{
+			QRectF rect;
+			rect.setLeft(*(IM1X->begin()+x1-1));
+			rect.setRight(rect.left() + intervalV);
+			rect.setBottom(*(IM2X->begin()+x2-1));
+			rect.setTop(*(IM2X->begin()+x2));
+			allcutroom[proper].push_back(rect);
+		}
+
 	}
 #endif
 	return true;
@@ -952,6 +1005,8 @@ bool StructData::loadroom_cartesian_x_y(){
 		}
 		index = index_min;
 	}
+	auto intervalV = *(IM1X->begin()+1)-*(IM1X->begin());
+	auto intervalH = *(IM2X->begin() + 1) - *(IM2X->begin());
 	QMap<int, QVector<QRectF>> allinfo;
 	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
 	{
@@ -966,6 +1021,25 @@ bool StructData::loadroom_cartesian_x_y(){
 			rect.setRight(*(IM1X->begin() + x1));
 			rect.setBottom(*(IM2X->begin() + (x2 - 1)));
 			rect.setTop(*(IM2X->begin() + x2));
+			allinfo[proper].push_back(rect);
+		}
+		//增加越界处理
+		else if (x3==index&& x1==IM1X->size()&& x2<IM2X->size())
+		{
+			QRectF rect;
+			rect.setLeft(*(IM1X->begin()+x1-1));
+			rect.setRight(rect.left() + intervalV);
+			rect.setBottom(*(IM2X->begin() + x2 - 1));
+			rect.setTop(*(IM2X->begin()+x2));
+			allinfo[proper].push_back(rect);
+		}
+		else if (x3==index&& x1<IM1X->size()&&x2==IM2X->size())
+		{
+			QRectF rect;
+			rect.setLeft(*(IM1X->begin()+x1-1));
+			rect.setRight(*(IM1X->begin()+x1));
+			rect.setBottom(*(IM2X->begin()+x2-1));
+			rect.setTop(rect.bottom()+intervalH);
 			allinfo[proper].push_back(rect);
 		}
 	}
@@ -1008,6 +1082,8 @@ bool StructData::loadroom_cartesian_x_z(){
 		}
 	}
 	allcutroom.clear();
+	auto intervalV = *(IM1X->begin() + 1) - *(IM1X->begin());
+	auto intervalH = *(IM3X->begin()+1) - *(IM3X->begin());
 	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
 	{
 		auto x1 = *itersetkmt; itersetkmt++;
@@ -1021,6 +1097,25 @@ bool StructData::loadroom_cartesian_x_z(){
 			rect.setRight(*(IM1X->begin() + x1));
 			rect.setBottom(*(IM3X->begin()+(x3-1)));
 			rect.setTop(*(IM3X->begin() + x3));
+			allcutroom[proper].push_back(rect);
+		}
+		//增加越界处理
+		else if (x2==index && x1==IM1X->size()&& x3<IM3X->size())
+		{
+			QRectF rect;
+			rect.setLeft(*(IM1X->begin()+x1-1));
+			rect.setRight(rect.left()+intervalV);
+			rect.setBottom(*(IM3X->begin()+x3-1));
+			rect.setTop(*(IM3X->begin()+x3));
+			allcutroom[proper].push_back(rect);
+		}
+		else if (x2==index&& x1<IM1X->size()&&x3==IM3X->size())
+		{
+			QRectF rect;
+			rect.setLeft(*(IM1X->begin()+x1-1));
+			rect.setRight(*(IM1X->begin()+x1));
+			rect.setBottom(*(IM3X->begin()+x3-1));
+			rect.setTop(rect.bottom()+intervalH);
 			allcutroom[proper].push_back(rect);
 		}
 	}
@@ -1063,6 +1158,8 @@ bool StructData::loadroom_cartesian_y_z(){
 		index = index_min;
 	}
 	allcutroom.clear();
+	auto intervalV = *(IM2X->begin() + 1) - *(IM2X->begin());
+	auto intervalH = *(IM3X->begin() + 1) - *(IM3X->begin());
 	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
 	{
 		auto x1 = *itersetkmt; itersetkmt++;
@@ -1076,6 +1173,25 @@ bool StructData::loadroom_cartesian_y_z(){
 			rect.setRight(*(IM2X->begin() + (x2)));
 			rect.setBottom(*(IM3X->begin()+(x3-1)));
 			rect.setTop(*(IM3X->begin()+x3));
+			allcutroom[proper].push_back(rect);
+		}
+		//增加越界处理
+		else if (x1==index&& x2==IM2X->size()&&x3<IM3X->size())
+		{
+			QRectF rect;
+			rect.setLeft(*(IM2X->begin()+x2-1));
+			rect.setRight(rect.left()+intervalV);
+			rect.setBottom(*(IM3X->begin()+x3-1));
+			rect.setTop(*(IM3X->begin() + x3));
+			allcutroom[proper].push_back(rect);
+		}
+		else if (x1==index&&x2<IM2X->size()&& x3==IM3X->size())
+		{
+			QRectF rect;
+			rect.setLeft(*(IM2X->begin()+x2-1));
+			rect.setRight(*(IM2X->begin() + x2));
+			rect.setBottom(*(IM3X->begin()+x3-1));
+			rect.setTop(rect.bottom()+intervalH);
 			allcutroom[proper].push_back(rect);
 		}
 	}
