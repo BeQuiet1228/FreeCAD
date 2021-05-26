@@ -38,18 +38,27 @@ std::vector<std::string> findLinkWithParam(const std::string& param_name, std::v
 std::vector<std::string> findLinkWithObject(const std::vector<std::string>& param_names, std::string& error) {
 	std::vector<std::string> res;
 	DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("Param");
-	std::string param_name = "a1";
-	if (param_name.empty() || docObj == nullptr) {
+	if (param_names.empty() || docObj == nullptr) {
 		error = "error";
 		return res;
 	}
 	std::vector<App::DocumentObject*> temp_v = docObj->getInList();
+	// 该循环是所有使用Param的体(object)
 	for (const auto& i : temp_v) {
 		boost::unordered_map<const ObjectIdentifier, const PropertyExpressionEngine::ExpressionInfo> pee =
 			i->ExpressionEngine.getExpressions();
+		// 该循环是该object所有的表达式
 		for (auto it = pee.begin(); it != pee.end(); ++it) {
-			if (findWholeWordsOnly(it->second.expression->toString(), param_name)) {
-				std::cerr << i->Label.getValue() << std::endl;
+			// 该循环是查询obj的表达式是否使用了param_names里面的变量
+			bool flag_to_break = false;
+			for (const auto& j : param_names) {
+				if (findWholeWordsOnly(it->second.expression->toString(), j)) {
+					res.push_back(std::string(i->Label.getValue()));
+					flag_to_break = true;
+					break;
+				}
+			}
+			if (flag_to_break) {
 				break;
 			}
 		}
@@ -59,6 +68,9 @@ std::vector<std::string> findLinkWithObject(const std::vector<std::string>& para
 	//std::unordered_map<std::string, std::string> param_dict;
 	//for (auto it = pee.begin(); it != pee.end(); ++it) {
 	//	param_dict.insert(std::unordered_map<std::string, std::string>::value_type(it->first.toString(), it->second.expression->toString()));
+	//}
+	//for (auto i : res) {
+	//	std::cerr << i << "\t";
 	//}
 	return res;
 }

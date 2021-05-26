@@ -43,9 +43,13 @@ void DeleteParamDialog::slotAnalyze() {
             this->isValid = true;
             this->ui->pb_ok->setEnabled(true);
             std::vector<std::string> affected_param = findLinkWithParam(paramName, this->ordered_param, std::string());
-            findLinkWithObject(std::vector<std::string>(), std::string());
+            std::vector<std::string> affected_obj = findLinkWithObject(affected_param, std::string());
             std::string warning = "The variable is effective, But the following variables will be affected:\n";
             for (const auto& i : affected_param) {
+                warning += i + "\n";
+            }
+            warning += "The following models may fail:\n";
+            for (const auto& i : affected_obj) {
                 warning += i + "\n";
             }
             this->ui->te_message->setText(QString::fromStdString(warning));
