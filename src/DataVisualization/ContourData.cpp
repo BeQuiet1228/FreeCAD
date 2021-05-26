@@ -285,12 +285,13 @@ std::vector<float> ContourData::getStructFace()
 std::string ContourData::getInformationTitle()
 {
 	std::string title;
+	const std::string end = "  ";
 	title += "观察时间:";
-	title += DataInformationGetter::getObserveTime(headList.at(12)) + "\n";
+	title += DataInformationGetter::getObserveTime(headList.at(12)) + end;
 	title += "观察分量:";
-	title += DataInformationGetter::getObserveObejct(headList.at(2)) + "\n";
-	title += "观测面:\n";
-	title += DataInformationGetter::getObserveFace(headList.at(16)) + "\n";
+	title += DataInformationGetter::getObserveObejct(headList.at(2)) + end;
+	title += "观测面:";
+	title += DataInformationGetter::getObserveFace(headList.at(16)) + end;
 
 	return title;
 }

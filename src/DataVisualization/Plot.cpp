@@ -385,15 +385,16 @@ void Plot::initGUI()
 	scaleWIdget->setColorBarWidth(20);
 
 	informationLabel = new QLabel();
-	informationLabel->setMargin(40);
-	informationLabel->setAlignment(Qt::AlignTop);
+	//informationLabel->setMargin(40);
+	//informationLabel->setAlignment(Qt::AlignTop);
+	informationLabel->setAlignment(Qt::AlignCenter);
 	initInformationLabelFont();
 
 	gridLayout->addWidget(canvas, 0, 1, 1, 1);
 	gridLayout->addWidget(AxisL, 0, 0, 1, 1);
 	gridLayout->addWidget(AxisB, 1, 1, 1, 1);
 	gridLayout->addWidget(scaleWIdget, 0, 2, 1, 1);
-	gridLayout->addWidget(informationLabel, 0, 3, 2, 1);
+	gridLayout->addWidget(informationLabel, 2, 0, 1, 3);
 
 	gridLayout->setRowStretch(0, 9);
 	gridLayout->setRowStretch(1, 1);

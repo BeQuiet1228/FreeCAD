@@ -127,10 +127,11 @@ ParticleData::Particle ParticleData::getParticleHard(const unsigned int& index)
 std::string ParticleData::getInformationTitle()
 {
 	std::string title;
+	const std::string end = "  ";
 	title += "观察时间:";
-	title += DataInformationGetter::getObserveTime(headList.at(11)) + "\n";
+	title += DataInformationGetter::getObserveTime(headList.at(11)) + end;
 	title += "观察分量:";
-	title += DataInformationGetter::getObserveObejct(headList.at(2)) + "\n";
+	title += DataInformationGetter::getObserveObejct(headList.at(2)) + end;
 
 	return title;
 }
