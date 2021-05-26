@@ -57,6 +57,7 @@ public:
 
 	void cellChangedWithZerothColumn(int row);
 	void cellChangedWithFirstColumn(int row);
+	std::vector<std::pair<std::string, std::string>> getAllOrderedParam();
 
 // ”Îm3dœ‡πÿ
 public:

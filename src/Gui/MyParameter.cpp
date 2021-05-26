@@ -14,6 +14,7 @@
 #include "time.h"
 #include "DlgInsertParamImp.h"
 #include "DlgDeleteParamImp.h"
+#include "AboutParameter.h"
 
 //#include "DlgExpressionInput.h"
 
@@ -454,6 +455,7 @@ void MyParameter::updateFromRowToEnd(int row, std::string param_name) {
     else {
         cur_row_name = QString::fromStdString(param_name);
     }
+    //auto iii = findLinkWithParam(cur_row_name.toStdString(), getAllOrderedParam(), std::string());
     std::vector<std::string> changed_param = std::vector<std::string>();    // 所有修改的变量
     changed_param.push_back(cur_row_name.toStdString());
     for (int i = row + 1; i < max_row - 1; ++i) {
@@ -613,9 +615,10 @@ void MyParameter::deleteParam() {
     }
     this->delete_param_dlg = new DeleteParamDialog();
     this->delete_param_dlg->inputAllParamName(allParamName);
+    this->delete_param_dlg->inputAllOrderedParam(this->getAllOrderedParam());
     this->delete_param_dlg->exec();
-    // 判断输入的变量是否有效
-    if (this->delete_param_dlg->isDeleted()) {
+    // 判断输入的变量是否有效并且需要删除
+    if (this->delete_param_dlg->isNeedToDelete && this->delete_param_dlg->isDeleted()) {
         std::string delete_param = this->delete_param_dlg->getParamName();
         int p_row = 0;  // param row
         for (int i = 0; i < allParamName.size(); ++i) {
@@ -632,6 +635,18 @@ void MyParameter::deleteParam() {
         this->updateFromRowToEnd(p_row - 1, delete_param);
     }
     delete this->delete_param_dlg;
+}
+
+// 获取当前变量，顺序按照用户定义的顺序
+std::vector<std::pair<std::string, std::string>> MyParameter::getAllOrderedParam() {
+    std::vector<std::pair<std::string, std::string>> res;
+    int max_row = this->tableWidget->rowCount();
+    for (int i = 0; i < max_row - 1; ++i) {
+        std::string name = tableWidget->item(i, 0)->text().toStdString();
+        std::string expression = tableWidget->item(i, 1)->text().toStdString();
+        res.push_back(std::make_pair(name, expression));
+    }
+    return res;
 }
 
 

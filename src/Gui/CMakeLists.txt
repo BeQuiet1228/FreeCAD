@@ -1275,6 +1275,8 @@ set(lzg_src DlgInsertParamImp.h
 	CJsonObject.hpp
 	MyParameter.h 
 	MyParameter.cpp
+    AboutParameter.h
+    AboutParameter.cpp
     DlgInsertParam.ui
     DlgDeleteParamImp.h
     DlgDeleteParamImp.cpp

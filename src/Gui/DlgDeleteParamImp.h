@@ -19,6 +19,7 @@ public:
     std::string getParamName();
     bool isDeleted();
     void inputAllParamName(const std::vector<std::string> &allParamName);
+    void inputAllOrderedParam(std::vector<std::pair<std::string, std::string>>& _ordered_param);
 
 private Q_SLOTS:
     void slotAnalyze();
@@ -30,6 +31,8 @@ public:
     std::string paramName;
     bool isValid;
     std::vector<std::string>& _allParamName = std::vector<std::string>();
+    std::vector<std::pair<std::string, std::string>> ordered_param;
+    bool isNeedToDelete;
 
 private:
     Ui::DeleteDialog* ui;

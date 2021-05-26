@@ -1,6 +1,7 @@
 #include "PreCompiled.h"
 
 #include "DlgDeleteParamImp.h"
+#include "AboutParameter.h"
 
 DeleteParamDialog::DeleteParamDialog(QWidget* parent)
     : QDialog(parent)
@@ -8,6 +9,7 @@ DeleteParamDialog::DeleteParamDialog(QWidget* parent)
 {
     ui->setupUi(this);
     this->isValid = false;
+    this->isNeedToDelete = false;
     this->paramName = std::string("");
     this->ui->pb_ok->setEnabled(false);
     QObject::connect(this->ui->pb_analyze, SIGNAL(clicked(bool)), this, SLOT(slotAnalyze()));
@@ -40,7 +42,13 @@ void DeleteParamDialog::slotAnalyze() {
         if (i == this->paramName) {
             this->isValid = true;
             this->ui->pb_ok->setEnabled(true);
-            this->ui->te_message->setText(QString::fromUtf8("The variable is effective"));
+            std::vector<std::string> affected_param = findLinkWithParam(paramName, this->ordered_param, std::string());
+            findLinkWithObject(std::vector<std::string>(), std::string());
+            std::string warning = "The variable is effective, But the following variables will be affected:\n";
+            for (const auto& i : affected_param) {
+                warning += i + "\n";
+            }
+            this->ui->te_message->setText(QString::fromStdString(warning));
             return;
         }
     }
@@ -48,6 +56,7 @@ void DeleteParamDialog::slotAnalyze() {
 }
 
 void DeleteParamDialog::slotOK() {
+    this->isNeedToDelete = true;
     this->close();
 }
 
@@ -62,4 +71,8 @@ void DeleteParamDialog::slotCancel() {
 void DeleteParamDialog::slotTextChanged() {
     this->ui->pb_ok->setEnabled(false);
     this->ui->te_message->clear();
+}
+
+void DeleteParamDialog::inputAllOrderedParam(std::vector<std::pair<std::string, std::string>>& _ordered_param) {
+    this->ordered_param = _ordered_param;
 }
