@@ -1,8 +1,11 @@
 #include "StructData.h"
+#include <QPoint>
 #ifdef MY_DEBUG
 #include<windows.h>
 #include <QDebug>
 #endif
+
+bool isAnAttribute(unsigned int proper);
 /**
 * @brief StructData::StructData 构造函数
 * @param Hdf5Data& heData
@@ -403,45 +406,35 @@ bool StructData::loadroomPolarRz()
 		index = index_min;
 	}
 	std::map<int, std::vector<QRectF>> allinfo;
-	auto intervalV = *(IM3X->begin()+1)-*(IM3X->begin());
-	auto intervalH = *(IM1X->begin() + 1) - *(IM1X->begin());
+	std::map<int, std::vector<QPoint>> pointlist;//用来判断线段
 	for(auto itersetkmt=datasetkmt->begin();itersetkmt!=datasetkmt->end();)
 	{
 		auto x1=*itersetkmt;itersetkmt++;
 		auto x2=*itersetkmt;itersetkmt++;
 		auto x3=*itersetkmt;itersetkmt++;
 		auto proper=*itersetkmt;itersetkmt++;
-		if (x2 == index&&x3<IM3X->size()&&x1<IM1X->size())
+		if (x2 == index&&x3<=IM3X->size()&&x1<=IM1X->size())
 		{
-			QRectF rect;
-			rect.setLeft(*(IM3X->begin() + x3 - 1));
-			rect.setRight(*(IM3X->begin() + x3));
-			rect.setBottom(*(IM1X->begin() + x1 - 1));
-			rect.setTop(*(IM1X->begin() + x1));
-			allinfo[proper].push_back(rect);
-		}
-		//增加越界处理
-		else if (x2==index&& x3==IM3X->size()&&x1<IM1X->size())
-		{
-			QRectF rect;
-			rect.setLeft(*(IM3X->begin() + x3 - 1));
-			rect.setBottom(*(IM1X->begin()+x1-1));
-			rect.setRight(rect.left() + intervalV);
-			rect.setTop(*(IM1X->begin() + x1));
-			allinfo[proper].push_back(rect);
-
-		}
-		else if (x2==index&& x3<IM3X->size()&&x1==IM1X->size())
-		{
-			QRectF rect;
-			rect.setLeft(*(IM3X->begin()+x3-1));
-			rect.setRight(*(IM3X->begin()+x3));
-			rect.setBottom(*(IM1X->begin()+x1-1));
-			rect.setTop(rect.bottom()+intervalH);
-			allinfo[proper].push_back(rect);
+			if (isAnAttribute(proper))
+			{
+				QRectF rect;
+				rect.setLeft(*(IM3X->begin() + x3 - 1));
+				rect.setRight(*(IM3X->begin() + x3));
+				rect.setBottom(*(IM1X->begin() + x1 - 1));
+				rect.setTop(*(IM1X->begin() + x1));
+				allinfo[proper].push_back(rect);
+			}
+			else
+			{
+				pointlist[proper].push_back(QPoint(x3-1,x1-1));
+			}
+			
 		}
 	}
+	//开始生成线段
+	createLines(pointlist, IM3X, IM1X);
 	allcutroom.swap(allinfo);
+	return true;
 }
 /**
 * @brief StructData::GetdatasetKmtPolar 获取datasetkmt的数据-polar坐标系-R_Z方向
@@ -594,53 +587,33 @@ bool StructData::loadroomCylindricalRz(){
 		index = index_min;
 	}
 	allcutroom.clear();
-	auto intervalV = *(IM1X->begin() + 1) - *(IM1X->begin());
-	auto intervalH = *(IM2X->begin() + 1) - *(IM2X->begin());
+	std::map<int, std::vector<QPoint>> pointlist;//用来暂时存储线段的所有点
 	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
 	{
 		auto x1 = *itersetkmt; itersetkmt++;
 		auto x2 = *itersetkmt; itersetkmt++;
 		auto x3 = *itersetkmt; itersetkmt++;
 		auto proper = *itersetkmt; itersetkmt++;
-		if (x3 == index&& x1 <IM1X->size()&&x2<IM2X->size())
+		if (x3 == index&& x1 <=IM1X->size()&&x2<=IM2X->size())
 		{
-			QRectF rect;
-			rect.setLeft(*(IM1X->begin()+x1-1));
-			rect.setRight(*(IM1X->begin() + x1));
-			rect.setBottom(*(IM2X->begin()+x2-1));
-			rect.setTop(*(IM2X->begin() + x2));
-			allcutroom[proper].push_back(rect);
+			if (isAnAttribute(proper))
+			{
+				QRectF rect;
+				rect.setLeft(*(IM1X->begin() + x1 - 1));
+				rect.setRight(*(IM1X->begin() + x1));
+				rect.setBottom(*(IM2X->begin() + x2 - 1));
+				rect.setTop(*(IM2X->begin() + x2));
+				allcutroom[proper].push_back(rect);
+			}
+			else
+			{
+				int x = x1-1, y = x2-1;
+				pointlist[proper].push_back(QPoint(x,y));
+			}
+			
 		}
-		else if (x3==index&& x1==IM1X->size()&&x2<IM2X->size())
-		{
-			QRectF rect;
-			rect.setLeft(*(IM1X->begin()+x1-1));
-			rect.setRight(rect.left()+intervalV);
-			rect.setBottom(*(IM2X->begin()+x2-1));
-			rect.setTop(*(IM2X->begin()+x2));
-			allcutroom[proper].push_back(rect);
-		}
-		//增加越界处理
-		else if (x3==index&& x1<IM1X->size()&& x2==IM2X->size())
-		{
-			QRectF rect;
-			rect.setLeft(*(IM1X->begin()+x1-1));
-			rect.setRight(*(IM1X->begin()+x1));
-			rect.setBottom(*(IM2X->begin()+x2-1));
-			rect.setTop(rect.bottom()+intervalH);
-			allcutroom[proper].push_back(rect);
-		}
-		else if (x3==index&& x1==IM1X->size()&& x2<IM2X->size())
-		{
-			QRectF rect;
-			rect.setLeft(*(IM1X->begin()+x1-1));
-			rect.setRight(rect.left() + intervalV);
-			rect.setBottom(*(IM2X->begin()+x2-1));
-			rect.setTop(*(IM2X->begin()+x2));
-			allcutroom[proper].push_back(rect);
-		}
-
 	}
+	createLines(pointlist, IM1X,IM2X);
 	return true;
 }
 /**
@@ -792,46 +765,35 @@ bool StructData::loadroomCartesianXy(){
 		}
 		index = index_min;
 	}
-	auto intervalV = *(IM1X->begin()+1)-*(IM1X->begin());
-	auto intervalH = *(IM2X->begin() + 1) - *(IM2X->begin());
-
 	std::map<int, std::vector<QRectF>> allinfo;
+	std::map<int, std::vector<QPoint>> pointList;
 	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
 	{
 		auto x1 = *itersetkmt; itersetkmt++;
 		auto x2 = *itersetkmt; itersetkmt++;
 		auto x3 = *itersetkmt; itersetkmt++;
 		auto proper = *itersetkmt; itersetkmt++;
-		if (x3 == index&& x1 < IM1X->size()&& x2<IM2X->size())
+		if (x3 == index&& x1 <= IM1X->size()&& x2<=IM2X->size())
 		{
-			QRectF rect;
-			rect.setLeft(*(IM1X->begin() + (x1 - 1)));
-			rect.setRight(*(IM1X->begin() + x1));
-			rect.setBottom(*(IM2X->begin() + (x2 - 1)));
-			rect.setTop(*(IM2X->begin() + x2));
-			allinfo[proper].push_back(rect);
-		}
-		//增加越界处理
-		else if (x3==index&& x1==IM1X->size()&& x2<IM2X->size())
-		{
-			QRectF rect;
-			rect.setLeft(*(IM1X->begin()+x1-1));
-			rect.setRight(rect.left() + intervalV);
-			rect.setBottom(*(IM2X->begin() + x2 - 1));
-			rect.setTop(*(IM2X->begin()+x2));
-			allinfo[proper].push_back(rect);
-		}
-		else if (x3==index&& x1<IM1X->size()&&x2==IM2X->size())
-		{
-			QRectF rect;
-			rect.setLeft(*(IM1X->begin()+x1-1));
-			rect.setRight(*(IM1X->begin()+x1));
-			rect.setBottom(*(IM2X->begin()+x2-1));
-			rect.setTop(rect.bottom()+intervalH);
-			allinfo[proper].push_back(rect);
+			if (isAnAttribute(proper))
+			{
+				QRectF rect;
+				rect.setLeft(*(IM1X->begin() + (x1 - 1)));
+				rect.setRight(*(IM1X->begin() + x1));
+				rect.setBottom(*(IM2X->begin() + (x2 - 1)));
+				rect.setTop(*(IM2X->begin() + x2));
+				allinfo[proper].push_back(rect);
+			}
+			else
+			{
+				int x=x1-1, y=x2-1;
+				pointList[proper].push_back(QPoint(x,y));
+			}
+			
 		}
 	}
 	allcutroom.swap(allinfo);
+	createLines(pointList, IM1X, IM2X);
 	return true;
 }
 /**
@@ -866,43 +828,33 @@ bool StructData::loadroomCartesianXz(){
 		}
 	}
 	allcutroom.clear();
-	auto intervalV = *(IM1X->begin() + 1) - *(IM1X->begin());
-	auto intervalH = *(IM3X->begin()+1) - *(IM3X->begin());
+	std::map<int, std::vector<QPoint>> pointList;
 	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
 	{
 		auto x1 = *itersetkmt; itersetkmt++;
 		auto x2 = *itersetkmt; itersetkmt++;
 		auto x3 = *itersetkmt; itersetkmt++;
 		auto proper = *itersetkmt; itersetkmt++;
-		if (x2 == index && x1 < IM1X->size()&&x3<IM3X->size())
+		if (x2 == index && x1 <= IM1X->size()&&x3<=IM3X->size())
 		{
-			QRectF rect;
-			rect.setLeft(*(IM1X->begin() + (x1 - 1)));
-			rect.setRight(*(IM1X->begin() + x1));
-			rect.setBottom(*(IM3X->begin()+(x3-1)));
-			rect.setTop(*(IM3X->begin() + x3));
-			allcutroom[proper].push_back(rect);
-		}
-		//增加越界处理
-		else if (x2==index && x1==IM1X->size()&& x3<IM3X->size())
-		{
-			QRectF rect;
-			rect.setLeft(*(IM1X->begin()+x1-1));
-			rect.setRight(rect.left()+intervalV);
-			rect.setBottom(*(IM3X->begin()+x3-1));
-			rect.setTop(*(IM3X->begin()+x3));
-			allcutroom[proper].push_back(rect);
-		}
-		else if (x2==index&& x1<IM1X->size()&&x3==IM3X->size())
-		{
-			QRectF rect;
-			rect.setLeft(*(IM1X->begin()+x1-1));
-			rect.setRight(*(IM1X->begin()+x1));
-			rect.setBottom(*(IM3X->begin()+x3-1));
-			rect.setTop(rect.bottom()+intervalH);
-			allcutroom[proper].push_back(rect);
+			if (isAnAttribute(proper))
+			{
+				QRectF rect;
+				rect.setLeft(*(IM1X->begin() + (x1 - 1)));
+				rect.setRight(*(IM1X->begin() + x1));
+				rect.setBottom(*(IM3X->begin() + (x3 - 1)));
+				rect.setTop(*(IM3X->begin() + x3));
+				allcutroom[proper].push_back(rect);
+			}
+			else
+			{
+				int x = x1-1, y = x3-1;
+				pointList[proper].push_back(QPoint(x,y));
+			}
+			
 		}
 	}
+	createLines(pointList, IM1X, IM3X);
 	return true;
 }
 /**
@@ -938,42 +890,103 @@ bool StructData::loadroomCartesianYz(){
 		index = index_min;
 	}
 	allcutroom.clear();
-	auto intervalV = *(IM2X->begin() + 1) - *(IM2X->begin());
-	auto intervalH = *(IM3X->begin() + 1) - *(IM3X->begin());
+	std::map<int, std::vector<QPoint>> pointList;
 	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
 	{
 		auto x1 = *itersetkmt; itersetkmt++;
 		auto x2 = *itersetkmt; itersetkmt++;
 		auto x3 = *itersetkmt; itersetkmt++;
 		auto proper = *itersetkmt; itersetkmt++;
-		if (x1 == index &&x2 < IM2X->size()&&x3<IM3X->size())
+		if (x1 == index &&x2 <=IM2X->size()&&x3<=IM3X->size())
 		{
-			QRectF rect;
-			rect.setLeft(*(IM2X->begin() + (x2 - 1)));
-			rect.setRight(*(IM2X->begin() + (x2)));
-			rect.setBottom(*(IM3X->begin()+(x3-1)));
-			rect.setTop(*(IM3X->begin()+x3));
-			allcutroom[proper].push_back(rect);
+			if (isAnAttribute(proper))
+			{
+				QRectF rect;
+				rect.setLeft(*(IM2X->begin() + (x2 - 1)));
+				rect.setRight(*(IM2X->begin() + (x2)));
+				rect.setBottom(*(IM3X->begin() + (x3 - 1)));
+				rect.setTop(*(IM3X->begin() + x3));
+				allcutroom[proper].push_back(rect);
+			}
+			else
+			{
+				int x = x2-1, y = x3-1;
+				pointList[proper].push_back(QPoint(x,y));
+			}
 		}
-		//增加越界处理
-		else if (x1==index&& x2==IM2X->size()&&x3<IM3X->size())
+	}
+	createLines(pointList, IM2X, IM3X);
+	return true;
+}
+/**
+* @brief  isAnAttribute 判断当前属性是否为线段
+* @param  unsigned int proper  
+* @return bool  
+*/
+bool isAnAttribute(unsigned int proper)
+{
+	switch (proper)
+	{
+		//PORT
+	case 256:
+	case 512:
+	case 1024:
+	case 1027:
+		return false;
+		//DRIVER
+	case 2048:
+	case 4096:
+	case 8192:
+		return false;
+		//INDUCTOR
+	case 16384:
+	case 32768:
+	case 65536:
+		return false;
+	default:
+		return true;
+	}
+}
+
+
+/**
+* @brief  StructData::createLines 生成线段
+* @param  std::map<int  
+* @param  std::vector<QPoint>> & points  
+* @param  const Data::ValuesPtr & IMX  
+* @param  const Data::ValuesPtr & IMY  
+* @return bool  
+*/
+bool StructData::createLines(std::map<int, std::vector<QPoint>>& points,const Data::ValuesPtr &IMX,const Data::ValuesPtr &IMY)
+{
+	allLines.clear();
+	for (auto iter = points.begin(); iter != points.end(); iter++)
+	{
+		unsigned int difval = 1;
+		std::vector<QPoint>::iterator startiter = iter->second.begin();
+		for (auto itersecond = iter->second.begin() + 1; itersecond != iter->second.end(); itersecond++)
 		{
-			QRectF rect;
-			rect.setLeft(*(IM2X->begin()+x2-1));
-			rect.setRight(rect.left()+intervalV);
-			rect.setBottom(*(IM3X->begin()+x3-1));
-			rect.setTop(*(IM3X->begin() + x3));
-			allcutroom[proper].push_back(rect);
+			unsigned int distance = (itersecond->x() - startiter->x())*(itersecond->x() - startiter->x()) +
+				(itersecond->y() - startiter->y())*(itersecond->y() - startiter->y());
+			unsigned int sqareDifval = difval*difval;
+			if (distance == sqareDifval)
+			{
+				difval += 1;
+			}
+			else
+			{
+				auto enditer = itersecond - 1;
+				QPointF startPoint(*(IMX->begin() + startiter->x()), *(IMY->begin() + startiter->y()));
+				QPointF endPoint(*(IMX->begin() + enditer->x()), *(IMY->begin() + enditer->y()));
+				allLines[iter->first].push_back(QLineF(startPoint, endPoint));
+				startiter = itersecond;
+				difval = 1;
+			}
 		}
-		else if (x1==index&&x2<IM2X->size()&& x3==IM3X->size())
-		{
-			QRectF rect;
-			rect.setLeft(*(IM2X->begin()+x2-1));
-			rect.setRight(*(IM2X->begin() + x2));
-			rect.setBottom(*(IM3X->begin()+x3-1));
-			rect.setTop(rect.bottom()+intervalH);
-			allcutroom[proper].push_back(rect);
-		}
+		auto enditer = iter->second.end() - 1;
+		QPointF startPoint(*(IMX->begin() + startiter->x()), *(IMY->begin() + startiter->y()));
+		QPointF endPoint(*(IMX->begin() + enditer->x()), *(IMY->begin() + enditer->y()));
+		allLines[iter->first].push_back(QLineF(startPoint, endPoint));
 	}
 	return true;
 }

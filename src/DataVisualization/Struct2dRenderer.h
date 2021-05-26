@@ -47,7 +47,7 @@ private:
 	{
 		return (y - yr.min)*yScale;
 	}
-	QPointF GetA_pos(QPointF& A_pos);
+	QPointF GetApos(QPointF& A_pos);
 	QVector<QLineF> GetCurLine_x();
 	QVector<QLineF> GetCutLine_y();
 private:

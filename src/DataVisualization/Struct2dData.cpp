@@ -82,8 +82,8 @@ bool Struct2dData::initdata(){
 	}
 	//装入成功
 	//获取所有点位
-	//ALLPointf.clear();
-	//ALLPointf.reserve(IM2X->size()*IM1X->size());
+	ALLPointf.clear();
+	ALLPointf.reserve(IM2X->size()*IM1X->size());
 	for (auto y = 0; y < IM2X->size(); y++)
 	{
 		for (auto x = 0; x < IM1X->size();x++)
@@ -92,7 +92,7 @@ bool Struct2dData::initdata(){
 			ALLPointf.push_back(QPointF(*(IM1X->begin() + x), *(IM2X->begin() + y)));
 		}
 	}
-	//allinfo.clear();
+	allinfo.clear();
 	for each(datasetkmtinfo i in datasetkmtlist)
 	{
 		allinfo[i.data3][i.data4].push_back(QPointF(*(IM1X->begin() + i.data1-1), *(IM2X->begin() + i.data2-1)));

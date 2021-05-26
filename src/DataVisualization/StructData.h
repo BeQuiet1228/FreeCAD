@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QMap>
 #include <QRectF>
+#include <QlineF>
 enum C_TYPE
 {
 	POLAR=0,
@@ -118,6 +119,10 @@ public:
 	{
 		return allcutroomcir;
 	}
+	std::map<int, std::vector<QLineF>> GetProperLines()
+	{
+		return allLines;
+	}
 protected:
 	virtual bool initXYRang(){ return 0; }
 	virtual void restorDeriveData() override{}
@@ -138,10 +143,12 @@ protected:
 	bool loadroomCartesianYz();
 	std::vector<DaTaKmt> GetdatasetKmtPolar();
 	std::vector<DaTaKmt> GetdatasetKmtCylindrical();
+	bool createLines(std::map<int, std::vector<QPoint>> &points,const Data::ValuesPtr &IMX, const Data::ValuesPtr &IMY);
 private:
 	//È«²¿ÇÐ¸î¿Õ¼ä
 	std::map<int, std::vector<QRectF>>	allcutroom;
 	std::map<int, std::vector<CutCir>> allcutroomcir;
+	std::map<int, std::vector<QLineF>> allLines;
 	int pointXSize, pointYSize;
 	DirectionType mType;
 	C_TYPE mCtype;

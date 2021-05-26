@@ -60,6 +60,7 @@ private:
 	float transitionY(const float& y, const float& yScale, const Data::Rang& yr);
 	void transitionPoint(QPointF& point, const float& xScale, const Data::Rang& xr, const float& yScale, const Data::Rang& yr);
 	void transitionRectF(QRectF& _rectf, const float& sScale, const Data::Rang& xr, const float& yScale, Data::Rang& yr);
+	void transitionLineF(QLineF& line, const float& xScale, const float& yScale,const Data::Rang &xr,const Data::Rang& yr);
 	bool getTransitionScale(float& xScale, float& yScale);
 	bool drawImagePolar();
 	bool drawImagePolarRz();

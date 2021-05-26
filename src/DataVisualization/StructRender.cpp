@@ -54,6 +54,26 @@ void StructRender::transitionRectF(QRectF& _rectf, const float& xScale, const Da
 }
 
 /**
+* @brief  StructRender::transitionLineF 线段转换
+* @param  QLineF & line  
+* @param  const float & xScale  
+* @param  const float & yScale  
+* @param  const Data::Rang & xr  
+* @param  const Data::Rang & yr  
+* @return void  
+*/
+void StructRender::transitionLineF(QLineF& line, const float& xScale, const float& yScale, const Data::Rang &xr, const Data::Rang& yr)
+{
+	QPointF p1 = line.p1();;
+	QPointF p2 = line.p2();
+	p1.setX(transitionX(p1.x(), xScale, xr));
+	p1.setY(transitionY(p1.y(), yScale, yr));
+	p2.setX(transitionX(p2.x(), xScale, xr));
+	p2.setY(transitionY(p2.y(), yScale, yr));
+	line.setP1(p1);
+	line.setP2(p2);
+}
+/**
 * @brief TimeRenderer::getTransitionScale 初始化数据与图片坐标的缩放比例
 * @param float & xScale
 * @param float & yScale
@@ -350,6 +370,29 @@ bool StructRender::drawImageRectspace(){
 			painter.drawRects(QVector<QRectF>::fromStdVector(iter->second));
 		}
 	}
+	//绘制线段
+	std::map<int, std::vector<QLineF>> mlines = d->GetProperLines();
+	for (auto iter=mlines.begin();iter!=mlines.end();iter++)
+	{
+		//查找当前属性是否有对应颜色
+		auto itercolor=color_pen.find(iter->first);
+		if (itercolor!=color_pen.end())
+		{
+			QPen pen(itercolor.value());
+			pen.setWidth(2);
+			painter.setPen(pen);
+			for (auto iterline = iter->second.begin(); iterline != iter->second.end();iterline++)
+			{
+				transitionLineF(*iterline, xScale, yScale, xr, yr);
+				QLine line = QLine(QPoint(iterline->p1().x(), iterline->p1().y()), QPoint(iterline->p2().x(), iterline->p2().y()));
+				QLineF linef = *iterline;
+				//painter.drawLine(linef);
+				//painter.drawLine(line);
+			}
+			QVector<QLineF> lines = QVector<QLineF>::fromStdVector(iter->second);
+			painter.drawLines(lines);
+		}
+	}
 	auto nImg = img.mirrored(false, true);
 	//#define _Debug
 #ifdef _Debug
@@ -550,7 +593,6 @@ StructData::structpoint StructRender::findApointZr(QPointF _curpostion){
 		_centerpoint.setY(transitionY(_centerpoint.y(), yScale, yr));
 		scaleCoord.push_back(_centerpoint);
 	}
-	//获取最接近的中心点（待优化）
 	unsigned int index = 0;
 	float distance = 10000.0f;
 	for (unsigned int i = 0; i < scaleCoord.size(); i++)
@@ -588,6 +630,40 @@ StructData::structpoint StructRender::findApointZr(QPointF _curpostion){
 	{
 		mpoint.y = recfCoord.top();
 		mpoint.d2 = conduitList[index].top();
+	}
+	//获取线段的点位
+	std::map<int, std::vector<QLineF>> lines = d->GetProperLines();
+	std::vector<QPointF> linePointf;
+	for (auto itermap = lines.begin(); itermap != lines.end();itermap++)
+	{
+		for (auto iterline = itermap->second.begin(); iterline != itermap->second.end();iterline++)
+		{
+			linePointf.push_back(iterline->p1());
+			linePointf.push_back(iterline->p2());
+		}
+	}
+	std::vector<QPointF> linescalePointf;
+	linescalePointf.insert(linescalePointf.end(), linePointf.begin(), linePointf.end());
+	float ldistance=10000.0f;
+	float lindex = 0;
+	for (int index = 0; index < linescalePointf.size();index++)
+	{
+		transitionPoint(linescalePointf[index],xScale,xr,yScale,yr);
+		float lcurdistance = GetDistance(_curpostion, linescalePointf[index]);
+		if (ldistance>lcurdistance)
+		{
+			ldistance = lcurdistance;
+			lindex = index;
+		}
+	}
+	QPointF rectPointf(mpoint.x,mpoint.y);
+	distance = GetDistance(rectPointf, _curpostion);
+	if (distance>ldistance)
+	{
+		mpoint.x = linescalePointf[lindex].x();
+		mpoint.y = linescalePointf[lindex].y();
+		mpoint.d1 = linePointf[lindex].x();
+		mpoint.d2 = linePointf[lindex].y();
 	}
 	return mpoint;
 }
@@ -837,29 +913,21 @@ void StructRender::loadconfig()
 	LoadColor(Freespace);
 	LoadColor(FOIL);
 	//线段-----PORT 2**8，2**9，2**10
-	color_tab[256] = QColor(0,255,0);
-	color_tab[512] = QColor(0, 255, 0);
-	color_tab[1024] = QColor(0, 255, 0);
-	color_pen[256] = color_tab[256];
-	color_pen[512] = color_tab[512];
-	color_pen[1024] = color_tab[1024];
+	color_pen[256] = QColor(0,255,0);
+	color_pen[512] = QColor(0,255,0);
+	color_pen[1024] =QColor(255,0,0);
+	color_pen[1027] = QColor(0, 0, 0);
 	//DRIVER--2^11,2^12,2^13
-	color_tab[2048] = QColor(255, 0, 0);
-	color_tab[4096] = QColor(255, 0, 0);
-	color_tab[8192] = QColor(255, 0, 0);
-	color_pen[2048] = color_tab[2048];
-	color_pen[4096] = color_tab[4096];
-	color_pen[8192] = color_tab[8192];
+	
+	color_pen[2048] = QColor(255, 0, 0);
+	color_pen[4096] = QColor(255, 0, 0);
+	color_pen[8192] = QColor(255, 0, 0);
 	//INDUCTOR--2^14,2^15,2^16
-	color_tab[16384] = QColor(0,0,255);
-	color_tab[32768] = QColor(0,0,255);
-	color_tab[65536] = QColor(0, 0, 255);
-	color_pen[16384] = color_tab[16384];
-	color_pen[32768] = color_tab[32768];
-	color_pen[65536] = color_tab[65536];
+	
+	color_pen[16384] = QColor(0, 0, 255);
+	color_pen[32768] = QColor(0, 0, 255);
+	color_pen[65536] = QColor(0, 0, 255);
 	//未知
-	color_tab[1027] = QColor(0,0,0);
-	color_pen[1027] = QColor(0,0,0);
 #undef LoadColor(a)
 	isAA = atoi(structConfig.getValue("isAlis").c_str());
 }
