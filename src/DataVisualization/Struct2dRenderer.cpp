@@ -284,7 +284,7 @@ bool Struct2DRenderer::getPloy_grid(){
 			}
 		}
 	}
-#pragma region 测试用
+#pragma region 
 	//绘制横向切割线
 	QVector<QLineF> liney = GetCutLine_y();
 	QVector<QLineF> linex = GetCurLine_x();

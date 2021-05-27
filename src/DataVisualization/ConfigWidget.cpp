@@ -291,7 +291,8 @@ void ConfigWidget::saveclicked()
 		}
 		auto levelColorVal = contourGroup.getGroup("levelColorVal");
 		auto levelColor = contourGroup.getGroup("levelColor");
-		std::vector<float> val = arrowCtrl->getVal();
+		std::vector<float> val;
+			//= arrowCtrl->getVal();
 		const QwtColorMap* xmap = scaleWIdget->colorMap();
 		for (auto index = 0; index < val.size();index++)
 		{
@@ -565,7 +566,7 @@ void ConfigWidget::loadxmlConfig(){
 			ui->epuivalence_sval->setText(QString::fromStdString(epuivalenceGroup.getValue("epuivalencesval")));
 		}
 		auto levelColorval = contourGroup.getGroup("levelColorVal");
-		arrowCtrl->setlevel(levelNumber+1);
+		//arrowCtrl->setlevel(levelNumber+1);
 		std::vector<float> val;
 		val.reserve(levelNumber+1);
 		for (auto index = 0; index < levelNumber + 1;++index)
@@ -576,7 +577,7 @@ void ConfigWidget::loadxmlConfig(){
 				val.push_back(atof(s_val.c_str()));
 			}
 		}
-		arrowCtrl->setVal(val);
+		//arrowCtrl->setVal(val);
 	}
 }
 /**
