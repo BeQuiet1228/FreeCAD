@@ -292,7 +292,7 @@ void MainWindow::hideContorlUI()
             {
                 subMdi->close();
                 //d->mdiArea->removeSubWindow(subMdi);
-                //delete subMdi;
+                delete subMdi;
             }
                 
         }
