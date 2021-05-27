@@ -68,23 +68,23 @@
     </message>
     <message>
         <source>&lt;empty&gt;</source>
-        <translation type="vanished">&lt;空&gt;</translation>
+        <translation type="obsolete">&lt;空&gt;</translation>
     </message>
     <message>
         <source>Angle</source>
-        <translation type="vanished">角度</translation>
+        <translation type="obsolete">角度</translation>
     </message>
     <message>
         <source>Axis</source>
-        <translation type="vanished">轴线</translation>
+        <translation type="obsolete">轴线</translation>
     </message>
     <message>
         <source>Position</source>
-        <translation type="vanished">位置</translation>
+        <translation type="obsolete">位置</translation>
     </message>
     <message>
         <source>Base</source>
-        <translation type="vanished">基本</translation>
+        <translation type="obsolete">基本</translation>
     </message>
 </context>
 <context>
@@ -118,6 +118,72 @@
     <message>
         <source>Toggle measurement</source>
         <translation>切换测量</translation>
+    </message>
+</context>
+<context>
+    <name>ControlTreeWidget</name>
+    <message>
+        <source>Contour</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PhaseSpace</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Observe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vector</source>
+        <translation type="unfinished">向量</translation>
+    </message>
+    <message>
+        <source>=</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>/1/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>_Temp.h5</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>_gather.h5</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Dialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished">对话框</translation>
+    </message>
+    <message>
+        <source>Variable Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Insert Rows:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">取消</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">确定</translation>
     </message>
 </context>
 <context>
@@ -332,19 +398,19 @@ while doing a left or right click and move the mouse up or down</source>
     <name>Gui::DAG::Model</name>
     <message>
         <source>Rename</source>
-        <translation type="vanished">重命名</translation>
+        <translation type="obsolete">重命名</translation>
     </message>
     <message>
         <source>Rename object</source>
-        <translation type="vanished">重命名对象</translation>
+        <translation type="obsolete">重命名对象</translation>
     </message>
     <message>
         <source>Finish editing</source>
-        <translation type="vanished">完成编辑</translation>
+        <translation type="obsolete">完成编辑</translation>
     </message>
     <message>
         <source>Finish editing object</source>
-        <translation type="vanished">完成编辑对象</translation>
+        <translation type="obsolete">完成编辑对象</translation>
     </message>
 </context>
 <context>
@@ -387,15 +453,15 @@ while doing a left or right click and move the mouse up or down</source>
     </message>
     <message>
         <source>Credits</source>
-        <translation type="vanished">鸣谢</translation>
+        <translation type="obsolete">鸣谢</translation>
     </message>
     <message>
         <source>FreeCAD would be nowhere without their efforts:</source>
-        <translation type="vanished">FreeCAD能够在此皆因这些人的贡献：</translation>
+        <translation type="obsolete">FreeCAD能够在此皆因这些人的贡献：</translation>
     </message>
     <message>
         <source>License</source>
-        <translation type="vanished">授权许可</translation>
+        <translation type="obsolete">授权许可</translation>
     </message>
 </context>
 <context>
@@ -2601,11 +2667,11 @@ Specify another directory, please.</source>
     </message>
     <message>
         <source>Magnitude</source>
-        <translation type="vanished">量纲</translation>
+        <translation type="obsolete">量纲</translation>
     </message>
     <message>
         <source>Unit</source>
-        <translation type="vanished">单位</translation>
+        <translation type="obsolete">单位</translation>
     </message>
     <message>
         <source>User system:</source>
@@ -3947,12 +4013,16 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Object dependencies</source>
-        <translation type="vanished">对象依赖关系</translation>
+        <translation type="obsolete">对象依赖关系</translation>
     </message>
     <message>
         <source>The selected objects have a dependency to unselected objects.
 Do you want to copy them, too?</source>
-        <translation type="vanished">所选物件与未选取物件有依赖,要一起复制它们吗?</translation>
+        <translation type="obsolete">所选物件与未选取物件有依赖,要一起复制它们吗?</translation>
+    </message>
+    <message>
+        <source>»ñÈ¡½á¹û</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4136,25 +4206,25 @@ How do you want to proceed?</source>
     <name>Gui::PropertyEditor::LinkLabel</name>
     <message>
         <source>Change the linked object</source>
-        <translation type="vanished">更改链接的对象</translation>
+        <translation type="obsolete">更改链接的对象</translation>
     </message>
 </context>
 <context>
     <name>Gui::PropertyEditor::LinkListLabel</name>
     <message>
         <source>Change the linked objects</source>
-        <translation type="vanished">更改链接的对象</translation>
+        <translation type="obsolete">更改链接的对象</translation>
     </message>
 </context>
 <context>
     <name>Gui::PropertyEditor::PropertyModel</name>
     <message>
         <source>Property</source>
-        <translation type="vanished">属性</translation>
+        <translation type="obsolete">属性</translation>
     </message>
     <message>
         <source>Value</source>
-        <translation type="vanished">值</translation>
+        <translation type="obsolete">值</translation>
     </message>
 </context>
 <context>
@@ -4433,56 +4503,56 @@ Do you want to specify another directory?</source>
     <name>Gui::TaskView::TaskAppearance</name>
     <message>
         <source>Plot mode:</source>
-        <translation type="vanished">图表模式:</translation>
+        <translation type="obsolete">图表模式:</translation>
     </message>
     <message>
         <source>Point size:</source>
-        <translation type="vanished">点大小:</translation>
+        <translation type="obsolete">点大小:</translation>
     </message>
     <message>
         <source>Line width:</source>
-        <translation type="vanished">线宽:</translation>
+        <translation type="obsolete">线宽:</translation>
     </message>
     <message>
         <source>Transparency:</source>
-        <translation type="vanished">透明度:</translation>
+        <translation type="obsolete">透明度:</translation>
     </message>
     <message>
         <source>Appearance</source>
-        <translation type="vanished">外观</translation>
+        <translation type="obsolete">外观</translation>
     </message>
     <message>
         <source>Document window:</source>
-        <translation type="vanished">文档窗口:</translation>
+        <translation type="obsolete">文档窗口:</translation>
     </message>
 </context>
 <context>
     <name>Gui::TaskView::TaskDialog</name>
     <message>
         <source>A dialog is already open in the task panel</source>
-        <translation type="vanished">一个对话框已在任务面板打开</translation>
+        <translation type="obsolete">一个对话框已在任务面板打开</translation>
     </message>
 </context>
 <context>
     <name>Gui::TaskView::TaskEditControl</name>
     <message>
         <source>Edit</source>
-        <translation type="vanished">编辑</translation>
+        <translation type="obsolete">编辑</translation>
     </message>
 </context>
 <context>
     <name>Gui::TaskView::TaskSelectLinkProperty</name>
     <message>
         <source>Appearance</source>
-        <translation type="vanished">外观</translation>
+        <translation type="obsolete">外观</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="vanished">...</translation>
+        <translation type="obsolete">...</translation>
     </message>
     <message>
         <source>edit selection</source>
-        <translation type="vanished">编辑选择</translation>
+        <translation type="obsolete">编辑选择</translation>
     </message>
 </context>
 <context>
@@ -5119,7 +5189,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>Do you want to close this dialog?</source>
-        <translation type="vanished">您要关闭此对话框吗?</translation>
+        <translation type="obsolete">您要关闭此对话框吗?</translation>
     </message>
     <message>
         <source>Do you want to save your changes to document &apos;%1&apos; before closing?</source>
@@ -5155,7 +5225,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>Origin</source>
-        <translation type="vanished">原点</translation>
+        <translation type="obsolete">原点</translation>
     </message>
     <message>
         <source> %1.%2.%3 </source>
@@ -5186,11 +5256,11 @@ Be aware the point where you click matters.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>你确定要关闭工程并关闭仿真程序吗？QAQ</source>
+        <source>Save  Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Save  Document</source>
+        <source>ä½&#xa0;ç¡®å®è¦å&#x85;³é­å·¥ç¨å¹¶å&#x85;³é­ä»¿çç¨åºåï¼QAQ</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5224,11 +5294,11 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>&amp;About %1</source>
-        <translation type="vanished">关于%1(&amp;A)</translation>
+        <translation type="obsolete">关于%1(&amp;A)</translation>
     </message>
     <message>
         <source>About %1</source>
-        <translation type="vanished">关于 %1</translation>
+        <translation type="obsolete">关于 %1</translation>
     </message>
     <message>
         <source>&amp;About CHIPIC</source>
@@ -5405,6 +5475,44 @@ Be aware the point where you click matters.</source>
     </message>
 </context>
 <context>
+    <name>StdCmdContourImageMod</name>
+    <message>
+        <source>File</source>
+        <translation type="unfinished">文件</translation>
+    </message>
+    <message>
+        <source>Image(on)</source>
+        <translation type="unfinished">等位图着色（开）</translation>
+    </message>
+    <message>
+        <source>ContourImageMod</source>
+        <translation type="unfinished">等值线图表是否着色</translation>
+    </message>
+    <message>
+        <source>Image(off)</source>
+        <translation type="unfinished">等位图着色（关）</translation>
+    </message>
+</context>
+<context>
+    <name>StdCmdContourLineMod</name>
+    <message>
+        <source>File</source>
+        <translation type="unfinished">文件</translation>
+    </message>
+    <message>
+        <source>contour(on)</source>
+        <translation type="unfinished">等值线（开）</translation>
+    </message>
+    <message>
+        <source>ContourLineMod</source>
+        <translation type="unfinished">等值线图表是否绘制等值线</translation>
+    </message>
+    <message>
+        <source>contour(off)</source>
+        <translation type="unfinished">等值线（关）</translation>
+    </message>
+</context>
+<context>
     <name>StdCmdCopy</name>
     <message>
         <source>Edit</source>
@@ -5432,6 +5540,44 @@ Be aware the point where you click matters.</source>
     <message>
         <source>Cut out</source>
         <translation>剪切</translation>
+    </message>
+</context>
+<context>
+    <name>StdCmdDataVisualizationAutoMax</name>
+    <message>
+        <source>open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AutoMax</source>
+        <translation type="unfinished">图表复位</translation>
+    </message>
+    <message>
+        <source>Data visualization plot auto max renderer!</source>
+        <translation type="unfinished">图表恢复到最初的渲染位置！</translation>
+    </message>
+    <message>
+        <source>Std_Data_Visualization_Auto_Max</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StdCmdDataVisualizationPlotDisplayGridMod</name>
+    <message>
+        <source>File</source>
+        <translation type="unfinished">文件</translation>
+    </message>
+    <message>
+        <source>Grid(off)</source>
+        <translation type="unfinished">图表网格（关）</translation>
+    </message>
+    <message>
+        <source>plot grid display mod</source>
+        <translation type="unfinished">是否开启图表上的网格显示</translation>
+    </message>
+    <message>
+        <source>Grid(on)</source>
+        <translation type="unfinished">图表网格（开）</translation>
     </message>
 </context>
 <context>
@@ -5649,11 +5795,11 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>No selection</source>
-        <translation type="vanished">无选择</translation>
+        <translation type="obsolete">无选择</translation>
     </message>
     <message>
         <source>Please select first the objects you want to export.</source>
-        <translation type="vanished">请先选择要导出的对象.</translation>
+        <translation type="obsolete">请先选择要导出的对象.</translation>
     </message>
 </context>
 <context>
@@ -6003,6 +6149,17 @@ Be aware the point where you click matters.</source>
     </message>
 </context>
 <context>
+    <name>StdCmdMyParameter</name>
+    <message>
+        <source>My_Parameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Std_My_Parameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>StdCmdNew</name>
     <message>
         <source>File</source>
@@ -6059,31 +6216,31 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>find</source>
-        <translation type="vanished">查找(&amp;O)...</translation>
+        <translation type="obsolete">查找(&amp;O)...</translation>
     </message>
     <message>
         <source>RunM3d</source>
-        <translation type="vanished">运行</translation>
+        <translation type="obsolete">运行</translation>
     </message>
     <message>
         <source>ConnectWay</source>
-        <translation type="vanished">连接方式</translation>
+        <translation type="obsolete">连接方式</translation>
     </message>
     <message>
         <source>ParalleRun</source>
-        <translation type="vanished">并行运行</translation>
+        <translation type="obsolete">并行运行</translation>
     </message>
     <message>
         <source>SmartContorl</source>
-        <translation type="vanished">优化算法</translation>
+        <translation type="obsolete">优化算法</translation>
     </message>
     <message>
         <source>StopM3d</source>
-        <translation type="vanished">停止</translation>
+        <translation type="obsolete">停止</translation>
     </message>
     <message>
         <source>&amp;Find...</source>
-        <translation type="vanished">查找(&amp;O)...</translation>
+        <translation type="obsolete">查找(&amp;O)...</translation>
     </message>
     <message>
         <source>Open a document or import files</source>
@@ -6123,6 +6280,25 @@ Be aware the point where you click matters.</source>
     <message>
         <source>Std_Open_Command_book</source>
         <translation></translation>
+    </message>
+</context>
+<context>
+    <name>StdCmdOpenDataVisualizationConfig</name>
+    <message>
+        <source>open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>VisualizationConfig</source>
+        <translation type="unfinished">图表设置</translation>
+    </message>
+    <message>
+        <source>Open Data Visualization Config</source>
+        <translation>设置各种图表的自定义信息，如线条颜色、字体大小、等..</translation>
+    </message>
+    <message>
+        <source>Std_Open_Data_Visualization_Config</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6412,6 +6588,25 @@ Be aware the point where you click matters.</source>
     <message>
         <source>StopM3d</source>
         <translation>停止</translation>
+    </message>
+</context>
+<context>
+    <name>StdCmdRunSuperTube</name>
+    <message>
+        <source>open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SuperTube</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>open SuperTube</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Std_Run_Super_Tube</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7078,11 +7273,11 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>Rotate the view by 90Â° counter-clockwise</source>
-        <translation type="vanished">旋转 90 ° 逆时针旋转视图</translation>
+        <translation>旋转 90 ° 逆时针旋转视图</translation>
     </message>
     <message>
         <source>Rotate the view by 90° counter-clockwise</source>
-        <translation>旋转 90 ° 逆时针旋转视图</translation>
+        <translation type="obsolete">旋转 90 ° 逆时针旋转视图</translation>
     </message>
 </context>
 <context>
@@ -7097,11 +7292,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>Rotate the view by 90Â° clockwise</source>
-        <translation type="vanished">按顺时针旋转90°旋转视图</translation>
-    </message>
-    <message>
-        <source>Rotate the view by 90° clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>按顺时针旋转90°旋转视图</translation>
     </message>
 </context>
 <context>
@@ -7554,7 +7745,7 @@ Do you want to duplicate them, too?</source>
     <name>testClass</name>
     <message>
         <source>test</source>
-        <translation type="vanished">测试</translation>
+        <translation type="obsolete">测试</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -7565,7 +7756,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:20pt; font-weight:600;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Created for Qt 4.3.x&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; font-weight:600;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; font-weight:600;&quot;&gt;www.ii-system.com&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="vanished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-size:20pt; font-weight:600;&quot;&gt;iisTaskPanel&lt;/span&gt;&lt;/p&gt;
@@ -7576,15 +7767,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Choose the style of the Task Panel</source>
-        <translation type="vanished">选择任务面板的样式</translation>
+        <translation type="obsolete">选择任务面板的样式</translation>
     </message>
     <message>
         <source>Default</source>
-        <translation type="vanished">默认</translation>
+        <translation type="obsolete">默认</translation>
     </message>
     <message>
         <source>Windows XP</source>
-        <translation type="vanished">Windows XP</translation>
+        <translation type="obsolete">Windows XP</translation>
     </message>
 </context>
 </TS>

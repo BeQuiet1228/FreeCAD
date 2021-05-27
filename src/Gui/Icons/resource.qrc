@@ -178,6 +178,14 @@
         <file>help-help.svg</file>
         <file>help-supertube.svg</file>
         <file>help-user-book.svg</file>
+        <file>contour_image_off.svg</file>
+        <file>contour_image_on.svg</file>
+        <file>contour_line_off.svg</file>
+        <file>grid_line_off.svg</file>
+        <file>grid_line_on.svg</file>
+        <file>plot_setting.svg</file>
+        <file>rest.svg</file>
+        <file>contour_line_on.svg</file>
     </qresource>
     <qresource prefix="/icons/FreeCAD-default">
         <file>index.theme</file>

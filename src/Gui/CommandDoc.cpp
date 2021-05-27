@@ -1920,7 +1920,7 @@ StdCmdContourImageMod::StdCmdContourImageMod()
 	sToolTipText = QT_TR_NOOP("ContourImageMod");
 	sWhatsThis = "Std_Contour_Image_Mod";
 	sStatusTip = QT_TR_NOOP("ContourImageMod");
-	sPixmap = "local";
+	sPixmap = "contour_image_on";
 }
 
 void StdCmdContourImageMod::activated(int iMsg)
@@ -1930,8 +1930,10 @@ void StdCmdContourImageMod::activated(int iMsg)
     if (strcmp(ret, "on") == 0)
     {
         sMenuText = QT_TR_NOOP("Image(on)");
+        sPixmap = "contour_image_on";
     }else {
         sMenuText = QT_TR_NOOP("Image(off)");
+        sPixmap = "contour_image_off";
     }
     updataActionIcon();
 }
@@ -1945,7 +1947,7 @@ public:
     StdCmdContourLineMod();
 	~StdCmdContourLineMod() = default;
 	const char* className() const override {
-		return "StdCmdContourImageMod";
+		return "StdCmdContourLineMod";
 	}
 protected:
 	virtual void activated(int iMsg);
@@ -1956,11 +1958,11 @@ StdCmdContourLineMod::StdCmdContourLineMod()
     :StdCmdRunM3d("Std_Contour_Line_Mod")
 {
 	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("Line(on)");
+	sMenuText = QT_TR_NOOP("contour(on)");
 	sToolTipText = QT_TR_NOOP("ContourLineMod");
 	sWhatsThis = "Std_Contour_Line_Mod";
 	sStatusTip = QT_TR_NOOP("ContourLineMod");
-	sPixmap = "local";
+	sPixmap = "contour_line_on";
 }
 
 
@@ -1970,10 +1972,12 @@ void StdCmdContourLineMod::activated(int iMsg)
 	getGuiApplication()->sendMsgToActiveView("ContourLineMod", &ret);
 	if (strcmp(ret, "on") == 0)
 	{
-		sMenuText = QT_TR_NOOP("Line(on)");
+		sMenuText = QT_TR_NOOP("contour(on)");
+        sPixmap = "contour_line_on";
 	}
 	else {
-		sMenuText = QT_TR_NOOP("Line(off)");
+		sMenuText = QT_TR_NOOP("contour(off)");
+        sPixmap = "contour_line_off";
 	}
 	updataActionIcon();
 }
@@ -2003,7 +2007,7 @@ StdCmdDataVisualizationPlotDisplayGridMod::StdCmdDataVisualizationPlotDisplayGri
 	sToolTipText = QT_TR_NOOP("plot grid display mod");
 	sWhatsThis = "Std_Data_Visualization_Plot_Display_Grid_Mod";
 	sStatusTip = QT_TR_NOOP("plot grid display mod");
-	sPixmap = "local";
+	sPixmap = "grid_line_on";
 }
 
 void StdCmdDataVisualizationPlotDisplayGridMod::activated(int iMsg)
@@ -2012,10 +2016,12 @@ void StdCmdDataVisualizationPlotDisplayGridMod::activated(int iMsg)
 	getGuiApplication()->sendMsgToActiveView("PlotDisplayMod", &ret);
 	if (strcmp(ret, "on") == 0)
 	{
-		sMenuText = QT_TR_NOOP("Line(on)");
+		sMenuText = QT_TR_NOOP("Grid(on)");
+        sPixmap = "grid_line_on";
 	}
 	else {
-		sMenuText = QT_TR_NOOP("Line(off)");
+		sMenuText = QT_TR_NOOP("Grid(off)");
+        sPixmap = "grid_line_off";
 	}
 	updataActionIcon();
 }
@@ -2258,7 +2264,7 @@ StdCmdOpenDataVisualizationConfig::StdCmdOpenDataVisualizationConfig()
 	sToolTipText = QT_TR_NOOP("Open Data Visualization Config");
 	sWhatsThis = "Std_Open_Data_Visualization_Config";
 	sStatusTip = QT_TR_NOOP("Std_Open_Data_Visualization_Config");
-	sPixmap = "help-supertube";
+	sPixmap = "plot_setting";
 }
 void StdCmdOpenDataVisualizationConfig::activated(int iMsg)
 {
@@ -2281,7 +2287,7 @@ StdCmdDataVisualizationAutoMax::StdCmdDataVisualizationAutoMax()
 	sToolTipText = QT_TR_NOOP("Data visualization plot auto max renderer!");
 	sWhatsThis = "Std_Data_Visualization_Auto_Max";
 	sStatusTip = QT_TR_NOOP("Std_Data_Visualization_Auto_Max");
-	sPixmap = "help-supertube";
+	sPixmap = "rest";
 }
 void StdCmdDataVisualizationAutoMax::activated(int iMsg)
 {

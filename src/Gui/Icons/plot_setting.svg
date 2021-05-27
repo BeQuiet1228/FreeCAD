@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>图表设置</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#EEEEEE" offset="0%"></stop>
+            <stop stop-color="#D8D8D8" offset="97.4767736%"></stop>
+        </linearGradient>
+        <rect id="path-2" x="0" y="0" width="10" height="12" rx="1"></rect>
+        <filter x="-5.0%" y="-4.2%" width="110.0%" height="108.3%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="1" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 1 0" type="matrix" in="shadowInnerInner1" result="shadowMatrixInner1"></feColorMatrix>
+            <feOffset dx="-1" dy="-1" in="SourceAlpha" result="shadowOffsetInner2"></feOffset>
+            <feComposite in="shadowOffsetInner2" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner2"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.3 0" type="matrix" in="shadowInnerInner2" result="shadowMatrixInner2"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner2"></feMergeNode>
+            </feMerge>
+        </filter>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-4">
+            <stop stop-color="#EEEEEE" offset="0.0422297297%"></stop>
+            <stop stop-color="#D8D8D8" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="新增图标5.25输出" transform="translate(-524.000000, -78.000000)">
+            <g id="图表设置" transform="translate(524.000000, 78.000000)">
+                <g id="Group" transform="translate(2.000000, 2.000000)">
+                    <g id="矩形">
+                        <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
+                        <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                        <rect stroke="#1A1A1A" stroke-width="0.5" stroke-linejoin="square" x="0.25" y="0.25" width="9.5" height="11.5" rx="1"></rect>
+                    </g>
+                </g>
+                <line x1="2.26715088" y1="5.02099609" x2="11.734375" y2="5.02099609" id="路径-28" stroke="#1A1A1A" stroke-width="0.25"></line>
+                <line x1="2" y1="8" x2="11.7" y2="8" id="路径-28备份" stroke="#1A1A1A" stroke-width="0.25"></line>
+                <line x1="2" y1="11" x2="11.7" y2="11" id="路径-28备份-2" stroke="#1A1A1A" stroke-width="0.25"></line>
+                <line x1="4.00561523" y1="2.3505249" x2="4.00561523" y2="13.7108154" id="路径-29" stroke="#1A1A1A" stroke-width="0.25"></line>
+                <line x1="10" y1="2" x2="10" y2="13.8" id="路径-29备份-2" stroke="#1A1A1A" stroke-width="0.25"></line>
+                <line x1="7" y1="2" x2="7" y2="13.8" id="路径-29备份" stroke="#1A1A1A" stroke-width="0.25"></line>
+                <g id="setting-two-(1)" transform="translate(5.500000, 7.000000)" stroke="#1A1A1A" stroke-linejoin="round" stroke-width="0.5">
+                    <path d="M3.213855,8 C2.4598575,7.7924063 1.788705,7.40699404 1.25727075,6.89632227 C1.455525,6.6790324 1.575,6.39828049 1.575,6.09172762 C1.575,5.40223855 0.97058475,4.84329401 0.225,4.84329401 C0.17989875,4.84329401 0.13531275,4.84533312 0.09134775,4.84932811 C0.03145275,4.57854286 0,4.29816548 0,4.01100494 C0,3.57600906 0.07217325,3.15659779 0.20605275,2.76244649 C0.21235725,2.76252972 0.218673,2.76257134 0.225,2.76257134 C0.97058475,2.76257134 1.575,2.2036268 1.575,1.51413773 C1.575,1.31619858 1.525185,1.12901677 1.436535,0.96274414 C1.9569375,0.51525976 2.5921125,0.180373687 3.2967225,0 C3.51999,0.404710964 3.9750075,0.68185074 4.5,0.68185074 C5.0249925,0.68185074 5.48001,0.404710964 5.7032775,0 C6.4078875,0.180373687 7.0430625,0.51525976 7.563465,0.96274414 C7.474815,1.12901677 7.425,1.31619858 7.425,1.51413773 C7.425,2.2036268 8.0294175,2.76257134 8.775,2.76257134 C8.7813225,2.76257134 8.787645,2.76252972 8.793945,2.76244649 C8.92782,3.15659779 9,3.57600906 9,4.01100494 C9,4.29816548 8.968545,4.57854286 8.90865,4.84932811 C8.864685,4.84533312 8.8201125,4.84329401 8.775,4.84329401 C8.0294175,4.84329401 7.425,5.40223855 7.425,6.09172762 C7.425,6.39828049 7.544475,6.6790324 7.7427225,6.89632227 C7.211295,7.40699404 6.5401425,7.7924063 5.786145,8 C5.61213,7.49658996 5.1021,7.13208896 4.5,7.13208896 C3.8979,7.13208896 3.38787,7.49658996 3.213855,8 Z" id="Path" fill="url(#linearGradient-4)"></path>
+                    <path d="M4.5,5.5 C5.32842857,5.5 6,4.82842857 6,4 C6,3.17157143 5.32842857,2.5 4.5,2.5 C3.67157143,2.5 3,3.17157143 3,4 C3,4.82842857 3.67157143,5.5 4.5,5.5 Z" id="Path" fill="#E7E7E7"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
