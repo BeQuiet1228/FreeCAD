@@ -278,9 +278,9 @@ void ParticleRenderer::loadconfig()
 	Config::GetInstance()->loadConfig();
 	auto Group = Config::GetInstance()->getRootGroup();
 	auto particleGroup = Group.getGroup("particle");
-	particleColor = QStringToQColor(QString::fromStdString(particleGroup.getValue("color")));
-	particleSize = atoi(particleGroup.getValue("size").c_str());
-	isAA = atoi(particleGroup.getValue("isAlis").c_str());
+	particleColor = QStringToQColor(QString::fromStdString(particleGroup.getGroup("color").getValue("value")));
+	particleSize = atoi(particleGroup.getGroup("size").getValue("value").c_str());
+	isAA = atoi(particleGroup.getGroup("AlisAttitude").getValue("isAlis").c_str());
 }
 
 /**

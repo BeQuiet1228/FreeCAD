@@ -14,26 +14,26 @@ namespace Mas{
 	enum DATA_VISUALIZATION_EXPORT structTexture
 	{
 		//理想导体
-		PerfectConductor = 3,
+		PERFECTCONDUCTOR = 3,
 		//电导新材料
-		ConductorNew = 8,
+		CONDUCTORNEW = 8,
 		//介质
-		Diolectric = 4,
+		DIOLECTRIC = 4,
 		//电介质和电导
-		dielectirAndconductance = 16,
+		DIELECTIRANDCONDUCTANCE = 16,
 		//磁导率
-		Permeability = 32,
+		PERMEABILITY = 32,
 		//
-		Freespace = 64,
+		FREESPACE = 64,
 		//
 		FOIL = 128,
 
 		//线段
 		//波导端口
-		waveGuideport = 1024,
+		WAVEGUIDEPORT = 1024,
 		DRIVER = 2048,
 		//感应器
-		Inductor = 16384
+		INDUCTOR = 16384
 
 	};
 	struct DATA_VISUALIZATION_EXPORT Setconfig

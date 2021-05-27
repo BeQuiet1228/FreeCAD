@@ -927,11 +927,11 @@ void Axis::loadconfig()
 	auto Group = Config::GetInstance()->getRootGroup();
 	auto axisGroup = Group.getGroup("axis");
 	//获取刻度颜色
-	axisParams.AxisColor=QStringToQColor(QString::fromStdString(axisGroup.getValue("axisColor")));
-	int UnitSize = atoi(axisGroup.getValue("axisSize").c_str());
-	axisParams.AxisValColor=QStringToQColor(QString::fromStdString(axisGroup.getValue("axisvalColor")));
+	axisParams.AxisColor=QStringToQColor(QString::fromStdString(axisGroup.getGroup("axisColor").getValue("value")));
+	int UnitSize = atoi(axisGroup.getGroup("axisSize").getValue("value").c_str());
+	axisParams.AxisValColor = QStringToQColor(QString::fromStdString(axisGroup.getGroup("axisvalColor").getValue("value")));
 	axisParams.AxisUnitSize= UnitSize;
-	axisParams.AxisValSize = atoi(axisGroup.getValue("axisvalSize").c_str());
+	axisParams.AxisValSize = atoi(axisGroup.getGroup("axisvalSize").getValue("value").c_str());
 	axisParams.AxisValSize = ((axisParams.AxisValSize < 10) ? 10 : (axisParams.AxisValSize));
 }
 

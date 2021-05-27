@@ -480,18 +480,17 @@ void Struct2DRenderer::loadconfig(){
 	auto structGroup = mGroup.getGroup("struct");
 	auto struct2DGroup = mGroup.getGroup("struct2D");
 #define GETCONFIG(x)\
-	color_tab[x]=QStringToQColor(QString::fromStdString(structGroup.getValue(#x)));\
-	color_line[x]=QStringToQColor(QString::fromStdString(structGroup.getValue(#x "line")));\
-			{QPen pen(QStringToQColor(QString::fromStdString(struct2DGroup.getValue(#x))));\
-	pen.setStyle((struct2DGroup.getValue(#x "type").find("solid")!=std::string::npos)?(Qt::SolidLine):(Qt::DashLine));\
-	pen.setWidth(atoi((struct2DGroup.getValue(#x "width")).c_str()));\
+	color_tab[x]=QStringToQColor(QString::fromStdString(structGroup.getGroup(#x).getValue("value")));\
+	color_line[x]=QStringToQColor(QString::fromStdString(structGroup.getGroup(#x "LINE").getValue("value")));\
+				{QPen pen(QStringToQColor(QString::fromStdString(struct2DGroup.getGroup(#x).getValue("value"))));\
+	pen.setStyle((struct2DGroup.getGroup(#x "TYPE").getValue("value").find("solid")!=std::string::npos)?(Qt::SolidLine):(Qt::DashLine));\
+	pen.setWidth(atoi((struct2DGroup.getGroup(#x "WIDTH").getValue("value")).c_str()));\
 	pen_tab[x]=pen;\
 	}
-	GETCONFIG(PerfectConductor);
-	GETCONFIG(ConductorNew);
-	GETCONFIG(Diolectric);
-	GETCONFIG(Permeability);
-	GETCONFIG(waveGuideport);
+	GETCONFIG(PERFECTCONDUCTOR);
+	GETCONFIG(CONDUCTORNEW);
+	GETCONFIG(DIOLECTRIC);
+	GETCONFIG(PERMEABILITY);
 #undef GETCONFIG(x)
 	isAA = atoi(structGroup.getValue("isAlis").c_str());
 }

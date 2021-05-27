@@ -366,9 +366,9 @@ void TimeRenderer::loadconfig()
 	Config::GetInstance()->loadConfig();
 	auto mGroup = Config::GetInstance()->getRootGroup();
 	auto timeconfig = mGroup.getGroup("observe");
-	unsigned __int32 _pensize = atoi(timeconfig.getValue("lineSize").c_str());
-	QColor _penColor = QStringToQColor(QString::fromStdString(timeconfig.getValue("lineColor")));
+	unsigned __int32 _pensize = atoi(timeconfig.getGroup("lineSize").getValue("value").c_str());
+	QColor _penColor = QStringToQColor(QString::fromStdString(timeconfig.getGroup("lineColor").getValue("value")));
 	(_penColor != Qt::white) ? (penColor = _penColor):(penColor=Qt::red);
 	(_pensize > 0 && _pensize < 6) ? (pensize = _pensize) :(pensize) ;
-	isAA = atoi(timeconfig.getValue("isAlis").c_str());
+	isAA = atoi(timeconfig.getGroup("AlisAttitude").getValue("isAlis").c_str());
 }

@@ -201,7 +201,16 @@ bool phasorRenderer::drawImage_Scence(){
 		//计算网格大小
 		float widthgrid = (d->getdefXrang().max - d->getdefXrang().min)*xScale / d->getXsize();
 		float heightrid = (d->getdefYrang().max - d->getdefYrang().min)*yScale / d->getYsize();
-		maxCoef = sqrt(widthgrid*widthgrid + heightrid*heightrid);
+		//这里修改效果
+		if (widthgrid>heightrid)
+		{
+			maxCoef = heightrid;
+		}
+		else
+		{
+			maxCoef = widthgrid;
+		}
+		//maxCoef = sqrt(widthgrid*widthgrid + heightrid*heightrid);
 	}
 	switch (d->GetdisMode())
 	{
@@ -213,8 +222,8 @@ bool phasorRenderer::drawImage_Scence(){
 			pen.setWidth(penSize);
 			painter.setPen(pen);
 			transitionpointF(p1[i], xScale, yScale, xr, yr);
-			p2[i].setX(p1[i].x() + p2[i].x()*maxCoef / 3);
-			p2[i].setY(p1[i].y() - p2[i].y()*maxCoef / 3);
+			p2[i].setX(p1[i].x() + p2[i].x()*maxCoef*0.9 );
+			p2[i].setY(p1[i].y() - p2[i].y()*maxCoef*0.9 );
 			painter.drawLine(p1[i], p2[i]);
 			painter.drawLine(p2[i], GetarrowTop(p2[i], p1[i]));
 			painter.drawLine(p2[i], GetarrowBottom(p2[i], p1[i]));
@@ -442,11 +451,11 @@ void phasorRenderer::loadconfig()
 	Config::GetInstance()->loadConfig();
 	auto group = Config::GetInstance()->getRootGroup();
 	auto vectorGroup = group.getGroup("vector");
-	penSize =atoi(vectorGroup.getValue("vectorsize").c_str());
-	penColor = QStringToQColor(QString::fromStdString(vectorGroup.getValue("vectorColor")));
-	isAA = atoi(vectorGroup.getValue("isAlis").c_str());
+	penSize = atoi(vectorGroup.getGroup("vectorsize").getValue("value").c_str());
+	penColor = QStringToQColor(QString::fromStdString(vectorGroup.getGroup("vectorColor").getValue("value")));
+	isAA = atoi(vectorGroup.getGroup("AlisAttitude").getValue("isAlis").c_str());
 	//矢量展示模式
-	bool isSizeToColor = atoi(vectorGroup.getValue("disMode").c_str());
+	bool isSizeToColor = atoi(vectorGroup.getGroup("disMode").getValue("value").c_str());
 	std::shared_ptr<phasorData> d = std::dynamic_pointer_cast<phasorData>(data);
 	if (isSizeToColor)
 		d->setdisMode(phasorData::DISMODE::sizeToColor);

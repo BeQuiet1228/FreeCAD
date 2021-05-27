@@ -16,7 +16,14 @@ namespace Gui{
 		//bIsPassive = false;
 	}
 	PlotMDIView::~PlotMDIView(){
-		printf("析构\n");
+		if (contourStateGetter)
+		{
+			delete contourStateGetter;
+		}
+		if (plot)
+		{
+			delete plot;
+		}
 	}
 	/**
 	* @brief PlotMDIView::GetViewPtr 获取plot控件的指针
