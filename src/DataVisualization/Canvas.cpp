@@ -61,7 +61,7 @@ void Canvas::paintEvent(QPaintEvent *event)
 	{
 		painter.drawRect(selectRect);
 	}
-//	painter.drawRect(0, 0, this->width()-2, this->height()-2);
+	painter.drawRect(0, 0, this->width()-2, this->height()-2);
 }
 
 /**
