@@ -53,7 +53,6 @@ class DATA_VISUALIZATION_EXPORT ConfigWidget :public QWidget
 {
 	Q_OBJECT
 public:
-public:
 	explicit ConfigWidget(QWidget* panter = nullptr);
 	~ConfigWidget();
 protected:

@@ -14,7 +14,7 @@ public:
 	void initUI();
 	virtual void resizeEvent(QResizeEvent * event) override;
 	public Q_SLOTS:
-void changmoveColor(std::vector<float>& val,std::vector<QColor>& colors);
+void changmoveColor(std::vector<float>& val,std::vector<QColor>& colors,const QColor& firstColor,const QColor& endColor);
 private:
 	QwtScaleWidget* scaleWidget;
 	QwtScaleEngine* scaleEngine;

@@ -5,7 +5,8 @@
 #include "RenderThreadManager.h"
 #include "RenderTask.h"
 #include "Renderer.h"
-#include "qwt/qwt_scale_widget.h"
+//#include "qwt/qwt_scale_widget.h"
+#include "ColorMapWidget.h"
 #include "qwt/qwt_scale_engine.h"
 #include "ContourRender.h"
 #include <stack>
@@ -380,7 +381,7 @@ void Plot::initGUI()
 	AxisB->SetAxisNumber(xAxisLevel);
 	connect(AxisL, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererYRang(const float&, const float&)));
 	connect(AxisB, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererXRang(const float&, const float&)));
-	scaleWIdget = new QwtScaleWidget(QwtScaleDraw::RightScale, this);
+	scaleWIdget = new ColorMapWidget(QwtScaleDraw::RightScale, this);
 	scaleWIdget->setColorBarEnabled(true);
 	scaleWIdget->setColorBarWidth(20);
 

@@ -16,6 +16,9 @@ QString pngresource[] = { ":/Arrow/arrow1.png" };
 */
 ArrowCtrl::ArrowCtrl(Direction direction, QWidget* parent) :QWidget(parent), mdirection(direction), nimg(nullptr), actionindex(-1)
 {
+	
+	firstColor=QColor(Qt::darkBlue);
+	endColor=QColor(Qt::darkRed);
 	initUI();
 }
 /**
@@ -58,13 +61,9 @@ void ArrowCtrl::mouseMoveEvent(QMouseEvent* event)
 		else
 		p1.setX(event->posF().x());
 		pos[curarrow].moveCenter(p1);
-		std::vector<float> vall;
-		for (auto index = 0; index < pos.size(); index++)
-		{
-			vall.push_back(pos[index].center().x() / (float)this->size().width());
-		}
-		emit changMoveColor(vall, mapColor);
+		val[curarrow] = p1.x() / this->width();
 		drawImage();
+		setColorMap();
 	}
 }
 /**
@@ -173,7 +172,7 @@ void ArrowCtrl::setlevel(int number)
 void ArrowCtrl::resizeEvent(QResizeEvent * event)
 {
 	QSize pngsize(this->height(), this->height());
-	for (int index = 0; index < levelnumber;index++)
+	for (int index = 0; index < pos.size();index++)
 	{
 		marrowmap[index] = marrowmap[index].scaled(pngsize,Qt::KeepAspectRatio, Qt::SmoothTransformation);
 		QRectF rectF(val[index] * this->size().width() - marrowmap[index].size().width() / 2, 
@@ -222,18 +221,6 @@ void ArrowCtrl::setVal(std::vector<float>& a){
 	}
 }
 /**
-* @brief  ArrowCtrl::getVal 获取等级范围
-* @return std::vector<float>  
-*/
-std::vector<float> ArrowCtrl::getVal(){
-	for (auto index = 0; index < pos.size();index++)
-	{
-		val[index] = pos[index].center().x() / (float)this->size().width();
-	}
-	std::sort(val.begin(), val.end());
-	return val;
-}
-/**
 * @brief  mouseDoubleClickEvent 鼠标双击事件
 * @param  QMouseEvent * event  
 * @return void  
@@ -271,6 +258,8 @@ void ArrowCtrl::mouseDoubleClickEvent(QMouseEvent* event){
 	marrowmap[indexarrow] = QPixmap::fromImage(img);
 	mapColor[indexarrow] = color;
 	drawImage();
+	//改变颜色
+	setColorMap();
 }
 /**
 * @brief  ArrowCtrl::initUI 初始化UI
@@ -279,7 +268,6 @@ void ArrowCtrl::mouseDoubleClickEvent(QMouseEvent* event){
 void ArrowCtrl::initUI()
 {
 	setlevel(3);
-	
 	//初始化动作
 	buttonActionAdd = new QAction("add",this);
 	buttonActionDelete = new QAction("delete",this);
@@ -308,6 +296,8 @@ void ArrowCtrl::addTriggered()
 	pos.push_back(rectf);
 	actionindex = -1;
 	drawImage();
+	setColorMap();
+	val.push_back(actionpos.x()/this->width());
 }
 /**
 * @brief  ArrowCtrl::deleteTriggered 删除
@@ -321,9 +311,12 @@ void ArrowCtrl::deleteTriggered()
 		marrowmap.erase(marrowmap.begin() + actionindex);
 		mapColor.erase(mapColor.begin() + actionindex);
 		pos.erase(pos.begin() + actionindex);
+		val.erase(val.begin()+actionindex);
 	}
 	actionindex = -1;
 	drawImage();
+	//
+	setColorMap();
 }
 /**
 * @brief  ArrowCtrl::mouseRightClicked 鼠标右键事件
@@ -353,5 +346,18 @@ void ArrowCtrl::mouseRightClicked(QMouseEvent* event)
 		buttonActionDelete->setEnabled(false);
 	}
 	buttonMenu->exec(menupos);
+}
+/**
+* @brief  ArrowCtrl::setColorMap 设置颜色表
+* @return void  
+*/
+void ArrowCtrl::setColorMap()
+{
+	std::vector<float> vall;
+	for (auto index = 0; index < pos.size(); index++)
+	{
+		vall.push_back(pos[index].center().x() / (float)this->size().width());
+	}
+	emit changMoveColor(vall, mapColor,firstColor,endColor);
 }
 #include"moc_Arrowctrl.cpp"

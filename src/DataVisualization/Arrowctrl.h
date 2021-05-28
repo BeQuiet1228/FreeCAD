@@ -29,14 +29,14 @@ public:
 	void setlevel(int number);
 	void resizeEvent(QResizeEvent * event);
 	void setVal(std::vector<float>&);
-	std::vector<float> getVal();
+	void setColorMap();
 protected:
 	void initUI();
 	bool drawImage();
 	void setimg(QImage& img);
 	QImage* getimg();
 Q_SIGNALS:
-	void changMoveColor(std::vector<float>&,std::vector<QColor>&);
+	void changMoveColor(std::vector<float>&,std::vector<QColor>&,const QColor& firstColor,const QColor& endColor);
 public Q_SLOTS:
 	void addTriggered();
 	void deleteTriggered();
@@ -50,14 +50,14 @@ private:
 	std::vector<QRectF> pos;
 	std::vector<float> val;
 	std::mutex imgmutex;
-	//添加右键菜单
-	//删除索引值
+	//
 	int actionindex;
-	//添加坐标
 	QPointF actionpos;
 	QAction* buttonActionAdd;
 	QAction* buttonActionDelete;
-	//声明菜单
 	QMenu* buttonMenu;
+	//
+	QColor firstColor;
+	QColor endColor;
 };
 #endif

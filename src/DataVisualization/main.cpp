@@ -19,13 +19,13 @@ int main(int argc, char *argv[])
 	//std::string path = "D:/MILO_C.h5";
 	
 	
-	/*Plot p;
+	Plot p;
 	DataSourceManage manager;
 	ListTreeWidget treectrl;
 	manager.init(&treectrl, &p);
 	manager.loadhdffile(path);
 	p.showMaximized();
-	treectrl.show();*/
+	treectrl.show();
 	ConfigWidget m_configwidget;
 	m_configwidget.show();
 #endif

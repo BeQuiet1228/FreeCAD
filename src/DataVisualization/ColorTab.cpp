@@ -35,6 +35,7 @@ void ColorTab::initUI()
 	QwtInterval interval(0, 1);
 	//Ìí¼ÓÑÕÉ«
 	QwtLinearColorMap* colormap = new QwtLinearColorMap(Qt::darkBlue, Qt::darkRed);
+	colormap->setMode(QwtLinearColorMap::Mode::FixedColors);
 	{
 		colormap->addColorStop(0.2, Qt::blue);
 		colormap->addColorStop(0.4, Qt::cyan);
@@ -60,10 +61,11 @@ void ColorTab::resizeEvent(QResizeEvent * event)
 * @param  std::vector<QColor> & colors  
 * @return void  
 */
-void ColorTab::changmoveColor(std::vector<float>& val, std::vector<QColor>& colors)
+void ColorTab::changmoveColor(std::vector<float>& val, std::vector<QColor>& colors,const QColor& firstColor,const QColor& endColor)
 {
 	QwtInterval interval(0, 1);
-	QwtLinearColorMap* colormap = new QwtLinearColorMap(Qt::darkBlue, Qt::darkRed);
+	QwtLinearColorMap* colormap = new QwtLinearColorMap(firstColor, endColor);
+	colormap->setMode(QwtLinearColorMap::Mode::FixedColors);
 	{
 		for (auto index = 0; index < val.size(); index++)
 			colormap->addColorStop(val[index],colors[index]);

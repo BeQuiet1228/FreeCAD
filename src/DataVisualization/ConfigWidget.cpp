@@ -80,8 +80,6 @@ void ConfigWidget::initUI()
 	ui->partcleEdit->setValidator(validator);
 	{
 		//等位图
-		ui->equal_ratiovaltableWidget;
-		ui->epuivalencevaltableWidget;
 		connect(ui->levelnumber, SIGNAL(currentIndexChanged(int)), this, SLOT(changeUser_defined(int)));
 	
 		QStringList header;
@@ -103,8 +101,10 @@ void ConfigWidget::initUI()
 		boxLayout->addWidget(mColorTab);
 		arrowCtrl = new ArrowCtrl( ArrowCtrl::Direction::TopToBottom,ui->colorscale);
 		boxLayout->addWidget(arrowCtrl);
-		connect(arrowCtrl, SIGNAL(changMoveColor(std::vector<float>&, std::vector<QColor>&)),
-			mColorTab, SLOT(changmoveColor(std::vector<float>&, std::vector<QColor>&)));
+		connect(arrowCtrl, 
+			SIGNAL(changMoveColor(std::vector<float>&, std::vector<QColor>&,const QColor&,const QColor&)),
+			mColorTab, 
+			SLOT(changmoveColor(std::vector<float>&, std::vector<QColor>&,const QColor&,const QColor&)));
 	}
 #undef  SETPERPORE(a,b)
 	//保存
@@ -259,31 +259,13 @@ void ConfigWidget::saveclicked()
 		particlegroup.getGroup("color").setSetting("value", partcleConfig._2nd.toStdString());
 		(ui->partclecheckBox->checkState() == Qt::Checked)?particlegroup.getGroup("AlisAttitude").setSetting("isAlis", "1"):particlegroup.getGroup("AlisAttitude").setSetting("isAlis", "0");
 	}
-	//等位图
 	{
-		auto contourGroup = Group.getGroup("Contour");
-		(ui->concheckBox->checkState() == Qt::Checked) ? contourGroup.setSetting("isAlis", "1") : contourGroup.setSetting("isAlis", "0");
-		contourGroup.setSetting("valtype",ui->contourvalType->itemText(ui->contourvalType->currentIndex()).toStdString());
-		contourGroup.setSetting("vallevel", ui->levelnumber->itemText(ui->levelnumber->currentIndex()).toStdString());
-		//等比
-		auto equl_ratioGroup = contourGroup.getGroup("equl_ratio");
-		equl_ratioGroup.setSetting("equal_ratioval", ui->equal_ratioval->text().toStdString());
-		equl_ratioGroup.setSetting("equal_ratiosval", ui->equal_ratio_sval->text().toStdString());
-		equl_ratioGroup.setSetting(QString("level_0").toStdString(), QString("%1").arg(ui->equal_ratio_sval->text().toFloat()).toStdString());
-		for (auto index = 1; index < ui->levelnumber->itemText(ui->levelnumber->currentIndex()).toInt()+1;index++)
-		{
-			equl_ratioGroup.setSetting(QString("level_%1").arg(index).toStdString(), QString("%1").
-				arg(ui->equal_ratio_sval->text().toFloat()*index*ui->equal_ratioval->text().toFloat()).toStdString());
-		}
-		//等值
-		auto epuivalenceGroup = contourGroup.getGroup("epuivalence");
-		epuivalenceGroup.setSetting("epuivalenceval", ui->epuivalenceval->text().toStdString());
-		epuivalenceGroup.setSetting("epuivalencesval", ui->epuivalence_sval->text().toStdString());
-		for (auto index = 0; index < ui->levelnumber->itemText(ui->levelnumber->currentIndex()).toInt() + 1; index++)
-		{
-			epuivalenceGroup.setSetting(QString("level_%1").arg(index).toStdString(), QString("%1").
-				arg(ui->epuivalence_sval->text().toFloat() + index*ui->epuivalenceval->text().toFloat()).toStdString());
-		}
+		//等位图
+		auto contourGroup = Group.getGroup("contour");
+		ui->equivalent;//等值
+		ui->raidoOfequality;//等比
+		ui->ScaledColors;//渐变
+		ui->FixedColors;//插值
 	}
 	Config::GetInstance()->saveFile();
 	ui->applicButtom->setEnabled(true);
@@ -517,40 +499,6 @@ void ConfigWidget::loadxmlConfig(){
 	}
 	//等位图
 	{
-		auto cleartableWidget = [&](QTableWidget* qtablewidget){
-			int row = qtablewidget->rowCount();
-			for (auto index = row - 1; index >= 0; index--)
-				qtablewidget->removeRow(index);
-		};
-		auto contourGroup = Group.getGroup("Contour");
-		ui->concheckBox->setCheckState(((QString::fromStdString(contourGroup.getValue("isAlis")).toInt() )==1) ?Qt::Checked:Qt::Unchecked);
-		toComboxIndex(ui->contourvalType, QString::fromStdString(contourGroup.getValue("valtype")));
-		toComboxIndex(ui->levelnumber, QString::fromStdString(contourGroup.getValue("vallevel")));
-		int levelNumber = ui->levelnumber->itemText(ui->levelnumber->currentIndex()).toInt();
-		{
-			//等比
-			auto equl_ratioGroup = contourGroup.getGroup("equl_ratio");
-			ui->equal_ratioval->setText(QString::fromStdString(equl_ratioGroup.getValue("equal_ratioval")));
-			ui->equal_ratio_sval->setText(QString::fromStdString(equl_ratioGroup.getValue("equal_ratiosval")));
-		}
-		{
-			//等值
-			auto epuivalenceGroup = contourGroup.getGroup("epuivalence");
-			ui->epuivalenceval->setText(QString::fromStdString( epuivalenceGroup.getValue("epuivalenceval") ));
-			ui->epuivalence_sval->setText(QString::fromStdString(epuivalenceGroup.getValue("epuivalencesval")));
-		}
-		auto levelColorval = contourGroup.getGroup("levelColorVal");
-		std::vector<float> val;
-		val.reserve(levelNumber+1);
-		for (auto index = 0; index < levelNumber + 1;++index)
-		{
-			std::string s_val = levelColorval.getValue(QString("level_%1").arg(index).toStdString());
-			if (s_val!="")
-			{
-				val.push_back(atof(s_val.c_str()));
-			}
-		}
-		//arrowCtrl->setVal(val);
 	}
 }
 /**
