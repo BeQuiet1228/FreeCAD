@@ -176,17 +176,9 @@ StdCmdCloseAllWindows::StdCmdCloseAllWindows()
 void StdCmdCloseAllWindows::activated(int iMsg)
 {
     Q_UNUSED(iMsg); 
+	if(Gui::Application::Instance->activeDocument()->canClose())
+        getMainWindow()->closeAllWindows();
 
-	//判断是否需要关闭内核
-	if (App::GetApplication().m_netServer && App::GetApplication().m_netServer->GetConnectState()
-		== PicNet::NetServer::ConnectState::CONNECTED)
-	{
-		Command::doCommand(Command::Doc, "import Control");
-		Command::doCommand(Command::Doc, "b=Control.controlCommand.TaskControlMain.Run(exitExe=2).Activated()");
-		return;
-	}
-    getMainWindow()->closeAllWindows();
-	doCommand(Command::Gui, "import Modeling\nModeling.Common.Tools.DocumentTools.closeAll()");
 }
 
 bool StdCmdCloseAllWindows::isActive(void)
