@@ -46,6 +46,9 @@ void Canvas::removeItem(const unsigned int& rank)
 void Canvas::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);
+	//»æÖÆÍâ±ß¿òÏß
+	painter.drawRect(0, 0, this->width() - 1, this->height() - 1);
+
 	for (auto item = items.begin(); item != items.end(); item++)
 	{
 #if 0
@@ -61,7 +64,7 @@ void Canvas::paintEvent(QPaintEvent *event)
 	{
 		painter.drawRect(selectRect);
 	}
-	painter.drawRect(0, 0, this->width()-1, this->height()-1);
+
 }
 
 /**
