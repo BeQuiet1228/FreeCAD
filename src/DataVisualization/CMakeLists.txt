@@ -28,7 +28,8 @@ SET(MY_MOC_HDR RenderThread.h
 	DoubleSilder.h
 	ConfigWidget.h
 	Arrowctrl.h
-	ColorTab.h)
+	ColorTab.h
+	ColorMapWidget.h)
 
 SET(TIME_SRC TimeData.h
 	TimeData.cpp

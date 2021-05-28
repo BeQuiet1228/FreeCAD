@@ -34,8 +34,8 @@ void ColorTab::initUI()
 	scaleEngine = new QwtLinearScaleEngine;
 	QwtInterval interval(0, 1);
 	//Ìí¼ÓÑÕÉ«
+	QwtLinearColorMap* colormap = new QwtLinearColorMap(Qt::darkBlue, Qt::darkRed);
 	{
-		QwtLinearColorMap* colormap = new QwtLinearColorMap(Qt::darkBlue, Qt::darkRed);
 		colormap->addColorStop(0.2, Qt::blue);
 		colormap->addColorStop(0.4, Qt::cyan);
 		colormap->addColorStop(0.6, Qt::yellow);

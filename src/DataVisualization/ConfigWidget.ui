@@ -921,7 +921,7 @@ background-color: rgb(255, 255, 255);
             <item>
              <widget class="QGroupBox" name="groupBox_10">
               <property name="title">
-               <string>style</string>
+               <string>图表风格：</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_12">
                <item row="0" column="0">
