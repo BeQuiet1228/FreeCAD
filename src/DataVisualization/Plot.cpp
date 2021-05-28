@@ -383,6 +383,7 @@ void Plot::initGUI()
 	scaleWIdget = new QwtScaleWidget(QwtScaleDraw::RightScale, this);
 	scaleWIdget->setColorBarEnabled(true);
 	scaleWIdget->setColorBarWidth(20);
+	scaleWIdget->setMargin(40);
 
 	informationLabel = new QLabel();
 	//informationLabel->setMargin(40);
