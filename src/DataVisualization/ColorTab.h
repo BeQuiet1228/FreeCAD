@@ -1,0 +1,22 @@
+#pragma once
+#ifndef COLORTAB_H_
+#define COLORTAB_H_
+#include <QWidget>
+class QwtScaleWidget;
+class QwtScaleEngine;
+class ColorTab :public QWidget
+{
+	Q_OBJECT
+public:
+	explicit ColorTab(QWidget* parent=nullptr);
+	~ColorTab();
+public:
+	void initUI();
+	virtual void resizeEvent(QResizeEvent * event) override;
+	public Q_SLOTS:
+void changmoveColor(std::vector<float>& val,std::vector<QColor>& colors);
+private:
+	QwtScaleWidget* scaleWidget;
+	QwtScaleEngine* scaleEngine;
+};
+#endif

@@ -27,7 +27,8 @@ SET(MY_MOC_HDR RenderThread.h
 	Dataresource.h
 	DoubleSilder.h
 	ConfigWidget.h
-	Arrowctrl.h)
+	Arrowctrl.h
+	ColorTab.h)
 
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
@@ -115,6 +116,8 @@ SET(SRC_TOOL ConfigWidget.h
 	ConfigWidget.cpp
 	Arrowctrl.h
 	Arrowctrl.cpp
+	ColorTab.cpp
+	ColorTab.h
 	)
 #处理ui和qrc文件
 if (BUILD_QT5)

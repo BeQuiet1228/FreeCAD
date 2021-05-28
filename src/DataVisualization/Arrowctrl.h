@@ -35,6 +35,8 @@ protected:
 	bool drawImage();
 	void setimg(QImage& img);
 	QImage* getimg();
+Q_SIGNALS:
+	void changMoveColor(std::vector<float>&,std::vector<QColor>&);
 public Q_SLOTS:
 	void addTriggered();
 	void deleteTriggered();

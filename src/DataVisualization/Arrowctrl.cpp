@@ -58,6 +58,12 @@ void ArrowCtrl::mouseMoveEvent(QMouseEvent* event)
 		else
 		p1.setX(event->posF().x());
 		pos[curarrow].moveCenter(p1);
+		std::vector<float> vall;
+		for (auto index = 0; index < pos.size(); index++)
+		{
+			vall.push_back(pos[index].center().x() / (float)this->size().width());
+		}
+		emit changMoveColor(vall, mapColor);
 		drawImage();
 	}
 }

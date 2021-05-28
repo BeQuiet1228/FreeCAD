@@ -13,6 +13,7 @@
 #include"qwt/qwt_scale_engine.h";
 #include "ContourRender.h"
 #include "Arrowctrl.h"
+#include "ColorTab.h"
 /**
 * @brief ConfigWidget::ConfigWidget
 * @param QWidget* panter
@@ -81,28 +82,29 @@ void ConfigWidget::initUI()
 		//等位图
 		ui->equal_ratiovaltableWidget;
 		ui->epuivalencevaltableWidget;
-		ui->user_definedtableWidget;
 		connect(ui->levelnumber, SIGNAL(currentIndexChanged(int)), this, SLOT(changeUser_defined(int)));
-		ui->user_definedtableWidget->setEditTriggers(QAbstractItemView::CurrentChanged);
-		ui->user_definedtableWidget->setColumnCount(1);
+	
 		QStringList header;
 		header << GetEncodingstr("自定义取值区间",ENCODING_GB2312);
-		ui->user_definedtableWidget->setHorizontalHeaderLabels(header);
-		ui->user_definedtableWidget->resizeColumnsToContents();
-		ui->user_definedtableWidget->setShowGrid(false);
 		//等位图示例
 		boxLayout = new QBoxLayout(QBoxLayout::Direction::BottomToTop,ui->colorscale);
-		scaleWIdget = new QwtScaleWidget(QwtScaleDraw::BottomScale, ui->colorscale);
+		ui->colorscale->setLayout(boxLayout);
+
+		/*scaleWIdget = new QwtScaleWidget(QwtScaleDraw::BottomScale, ui->colorscale);
 		scaleWIdget->setColorBarEnabled(true);
 		scaleWIdget->setColorBarWidth(20);
 		scaleEngine = new QwtLinearScaleEngine;
 		QwtInterval interval(0, 1);
 		scaleWIdget->setColorMap(interval,new ColorMap);
 		scaleWIdget->setScaleDiv(scaleEngine->divideScale(0,1,5,6,0));
-		ui->colorscale->setLayout(boxLayout);
-		boxLayout->addWidget(scaleWIdget);
+		boxLayout->addWidget(scaleWIdget);*/
+
+		mColorTab = new ColorTab(ui->colorscale);
+		boxLayout->addWidget(mColorTab);
 		arrowCtrl = new ArrowCtrl( ArrowCtrl::Direction::TopToBottom,ui->colorscale);
 		boxLayout->addWidget(arrowCtrl);
+		connect(arrowCtrl, SIGNAL(changMoveColor(std::vector<float>&, std::vector<QColor>&)),
+			mColorTab, SLOT(changmoveColor(std::vector<float>&, std::vector<QColor>&)));
 	}
 #undef  SETPERPORE(a,b)
 	//保存
@@ -281,24 +283,6 @@ void ConfigWidget::saveclicked()
 		{
 			epuivalenceGroup.setSetting(QString("level_%1").arg(index).toStdString(), QString("%1").
 				arg(ui->epuivalence_sval->text().toFloat() + index*ui->epuivalenceval->text().toFloat()).toStdString());
-		}
-		//自定义
-		auto user_definedGroup = contourGroup.getGroup("user_defined");
-		for (auto index = 0; index < ui->user_definedtableWidget->rowCount();index++)
-		{
-			QTableWidgetItem* item = ui->user_definedtableWidget->item(index, 0);
-			user_definedGroup.setSetting(QString("level_%1").arg(index).toStdString(),item->text().toStdString());
-		}
-		auto levelColorVal = contourGroup.getGroup("levelColorVal");
-		auto levelColor = contourGroup.getGroup("levelColor");
-		std::vector<float> val;
-			//= arrowCtrl->getVal();
-		const QwtColorMap* xmap = scaleWIdget->colorMap();
-		for (auto index = 0; index < val.size();index++)
-		{
-			levelColorVal.setSetting(QString("level_%1").arg(index).toStdString(),QString("%1").arg(val[index]).toStdString());
-			QColor color = xmap->color(QwtInterval(0.0,1.0),val[index]);
-			levelColor.setSetting(QString("level_%1").arg(index).toStdString(),QColorToQstring(color).toStdString());
 		}
 	}
 	Config::GetInstance()->saveFile();
@@ -544,16 +528,6 @@ void ConfigWidget::loadxmlConfig(){
 		toComboxIndex(ui->levelnumber, QString::fromStdString(contourGroup.getValue("vallevel")));
 		int levelNumber = ui->levelnumber->itemText(ui->levelnumber->currentIndex()).toInt();
 		{
-			auto user_definedGroup = contourGroup.getGroup("user_defined");
-			cleartableWidget(ui->user_definedtableWidget);
-			for (auto index = 0; index < levelNumber+1;index++)
-			{
-				ui->user_definedtableWidget->insertRow(index);
-				QString levelval = QString("level_%1").arg(index);
-				ui->user_definedtableWidget->setItem(index, 0, new QTableWidgetItem( QString::fromStdString(user_definedGroup.getValue(levelval.toStdString()))));
-			}
-		}
-		{
 			//等比
 			auto equl_ratioGroup = contourGroup.getGroup("equl_ratio");
 			ui->equal_ratioval->setText(QString::fromStdString(equl_ratioGroup.getValue("equal_ratioval")));
@@ -566,7 +540,6 @@ void ConfigWidget::loadxmlConfig(){
 			ui->epuivalence_sval->setText(QString::fromStdString(epuivalenceGroup.getValue("epuivalencesval")));
 		}
 		auto levelColorval = contourGroup.getGroup("levelColorVal");
-		//arrowCtrl->setlevel(levelNumber+1);
 		std::vector<float> val;
 		val.reserve(levelNumber+1);
 		for (auto index = 0; index < levelNumber + 1;++index)
@@ -642,30 +615,6 @@ void ConfigWidget::struct_2D_clicked(int _property, QPushButton* button){
 */
 void ConfigWidget::changeUser_defined(int index)
 {
-	int rowold=ui->user_definedtableWidget->rowCount();
-	
-	int rownew=ui->levelnumber->itemText(index).toInt()+1;
-	arrowCtrl->setlevel(rownew);
-	if (rownew>rowold)
-	{
-		for (auto i = 0; i < rownew - rowold;i++)
-		{
-			int row = ui->user_definedtableWidget->rowCount();
-			ui->user_definedtableWidget->insertRow(row);
-			QTableWidgetItem* item = new QTableWidgetItem(QString("123456"));
-			ui->user_definedtableWidget->setItem(row, 0, item);
-		}
-		ui->user_definedtableWidget->resizeRowsToContents();
-	}
-	else if (rowold>rownew)
-	{
-		for (auto  i = rowold; i >=0; i--)
-		{
-			int row = ui->user_definedtableWidget->rowCount();
-			if (row==rownew) break;
-			ui->user_definedtableWidget->removeRow(row-1);
-		}
-	}
 }
 void ConfigWidget::canclelicked()
 {
