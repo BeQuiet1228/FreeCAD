@@ -7,7 +7,7 @@
 * @param  QWidget * parent  
 * @return   
 */
-ColorTab::ColorTab(QWidget* parent) :QWidget(parent), scaleWidget(nullptr), scaleEngine(nullptr)
+ColorTab::ColorTab(QWidget* parent) :QWidget(parent), scaleWidget(nullptr), scaleEngine(nullptr), style(0)
 {
 	setMinimumSize(QSize(0, 0));
 	setMaximumSize(QSize(16777715,1677715));
@@ -65,11 +65,67 @@ void ColorTab::changmoveColor(std::vector<float>& val, std::vector<QColor>& colo
 {
 	QwtInterval interval(0, 1);
 	QwtLinearColorMap* colormap = new QwtLinearColorMap(firstColor, endColor);
-	colormap->setMode(QwtLinearColorMap::Mode::FixedColors);
+	//colormap->setMode(QwtLinearColorMap::Mode::FixedColors);
+	switch (style)
+	{
+	case 0:
+		colormap->setMode(QwtLinearColorMap::Mode::FixedColors); break;
+	case 1:
+		colormap->setMode(QwtLinearColorMap::Mode::ScaledColors); break;
+	}
 	{
 		for (auto index = 0; index < val.size(); index++)
 			colormap->addColorStop(val[index],colors[index]);
 	}
 	scaleWidget->setColorMap(interval, colormap);
+}
+/**
+* @brief  ColorTab::GetColors
+* @param  std::vector<float> vals  
+* @return std::vector<QT_NAMESPACE::QColor>  
+*/
+std::vector<QColor> ColorTab::GetColors(std::vector<float> vals)
+{
+	std::vector<QColor> colors;
+	colors.clear();
+	QwtInterval interval(0,1);
+	for (auto index = 0; index < vals.size();index++)
+	{
+		colors.push_back(scaleWidget->colorMap()->color(interval, vals[index]));
+	}
+	return colors;
+}
+/**
+* @brief  ColorTab::setColors …Ë÷√—’…´
+* @param  std::vector<float> & vals  
+* @param  std::vector<QColor> & colors  
+* @return void  
+*/
+void ColorTab::setColors(std::vector<float>& vals, std::vector<QColor>& colors)
+{
+	QwtInterval interval(0,1);
+	QwtLinearColorMap* colormap = new QwtLinearColorMap(/**colors.begin(),*(colors.end()-1)*/);
+	switch (style)
+	{
+	case 0:
+		colormap->setMode(QwtLinearColorMap::Mode::FixedColors); break;
+	case 1:
+		colormap->setMode(QwtLinearColorMap::Mode::ScaledColors); break;
+	}
+	for (auto index = 0; index < colors.size();index++)
+	{
+		colormap->addColorStop(vals[index], colors[index]);
+	}
+	scaleWidget->setColorMap(interval, colormap);
+}
+
+/**
+* @brief  ColorTab::setStyle
+* @param  int s  
+* @return void  
+*/
+void ColorTab::setColorStyle(int s)
+{
+	style = s;
 }
 #include "moc_ColorTab.cpp"

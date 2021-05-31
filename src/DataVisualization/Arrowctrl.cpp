@@ -204,21 +204,45 @@ QImage* ArrowCtrl::getimg(){
 	std::lock_guard<std::mutex> am(imgmutex);
 	return nimg;
 }
-/**
-* @brief  ArrowCtrl::setVal 设置等级范围
-* @param  std::vector<float> &  
-* @return void  
-*/
-void ArrowCtrl::setVal(std::vector<float>& a){
-	if (a.empty())
-		return;
-	val.clear();
-	val.reserve(a.size());
-	val = a;
-	for (auto index = 0; index < a.size();index++)
+void ArrowCtrl::setvals(std::vector<float>& vals, std::vector<QColor>& colors)
+{
+	firstColor=*colors.begin();
+	endColor=*(colors.end()-1);
+	val.clear(); val.reserve(vals.size());
+	mapColor.clear(); mapColor.reserve(vals.size());
+	marrowmap.clear(); marrowmap.reserve(vals.size());
+	pos.clear(); pos.reserve(vals.size());
+	for (auto index = 1; index < vals.size() - 1;index++)
 	{
-		pos[index].moveCenter(QPointF(val[index] * this->size().width(), pos[index].center().y()));
+		mapColor.push_back(colors[index]);
+		val.push_back(vals[index]);
 	}
+	//添加箭头
+	QSize pngsize(this->height(), this->height());
+	for (int index = 0; index < val.size(); index++)
+	{
+		QPixmap map(pngresource[0]);
+		map = map.scaled(pngsize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+		
+		//替换颜色
+		QImage img = map.toImage();
+		QColor color(Qt::black);
+		for (int w = 0; w < img.width(); ++w)
+		{
+			for (int h = 0; h < img.height(); h++)
+			{
+				if (img.pixel(w, h) ==color.rgb())
+				{
+					img.setPixel(w, h, mapColor[index].rgba());
+				}
+			}
+		}
+		marrowmap.push_back(QPixmap::fromImage(img));
+		QRectF rectF(val[index] * this->size().width() - marrowmap[index].size().width() / 2,
+			this->size().height() - marrowmap[index].size().height(), marrowmap[index].size().width(), marrowmap[index].size().height());
+		pos.push_back(rectF);
+	}
+	drawImage();
 }
 /**
 * @brief  mouseDoubleClickEvent 鼠标双击事件
@@ -359,5 +383,37 @@ void ArrowCtrl::setColorMap()
 		vall.push_back(pos[index].center().x() / (float)this->size().width());
 	}
 	emit changMoveColor(vall, mapColor,firstColor,endColor);
+}
+
+/**
+* @brief  ArrowCtrl::getValue 获取数据
+* @return std::vector<float>  
+*/
+std::vector<float> ArrowCtrl::getValue(){
+	std::vector<float> vals;
+	vals.insert(vals.end(),val.begin(),val.end());
+	std::sort(vals.begin(), vals.end());
+	if (*(vals.end() - 1) != 1.0f)vals.push_back(1.0f);
+	if (*vals.begin() != 0) vals.push_back(0.0f);
+	std::sort(vals.begin(), vals.end());
+	return vals;
+}
+/**
+* @brief  ArrowCtrl::SetFirstColor 设置起始颜色
+* @param  QColor & color  
+* @return void  
+*/
+void ArrowCtrl::SetFirstColor(QColor& color){
+	firstColor=color;
+	setColorMap();
+}
+/**
+* @brief  ArrowCtrl::SetEndColor 设置结束色
+* @param  QColor & color  
+* @return void  
+*/
+void ArrowCtrl::SetEndColor(QColor& color){
+	endColor = color;
+	setColorMap();
 }
 #include"moc_Arrowctrl.cpp"

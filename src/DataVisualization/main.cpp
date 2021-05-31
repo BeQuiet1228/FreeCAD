@@ -26,8 +26,8 @@ int main(int argc, char *argv[])
 	manager.loadhdffile(path);
 	p.showMaximized();
 	treectrl.show();
-	ConfigWidget m_configwidget;
-	m_configwidget.show();
+	//ConfigWidget m_configwidget;
+	//m_configwidget.show();
 #endif
 	//pull request test
 	return a.exec();

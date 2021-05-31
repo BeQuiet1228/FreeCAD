@@ -28,8 +28,11 @@ public:
 	void paintEvent(QPaintEvent * event);
 	void setlevel(int number);
 	void resizeEvent(QResizeEvent * event);
-	void setVal(std::vector<float>&);
+	void setvals(std::vector<float>&,std::vector<QColor>&);
 	void setColorMap();
+	std::vector<float> getValue();
+	void SetFirstColor(QColor& color);
+	void SetEndColor(QColor& color);
 protected:
 	void initUI();
 	bool drawImage();

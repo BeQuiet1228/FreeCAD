@@ -14,6 +14,7 @@
 #include "ContourRender.h"
 #include "Arrowctrl.h"
 #include "ColorTab.h"
+#include <sstream>
 /**
 * @brief ConfigWidget::ConfigWidget
 * @param QWidget* panter
@@ -80,23 +81,8 @@ void ConfigWidget::initUI()
 	ui->partcleEdit->setValidator(validator);
 	{
 		//等位图
-		connect(ui->levelnumber, SIGNAL(currentIndexChanged(int)), this, SLOT(changeUser_defined(int)));
-	
-		QStringList header;
-		header << GetEncodingstr("自定义取值区间",ENCODING_GB2312);
-		//等位图示例
 		boxLayout = new QBoxLayout(QBoxLayout::Direction::BottomToTop,ui->colorscale);
 		ui->colorscale->setLayout(boxLayout);
-
-		/*scaleWIdget = new QwtScaleWidget(QwtScaleDraw::BottomScale, ui->colorscale);
-		scaleWIdget->setColorBarEnabled(true);
-		scaleWIdget->setColorBarWidth(20);
-		scaleEngine = new QwtLinearScaleEngine;
-		QwtInterval interval(0, 1);
-		scaleWIdget->setColorMap(interval,new ColorMap);
-		scaleWIdget->setScaleDiv(scaleEngine->divideScale(0,1,5,6,0));
-		boxLayout->addWidget(scaleWIdget);*/
-
 		mColorTab = new ColorTab(ui->colorscale);
 		boxLayout->addWidget(mColorTab);
 		arrowCtrl = new ArrowCtrl( ArrowCtrl::Direction::TopToBottom,ui->colorscale);
@@ -105,6 +91,11 @@ void ConfigWidget::initUI()
 			SIGNAL(changMoveColor(std::vector<float>&, std::vector<QColor>&,const QColor&,const QColor&)),
 			mColorTab, 
 			SLOT(changmoveColor(std::vector<float>&, std::vector<QColor>&,const QColor&,const QColor&)));
+
+		connect(ui->FixedColors, SIGNAL(toggled(bool)), this, SLOT(radioButton1(bool)));
+		connect(ui->ScaledColors, SIGNAL(toggled(bool)), this, SLOT(radioButton2(bool)));
+		SETPERPORE(ui->firstColorBtn,setfirstColor());
+		SETPERPORE(ui->endColorBtn,setendColor());
 	}
 #undef  SETPERPORE(a,b)
 	//保存
@@ -264,8 +255,25 @@ void ConfigWidget::saveclicked()
 		auto contourGroup = Group.getGroup("contour");
 		ui->equivalent;//等值
 		ui->raidoOfequality;//等比
-		ui->ScaledColors;//渐变
-		ui->FixedColors;//插值
+		if (ui->ScaledColors->isChecked()) contourGroup.getGroup("lineMapColors").setSetting("value", "ScaleColors");
+		else contourGroup.getGroup("lineMapColors").setSetting("value","FixedColors");
+		(ui->concheckBox->checkState() == Qt::Checked) ? (contourGroup.getGroup("AlisAttitude").setSetting("isAlis", "1")) : (contourGroup.getGroup("AlisAttitude").setSetting("isAlis", "0"));
+		if (ui->equivalent->isChecked()) contourGroup.getGroup("valueStyle").setSetting("value", "equivalent");
+		else contourGroup.getGroup("valueStyle").setSetting("value", "raidoOfequality");
+		//lineMapValue
+		//获取颜色
+		{
+			std::vector<float> vals;
+			vals = arrowCtrl->getValue();
+			auto levelGroup = contourGroup.getGroup("lineMapColorval");
+			levelGroup.setSetting("valueNumber", QString("%1").arg(vals.size()).toStdString());
+			std::vector<QColor> colors = mColorTab->GetColors(vals);
+			for (auto index = 0; index < vals.size();index++)
+			{
+				levelGroup.getGroup(QString("level_%1").arg(index).toStdString()).setSetting("value",QString("%1").arg(vals[index]).toStdString());
+				levelGroup.getGroup(QString("level_%1").arg(index).toStdString()).setSetting("color",QColorToQstring(colors[index]).toStdString());
+			}
+		}
 	}
 	Config::GetInstance()->saveFile();
 	ui->applicButtom->setEnabled(true);
@@ -499,6 +507,50 @@ void ConfigWidget::loadxmlConfig(){
 	}
 	//等位图
 	{
+		auto contourGroup = Group.getGroup("contour");
+		//lineMapColors
+		if (contourGroup.getGroup("lineMapColors").getValue("value").find("ScaleColors") != std::string::npos)
+		{
+			ui->ScaledColors->setChecked(true);
+			ui->FixedColors->setChecked(false);
+			mColorTab->setColorStyle(1);
+		}
+		else
+		{
+			ui->FixedColors->setChecked(true);
+			ui->ScaledColors->setChecked(false);
+			mColorTab->setColorStyle(0);
+		}
+		//valueStyle
+		if (contourGroup.getGroup("valueStyle").getValue("value").find("raidoOfequality")!=std::string::npos)
+		{
+			ui->raidoOfequality->setChecked(true);
+			ui->equivalent->setChecked(false);
+		}
+		else
+		{
+			ui->equivalent->setChecked(true);
+			ui->raidoOfequality->setChecked(false);
+		}
+		auto levelGroup = contourGroup.getGroup("lineMapColorval");
+		unsigned int levelSize = atoi(levelGroup.getValue("valueNumber").c_str());
+		std::vector<float> vals;
+		std::vector<QColor> colors;
+		for (auto index = 0; index < levelSize;index++)
+		{
+			vals.push_back(atof( levelGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("value").c_str()));
+			colors.push_back(QStringToQColor(QString::fromStdString(levelGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("color"))));
+		}
+		arrowCtrl->setvals(vals,colors);
+		mColorTab->setColors(vals,colors);
+		QPalette qpalette1 = ui->firstColorBtn->palette();
+		qpalette1.setColor(QPalette::Button, *colors.begin());
+		ui->firstColorBtn->setPalette(qpalette1);
+		QPalette qpalette2 = ui->endColorBtn->palette();
+		qpalette2.setColor(QPalette::Button, *(colors.end()-1));
+		ui->endColorBtn->setPalette(qpalette2);
+		arrowCtrl->SetFirstColor(*colors.begin());
+		arrowCtrl->SetEndColor(*(colors.end() - 1));
 	}
 }
 /**
@@ -555,18 +607,44 @@ void ConfigWidget::struct_2D_clicked(int _property, QPushButton* button){
 	button->setText(QString("#%1").arg(QColorToQstring(color)));
 	struct2dinfo[_property] = QColorToQstring(color);
 }
-
-/**
-* @brief  ConfigWidget::changeUser_defined 自定义列表修改
-* @param  int index  
-* @return void  
-*/
-void ConfigWidget::changeUser_defined(int index)
-{
-}
 void ConfigWidget::canclelicked()
 {
 	this->close();
+}
+void ConfigWidget::radioButton1(bool flag){
+	if (flag==true)
+	{
+		mColorTab->setColorStyle(0);
+	}
+}
+void ConfigWidget::radioButton2(bool flag){
+	if (flag==true)
+	{
+		mColorTab->setColorStyle(1);
+	}
+}
+/**
+* @brief  ConfigWidget::setfirstColor 设置起始颜色
+* @return void  
+*/
+void ConfigWidget::setfirstColor(){
+	QColor color = QColorDialog::getColor(Qt::white, this, "pick Color", QColorDialog::ShowAlphaChannel);
+	QPalette qpalette = ui->firstColorBtn->palette();
+	qpalette.setColor(QPalette::Button, color);
+	ui->firstColorBtn->setPalette(qpalette);
+	arrowCtrl->SetFirstColor(color);
+
+}
+/**
+* @brief  ConfigWidget::setendColor 设置终止颜色
+* @return void  
+*/
+void ConfigWidget::setendColor(){
+	QColor color = QColorDialog::getColor(Qt::black, this, "pick Color", QColorDialog::ShowAlphaChannel);
+	QPalette qpalette = ui->endColorBtn->palette();
+	qpalette.setColor(QPalette::Button, color);
+	ui->endColorBtn->setPalette(qpalette);
+	arrowCtrl->SetEndColor(color);
 }
 /**
 * @brief  Mas::Setconfig::Setconfig

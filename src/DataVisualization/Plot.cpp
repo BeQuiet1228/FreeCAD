@@ -253,6 +253,7 @@ void Plot::updateAxis()
 	QwtInterval interval(vr.min, vr.max);
 	scaleWIdget->setColorMap(interval, new ColorMap);
 	scaleWIdget->setScaleDiv(scaleEngine->divideScale(vr.min, vr.max, 6, 8, 0));
+	scaleWIdget->setValrange(vr.min, vr.max);
 	scaleWIdget->show();
 }
 

@@ -91,8 +91,10 @@ public Q_SLOTS:
 	void veccolorClicked();
 	//相空间图
 	void partcleColorclicked();
-	//等位图
-	void changeUser_defined(int);
+	void radioButton1(bool);
+	void radioButton2(bool);
+	void setfirstColor();
+	void setendColor();
 private:
 	void loadxmlConfig();
 	void SetAllreRender(QPushButton*);
