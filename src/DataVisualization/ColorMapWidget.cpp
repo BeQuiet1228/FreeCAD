@@ -50,7 +50,6 @@ void ColorMapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 		newwidget->show();
 		isColse = false;
 	}
-	
 }
 /**
 * @brief  ColorMapWidget::setclose
@@ -76,6 +75,6 @@ void ColorMapWidget::setValrange(float rmin, float rmax)
 }
 void ColorMapWidget::GetListDoubleslot(std::vector<double>& listdouble)
 {
-	emit GetListDoubleslot(listdouble);
+	emit GetListDouble(listdouble);
 }
 #include "moc_ColorMapWidget.cpp"

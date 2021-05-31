@@ -36,7 +36,9 @@ void realTimewidget::closeEvent(QCloseEvent *event)
 		val.push_back(curval);
 	}
 	std::sort(val.begin(),val.end());
+	val.erase(std::unique(val.begin(),val.end()),val.end());
 	emit GetListDouble(val);
+	disconnect(this, 0);
 	QWidget::closeEvent(event);
 }
 /**
