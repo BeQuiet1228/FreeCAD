@@ -294,7 +294,7 @@ void MainWindow::hideContorlUI()
 				//plot->getGuiDocument()->detachView(plot, true);
                 subMdi->close();
                 //d->mdiArea->removeSubWindow(subMdi);
-                //delete subMdi;
+                delete subMdi;
             }
                 
         }
@@ -1171,15 +1171,15 @@ MDIView* MainWindow::activeWindow(void) const
 
 void MainWindow::closeEvent (QCloseEvent * e)
 {
-	//判断是否需要关闭内核
-	if (App::GetApplication().m_netServer && App::GetApplication().m_netServer->GetConnectState()
-		== PicNet::NetServer::ConnectState::CONNECTED)
-	{
-		Command::doCommand(Command::Doc, "import Control");
-		Command::doCommand(Command::Doc, "b=Control.controlCommand.TaskControlMain.Run(exitExe=1).Activated()");
-		e->setAccepted(false);
-		return;
-	}
+// 	//判断是否需要关闭内核
+// 	if (App::GetApplication().m_netServer && App::GetApplication().m_netServer->GetConnectState()
+// 		== PicNet::NetServer::ConnectState::CONNECTED)
+// 	{
+// 		Command::doCommand(Command::Doc, "import Control");
+// 		Command::doCommand(Command::Doc, "b=Control.controlCommand.TaskControlMain.Run(exitExe=1).Activated()");
+// 		e->setAccepted(false);
+// 		return;
+// 	}
     Application::Instance->tryClose(e);
     if (e->isAccepted()) {
 		

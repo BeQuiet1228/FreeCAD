@@ -36,6 +36,9 @@ bool DirData::isTruedir()
 	{
 		return true;
 	}break;
+	case NONE:
+		return true;
+		break;
 	}
 	return false;
 }

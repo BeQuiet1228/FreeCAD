@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>关闭网格</title>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="新增图标5.25输出" transform="translate(-630.000000, -78.000000)">
+            <g id="关闭网格" transform="translate(630.000000, 78.000000)">
+                <g id="Group" transform="translate(2.000000, 2.000000)">
+                    <rect id="矩形" x="0" y="0" width="10" height="12" rx="1"></rect>
+                </g>
+                <g id="网格线" transform="translate(3.000000, 2.000000)" stroke="#1A1A1A" stroke-width="0.5">
+                    <line x1="2.39808173e-14" y1="9" x2="9.7" y2="9" id="路径-28备份-2"></line>
+                    <line x1="8" y1="-2.30926389e-14" x2="8" y2="11.8" id="路径-29备份-2"></line>
+                    <line x1="2.30926389e-14" y1="6" x2="9.7" y2="6" id="路径-28备份"></line>
+                    <line x1="2.30926389e-14" y1="3" x2="9.7" y2="3" id="路径-28备份-3"></line>
+                    <line x1="5" y1="-2.30926389e-14" x2="5" y2="10" id="路径-29备份"></line>
+                    <line x1="2" y1="-2.30926389e-14" x2="2" y2="11.8" id="路径-29备份-3"></line>
+                </g>
+                <circle id="椭圆形" fill="#C4C5C6" cx="11" cy="11" r="4"></circle>
+                <g id="编组" transform="translate(8.000000, 8.000000)" stroke="#1A1A1A" stroke-width="0.5">
+                    <circle id="椭圆形" cx="3" cy="3" r="2.75"></circle>
+                    <line x1="5" y1="1.04182209" x2="1.0500586" y2="5.01662855" id="路径-95"></line>
+                    <line x1="1.0500586" y1="1.04182209" x2="5" y2="5.01662855" id="路径-97"></line>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

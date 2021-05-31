@@ -385,6 +385,7 @@ void Plot::initGUI()
 	scaleWIdget = new ColorMapWidget(QwtScaleDraw::RightScale, this);
 	scaleWIdget->setColorBarEnabled(true);
 	scaleWIdget->setColorBarWidth(20);
+	scaleWIdget->setMargin(40);
 
 	informationLabel = new QLabel();
 	//informationLabel->setMargin(40);
@@ -536,7 +537,8 @@ void Plot::renderFinished()
 void Plot::canvasSelectRect(QRect rect)
 {
 	//如果选取框太小  不给予放大缩小操作
-	if (rect.width() < 10 || rect.height() < 10)
+	//这里取绝对值是因为反向选取的框，宽度和高度都是负值。
+	if (std::abs(rect.width()) < 10 || std::abs(rect.height()) < 10)
 		return;
 
 
@@ -547,9 +549,9 @@ void Plot::canvasSelectRect(QRect rect)
 	//将矩形框转换为范围
 	float xMax, xMin, yMax, yMin;
 	xMax = rect.width() > 0 ? rect.x() + rect.width() : rect.x();
-	xMin = xMax - rect.width();
+	xMin = rect.width() > 0 ? xMax - rect.width():xMax + rect.width();
 	yMax = rect.height() > 0 ? rect.y() + rect.height() : rect.y();
-	yMin = yMax - rect.height();
+	yMin = rect.height() > 0 ? yMax - rect.height(): yMax + rect.height();
 	//因为屏幕坐标系的原点在左上角，而实际坐标系的远点在左下角。所以这里的y范围需要做一下翻转
 	float tempYMax = size.height() - yMin;
 	yMin = size.height() - yMax;
