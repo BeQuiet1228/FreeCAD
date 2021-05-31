@@ -290,6 +290,7 @@ QString ControlTreeWidget::makeFilePath(unsigned long threadID)
 void ControlTreeWidget::itemDouble_clicke(QTreeWidgetItem* item, int column)
 {
 	sendControlMsg(item);
+	this->setEnabled(false);
 }
 
 
@@ -323,6 +324,7 @@ void ControlTreeWidget::outputStructFile(unsigned long threadID)
 
 void ControlTreeWidget::outputTempFile(unsigned long threadID)
 {
+	this->setEnabled(true);
 	if (tempHdf5IO == nullptr)
 		return;
 

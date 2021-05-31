@@ -241,14 +241,14 @@ void Plot::updateAxis()
 	//ÏÔÊ¾Í¼Àý
 	if (!axisRightEnabled)
 		return;
-	auto contourRender = std::dynamic_pointer_cast<ContourRender>(mainRenderer);
-	if (!contourRender)
+	auto valueRange = std::dynamic_pointer_cast<RendererValueRangeInterface>(mainRenderer);
+	if (!valueRange)
 	{
 		scaleWIdget->hide();
 		return;
 	}
 
-	Data::Rang vr = contourRender->getValueRange();
+	Data::Rang vr = valueRange->getValueRange();
 	QwtInterval interval(vr.min, vr.max);
 	scaleWIdget->setColorMap(interval, new ColorMap);
 	scaleWIdget->setScaleDiv(scaleEngine->divideScale(vr.min, vr.max, 6, 8, 0));

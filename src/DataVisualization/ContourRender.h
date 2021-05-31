@@ -14,7 +14,7 @@ typedef struct ContourParam
 	ContourParam();
 }CONTOURPARAM;
 
-class ContourRender:public Renderer,public QwtPlotSpectrogram{
+class ContourRender:public Renderer,public QwtPlotSpectrogram,public RendererValueRangeInterface{
 public:
 	ContourRender(std::shared_ptr<ContourData> data);
 	~ContourRender();
@@ -31,7 +31,7 @@ public:
 	void dataInit() override;
 	virtual void loadconfig() override;
 	//获取value范围
-	Data::Rang getValueRange();
+	Data::Rang getValueRange() override;
 	//获取对应的结构体面
 	std::vector<float> getStructFace();
 private:

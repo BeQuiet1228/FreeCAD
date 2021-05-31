@@ -73,3 +73,12 @@ public:
 	//获取图表信息
 	virtual std::string getInformationTitile();
 };
+
+class RendererValueRangeInterface {
+public:
+	RendererValueRangeInterface() = default;
+	virtual ~RendererValueRangeInterface() {};
+public:
+	virtual Data::Rang getValueRange() = 0;
+
+};
