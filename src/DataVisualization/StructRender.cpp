@@ -5,6 +5,7 @@
 #include "C_encoding.h"
 #include <QDebug>
 #include <QPixmap>
+void changColorPixmap(QPixmap& map,QColor& color);
 StructRender::StructRender(std::shared_ptr<StructData> data) :Renderer(std::dynamic_pointer_cast<Data>(data)){		
 	color_tab[StructTexture::PERFECTCONDUCTOR] = QColor(125, 125, 125, 255);
 	isAA = true;
@@ -12,7 +13,7 @@ StructRender::StructRender(std::shared_ptr<StructData> data) :Renderer(std::dyna
 StructRender::~StructRender(){
 
 }
-
+QString lineicon[] = {":/struct/C.png",":/struct/a.png",":/struct/s.png"};
 /**
 * @brief StructRender::transitionX 坐标值转换
 * @param const float & x
@@ -392,7 +393,7 @@ bool StructRender::drawImageRectspace(){
 				QLineF linef = *iterline;
 			}
 			QVector<QLineF> lines = QVector<QLineF>::fromStdVector(iter->second);
-			DrawLine(painter, lines, 0);
+			DrawLine(painter, lines, iter->first);
 		}
 	}
 	auto nImg = img.mirrored(false, true);
@@ -914,6 +915,10 @@ void StructRender::loadconfig()
 	LoadColor(DIELECTIRANDCONDUCTANCE);
 	LoadColor(FREESPACE);
 	LoadColor(FOIL);
+
+	
+
+
 	//线段-----PORT 2**8，2**9，2**10
 	color_pen[256] = QColor(0,255,0);
 	color_pen[512] = QColor(0,255,0);
@@ -930,11 +935,23 @@ void StructRender::loadconfig()
 	color_pen[32768] = QColor(0, 0, 255);
 	color_pen[65536] = QColor(0, 0, 255);
 
-
-	QPixmap map(":/test/test.png");
-	QSize pngsize(16,16);
-	map = map.scaled(pngsize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-	pixmap[0] = map;
+	//处理图像
+	QPixmap mapc(lineicon[0]);
+	QPixmap mapa(lineicon[1]);
+	QPixmap maps(lineicon[2]);
+	QSize pngsize(16, 16);
+	changColorPixmap(maps, QColor(Qt::red));
+	mapc = mapc.scaled(pngsize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	mapa = mapa.scaled(pngsize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	maps = maps.scaled(pngsize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	QMatrix rm;
+	rm.rotate(180);
+	mapc = mapc.transformed(QPixmap::trueMatrix(rm,pngsize.width(),pngsize.height()));
+	mapa = mapa.transformed(QPixmap::trueMatrix(rm, pngsize.width(), pngsize.height()));
+	maps = maps.transformed(QPixmap::trueMatrix(rm, pngsize.width(), pngsize.height()));
+	pixmap[256] = pixmap[512]=pixmap[1024]=pixmap[1027]=maps;
+	pixmap[2048] = pixmap[4096] = pixmap[8192] = mapa;
+	pixmap[16384] = pixmap[32768] = pixmap[65536] = mapc;
 #undef LoadColor(a)
 	isAA = atoi(structConfig.getValue("isAlis").c_str());
 }
@@ -970,7 +987,6 @@ bool StructRender::setDefaultRang(QSize& size){
 	}
 	
 }
-
 void StructRender::DrawLine(QPainter& painter, QVector<QLineF>& lines, int mPorper)
 {
 	QSize pngSize = pixmap[mPorper].size();
@@ -981,7 +997,7 @@ void StructRender::DrawLine(QPainter& painter, QVector<QLineF>& lines, int mPorp
 		//纵向
 		if (p1.x()==p2.x())
 		{
-			auto intervalnumber = abs(p1.y() - p2.y()) / pixmap[0].size().height();
+			auto intervalnumber = abs(p1.y() - p2.y()) / pixmap[mPorper].size().height();
 			auto startpos = (p1.y() > p2.y()) ? (p2.y()) : (p1.y());
 			auto endpos = (p1.y() > p2.y()) ? (p1.y()) : (p2.y());
 			for (auto index = 0; index < intervalnumber;index++)
@@ -999,7 +1015,7 @@ void StructRender::DrawLine(QPainter& painter, QVector<QLineF>& lines, int mPorp
 				else
 				{
 					rect.setBottom(rect.top() + pngSize.height());
-					painter.drawPixmap(rect, pixmap[0]);
+					painter.drawPixmap(rect, pixmap[mPorper]);
 				}
 				
 			}
@@ -1010,6 +1026,10 @@ void StructRender::DrawLine(QPainter& painter, QVector<QLineF>& lines, int mPorp
 			auto intervalnumber = abs(p1.x() - p2.x()) / pixmap[mPorper].size().width();
 			auto startpos = (p1.x() > p2.x()) ? (p2.x()) : (p1.x());
 			auto endpos = (p1.x() > p2.x()) ? (p1.x()) : (p2.x());
+			//图像翻转
+			QMatrix rm;
+			rm.rotate(90);
+			QPixmap mapy = pixmap[mPorper].transformed(QPixmap::trueMatrix(rm, pngSize.width(), pngSize.height()));
 			for (auto index = 0; index < intervalnumber; index++)
 			{
 				QRect rect;
@@ -1019,16 +1039,40 @@ void StructRender::DrawLine(QPainter& painter, QVector<QLineF>& lines, int mPorp
 				if (rect.left() + pngSize.width() >= endpos)
 				{
 					rect.setRight(endpos);
-					QPixmap map=pixmap[mPorper].copy(0, 0, rect.width(), rect.height());
+					QPixmap map = mapy.copy(0, 0, endpos - rect.left(), rect.height());
 					painter.drawPixmap(rect,map);
 				}
 				else
 				{
 					rect.setRight(rect.left() + pngSize.width());
-					painter.drawPixmap(rect, pixmap[mPorper]);
+					painter.drawPixmap(rect, mapy);
 				}
 				
 			}
 		}
 	}
+}
+
+/**
+* @brief  changColorPixmap
+* @param  QPixmap & map  
+* @return void  
+*/
+void changColorPixmap(QPixmap& map, QColor& color)
+{
+	//默认为红色
+	QImage img = map.toImage();
+	QColor colorred = QStringToQColor("ffdc3023");
+	for (auto w = 0; w < img.width();w++)
+	{
+		for (auto h = 0; h < img.height();h++)
+		{
+			//qDebug() << QString::number(img.pixel(w, h), 16);
+			if (img.pixel(w,h)==colorred.rgb())
+			{
+				img.setPixel(w, h, color.rgba());
+			}
+		}
+	}
+	map = QPixmap::fromImage(img);
 }
