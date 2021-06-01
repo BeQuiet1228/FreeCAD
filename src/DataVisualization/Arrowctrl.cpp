@@ -206,6 +206,8 @@ QImage* ArrowCtrl::getimg(){
 }
 void ArrowCtrl::setvals(std::vector<float>& vals, std::vector<QColor>& colors)
 {
+	if (vals.empty())
+		return;
 	firstColor=*colors.begin();
 	endColor=*(colors.end()-1);
 	val.clear(); val.reserve(vals.size());

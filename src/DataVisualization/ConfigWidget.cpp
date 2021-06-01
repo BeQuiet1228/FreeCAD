@@ -541,16 +541,20 @@ void ConfigWidget::loadxmlConfig(){
 			vals.push_back(atof( levelGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("value").c_str()));
 			colors.push_back(QStringToQColor(QString::fromStdString(levelGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("color"))));
 		}
-		arrowCtrl->setvals(vals,colors);
-		mColorTab->setColors(vals,colors);
-		QPalette qpalette1 = ui->firstColorBtn->palette();
-		qpalette1.setColor(QPalette::Button, *colors.begin());
-		ui->firstColorBtn->setPalette(qpalette1);
-		QPalette qpalette2 = ui->endColorBtn->palette();
-		qpalette2.setColor(QPalette::Button, *(colors.end()-1));
-		ui->endColorBtn->setPalette(qpalette2);
-		arrowCtrl->SetFirstColor(*colors.begin());
-		arrowCtrl->SetEndColor(*(colors.end() - 1));
+		if (!vals.empty())
+		{
+			arrowCtrl->setvals(vals, colors);
+			mColorTab->setColors(vals, colors);
+			QPalette qpalette1 = ui->firstColorBtn->palette();
+			qpalette1.setColor(QPalette::Button, *colors.begin());
+			ui->firstColorBtn->setPalette(qpalette1);
+			QPalette qpalette2 = ui->endColorBtn->palette();
+			qpalette2.setColor(QPalette::Button, *(colors.end() - 1));
+			ui->endColorBtn->setPalette(qpalette2);
+			arrowCtrl->SetFirstColor(*colors.begin());
+			arrowCtrl->SetEndColor(*(colors.end() - 1));
+		}
+		
 	}
 }
 /**

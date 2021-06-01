@@ -991,9 +991,18 @@ void StructRender::DrawLine(QPainter& painter, QVector<QLineF>& lines, int mPorp
 				rect.setLeft(p1.x() - pngSize.width() / 2);
 				rect.setRight(rect.left() + pngSize.width());
 				rect.setTop(startpos+index*pngSize.height());
-				if (rect.top()+pngSize.height()>=endpos)	rect.setBottom(endpos);
-				else rect.setBottom(rect.top()+pngSize.height());
-				painter.drawPixmap(rect, pixmap[0]);
+				if (rect.top() + pngSize.height() >= endpos)
+				{
+					rect.setBottom(endpos);
+					QPixmap map = pixmap[mPorper].copy(0,0,pngSize.width(),endpos-rect.top());
+					painter.drawPixmap(rect,map);
+				}
+				else
+				{
+					rect.setBottom(rect.top() + pngSize.height());
+					painter.drawPixmap(rect, pixmap[0]);
+				}
+				
 			}
 		}
 		//∫·œÚ
@@ -1008,9 +1017,18 @@ void StructRender::DrawLine(QPainter& painter, QVector<QLineF>& lines, int mPorp
 				rect.setTop(p1.y()-pngSize.height()/2);
 				rect.setBottom(rect.top() + pngSize.height());
 				rect.setLeft(startpos+index*pngSize.width());
-				if (rect.left() + pngSize.width() >= endpos)	rect.setRight(endpos);
-				else rect.setRight(rect.left()+pngSize.width());
-				painter.drawPixmap(rect, pixmap[mPorper]);
+				if (rect.left() + pngSize.width() >= endpos)
+				{
+					rect.setRight(endpos);
+					QPixmap map=pixmap[mPorper].copy(0, 0, rect.width(), rect.height());
+					painter.drawPixmap(rect,map);
+				}
+				else
+				{
+					rect.setRight(rect.left() + pngSize.width());
+					painter.drawPixmap(rect, pixmap[mPorper]);
+				}
+				
 			}
 		}
 	}
