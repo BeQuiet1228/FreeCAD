@@ -320,6 +320,7 @@ void MainWindow::inintContorlUI()
 		contorlDataToolBar->hide();*/
 		QVBoxLayout *layout = new QVBoxLayout;
 		QWidget* wd = new QWidget;
+        wd->setObjectName(QString::fromStdString("ControlDockWidget"));
 		wd->setLayout(layout);
 		layout->addWidget(contorlButtonBar);
 		layout->addWidget(contorlDataBar);
