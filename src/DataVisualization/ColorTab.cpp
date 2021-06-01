@@ -63,7 +63,7 @@ void ColorTab::resizeEvent(QResizeEvent * event)
 */
 void ColorTab::changmoveColor(std::vector<float>& val, std::vector<QColor>& colors,const QColor& firstColor,const QColor& endColor)
 {
-	QwtInterval interval(0, 1);
+	QwtInterval interval(0.0, 1.0);
 	QwtLinearColorMap* colormap = new QwtLinearColorMap(firstColor, endColor);
 	//colormap->setMode(QwtLinearColorMap::Mode::FixedColors);
 	switch (style)
@@ -74,6 +74,8 @@ void ColorTab::changmoveColor(std::vector<float>& val, std::vector<QColor>& colo
 		colormap->setMode(QwtLinearColorMap::Mode::ScaledColors); break;
 	}
 	{
+		/*colormap->addColorStop(0,firstColor);
+		colormap->addColorStop(0.9, endColor);*/
 		for (auto index = 0; index < val.size(); index++)
 			colormap->addColorStop(val[index],colors[index]);
 	}
@@ -88,7 +90,7 @@ std::vector<QColor> ColorTab::GetColors(std::vector<float> vals)
 {
 	std::vector<QColor> colors;
 	colors.clear();
-	QwtInterval interval(0,1);
+	QwtInterval interval(0.0,1.0);
 	for (auto index = 0; index < vals.size();index++)
 	{
 		colors.push_back(scaleWidget->colorMap()->color(interval, vals[index]));
@@ -103,8 +105,8 @@ std::vector<QColor> ColorTab::GetColors(std::vector<float> vals)
 */
 void ColorTab::setColors(std::vector<float>& vals, std::vector<QColor>& colors)
 {
-	QwtInterval interval(0,1);
-	QwtLinearColorMap* colormap = new QwtLinearColorMap(/**colors.begin(),*(colors.end()-1)*/);
+	QwtInterval interval(0.0f,1.0f);
+	QwtLinearColorMap* colormap = new QwtLinearColorMap(*colors.begin(),*(colors.end()-1));
 	switch (style)
 	{
 	case 0:
@@ -112,7 +114,7 @@ void ColorTab::setColors(std::vector<float>& vals, std::vector<QColor>& colors)
 	case 1:
 		colormap->setMode(QwtLinearColorMap::Mode::ScaledColors); break;
 	}
-	for (auto index = 0; index < colors.size();index++)
+	for (auto index = 1; index < colors.size()-1;index++)
 	{
 		colormap->addColorStop(vals[index], colors[index]);
 	}

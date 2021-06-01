@@ -7,7 +7,9 @@
 	<file>arrow1.png</file>
 	</qresource>
 	
-	<qresource prefix="/test">
-	<file>test.png</file>
+	<qresource prefix="/struct">
+	<file>C.png</file>
+	<file>a.png</file>
+	<file>s.png</file>
 	</qresource>
 </RCC>
