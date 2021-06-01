@@ -8,6 +8,7 @@
 #include <QImage>
 #include "CustomConfig.h"
 #include "C_encoding.h"
+#include <math.h>
 ContourRenderPolar::ContourRenderPolar(std::shared_ptr<ContourData> data)
 	:ContourRender(data)
 {
@@ -55,21 +56,6 @@ bool ContourRenderPolar::drawImage()
 	setImage(img.mirrored(false, true));
 
 	return true;
-
-/*
-	QImage img = renderImage(xmap, ymap, rect, getSize());
-	QPainter painter(&img);
-	painter.setRenderHint(QPainter::Antialiasing, true);
-
-
-	
-	QRectF area = QwtScaleMap::invTransform(xmap, ymap, rect);
-	QwtRasterData::ContourLines lines =renderContourLines(area, rect.toRect().size());
-	drawContourLines(&painter, xmap, ymap, lines);
-
-	setImage(img.mirrored(false, true));
-
-	return true; */
 }
 
 bool ContourRenderPolar::addListRang(std::list<Data::Rang> listRang)
@@ -79,6 +65,43 @@ bool ContourRenderPolar::addListRang(std::list<Data::Rang> listRang)
 
 bool ContourRenderPolar::drawPointImage()
 {
+	std::shared_ptr<ContourData> d = std::dynamic_pointer_cast<ContourData>(Renderer::data);
+
+	auto pos = getFindPosition();
+	//获取屏幕与数据的比例
+	float xScale, yScale;
+	getTransitionScale(xScale, yScale);
+	Data::Rang xr = getXRang(), yr = getYRang();
+
+	ContourData::Grid grid = findPoint();
+	float r = grid.x, theta = grid.y;
+	float x, y;
+	x = r * std::cos(theta);
+	y = R * std::sin(theta);
+
+	x = transitionDataToScreen(x, xScale, getXRang());
+	y = transitionDataToScreen(y, yScale, getYRang());
+	//坐标翻转（因为坐标系原点不一致的关系）
+	y = getSize().height() - y;
+
+	//新建画布 画笔
+	QImage img(getSize(), QImage::Format_ARGB32);
+	img.fill(qRgba(0, 0, 0, 0));
+	QPen pen(Qt::red);
+	pen.setBrush(Qt::blue);
+	pen.setWidth(5);
+	QPainter painter(&img);
+	painter.setPen(pen);
+
+	QPointF point(x, y);
+	painter.drawPoint(point);
+
+	std::map<QString, float> list;
+	list["R"] = r;
+	list["THETA"] = theta;
+	list["Value"] = grid.value;
+	displayPointInformation(&painter, &point, list);
+	setImage(img);
 	return true;
 }
 
@@ -147,6 +170,37 @@ void ContourRenderPolar::loadconfig()
 		delete subGroup;
 		subGroup = nullptr;
 	}
+}
+
+ContourData::Grid ContourRenderPolar::findPoint()
+{
+	QPointF pos = getFindPosition();
+	
+	float xscale, yscale;
+	if (!getTransitionScale(xscale, yscale))
+	{
+		std::cerr << "ContourRenderPolar::findPoint() get scale failed!" << std::endl;
+	}
+
+	float x, y;
+	x = pos.x()/xscale + getXRang().min;
+	y = pos.y()/yscale + getYRang().min;
+
+	float r, theta;
+	r = std::sqrt(std::pow(x, 2) + std::pow(y, 2));
+	//这里使用y判断象限 然后调整theta的值
+	if (y < 0)
+	{
+		theta = std::acos(x / r);
+	}else {
+		theta = 2*M_PI - std::acos(x / r);
+	}
+	
+	std::cerr << "R:" << r << ",THETA:" << theta << std::endl;
+
+	auto d = std::dynamic_pointer_cast<ContourData>(Renderer::data);
+
+	return d->findGrid(r, theta);
 }
 
 /**

@@ -18,5 +18,8 @@ public:
 private:
 	//绘制提示框
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const ContourData::Grid& grid);
+	//寻找匹配点
+	ContourData::Grid findPoint();
+private:
 	ContourParam contourPolarparam;
 };
