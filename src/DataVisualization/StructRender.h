@@ -83,15 +83,17 @@ private:
 	bool drawPointImageCartesianXyz();
 	StructData::structpoint findApointZr(QPointF _curpostion);
 	float GetDistance(QPointF p1, QPointF p2);
-
+	QImage* getimage(int number);
 	//目前先暂时保留，改方法没有使用
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d);
 	bool drawPointRect();
 	bool drawPointCir();
 	StructData::structpoint findApointCylindrical(QPointF _curpoint);
+	void DrawLine(QPainter& painter,QVector<QLineF>& lines,int mPorper);
 private:
 	QMap<int, QColor> color_tab;
 	QMap<int, QColor> color_pen;
+	std::map<int, QPixmap> pixmap;
 	Data::Rang xRang, yRang;
 	std::mutex xRangMutex, yRangMutex;
 	bool isAA;

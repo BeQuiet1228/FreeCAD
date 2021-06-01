@@ -4,6 +4,7 @@
 #include "CustomConfig.h"
 #include "C_encoding.h"
 #include <QDebug>
+#include <QPixmap>
 StructRender::StructRender(std::shared_ptr<StructData> data) :Renderer(std::dynamic_pointer_cast<Data>(data)){		
 	color_tab[StructTexture::PERFECTCONDUCTOR] = QColor(125, 125, 125, 255);
 	isAA = true;
@@ -372,13 +373,17 @@ bool StructRender::drawImageRectspace(){
 	}
 	//绘制线段
 	std::map<int, std::vector<QLineF>> mlines = d->GetProperLines();
+	//painter.setBrush(brushs[0]);
 	for (auto iter=mlines.begin();iter!=mlines.end();iter++)
 	{
 		//查找当前属性是否有对应颜色
 		auto itercolor=color_pen.find(iter->first);
 		if (itercolor!=color_pen.end())
 		{
-			QPen pen(itercolor.value(),10,Qt::SolidLine,Qt::FlatCap);
+			//painter.setBrush(brushs[0]);
+			QPen pen/*(itercolor.value(), 10, Qt::SolidLine, Qt::FlatCap)*/;
+			pen.setWidth(10);
+			//pen.setBrush(brushs[0]);
 			painter.setPen(pen);
 			for (auto iterline = iter->second.begin(); iterline != iter->second.end();iterline++)
 			{
@@ -387,7 +392,8 @@ bool StructRender::drawImageRectspace(){
 				QLineF linef = *iterline;
 			}
 			QVector<QLineF> lines = QVector<QLineF>::fromStdVector(iter->second);
-			painter.drawLines(lines);
+			//painter.drawLines(lines);
+			DrawLine(painter, lines, 0);
 		}
 	}
 	auto nImg = img.mirrored(false, true);
@@ -924,7 +930,12 @@ void StructRender::loadconfig()
 	color_pen[16384] = QColor(0, 0, 255);
 	color_pen[32768] = QColor(0, 0, 255);
 	color_pen[65536] = QColor(0, 0, 255);
-	//未知
+
+
+	QPixmap map(":/test/test.png");
+	QSize pngsize(16,16);
+	map = map.scaled(pngsize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	pixmap[0] = map;
 #undef LoadColor(a)
 	isAA = atoi(structConfig.getValue("isAlis").c_str());
 }
@@ -959,4 +970,48 @@ bool StructRender::setDefaultRang(QSize& size){
 		break;
 	}
 	
+}
+
+void StructRender::DrawLine(QPainter& painter, QVector<QLineF>& lines, int mPorper)
+{
+	QSize pngSize = pixmap[mPorper].size();
+	for (auto iter = lines.begin(); iter != lines.end();iter++)
+	{
+		QPointF p1 = iter->p1();
+		QPointF p2 = iter->p2();
+		//纵向
+		if (p1.x()==p2.x())
+		{
+			auto intervalnumber = abs(p1.y() - p2.y()) / pixmap[0].size().height();
+			auto startpos = (p1.y() > p2.y()) ? (p2.y()) : (p1.y());
+			auto endpos = (p1.y() > p2.y()) ? (p1.y()) : (p2.y());
+			for (auto index = 0; index < intervalnumber;index++)
+			{
+				QRect rect;
+				rect.setLeft(p1.x() - pngSize.width() / 2);
+				rect.setRight(rect.left() + pngSize.width());
+				rect.setTop(startpos+index*pngSize.height());
+				if (rect.top()+pngSize.height()>=endpos)	rect.setBottom(endpos);
+				else rect.setBottom(rect.top()+pngSize.height());
+				painter.drawPixmap(rect, pixmap[0]);
+			}
+		}
+		//横向
+		else if (p1.y()==p2.y())
+		{
+			auto intervalnumber = abs(p1.x() - p2.x()) / pixmap[mPorper].size().width();
+			auto startpos = (p1.x() > p2.x()) ? (p2.x()) : (p1.x());
+			auto endpos = (p1.x() > p2.x()) ? (p1.x()) : (p2.x());
+			for (auto index = 0; index < intervalnumber; index++)
+			{
+				QRect rect;
+				rect.setTop(p1.y()-pngSize.height()/2);
+				rect.setBottom(rect.top() + pngSize.height());
+				rect.setLeft(startpos+index*pngSize.width());
+				if (rect.left() + pngSize.width() >= endpos)	rect.setRight(endpos);
+				else rect.setRight(rect.left()+pngSize.width());
+				painter.drawPixmap(rect, pixmap[mPorper]);
+			}
+		}
+	}
 }

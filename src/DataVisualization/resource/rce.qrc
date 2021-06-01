@@ -6,4 +6,8 @@
 	<qresource prefix="/Arrow">
 	<file>arrow1.png</file>
 	</qresource>
+	
+	<qresource prefix="/test">
+	<file>test.png</file>
+	</qresource>
 </RCC>
