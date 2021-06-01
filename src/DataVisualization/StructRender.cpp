@@ -6,14 +6,23 @@
 #include <QDebug>
 #include <QPixmap>
 void changColorPixmap(QPixmap& map,QColor& color);
+QString lineicon[] = { ":/struct/C.png", ":/struct/a.png", ":/struct/s.png" };
+/**
+* @brief  StructRender::StructRender
+* @param  std::shared_ptr<StructData> data  
+* @return   
+*/
 StructRender::StructRender(std::shared_ptr<StructData> data) :Renderer(std::dynamic_pointer_cast<Data>(data)){		
 	color_tab[StructTexture::PERFECTCONDUCTOR] = QColor(125, 125, 125, 255);
 	isAA = true;
 }
+/**
+* @brief  StructRender::~StructRender
+* @return   
+*/
 StructRender::~StructRender(){
 
 }
-QString lineicon[] = {":/struct/C.png",":/struct/a.png",":/struct/s.png"};
 /**
 * @brief StructRender::transitionX 坐标值转换
 * @param const float & x
@@ -25,7 +34,6 @@ float StructRender::transitionX(const float& x, const float& xScale, const Data:
 {
 	return (x - xr.min)*xScale;
 }
-
 /**
 * @brief StructRender::transitionY 坐标值转转
 * @param const float & y
@@ -37,7 +45,6 @@ float StructRender::transitionY(const float& y, const float& yScale, const Data:
 {
 	return (y - yr.min)*yScale;
 }
-
 /**
 * @brief StructRender::transitionRectF 切割空间的坐标转换
 * @param QRectF& _rect
@@ -54,7 +61,6 @@ void StructRender::transitionRectF(QRectF& _rectf, const float& xScale, const Da
 	_rectf.setTop(transitionY(_rectf.top(), yScale, yr));
 	_rectf.setBottom(transitionY(_rectf.bottom(), yScale, yr));
 }
-
 /**
 * @brief  StructRender::transitionLineF 线段转换
 * @param  QLineF & line  
@@ -109,7 +115,6 @@ bool StructRender::getTransitionScale(float& xScale, float& yScale)
 	yScale = size.height() / yLength;
 	return true;
 }
-
 /**
 * @brief StructRender::transitionPoint 转换坐标
 * @param QPointF& point
@@ -130,17 +135,23 @@ void StructRender::transitionPoint(QPointF& point, const float& xScale, const Da
 */
 bool StructRender::drawImage(){
 	std::shared_ptr<StructData> d = std::dynamic_pointer_cast<StructData>(data);
-	C_TYPE ctype = d->GetC_TYPE();
-	switch (ctype)
+	DirectionType _type = d->GetDirectionType();
+	switch (_type)
 	{
-	case POLAR:
-		return drawImagePolar();
-	case CYLINDRICAL:
-		return drawImageCylindrical();
-	case CARTESIAN:
-		return drawImageCartesian();
+	case X_Y:
+	case X_Z:
+	case Y_Z:
+	case R_Z:
+		return drawImageRectspace();
+	case R_THETA:
+		return drawImageRandspace();
 	}
 }
+/**
+* @brief  StructRender::addListRang
+* @param  std::list<Data::Rang> listRang  
+* @return bool  
+*/
 bool StructRender::addListRang(std::list<Data::Rang> listRang){
 	return true;
 }
@@ -150,15 +161,16 @@ bool StructRender::addListRang(std::list<Data::Rang> listRang){
 */
 bool StructRender::drawPointImage(){
 	std::shared_ptr<StructData> d = std::dynamic_pointer_cast<StructData>(data);
-	C_TYPE ctype = d->GetC_TYPE();
-	switch (ctype)
+	DirectionType _type = d->GetDirectionType();
+	switch (_type)
 	{
-	case POLAR:
-		return drawPointImagePolar();
-	case CYLINDRICAL:
-		return drawPointImageCylindrical();
-	case CARTESIAN:
-		return drawPointImageCartesian();
+	case X_Y:
+	case X_Z:
+	case Y_Z:
+	case R_Z:
+		return drawPointRect();
+	case R_THETA:
+		return drawPointCir();
 	}
 }
 /**
@@ -185,72 +197,6 @@ void StructRender::dataInit(){
 		d->loadPoint();
 		d->loadroom();
 	}
-}
-/**
-* @brief StructRender::drawImagePolar 绘制-polar坐标系
-* @return bool
-*/
-bool StructRender::drawImagePolar()
-{
-	std::shared_ptr<StructData> d = std::dynamic_pointer_cast<StructData>(data);
-	DirectionType _type = d->GetDirectionType();
-	switch (_type)
-	{
-	case R_Z:
-		return drawImagePolarRz();
-	case R_THETA:
-		return drawImagePolarRtheta();
-	}
-}
-/**
-* @brief StructRender::drawImagePolar 绘制-cylindrical坐标系
-* @return bool
-*/
-bool StructRender::drawImageCylindrical()
-{
-	std::shared_ptr<StructData> d = std::dynamic_pointer_cast<StructData>(data);
-	DirectionType _type = d->GetDirectionType();
-	switch (_type)
-	{
-	case R_Z:
-		return drawImageCylindricalRz();
-	case R_THETA:
-		return drawImageCylindricalRtheta();
-	}
-	return true;
-}
-/**
-* @brief StructRender::drawImagePolar 绘制-cartesian坐标系
-* @return bool
-*/
-bool StructRender::drawImageCartesian()
-{
-	std::shared_ptr<StructData> d = std::dynamic_pointer_cast<StructData>(data);
-	DirectionType _type = d->GetDirectionType();
-	switch (_type)
-	{
-	case X_Y:
-		return drawImageCartesianXy();
-	case Y_Z:
-		return drawImageCartesianYz();
-	case X_Z:
-		return drawImageCartesianXz();
-	}
-	return true;
-}
-/**
-* @brief StructRender::drawImagePolar 绘制-polar坐标系-rz方向
-* @return bool
-*/
-bool StructRender::drawImagePolarRz(){
-	return drawImageRectspace();
-}
-/**
-* @brief StructRender::drawImagePolar 绘制-polar坐标系-r_theta方向
-* @return bool
-*/
-bool StructRender::drawImagePolarRtheta(){
-	return drawImageRandspace();
 }
 /**
 * @brief StructRender::GetPath 获取绘制路径
@@ -300,20 +246,6 @@ QVector<QPainterPath> StructRender::GetPath(std::vector<StructData::CutCir>& _ve
 #pragma  endregion
 	}
 	return pathlist;
-}
-/**
-* @brief StructRender::drawImageCylindricalRz 绘制-cylindrical坐标系-rz方向
-* @return bool
-*/
-bool StructRender::drawImageCylindricalRz(){
-	return drawImageRectspace();
-}
-/**
-* @brief StructRender::drawImageCylindricalRtheta 绘制-cylindrical坐标系-r_theta方向
-* @return bool
-*/
-bool StructRender::drawImageCylindricalRtheta(){
-	return drawImageRandspace();
 }
 /**
 * @brief StructRender::drawImageRectspace 绘制-矩形空间
@@ -374,18 +306,12 @@ bool StructRender::drawImageRectspace(){
 	}
 	//绘制线段
 	std::map<int, std::vector<QLineF>> mlines = d->GetProperLines();
-	//painter.setBrush(brushs[0]);
 	for (auto iter=mlines.begin();iter!=mlines.end();iter++)
 	{
 		//查找当前属性是否有对应颜色
-		auto itercolor=color_pen.find(iter->first);
-		if (itercolor!=color_pen.end())
+		auto itercolor=pixmap.find(iter->first);
+		if (itercolor!=pixmap.end())
 		{
-			//painter.setBrush(brushs[0]);
-			QPen pen/*(itercolor.value(), 10, Qt::SolidLine, Qt::FlatCap)*/;
-			pen.setWidth(10);
-			//pen.setBrush(brushs[0]);
-			painter.setPen(pen);
 			for (auto iterline = iter->second.begin(); iterline != iter->second.end();iterline++)
 			{
 				transitionLineF(*iterline, xScale, yScale, xr, yr);
@@ -397,10 +323,10 @@ bool StructRender::drawImageRectspace(){
 		}
 	}
 	auto nImg = img.mirrored(false, true);
-	//#define _Debug
+#define _Debug
 #ifdef _Debug
 	static int index = 0;
-	QString _path = QString("C:/Users/Administrator/Desktop/save/savepmg_%1.png").arg(index++);
+	QString _path = QString("C:/Users/ASUS/Desktop/save/savepmg_%1.png").arg(index++);
 	bool res = nImg.save(_path);
 #undef _Debug
 #endif
@@ -454,103 +380,15 @@ bool StructRender::drawImageRandspace(){
 		}
 	}
 	auto nImg = img.mirrored(false, true);
+#define _Debug
+#ifdef _Debug
+	static int index = 0;
+	QString _path = QString("C:/Users/ASUS/Desktop/save/savepmg_%1.png").arg(index++);
+	bool res = nImg.save(_path);
+#undef _Debug
+#endif
 	setImage(nImg);
 	return true;
-}
-/**
-* @brief StructRender::drawImageCartesianXy 绘制-cartesian坐标系-xy方向
-* @return bool
-*/
-bool StructRender::drawImageCartesianXy(){
-	return drawImageRectspace();
-}
-/**
-* @brief StructRender::drawImageCartesianYz 绘制-cartesian坐标系-yz方向
-* @return bool
-*/
-bool StructRender::drawImageCartesianYz()
-{
-	return drawImageRectspace();
-}
-/**
-* @brief StructRender::drawImageCartesianXz 绘制-cartesian坐标系-xz方向
-* @return bool
-*/
-bool StructRender::drawImageCartesianXz()
-{
-	return drawImageRectspace();
-}
-/**
-* @brief StructRender::drawPointImagePolar 绘制-polar坐标系
-* @return bool
-*/
-bool StructRender::drawPointImagePolar(){
-	std::shared_ptr<StructData> d = std::dynamic_pointer_cast<StructData>(data);
-	DirectionType _type = d->GetDirectionType();
-	switch (_type)
-	{
-	case R_Z:
-		return drawPointImagePolarRz();
-	case R_THETA:
-		return drawPointImagePolarRtheta();
-	}
-}
-/**
-* @brief StructRender::drawPointImageCylindrical 绘制-cylindrical坐标系
-* @return bool
-*/
-bool StructRender::drawPointImageCylindrical(){
-	std::shared_ptr<StructData> d = std::dynamic_pointer_cast<StructData>(data);
-	DirectionType _type = d->GetDirectionType();
-	switch (_type)
-	{
-	case R_Z:
-		return drawPointImageCylindricalRz();
-	case R_THETA:
-		return drawPointImageCylindricalRtheta();
-	}
-}
-/**
-* @brief StructRender::drawPointImageCartesian 绘制-cartesian坐标系
-* @return bool
-*/
-bool StructRender::drawPointImageCartesian(){
-	return drawPointImageCartesianXyz();
-}
-/**
-* @brief StructRender::drawPointImagePolarRz 绘制-polar坐标系-rz方向
-* @return bool
-*/
-bool StructRender::drawPointImagePolarRz(){
-	return drawPointRect();
-}
-/**
-* @brief StructRender::drawPointImagePolarRtheta 绘制取点-polar坐标系-R_THETA方向
-* @return bool
-*/
-bool StructRender::drawPointImagePolarRtheta(){
-	return drawPointCir();
-}
-/**
-* @brief StructRender::drawPointImageCylindricalRz 绘制取点-cylindrical坐标系-rz方向
-* @return bool
-*/
-bool StructRender::drawPointImageCylindricalRz(){
-	return drawPointRect();
-}
-/**
-* @brief StructRender::drawPointImageCylindricalRtheta 绘制取点-cylindrical坐标系-r_theta方向
-* @return bool
-*/
-bool StructRender::drawPointImageCylindricalRtheta(){
-	return drawPointCir();
-}
-/**
-* @brief StructRender::drawPointImageCartesianXyz 绘制取点-Cartesian坐标系
-* @return bool
-*/
-bool StructRender::drawPointImageCartesianXyz(){
-	return drawPointRect();
 }
 /**
 * @brief StructRender::findApointZr 查找最近的点-ZR方向
@@ -683,53 +521,6 @@ float StructRender::GetDistance(QPointF p1, QPointF p2)
 		((p1.y() - p2.y())*(p1.y() - p2.y()));
 	return sqrt(distance);
 
-}
-/**
-* @brief StructRender::drawDisplayPoint 绘制点位
-* @param QPainter& painter 
-* @param const QPointF& position 屏幕上的点位
-* @param const QPointF& d 真实点位信息
-* @return void
-*/
-//该方法以没有使用，暂时保留，后续会去除
-void StructRender::drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d)
-{
-	//设置画笔的颜色
-	QPen pen;
-	pen.setColor(QColor(102, 205, 170));
-	pen.setWidth(2);
-	painter.setPen(pen);
-	painter.setBrush(QBrush(QColor(255, 250, 240)));
-	//建立话画框
-	QRectF displayRect;
-	displayRect.setX(position.x() + 10);
-	displayRect.setY(position.y() - 5);
-	//如果这个点在边界上  那么调整话框的位置
-	auto size = getSize();
-	if (displayRect.y() > (size.height() - 60))
-	{
-		displayRect.setY(displayRect.y() - 70);
-	}
-	if (displayRect.x() > (size.width() - 130))
-	{
-		displayRect.setX(displayRect.x() - 150);
-	}
-
-	displayRect.setWidth(110);
-	displayRect.setHeight(50);
-	painter.drawRect(displayRect);
-	//绘制显示信息
-	QFont f;
-	f.setPixelSize(17);
-	painter.setFont(f);
-	painter.drawText(displayRect.x() + 10,
-		displayRect.y() + 20,
-		QString("X:%1").arg(d.x(), 0, 'E', 2)
-		);
-	painter.drawText(displayRect.x() + 10,
-		displayRect.y() + 40,
-		QString("Y:%1").arg(d.y(), 0, 'E', 2)
-		);
 }
 /**
 * @brief StructRender::drawPointRect 绘制点位-矩形
@@ -915,32 +706,14 @@ void StructRender::loadconfig()
 	LoadColor(DIELECTIRANDCONDUCTANCE);
 	LoadColor(FREESPACE);
 	LoadColor(FOIL);
-
-	
-
-
-	//线段-----PORT 2**8，2**9，2**10
-	color_pen[256] = QColor(0,255,0);
-	color_pen[512] = QColor(0,255,0);
-	color_pen[1024] =QColor(255,0,0);
-	color_pen[1027] = QColor(0, 0, 0);
-	//DRIVER--2^11,2^12,2^13
-	
-	color_pen[2048] = QColor(255, 0, 0);
-	color_pen[4096] = QColor(255, 0, 0);
-	color_pen[8192] = QColor(255, 0, 0);
-	//INDUCTOR--2^14,2^15,2^16
-	
-	color_pen[16384] = QColor(0, 0, 255);
-	color_pen[32768] = QColor(0, 0, 255);
-	color_pen[65536] = QColor(0, 0, 255);
-
-	//处理图像
+	//线段-----PORT 2**8/256，2**9/512，2**10/1024,1027
+	//DRIVER--2^11/2048,2^12/4096,2^13/8192
+	//INDUCTOR--2^14/16384,2^15/32768,2^16/65536
 	QPixmap mapc(lineicon[0]);
 	QPixmap mapa(lineicon[1]);
 	QPixmap maps(lineicon[2]);
 	QSize pngsize(16, 16);
-	changColorPixmap(maps, QColor(Qt::red));
+	changColorPixmap(maps, QColor(Qt::cyan));
 	mapc = mapc.scaled(pngsize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 	mapa = mapa.scaled(pngsize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 	maps = maps.scaled(pngsize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
@@ -955,7 +728,6 @@ void StructRender::loadconfig()
 #undef LoadColor(a)
 	isAA = atoi(structConfig.getValue("isAlis").c_str());
 }
-
 /**
 * @brief  StructRender::setDefaultRang 设置默认坐标取值范围
 * @param  QSize & size  
@@ -987,6 +759,13 @@ bool StructRender::setDefaultRang(QSize& size){
 	}
 	
 }
+/**
+* @brief  StructRender::DrawLine 绘制线段
+* @param  QPainter & painter  
+* @param  QVector<QLineF> & lines  
+* @param  int mPorper  
+* @return void  
+*/
 void StructRender::DrawLine(QPainter& painter, QVector<QLineF>& lines, int mPorper)
 {
 	QSize pngSize = pixmap[mPorper].size();
@@ -1052,7 +831,6 @@ void StructRender::DrawLine(QPainter& painter, QVector<QLineF>& lines, int mPorp
 		}
 	}
 }
-
 /**
 * @brief  changColorPixmap
 * @param  QPixmap & map  
