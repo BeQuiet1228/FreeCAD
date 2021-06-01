@@ -959,6 +959,8 @@ bool isAnAttribute(unsigned int proper)
 */
 bool StructData::createLines(std::map<int, std::vector<QPoint>>& points,const Data::ValuesPtr &IMX,const Data::ValuesPtr &IMY)
 {
+	auto intervalx = *(IMX->begin() + 1) - *(IMX->begin());
+	auto intervaly = *(IMY->begin() + 1) - *(IMY->begin());
 	allLines.clear();
 	for (auto iter = points.begin(); iter != points.end(); iter++)
 	{
@@ -978,6 +980,8 @@ bool StructData::createLines(std::map<int, std::vector<QPoint>>& points,const Da
 				auto enditer = itersecond - 1;
 				QPointF startPoint(*(IMX->begin() + startiter->x()), *(IMY->begin() + startiter->y()));
 				QPointF endPoint(*(IMX->begin() + enditer->x()), *(IMY->begin() + enditer->y()));
+				if (startPoint.x()==endPoint.x())	endPoint.setY(endPoint.y() + intervaly);
+				else endPoint.setX(endPoint.x() + intervalx);
 				allLines[iter->first].push_back(QLineF(startPoint, endPoint));
 				startiter = itersecond;
 				difval = 1;
@@ -986,6 +990,8 @@ bool StructData::createLines(std::map<int, std::vector<QPoint>>& points,const Da
 		auto enditer = iter->second.end() - 1;
 		QPointF startPoint(*(IMX->begin() + startiter->x()), *(IMY->begin() + startiter->y()));
 		QPointF endPoint(*(IMX->begin() + enditer->x()), *(IMY->begin() + enditer->y()));
+		if (startPoint.x() == endPoint.x())	endPoint.setY(endPoint.y() + intervaly);
+		else endPoint.setX(endPoint.x() + intervalx);
 		allLines[iter->first].push_back(QLineF(startPoint, endPoint));
 	}
 	return true;
