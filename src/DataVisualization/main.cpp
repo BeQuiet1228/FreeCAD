@@ -14,9 +14,11 @@ int main(int argc, char *argv[])
 	CanvasItem::registerMetaTye();
 #if 1
 	//std::string path = "D:/H5/MILO.h5";
-	std::string path = "D:/MILO_D(1).h5";
-	//std::string path = "D:/MILO_P.h5";
+	//std::string path = "D:/MILO_D(1).h5";
+	std::string path = "D:/MILO_P.h5";
 	//std::string path = "D:/MILO_C.h5";
+	
+	
 	Plot p;
 	DataSourceManage manager;
 	ListTreeWidget treectrl;
@@ -24,8 +26,8 @@ int main(int argc, char *argv[])
 	manager.loadhdffile(path);
 	p.showMaximized();
 	treectrl.show();
-	ConfigWidget m_configwidget;
-	m_configwidget.show();
+	//ConfigWidget m_configwidget;
+	//m_configwidget.show();
 #endif
 	//pull request test
 	return a.exec();

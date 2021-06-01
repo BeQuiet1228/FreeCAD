@@ -15,7 +15,8 @@ class Renderer;
 class RenderThreadManager;
 class Axis;
 class QwtScaleEngine;
-class QwtScaleWidget;
+//class QwtScaleWidget;
+class ColorMapWidget;
 class UndoRedoStack;
 class DATA_VISUALIZATION_EXPORT Plot:public QWidget{
 	Q_OBJECT
@@ -46,7 +47,8 @@ private:
 	const unsigned int SUB_RENDER_START_RANK = 10;
 	const unsigned int FIND_POINT_RENDER_RANK = SUB_RENDER_START_RANK + 20;
 	//颜色图例
-	QwtScaleWidget *scaleWIdget;
+	//QwtScaleWidget *scaleWIdget;
+	ColorMapWidget* scaleWIdget;
 	QwtScaleEngine *scaleEngine;
 	//图例是否可用
 	bool axisRightEnabled;

@@ -60,7 +60,7 @@ bool Struct2DRenderer::drawPointImage(){
 	QPointF d_pos=QPointF(0.0,0.0);
 	//获取当前点位
 	/**************************/
-	d_pos=GetA_pos(A_pos);
+	d_pos=GetApos(A_pos);
 	/***************************/
 	A_pos.setY(getSize().height()-A_pos.y());
 	painter.drawPoint(A_pos);
@@ -99,20 +99,6 @@ void Struct2DRenderer::dataInit(){
 */
 QVector<QLineF> Struct2DRenderer::Getlines(std::vector<QPointF> points){
 	QVector<QLineF> lines;
-	/*int index = 0;
-	while (index<points.size())
-	{
-		for (auto i = 0; i < points.size();i++)
-		{
-			if (index==i)
-				continue;
-			if (points[index].x()==points[i].x()||points[index].y()==points[i].y())
-			{
-				lines.push_back(QLineF(points[index], points[i]));
-			}
-		}
-		index++;
-	}*/
 	for (auto i = 0; i < points.size()-1;i++)
 	{
 		lines.push_back(QLineF(points[i], points[i + 1]));
@@ -165,11 +151,11 @@ void Struct2DRenderer::drawDisplayPoint(QPainter& painter, const QPointF& positi
 		);
 }
 /**
-* @brief Struct2DRenderer::GetA_pos 获取最接近的点
+* @brief Struct2DRenderer::GetApos 获取最接近的点
 * @param QPointF& A_pos 屏幕上的点
 * @return QPointF 真实坐标
 */
-QPointF Struct2DRenderer::GetA_pos(QPointF& A_pos)
+QPointF Struct2DRenderer::GetApos(QPointF& A_pos)
 {
 	float xScale, yScale;
 	getTransitionScale(xScale, yScale);
@@ -298,7 +284,7 @@ bool Struct2DRenderer::getPloy_grid(){
 			}
 		}
 	}
-#pragma region 测试用
+#pragma region 
 	//绘制横向切割线
 	QVector<QLineF> liney = GetCutLine_y();
 	QVector<QLineF> linex = GetCurLine_x();
@@ -494,18 +480,17 @@ void Struct2DRenderer::loadconfig(){
 	auto structGroup = mGroup.getGroup("struct");
 	auto struct2DGroup = mGroup.getGroup("struct2D");
 #define GETCONFIG(x)\
-	color_tab[x]=QStringToQColor(QString::fromStdString(structGroup.getValue(#x)));\
-	color_line[x]=QStringToQColor(QString::fromStdString(structGroup.getValue(#x "line")));\
-			{QPen pen(QStringToQColor(QString::fromStdString(struct2DGroup.getValue(#x))));\
-	pen.setStyle((struct2DGroup.getValue(#x "type").find("solid")!=std::string::npos)?(Qt::SolidLine):(Qt::DashLine));\
-	pen.setWidth(atoi((struct2DGroup.getValue(#x "width")).c_str()));\
+	color_tab[x]=QStringToQColor(QString::fromStdString(structGroup.getGroup(#x).getValue("value")));\
+	color_line[x]=QStringToQColor(QString::fromStdString(structGroup.getGroup(#x "LINE").getValue("value")));\
+				{QPen pen(QStringToQColor(QString::fromStdString(struct2DGroup.getGroup(#x).getValue("value"))));\
+	pen.setStyle((struct2DGroup.getGroup(#x "TYPE").getValue("value").find("solid")!=std::string::npos)?(Qt::SolidLine):(Qt::DashLine));\
+	pen.setWidth(atoi((struct2DGroup.getGroup(#x "WIDTH").getValue("value")).c_str()));\
 	pen_tab[x]=pen;\
 	}
-	GETCONFIG(PerfectConductor);
-	GETCONFIG(ConductorNew);
-	GETCONFIG(Diolectric);
-	GETCONFIG(Permeability);
-	GETCONFIG(waveGuideport);
+	GETCONFIG(PERFECTCONDUCTOR);
+	GETCONFIG(CONDUCTORNEW);
+	GETCONFIG(DIOLECTRIC);
+	GETCONFIG(PERMEABILITY);
 #undef GETCONFIG(x)
 	isAA = atoi(structGroup.getValue("isAlis").c_str());
 }

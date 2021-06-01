@@ -16,7 +16,6 @@ namespace Gui{
 		//bIsPassive = false;
 	}
 	PlotMDIView::~PlotMDIView(){
-		printf("析构\n");
 	}
 	/**
 	* @brief PlotMDIView::GetViewPtr 获取plot控件的指针

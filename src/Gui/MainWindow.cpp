@@ -287,9 +287,11 @@ void MainWindow::hideContorlUI()
         PlotMDIView* plot = dynamic_cast<PlotMDIView*>(*iter);
         if (plot)
         {
+			//plot->getGuiDocument()->detachView(plot,true);
             auto subMdi = dynamic_cast<QWidget*>(plot->parent());
             if (subMdi)
             {
+				//plot->getGuiDocument()->detachView(plot, true);
                 subMdi->close();
                 //d->mdiArea->removeSubWindow(subMdi);
                 delete subMdi;

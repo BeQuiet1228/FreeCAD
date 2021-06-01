@@ -7,17 +7,17 @@
 enum StructTexture
 {
 	//理想导体
-	PerfectConductor = 3,
+	PERFECTCONDUCTOR = 3,
 	//电导新材料
-	ConductorNew = 8,
+	CONDUCTORNEW = 8,
 	//介质
-	Diolectric = 4,
+	DIOLECTRIC = 4,
 	//电介质和电导
-	dielectirAndconductance = 16,
+	DIELECTIRANDCONDUCTANCE = 16,
 	//磁导率
-	Permeability = 32,
+	PERMEABILITY = 32,
 	//自由空间
-	Freespace = 64,
+	FREESPACE = 64,
 	//电阻
 	FOIL = 128,
 	
@@ -54,43 +54,46 @@ public:
 	virtual void dataInit() override;
 	virtual bool setDefaultRang(QSize&) override;
 private:
-	bool drawImage_rect_space();
-	bool drawImage_rand_space();
+	bool drawImageRectspace();
+	bool drawImageRandspace();
 	float transitionX(const float& x, const float& xScale, const Data::Rang& xr);
 	float transitionY(const float& y, const float& yScale, const Data::Rang& yr);
 	void transitionPoint(QPointF& point, const float& xScale, const Data::Rang& xr, const float& yScale, const Data::Rang& yr);
 	void transitionRectF(QRectF& _rectf, const float& sScale, const Data::Rang& xr, const float& yScale, Data::Rang& yr);
+	void transitionLineF(QLineF& line, const float& xScale, const float& yScale,const Data::Rang &xr,const Data::Rang& yr);
 	bool getTransitionScale(float& xScale, float& yScale);
-	bool drawImage_polar();
-	bool drawImage_polar_r_z();
-	bool drawImage_polar_r_theta();
-	bool drawImage_cylindrical();
-	bool drawImage_cylindrical_r_z();
-	bool drawImage_cylindrical_r_theta();
-	bool drawImage_cartesian();
-	bool drawImage_cartesian_x_y();
-	bool drawImage_cartesian_y_z();
-	bool drawImage_cartesian_x_z();
+	bool drawImagePolar();
+	bool drawImagePolarRz();
+	bool drawImagePolarRtheta();
+	bool drawImageCylindrical();
+	bool drawImageCylindricalRz();
+	bool drawImageCylindricalRtheta();
+	bool drawImageCartesian();
+	bool drawImageCartesianXy();
+	bool drawImageCartesianYz();
+	bool drawImageCartesianXz();
 	QVector<QPainterPath> StructRender::GetPath(std::vector<StructData::CutCir>& _vector, const Data::Rang& xr, const Data::Rang& yr, const float& xScale, const float& yScale);
-	bool drawPointImage_polar();
-	bool drawPointImage_cylindrical();
-	bool drawPointImage_cartesian();
-	bool drawPointImage_polar_r_z();
-	bool drawPointImage_polar_r_theta();
-	bool drawPointImage_cylindrical_r_z();
-	bool drawPointImage_cylindrical_r_theta();
-	bool drawPointImage_cartesian_x_y_z();
-	StructData::structpoint findApoint_Z_R(QPointF _curpostion);
+	bool drawPointImagePolar();
+	bool drawPointImageCylindrical();
+	bool drawPointImageCartesian();
+	bool drawPointImagePolarRz();
+	bool drawPointImagePolarRtheta();
+	bool drawPointImageCylindricalRz();
+	bool drawPointImageCylindricalRtheta();
+	bool drawPointImageCartesianXyz();
+	StructData::structpoint findApointZr(QPointF _curpostion);
 	float GetDistance(QPointF p1, QPointF p2);
-
+	QImage* getimage(int number);
 	//目前先暂时保留，改方法没有使用
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d);
 	bool drawPointRect();
 	bool drawPointCir();
-	StructData::structpoint findApoint_Cylindrical(QPointF _curpoint);
+	StructData::structpoint findApointCylindrical(QPointF _curpoint);
+	void DrawLine(QPainter& painter,QVector<QLineF>& lines,int mPorper);
 private:
 	QMap<int, QColor> color_tab;
 	QMap<int, QColor> color_pen;
+	std::map<int, QPixmap> pixmap;
 	Data::Rang xRang, yRang;
 	std::mutex xRangMutex, yRangMutex;
 	bool isAA;

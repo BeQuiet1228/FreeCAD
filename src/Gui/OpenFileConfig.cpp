@@ -67,17 +67,14 @@ QString OpenFileConfig::makeFormatString()
 * @param const QStringList & fileList
 * @return QStringList 
 */
-#include <QDebug>
 QStringList  FileFormat::isFormat(QStringList& fileList)
 {
 	QStringList list;
 	
 	int formatLen = format.length();
-	qDebug() << format;
 	for (auto i = fileList.begin(); i != fileList.end();)
 	{
 		auto temp = i->right(formatLen).toLower();
-		qDebug() << temp;
 		if (format.toLower() == temp)
 		{
 			list.append(QString(*i));
@@ -89,7 +86,6 @@ QStringList  FileFormat::isFormat(QStringList& fileList)
 				
 	}
 	return list;
-	qDebug() << list;
 }
 
 FileFormatM3DText::FileFormatM3DText()

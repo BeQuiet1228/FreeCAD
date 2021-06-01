@@ -107,5 +107,4 @@ public:
 	static void copyToHdf5IO(Hdf5IO& hdf5IO, std::vector<Hdf5Data>& datas);
 	static void creatNewHdf5File(const std::string& fileName);
 	static void creatHdf5File(const std::string& fileName);
-
 };

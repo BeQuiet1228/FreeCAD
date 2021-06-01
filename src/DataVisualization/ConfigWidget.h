@@ -9,31 +9,32 @@ class QPushButton;
 class QBoxLayout;
 class QwtScaleWidget;
 class QwtScaleEngine;
+class ColorTab;
 class ArrowCtrl;
 namespace Mas{
 	enum DATA_VISUALIZATION_EXPORT structTexture
 	{
 		//理想导体
-		PerfectConductor = 3,
+		PERFECTCONDUCTOR = 3,
 		//电导新材料
-		ConductorNew = 8,
+		CONDUCTORNEW = 8,
 		//介质
-		Diolectric = 4,
+		DIOLECTRIC = 4,
 		//电介质和电导
-		dielectirAndconductance = 16,
+		DIELECTIRANDCONDUCTANCE = 16,
 		//磁导率
-		Permeability = 32,
+		PERMEABILITY = 32,
 		//
-		Freespace = 64,
+		FREESPACE = 64,
 		//
 		FOIL = 128,
 
 		//线段
 		//波导端口
-		waveGuideport = 1024,
+		WAVEGUIDEPORT = 1024,
 		DRIVER = 2048,
 		//感应器
-		Inductor = 16384
+		INDUCTOR = 16384
 
 	};
 	struct DATA_VISUALIZATION_EXPORT Setconfig
@@ -51,7 +52,6 @@ namespace Ui{
 class DATA_VISUALIZATION_EXPORT ConfigWidget :public QWidget
 {
 	Q_OBJECT
-public:
 public:
 	explicit ConfigWidget(QWidget* panter = nullptr);
 	~ConfigWidget();
@@ -91,8 +91,10 @@ public Q_SLOTS:
 	void veccolorClicked();
 	//相空间图
 	void partcleColorclicked();
-	//等位图
-	void changeUser_defined(int);
+	void radioButton1(bool);
+	void radioButton2(bool);
+	void setfirstColor();
+	void setendColor();
 private:
 	void loadxmlConfig();
 	void SetAllreRender(QPushButton*);
@@ -119,6 +121,7 @@ private:
 	QBoxLayout* boxLayout;
 	QwtScaleWidget *scaleWIdget;
 	QwtScaleEngine *scaleEngine;
+	ColorTab* mColorTab;
 	ArrowCtrl* arrowCtrl;
 private:
 	Ui::ConfigWidget *ui;
