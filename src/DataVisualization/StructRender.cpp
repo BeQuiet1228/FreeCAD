@@ -392,7 +392,6 @@ bool StructRender::drawImageRectspace(){
 				QLineF linef = *iterline;
 			}
 			QVector<QLineF> lines = QVector<QLineF>::fromStdVector(iter->second);
-			//painter.drawLines(lines);
 			DrawLine(painter, lines, 0);
 		}
 	}

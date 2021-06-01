@@ -551,8 +551,9 @@ void ConfigWidget::loadxmlConfig(){
 			QPalette qpalette2 = ui->endColorBtn->palette();
 			qpalette2.setColor(QPalette::Button, *(colors.end() - 1));
 			ui->endColorBtn->setPalette(qpalette2);
-			arrowCtrl->SetFirstColor(*colors.begin());
 			arrowCtrl->SetEndColor(*(colors.end() - 1));
+			arrowCtrl->SetFirstColor(*colors.begin());
+			
 		}
 		
 	}
