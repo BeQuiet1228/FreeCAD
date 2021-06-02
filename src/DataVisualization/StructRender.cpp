@@ -323,7 +323,7 @@ bool StructRender::drawImageRectspace(){
 		}
 	}
 	auto nImg = img.mirrored(false, true);
-#define _Debug
+//#define _Debug
 #ifdef _Debug
 	static int index = 0;
 	QString _path = QString("C:/Users/ASUS/Desktop/save/savepmg_%1.png").arg(index++);
@@ -380,7 +380,7 @@ bool StructRender::drawImageRandspace(){
 		}
 	}
 	auto nImg = img.mirrored(false, true);
-#define _Debug
+//#define _Debug
 #ifdef _Debug
 	static int index = 0;
 	QString _path = QString("C:/Users/ASUS/Desktop/save/savepmg_%1.png").arg(index++);
@@ -561,8 +561,6 @@ bool StructRender::drawPointCir(){
 	QPainter painter(&img);
 	painter.setPen(pen);
 	//获取当前点位
-
-	//structureData::structpoint _point = findApointCylindrical(this->getFindPosition());
 	QPointF A_Point = this->getFindPosition();
 	StructData::structpoint _point = findApointCylindrical(A_Point);
 	//坐标翻转
