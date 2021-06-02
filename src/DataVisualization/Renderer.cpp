@@ -253,16 +253,11 @@ void Renderer::displayPointInformation(QPainter* painter, QPointF* point , std::
 	}
 	displayRect.setWidth(displayRectWidth);
 	displayRect.setHeight(displayRectHeight);
-	//painter->drawRoundedRect(displayRect,25,25);
 	painter->drawRoundRect(displayRect, 10,10);
 	//»æÖÆÐÅÏ¢
 	painter->setFont(f);
-	//for each (QString var in varstrlist)
-	/*for (auto i = 0; i < varstrlist.size(); i++)
-		painter->drawText(displayRect.x() + 10, displayRect.y() + (perHeight + 3)*(i + 1), varstrlist[i]);*/\
-
-	QPen pen1; pen1.setColor(QColor(0, 0, 0)); pen1.setWidth(2);
-	QPen pen2; pen2.setColor(QColor(125, 125, 125)); pen2.setWidth(2);
+	QPen pen1; pen1.setColor(QColor(0, 0, 0)); pen1.setWidth(3);
+	QPen pen2; pen2.setColor(QColor(125, 125, 125)); pen2.setWidth(3);
 	unsigned int i = 0;
 	for (auto index =list.begin(); index!=list.end();index++,i++)
 	{

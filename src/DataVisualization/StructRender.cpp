@@ -711,7 +711,9 @@ void StructRender::loadconfig()
 	QPixmap mapa(lineicon[1]);
 	QPixmap maps(lineicon[2]);
 	QSize pngsize(16, 16);
-	changColorPixmap(maps, QColor(Qt::cyan));
+	changColorPixmap(maps, QColor(Qt::gray));
+	changColorPixmap(mapa, QColor(Qt::gray));
+	changColorPixmap(mapc, QColor(Qt::gray));
 	mapc = mapc.scaled(pngsize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 	mapa = mapa.scaled(pngsize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 	maps = maps.scaled(pngsize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
@@ -720,7 +722,7 @@ void StructRender::loadconfig()
 	mapc = mapc.transformed(QPixmap::trueMatrix(rm,pngsize.width(),pngsize.height()));
 	mapa = mapa.transformed(QPixmap::trueMatrix(rm, pngsize.width(), pngsize.height()));
 	maps = maps.transformed(QPixmap::trueMatrix(rm, pngsize.width(), pngsize.height()));
-	pixmap[256] = pixmap[512]=pixmap[1024]=pixmap[1027]=maps;
+	pixmap[256] = pixmap[512]=pixmap[1024]=pixmap[1027]=mapc;
 	pixmap[2048] = pixmap[4096] = pixmap[8192] = mapa;
 	pixmap[16384] = pixmap[32768] = pixmap[65536] = mapc;
 #undef LoadColor(a)
