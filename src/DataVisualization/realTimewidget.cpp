@@ -47,7 +47,7 @@ void realTimewidget::closeEvent(QCloseEvent *event)
 	QWidget::closeEvent(event);
 }
 /**
-* @brief  realTimewidget::init
+* @brief  realTimewidget::init 初始化
 * @param  float min  
 * @param  float max  
 * @return void  
@@ -58,7 +58,6 @@ void realTimewidget::init(float rmin, float rmax)
 	max = rmax;
 	this->setWindowTitle(QString("Rang:(%1~%2)").arg(min).arg(max));
 	//初始化
-	//ui->tableWidget->setWindowTitle("setrang");
 	QStringList header;
 	header << "value:"<<"Rang:";
 	ui->tableWidget->setColumnCount(2);
@@ -77,13 +76,11 @@ void realTimewidget::init(float rmin, float rmax)
 	QTableWidgetItem* item = new QTableWidgetItem(QString("%1~%2").arg(min, 0, 'f', GetdecimalBit(min)).arg(max, 0, 'f', GetdecimalBit(max)));
 	item->setFlags(Qt::ItemIsEditable);
 	ui->tableWidget->setItem(rowFirst,1,item);
-	//ui->tableWidget->resizeRowsToContents();
 	ui->tableWidget->resizeColumnsToContents();
 	connect(ui->addBtn, SIGNAL(clicked()), this, SLOT(addClicked()));
 	connect(ui->deleteBtn, SIGNAL(clicked()), this, SLOT(deleteClicked()));
 	connect(ui->tableWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
 	connect(ui->tableWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
-
 }
 
 /**

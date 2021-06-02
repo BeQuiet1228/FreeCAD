@@ -1,9 +1,22 @@
 #include "Struct2dData.h"
-
+/**
+* @brief  Struct2dData::Struct2dData
+* @param  Hdf5Data & heData  
+* @param  const RunMod & mode  
+* @return   
+*/
 Struct2dData::Struct2dData(Hdf5Data& heData, const RunMod& mode):XYData(heData,mode){
 }
+/**
+* @brief  Struct2dData::~Struct2dData
+* @return   
+*/
 Struct2dData::~Struct2dData(){
 }
+/**
+* @brief  Struct2dData::restorDeriveData
+* @return void  
+*/
 void Struct2dData::restorDeriveData(){
 }
 /**
@@ -99,6 +112,11 @@ bool Struct2dData::initdata(){
 	}
 	return true;
 }
+/**
+* @brief  Struct2dData::findIndexFromXValueL
+* @param  const float & x  
+* @return unsigned int  
+*/
 unsigned int Struct2dData::findIndexFromXValueL(const float&x){
 	return 0;
 }

@@ -24,7 +24,7 @@ phasorRenderer::~phasorRenderer(){
 * @return bool
 */
 bool phasorRenderer::drawImage(){
-	return drawImage_Scence();
+	return drawImageScence();
 }
 /**
 * @brief phasorRenderer::addListRang 
@@ -170,10 +170,10 @@ void phasorRenderer::transionVector(QPointF& endpoint, QPointF startpoint, const
 	endpoint.setY( y_distance+ startpoint.y());
 }
 /**
-* @brief phasorRenderer::drawImage_Scence 依据屏幕缩放绘制
+* @brief phasorRenderer::drawImageScence 依据屏幕缩放绘制
 * @retrun bool
 */
-bool phasorRenderer::drawImage_Scence(){
+bool phasorRenderer::drawImageScence(){
 	//获取画布缩放
 	float xScale(0.0), yScale(0.0);
 	if (!getTransitionScale(xScale, yScale))

@@ -266,7 +266,7 @@ bool StructRender::drawImageRectspace(){
 	QPen pen(Qt::black);
 	pen.setWidth(1);
 	QPainter painter(&img);
-	painter.setRenderHint(QPainter::Antialiasing, isAA);;
+	painter.setRenderHint(QPainter::Antialiasing, isAA);
 	painter.setPen(pen);
 	std::map<int, std::vector<QRectF>> mapInfo = d->GetAllcutInfo();
 #ifdef MY_DEBUG

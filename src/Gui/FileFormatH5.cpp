@@ -27,7 +27,7 @@ void FileFormatH5::open(const QStringList& fileList)
 	}
 }
 /**
-* @brief FileFormatH5::openOnce 
+* @brief FileFormatH5::openOnce 打开一次
 * @param const QString& fileList
 * @param App::Document* doc
 * @return void
