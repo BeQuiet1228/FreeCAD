@@ -3,6 +3,7 @@
 #include <HDF5Reader/hdf5io.h>
 #include <QTreeWidgetItem>
 #include <vector>
+#include <QTimer>
 class ControlTreeWidget :public QTreeWidget {
 	enum MsgType {
 		NONE = 0,
@@ -47,12 +48,21 @@ public Q_SLOTS :
 	void outputStructFile(unsigned long threadID);
 	//输出临时文件
 	void outputTempFile(unsigned long threadID);
-
+	//点击定时器超时
+	void treeDoubleClickTimeOut();
 private:
 	//存储临时文件路径
 	QString tempFilePath;
 	//存储临时h5文件
 	Hdf5IO *tempHdf5IO;
+	//点击超时定时器
+	QTimer timer;
+	//超时时间
+	const unsigned int timeOutCount = 5*1000;
+private:
+	//设置树控件为不可用
+	void setTreeUnuseable();
+	void setTreeUseable();
 	//string类型转换
 	QString tr(const std::string& st) {
 		return QString::fromStdString(st);
