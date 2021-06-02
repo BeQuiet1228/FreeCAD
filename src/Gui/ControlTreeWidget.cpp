@@ -33,6 +33,9 @@ ControlTreeWidget::ControlTreeWidget(QWidget* parent)
 	connect(chipicManager, SIGNAL(outputStructFileSignal(unsigned long)), this, SLOT(outputStructFile(unsigned long)));
 	connect(chipicManager, SIGNAL(newResultFIleSignal(unsigned long)), this, SLOT(outputTempFile(unsigned long)));
 	
+	//定时器超时
+	auto b = connect(&timer, SIGNAL(timeout()), this, SLOT(treeDoubleClickTimeOut()));
+
 }
 
 ControlTreeWidget::~ControlTreeWidget()
@@ -107,7 +110,7 @@ void ControlTreeWidget::sendControlMsg(QTreeWidgetItem* item)
 	if (!getTypeAndIndex(item, type, index))
 		return;
 	control->senWinMessage(109, type, index + 1);
-
+	setTreeUnuseable();
 }
 
 /**
@@ -290,7 +293,6 @@ QString ControlTreeWidget::makeFilePath(unsigned long threadID)
 void ControlTreeWidget::itemDouble_clicke(QTreeWidgetItem* item, int column)
 {
 	sendControlMsg(item);
-	this->setEnabled(false);
 }
 
 
@@ -324,7 +326,8 @@ void ControlTreeWidget::outputStructFile(unsigned long threadID)
 
 void ControlTreeWidget::outputTempFile(unsigned long threadID)
 {
-	this->setEnabled(true);
+	setTreeUseable();
+
 	if (tempHdf5IO == nullptr)
 		return;
 
@@ -342,4 +345,33 @@ void ControlTreeWidget::outputTempFile(unsigned long threadID)
 	Gui::Application::DisplatPlot(newStructData);
 }
 
+/**
+* @brief ControlTreeWidget::treeDoubleClickTimeOut 定时器超时
+* @return void
+*/
+void ControlTreeWidget::treeDoubleClickTimeOut()
+{
+	this->setEnabled(true);
+	timer.stop();
+}
+
+/**
+* @brief ControlTreeWidget::setTreeUnuseable 设置树控件的状态为不可用
+* @return void
+*/
+void ControlTreeWidget::setTreeUnuseable()
+{
+	this->setEnabled(false);
+	timer.start(timeOutCount);
+}
+
+/**
+* @brief ControlTreeWidget::setTreeUseable 设置树控件为可用状态
+* @return void
+*/
+void ControlTreeWidget::setTreeUseable()
+{
+	this->setEnabled(true);
+	timer.stop();
+}
 
