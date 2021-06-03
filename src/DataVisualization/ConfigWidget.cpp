@@ -7,11 +7,9 @@
 #include "C_encoding.h"
 #include "CustomConfig.h"
 #include<QPushButton>
-#include <QRegExp>
-#include<QStringList>
 #include "qwt/qwt_scale_widget.h"
 #include"qwt/qwt_scale_engine.h";
-#include "ContourRender.h"
+#include "qwt/qwt_color_map.h"
 #include "Arrowctrl.h"
 #include "ColorTab.h"
 #include <sstream>
@@ -58,14 +56,6 @@ void ConfigWidget::initUI()
 		SETPERPORE(ui->FOILColor, FOILclicked());
 		SETPERPORE(ui->FOILlineColor, FOILlineclicked());
 	}
-	//2维结构图
-	{
-		SETPERPORE(ui->PerfectConductorColor2, PerfectConductorClicked2());
-		SETPERPORE(ui->ConductorNewColor2,ConductorNewClicked2());
-		SETPERPORE(ui->DiolectricColor2,DiolectricClicked2());
-		SETPERPORE(ui->PermeabilityColor2,PermeabilityClicked2());
-		SETPERPORE(ui->dielectirAndconductanceColor2,dielectirAndconductanceClicked2());
-	}
 	//时间图
 	SETPERPORE(ui->lineColor,linecolorClicked());
 	//矢量图
@@ -104,31 +94,6 @@ void ConfigWidget::initUI()
 	connect(ui->cancleButtom,SIGNAL(clicked()), this, SLOT(canclelicked()));
 }
 
-/**
-* @brief  ConfigWidget::PerfectConductorClicked
-* @return void  
-*/
-void ConfigWidget::PerfectConductorClicked(){ structInfoClicked(Mas::PERFECTCONDUCTOR, ui->PerfectConductorColor); }
-/**
-* @brief  ConfigWidget::ConductorNewClicked
-* @return void  
-*/
-void ConfigWidget::ConductorNewClicked(){ structInfoClicked(Mas::CONDUCTORNEW, ui->ConductorNewColor); }
-/**
-* @brief  ConfigWidget::DiolectricClicked
-* @return void  
-*/
-void ConfigWidget::DiolectricClicked(){	structInfoClicked(Mas::DIOLECTRIC, ui->DiolectricColor);}
-/**
-* @brief  ConfigWidget::PermeabilityClicked
-* @return void  
-*/
-void ConfigWidget::PermeabilityClicked(){structInfoClicked(Mas::PERMEABILITY, ui->PermeabilityColor);}
-/**
-* @brief  ConfigWidget::dielectirAndconductanceClicked
-* @return void  
-*/
-void ConfigWidget::dielectirAndconductanceClicked(){ structInfoClicked(Mas::DIELECTIRANDCONDUCTANCE, ui->dielectirAndconductanceColor); }
 /**
 * @brief  ConfigWidget::structInfoClicked
 * @param  int _property  
@@ -181,29 +146,6 @@ void ConfigWidget::saveclicked()
 		//抗锯齿
 		ConfigGroup AlisAttitude = StructGroup.getGroup("AlisAttitude");
 		(ui->structcheckBox->checkState() == Qt::Checked) ? AlisAttitude.setSetting("isAlis", "1") : AlisAttitude.setSetting("isAlis", "0");
-	}
-	//2维结构图参数
-	{
-		auto Struct2DGroup = Group.getGroup("struct2D");
-#define SetSeting(x,y,z,w) (x):\
-										{\
-			Struct2DGroup.getGroup((#x+5)).setSetting("value",(y));\
-		Struct2DGroup.getGroup(#x "TYPE" + 5).setSetting("value", (z->itemText(z->currentIndex())).toStdString());\
-		Struct2DGroup.getGroup(#x "WIDTH" + 5).setSetting("value", (w->itemText(w->currentIndex())).toStdString());\
-				}\
-		break
-		for (auto iter = struct2dinfo.begin(); iter != struct2dinfo.end(); iter++)
-		{
-			switch (iter->first)
-			{
-				case SetSeting(Mas::CONDUCTORNEW, iter->second.toStdString(), ui->ConductorNewtype, ui->ConductorNewWidth);
-				case SetSeting(Mas::DIOLECTRIC, iter->second.toStdString(), ui->Diolectrictype, ui->DiolectricWidth);
-				case SetSeting(Mas::PERFECTCONDUCTOR, iter->second.toStdString(), ui->PerfectConductortype, ui->PerfectConductorWidth);
-				case SetSeting(Mas::DIELECTIRANDCONDUCTANCE, iter->second.toStdString(), ui->dielectirAndconductancetype, ui->dielectirAndconductanceWidth);
-				case SetSeting(Mas::PERMEABILITY, iter->second.toStdString(), ui->Permeabilitytype, ui->PermeabilityWidth);
-			}
-#undef SetSeting(x,y)
-		}
 	}
 	//时间图
 	{
@@ -343,30 +285,15 @@ void ConfigWidget::axisValColorclicked()
 	QColor color = setbuttomColor(ui->axisvalColor);
 	axisinfo._4th = QColorToQstring(color);
 }
-
-/**
-* @brief  ConfigWidget::PerfectConductorlineClicked 
-* @return void  
-*/void ConfigWidget::PerfectConductorlineClicked(){ structinfolineClicked(Mas::PERFECTCONDUCTOR, ui->PerfectConductorlineColor); }
-
-/**
-* @brief  ConfigWidget::ConductorNewlineClicked
-* @return void  
-*/void ConfigWidget::ConductorNewlineClicked(){ structinfolineClicked(Mas::CONDUCTORNEW, ui->ConductorNewlineColor); }
-
-/**
-* @brief  ConfigWidget::DiolectriclineClicked
-* @return void  
-*/void ConfigWidget::DiolectriclineClicked(){ structinfolineClicked(Mas::DIOLECTRIC, ui->DiolectriclineColor); }
-/**
-* @brief  ConfigWidget::PermeabilitylineClicked
-* @return void  
-*/
+void ConfigWidget::PerfectConductorClicked(){ structInfoClicked(Mas::PERFECTCONDUCTOR, ui->PerfectConductorColor); }
+void ConfigWidget::ConductorNewClicked(){ structInfoClicked(Mas::CONDUCTORNEW, ui->ConductorNewColor); }
+void ConfigWidget::DiolectricClicked(){ structInfoClicked(Mas::DIOLECTRIC, ui->DiolectricColor); }
+void ConfigWidget::PermeabilityClicked(){ structInfoClicked(Mas::PERMEABILITY, ui->PermeabilityColor); }
+void ConfigWidget::dielectirAndconductanceClicked(){ structInfoClicked(Mas::DIELECTIRANDCONDUCTANCE, ui->dielectirAndconductanceColor); }
+void ConfigWidget::PerfectConductorlineClicked(){ structinfolineClicked(Mas::PERFECTCONDUCTOR, ui->PerfectConductorlineColor); }
+void ConfigWidget::ConductorNewlineClicked(){ structinfolineClicked(Mas::CONDUCTORNEW, ui->ConductorNewlineColor); }
+void ConfigWidget::DiolectriclineClicked(){ structinfolineClicked(Mas::DIOLECTRIC, ui->DiolectriclineColor); }
 void ConfigWidget::PermeabilitylineClicked(){ structinfolineClicked(Mas::PERMEABILITY, ui->PermeabilitylineColor); }
-/**
-* @brief  ConfigWidget::dielectirAndconductancelineClicked
-* @return void  
-*/
 void ConfigWidget::dielectirAndconductancelineClicked(){ structinfolineClicked(Mas::DIELECTIRANDCONDUCTANCE, ui->dielectirAndconductancelineColor); }
 void ConfigWidget::FreespaceClicked(){ structInfoClicked(Mas::FREESPACE, ui->FreespaceColor); }
 void ConfigWidget::Freespacelineclicked(){ structinfolineClicked(Mas::FREESPACE, ui->FreespacelineColor);}
@@ -450,21 +377,6 @@ void ConfigWidget::loadxmlConfig(){
 		ui->structcheckBox->setCheckState((QString::fromStdString(StructGroup.getGroup("AlisAttitude").getValue("isAlis")).toInt() == 1) ? Qt::Checked:Qt::Unchecked);
 	}
 #undef LOADCONFIGCOLOR(a,b,c)
-	//2维结构图
-	{
-#define LOADSTRUCT2D(x,y)\
-	fileeButtom(y##Color2,StructGroup.getGroup(#x).getValue("value"));\
-	struct2dinfo[Mas::##x] = QString::fromStdString(StructGroup.getGroup(#x).getValue("value"));\
-	toComboxIndex(y##type,QString::fromStdString(StructGroup.getGroup(#x "TYPE").getValue("value")));\
-	toComboxIndex(y##Width,QString::fromStdString(StructGroup.getGroup(#x "WIDTH").getValue("value")));
-		auto StructGroup = Group.getGroup("struct2D");
-		LOADSTRUCT2D(DIOLECTRIC,ui->Diolectric);
-		LOADSTRUCT2D(DIELECTIRANDCONDUCTANCE, ui->dielectirAndconductance);
-		LOADSTRUCT2D(PERMEABILITY, ui->Permeability);
-		LOADSTRUCT2D(PERFECTCONDUCTOR, ui->PerfectConductor);
-		LOADSTRUCT2D(CONDUCTORNEW, ui->ConductorNew);
-#undef LOADSTRUCT2D(x,y)
-	}
 	//时间图
 	{
 		auto timeGroup = Group.getGroup("observe");
@@ -573,55 +485,29 @@ void ConfigWidget::fileeButtom(QPushButton* button, std::string color)
 	button->setText(QString("#%1").arg(QString::fromStdString(color)));
 }
 /**
-* @brief  ConfigWidget::PerfectConductorClicked_2
+* @brief  ConfigWidget::canclelicked 取消按钮
 * @return void  
 */
-void ConfigWidget::PerfectConductorClicked2(){ struct_2D_clicked(Mas::PERFECTCONDUCTOR, ui->PerfectConductorColor2); }
-/**
-* @brief  ConfigWidget::ConductorNewClicked_2
-* @return void  
-*/
-void ConfigWidget::ConductorNewClicked2(){ struct_2D_clicked(Mas::CONDUCTORNEW, ui->ConductorNewColor2); }
-/**
-* @brief  ConfigWidget::DiolectricClicked_2
-* @return void  
-*/
-void ConfigWidget::DiolectricClicked2(){ struct_2D_clicked(Mas::DIOLECTRIC, ui->DiolectricColor2); }
-/**
-* @brief  ConfigWidget::PermeabilityClicked_2
-* @return void  
-*/
-void ConfigWidget::PermeabilityClicked2(){ struct_2D_clicked(Mas::PERMEABILITY, ui->PermeabilityColor2); }
-/**
-* @brief  ConfigWidget::dielectirAndconductanceClicked_2
-* @return void  
-*/
-void ConfigWidget::dielectirAndconductanceClicked2(){ struct_2D_clicked(Mas::DIELECTIRANDCONDUCTANCE, ui->dielectirAndconductanceColor2); }
-
-/**
-* @brief  ConfigWidget::struct_2D_clicked 
-* @param  int _property  
-* @param  QPushButton *  
-* @return void  
-*/
-void ConfigWidget::struct_2D_clicked(int _property, QPushButton* button){
-	QColor color = QColorDialog::getColor(Qt::white, this, "pick Color", QColorDialog::ShowAlphaChannel);
-	QPalette qpalette = button->palette();
-	qpalette.setColor(QPalette::Button, color);
-	button->setPalette(qpalette);
-	button->setText(QString("#%1").arg(QColorToQstring(color)));
-	struct2dinfo[_property] = QColorToQstring(color);
-}
 void ConfigWidget::canclelicked()
 {
 	this->close();
 }
+/**
+* @brief  ConfigWidget::radioButton1
+* @param  bool flag  
+* @return void  
+*/
 void ConfigWidget::radioButton1(bool flag){
 	if (flag==true)
 	{
 		mColorTab->setColorStyle(0);
 	}
 }
+/**
+* @brief  ConfigWidget::radioButton2
+* @param  bool flag  
+* @return void  
+*/
 void ConfigWidget::radioButton2(bool flag){
 	if (flag==true)
 	{
@@ -650,6 +536,46 @@ void ConfigWidget::setendColor(){
 	qpalette.setColor(QPalette::Button, color);
 	ui->endColorBtn->setPalette(qpalette);
 	arrowCtrl->SetEndColor(color);
+}
+/**
+* @brief  ConfigWidget::getQwtLinearColorMap 返回颜色
+* @return QwtLinearColorMap*  
+*/
+QwtLinearColorMap* ConfigWidget::getQwtLinearColorMap()
+{
+	//读取xml文件
+	Config::GetInstance()->loadConfig();
+	ConfigGroup mGroup = Config::GetInstance()->getRootGroup();
+	ConfigGroup contourGroup = mGroup.getGroup("contour");
+	QwtLinearColorMap::Mode mode;
+	if (contourGroup.getGroup("lineMapColors").getValue("value").find("ScaleColors") != std::string::npos)
+		mode = QwtLinearColorMap::Mode::ScaledColors;
+	else
+		mode = QwtLinearColorMap::Mode::FixedColors;
+	std::vector<float> vals;
+	std::vector<QColor> colors;
+	auto lineMapColorGroup = contourGroup.getGroup("lineMapColorval");
+	int count = atoi(lineMapColorGroup.getValue("valueNumber").c_str());
+	vals.clear(); vals.reserve(count);
+	colors.clear(); colors.reserve(count);
+	for (auto index = 0; index < count; index++)
+	{
+		float val;
+		QColor color;
+		val= atof(
+			lineMapColorGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("value").c_str());
+		color = QStringToQColor(QString::fromStdString(
+			lineMapColorGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("color")));
+		vals.push_back(val);
+		colors.push_back(color);
+	}
+	QwtLinearColorMap* colormap = new QwtLinearColorMap(*(colors.begin()), *(colors.end() - 1));
+	for (auto index = 1; index < count - 1;index++)
+	{
+		colormap->addColorStop(vals[index],colors[index]);
+	}
+	colormap->setMode(mode);
+	return colormap;
 }
 /**
 * @brief  Mas::Setconfig::Setconfig

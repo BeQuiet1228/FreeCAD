@@ -9,6 +9,7 @@ class QPushButton;
 class QBoxLayout;
 class QwtScaleWidget;
 class QwtScaleEngine;
+class QwtLinearColorMap;
 class ColorTab;
 class ArrowCtrl;
 namespace Mas{
@@ -57,6 +58,8 @@ public:
 	~ConfigWidget();
 protected:
 	void initUI();
+public:
+	static QwtLinearColorMap* getQwtLinearColorMap();
 public Q_SLOTS:
 	//保存
 	void saveclicked();
@@ -79,12 +82,6 @@ public Q_SLOTS:
 	void Freespacelineclicked();
 	void FOILclicked();
 	void FOILlineclicked();
-	//2维结构图
-	void PerfectConductorClicked2();
-	void ConductorNewClicked2();
-	void DiolectricClicked2();
-	void PermeabilityClicked2();
-	void dielectirAndconductanceClicked2();
 	//时间图
 	void linecolorClicked();
 	//矢量图
@@ -103,11 +100,9 @@ private:
 private:
 	void structInfoClicked(int _property,QPushButton*);
 	void structinfolineClicked(int _property, QPushButton*);
-	void struct_2D_clicked(int _property,QPushButton*);
 	//结构图
 	std::map<QString, QString> structColor;
 	std::map<QString, QString>structlineColor;
-	std::map<int, QString> struct2dinfo;
 	//向量
 	Mas::Setconfig vecconfig;
 	//时间图
