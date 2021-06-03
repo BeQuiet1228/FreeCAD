@@ -251,6 +251,13 @@ void CodeEditor::keyPressEvent(QKeyEvent *event)
 
     QPlainTextEdit::keyPressEvent(event);
 }
+
+void CodeEditor::mousePressEvent(QMouseEvent* event)
+{
+    QPlainTextEdit::mousePressEvent(event);
+    hideLisetWidget();
+}
+
 //隐藏关键词提示的listwiget
 void CodeEditor::hideLisetWidget()
 {
