@@ -11,14 +11,18 @@
 #define  HORI_GRID (30.0f)
 #define  VERT_GRID (30.0f)
 phasorRenderer::phasorRenderer(std::shared_ptr<phasorData> data)
-	:Renderer(std::dynamic_pointer_cast<Data>(data))
+	:Renderer(std::dynamic_pointer_cast<Data>(data)), colormapsite(0), lastcolormapsite(0)
 {
 	penSize=1;
 	penColor=Qt::red;
 	isAA = true;
 }
 phasorRenderer::~phasorRenderer(){
-
+	if (colormapsite!=0)
+	{
+		QwtLinearColorMap* map = reinterpret_cast<QwtLinearColorMap*>(colormapsite);
+		delete map;
+	}
 }
 /**
 * @brief phasorRenderer::drawImage 绘制图片
@@ -190,11 +194,20 @@ bool phasorRenderer::drawImageScence(){
 	painter.setRenderHint(QPainter::Antialiasing, isAA);
 	std::vector<float> scaleval = d->getScaleVal();
 	//ColorMap* map = new ColorMap();
-	QwtLinearColorMap* map=ConfigWidget::getQwtLinearColorMap();
+	//QwtLinearColorMap* map = getQwtLinearColorMap();
+	QwtLinearColorMap* map = reinterpret_cast<QwtLinearColorMap*>(colormapsite);
+	if (colormapsite!=lastcolormapsite)
+	{
+		if (lastcolormapsite!=0)
+		{
+			QwtLinearColorMap* lastmap = reinterpret_cast<QwtLinearColorMap*>(lastcolormapsite);
+			delete lastmap;
+		}
+		lastcolormapsite = colormapsite;
+	}
 	std::vector<QColor> colorMap; colorMap.reserve(scaleval.size());
 	for (auto iter = scaleval.begin(); iter != scaleval.end();iter++)
 		colorMap.push_back(map->color(QwtInterval(0.0, 1.0), *iter));
-	delete map;
 	//绘制向量
 	QVector<QPointF> p1 = d->Getp1Point();
 	QVector<QPointF> p2 = d->Getp2Point();
@@ -322,34 +335,12 @@ QVector<QLineF> phasorRenderer::findVecLines(QVector<QRectF> scene_rect, QVector
 		p2[i].setX(p1[i].x() + HORI_GRID*rations[i] * (p2[i].x() / sqrt(p2[i].x()*p2[i].x() + p2[i].y()*p2[i].y())));
 		p2[i].setY(p1[i].y() + VERT_GRID*rations[i] * (p2[i].y() / sqrt(p2[i].x()*p2[i].x() + p2[i].y()*p2[i].y())));
 	}
-	//开始填充线段
-	//for (auto i = 0; i <scene_rect.size(); i++)
-	//{
-		//在屏幕范围内
-		//float _distance = sqrt(scene_rect[i].width()*scene_rect[i].width()+scene_rect[i].height()*scene_rect[i].height());
-		//int minindex = -1;
-		//for (auto index = 0; index < p1.size();index++)
-		//{
-		//	float __distance = sqrt((p1[index].x() - scene_rect[i].left())*(p1[index].x() - scene_rect[i].left()) + 
-		//		(p1[index].y() - scene_rect[i].bottom())*(p1[index].y() - scene_rect[i].bottom()));
-		//	if (_distance>__distance)
-		//	{
-		//		_distance = __distance;
-		//		minindex = index;
-		//	}
-		//}
-		//if (minindex!=-1)
-		//{
 	for (auto i = 0; i < p1.size();i++)
 	{
 		lines.push_back(QLineF(p1[i], p2[i]));
 		lines.push_back(QLineF(p2[i], GetarrowTop(p2[i], p1[i])));
 		lines.push_back(QLineF(p2[i], GetarrowBottom(p2[i], p1[i])));
 	}
-			
-		//}
-		
-	//}
 	return lines;
 }
 /**
@@ -465,7 +456,11 @@ void phasorRenderer::loadconfig()
 	else
 		d->setdisMode(phasorData::DISMODE::sizeToLen);
 
-
+	auto ptr=ConfigWidget::getQwtLinearColorMap();
+	if (ptr)
+	{
+		colormapsite = reinterpret_cast<unsigned long long>(ptr);
+	}
 }
 
 /**

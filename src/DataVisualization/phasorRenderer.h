@@ -51,5 +51,7 @@ private:
 	unsigned __int32 penSize;
 	QColor penColor;
 	bool isAA;
+	unsigned long long colormapsite;
+	unsigned long long lastcolormapsite;
 };
 #endif

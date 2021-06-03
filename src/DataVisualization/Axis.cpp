@@ -923,16 +923,18 @@ void Axis::axisRangeChange()
 */
 void Axis::loadconfig()
 {
-	bool isres=Config::GetInstance()->loadConfig();
-	auto Group = Config::GetInstance()->getRootGroup();
-	auto axisGroup = Group.getGroup("axis");
-	//获取刻度颜色
-	axisParams.AxisColor=QStringToQColor(QString::fromStdString(axisGroup.getGroup("axisColor").getValue("value")));
-	int UnitSize = atoi(axisGroup.getGroup("axisSize").getValue("value").c_str());
-	axisParams.AxisValColor = QStringToQColor(QString::fromStdString(axisGroup.getGroup("axisvalColor").getValue("value")));
-	axisParams.AxisUnitSize= UnitSize;
-	axisParams.AxisValSize = atoi(axisGroup.getGroup("axisvalSize").getValue("value").c_str());
-	axisParams.AxisValSize = ((axisParams.AxisValSize < 10) ? 10 : (axisParams.AxisValSize));
+	if (Config::GetInstance()->loadConfig())
+	{
+		auto Group = Config::GetInstance()->getRootGroup();
+		auto axisGroup = Group.getGroup("axis");
+		//获取刻度颜色
+		axisParams.AxisColor = QStringToQColor(QString::fromStdString(axisGroup.getGroup("axisColor").getValue("value")));
+		int UnitSize = atoi(axisGroup.getGroup("axisSize").getValue("value").c_str());
+		axisParams.AxisValColor = QStringToQColor(QString::fromStdString(axisGroup.getGroup("axisvalColor").getValue("value")));
+		axisParams.AxisUnitSize = UnitSize;
+		axisParams.AxisValSize = atoi(axisGroup.getGroup("axisvalSize").getValue("value").c_str());
+		axisParams.AxisValSize = ((axisParams.AxisValSize < 10) ? 10 : (axisParams.AxisValSize));
+	}
 }
 
 /**
