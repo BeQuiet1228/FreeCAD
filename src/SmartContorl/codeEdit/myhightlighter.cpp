@@ -13,7 +13,7 @@ myHightLighter::myHightLighter(QTextDocument *parent)
             while (!stream.atEnd()) {
               QString line = stream.readLine();
              // caseWords.append(line);
-              QRegExp regularExpression("\\b" + line + "\\b");    //创建正则表达式
+              QRegExp regularExpression("(^|\\s)" + line + "(\\s|$|;)");    //创建正则表达式
               regularExpression.setCaseSensitivity(Qt::CaseInsensitive);      //匹配时忽略大小写
 
               QTextCharFormat myClassFormat;
@@ -155,7 +155,7 @@ void myHightLighter::higlightAnnotation(const QString& text)
 	*/
 
 	//生成注释的正则 --设置为静态时为了节省每次初始化正则表达式的时间（这个时间貌似挺长的）
-	static QRegExp rex("\\b[zZ]\\b");
+	static QRegExp rex("(^|\\s)[zZ](\\s|$)");
 	static QRegExp rexf(";");
 	//设置高亮色
 	QTextCharFormat myClassFormat;
@@ -166,6 +166,8 @@ void myHightLighter::higlightAnnotation(const QString& text)
 	//在这里判断上一行的状态来确定是否直接在该行的开始进行注释高亮
 	if (this->previousBlockState() != 1)
 		pos = rex.indexIn(text, pos);
+    if(pos == -1)
+        setCurrentBlockState(0);
 	while (pos != -1) {
 		int posf = 0;
 		int len = 0;

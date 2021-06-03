@@ -91,7 +91,9 @@ void MatchWordsThread::run()
             if(pos == 0)
                 vipCaseWords.append(caseWords.at(i));
             else {
+#if 0       //ÏÈ¹Ø±ÕÄ£ºýÆ¥Åä
                 lowCaseWords.append(caseWords.at(i));
+#endif   
             }
         }
 
