@@ -10,9 +10,18 @@
 #include "PlotMDIView.h"
 #include "MainWindow.h"
 namespace Gui{
+	/**
+	* @brief  Gui::TreeViewCtrl::TreeViewCtrl
+	* @param  QWidget * parent  
+	* @return   
+	*/
 	TreeViewCtrl::TreeViewCtrl(QWidget* parent):ListTreeWidget(parent){
 
 	}
+	/**
+	* @brief  Gui::TreeViewCtrl::~TreeViewCtrl
+	* @return   
+	*/
 	TreeViewCtrl::~TreeViewCtrl()
 	{
 

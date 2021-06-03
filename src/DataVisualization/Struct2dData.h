@@ -49,7 +49,6 @@ public:
 		std::lock_guard<std::mutex> am(yRangMutex);
 		return yRang;
 	}
-	//…Ë÷√»°÷µ∑∂Œß
 	void setXRang(const Rang& xr)
 	{
 		std::lock_guard<std::mutex> am(xRangMutex);

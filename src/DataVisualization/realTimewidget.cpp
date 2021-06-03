@@ -20,6 +20,11 @@ realTimewidget::~realTimewidget()
 {
 
 }
+/**
+* @brief  realTimewidget::closeEvent 关闭事件
+* @param  QCloseEvent * event  
+* @return void  
+*/
 void realTimewidget::closeEvent(QCloseEvent *event)
 {
 	emit setcoloseEvent(true);
@@ -42,7 +47,7 @@ void realTimewidget::closeEvent(QCloseEvent *event)
 	QWidget::closeEvent(event);
 }
 /**
-* @brief  realTimewidget::init
+* @brief  realTimewidget::init 初始化
 * @param  float min  
 * @param  float max  
 * @return void  
@@ -53,7 +58,6 @@ void realTimewidget::init(float rmin, float rmax)
 	max = rmax;
 	this->setWindowTitle(QString("Rang:(%1~%2)").arg(min).arg(max));
 	//初始化
-	//ui->tableWidget->setWindowTitle("setrang");
 	QStringList header;
 	header << "value:"<<"Rang:";
 	ui->tableWidget->setColumnCount(2);
@@ -68,15 +72,15 @@ void realTimewidget::init(float rmin, float rmax)
 	int rowFirst = ui->tableWidget->rowCount();
 	ui->tableWidget->insertRow(rowFirst);
 	float curval = (min + max) / 2;
-	/*QLineEdit* edit = new QLineEdit();
-	edit->setValidator(new QDoubleValidator(min,max,6,this));*/
 	ui->tableWidget->setItem(rowFirst,0,new QTableWidgetItem(QString("%1").arg(curval,0,'f',GetdecimalBit(curval))));
-	//ui->tableWidget->setCellWidget(rowFirst, 0, edit);
+	QTableWidgetItem* item = new QTableWidgetItem(QString("%1~%2").arg(min, 0, 'f', GetdecimalBit(min)).arg(max, 0, 'f', GetdecimalBit(max)));
+	item->setFlags(Qt::ItemIsEditable);
+	ui->tableWidget->setItem(rowFirst,1,item);
+	ui->tableWidget->resizeColumnsToContents();
 	connect(ui->addBtn, SIGNAL(clicked()), this, SLOT(addClicked()));
 	connect(ui->deleteBtn, SIGNAL(clicked()), this, SLOT(deleteClicked()));
 	connect(ui->tableWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
 	connect(ui->tableWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
-	//connect(ui->tableWidget, SIGNAL(itemEntered(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
 }
 
 /**
@@ -97,6 +101,9 @@ void realTimewidget::addClicked(){
 		float curval = ui->tableWidget->item(row - 1, 0)->text().toFloat();
 		ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(curval, 0, 'f', GetdecimalBit(curval))));
 	}
+	QTableWidgetItem* item = new QTableWidgetItem(QString("%1~%2").arg(min,0,'f',GetdecimalBit(min)).arg(max,0,'f',GetdecimalBit(max)));
+	item->setFlags(Qt::ItemIsEditable);
+	ui->tableWidget->setItem(row, 1, item);
 }
 
 /**

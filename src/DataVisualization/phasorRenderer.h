@@ -4,7 +4,8 @@
 #include "Renderer.h"
 #include "phasorData.h"
 #include <QColor>
-class phasorRenderer :public Renderer{
+class phasorRenderer :public Renderer,public RendererValueRangeInterface
+{
 public:
 	phasorRenderer(std::shared_ptr<phasorData> data);
 	~phasorRenderer();
@@ -19,6 +20,7 @@ public:
 	virtual void dataInit() override;
 	virtual void loadconfig() override;
 	virtual bool setDefaultRang(QSize& ) override;
+	virtual Data::Rang getValueRange() override;
 private:
 	QPointF GetarrowTop(QPointF endpoint,QPointF startpoint);
 	QPointF GetarrowBottom(QPointF endpoint,QPointF startpoint);
@@ -41,7 +43,7 @@ private:
 	void transionVector(QPointF& endipoint,QPointF startpoint,const float& lenScale);
 	QVector<QRectF> GetRectF_Scene();
 	QVector<QLineF> findVecLines(QVector<QRectF> scene_rect,QVector<QPointF> p1,QVector<QPointF> p2);
-	bool drawImage_Scence();
+	bool drawImageScence();
 	int findApoint(QPointF A_point);
 	//点位显示的方法，暂时保留
 	void drawDisplayPoint(QPainter& painter,QPointF& position,QPointF& p1,QPointF& len_coef);

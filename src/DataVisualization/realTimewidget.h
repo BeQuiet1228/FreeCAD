@@ -21,7 +21,6 @@ Q_SIGNALS:
 	void addClicked();
 	void deleteClicked();
 	void tableWidgetClicked(QTableWidgetItem*);
-
 public :
 	void closeEvent(QCloseEvent *event);
 protected:
@@ -31,9 +30,7 @@ private:
 	Ui::realTimewidget *ui;
 	float min;
 	float max;
-	//当前选中行
 	int curRow;
-	//之前选中行
 	int lastRow;
 };
 #endif

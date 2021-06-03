@@ -25,6 +25,11 @@ QString GetEncodingstr(const char* str, unsigned int type)
 	}
 }
 
+/**
+* @brief  QColorToQstring  ÑÕÉ«×ª×Ö·û
+* @param  QColor & color  
+* @return QT_NAMESPACE::QString  
+*/
 QString QColorToQstring(QColor& color)
 {
 	return QString().sprintf("%02X%02X%02X%02X", color.alpha(),color.red(),color.green(),color.blue());

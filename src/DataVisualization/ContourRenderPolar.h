@@ -14,12 +14,10 @@ public:
 	bool setDefaultRang() override;
 	virtual bool setDefaultRang(QSize& ) override;
 	void dataInit() override;
-	virtual void loadconfig() override;
 private:
 	//绘制提示框
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const ContourData::Grid& grid);
 	//寻找匹配点
 	ContourData::Grid findPoint();
 private:
-	ContourParam contourPolarparam;
 };

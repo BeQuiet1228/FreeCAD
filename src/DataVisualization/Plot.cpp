@@ -5,7 +5,6 @@
 #include "RenderThreadManager.h"
 #include "RenderTask.h"
 #include "Renderer.h"
-//#include "qwt/qwt_scale_widget.h"
 #include "ColorMapWidget.h"
 #include "qwt/qwt_scale_engine.h"
 #include "ContourRender.h"
@@ -13,6 +12,7 @@
 #include "RenderGrid.h"
 #include <QFont>
 #include "C_encoding.h"
+#include"ConfigWidget.h"
 struct UndoRedoData
 {
 	UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
@@ -251,7 +251,7 @@ void Plot::updateAxis()
 
 	Data::Rang vr = valueRange->getValueRange();
 	QwtInterval interval(vr.min, vr.max);
-	scaleWIdget->setColorMap(interval, new ColorMap);
+	scaleWIdget->setColorMap(interval, ConfigWidget::getQwtLinearColorMap());
 	scaleWIdget->setScaleDiv(scaleEngine->divideScale(vr.min, vr.max, 6, 8, 0));
 	scaleWIdget->setValrange(vr.min, vr.max);
 	scaleWIdget->show();

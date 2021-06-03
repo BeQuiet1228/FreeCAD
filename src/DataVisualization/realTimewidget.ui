@@ -13,9 +13,24 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget#realTimewidget{
+background-color:gray;
+border:1px solid #0000ff;
+border-radius:6px;
+}</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QTableWidget" name="tableWidget"/>
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="styleSheet">
+      <string notr="true">QTableWidget#tableWidget{
+color:black;
+border:1px solid #0000ff;
+border-radius:6px;
+}</string>
+     </property>
+    </widget>
    </item>
    <item row="0" column="1">
     <layout class="QVBoxLayout" name="verticalLayout">

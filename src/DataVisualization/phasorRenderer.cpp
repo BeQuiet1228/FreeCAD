@@ -5,6 +5,7 @@
 #include "C_encoding.h"
 #include <QDebug>
 #include "ContourRender.h"
+#include"ConfigWidget.h"
 #define  M_PI_ (3.141592653589793)
 //按像素来
 #define  HORI_GRID (30.0f)
@@ -24,7 +25,7 @@ phasorRenderer::~phasorRenderer(){
 * @return bool
 */
 bool phasorRenderer::drawImage(){
-	return drawImage_Scence();
+	return drawImageScence();
 }
 /**
 * @brief phasorRenderer::addListRang 
@@ -170,10 +171,10 @@ void phasorRenderer::transionVector(QPointF& endpoint, QPointF startpoint, const
 	endpoint.setY( y_distance+ startpoint.y());
 }
 /**
-* @brief phasorRenderer::drawImage_Scence 依据屏幕缩放绘制
+* @brief phasorRenderer::drawImageScence 依据屏幕缩放绘制
 * @retrun bool
 */
-bool phasorRenderer::drawImage_Scence(){
+bool phasorRenderer::drawImageScence(){
 	//获取画布缩放
 	float xScale(0.0), yScale(0.0);
 	if (!getTransitionScale(xScale, yScale))
@@ -188,10 +189,12 @@ bool phasorRenderer::drawImage_Scence(){
 	QPainter painter(&img);
 	painter.setRenderHint(QPainter::Antialiasing, isAA);
 	std::vector<float> scaleval = d->getScaleVal();
-	ColorMap* map = new ColorMap();
+	//ColorMap* map = new ColorMap();
+	QwtLinearColorMap* map=ConfigWidget::getQwtLinearColorMap();
 	std::vector<QColor> colorMap; colorMap.reserve(scaleval.size());
 	for (auto iter = scaleval.begin(); iter != scaleval.end();iter++)
 		colorMap.push_back(map->color(QwtInterval(0.0, 1.0), *iter));
+	delete map;
 	//绘制向量
 	QVector<QPointF> p1 = d->Getp1Point();
 	QVector<QPointF> p2 = d->Getp2Point();
@@ -461,6 +464,8 @@ void phasorRenderer::loadconfig()
 		d->setdisMode(phasorData::DISMODE::sizeToColor);
 	else
 		d->setdisMode(phasorData::DISMODE::sizeToLen);
+
+
 }
 
 /**
@@ -470,4 +475,16 @@ void phasorRenderer::loadconfig()
 */
 bool phasorRenderer::setDefaultRang(QSize& size){
 	return setDefaultRang();
+}
+
+/**
+* @brief  phasorRenderer::getValueRange
+* @return Data::Rang  
+*/
+Data::Rang phasorRenderer::getValueRange()
+{
+	Data::Rang ra;
+	ra.min = 0;
+	ra.max = 1;
+	return ra;
 }

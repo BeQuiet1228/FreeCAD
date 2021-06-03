@@ -37,7 +37,7 @@ bool ContourRender::drawImage()
 	QImage img(getSize(), QImage::Format_ARGB32);
 	img.fill(qRgba(0, 0, 0, 0));
 	QPainter painter(&img);
-	painter.setRenderHint(QPainter::Antialiasing, contourParam.isAA);
+	painter.setRenderHint(QPainter::Antialiasing, cfgInfo.isAA);
 	draw(&painter, xmap, ymap, rect);
 
 	//renderImage(xmap, ymap, rect, getSize());
@@ -217,40 +217,30 @@ void ContourRender::initContourLevels()
 void ContourRender::loadconfig(){
 	Config::GetInstance()->loadConfig();
 	ConfigGroup mGroup = Config::GetInstance()->getRootGroup();
-	ConfigGroup contourGroup = mGroup.getGroup("Contour");
-	//获取抗锯齿属性
-	contourParam.isAA = atoi(contourGroup.getValue("isAlis").c_str());
-	//获取默认等级数
-	contourParam.levelnumber = atoi(contourGroup.getValue("vallevel").c_str());
-	//获取取值类型
-	std::string valtype = contourGroup.getValue("valtype");
-	ConfigGroup* subGroup=nullptr;
-	if (valtype.find("epuivalence") != std::string::npos)
-		subGroup = new ConfigGroup(contourGroup.getGroup("epuivalence"));
-	else if (valtype.find("equal-ratio") != std::string::npos)
-		subGroup = new ConfigGroup(contourGroup.getGroup("equl_ratio"));
-	else if (valtype.find("user-defined") != std::string::npos)
-		subGroup = new  ConfigGroup(contourGroup.getGroup("user_defined"));
+	ConfigGroup contourGroup = mGroup.getGroup("contour");
+	//线段取值
+	if (contourGroup.getGroup("lineMapColors").getValue("value").find("ScaleColors") != std::string::npos)
+		cfgInfo.mode = QwtLinearColorMap::Mode::ScaledColors;
 	else
-		return;
-	auto colorGroup = contourGroup.getGroup("levelColor");
-	//获取各等级之间的范围
-	contourParam.val.clear();
-	contourParam.val.reserve(contourParam.levelnumber+1);
-	contourParam.valColor.clear();
-	contourParam.valColor.reserve(contourParam.levelnumber + 1);
-	for (auto index = 0; index < contourParam.levelnumber + 1;index++)
+		cfgInfo.mode = QwtLinearColorMap::Mode::FixedColors;
+	//抗锯齿
+	cfgInfo.isAA = atoi(contourGroup.getGroup("AlisAttitude").getValue("isAlis").c_str());
+	//等级
+	auto lineMapColorGroup = contourGroup.getGroup("lineMapColorval");
+	int count = atoi(lineMapColorGroup.getValue("valueNumber").c_str());
+	cfgInfo.colorlist.clear(); cfgInfo.colorlist.reserve(count);
+	for (auto index = 0; index < count;index++)
 	{
-		std::string s_val = subGroup->getValue(QString("level_%1").arg(index).toStdString());
-		contourParam.val.push_back(atof(s_val.c_str()));
-		contourParam.valColor.push_back(QStringToQColor(QString::fromStdString(colorGroup.getValue(QString("level_%1").arg(index).toStdString()))));
+		CfgInfo::valColor valcolor;
+		valcolor.value= atof(
+			lineMapColorGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("value").c_str());
+		valcolor.color= QStringToQColor(QString::fromStdString(
+			lineMapColorGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("color")));
+		cfgInfo.colorlist.push_back(valcolor);
 	}
-	if (subGroup)
-	{
-		delete subGroup;
-		subGroup = nullptr;
-	}
-}
-ContourParam::ContourParam() :isAA(true){
-
+	//等级模式
+	if (contourGroup.getGroup("valueStyle").getValue("value").find("equivalent") != std::string::npos)
+		cfgInfo.contourLevelsMod = EQUAL_DIFFERENCE;
+	else
+		cfgInfo.contourLevelsMod = PROPORTIONAL;
 }
