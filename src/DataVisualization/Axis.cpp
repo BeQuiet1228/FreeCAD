@@ -923,7 +923,7 @@ void Axis::axisRangeChange()
 */
 void Axis::loadconfig()
 {
-	Config::GetInstance()->loadConfig();
+	bool isres=Config::GetInstance()->loadConfig();
 	auto Group = Config::GetInstance()->getRootGroup();
 	auto axisGroup = Group.getGroup("axis");
 	//获取刻度颜色

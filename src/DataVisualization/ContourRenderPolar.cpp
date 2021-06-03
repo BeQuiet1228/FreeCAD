@@ -9,6 +9,7 @@
 #include "CustomConfig.h"
 #include "C_encoding.h"
 #include <math.h>
+#include "ConfigWidget.h"
 ContourRenderPolar::ContourRenderPolar(std::shared_ptr<ContourData> data)
 	:ContourRender(data)
 {
@@ -22,7 +23,7 @@ ContourRenderPolar::~ContourRenderPolar()
 
 bool ContourRenderPolar::drawImage()
 {
-
+	//setColorMap(ConfigWidget::getQwtLinearColorMap());
 	QwtScaleMap xmap, ymap;
 	xmap.setPaintInterval(0, this->getSize().width());
 	xmap.setScaleInterval(getXRang().min, getXRang().max);
