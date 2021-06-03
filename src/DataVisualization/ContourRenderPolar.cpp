@@ -77,12 +77,12 @@ bool ContourRenderPolar::drawPointImage()
 	float r = grid.x, theta = grid.y;
 	float x, y;
 	x = r * std::cos(theta);
-	y = R * std::sin(theta);
+	y = r * std::sin(theta);
 
 	x = transitionDataToScreen(x, xScale, getXRang());
 	y = transitionDataToScreen(y, yScale, getYRang());
 	//坐标翻转（因为坐标系原点不一致的关系）
-	y = getSize().height() - y;
+	//y = getSize().height() - y;
 
 	//新建画布 画笔
 	QImage img(getSize(), QImage::Format_ARGB32);
