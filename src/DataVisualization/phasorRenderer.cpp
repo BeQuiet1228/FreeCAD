@@ -394,49 +394,6 @@ int phasorRenderer::findApoint(QPointF A_point)
 	return index;
 }
 /**
-* @brief phasorRenderer::drawDisplayPoint 绘制显示信息
-* @param QPainter& painter 
-* @param QPointF& postion
-* @param QPointF& len_coef
-* @return void
-*/
-//注，以增加Rendeer中的点位显示方法，这个暂时保留，后续删除
-void phasorRenderer::drawDisplayPoint(QPainter& painter, QPointF& postion, QPointF& p1, QPointF& len_coef)
-{
-	//设置画笔的颜色
-	QPen pen;
-	pen.setColor(QColor(102,205,170));
-	pen.setWidth(2);
-	painter.setPen(pen);
-	painter.setBrush(QBrush(QColor(255,250,240)));
-	//建立对话框
-	QRectF displatRect;
-	displatRect.setX(postion.x() + 10);
-	displatRect.setY(postion.y() - 5);
-	//如果这个点在边界上 那么调整对话框
-	auto size = getSize();
-	if (displatRect.y()>(size.height()-80))
-	{
-		displatRect.setY(displatRect.y()-90);
-	}
-	if (displatRect.x()>(size.width()-190))
-	{
-		displatRect.setX(displatRect.x() - 210);
-	}
-	displatRect.setWidth(170);
-	displatRect.setHeight(90);
-	painter.drawRect(displatRect);
-	//绘制显示信息
-	QFont f;
-	f.setPixelSize(17);
-	painter.setFont(f);
-	painter.drawText(displatRect.x() + 10, displatRect.y() + 20, QString("X:%1").arg(p1.x(), 0, 'E', 2));
-	painter.drawText(displatRect.x() + 10, displatRect.y() + 40, QString("Y:%1").arg(p1.y(), 0, 'E', 2));
-	painter.drawText(displatRect.x() + 10, displatRect.y() + 60, QString("X_COEF:%1").arg(len_coef.x(),0,'E',2));
-	painter.drawText(displatRect.x() + 10, displatRect.y() + 80, QString("Y_COEF:%1").arg(len_coef.y(),0,'E',2));
-}
-
-/**
 * @brief  phasorRenderer::loadconfig 读取配置
 * @return void  
 */
@@ -455,7 +412,6 @@ void phasorRenderer::loadconfig()
 		d->setdisMode(phasorData::DISMODE::sizeToColor);
 	else
 		d->setdisMode(phasorData::DISMODE::sizeToLen);
-
 	auto ptr=ConfigWidget::getQwtLinearColorMap();
 	if (ptr)
 	{

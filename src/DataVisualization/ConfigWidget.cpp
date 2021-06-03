@@ -546,36 +546,50 @@ QwtLinearColorMap* ConfigWidget::getQwtLinearColorMap()
 	//¶ÁÈ¡xmlÎÄ¼þ
 	Config::GetInstance()->loadConfig();
 	ConfigGroup mGroup = Config::GetInstance()->getRootGroup();
-	ConfigGroup contourGroup = mGroup.getGroup("contour");
-	QwtLinearColorMap::Mode mode;
-	if (contourGroup.getGroup("lineMapColors").getValue("value").find("ScaleColors") != std::string::npos)
-		mode = QwtLinearColorMap::Mode::ScaledColors;
+	if (!mGroup.GroupIsempty("contour"))
+	{
+		ConfigGroup contourGroup = mGroup.getGroup("contour");
+		bool isres = contourGroup.empty();
+		QwtLinearColorMap::Mode mode;
+		if (contourGroup.getGroup("lineMapColors").getValue("value").find("ScaleColors") != std::string::npos)
+			mode = QwtLinearColorMap::Mode::ScaledColors;
+		else
+			mode = QwtLinearColorMap::Mode::FixedColors;
+		std::vector<float> vals;
+		std::vector<QColor> colors;
+		auto lineMapColorGroup = contourGroup.getGroup("lineMapColorval");
+		int count = atoi(lineMapColorGroup.getValue("valueNumber").c_str());
+		vals.clear(); vals.reserve(count);
+		colors.clear(); colors.reserve(count);
+		for (auto index = 0; index < count; index++)
+		{
+			float val;
+			QColor color;
+			val = atof(
+				lineMapColorGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("value").c_str());
+			color = QStringToQColor(QString::fromStdString(
+				lineMapColorGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("color")));
+			vals.push_back(val);
+			colors.push_back(color);
+		}
+		QwtLinearColorMap* colormap = new QwtLinearColorMap(*(colors.begin()), *(colors.end() - 1));
+		for (auto index = 1; index < count - 1; index++)
+		{
+			colormap->addColorStop(vals[index], colors[index]);
+		}
+		colormap->setMode(mode);
+		return colormap;
+	}
 	else
-		mode = QwtLinearColorMap::Mode::FixedColors;
-	std::vector<float> vals;
-	std::vector<QColor> colors;
-	auto lineMapColorGroup = contourGroup.getGroup("lineMapColorval");
-	int count = atoi(lineMapColorGroup.getValue("valueNumber").c_str());
-	vals.clear(); vals.reserve(count);
-	colors.clear(); colors.reserve(count);
-	for (auto index = 0; index < count; index++)
 	{
-		float val;
-		QColor color;
-		val= atof(
-			lineMapColorGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("value").c_str());
-		color = QStringToQColor(QString::fromStdString(
-			lineMapColorGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("color")));
-		vals.push_back(val);
-		colors.push_back(color);
+		QwtLinearColorMap* map = new QwtLinearColorMap(Qt::darkBlue,Qt::darkRed);
+		map->addColorStop(0.2, Qt::blue);
+		map->addColorStop(0.4, Qt::cyan);
+		map->addColorStop(0.6, Qt::yellow);
+		map->addColorStop(0.8, Qt::red);
+		return map;
 	}
-	QwtLinearColorMap* colormap = new QwtLinearColorMap(*(colors.begin()), *(colors.end() - 1));
-	for (auto index = 1; index < count - 1;index++)
-	{
-		colormap->addColorStop(vals[index],colors[index]);
-	}
-	colormap->setMode(mode);
-	return colormap;
+	
 }
 /**
 * @brief  Mas::Setconfig::Setconfig

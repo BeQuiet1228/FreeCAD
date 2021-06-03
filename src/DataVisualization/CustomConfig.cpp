@@ -80,3 +80,15 @@ ConfigGroup ConfigGroup::getGroup(const std::string& groupName)
 		group.node = node.append_child(groupName.c_str());
 	return group;
 }
+
+/**
+* @brief  ConfigGroup::GroupIsempty 判断组对象是否存在
+* @param  const std::string & groupName  
+* @return bool  
+*/
+bool ConfigGroup::GroupIsempty(const std::string& groupName)
+{
+	ConfigGroup group;
+	group.node = node.child(groupName.c_str());
+	return group.node.empty();
+}
