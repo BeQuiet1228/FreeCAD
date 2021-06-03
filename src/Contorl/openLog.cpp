@@ -40,8 +40,14 @@ void OpenLog::setCurrentChipicM3dPath(const std::string& path, const int& thread
 void OpenLog::openLog()
 {
 	QString cmd = "notepad.exe " + this->m3dPath;
-
+#if 0
 	process->start(cmd);
 	process->waitForFinished();
+#else
+	QProcess pr;
+	pr.start(cmd);
+	pr.waitForFinished();
+#endif
+
 }
 
