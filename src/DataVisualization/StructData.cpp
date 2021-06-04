@@ -5,14 +5,14 @@
 #include <QDebug>
 #endif
 
-bool isAnAttribute(unsigned int proper);
 /**
 * @brief StructData::StructData 构造函数
 * @param Hdf5Data& heData
 * @param DirectionType _type 方向
 * @param const RunMod& mod
 */
-StructData::StructData(Hdf5Data& heData, DirectionType _type, const RunMod& mod):XYData(heData,mod),istrue(false){
+StructData::StructData(Hdf5Data& heData, DirectionType _type, const RunMod& mod):XYData(heData,mod),istrue(false),
+isloadRoom(false){
 	switch (heData.coordinateSystem)
 	{
 	case Hdf5Data::CARTESIAN:
@@ -68,7 +68,8 @@ StructData::StructData(Hdf5Data& heData, DirectionType _type, const RunMod& mod)
 * @param _3DPointf endpoint 三维点位2
 * @parame const RunMod& mod
 */
-StructData::StructData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf endpoint, const RunMod& mod):XYData(heData,mod),istrue(true),mstartpoint(startpoint),mendpoint(endpoint){
+StructData::StructData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf endpoint, const RunMod& mod):
+XYData(heData,mod),istrue(true),mstartpoint(startpoint),mendpoint(endpoint),isloadRoom(false){
 	//std::vector<std::string> headerlist = autoHeaderInfo();
 	int res = (startpoint == endpoint);
 	_face_point_index = startpoint[res];
@@ -303,6 +304,8 @@ bool StructData::loadPointPolar()
 */
 bool StructData::loadroom()
 {
+	if (isloadRoom)
+		return true;
 #ifdef MY_DEBUG
 	//测试数据生成时间
 	LARGE_INTEGER startTime;
@@ -325,6 +328,7 @@ bool StructData::loadroom()
 	auto interval = ((double)endTime.QuadPart - (double)startTime.QuadPart) / (double)cpufer.QuadPart;
 	qDebug() << "processingData(interval):" << interval;
 #endif
+	isloadRoom = true;
 	return true;
 }
 /**
@@ -409,26 +413,27 @@ bool StructData::loadroomPolarRz()
 	std::map<int, std::vector<QPoint>> pointlist;//用来判断线段
 	for(auto itersetkmt=datasetkmt->begin();itersetkmt!=datasetkmt->end();)
 	{
-		auto x1=*itersetkmt;itersetkmt++;
-		auto x2=*itersetkmt;itersetkmt++;
-		auto x3=*itersetkmt;itersetkmt++;
-		auto proper=*itersetkmt;itersetkmt++;
-		if (x2 == index&&x3<=IM3X->size()&&x1<=IM1X->size())
+		unsigned __int64 x1=*itersetkmt;itersetkmt++;
+		unsigned __int64 x2=*itersetkmt;itersetkmt++;
+		unsigned __int64 x3=*itersetkmt;itersetkmt++;
+		unsigned __int64 proper=*itersetkmt;itersetkmt++;
+		if (x2 == index&&x3 <= IM3X->size() && x1 <= IM1X->size())
 		{
-			if (isAnAttribute(proper))
+			unsigned __int64 rectpro = isAnAttritbute(proper, RECTPROPER);
+			unsigned __int64 linepro = isAnAttritbute(proper, LINEPROPER);
+			if (rectpro)
 			{
 				QRectF rect;
 				rect.setLeft(*(IM3X->begin() + x3 - 1));
 				rect.setRight(*(IM3X->begin() + x3));
 				rect.setBottom(*(IM1X->begin() + x1 - 1));
 				rect.setTop(*(IM1X->begin() + x1));
-				allinfo[proper].push_back(rect);
+				allinfo[rectpro].push_back(rect);
 			}
-			else
+			if (linepro)
 			{
-				pointlist[proper].push_back(QPoint(x3-1,x1-1));
+				pointlist[linepro].push_back(QPoint(x3 - 1, x1 - 1));
 			}
-			
 		}
 	}
 	//开始生成线段
@@ -590,27 +595,28 @@ bool StructData::loadroomCylindricalRz(){
 	std::map<int, std::vector<QPoint>> pointlist;//用来暂时存储线段的所有点
 	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
 	{
-		auto x1 = *itersetkmt; itersetkmt++;
-		auto x2 = *itersetkmt; itersetkmt++;
-		auto x3 = *itersetkmt; itersetkmt++;
-		auto proper = *itersetkmt; itersetkmt++;
+		unsigned __int64 x1 = *itersetkmt; itersetkmt++;
+		unsigned __int64 x2 = *itersetkmt; itersetkmt++;
+		unsigned __int64 x3 = *itersetkmt; itersetkmt++;
+		unsigned __int64 proper = *itersetkmt; itersetkmt++;
 		if (x3 == index&& x1 <=IM1X->size()&&x2<=IM2X->size())
 		{
-			if (isAnAttribute(proper))
+			unsigned __int64 rectPro = isAnAttritbute(proper,RECTPROPER);
+			unsigned __int64 linePro = isAnAttritbute(proper, LINEPROPER);
+			if (rectPro)
 			{
 				QRectF rect;
 				rect.setLeft(*(IM1X->begin() + x1 - 1));
 				rect.setRight(*(IM1X->begin() + x1));
 				rect.setBottom(*(IM2X->begin() + x2 - 1));
 				rect.setTop(*(IM2X->begin() + x2));
-				allcutroom[proper].push_back(rect);
+				allcutroom[rectPro].push_back(rect);
 			}
-			else
+			if (linePro)
 			{
-				int x = x1-1, y = x2-1;
-				pointlist[proper].push_back(QPoint(x,y));
+				int x = x1 - 1, y = x2 - 1;
+				pointlist[linePro].push_back(QPoint(x, y));
 			}
-			
 		}
 	}
 	createLines(pointlist, IM1X,IM2X);
@@ -769,27 +775,28 @@ bool StructData::loadroomCartesianXy(){
 	std::map<int, std::vector<QPoint>> pointList;
 	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
 	{
-		auto x1 = *itersetkmt; itersetkmt++;
-		auto x2 = *itersetkmt; itersetkmt++;
-		auto x3 = *itersetkmt; itersetkmt++;
-		auto proper = *itersetkmt; itersetkmt++;
+		unsigned __int64 x1 = *itersetkmt; itersetkmt++;
+		unsigned __int64 x2 = *itersetkmt; itersetkmt++;
+		unsigned __int64 x3 = *itersetkmt; itersetkmt++;
+		unsigned __int64 proper = *itersetkmt; itersetkmt++;
 		if (x3 == index&& x1 <= IM1X->size()&& x2<=IM2X->size())
 		{
-			if (isAnAttribute(proper))
+			unsigned __int64 rectPro = isAnAttritbute(proper, RECTPROPER);
+			unsigned __int64 linePro = isAnAttritbute(proper, LINEPROPER);
+			if (rectPro)
 			{
 				QRectF rect;
 				rect.setLeft(*(IM1X->begin() + (x1 - 1)));
 				rect.setRight(*(IM1X->begin() + x1));
 				rect.setBottom(*(IM2X->begin() + (x2 - 1)));
 				rect.setTop(*(IM2X->begin() + x2));
-				allinfo[proper].push_back(rect);
+				allinfo[rectPro].push_back(rect);
 			}
-			else
+			if (linePro)
 			{
-				int x=x1-1, y=x2-1;
-				pointList[proper].push_back(QPoint(x,y));
+				int x = x1 - 1, y = x2 - 1;
+				pointList[linePro].push_back(QPoint(x, y));
 			}
-			
 		}
 	}
 	allcutroom.swap(allinfo);
@@ -831,27 +838,26 @@ bool StructData::loadroomCartesianXz(){
 	std::map<int, std::vector<QPoint>> pointList;
 	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
 	{
-		auto x1 = *itersetkmt; itersetkmt++;
-		auto x2 = *itersetkmt; itersetkmt++;
-		auto x3 = *itersetkmt; itersetkmt++;
-		auto proper = *itersetkmt; itersetkmt++;
+		unsigned __int64 x1 = *itersetkmt; itersetkmt++;
+		unsigned __int64 x2 = *itersetkmt; itersetkmt++;
+		unsigned __int64 x3 = *itersetkmt; itersetkmt++;
+		unsigned __int64 proper = *itersetkmt; itersetkmt++;
 		if (x2 == index && x1 <= IM1X->size()&&x3<=IM3X->size())
 		{
-			if (isAnAttribute(proper))
-			{
+			unsigned __int64 rectPro=isAnAttritbute(proper,RECTPROPER);
+			unsigned __int64 linePro=isAnAttritbute(proper,LINEPROPER);
+			if(rectPro){
 				QRectF rect;
 				rect.setLeft(*(IM1X->begin() + (x1 - 1)));
 				rect.setRight(*(IM1X->begin() + x1));
 				rect.setBottom(*(IM3X->begin() + (x3 - 1)));
 				rect.setTop(*(IM3X->begin() + x3));
-				allcutroom[proper].push_back(rect);
+				allcutroom[rectPro].push_back(rect);
 			}
-			else
-			{
-				int x = x1-1, y = x3-1;
-				pointList[proper].push_back(QPoint(x,y));
+			if(linePro){
+				int x = x1 - 1, y = x3 - 1;
+				pointList[linePro].push_back(QPoint(x, y));
 			}
-			
 		}
 	}
 	createLines(pointList, IM1X, IM3X);
@@ -893,61 +899,51 @@ bool StructData::loadroomCartesianYz(){
 	std::map<int, std::vector<QPoint>> pointList;
 	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
 	{
-		auto x1 = *itersetkmt; itersetkmt++;
-		auto x2 = *itersetkmt; itersetkmt++;
-		auto x3 = *itersetkmt; itersetkmt++;
-		auto proper = *itersetkmt; itersetkmt++;
+		unsigned __int64 x1 = *itersetkmt; itersetkmt++;
+		unsigned __int64 x2 = *itersetkmt; itersetkmt++;
+		unsigned __int64 x3 = *itersetkmt; itersetkmt++;
+		unsigned __int64 proper = *itersetkmt; itersetkmt++;
 		if (x1 == index &&x2 <=IM2X->size()&&x3<=IM3X->size())
 		{
-			if (isAnAttribute(proper))
+			unsigned __int64 rectPro=isAnAttritbute(proper,RECTPROPER);
+			unsigned __int64 linePro=isAnAttritbute(proper,LINEPROPER);
+			if (rectPro)
 			{
 				QRectF rect;
 				rect.setLeft(*(IM2X->begin() + (x2 - 1)));
 				rect.setRight(*(IM2X->begin() + (x2)));
 				rect.setBottom(*(IM3X->begin() + (x3 - 1)));
 				rect.setTop(*(IM3X->begin() + x3));
-				allcutroom[proper].push_back(rect);
+				allcutroom[rectPro].push_back(rect);
 			}
-			else
+			if (linePro)
 			{
 				int x = x2-1, y = x3-1;
-				pointList[proper].push_back(QPoint(x,y));
+				pointList[linePro].push_back(QPoint(x,y));
 			}
 		}
 	}
 	createLines(pointList, IM2X, IM3X);
 	return true;
 }
-/**
-* @brief  isAnAttribute 判断当前属性是否为线段
-* @param  unsigned int proper  
-* @return bool  
-*/
-bool isAnAttribute(unsigned int proper)
+unsigned __int64 StructData::isAnAttritbute(unsigned __int64 p, PROPERTYPE sp)
 {
-	switch (proper)
+	switch (sp)
 	{
-		//PORT
-	case 256:
-	case 512:
-	case 1024:
-	case 1027:
-		return false;
-		//DRIVER
-	case 2048:
-	case 4096:
-	case 8192:
-		return false;
-		//INDUCTOR
-	case 16384:
-	case 32768:
-	case 65536:
-		return false;
+	case StructData::RECTPROPER:
+	{
+		unsigned __int64 rectPro = p & 0xff;
+		return rectPro;
+	}
+	case StructData::LINEPROPER:
+	{
+		unsigned __int64 linePro = p & 0xff00;
+		return linePro;
+	}
 	default:
-		return true;
+		return 0;
 	}
 }
-
 
 /**
 * @brief  StructData::createLines 生成线段

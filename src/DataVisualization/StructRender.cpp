@@ -269,15 +269,7 @@ bool StructRender::drawImageRectspace(){
 	painter.setRenderHint(QPainter::Antialiasing, isAA);
 	painter.setPen(pen);
 	std::map<int, std::vector<QRectF>> mapInfo = d->GetAllcutInfo();
-#ifdef MY_DEBUG
-	//测试打印出全部属性
-	QStringList msg;
-	for (auto iter = mapInfo.begin(); iter != mapInfo.end(); iter++)
-	{
-		msg << QString::number(iter->first,10);
-	}
-	qDebug() <<"getAllProperty:"<< msg;
-#endif // MY_DEBUG
+
 	for (auto iter = mapInfo.begin(); iter != mapInfo.end(); iter++)
 	{
 		auto itercolor = color_tab.find(iter->first);
@@ -305,7 +297,7 @@ bool StructRender::drawImageRectspace(){
 		}
 	}
 	//绘制线段
-	std::map<int, std::vector<QLineF>> mlines = d->GetProperLines();
+	std::map<unsigned __int64, std::vector<QLineF>> mlines = d->GetProperLines();
 	for (auto iter=mlines.begin();iter!=mlines.end();iter++)
 	{
 		//查找当前属性是否有对应颜色
@@ -323,13 +315,19 @@ bool StructRender::drawImageRectspace(){
 		}
 	}
 	auto nImg = img.mirrored(false, true);
-//#define _Debug
-#ifdef _Debug
-	static int index = 0;
-	QString _path = QString("C:/Users/ASUS/Desktop/save/savepmg_%1.png").arg(index++);
-	bool res = nImg.save(_path);
-#undef _Debug
-#endif
+#ifdef MY_DEBUG
+	//测试打印出全部属性
+	QStringList msg;
+	for (auto iter = mapInfo.begin(); iter != mapInfo.end(); iter++)
+	{
+		msg << QString::number(iter->first,10);
+	}
+	for (auto iter = mlines.begin(); iter != mlines.end();iter++)
+	{
+		msg << QString::number(iter->first,10);
+	}
+	qDebug() << "getAllProperty:" << msg;
+#endif // MY_DEBUG
 	setImage(nImg);
 	return true;
 }
@@ -473,7 +471,7 @@ StructData::structpoint StructRender::findApointZr(QPointF _curpostion){
 		mpoint.d2 = conduitList[index].top();
 	}
 	//获取线段的点位
-	std::map<int, std::vector<QLineF>> lines = d->GetProperLines();
+	auto  lines = d->GetProperLines();
 	std::vector<QPointF> linePointf;
 	for (auto itermap = lines.begin(); itermap != lines.end();itermap++)
 	{
@@ -704,7 +702,7 @@ void StructRender::loadconfig()
 	LoadColor(DIELECTIRANDCONDUCTANCE);
 	LoadColor(FREESPACE);
 	LoadColor(FOIL);
-	//线段-----PORT 2**8/256，2**9/512，2**10/1024,1027
+	//线段-----PORT 2**8/256，2**9/512，2**10/1024
 	//DRIVER--2^11/2048,2^12/4096,2^13/8192
 	//INDUCTOR--2^14/16384,2^15/32768,2^16/65536
 	QPixmap mapc(lineicon[0]);
@@ -722,7 +720,7 @@ void StructRender::loadconfig()
 	mapc = mapc.transformed(QPixmap::trueMatrix(rm,pngsize.width(),pngsize.height()));
 	mapa = mapa.transformed(QPixmap::trueMatrix(rm, pngsize.width(), pngsize.height()));
 	maps = maps.transformed(QPixmap::trueMatrix(rm, pngsize.width(), pngsize.height()));
-	pixmap[256] = pixmap[512]=pixmap[1024]=pixmap[1027]=maps;
+	pixmap[256] = pixmap[512]=pixmap[1024]=maps;
 	pixmap[2048] = pixmap[4096] = pixmap[8192] = mapa;
 	pixmap[16384] = pixmap[32768] = pixmap[65536] = mapc;
 #undef LoadColor(a)
@@ -854,3 +852,5 @@ void changColorPixmap(QPixmap& map, QColor& color)
 	}
 	map = QPixmap::fromImage(img);
 }
+
+

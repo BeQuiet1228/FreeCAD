@@ -53,10 +53,12 @@ private:
 	bool drawPointCir();
 	StructData::structpoint findApointCylindrical(QPointF _curpoint);
 	void DrawLine(QPainter& painter,QVector<QLineF>& lines,int mPorper);
+
+	
 private:
 	QMap<int, QColor> color_tab;
 	QMap<int, QColor> color_pen;
-	std::map<int, QPixmap> pixmap;
+	std::map<unsigned __int64, QPixmap> pixmap;
 	Data::Rang xRang, yRang;
 	std::mutex xRangMutex, yRangMutex;
 	bool isAA;
