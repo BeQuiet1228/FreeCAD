@@ -20,6 +20,10 @@ enum StructTexture
 	FREESPACE = 64,
 	//µç×è
 	FOIL = 128,
+	//
+	PORT,
+	DRIVER,
+	INDUCTOR
 };
 class StructRender :public Renderer
 {

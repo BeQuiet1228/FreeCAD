@@ -711,9 +711,9 @@ void StructRender::loadconfig()
 	QPixmap mapa(lineicon[1]);
 	QPixmap maps(lineicon[2]);
 	QSize pngsize(16, 16);
-	changColorPixmap(maps, QColor(Qt::gray));
-	changColorPixmap(mapa, QColor(Qt::gray));
-	changColorPixmap(mapc, QColor(Qt::gray));
+	changColorPixmap(maps, QStringToQColor(QString::fromStdString(structConfig.getGroup("PORT").getValue("value"))));
+	changColorPixmap(mapa, QStringToQColor(QString::fromStdString(structConfig.getGroup("DRIVER").getValue("value"))));
+	changColorPixmap(mapc, QStringToQColor(QString::fromStdString(structConfig.getGroup("INDUCTOR").getValue("value"))));
 	mapc = mapc.scaled(pngsize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 	mapa = mapa.scaled(pngsize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 	maps = maps.scaled(pngsize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
