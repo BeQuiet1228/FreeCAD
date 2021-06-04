@@ -8,12 +8,12 @@
 #include <qmath.h>
 #include "CustomConfig.h"
 #include "C_encoding.h"
+#include "ConfigWidget.h"
 ContourRender::ContourRender(std::shared_ptr<ContourData> data)
 	:Renderer(std::dynamic_pointer_cast<Data>(data)),contourLevelsMod(EQUAL_DIFFERENCE)
 	,contourLevel(10)
 {
 	setRenderThreadCount(0);
-	setColorMap(new ColorMap);
 
 	setDisplayMode(DisplayMode::ImageMode, true);
 	setDisplayMode(DisplayMode::ContourMode, true);
@@ -26,6 +26,8 @@ ContourRender::~ContourRender()
 
 bool ContourRender::drawImage()
 {
+	setColorMap(ConfigWidget::getQwtLinearColorMap());
+
 	QwtScaleMap xmap, ymap;
 	xmap.setPaintInterval(0, this->getSize().width());
 	xmap.setScaleInterval(getXRang().min, getXRang().max);
