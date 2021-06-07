@@ -29,6 +29,8 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 
     listWidget = new CaseWordListWidget(this);      //关键字提示窗口
     listWidget->hide();
+    //绑定提示框被双击事件
+    connect(listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(listWidgetDoubleClicked(QListWidgetItem*)));
 
     myHightLighter *highLighter = new myHightLighter(this->document());         //设置高亮器
 	QFont f("Microsoft YaHei");
@@ -77,6 +79,21 @@ void CodeEditor::autoFindDialogPoint()
 	auto pos = this->mapToGlobal(this->pos());
 	pos.setX(pos.x() + this->width() - findDialog->width() - 30);
 	findDialog->move(pos);
+}
+
+/**
+* @brief CodeEditor::insertCaseWordWithListWidget 插入listWidget当前被选中的关键字
+* @return void
+*/
+void CodeEditor::insertCaseWordWithListWidget()
+{
+	QString caseWord = listWidget->currentItem()->text();           //获取当前关键字
+	QTextCursor cursor = this->textCursor();            //获取光标信息
+
+	cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor, caseWordCurrentSize);
+
+	cursor.insertText(caseWord);    //插入关键字
+	this->setTextCursor(cursor);    //设置光标信息
 }
 
 void CodeEditor::updateLineNumberAreaWidth(int /* newBlockCount */)
@@ -229,13 +246,7 @@ void CodeEditor::keyPressEvent(QKeyEvent *event)
         }
         if(event->text() == "\r")               //如果是回车符，则键入关键字
         {
-            QString caseWord = listWidget->currentItem()->text();           //获取当前关键字
-            QTextCursor cursor = this->textCursor();            //获取光标信息
-
-            cursor.movePosition(QTextCursor::Left,QTextCursor::KeepAnchor,caseWordCurrentSize);
-
-            cursor.insertText(caseWord);    //插入关键字
-            this->setTextCursor(cursor);    //设置光标信息
+            insertCaseWordWithListWidget();
             return;
         }
 
@@ -262,6 +273,16 @@ void CodeEditor::mousePressEvent(QMouseEvent* event)
 void CodeEditor::hideLisetWidget()
 {
     listWidget->hide();
+}
+
+/**
+* @brief CodeEditor::listWidgetDoubleClicked listWidget控件中的关键字被双击
+* @param QListWidgetItem *
+* @return void
+*/
+void CodeEditor::listWidgetDoubleClicked(QListWidgetItem*)
+{
+    insertCaseWordWithListWidget();
 }
 
 #include "codeEdit/moc_codeeditor.cpp"

@@ -6,7 +6,11 @@ std::string DataInformationGetter::getObserveObejct(const std::string& head)
 {
 	QString str = QString::fromStdString(head);
 	QStringList sl = str.split("=");
+	if (sl.size() < 2)
+		return " ";
 	str = sl.at(1);
+	sl = str.split("-#");
+	str = sl.at(0);
 	str = str.simplified();
 
 	return str.toStdString();
