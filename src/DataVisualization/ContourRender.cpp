@@ -11,7 +11,7 @@
 #include "ConfigWidget.h"
 ContourRender::ContourRender(std::shared_ptr<ContourData> data)
 	:Renderer(std::dynamic_pointer_cast<Data>(data)),contourLevelsMod(EQUAL_DIFFERENCE)
-	,contourLevel(10)
+	, contourLevel(10), colormapsite(0), lastcolormapsite(0)
 {
 	setRenderThreadCount(0);
 	setColorMap(new ColorMap);
@@ -22,12 +22,19 @@ ContourRender::ContourRender(std::shared_ptr<ContourData> data)
 
 ContourRender::~ContourRender()
 {
-
+	colormapsite = 0;
+	lastcolormapsite = 0;
 }
 
 bool ContourRender::drawImage()
 {
-	//setColorMap(ConfigWidget::getQwtLinearColorMap());
+	
+	QwtLinearColorMap* map = reinterpret_cast<QwtLinearColorMap*>(colormapsite);
+	if (colormapsite!=lastcolormapsite)
+	{
+		lastcolormapsite = colormapsite;
+		setColorMap(map);
+	}
 	QwtScaleMap xmap, ymap;
 	xmap.setPaintInterval(0, this->getSize().width());
 	xmap.setScaleInterval(getXRang().min, getXRang().max);
@@ -245,4 +252,10 @@ void ContourRender::loadconfig(){
 		cfgInfo.contourLevelsMod = EQUAL_DIFFERENCE;
 	else
 		cfgInfo.contourLevelsMod = PROPORTIONAL;
+
+	QwtLinearColorMap* map = ConfigWidget::getQwtLinearColorMap();
+	if (map)
+	{
+		colormapsite = reinterpret_cast<unsigned __int64>(map);
+	}
 }

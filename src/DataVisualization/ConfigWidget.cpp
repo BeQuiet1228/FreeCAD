@@ -13,6 +13,7 @@
 #include "Arrowctrl.h"
 #include "ColorTab.h"
 #include <sstream>
+#include "Plot.h"
 /**
 * @brief ConfigWidget::ConfigWidget
 * @param QWidget* panter
@@ -226,6 +227,7 @@ void ConfigWidget::saveclicked()
 #ifdef MY_DEBUG
 	printf("saveclicked\n");
 #endif
+	emit plotLoadconfig();
 }
 /**
 * @brief  ConfigWidget::linecolorClicked 时间图颜色选择
@@ -608,6 +610,13 @@ QwtLinearColorMap* ConfigWidget::getQwtLinearColorMap()
 		return map;
 	}
 	
+}
+void ConfigWidget::bindplot(Plot* lp)
+{
+	if (lp)
+	{
+		connect(this, SIGNAL(plotLoadconfig()),lp,SLOT(setappEvent()));
+	}
 }
 /**
 * @brief  Mas::Setconfig::Setconfig

@@ -127,6 +127,7 @@ public:
 	{
 		return allLines;
 	}
+	void segloadRoom(unsigned  __int64 site1,unsigned __int64 site2);
 protected:
 	virtual bool initXYRang(){ return 0; }
 	virtual void restorDeriveData() override{}

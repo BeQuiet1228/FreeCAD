@@ -134,6 +134,7 @@
 #include "MainWindow.h"
 #include "TreeViewctrl.h"
 #include "DocumentPic.h"
+#include "DataVisualization/ConfigWidget.h"
 using namespace Gui;
 using namespace Gui::DockWnd;
 using namespace std;
@@ -327,6 +328,31 @@ void Application::ToStruct(Hdf5Data data)
 		m_lisTreeWidget->toStructh5df(data, structindex);
 	}
 		
+}
+/**
+* @brief  Gui::Application::showPlotSettingDialog ÏÔÊ¾ÉèÖÃ´°¿Ú
+* @return void  
+*/
+void Application::showPlotSettingDialog()
+{
+	ConfigWidget* configWidget = new ConfigWidget();
+	configWidget->setAttribute(Qt::WA_DeleteOnClose);
+	auto doc = Gui::Application::Instance->activeDocument();
+	if (doc)
+	{
+		std::list<Gui::MDIView*> list = doc->getMDIViews();
+		Gui::PlotMDIView* ptr = nullptr;
+		for each (Gui::MDIView* var in list)
+		{
+			ptr = dynamic_cast<Gui::PlotMDIView*> (var);
+			if (ptr)break;
+		}
+		if (ptr != nullptr)
+		{
+			configWidget->bindplot((Plot*)ptr->GetViewPtr());
+		}
+	}
+	configWidget->show();
 }
 } // namespace Gui
 

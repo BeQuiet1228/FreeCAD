@@ -24,6 +24,12 @@ ContourRenderPolar::~ContourRenderPolar()
 bool ContourRenderPolar::drawImage()
 {
 	//setColorMap(ConfigWidget::getQwtLinearColorMap());
+	if (colormapsite!=lastcolormapsite)
+	{
+		lastcolormapsite = colormapsite;
+		QwtLinearColorMap* map = reinterpret_cast<QwtLinearColorMap*>(colormapsite);
+		setColorMap(map);
+	}
 	QwtScaleMap xmap, ymap;
 	xmap.setPaintInterval(0, this->getSize().width());
 	xmap.setScaleInterval(getXRang().min, getXRang().max);

@@ -1,10 +1,23 @@
 #include "StructData.h"
 #include <QPoint>
+#include<thread>
 #ifdef MY_DEBUG
 #include<windows.h>
 #include <QDebug>
 #endif
+#define THRESHOLD (1000000)  //限定门限
+#include <process.h>
+namespace threadSites{
 
+	typedef struct lps
+	{
+		unsigned __int64 site1;
+		unsigned __int64 site2;
+		StructData* lp;
+	};
+	HANDLE threadEvent = nullptr;
+};
+unsigned int __stdcall functhread(void*);
 /**
 * @brief StructData::StructData 构造函数
 * @param Hdf5Data& heData
@@ -409,6 +422,9 @@ bool StructData::loadroomPolarRz()
 		}
 		index = index_min;
 	}
+#ifdef MY_DEBUG
+	qDebug() << datasetkmt->size();
+#endif
 	std::map<int, std::vector<QRectF>> allinfo;
 	std::map<int, std::vector<QPoint>> pointlist;//用来判断线段
 	for(auto itersetkmt=datasetkmt->begin();itersetkmt!=datasetkmt->end();)
@@ -591,6 +607,9 @@ bool StructData::loadroomCylindricalRz(){
 		}
 		index = index_min;
 	}
+#ifdef MY_DEBUG
+	qDebug() << datasetkmt->size();
+#endif
 	allcutroom.clear();
 	std::map<int, std::vector<QPoint>> pointlist;//用来暂时存储线段的所有点
 	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
@@ -771,6 +790,57 @@ bool StructData::loadroomCartesianXy(){
 		}
 		index = index_min;
 	}
+#ifdef MY_DEBUG
+	qDebug() << datasetkmt->size();
+#endif
+#if 0
+	//这是尝试使用线程分段处理数据
+	//开始分段操作100万为单位
+	std::vector<HANDLE> thlist;
+	if (datasetkmt->size()>THRESHOLD)
+	{
+		threadSites::threadEvent = CreateEvent(nullptr,true,true,nullptr);
+		for (auto index = 0; index < datasetkmt->size() / THRESHOLD;index++)
+		{
+			unsigned __int64 site1 = index*THRESHOLD;
+			unsigned __int64 site2 = (index + 1)*THRESHOLD;
+			WaitForSingleObject(threadSites::threadEvent,INFINITY)		
+			ResetEvent(threadSites::threadEvent);
+			threadSites::lps llps;
+			llps.lp = this;	llps.site1 = site1;	llps.site2 = site2;
+			HANDLE header = (HANDLE)_beginthreadex(nullptr, 0, functhread, &llps, 0, nullptr);
+			thlist.push_back(header);
+			
+		}
+		if (datasetkmt->size()%THRESHOLD)
+		{
+			unsigned __int64 site1=(datasetkmt->size()/THRESHOLD)*THRESHOLD;
+			unsigned __int64 site2=datasetkmt->size();
+			threadSites::lps* llps = new threadSites::lps();
+			llps->lp = this;llps->site1 = site1;llps->site2 = site2;
+			HANDLE header = (HANDLE)_beginthreadex(nullptr,1,functhread,llps,0,nullptr);
+			thlist.push_back(header);
+		}
+		while (!thlist.empty())
+		{
+			for (auto index = 0; index < thlist.size();index++)
+			{
+				if (WaitForSingleObject(thlist[index],20)!=WAIT_TIMEOUT)
+				{
+					CloseHandle(thlist[index]);
+					thlist[index] = nullptr;
+					thlist.erase(thlist.begin() + index);
+				}
+			}
+		}
+
+#ifdef MY_DEBUG
+		qDebug("prodatasuccess\n");
+#endif // MY_DEBUG
+
+	}
+
+#else 
 	std::map<int, std::vector<QRectF>> allinfo;
 	std::map<int, std::vector<QPoint>> pointList;
 	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
@@ -801,6 +871,7 @@ bool StructData::loadroomCartesianXy(){
 	}
 	allcutroom.swap(allinfo);
 	createLines(pointList, IM1X, IM2X);
+#endif
 	return true;
 }
 /**
@@ -833,7 +904,11 @@ bool StructData::loadroomCartesianXz(){
 				distancemin = curdistance;
 			}
 		}
+		index = index_min;
 	}
+#ifdef MY_DEBUG
+	qDebug() << datasetkmt->size();
+#endif
 	allcutroom.clear();
 	std::map<int, std::vector<QPoint>> pointList;
 	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
@@ -895,6 +970,9 @@ bool StructData::loadroomCartesianYz(){
 		}
 		index = index_min;
 	}
+#ifdef MY_DEBUG
+	qDebug() << datasetkmt->size();
+#endif
 	allcutroom.clear();
 	std::map<int, std::vector<QPoint>> pointList;
 	for (auto itersetkmt = datasetkmt->begin(); itersetkmt != datasetkmt->end();)
@@ -991,4 +1069,21 @@ bool StructData::createLines(std::map<int, std::vector<QPoint>>& points,const Da
 		allLines[iter->first].push_back(QLineF(startPoint, endPoint));
 	}
 	return true;
+}
+/**
+* @brief  StructData::segloadRoom 分段处理
+* @param  unsigned __int64 site1  
+* @param  unsigned __int64 site2  
+* @return void  
+*/
+void StructData::segloadRoom(unsigned  __int64 site1, unsigned __int64 site2)
+{
+	qDebug() << site1 << site2;
+}
+unsigned int __stdcall  functhread(void*lp)
+{
+	threadSites::lps* llp = reinterpret_cast<threadSites::lps*>(lp);
+	SetEvent(threadSites::threadEvent);
+	llp->lp->segloadRoom(llp->site1, llp->site2);
+	return 0;
 }

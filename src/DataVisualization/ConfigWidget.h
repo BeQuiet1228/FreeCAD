@@ -12,6 +12,7 @@ class QwtScaleEngine;
 class QwtLinearColorMap;
 class ColorTab;
 class ArrowCtrl;
+class Plot;
 namespace Mas{
 	enum DATA_VISUALIZATION_EXPORT structTexture
 	{
@@ -57,7 +58,11 @@ public:
 protected:
 	void initUI();
 public:
+	void bindplot(Plot* lp);
+public:
 	static QwtLinearColorMap* getQwtLinearColorMap();
+Q_SIGNALS:
+	void plotLoadconfig();
 public Q_SLOTS:
 	//±£´æ
 	void saveclicked();
