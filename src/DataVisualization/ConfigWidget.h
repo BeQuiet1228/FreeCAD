@@ -12,6 +12,7 @@ class QwtScaleEngine;
 class QwtLinearColorMap;
 class ColorTab;
 class ArrowCtrl;
+class Plot;
 namespace Mas{
 	enum DATA_VISUALIZATION_EXPORT structTexture
 	{
@@ -31,11 +32,9 @@ namespace Mas{
 		FOIL = 128,
 
 		//线段
-		//波导端口
-		WAVEGUIDEPORT = 1024,
-		DRIVER = 2048,
-		//感应器
-		INDUCTOR = 16384
+		PORT,
+		DRIVER,
+		INDUCTOR
 
 	};
 	struct DATA_VISUALIZATION_EXPORT Setconfig
@@ -59,15 +58,17 @@ public:
 protected:
 	void initUI();
 public:
+	void bindplot(Plot* lp);
+public:
 	static QwtLinearColorMap* getQwtLinearColorMap();
+Q_SIGNALS:
+	void plotLoadconfig();
 public Q_SLOTS:
 	//保存
 	void saveclicked();
 	void canclelicked();
-	//刻度标
 	void axisColorclicked();
 	void axisValColorclicked();
-	//结构图
 	void PerfectConductorClicked();
 	void ConductorNewClicked();
 	void DiolectricClicked();
@@ -82,11 +83,11 @@ public Q_SLOTS:
 	void Freespacelineclicked();
 	void FOILclicked();
 	void FOILlineclicked();
-	//时间图
+	void PortClicked();
+	void InductorClicked();
+	void DriverClicked();
 	void linecolorClicked();
-	//矢量图
 	void veccolorClicked();
-	//相空间图
 	void partcleColorclicked();
 	void radioButton1(bool);
 	void radioButton2(bool);
@@ -102,7 +103,7 @@ private:
 	void structinfolineClicked(int _property, QPushButton*);
 	//结构图
 	std::map<QString, QString> structColor;
-	std::map<QString, QString>structlineColor;
+	std::map<QString, QString> structlineColor;
 	//向量
 	Mas::Setconfig vecconfig;
 	//时间图

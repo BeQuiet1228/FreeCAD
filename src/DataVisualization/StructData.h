@@ -47,6 +47,10 @@ struct _3DPointf
 class StructData:public XYData
 {
 public:
+		enum PROPERTYPE{
+		RECTPROPER,
+		LINEPROPER
+	};
 	typedef struct DaTaKmt
 	{
 		//坐标1
@@ -119,17 +123,17 @@ public:
 	{
 		return allcutroomcir;
 	}
-	std::map<int, std::vector<QLineF>> GetProperLines()
+	std::map<unsigned __int64, std::vector<QLineF>> GetProperLines()
 	{
 		return allLines;
 	}
+	void segloadRoom(unsigned  __int64 site1,unsigned __int64 site2);
 protected:
 	virtual bool initXYRang(){ return 0; }
 	virtual void restorDeriveData() override{}
 	bool loadPointPolar();
 	bool loadPointCylindrical();
-	bool loadPointCartesian();
-	
+	bool loadPointCartesian();	
 	//加载3维空间切割空间
 	bool loadroomPolar();
 	bool loadroomPolarRz();
@@ -144,11 +148,12 @@ protected:
 	std::vector<DaTaKmt> GetdatasetKmtPolar();
 	std::vector<DaTaKmt> GetdatasetKmtCylindrical();
 	bool createLines(std::map<int, std::vector<QPoint>> &points,const Data::ValuesPtr &IMX, const Data::ValuesPtr &IMY);
+	unsigned __int64 isAnAttritbute(unsigned __int64, PROPERTYPE);
 private:
 	//全部切割空间
 	std::map<int, std::vector<QRectF>>	allcutroom;
 	std::map<int, std::vector<CutCir>> allcutroomcir;
-	std::map<int, std::vector<QLineF>> allLines;
+	std::map<unsigned __int64, std::vector<QLineF>> allLines;
 	int pointXSize, pointYSize;
 	DirectionType mType;
 	C_TYPE mCtype;
@@ -159,5 +164,7 @@ private:
 	std::mutex xRangMutex, yRangMutex;
 	//确定面的索引
 	float _face_point_index;
+	//因为重复处理会消耗时间，所以设定开关，防止重复读取
+	bool isloadRoom;
 };
 #endif

@@ -18,7 +18,7 @@ public:
 	std::string getValue(const std::string& key);
 	//获取组
 	ConfigGroup getGroup(const std::string& groupName);
-
+	bool GroupIsempty(const std::string& groupName);
 	//是否为空
 	bool empty(){
 		return node.empty();

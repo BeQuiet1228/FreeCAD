@@ -99,6 +99,8 @@ public:
 	bool getGridLineEnabled() {
 		return gridLineEnabled;
 	}
+	//读取配置
+	void loadconfig();
 private:
 	//初始化界面
 	void initGUI();
@@ -124,6 +126,9 @@ public Q_SLOTS:
 	void reRendererYRang(const float& min, const float& max);
 	//画布改变大小
 	void canvasResize(QSize size);
+	//设置应用事件
+	void setappEvent();
+	
 protected:
 	void resizeEvent(QResizeEvent *event) override;
 protected:

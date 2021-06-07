@@ -13,6 +13,7 @@
 #include "Arrowctrl.h"
 #include "ColorTab.h"
 #include <sstream>
+#include "Plot.h"
 /**
 * @brief ConfigWidget::ConfigWidget
 * @param QWidget* panter
@@ -55,6 +56,10 @@ void ConfigWidget::initUI()
 		SETPERPORE(ui->FreespacelineColor, Freespacelineclicked());
 		SETPERPORE(ui->FOILColor, FOILclicked());
 		SETPERPORE(ui->FOILlineColor, FOILlineclicked());
+		//线段
+		SETPERPORE(ui->Port,PortClicked());
+		SETPERPORE(ui->Inductor,InductorClicked());
+		SETPERPORE(ui->Driver,DriverClicked());
 	}
 	//时间图
 	SETPERPORE(ui->lineColor,linecolorClicked());
@@ -108,23 +113,23 @@ void ConfigWidget::structInfoClicked(int _property, QPushButton* button)
 	qpalette.setColor(QPalette::Button,color);
 	button->setPalette(qpalette);
 	button->setText(QString("#%1").arg(QColorToQstring(color)));
+#define XX(a)\
+	a:\
+	structColor[#a+5]=QColorToQstring(color);break;
 	switch (_property)
 	{
-	case Mas::CONDUCTORNEW:
-		structColor["CONDUCTORNEW"] = QColorToQstring(color); break;
-	case Mas::DIOLECTRIC:
-		structColor["DIOLECTRIC"] = QColorToQstring(color); break;
-	case Mas::PERFECTCONDUCTOR:
-		structColor["PERFECTCONDUCTOR"] = QColorToQstring(color); break;
-	case Mas::PERMEABILITY:
-		structColor["PERMEABILITY"] = QColorToQstring(color); break;
-	case Mas::DIELECTIRANDCONDUCTANCE:
-		structColor["DIELECTIRANDCONDUCTANCE"] = QColorToQstring(color); break;
-	case Mas::FREESPACE:
-		structColor["FREESPACE"] = QColorToQstring(color); break;
-	case Mas::FOIL:
-		structColor["FOIL"] = QColorToQstring(color); break;
+	case XX(Mas::CONDUCTORNEW)
+	case XX(Mas::DIOLECTRIC)
+	case XX(Mas::PERFECTCONDUCTOR)
+	case XX(Mas::PERMEABILITY)
+	case XX(Mas::DIELECTIRANDCONDUCTANCE)
+	case XX(Mas::FREESPACE)
+	case XX(Mas::FOIL)
+	case XX(Mas::PORT)
+	case XX(Mas::DRIVER)
+	case XX(Mas::INDUCTOR)
 	}
+#undef  XX(a)
 }
 /*
 * @brief  saveclicked 应用按钮
@@ -222,6 +227,7 @@ void ConfigWidget::saveclicked()
 #ifdef MY_DEBUG
 	printf("saveclicked\n");
 #endif
+	emit plotLoadconfig();
 }
 /**
 * @brief  ConfigWidget::linecolorClicked 时间图颜色选择
@@ -299,6 +305,9 @@ void ConfigWidget::FreespaceClicked(){ structInfoClicked(Mas::FREESPACE, ui->Fre
 void ConfigWidget::Freespacelineclicked(){ structinfolineClicked(Mas::FREESPACE, ui->FreespacelineColor);}
 void ConfigWidget::FOILclicked(){ structInfoClicked(Mas::FOIL,ui->FOILColor);}
 void ConfigWidget::FOILlineclicked(){ structinfolineClicked(Mas::FOIL, ui->FOILlineColor); }
+void ConfigWidget::PortClicked(){ structInfoClicked(Mas::PORT, ui->Port); }
+void ConfigWidget::InductorClicked(){ structInfoClicked(Mas::INDUCTOR, ui->Inductor); }
+void ConfigWidget::DriverClicked(){ structInfoClicked(Mas::DRIVER, ui->Driver); }
 /**
 * @brief  ConfigWidget::structinfolineClicked
 * @param  int _property  
@@ -358,25 +367,36 @@ void ConfigWidget::loadxmlConfig(){
 	};
 	//结构图
 	//此处写成宏是因为后续如果有新增加得属性，只需在域内使用该宏即可，减少重复书写
-#define LOADCONFIGCOLOR(a,b,c)\
+#define LOADCONFIGCOLOR(a,b,c,d)\
 	fileeButtom(c##Color,(b).getGroup(#a).getValue("value"));\
 	structColor[#a] = QString::fromStdString(StructGroup.getGroup(#a).getValue("value"));\
-	fileeButtom(c##lineColor,(b).getGroup(#a "LINE").getValue("value"));\
+	fileeButtom(c##lineColor, (b).getGroup(#a "LINE").getValue("value")); \
 	structlineColor[#a "LINE"] = QString::fromStdString((b).getGroup(#a "LINE").getValue("value"));
+
 	{
 		auto StructGroup = Group.getGroup("struct");
-		LOADCONFIGCOLOR(DIOLECTRIC, StructGroup, ui->Diolectric);
-		LOADCONFIGCOLOR(DIELECTIRANDCONDUCTANCE, StructGroup, ui->dielectirAndconductance);
-		LOADCONFIGCOLOR(PERMEABILITY, StructGroup, ui->Permeability);
-		LOADCONFIGCOLOR(PERFECTCONDUCTOR, StructGroup, ui->PerfectConductor);
-		LOADCONFIGCOLOR(CONDUCTORNEW, StructGroup, ui->ConductorNew);
+		LOADCONFIGCOLOR(DIOLECTRIC, StructGroup, ui->Diolectric,true);
+		LOADCONFIGCOLOR(DIELECTIRANDCONDUCTANCE, StructGroup, ui->dielectirAndconductance, true);
+		LOADCONFIGCOLOR(PERMEABILITY, StructGroup, ui->Permeability, true);
+		LOADCONFIGCOLOR(PERFECTCONDUCTOR, StructGroup, ui->PerfectConductor, true);
+		LOADCONFIGCOLOR(CONDUCTORNEW, StructGroup, ui->ConductorNew, true);
 		//新增属性-20210521
-		LOADCONFIGCOLOR(FREESPACE, StructGroup, ui->Freespace);
-		LOADCONFIGCOLOR(FOIL, StructGroup, ui->FOIL);
+		LOADCONFIGCOLOR(FREESPACE, StructGroup, ui->Freespace, true);
+		LOADCONFIGCOLOR(FOIL, StructGroup, ui->FOIL, true);
+#undef LOADCONFIGCOLOR(a,b,c)
+#define ADDLINECOLOR(a,b)\
+	{auto color=StructGroup.getGroup(#a).getValue("value");\
+	fileeButtom(b,color);\
+	structColor[#a]=QString::fromStdString(color);\
+	}
+		ADDLINECOLOR(PORT, ui->Port);
+		ADDLINECOLOR(DRIVER, ui->Driver);
+		ADDLINECOLOR(INDUCTOR, ui->Inductor);
+#undef ADDLINECOLOR(a,b)
 		//抗锯齿
 		ui->structcheckBox->setCheckState((QString::fromStdString(StructGroup.getGroup("AlisAttitude").getValue("isAlis")).toInt() == 1) ? Qt::Checked:Qt::Unchecked);
 	}
-#undef LOADCONFIGCOLOR(a,b,c)
+
 	//时间图
 	{
 		auto timeGroup = Group.getGroup("observe");
@@ -546,41 +566,63 @@ QwtLinearColorMap* ConfigWidget::getQwtLinearColorMap()
 	//读取xml文件
 	Config::GetInstance()->loadConfig();
 	ConfigGroup mGroup = Config::GetInstance()->getRootGroup();
-	ConfigGroup contourGroup = mGroup.getGroup("contour");
-	QwtLinearColorMap::Mode mode;
-	if (contourGroup.getGroup("lineMapColors").getValue("value").find("ScaleColors") != std::string::npos)
-		mode = QwtLinearColorMap::Mode::ScaledColors;
+	if (!mGroup.GroupIsempty("contour"))
+	{
+		ConfigGroup contourGroup = mGroup.getGroup("contour");
+		bool isres = contourGroup.empty();
+		QwtLinearColorMap::Mode mode;
+		if (contourGroup.getGroup("lineMapColors").getValue("value").find("ScaleColors") != std::string::npos)
+			mode = QwtLinearColorMap::Mode::ScaledColors;
+		else
+			mode = QwtLinearColorMap::Mode::FixedColors;
+		std::vector<float> vals;
+		std::vector<QColor> colors;
+		auto lineMapColorGroup = contourGroup.getGroup("lineMapColorval");
+		int count = atoi(lineMapColorGroup.getValue("valueNumber").c_str());
+		vals.clear(); vals.reserve(count);
+		colors.clear(); colors.reserve(count);
+		for (auto index = 0; index < count; index++)
+		{
+			float val;
+			QColor color;
+			val = atof(
+				lineMapColorGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("value").c_str());
+			color = QStringToQColor(QString::fromStdString(
+				lineMapColorGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("color")));
+			vals.push_back(val);
+			colors.push_back(color);
+		}
+		QwtLinearColorMap* colormap = new QwtLinearColorMap(*(colors.begin()), *(colors.end() - 1));
+		for (auto index = 1; index < count - 1; index++)
+		{
+			colormap->addColorStop(vals[index], colors[index]);
+		}
+		colormap->setMode(mode);
+		return colormap;
+	}
 	else
-		mode = QwtLinearColorMap::Mode::FixedColors;
-	std::vector<float> vals;
-	std::vector<QColor> colors;
-	auto lineMapColorGroup = contourGroup.getGroup("lineMapColorval");
-	int count = atoi(lineMapColorGroup.getValue("valueNumber").c_str());
-	vals.clear(); vals.reserve(count);
-	colors.clear(); colors.reserve(count);
-	for (auto index = 0; index < count; index++)
 	{
-		float val;
-		QColor color;
-		val= atof(
-			lineMapColorGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("value").c_str());
-		color = QStringToQColor(QString::fromStdString(
-			lineMapColorGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("color")));
-		vals.push_back(val);
-		colors.push_back(color);
+		QwtLinearColorMap* map = new QwtLinearColorMap(Qt::darkBlue,Qt::darkRed);
+		map->addColorStop(0.2, Qt::blue);
+		map->addColorStop(0.4, Qt::cyan);
+		map->addColorStop(0.6, Qt::yellow);
+		map->addColorStop(0.8, Qt::red);
+		return map;
 	}
-	QwtLinearColorMap* colormap = new QwtLinearColorMap(*(colors.begin()), *(colors.end() - 1));
-	for (auto index = 1; index < count - 1;index++)
+	
+}
+void ConfigWidget::bindplot(Plot* lp)
+{
+	if (lp)
 	{
-		colormap->addColorStop(vals[index],colors[index]);
+		connect(this, SIGNAL(plotLoadconfig()),lp,SLOT(setappEvent()));
 	}
-	colormap->setMode(mode);
-	return colormap;
 }
 /**
 * @brief  Mas::Setconfig::Setconfig
 * @return   
 */
+
 Mas::Setconfig::Setconfig()
 	:_1st("1"), _2nd("1"), _3th("1"), _4th("1")
 {}

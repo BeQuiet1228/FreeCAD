@@ -651,5 +651,21 @@ void Plot::canvasResize(QSize size)
 		return;
 	reRender(size);
 }
-
+void Plot::loadconfig()
+{
+	if (!mainRenderer)
+		return;
+	mainRenderer->loadconfig();
+	for (auto iter = subRenderers.begin(); iter != subRenderers.end(); iter++)
+		(*iter)->loadconfig();
+	AxisL->loadconfig();
+	AxisB->loadconfig();
+	//reRender();
+}
+void Plot::setappEvent()
+{
+	loadconfig();
+	updateAxis();
+	reRender();
+}
 #include "moc_Plot.cpp"

@@ -13,11 +13,7 @@ int main(int argc, char *argv[])
 	QApplication a(argc, argv);
 	CanvasItem::registerMetaTye();
 #if 1
-	//std::string path = "D:/H5/MILO.h5";
-	//std::string path = "D:/MILO_D(1).h5";
-	std::string path = "D:/MILO_P.h5";
-	//std::string path = "D:/MILO_C.h5";
-	
+	std::string path = "D:/MILO_D.h5";
 	
 	Plot p;
 	DataSourceManage manager;
