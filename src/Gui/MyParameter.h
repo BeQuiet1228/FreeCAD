@@ -39,6 +39,7 @@ public:
 	QPushButton* batch_btn;
 	QPushButton* insert_btn;
 	QPushButton* delete_btn;
+	QPushButton* change_name_btn;
 	QWidget* text_import;
 	InsertParamDialog* insert_param_dlg;
 	DeleteParamDialog* delete_param_dlg;
@@ -76,6 +77,7 @@ private Q_SLOTS:
 	void importText();
 	void insertParam();
 	void deleteParam();
+	void changeParamName();
 };
 
 

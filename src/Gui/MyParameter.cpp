@@ -14,6 +14,7 @@
 #include "time.h"
 #include "DlgInsertParamImp.h"
 #include "DlgDeleteParamImp.h"
+#include "DlgChangeParamNameImp.h"
 #include "AboutParameter.h"
 
 //#include "DlgExpressionInput.h"
@@ -68,9 +69,15 @@ MyParameter::MyParameter(QWidget* parent) : QWidget(parent){
     delete_btn->setText(QString::fromUtf8("delete param"));
     QObject::connect(this->delete_btn, SIGNAL(clicked(bool)), this, SLOT(deleteParam()));
 
+    change_name_btn = new QPushButton(this);
+    change_name_btn->setObjectName(QString::fromUtf8("change_name_btn"));
+    change_name_btn->setText(QString::fromUtf8("change param name"));
+    QObject::connect(this->change_name_btn, SIGNAL(clicked(bool)), this, SLOT(changeParamName()));
+
     gl->addWidget(batch_btn, 1, 0, 1, 1);
     gl->addWidget(insert_btn, 1, 1, 1, 1);
     gl->addWidget(delete_btn, 2, 1, 1, 1);
+    gl->addWidget(change_name_btn, 2, 0, 1, 1);
 }
 
 MyParameter::~MyParameter()
@@ -647,6 +654,51 @@ std::vector<std::pair<std::string, std::string>> MyParameter::getAllOrderedParam
         res.push_back(std::make_pair(name, expression));
     }
     return res;
+}
+
+// 修改变量名
+void MyParameter::changeParamName() {
+    std::vector<std::pair<std::string, std::string>> apo = this->getAllOrderedParam();  // 所有有序的变量名
+    ChangeParamNameDialog* dlg_cpn = new ChangeParamNameDialog(apo);
+    dlg_cpn->exec();
+    std::string new_name = dlg_cpn->new_name;
+    int change_row = dlg_cpn->change_row;
+    std::string old_name = this->tableWidget->item(change_row, 0)->text().toStdString();
+    std::string expression = this->tableWidget->item(change_row, 1)->text().toStdString();
+    if (new_name.empty() || (!this->isValidWithName(new_name, change_row))) {
+        return;
+    }
+    // 删除当前变量
+    this->tableWidget->blockSignals(true);
+    this->tableWidget->removeRow(change_row);
+    this->tableWidget->blockSignals(false);
+    DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("Param");
+    docObj->removeDynamicProperty(old_name.c_str());
+    this->updateFromRowToEnd(change_row - 1, old_name);
+    // 添加新的变量
+    this->tableWidget->insertRow(change_row);
+    QTableWidgetItem* item_name = new QTableWidgetItem();
+    QTableWidgetItem* item_expression = new QTableWidgetItem();
+    QTableWidgetItem* item_value = new QTableWidgetItem();
+    QTableWidgetItem* item_type = new QTableWidgetItem();
+    QTableWidgetItem* item_description = new QTableWidgetItem();
+    // 使新建行无法编辑
+    item_expression->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    item_value->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    item_type->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    item_description->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    // 将item添加到tableWidget
+    this->tableWidget->blockSignals(true);
+    tableWidget->setItem(change_row, 0, item_name);
+    tableWidget->setItem(change_row, 1, item_expression);
+    tableWidget->setItem(change_row, 2, item_value);
+    tableWidget->setItem(change_row, 3, item_type);
+    tableWidget->setItem(change_row, 4, item_description);
+    this->tableWidget->blockSignals(false);
+    tableWidget->item(change_row, 0)->setText(QString::fromStdString(new_name));
+    tableWidget->item(change_row, 1)->setText(QString::fromStdString(expression));
+
+    delete dlg_cpn;
 }
 
 

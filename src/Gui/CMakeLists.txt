@@ -1266,7 +1266,7 @@ fc_wrap_cpp(ControlTreeWidgetMoc ControlTreeWidget.h)
 SOURCE_GROUP("Control" FILES ${Control_SRC})
 
 
-fc_wrap_cpp(MyParameter_MOC MyParameter.h  DlgInsertParamImp.h DlgDeleteParamImp.h)
+fc_wrap_cpp(MyParameter_MOC MyParameter.h  DlgInsertParamImp.h DlgDeleteParamImp.h DlgChangeParamNameImp.h)
 set(lzg_src DlgInsertParamImp.h
 	DlgInsertParamImp.cpp
 	cJSON.c
@@ -1281,12 +1281,15 @@ set(lzg_src DlgInsertParamImp.h
     DlgDeleteParamImp.h
     DlgDeleteParamImp.cpp
     DlgDeleteParam.ui
+    DlgChangeParamNameImp.h
+    DlgChangeParamNameImp.cpp
+    DlgChangeParamName.ui
 	${MyParameter_MOC}
 )
 if (BUILD_QT5)
-    QT5_WRAP_UI(lzg_ui DlgInsertParam.ui DlgDeleteParam.ui)
+    QT5_WRAP_UI(lzg_ui DlgInsertParam.ui DlgDeleteParam.ui DlgChangeParamName.ui)
 else()
-    QT4_WRAP_UI(lzg_ui DlgInsertParam.ui DlgDeleteParam.ui)
+    QT4_WRAP_UI(lzg_ui DlgInsertParam.ui DlgDeleteParam.ui DlgChangeParamName.ui)
 endif()
 
 source_group("lzg" FILES ${lzg_src})	
