@@ -260,10 +260,23 @@ void MainWindowDef::addTitleShortcutAction(QAction* action)
 
 void MainWindowDef::showMax()
 {
+	QPoint centerPos = this->geometry().center();
+	QPoint screenPos = this->mapToGlobal(centerPos);
+	for (auto index = 0; index < screens.size();index++)
+	{
+		//窗口中心点是否在该屏幕内？
+		if (screens[index].contains(screenPos))
+		{
+			//存在
+			resize(screens[index].size());
+			move(screens[index].topLeft());
+			break;
+		}
+	}
 	oldSize = this->size();
 	oldPoint = this->pos();
-	resize(QApplication::desktop()->availableGeometry().size());
-	move(0, 0);
+	//resize(QApplication::desktop()->availableGeometry().size());
+	//move(0, 0);
 	show();
 	isMax = true;
 }
