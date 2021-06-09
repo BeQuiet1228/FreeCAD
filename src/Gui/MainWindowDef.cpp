@@ -55,7 +55,7 @@ MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 	connect(ui->btMaxShow, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));
 	connect(ui->titleBar, SIGNAL(doubleClick()), this, SLOT(titleBarDoubleClicked()));
 
-	boundaryWidth = 5;
+	boundaryWidth = 4;
 	/*
 		设置鼠标移动事件追踪。
 		如果不设置此选项，那么仅当鼠标按下时才会触发moveEvent
@@ -110,10 +110,13 @@ void MainWindowDef::mousePressEvent(QMouseEvent *event)
 void MainWindowDef::mouseReleaseEvent(QMouseEvent *event)
 {
 	QWidget::mouseReleaseEvent(event);
+
 	if (event->button() == Qt::LeftButton)
 	{
 		leftButtonIsPress = false;
 	}
+	setCursor(Qt::ArrowCursor);
+	cursorState = NONE;
 }
 
 void MainWindowDef::resizeEvent(QResizeEvent *event)
@@ -134,8 +137,7 @@ void MainWindowDef::titleBarMove(QPoint pos)
 	if (isMax)
 	{
 		resize(this->width()*0.7, this->height()*0.7);
-	}
-		
+	}	
 	this->move(this->pos() + pos);
 }
 
@@ -185,10 +187,11 @@ void MainWindowDef::changeCursor(const QPoint& pos)
 	{
 		setCursor(Qt::ArrowCursor);
 		cursorState = NONE;
+		//qDebug() << "changeCursor Is Max";
 		return;
 	}
-	if (this->width() < 100 || this->height() < 100)
-		return;
+	/*if (this->width() < 100 || this->height() < 100)
+		return;*/
 	auto rpos = this->pos() - pos;
 	bool bright , bbottom ;
 	bright = bbottom = false;
@@ -197,7 +200,6 @@ void MainWindowDef::changeCursor(const QPoint& pos)
 		bright = true;
 	if ((pos.y() + boundaryWidth - this->height()) > 0)
 		bbottom = true;
-	
 	 if (bbottom && bright)
 	{
 		setCursor(Qt::SizeFDiagCursor);
@@ -213,8 +215,6 @@ void MainWindowDef::changeCursor(const QPoint& pos)
 		setCursor(Qt::ArrowCursor);
 		cursorState = NONE;
 	}
-		
-
 }
 
 void MainWindowDef::changeSize(const QPoint& pos)
@@ -263,11 +263,11 @@ void MainWindowDef::addTitleShortcutAction(QAction* action)
 void MainWindowDef::showMax()
 {
 	QPoint centerPos = this->geometry().center();
-	QPoint screenPos = this->mapToGlobal(centerPos);
+	//QPoint screenPos = this->mapToGlobal(centerPos);
 	for (auto index = 0; index < screens.size();index++)
 	{
 		//窗口中心点是否在该屏幕内？
-		if (screens[index].contains(screenPos))
+		if (screens[index].contains(centerPos))
 		{
 			//存在
 			resize(screens[index].size());
