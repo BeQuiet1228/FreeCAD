@@ -9,6 +9,7 @@ TitleBar::TitleBar(QWidget* parent /*= 0*/)
 	:QWidget(parent)
 {
 	setObjectName(QString::fromLocal8Bit("titleBar"));
+	setCursor(Qt::ArrowCursor);
 }
 
 void TitleBar::mouseMoveEvent(QMouseEvent *event)
@@ -46,6 +47,7 @@ MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 :QWidget(parent), ui(new Ui::WindowDef())
 {
 	ui->setupUi(this);
+	setCursor(Qt::ArrowCursor);
 	this->setWindowFlags(Qt::FramelessWindowHint);
 	connect(ui->titleBar, SIGNAL(toMove(QPoint)), this, SLOT(titleBarMove(QPoint)));
 	connect(ui->btMini, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));

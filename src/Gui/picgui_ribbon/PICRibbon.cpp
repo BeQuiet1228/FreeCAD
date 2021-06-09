@@ -10,7 +10,7 @@
 Ribbon::Ribbon(QWidget *parent)
   : QTabWidget(parent)
 {
-
+	setCursor(Qt::ArrowCursor);
 }
 
 void Ribbon::addTab(const QString &tabName)

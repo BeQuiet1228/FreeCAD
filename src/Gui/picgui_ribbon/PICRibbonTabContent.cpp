@@ -9,6 +9,7 @@ PICRibbonTabContent::PICRibbonTabContent(QWidget *parent)
   , ui(new Ui::PICRibbonTabContent)
 {
   ui->setupUi(this);
+  setCursor(Qt::ArrowCursor);
 }
 
 PICRibbonTabContent::~PICRibbonTabContent()
