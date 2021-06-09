@@ -69,14 +69,17 @@ MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 	tabWidgetInterface = new Ribbon();
 	tabWidgetInterface->setObjectName(QString::fromLocal8Bit("ribbonTabWidget"));
 	ui->widgetTab->layout()->addWidget(tabWidgetInterface);
-	//tabWidgetInterface->show();
-
-	//初始化
-	//auto size = QApplication::desktop()->availableGeometry().size();
-	//this->resize(size.width()*0.7, size.height()*0.7);
-	//this->show();
-	//this->hide();
+	auto desktopWidget = QApplication::desktop();
 	this->resize(1000, 500);
+	//获取窗口数量
+	unsigned int screenCount = QApplication::desktop()->screenCount();
+	screens.clear();
+	//装填Rect至每个屏幕的
+	for (auto index = 0; index < screenCount;index++)
+	{
+		QRect rect = QApplication::desktop()->availableGeometry(index);
+		screens.push_back(rect);
+	}
 }
 
 
@@ -267,7 +270,8 @@ void MainWindowDef::showMax()
 
 void MainWindowDef::showOld()
 {
-	resize(oldSize);
+	if (oldSize == this->size()) resize(this->width()*0.7,this->height()*0.7);
+	else resize(oldSize);
 	move(oldPoint);
 	show();
 }

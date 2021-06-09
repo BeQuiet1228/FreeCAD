@@ -61,6 +61,7 @@ private:
 	QToolBar* toolbar;
 	//记录窗口是否已经最大化
 	bool isMax = false;
+	std::vector<QRect> screens;
 public:
 	//选项卡对象
 	TabWidgetInterFace *tabWidgetInterface;
