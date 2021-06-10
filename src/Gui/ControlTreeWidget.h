@@ -58,7 +58,7 @@ private:
 	//点击超时定时器
 	QTimer timer;
 	//超时时间
-	const unsigned int timeOutCount = 5*1000;
+	const unsigned int timeOutCount = 10*1000;
 private:
 	//设置树控件为不可用
 	void setTreeUnuseable();

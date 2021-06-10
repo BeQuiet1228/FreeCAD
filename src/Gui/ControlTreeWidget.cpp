@@ -292,6 +292,8 @@ QString ControlTreeWidget::makeFilePath(unsigned long threadID)
 
 void ControlTreeWidget::itemDouble_clicke(QTreeWidgetItem* item, int column)
 {
+	if ((item->flags() & Qt::ItemIsEnabled) != Qt::ItemIsEnabled)
+		return;
 	sendControlMsg(item);
 }
 
@@ -351,8 +353,7 @@ void ControlTreeWidget::outputTempFile(unsigned long threadID)
 */
 void ControlTreeWidget::treeDoubleClickTimeOut()
 {
-	this->setEnabled(true);
-	timer.stop();
+	setTreeUseable();
 }
 
 /**
@@ -361,7 +362,8 @@ void ControlTreeWidget::treeDoubleClickTimeOut()
 */
 void ControlTreeWidget::setTreeUnuseable()
 {
-	this->setEnabled(false);
+	for(auto iter = items.begin();iter != items.end();iter++)
+		(*iter)->setFlags(contourItem->flags() & (~Qt::ItemIsEnabled));
 	timer.start(timeOutCount);
 }
 
@@ -371,6 +373,9 @@ void ControlTreeWidget::setTreeUnuseable()
 */
 void ControlTreeWidget::setTreeUseable()
 {
+	for (auto iter = items.begin(); iter != items.end(); iter++)
+		(*iter)->setFlags(contourItem->flags() | Qt::ItemIsEnabled);
+	Gui::MainWindow::getInstance()->setFocus();
 	this->setEnabled(true);
 	timer.stop();
 }
