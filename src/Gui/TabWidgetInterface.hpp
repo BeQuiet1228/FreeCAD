@@ -37,7 +37,9 @@ public:
 	virtual void  setTabOlder(const QString& tabName, const int older){};
 	//判断是否已有该action
 	virtual bool hasAction(const QAction* action){ return true; };
-
+	//新增，2021-6-10,用于进行缩放判断
+	virtual QSize getunfoldMinSize(){ return QSize(0, 0); }
+	virtual QSize getcurMinSize(){ return QSize(0, 0); }
 };
 class TabTest :public TabWidgetInterFace{
 public:

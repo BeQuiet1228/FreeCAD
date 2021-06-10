@@ -61,6 +61,7 @@ private:
 	QToolBar* toolbar;
 	//记录窗口是否已经最大化
 	bool isMax = false;
+	std::vector<QRect> screens;
 public:
 	//选项卡对象
 	TabWidgetInterFace *tabWidgetInterface;
@@ -82,6 +83,8 @@ private:
 	void changeCursor(const QPoint& pos);
 	//相应拖拽的放大缩小
 	void changeSize(const QPoint& pos);
+	//测试代码
+	void test();
 
 public:
 	//添加中心区域的窗口

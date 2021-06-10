@@ -54,12 +54,14 @@ namespace Gui{
 		{
 			Gui::PlotMDIView* plot = new Gui::PlotMDIView(*guidoc);
 			Gui::MainWindow::getInstance()->addWindow(plot);
-			(DocumentManager*)(docM)->bindTreeContrue(nullptr, (Plot*)plot->GetViewPtr());
+			Plot* mplot = reinterpret_cast<Plot*>(plot->GetViewPtr());
+			docM->bindTreeContrue(nullptr, mplot);
 			
 		}
 		else
 		{
-			(DocumentManager*)(docM)->bindTreeContrue(nullptr, (Plot*)ptr->GetViewPtr());
+			Plot* mplot = reinterpret_cast<Plot*>(ptr->GetViewPtr());
+			docM->bindTreeContrue(nullptr,mplot);
 		}
 		if (iter != datainfor.end())
 		{

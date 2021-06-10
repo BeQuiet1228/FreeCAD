@@ -23,7 +23,7 @@ namespace Gui{
 	*/
 	void* PlotMDIView::GetViewPtr()
 	{
-		return (void*)plot;
+		return  reinterpret_cast<void*>(plot);
 	}
 	/**
 	* @brief PlotMDIView::resizeEvent 自适应大小
