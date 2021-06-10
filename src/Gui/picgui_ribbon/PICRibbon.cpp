@@ -286,6 +286,11 @@ QList<QAction *> Ribbon::getTabActions(const QString &tabName)
 	return list;
 }
 
+/**
+* @brief  Ribbon::getGroupActions 获取对应的内容
+* @param  const QString & groupName  
+* @return QT_NAMESPACE::QList<QAction *>  
+*/
 QList<QAction *> Ribbon::getGroupActions(const QString &groupName)
 {
 	PICRibbonButtonGroup * g;
@@ -377,6 +382,29 @@ void Ribbon::setGroupSequence(const QString &tabName, const QString &groupName, 
 	}
 }
 
+/**
+* @brief  Ribbon::getunfoldMinSize
+* @return QT_NAMESPACE::QSize  
+*/
+QSize Ribbon:: getunfoldMinSize() {
+	QSize size;
+	QWidget* tab = nullptr;
+	for (auto index = 0; index < count();index++)
+	{
+		tab = QTabWidget::widget(index);
+	}
+	return size;
+}
+/**
+* @brief  Ribbon::getcurMinSize
+* @return QT_NAMESPACE::QSize  
+*/
+QSize Ribbon:: getcurMinSize() {
+	QSize size;
+	{
 
+	}
+	return size;
+}
 
 

@@ -338,7 +338,7 @@ bool StructData::loadroom()
 	}
 #ifdef MY_DEBUG
 	QueryPerformanceCounter(&endTime);
-	auto interval = ((double)endTime.QuadPart - (double)startTime.QuadPart) / (double)cpufer.QuadPart;
+	auto interval =(static_cast<double>(endTime.QuadPart) - static_cast<double>(startTime.QuadPart)) / static_cast<double>(cpufer.QuadPart);
 	qDebug() << "processingData(interval):" << interval;
 #endif
 	isloadRoom = true;
