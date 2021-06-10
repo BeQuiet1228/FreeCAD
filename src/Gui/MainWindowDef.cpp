@@ -137,6 +137,7 @@ void MainWindowDef::titleBarMove(QPoint pos)
 void MainWindowDef::toolButtonClicked(bool b)
 {
 	if (sender() == ui->btMini){
+		//最小化窗口
 		this->showMinimized();
 	}else if (sender() == ui->btClose){
 		/*
