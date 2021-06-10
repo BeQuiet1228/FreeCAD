@@ -89,24 +89,26 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
 void Canvas::mousePressEvent(QMouseEvent *event)
 {
 	QWidget::mousePressEvent(event);
-	if (event->button() != Qt::LeftButton)
+	if (event->button() != Qt::RightButton)
 		return;
 	mouseLeftPress = true;
 	selectRect.setX(event->pos().x());
 	selectRect.setY(event->pos().y());
+	selectRect.setWidth(0);
+	selectRect.setHeight(0);
 }
 
 void Canvas::mouseReleaseEvent(QMouseEvent *event)
 {
 	QWidget::mouseReleaseEvent(event);
 	//右键取点
-	if (event->button() == Qt::RightButton)
+	if (event->button() == Qt::LeftButton)
 	{
 		emitSelectPoint(event->pos());
 		return;
 	}
 	//左键拖拽放大	
-	if (event->button() != Qt::LeftButton)
+	if (event->button() != Qt::RightButton)
 		return;
 	mouseLeftPress = false;
 	update();

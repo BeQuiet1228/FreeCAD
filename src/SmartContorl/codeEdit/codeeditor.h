@@ -38,6 +38,8 @@ public:
 	void hideFindDialog();
 	//调整查找框的位置
 	void autoFindDialogPoint();
+private:
+    void insertCaseWordWithListWidget();
 protected:
     void resizeEvent(QResizeEvent *event);
     void keyPressEvent(QKeyEvent *event);
@@ -50,6 +52,7 @@ private slots:
     void inserChanged(int position, int charsRemoved, int charsAdded);
     void matchFinished(QList<QString> vipCaseWords,QList<QString> lowCaseWords,int caseWordSize);
     void hideLisetWidget();
+    void listWidgetDoubleClicked(QListWidgetItem*);
 
 private:
     int caseWordCurrentSize;

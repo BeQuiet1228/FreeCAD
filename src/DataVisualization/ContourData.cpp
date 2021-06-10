@@ -196,24 +196,22 @@ ContourData::Grid ContourData::findGrid(const float& x, const float& y)
 	Grid grid;
 
 	//获取宽度索引
-	for (unsigned int index = width / 2; index > 0 && index < width ;)
+	for (; w < width;w++)
 	{
-		grid = grids.at(index + w);
-		if (grid.x < x)
+		grid = grids.at(+ w);
+		if (grid.x > x)
 		{
-			w += index;
+			break;
 		}
-		index = index / 2;
 	}
 	//获取高度索引
-	for (unsigned int index = height / 2; index > 0 && index < height;)
+	for (; h < height;h++)
 	{
-		grid = grids.at(index*width + h*width);
-		if (grid.y < y)
+		grid = grids.at(h*width);
+		if (grid.y > y)
 		{
-			h += index;
+			break;
 		}
-		index = index / 2;
 	}
 
 	int index = w + h*width;

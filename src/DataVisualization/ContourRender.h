@@ -41,8 +41,6 @@ public:
 	std::vector<float> getStructFace();
 protected:
 	CFGINFO cfgInfo;
-	unsigned __int64 colormapsite;
-	unsigned __int64 lastcolormapsite;
 private:
 	//»æÖÆÌáÊ¾¿ò
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const ContourData::Grid& grid);
