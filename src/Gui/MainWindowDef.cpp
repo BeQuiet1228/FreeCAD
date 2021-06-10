@@ -284,7 +284,9 @@ void MainWindowDef::showMax()
 			//´æÔÚ
 			resize(screens[index].size());
 			move(screens[index].topLeft());
+			isMax = true;
 			break;
+			
 		}
 	}
 	oldSize = this->size();
@@ -292,7 +294,7 @@ void MainWindowDef::showMax()
 	//resize(QApplication::desktop()->availableGeometry().size());
 	//move(0, 0);
 	show();
-	isMax = true;
+	
 }
 
 void MainWindowDef::showOld()
