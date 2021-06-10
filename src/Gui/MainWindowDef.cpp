@@ -134,10 +134,20 @@ void MainWindowDef::moveEvent(QMoveEvent *event)
 
 void MainWindowDef::titleBarMove(QPoint pos)
 {
+	QPoint posing = this->pos() + pos;
+	for (auto index = 0; index < screens.size();index++)
+	{
+		if (posing.y()-screens[index].topLeft().y()<2)
+		{
+			showMax();
+			return ;
+		}
+	}
 	if (isMax)
 	{
 		resize(this->width()*0.7, this->height()*0.7);
-	}	
+		isMax = false;
+	}
 	this->move(this->pos() + pos);
 }
 
@@ -181,13 +191,15 @@ void MainWindowDef::changeCursor(const QPoint& pos)
 {
 	//防止已经在拖拽状态的时候改变光标的状态
 	if (leftButtonIsPress)
+	{
 		return;
+	}
+		
 	//如果已经最大化 则不允许拖拽
 	if (isMax)
 	{
-		setCursor(Qt::ArrowCursor);
 		cursorState = NONE;
-		//qDebug() << "changeCursor Is Max";
+		qDebug() << "changeCursor Is Max";
 		return;
 	}
 	/*if (this->width() < 100 || this->height() < 100)
