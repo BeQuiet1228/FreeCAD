@@ -63,8 +63,4 @@ private:
 	//设置树控件为不可用
 	void setTreeUnuseable();
 	void setTreeUseable();
-	//string类型转换
-	QString tr(const std::string& st) {
-		return QString::fromStdString(st);
-	}
 };

@@ -167,63 +167,66 @@ void ControlTreeWidget::clear()
 bool ControlTreeWidget::addContourItem(const std::string& str)
 {
 	QString typeName, name, rank;
-	typeName = tr("Contour");
+	typeName = QString::fromStdString("Contour");
 	if (!analysisType(str, typeName, name, rank))
 		return false;
 
 	QTreeWidgetItem* childItem = new QTreeWidgetItem;
 	childItem->setText(0,name);
 	contourItem->addChild(childItem);
-
+	return true;
 }
 
 bool ControlTreeWidget::addPhaseSpaceItem(const std::string& str)
 {
 	QString typeName, name, rank;
-	typeName = tr("PhaseSpace");
+	typeName = QString::fromStdString("PhaseSpace");
 	if (!analysisType(str, typeName, name, rank))
 		return false;
 
 	QTreeWidgetItem* childItem = new QTreeWidgetItem;
 	childItem->setText(0, name);
 	phaseSpaceItem->addChild(childItem);
-
+	return true;
 }
 
 bool ControlTreeWidget::addObserveItem(const std::string& str)
 {
 	QString typeName, name, rank;
-	typeName = tr("Observe");
+	typeName = QString::fromStdString("Observe");
 	if (!analysisType(str, typeName, name, rank))
 		return false;
 
 	QTreeWidgetItem* childItem = new QTreeWidgetItem;
 	childItem->setText(0, name);
 	observeItem->addChild(childItem);
+	return true;
 }
 
 bool ControlTreeWidget::addRangeItem(const std::string& str)
 {
 	QString typeName, name, rank;
-	typeName = tr("Range");
+	typeName = QString::fromStdString("Range");
 	if (!analysisType(str, typeName, name, rank))
 		return false;
 
 	QTreeWidgetItem* childItem = new QTreeWidgetItem;
 	childItem->setText(0, name);
 	rangeItem->addChild(childItem);
+	return true;
 }
 
 bool ControlTreeWidget::addVectorItem(const std::string& str)
 {
 	QString typeName, name, rank;
-	typeName = tr("Vector");
+	typeName = QString::fromStdString("Vector");
 	if (!analysisType(str, typeName, name, rank))
 		return false;
 
 	QTreeWidgetItem* childItem = new QTreeWidgetItem;
 	childItem->setText(0, name);
 	vectorItem->addChild(childItem);
+	return true;
 }
 
 /**
@@ -237,17 +240,17 @@ bool ControlTreeWidget::addVectorItem(const std::string& str)
 bool ControlTreeWidget::analysisType(const std::string& str, const QString& typeName, QString& name, QString& rank)
 {
 	QString qstr = GetEncodingstr(str.c_str(), ENCODING_GB2312);
-	auto lists = qstr.split(tr("="));
+	auto lists = qstr.split(QString::fromStdString("="));
 
 	if (lists.size() != 2)
 		return false;
 
 	qstr = lists.at(0);
 	//获取名称和观测排序
-	QString temp = qstr.left(typeName.length());
-	if (temp != typeName)
+	std::cerr << qstr.toStdString() << "||" << typeName.toStdString() << std::endl;
+	if (qstr.indexOf(typeName) == -1)
 		return false;
-	rank = qstr.remove(temp);
+	rank = qstr.remove(typeName);
 	name = lists.at(1);
 	name = name.simplified();
 	return true;
@@ -275,15 +278,15 @@ QString ControlTreeWidget::makeFilePath(unsigned long threadID)
 	//获取线程数，因为并行时输出文件的路径不一样
 	int threadCount = control->getChipicThreadCount(threadID);
 	if (threadCount < 1)
-		return tr("");
+		return QString::fromStdString("");
 	QString tempFilePath;
 	if (threadCount > 1)
-		tempFilePath = path + tr("/1/") + m3dFileName + tr("_Temp.h5");
+		tempFilePath = path + QString::fromStdString("/1/") + m3dFileName + QString::fromStdString("_Temp.h5");
 	else
-		tempFilePath = path + tr("/") + m3dFileName + tr("_Temp.h5");
+		tempFilePath = path + QString::fromStdString("/") + m3dFileName + QString::fromStdString("_Temp.h5");
 
 	//生成新的临时文件路径
-	QString newTempPath = path + tr("/") + m3dFileName + tr("_gather.h5");
+	QString newTempPath = path + QString::fromStdString("/") + m3dFileName + QString::fromStdString("_gather.h5");
 
 	this->tempFilePath = newTempPath;
 
@@ -301,7 +304,7 @@ void ControlTreeWidget::itemDouble_clicke(QTreeWidgetItem* item, int column)
 void ControlTreeWidget::outputStructFile(unsigned long threadID)
 {
 	QString filePath = makeFilePath(threadID);
-	if (filePath == tr(""))
+	if (filePath == QString::fromStdString(""))
 		return;
 
 	//打开结构图文件 获取结构图对象
@@ -334,7 +337,7 @@ void ControlTreeWidget::outputTempFile(unsigned long threadID)
 		return;
 
 	QString filePath = makeFilePath(threadID);
-	if (filePath == tr(""))
+	if (filePath == QString::fromStdString(""))
 		return;
 	//打开结构图文件 获取结构图对象
 	Hdf5IO tempIO;
