@@ -47,7 +47,7 @@ struct _3DPointf
 class StructData:public XYData
 {
 public:
-		enum PROPERTYPE{
+	enum PROPERTYPE{
 		RECTPROPER,
 		LINEPROPER
 	};
@@ -81,6 +81,27 @@ public:
 		structpoint() :x(0.0), y(0.0), d1(0.0), d2(0.0){}
 		float x, y;//直角坐标系下的数据
 		float d1, d2;//原始数据
+	};
+	enum structType
+	{
+		//理想导体
+		PERFECTCONDUCTOR = 3,
+		//电导新材料
+		CONDUCTORNEW = 8,
+		//介质
+		DIOLECTRIC = 4,
+		//电介质和电导
+		DIELECTIRANDCONDUCTANCE = 16,
+		//磁导率
+		PERMEABILITY = 32,
+		//自由空间
+		FREESPACE = 64,
+		//电阻
+		FOIL = 128,
+		//
+		PORT,
+		DRIVER,
+		INDUCTOR
 	};
 	StructData(Hdf5Data& heData, DirectionType _type,const RunMod& mod=SINGLE_THREAD);
 	StructData(Hdf5Data& heData,_3DPointf startpoint,_3DPointf endpoint,const RunMod& mod=SINGLE_THREAD);
@@ -148,7 +169,7 @@ protected:
 	std::vector<DaTaKmt> GetdatasetKmtPolar();
 	std::vector<DaTaKmt> GetdatasetKmtCylindrical();
 	bool createLines(std::map<int, std::vector<QPoint>> &points,const Data::ValuesPtr &IMX, const Data::ValuesPtr &IMY);
-	unsigned __int64 isAnAttritbute(unsigned __int64, PROPERTYPE);
+	std::list<unsigned __int64> isAnAttritbute(unsigned __int64, PROPERTYPE);
 private:
 	//全部切割空间
 	std::map<int, std::vector<QRectF>>	allcutroom;
