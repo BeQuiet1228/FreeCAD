@@ -127,7 +127,7 @@ void MainWindowDef::mouseMoveEvent(QMouseEvent *event)
 	changeCursor(event->pos());
 	changeSize(event->pos());
 
-	test();
+	
 	/*QSize size= tabWidgetInterface->size();
 	qDebug() <<"size--"<< size;*/
 }
@@ -159,6 +159,7 @@ void MainWindowDef::resizeEvent(QResizeEvent *event)
 	QWidget::resizeEvent(event);
 	if (isMax)
 		isMax = false;
+	test();
 }
 
 void MainWindowDef::moveEvent(QMoveEvent *event)
@@ -175,7 +176,6 @@ void MainWindowDef::titleBarMove(QPoint pos)
 		if (posing.y()-screens[index].topLeft().y()<2)
 		{
 			showMax();
-			//qDebug() << "showMax";
 			return ;
 		}
 	}
@@ -368,8 +368,12 @@ void MainWindowDef::showOld()
 void MainWindowDef::test()
 {
 	//获取tab页
-	auto tabs = tabWidgetInterface->getTabs();
-	auto groups=tabWidgetInterface->getGroups();
-	auto action=tabWidgetInterface->getActions();
+	QSize unfoldMinSize = tabWidgetInterface->getunfoldMinSize();
+	QSize widgetCurSize = this->size();
+	if ((widgetCurSize.width()- unfoldMinSize.width()) <= 30)
+	{
+		qDebug() << "needScale:";
+		//开始缩放
+	}
 }
 #include "moc_MainWindowDef.cpp"

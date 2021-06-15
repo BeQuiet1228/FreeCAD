@@ -57,6 +57,8 @@ public:
 
 protected:
 	void paintEvent(QPaintEvent *event);
+public:
+	QHBoxLayout* contentLayout;
 private:
   Ui::PICRibbonTabContent *ui;
 };

@@ -10,6 +10,7 @@
 Ribbon::Ribbon(QWidget *parent)
   : QTabWidget(parent)
 {
+	mydarWer.clear();
 	setCursor(Qt::ArrowCursor);
 }
 
@@ -21,7 +22,6 @@ void Ribbon::addTab(const QString &tabName)
   this->setAttribute(Qt::WA_StyledBackground);
 
 }
-
 void Ribbon::addTab(const QIcon &tabIcon, const QString &tabName)
 {
   // Note: superclass QTabWidget also has a function addTab()
@@ -389,10 +389,31 @@ void Ribbon::setGroupSequence(const QString &tabName, const QString &groupName, 
 QSize Ribbon:: getunfoldMinSize() {
 	QSize size;
 	QWidget* tab = nullptr;
+	unsigned int widgetMax = 0;
+	unsigned int widgetMaxHeight = 0;
 	for (auto index = 0; index < count();index++)
 	{
 		tab = QTabWidget::widget(index);
+		PICRibbonTabContent* picribbontabcontent = dynamic_cast<PICRibbonTabContent*>(tab);
+		unsigned int curallwidth = 0;
+		unsigned int curallheight = 0;
+		for (auto index2 = 0; index2 < picribbontabcontent->contentLayout->count();index2++)
+		{
+			PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(picribbontabcontent->contentLayout->itemAt(index2)->widget());
+			curallwidth += group->size().width();
+			curallheight = (curallheight<group->size().height()?group->size().height():curallheight);
+		}
+		if (curallwidth>widgetMax)
+		{
+			widgetMax = curallwidth;
+		}
+		if (curallheight>widgetMaxHeight)
+		{
+			widgetMaxHeight = curallheight;
+		}
 	}
+	size.setWidth(widgetMax);
+	size.setHeight(widgetMaxHeight);
 	return size;
 }
 /**
@@ -407,4 +428,59 @@ QSize Ribbon:: getcurMinSize() {
 	return size;
 }
 
-
+/**
+* @brief  Ribbon::setScale 实现抽屉效果
+* @return void  
+*/
+void Ribbon::setScale(QSize& size) {
+	if (mydarWer.empty())
+	{
+		for (auto index = 0; index < count();index++)
+		{
+			toScale(index,size);
+		}
+	}
+}
+/**
+* @brief  Ribbon::toScale
+* @param  unsigned int index  
+* @param  QSize & size  
+* @return void  
+*/
+void Ribbon::toScale(unsigned int index,QSize& size)
+{
+	QWidget* tab = QTabWidget::widget(index);
+	PICRibbonTabContent* picribbontabcontent = dynamic_cast<PICRibbonTabContent*>(tab);
+	unsigned int allWidth = 0;
+	unsigned int heightMax = 0;
+	for (auto subindex = picribbontabcontent->contentLayout->count() - 1; subindex >= 0;subindex--)
+	{
+		PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(picribbontabcontent->contentLayout->itemAt(subindex)->widget());
+		allWidth += group->width();
+		heightMax = (heightMax>group->height()?heightMax:group->height());
+	}
+	if (size.width()-allWidth<30)
+	{
+		//进行缩放
+		for (auto subindex = picribbontabcontent->contentLayout->count() - 1; subindex >= 0;subindex--)
+		{
+			PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(picribbontabcontent->contentLayout->itemAt(subindex)->widget());
+			auto iter = mydarWer.find(group->title());
+			if (iter != mydarWer.end());
+			else
+			{
+				//进行缩放
+				PICRibbonButtonGroup* newGroup = new PICRibbonButtonGroup;
+				newGroup->setTitle(group->title());
+				std::list<QAction*> mActions = getGroupActions(group->title()).toStdList();
+				for (auto iter = mActions.begin(); iter != mActions.end();iter++)
+				{
+					QToolButton *b = new QToolButton;
+					b->setDefaultAction(*iter);
+					newGroup->addButton(b);
+				}
+				this->clearGoup(group->title());
+			}
+		}
+	}
+}
