@@ -365,7 +365,7 @@ void Application::showPlotSettingDialog()
 		}
 		if (ptr != nullptr)
 		{
-			configWidget->bindplot((Plot*)ptr->GetViewPtr());
+			configWidget->bindplot(ptr->GetViewPtr());
 		}
 	}
 	configWidget->show();
