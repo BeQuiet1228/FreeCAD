@@ -952,7 +952,8 @@ void MainWindow::removeWindow(Gui::MDIView* view)
             par = par->parentWidget();
         }
     }
-
+    //这里对源码进行修改，这样的移除方式，似乎会导致意想不到的异常
+#if 0
     QWidget* parent = view->parentWidget();
     // The call of 'd->mdiArea->removeSubWindow(parent)' causes the QMdiSubWindow
     // to lose its parent and thus the notification in QMdiSubWindow::closeEvent
@@ -961,6 +962,11 @@ void MainWindow::removeWindow(Gui::MDIView* view)
     // cause other problems.
     d->mdiArea->removeSubWindow(parent);
     parent->deleteLater();
+#else
+    QWidget* parent = view->parentWidget();
+    if (parent)
+        parent->close();
+#endif
 }
 
 void MainWindow::tabChanged(MDIView* view)

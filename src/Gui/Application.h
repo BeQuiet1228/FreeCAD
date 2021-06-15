@@ -247,6 +247,8 @@ public:
     PYFUNCDEF_S(sShowPreferences);
 
     PYFUNCDEF_S(sCreateViewer);
+	//显示M3d文件
+    PYFUNCDEF_S(sDisplayText);
 
     static PyMethodDef    Methods[]; 
 

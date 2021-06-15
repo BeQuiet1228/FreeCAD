@@ -9,6 +9,7 @@
 #include <FileDialog.h>
 #include <QFile>
 #include <QMdiArea>
+#include "Application.h"
 LuaEditView::LuaEditView(Gui::Document* doc, QWidget* parent /*= 0*/)
 	: MDIView(doc, parent, 0)
 {
@@ -97,9 +98,12 @@ void LuaEditView::windowStateChanged(MDIView* mdiVew)
 bool LuaEditView::save()
 {
 	auto doc = this->getAppDocument();
-	DocumentM3dText *doct = static_cast<DocumentM3dText*>(doc);
+	DocumentM3dText *doct = dynamic_cast<DocumentM3dText*>(doc);
 	if (!doct)
-		return false;
+	{
+		Gui::Application::Instance->activeDocument()->save();
+		return true;
+	}
 	doct->setContent(this->codeEditor->toPlainText());
 	if (doct->isSaved())
 	{
@@ -114,9 +118,13 @@ bool LuaEditView::saveAs()
 {
 	auto doc = this->getAppDocument();
 	QString path = QString::fromUtf8(doc->FileName.getValue());
-	DocumentM3dText *doct = static_cast<DocumentM3dText*>(doc);
+	DocumentM3dText *doct = dynamic_cast<DocumentM3dText*>(doc);
 	if (!doct)
+	{
+		Gui:: Application::Instance->activeDocument()->saveAs();
 		return false;
+	}
+		
 	std::string format = doct->getFileFormat();
 
 	QString fn = Gui::FileDialog::getSaveFileName(Gui::MainWindow::getInstance(), QObject::tr("Save  Document"),
@@ -130,4 +138,14 @@ bool LuaEditView::saveAs()
 	setWindowTitle(QString::fromStdString(fi.fileNamePure()));
 	doc->save();
 	return true;
+}
+
+/**
+* @brief LuaEditView::setReadOnly ÉèÖÃ±à¼­Æ÷Ö»¶Á
+* @param const bool & b
+* @return void
+*/
+void LuaEditView::setReadOnly(const bool& b)
+{
+	codeEditor->setReadOnly(b);
 }
