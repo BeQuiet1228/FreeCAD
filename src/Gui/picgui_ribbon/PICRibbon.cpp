@@ -437,17 +437,18 @@ void Ribbon::setScale(QSize& size) {
 	{
 		for (auto index = 0; index < count();index++)
 		{
-			toScale(index,size);
+			toScale(index, size);
 		}
 	}
 }
+
 /**
 * @brief  Ribbon::toScale
 * @param  unsigned int index  
 * @param  QSize & size  
-* @return void  
+* @return bool  
 */
-void Ribbon::toScale(unsigned int index,QSize& size)
+bool Ribbon::toScale(unsigned int index,QSize& size)
 {
 	QWidget* tab = QTabWidget::widget(index);
 	PICRibbonTabContent* picribbontabcontent = dynamic_cast<PICRibbonTabContent*>(tab);
@@ -461,15 +462,39 @@ void Ribbon::toScale(unsigned int index,QSize& size)
 	}
 	if (size.width()-allWidth<30)
 	{
-		//进行缩放
-		for (auto subindex = picribbontabcontent->contentLayout->count() - 1; subindex >= 0;subindex--)
+		////进行缩放
+		//for (auto subindex = picribbontabcontent->contentLayout->count() - 1; subindex >= 0;subindex--)
+		//{
+		//	PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(picribbontabcontent->contentLayout->itemAt(subindex)->widget());
+		//	auto iter = mydarWer.find(group->title());
+		//	if (iter != mydarWer.end());
+		//	else
+		//	{
+		//		//进行缩放
+		//		PICRibbonButtonGroup* newGroup = new PICRibbonButtonGroup;
+		//		newGroup->setTitle(group->title());
+		//		std::list<QAction*> mActions = getGroupActions(group->title()).toStdList();
+		//		for (auto iter = mActions.begin(); iter != mActions.end();iter++)
+		//		{
+		//			QToolButton *b = new QToolButton;
+		//			b->setDefaultAction(*iter);
+		//			newGroup->addButton(b);
+		//		}
+		//		this->clearGoup(group->title());
+		//	}
+		//}
+
+		auto subindex = picribbontabcontent->contentLayout->count() - 1;
+		while (subindex>=0)
 		{
 			PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(picribbontabcontent->contentLayout->itemAt(subindex)->widget());
 			auto iter = mydarWer.find(group->title());
-			if (iter != mydarWer.end());
+			if (iter != mydarWer.end())
+			{
+				subindex -= 1;
+			}
 			else
 			{
-				//进行缩放
 				PICRibbonButtonGroup* newGroup = new PICRibbonButtonGroup;
 				newGroup->setTitle(group->title());
 				std::list<QAction*> mActions = getGroupActions(group->title()).toStdList();
@@ -480,7 +505,13 @@ void Ribbon::toScale(unsigned int index,QSize& size)
 					newGroup->addButton(b);
 				}
 				this->clearGoup(group->title());
+				break;
 			}
 		}
+		return toScale(index, size);
+	}
+	else
+	{
+		return true;
 	}
 }

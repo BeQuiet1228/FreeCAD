@@ -93,7 +93,7 @@ public:
   //抽屉功能
   std::map<QString, QWidget*> mydarWer;
 private:
-	void toScale(unsigned int index,QSize& size);
+	bool toScale(unsigned int index,QSize& size);
 };
 
 #endif // RIBBONTABWIDGET_H

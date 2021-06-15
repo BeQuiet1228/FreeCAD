@@ -372,8 +372,8 @@ void MainWindowDef::test()
 	QSize widgetCurSize = this->size();
 	if ((widgetCurSize.width()- unfoldMinSize.width()) <= 30)
 	{
-		qDebug() << "needScale:";
-		//¿ªÊ¼Ëõ·Å
+		//qDebug() << "needScale:";
+		tabWidgetInterface->setScale(this->size());
 	}
 }
 #include "moc_MainWindowDef.cpp"
