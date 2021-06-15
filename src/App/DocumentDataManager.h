@@ -24,7 +24,8 @@ public:
 	void dataclear();
 public:
 	//‘ÿ»ÎŒƒ±æ
-	bool loadfile(const QString& filePath);
+	bool loadFile(const QString& filePath);
+	bool loadFile(const std::string& FilePath);
 	bool bindTreeContrue(ListTreeWidget* ptr,Plot* plotptr);
 	int ToStructHdf5(Hdf5Data data);
 	void DisplatPlot(Hdf5Data data,int _type=0);

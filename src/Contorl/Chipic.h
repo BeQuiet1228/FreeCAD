@@ -43,6 +43,8 @@ public:
 	void closeChipic();
 	//打开log文件
 	void openLogFile();
+	//获取运行结果数据路径
+	std::string getResultPath();
 	//设置是否为auto运行模式
 	void setIsAuto(const bool& a){
 		this->isAuto = a;

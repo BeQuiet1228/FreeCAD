@@ -43,6 +43,8 @@ Q_SIGNALS:
 	void newResultFIleSignal(unsigned long);
 	//输出结构图
 	void outputStructFileSignal(unsigned long);
+	//打开输出结果
+	void openH5Result(std::string path);
 public Q_SLOTS:
 	void hasNewMessage();
 	//更新ui状态

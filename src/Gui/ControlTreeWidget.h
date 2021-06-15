@@ -50,6 +50,8 @@ public Q_SLOTS :
 	void outputTempFile(unsigned long threadID);
 	//点击定时器超时
 	void treeDoubleClickTimeOut();
+	//计算完成槽
+	void openResultFile(std::string path);
 private:
 	//存储临时文件路径
 	QString tempFilePath;
