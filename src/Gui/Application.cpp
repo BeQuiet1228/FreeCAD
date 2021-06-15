@@ -300,6 +300,17 @@ void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
 	std::list<Gui::MDIView*> list = doc->getMDIViews();
 	Gui::PlotMDIView* ptr = nullptr;
 	DocumentManager* documentmanager = dynamic_cast<DocumentManager*>(doc->getDocument());
+	if (!documentmanager)
+	{
+		std::cerr << "documentmanager==nullptr from   FreeCADGUI Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)"<<std::endl;
+		return;
+	}
+	ListTreeWidget* m_listTreeWidget = dynamic_cast<ListTreeWidget*>(Gui::MainWindow::getInstance()->mTreeWidget);
+	if (!m_listTreeWidget)
+	{
+		std::cerr << "ListTreeWidget ==nullptr from FreeCADGUI Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)" << std::endl;
+		return;
+	}
 	for each (Gui::MDIView* var in list)
 	{
 		ptr = dynamic_cast<Gui::PlotMDIView*> (var);
@@ -307,17 +318,13 @@ void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
 	}
 	if (ptr != nullptr)
 	{
-		ListTreeWidget* m_listTreeWidget = dynamic_cast<ListTreeWidget*>(Gui::MainWindow::getInstance()->mTreeWidget);
-		Plot* mplot = reinterpret_cast<Plot*>(ptr->GetViewPtr());
-		documentmanager->bindTreeContrue(m_listTreeWidget,mplot);
+		documentmanager->bindTreeContrue(m_listTreeWidget,ptr->GetViewPtr());
 	}
 	else
 	{
 		Gui::PlotMDIView* plot = new Gui::PlotMDIView(*doc);
 		Gui::MainWindow::getInstance()->addWindow(plot);
-		ListTreeWidget* m_ListTreeWidget = dynamic_cast<ListTreeWidget*>(Gui::MainWindow::getInstance()->mTreeWidget);
-		Plot* mplot = reinterpret_cast<Plot*>(plot->GetViewPtr());
-		documentmanager->bindTreeContrue(m_ListTreeWidget,mplot);
+		documentmanager->bindTreeContrue(m_listTreeWidget,plot->GetViewPtr());
 	}
 	documentmanager->DisplatPlot(data, _type);
 }
@@ -326,7 +333,13 @@ void Application::ToStruct(Hdf5Data data)
 	auto doc = Gui::Application::Instance->activeDocument();
 	if (doc)
 	{
-		int structindex=((DocumentManager*)(doc->getDocument()))->ToStructHdf5(data);
+		DocumentManager* documentmanager = dynamic_cast<DocumentManager*>(doc->getDocument());
+		if (!documentmanager)
+		{
+			std::cerr << "documentmanager is null from Free void Application::ToStruct(Hdf5Data data)" << std::endl;
+			return;
+		}
+		int structindex=documentmanager->ToStructHdf5(data);
 		Gui::TreeViewCtrl* m_lisTreeWidget = Gui::MainWindow::getInstance()->mTreeWidget;
 		m_lisTreeWidget->toStructh5df(data, structindex);
 	}
