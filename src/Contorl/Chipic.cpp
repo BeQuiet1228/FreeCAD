@@ -151,6 +151,15 @@ void Chipic::openLogFile()
 }
 
 /**
+* @brief Chipic::getResultPath 返回一个运算结果h5文件的数据
+* @return std::string
+*/
+std::string Chipic::getResultPath()
+{
+ 	return makePath(".h5");
+}
+
+/**
 * @brief Chipic::disposIterationCountMessage 处理迭代时间消息
 * @param const Message & msg
 * @return bool

@@ -10,16 +10,23 @@
 #include "Gui/MainWindow.h"
 #include "Gui/Application.h"
 /**
-* @brief DocumentManager::loadfile 加载h5文件
+* @brief DocumentManager::loadFile 加载h5文件
 * @param const QString& filePath 传入路径
 * @return bool
 */
-bool DocumentManager::loadfile(const QString& filePath)
+bool DocumentManager::loadFile(const QString& filePath)
 {
 	std::string _filePath = filePath.toStdString();
-	m_DataSourceManage->loadhdffile(_filePath);
+	loadFile(_filePath);
 	return true;
 }
+
+bool DocumentManager::loadFile(const std::string& FilePath)
+{
+	m_DataSourceManage->loadhdffile(FilePath);
+	return true;
+}
+
 /**
 * @brief DocumentManager::bindTreeContrue 绑定控制控件
 * @param ListTreeWidget* ptr
