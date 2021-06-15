@@ -299,6 +299,7 @@ void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
 	auto doc = Gui::Application::Instance->activeDocument();
 	std::list<Gui::MDIView*> list = doc->getMDIViews();
 	Gui::PlotMDIView* ptr = nullptr;
+	DocumentManager* documentmanager = dynamic_cast<DocumentManager*>(doc->getDocument());
 	for each (Gui::MDIView* var in list)
 	{
 		ptr = dynamic_cast<Gui::PlotMDIView*> (var);
@@ -306,8 +307,9 @@ void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
 	}
 	if (ptr != nullptr)
 	{
-		Gui::TreeViewCtrl* m_lisTreeWidget = Gui::MainWindow::getInstance()->mTreeWidget;
-		((DocumentManager*)(doc->getDocument()))->bindTreeContrue((ListTreeWidget*)m_lisTreeWidget, (Plot*)ptr->GetViewPtr());
+		ListTreeWidget* m_listTreeWidget = dynamic_cast<ListTreeWidget*>(Gui::MainWindow::getInstance()->mTreeWidget);
+		Plot* mplot = reinterpret_cast<Plot*>(ptr->GetViewPtr());
+		documentmanager->bindTreeContrue(m_listTreeWidget,mplot);
 	}
 	else
 	{

@@ -418,6 +418,7 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
 
 	mainWindowDef = new MainWindowDef();
 	mainWindowDef->addCenterWidget(this);
+	//ÕâÀïÒþ²Ø¾É°æµÄmenubar
 	this->menuBar()->setVisible(false);
 
 

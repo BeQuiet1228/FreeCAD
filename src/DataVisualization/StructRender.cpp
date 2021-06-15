@@ -13,7 +13,7 @@ QString lineicon[] = { ":/struct/C.png", ":/struct/a.png", ":/struct/s.png" };
 * @return   
 */
 StructRender::StructRender(std::shared_ptr<StructData> data) :Renderer(std::dynamic_pointer_cast<Data>(data)){		
-	color_tab[StructTexture::PERFECTCONDUCTOR] = QColor(125, 125, 125, 255);
+	color_tab[StructData::PERFECTCONDUCTOR] = QColor(125, 125, 125, 255);
 	isAA = true;
 }
 /**
@@ -408,20 +408,20 @@ StructData::structpoint StructRender::findApointZr(QPointF _curpostion){
 	//获取真实的数据
 	std::vector<QRectF> conduitList = d->GetAllcutInfo()[3];
 	//添加所有属性
-	auto func = [&](StructTexture structtexture){
+	auto func = [&](StructData::structType structtexture){
 		std::vector<QRectF> tempList = d->GetAllcutInfo()[structtexture];
 		if (!tempList.empty())
 		{
 			conduitList.insert(conduitList.end(),tempList.begin(),tempList.end());
 		}
 	};
-	func(PERFECTCONDUCTOR);
-	func(CONDUCTORNEW);
-	func(DIOLECTRIC);
-	func(DIELECTIRANDCONDUCTANCE);
-	func(PERMEABILITY);
-	func(FREESPACE);
-	func(FOIL);
+	func(StructData::PERFECTCONDUCTOR);
+	func(StructData::CONDUCTORNEW);
+	func(StructData::DIOLECTRIC);
+	func(StructData::DIELECTIRANDCONDUCTANCE);
+	func(StructData::PERMEABILITY);
+	func(StructData::FREESPACE);
+	func(StructData::FOIL);
 	//获取矩形中心点
 	std::vector<QPointF> scaleCoord;
 	for (auto iter = conduitList.begin(); iter != conduitList.end(); iter++)
@@ -693,15 +693,15 @@ void StructRender::loadconfig()
 	ConfigGroup mGroup = Config::GetInstance()->getRootGroup();
 	ConfigGroup structConfig = mGroup.getGroup("struct");
 #define LoadColor(a)\
-	color_tab[(a)] = QStringToQColor(QString::fromStdString(structConfig.getGroup(#a).getValue("value")));\
-	color_pen[(a)] = QStringToQColor(QString::fromStdString(structConfig.getGroup(#a "LINE").getValue("value")));
-	LoadColor(PERFECTCONDUCTOR);
-	LoadColor(CONDUCTORNEW);
-	LoadColor(DIOLECTRIC);
-	LoadColor(PERMEABILITY);
-	LoadColor(DIELECTIRANDCONDUCTANCE);
-	LoadColor(FREESPACE);
-	LoadColor(FOIL);
+	color_tab[(a)] = QStringToQColor(QString::fromStdString(structConfig.getGroup(#a+12).getValue("value")));\
+	color_pen[(a)] = QStringToQColor(QString::fromStdString(structConfig.getGroup(#a "LINE"+12).getValue("value")));
+	LoadColor(StructData::PERFECTCONDUCTOR);
+	LoadColor(StructData::CONDUCTORNEW);
+	LoadColor(StructData::DIOLECTRIC);
+	LoadColor(StructData::PERMEABILITY);
+	LoadColor(StructData::DIELECTIRANDCONDUCTANCE);
+	LoadColor(StructData::FREESPACE);
+	LoadColor(StructData::FOIL);
 	//线段-----PORT 2**8/256，2**9/512，2**10/1024
 	//DRIVER--2^11/2048,2^12/4096,2^13/8192
 	//INDUCTOR--2^14/16384,2^15/32768,2^16/65536

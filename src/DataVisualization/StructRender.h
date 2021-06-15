@@ -4,27 +4,6 @@
 #include "Renderer.h"
 #include "StructData.h"
 #include <QColor>
-enum StructTexture
-{
-	//理想导体
-	PERFECTCONDUCTOR = 3,
-	//电导新材料
-	CONDUCTORNEW = 8,
-	//介质
-	DIOLECTRIC = 4,
-	//电介质和电导
-	DIELECTIRANDCONDUCTANCE = 16,
-	//磁导率
-	PERMEABILITY = 32,
-	//自由空间
-	FREESPACE = 64,
-	//电阻
-	FOIL = 128,
-	//
-	PORT,
-	DRIVER,
-	INDUCTOR
-};
 class StructRender :public Renderer
 {
 public:

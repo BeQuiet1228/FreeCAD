@@ -11,6 +11,7 @@ PICRibbonButtonGroup::PICRibbonButtonGroup(QWidget *parent)
   , m_title(tr(""))
 {
   ui->setupUi(this);
+  setCursor(Qt::ArrowCursor);//设置鼠标样式
 }
 
 PICRibbonButtonGroup::~PICRibbonButtonGroup()

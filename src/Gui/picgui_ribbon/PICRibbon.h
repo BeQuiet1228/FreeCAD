@@ -56,7 +56,8 @@ public:
 
   QList<PICRibbonTabContent *> get_tab_all();
   PICRibbonTabContent * get_tab_by_name(QString& name);
-
+  virtual QSize getunfoldMinSize() override;
+  virtual QSize getcurMinSize() override;
 
   //添加一个action
   void addAction(const QString& tabName, const QString& groupName, QAction* action);

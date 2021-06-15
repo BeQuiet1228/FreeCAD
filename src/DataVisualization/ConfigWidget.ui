@@ -352,7 +352,7 @@ background-color: rgb(255, 255, 255);
       <enum>QTabWidget::Triangular</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -1771,7 +1771,7 @@ background-color: rgb(255, 255, 255);
      </widget>
      <widget class="QWidget" name="tab_5">
       <attribute name="title">
-       <string>2维机构图</string>
+       <string>2维结构图</string>
       </attribute>
      </widget>
     </widget>

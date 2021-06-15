@@ -166,6 +166,12 @@
        <height>150</height>
       </size>
      </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>150</height>
+      </size>
+     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -224,7 +230,7 @@
  </customwidgets>
  <resources>
   <include location="Icons/resource.qrc"/>
-  <include location="C:/Users/Administrator/.designer/backup/Icons/resource.qrc"/>
+  <include location="Icons/resource.qrc"/>
  </resources>
  <connections/>
 </ui>
