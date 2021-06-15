@@ -4,6 +4,7 @@
 
 #include <QToolButton>
 #include <QDebug>
+#include <QGridLayout>
 #include "picgui_ribbon/moc_PICRibbonButtonGroup.cpp"
 PICRibbonButtonGroup::PICRibbonButtonGroup(QWidget *parent)
   : QWidget(parent)
@@ -12,6 +13,7 @@ PICRibbonButtonGroup::PICRibbonButtonGroup(QWidget *parent)
 {
   ui->setupUi(this);
   setCursor(Qt::ArrowCursor);//设置鼠标样式
+  gridLayout_btn = ui->gridLayout_btn;
 }
 
 PICRibbonButtonGroup::~PICRibbonButtonGroup()

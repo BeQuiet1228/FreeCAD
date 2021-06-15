@@ -367,12 +367,12 @@ void MainWindowDef::showOld()
 */
 void MainWindowDef::test()
 {
-	//»ñÈ¡tabÒ³
 	QSize unfoldMinSize = tabWidgetInterface->getunfoldMinSize();
 	QSize widgetCurSize = this->size();
+	std::cerr << (widgetCurSize.width() - unfoldMinSize.width()) << std::endl;
 	if ((widgetCurSize.width()- unfoldMinSize.width()) <= 30)
 	{
-		//qDebug() << "needScale:";
+		std::cerr << "needScale:" << std::endl;
 		tabWidgetInterface->setScale(this->size());
 	}
 }

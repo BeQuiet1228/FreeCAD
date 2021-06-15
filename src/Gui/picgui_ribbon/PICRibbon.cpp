@@ -8,7 +8,7 @@
 #include "picgui_ribbon/moc_PICRibbon.cpp"
 #include <iostream>
 Ribbon::Ribbon(QWidget *parent)
-  : QTabWidget(parent)
+	: QTabWidget(parent)
 {
 	mydarWer.clear();
 	setCursor(Qt::ArrowCursor);
@@ -170,6 +170,13 @@ PICRibbonTabContent *Ribbon::get_tab_by_name(QString &name)
 
 
 
+/**
+* @brief  Ribbon::addAction
+* @param  const QString & tabName  
+* @param  const QString & groupName  
+* @param  QAction * action  
+* @return void  
+*/
 void Ribbon::addAction(const QString &tabName, const QString &groupName, QAction *action)
 {
 	QToolButton *b = new QToolButton;
@@ -177,6 +184,10 @@ void Ribbon::addAction(const QString &tabName, const QString &groupName, QAction
 	this->addButton(tabName, groupName, b);
 }
 
+/**
+* @brief  Ribbon::clearAllAction
+* @return void  
+*/
 void Ribbon::clearAllAction()
 {
 	this->clear();
@@ -219,6 +230,10 @@ void Ribbon::clearGoup(const QString &groupName)
 	//    }
 }
 
+/**
+* @brief  Ribbon::getTabs
+* @return QT_NAMESPACE::QList<QT_NAMESPACE::QString>  
+*/
 QList<QString> Ribbon::getTabs()
 {
 	QList<QString> list;
@@ -231,6 +246,10 @@ QList<QString> Ribbon::getTabs()
 	return list;
 }
 
+/**
+* @brief  Ribbon::getGroups 获取组
+* @return QT_NAMESPACE::QList<QT_NAMESPACE::QString>  
+*/
 QList<QString> Ribbon::getGroups()
 {
 	QList<PICRibbonTabContent *> list_t = get_tab_all();
@@ -246,6 +265,11 @@ QList<QString> Ribbon::getGroups()
 	return list;
 }
 
+/**
+* @brief  Ribbon::getGroup
+* @param  const QString & tabName  
+* @return QT_NAMESPACE::QList<QT_NAMESPACE::QString>  
+*/
 QList<QString> Ribbon::getGroup(const QString &tabName)
 {
 	QString name_t = tabName;
@@ -259,6 +283,10 @@ QList<QString> Ribbon::getGroup(const QString &tabName)
 	return list;
 }
 
+/**
+* @brief  Ribbon::getActions
+* @return QT_NAMESPACE::QList<QAction *>  
+*/
 QList<QAction *> Ribbon::getActions()
 {
 	QList<PICRibbonTabContent *> list_t = get_tab_all();
@@ -273,6 +301,11 @@ QList<QAction *> Ribbon::getActions()
 	return list;
 }
 
+/**
+* @brief  Ribbon::getTabActions
+* @param  const QString & tabName  
+* @return QT_NAMESPACE::QList<QAction *>  
+*/
 QList<QAction *> Ribbon::getTabActions(const QString &tabName)
 {
 
@@ -311,6 +344,12 @@ QList<QAction *> Ribbon::getGroupActions(const QString &groupName)
 }
 
 
+/**
+* @brief  Ribbon::setTabOlder
+* @param  const QString & tabName  
+* @param  const int older  
+* @return void  
+*/
 void Ribbon::setTabOlder(const QString &tabName, const int older)
 {
 	QString name_t = tabName;
@@ -318,6 +357,11 @@ void Ribbon::setTabOlder(const QString &tabName, const int older)
 	QTabWidget::insertTab(older, t, name_t);
 }
 
+/**
+* @brief  Ribbon::hasAction
+* @param  const QAction * action  
+* @return bool  
+*/
 bool Ribbon::hasAction(const QAction *action)
 {
 	QList<QAction*> list = this->getActions();
@@ -383,7 +427,7 @@ void Ribbon::setGroupSequence(const QString &tabName, const QString &groupName, 
 }
 
 /**
-* @brief  Ribbon::getunfoldMinSize
+* @brief  Ribbon::getunfoldMinSize 获取扩展大小门限
 * @return QT_NAMESPACE::QSize  
 */
 QSize Ribbon:: getunfoldMinSize() {
@@ -417,7 +461,7 @@ QSize Ribbon:: getunfoldMinSize() {
 	return size;
 }
 /**
-* @brief  Ribbon::getcurMinSize
+* @brief  Ribbon::getcurMinSize 获取当前最小大小
 * @return QT_NAMESPACE::QSize  
 */
 QSize Ribbon:: getcurMinSize() {
@@ -427,23 +471,19 @@ QSize Ribbon:: getcurMinSize() {
 	}
 	return size;
 }
-
 /**
-* @brief  Ribbon::setScale 实现抽屉效果
+* @brief  Ribbon::setScale 设置缩放
+* @param  QSize & size  
 * @return void  
 */
 void Ribbon::setScale(QSize& size) {
-	if (mydarWer.empty())
+	for (auto index = 0; index < count();index++)
 	{
-		for (auto index = 0; index < count();index++)
-		{
-			toScale(index, size);
-		}
+		toScale(index, size);
 	}
 }
-
 /**
-* @brief  Ribbon::toScale
+* @brief  Ribbon::toScale 具体缩放
 * @param  unsigned int index  
 * @param  QSize & size  
 * @return bool  
@@ -462,28 +502,6 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 	}
 	if (size.width()-allWidth<30)
 	{
-		////进行缩放
-		//for (auto subindex = picribbontabcontent->contentLayout->count() - 1; subindex >= 0;subindex--)
-		//{
-		//	PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(picribbontabcontent->contentLayout->itemAt(subindex)->widget());
-		//	auto iter = mydarWer.find(group->title());
-		//	if (iter != mydarWer.end());
-		//	else
-		//	{
-		//		//进行缩放
-		//		PICRibbonButtonGroup* newGroup = new PICRibbonButtonGroup;
-		//		newGroup->setTitle(group->title());
-		//		std::list<QAction*> mActions = getGroupActions(group->title()).toStdList();
-		//		for (auto iter = mActions.begin(); iter != mActions.end();iter++)
-		//		{
-		//			QToolButton *b = new QToolButton;
-		//			b->setDefaultAction(*iter);
-		//			newGroup->addButton(b);
-		//		}
-		//		this->clearGoup(group->title());
-		//	}
-		//}
-
 		auto subindex = picribbontabcontent->contentLayout->count() - 1;
 		while (subindex>=0)
 		{
@@ -504,14 +522,78 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 					b->setDefaultAction(*iter);
 					newGroup->addButton(b);
 				}
+				mydarWer.insert(std::pair <QString,QWidget*>(group->title(),newGroup));
+				QString myTitle = group->title();
 				this->clearGoup(group->title());
-				break;
+				picribbontabcontent->addGroup(myTitle);
+				QToolButton* buttom = new QToolButton;
+				picribbontabcontent->addButton(myTitle,buttom);
+				QObject::connect(buttom, SIGNAL(clicked()),this,SLOT(buttomclicked()));
+				return toScale(index, size);
 			}
 		}
-		return toScale(index, size);
 	}
-	else
+	return false;
+}
+/**
+* @brief  Ribbon::buttomclicked 按钮事件
+* @return void  
+*/
+void Ribbon::buttomclicked()
+{
+	QToolButton* qtoolbutton = static_cast<QToolButton*>(QObject::sender());
+	for (auto index = 0; index < count();index++)
 	{
-		return true;
+		QWidget* tab = QTabWidget::widget(index);
+		PICRibbonTabContent* picribbontabcontent = dynamic_cast<PICRibbonTabContent*>(tab);
+		for (auto subindex = 0; subindex < picribbontabcontent->contentLayout->count();subindex++)
+		{
+			PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(picribbontabcontent->contentLayout->itemAt(subindex)->widget());
+			auto btnCount = group->buttonCount();
+			if (btnCount<=1)
+			{
+				if (QObject::sender()==group->gridLayout_btn->itemAt(0)->widget())
+				{
+					showdrawerGroup(group->title());
+					return;
+				}
+			}
+		}
+	}
+}
+
+/**
+* @brief  Ribbon::showdrawerGroup
+* @param  QString GroupName  
+* @return void  
+*/
+void Ribbon::showdrawerGroup(QString GroupName)
+{
+	auto iter = mydarWer.find(GroupName);
+	if (iter!=mydarWer.end())
+	{
+		PICRibbonButtonGroup* newGroup = dynamic_cast<PICRibbonButtonGroup*>(iter->second);
+		if (newGroup->isVisible())
+		{
+			newGroup->hide();
+		}
+		else
+		{
+			newGroup->setWindowFlags(Qt::FramelessWindowHint);
+			QPalette pal = newGroup->palette();
+			pal.setColor(QPalette::Background, Qt::white);
+			newGroup->setAutoFillBackground(true);
+			newGroup->setPalette(pal);
+			newGroup->show();
+		}
+		
+	}
+	for (auto index = mydarWer.begin(); index != mydarWer.end(); index++)
+	{
+		PICRibbonButtonGroup* newGroup = dynamic_cast<PICRibbonButtonGroup*>(index->second);
+		if (newGroup&&newGroup->isVisible()&&index!=iter)
+		{
+			newGroup->hide();
+		}
 	}
 }

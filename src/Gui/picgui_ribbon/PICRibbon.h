@@ -6,7 +6,7 @@
 #include "TabWidgetInterface.hpp"
 #include "PICRibbonTabContent.h"
 
-class GuiExport Ribbon : public TabWidgetInterFace
+class GuiExport Ribbon : public TabWidgetInterFace,QObject
 {
   Q_OBJECT
 public:
@@ -92,8 +92,11 @@ public:
   void setGroupSequence(const QString &tabName, const QString &groupName, int sequence);
   //抽屉功能
   std::map<QString, QWidget*> mydarWer;
+  public Q_SLOTS:
+  void buttomclicked();
 private:
 	bool toScale(unsigned int index,QSize& size);
+	void showdrawerGroup(QString GroupName);
 };
 
 #endif // RIBBONTABWIDGET_H
