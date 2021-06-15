@@ -20,6 +20,9 @@ public:
 	//响应保存函数
 	bool save();
 	bool saveAs();
+
+	//设置编辑器只读
+	void setReadOnly(const bool& b);
 private:
 	CodeEditor *codeEditor;
 };
