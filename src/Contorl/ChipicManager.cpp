@@ -147,10 +147,15 @@ void ChipicManager::chipicWorkFinished()
 	auto chipic = dynamic_cast<Chipic *>(sender);
 	if (!chipic)
 		return;
+
+	//获取结果数据路径
+	std::string resultPath = chipic->getResultPath();
+
 	chipic->closeChipic();
 	Contorl::closePlot();
 	showWorkFinishedBox();
 	emit finishChipicM3dPath(chipic->threadID);
+	emit openH5Result(resultPath);
 }
 
 /**

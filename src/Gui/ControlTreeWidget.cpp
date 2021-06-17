@@ -21,6 +21,7 @@
 #include <QFileInfo>
 #include "Gui/Application.h"
 #include "DataVisualization/C_encoding.h"
+#include "DocumentPic.h"
 ControlTreeWidget::ControlTreeWidget(QWidget* parent)
 	:QTreeWidget(parent),tempHdf5IO(nullptr)
 {
@@ -32,7 +33,7 @@ ControlTreeWidget::ControlTreeWidget(QWidget* parent)
 	auto chipicManager = control->getChipicManager();
 	connect(chipicManager, SIGNAL(outputStructFileSignal(unsigned long)), this, SLOT(outputStructFile(unsigned long)));
 	connect(chipicManager, SIGNAL(newResultFIleSignal(unsigned long)), this, SLOT(outputTempFile(unsigned long)));
-	
+	bool b1 = connect(chipicManager, SIGNAL(openH5Result(std::string)), this, SLOT(openResultFile(std::string)));
 	//定时器超时
 	auto b = connect(&timer, SIGNAL(timeout()), this, SLOT(treeDoubleClickTimeOut()));
 
@@ -358,6 +359,20 @@ void ControlTreeWidget::treeDoubleClickTimeOut()
 {
 	setTreeUseable();
 }
+
+void ControlTreeWidget::openResultFile(std::string path)
+{
+	auto mw = Gui::MainWindow::getInstance();
+	mw->hideContorlUI();
+
+	//清空h5文件对象
+	auto doc = Gui::Application::Instance->activeDocument();
+	auto picDoc = dynamic_cast<DocumentPic*>(doc);
+	if (picDoc)
+		picDoc->releaseH5Object();
+	picDoc->openH5File(path);
+}
+
 
 /**
 * @brief ControlTreeWidget::setTreeUnuseable 设置树控件的状态为不可用
