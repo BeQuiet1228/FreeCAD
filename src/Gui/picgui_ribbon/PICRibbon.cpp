@@ -513,14 +513,15 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 			}
 			else
 			{
-				PICRibbonButtonGroup* newGroup = new PICRibbonButtonGroup;
+				QWidget* parent = reinterpret_cast<QWidget*>(MaindefStie);
+				PICRibbonButtonGroup* newGroup = new PICRibbonButtonGroup(parent);
 				newGroup->setTitle(group->title());
 				std::list<QAction*> mActions = getGroupActions(group->title()).toStdList();
 				for (auto iter = mActions.begin(); iter != mActions.end();iter++)
 				{
 					QToolButton *b = new QToolButton;
 					b->setDefaultAction(*iter);
-					newGroup->addButton(b);
+					newGroup->addButton2(b);
 				}
 				mydarWer.insert(std::pair <QString,QWidget*>(group->title(),newGroup));
 				QString myTitle = group->title();
@@ -554,7 +555,7 @@ void Ribbon::buttomclicked()
 			{
 				if (QObject::sender()==group->gridLayout_btn->itemAt(0)->widget())
 				{
-					showdrawerGroup(group->title());
+					showdrawerGroup(group->title(),qtoolbutton);
 					return;
 				}
 			}
@@ -567,7 +568,7 @@ void Ribbon::buttomclicked()
 * @param  QString GroupName  
 * @return void  
 */
-void Ribbon::showdrawerGroup(QString GroupName)
+void Ribbon::showdrawerGroup(QString GroupName,QToolButton* buttom)
 {
 	auto iter = mydarWer.find(GroupName);
 	if (iter!=mydarWer.end())
@@ -584,6 +585,11 @@ void Ribbon::showdrawerGroup(QString GroupName)
 			pal.setColor(QPalette::Background, Qt::white);
 			newGroup->setAutoFillBackground(true);
 			newGroup->setPalette(pal);
+			//移动
+			//QRect rect = buttom->frameGeometry();
+			QPoint pos=buttom->pos();
+			QPoint GlobalPos=mapToGlobal(pos);
+			newGroup->move(GlobalPos);
 			newGroup->show();
 		}
 		
@@ -596,4 +602,9 @@ void Ribbon::showdrawerGroup(QString GroupName)
 			newGroup->hide();
 		}
 	}
+}
+
+void Ribbon::setParentWidget(MainWindowDef* parent)
+{
+	MaindefStie = reinterpret_cast<unsigned __int64>(parent);
 }

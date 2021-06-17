@@ -113,6 +113,7 @@ MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 		screens.push_back(rect);
 	}
 	setMinimumSize(0,0);
+	tabWidgetInterface->setParentWidget(this);
 }
 
 

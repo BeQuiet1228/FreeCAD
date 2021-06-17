@@ -5,7 +5,7 @@
 #include <QToolButton>
 #include "TabWidgetInterface.hpp"
 #include "PICRibbonTabContent.h"
-
+class MainWindowDef;
 class GuiExport Ribbon : public TabWidgetInterFace,QObject
 {
   Q_OBJECT
@@ -94,9 +94,11 @@ public:
   std::map<QString, QWidget*> mydarWer;
   public Q_SLOTS:
   void buttomclicked();
+  void setParentWidget(MainWindowDef* parent);
 private:
 	bool toScale(unsigned int index,QSize& size);
-	void showdrawerGroup(QString GroupName);
+	void showdrawerGroup(QString GroupName,QToolButton*);
+	unsigned __int64 MaindefStie;
 };
 
 #endif // RIBBONTABWIDGET_H
