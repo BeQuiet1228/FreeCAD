@@ -322,11 +322,14 @@ void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
 	}
 	else
 	{
-		Gui::PlotMDIView* plot = new Gui::PlotMDIView(*doc);
-		Gui::MainWindow::getInstance()->addWindow(plot);
-		documentmanager->bindTreeContrue(m_listTreeWidget,plot->GetViewPtr());
+		/*Gui::PlotMDIView* plot */
+		ptr= new Gui::PlotMDIView(*doc);
+		Gui::MainWindow::getInstance()->addWindow(ptr);
+		documentmanager->bindTreeContrue(m_listTreeWidget,ptr->GetViewPtr());
 	}
 	documentmanager->DisplatPlot(data, _type);
+	//保证当前页面为活动页
+	MainWindow::getInstance()->setActiveWindow(ptr);
 }
 void Application::ToStruct(Hdf5Data data)
 {
