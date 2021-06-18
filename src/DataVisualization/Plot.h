@@ -101,6 +101,8 @@ public:
 	}
 	//读取配置
 	void loadconfig();
+	//Equal scale display
+	void EqualScaleDisplay();
 private:
 	//初始化界面
 	void initGUI();

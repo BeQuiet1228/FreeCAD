@@ -846,6 +846,12 @@ void StdCmdUndo::activated(int iMsg)
 	//pcDoc->recompute();
 	//pcDoc->flagNeedUpdateBoolean.setValue(0);
 	//doCommand(Command::Gui, "DocumentTools.updateBoolean()");
+    if (getDocument()->classID == 2)
+    {
+        Base::InterpreterSingleton python;
+        python.runString("FreeCADGui.runCommand('CreateM3D_new')");
+        python.runString("FreeCADGui.runCommand('UpdateBooleanCommand_3D')");
+    }
 }
 
 bool StdCmdUndo::isActive(void)
@@ -896,6 +902,13 @@ void StdCmdRedo::activated(int iMsg)
 	//pcDoc->recompute();
 	//pcDoc->flagNeedUpdateBoolean.setValue(0);
 	//doCommand(Command::Gui, "DocumentTools.updateBoolean()");
+
+    if (getDocument()->classID == 2)
+    {
+        Base::InterpreterSingleton python;
+        python.runString("FreeCADGui.runCommand('CreateM3D_new')");
+        python.runString("FreeCADGui.runCommand('UpdateBooleanCommand_3D')");
+    }
 }
 
 bool StdCmdRedo::isActive(void)
@@ -1263,6 +1276,9 @@ void StdCmdDelete::activated(int iMsg)
             }
             doCommand(Doc, "App.getDocument(\"%s\").recompute()", (*it)->getName());
         }
+        Base::InterpreterSingleton python;
+        python.runString("FreeCADGui.runCommand('CreateM3D_new')");
+        python.runString("FreeCADGui.runCommand('UpdateBooleanCommand_3D')");
         // 以下代码为卢老师团队修改过后的代码，保留做参考，上述代码为原生代码
         {/* {
             // go through all documents

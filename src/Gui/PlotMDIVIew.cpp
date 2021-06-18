@@ -21,9 +21,9 @@ namespace Gui{
 	* @brief PlotMDIView::GetViewPtr 获取plot控件的指针
 	* @return void 
 	*/
-	void* PlotMDIView::GetViewPtr()
+	Plot* PlotMDIView::GetViewPtr()
 	{
-		return (void*)plot;
+		return plot;
 	}
 	/**
 	* @brief PlotMDIView::resizeEvent 自适应大小

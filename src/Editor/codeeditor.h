@@ -72,7 +72,6 @@ public:
     QSize sizeHint(){
         return QSize(codeEditor->lineNumberAreaWidth(), 0);
     }
-
 protected:
     void paintEvent(QPaintEvent *event) {
         codeEditor->lineNumberAreaPaintEvent(event);

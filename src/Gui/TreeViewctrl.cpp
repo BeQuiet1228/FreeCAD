@@ -36,7 +36,11 @@ namespace Gui{
 		App::Document *doc = App::GetApplication().getActiveDocument();
 		DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
 		if (!docM)
+		{
+			std::cerr << "DocumentManager is null from FreeCadGui void TreeViewCtrl::double_clicked_event(const QModelIndex &index)" << std::endl;
 			return;
+		}
+			
 		//获取plot
 		QStandardItem* currenitem = goodsModel->itemFromIndex(index);
 		//寻找对应的hdf数据
@@ -54,12 +58,12 @@ namespace Gui{
 		{
 			Gui::PlotMDIView* plot = new Gui::PlotMDIView(*guidoc);
 			Gui::MainWindow::getInstance()->addWindow(plot);
-			(DocumentManager*)(docM)->bindTreeContrue(nullptr, (Plot*)plot->GetViewPtr());
+			docM->bindTreeContrue(nullptr, plot->GetViewPtr());
 			
 		}
 		else
 		{
-			(DocumentManager*)(docM)->bindTreeContrue(nullptr, (Plot*)ptr->GetViewPtr());
+			docM->bindTreeContrue(nullptr,ptr->GetViewPtr());
 		}
 		if (iter != datainfor.end())
 		{

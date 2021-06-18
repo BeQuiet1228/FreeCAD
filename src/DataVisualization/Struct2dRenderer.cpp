@@ -487,10 +487,10 @@ void Struct2DRenderer::loadconfig(){
 	pen.setWidth(atoi((struct2DGroup.getGroup(#x "WIDTH").getValue("value")).c_str()));\
 	pen_tab[x]=pen;\
 	}
-	GETCONFIG(PERFECTCONDUCTOR);
-	GETCONFIG(CONDUCTORNEW);
-	GETCONFIG(DIOLECTRIC);
-	GETCONFIG(PERMEABILITY);
+	GETCONFIG(StructData::PERFECTCONDUCTOR);
+	GETCONFIG(StructData::CONDUCTORNEW);
+	GETCONFIG(StructData::DIOLECTRIC);
+	GETCONFIG(StructData::PERMEABILITY);
 #undef GETCONFIG(x)
 	isAA = atoi(structGroup.getValue("isAlis").c_str());
 }

@@ -100,3 +100,15 @@ std::string DocumentPic::getTextPath()
 	return path;
 }
 
+void DocumentPic::openH5File(const std::string& path)
+{
+	auto appDoc = getAppDocument();
+	if (appDoc == nullptr)
+		return ;
+	DocumentManager* docm = dynamic_cast<DocumentManager*>(appDoc);
+	if (!docm)
+		return;
+
+	docm->loadFile(path);
+}
+

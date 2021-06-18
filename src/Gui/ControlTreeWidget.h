@@ -50,6 +50,8 @@ public Q_SLOTS :
 	void outputTempFile(unsigned long threadID);
 	//点击定时器超时
 	void treeDoubleClickTimeOut();
+	//计算完成槽
+	void openResultFile(std::string path);
 private:
 	//存储临时文件路径
 	QString tempFilePath;
@@ -58,13 +60,9 @@ private:
 	//点击超时定时器
 	QTimer timer;
 	//超时时间
-	const unsigned int timeOutCount = 5*1000;
+	const unsigned int timeOutCount = 10*1000;
 private:
 	//设置树控件为不可用
 	void setTreeUnuseable();
 	void setTreeUseable();
-	//string类型转换
-	QString tr(const std::string& st) {
-		return QString::fromStdString(st);
-	}
 };
