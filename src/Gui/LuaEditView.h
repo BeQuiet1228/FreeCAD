@@ -3,7 +3,7 @@
 #include <qaction.h>
 #include <QIcon>
 #include "Document.h"
-class CodeEditor;
+class M3dEditor;
 class LuaEditView :public Gui::MDIView{
 public:
 	LuaEditView(Gui::Document* doc,QWidget* parent = 0);
@@ -21,7 +21,7 @@ public:
 	bool save();
 	bool saveAs();
 private:
-	CodeEditor *codeEditor;
+	M3dEditor*codeEditor;
 };
 struct SmartContorlAction
 {

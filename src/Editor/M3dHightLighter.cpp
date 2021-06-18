@@ -1,8 +1,8 @@
-#include "myhightlighter.h"
+#include "M3dHightLighter.h"
 #include <QRegExp>
 #include <QFile>
 #include <QTextStream>
-myHightLighter::myHightLighter(QTextDocument *parent)
+M3dHightLighter::M3dHightLighter(QTextDocument *parent)
     :QSyntaxHighlighter(parent)
 {
     {       //载入关键字
@@ -42,7 +42,7 @@ myHightLighter::myHightLighter(QTextDocument *parent)
     }
 }
 
-void myHightLighter::highlightBlock(const QString &text)
+void M3dHightLighter::highlightBlock(const QString &text)
 {
 //    for(int i = 0;i < caseWords.size();i++) //高亮关键字
 //    {
@@ -74,7 +74,7 @@ void myHightLighter::highlightBlock(const QString &text)
 * @format 高亮规则
 * &text 文本块
 */
-void myHightLighter::highlightCaseWord(const QString &word,const QTextCharFormat &format,const QString &text)
+void M3dHightLighter::highlightCaseWord(const QString &word,const QTextCharFormat &format,const QString &text)
 {
 
     QRegExp regularExpression("\\b" + word + "\\b");    //创建正则表达式
@@ -91,7 +91,7 @@ void myHightLighter::highlightCaseWord(const QString &word,const QTextCharFormat
 * @format 高亮规则
 * &text 文本块
 */
-void myHightLighter::highlightCaseWord(const QRegExp &rex,const QTextCharFormat &format,const QString &text)
+void M3dHightLighter::highlightCaseWord(const QRegExp &rex,const QTextCharFormat &format,const QString &text)
 {
     int pos = 0;
     while ((pos = rex.indexIn(text, pos)) != -1) {
@@ -104,7 +104,7 @@ void myHightLighter::highlightCaseWord(const QRegExp &rex,const QTextCharFormat 
 * @word 关键字
 * &text 文本块
 */
-void myHightLighter::highlightCaseWord(const QString &word, const QString &text)
+void M3dHightLighter::highlightCaseWord(const QString &word, const QString &text)
 {
     QTextCharFormat myClassFormat;
     myClassFormat.setFontWeight(QFont::Bold);
@@ -117,7 +117,7 @@ void myHightLighter::highlightCaseWord(const QString &word, const QString &text)
 * @format 高亮规则
 * &text 文本块
 */
-void myHightLighter::highlightFunctio(const QString &function, const QTextCharFormat &format, const QString &text)
+void M3dHightLighter::highlightFunctio(const QString &function, const QTextCharFormat &format, const QString &text)
 {
     QRegExp regularExpression(function);    //创建正则表达式
     regularExpression.setCaseSensitivity(Qt::CaseInsensitive);      //匹配时忽略大小写
@@ -133,7 +133,7 @@ void myHightLighter::highlightFunctio(const QString &function, const QTextCharFo
 * @function 函数
 * &text 文本块
 */
-void myHightLighter::highlightFunctio(const QString &function, const QString &text)
+void M3dHightLighter::highlightFunctio(const QString &function, const QString &text)
 {
     QTextCharFormat myClassFormat;
     myClassFormat.setFontWeight(QFont::Bold);
@@ -143,11 +143,11 @@ void myHightLighter::highlightFunctio(const QString &function, const QString &te
 
 
 /**
-* @brief myHightLighter::higlightAnnotation 对z开头的文本进行注释
+* @brief M3dHightLighter::higlightAnnotation 对z开头的文本进行注释
 * @param const QString & text
 * @return void
 */
-void myHightLighter::higlightAnnotation(const QString& text)
+void M3dHightLighter::higlightAnnotation(const QString& text)
 {
 	/*
 		--这个注释以z开始，z的两边必须时单词的边界，才可以，然后以分号结尾

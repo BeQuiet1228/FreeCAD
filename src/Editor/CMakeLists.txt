@@ -11,6 +11,7 @@ set(MOC_HEADER
 	FindDialog.h
 	matchwordsthrea.h
 	codeeditor.h
+	M3dEditor.h
 )
 set(UI_SRC
 	FindDialog.ui
@@ -67,12 +68,14 @@ SET(EDIT_SRC
 	codeeditor.h
 	matchwordsthrea.cpp
 	matchwordsthrea.h
-	myhightlighter.cpp
-	myhightlighter.h
+	M3dHightLighter.cpp
+	M3dHightLighter.h
 	FindDialog.ui
 	FindDialog.h
 	FindDialog.cpp
-	EidtorExportConfig.hpp
+	EditorExportConfig.hpp
+	M3dEditor.h
+	M3dEditor.cpp
 )
 source_group("moc" FILES ${MOC_SRCS})
 source_group("ui_h" FILES ${Gui_UIC_HDRS})

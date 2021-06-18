@@ -52,6 +52,7 @@ if(MSVC)
 		 HDF5Reader
          ${COIN3D_LIBRARIES}
          ${OPENGL_gl_LIBRARY}
+		 Editor
     )
 	if(contorl_client_dll)
 	list(APPEND FreeCADGui_LIBS
