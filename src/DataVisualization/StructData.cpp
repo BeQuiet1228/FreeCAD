@@ -406,7 +406,8 @@ bool StructData::loadroomPolarRz()
 	Data::ValuesPtr IM2X = *it; it++;
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
-	int index = IM2X->size() / 2;
+	//默认取中间位置
+	int index = IM2X->size() / 2+IM2X->size()%2;
 	if (istrue)
 	{
 		int index_min = 1;
@@ -547,7 +548,8 @@ bool StructData::loadroomPolarRtheta()
 		}
 #pragma endregion
 #pragma region 筛选属性
-		int index = IM1X->size() / 2;
+		//默认取中间位置
+		int index = IM1X->size() / 2+IM1X->size()%2;
 		if (istrue)
 		{
 			int index_min = 1;
@@ -594,7 +596,8 @@ bool StructData::loadroomCylindricalRz(){
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
 	QMap<int, QVector<QRectF>> allinfo;
-	int index = IM3X->size() / 2;
+	//默认取中间位置
+	int index = IM3X->size() / 2+IM3X->size()%2;
 	if (istrue)
 	{
 		int index_min = 1;
@@ -709,7 +712,8 @@ bool StructData::loadroomCylindricalRtheta(){
 		}
 #pragma endregion
 #pragma region 筛选属性
-		int index = IM1X->size() / 2;
+		//默认取中间位置
+		int index = IM1X->size() / 2+IM1X->size()%2;
 		if (istrue)
 		{
 			int index_min = 1;
@@ -784,7 +788,8 @@ bool StructData::loadroomCartesianXy(){
 	Data::ValuesPtr IM2X = *it; it++;
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
-	int index = IM3X->size() / 2;
+	//默认取中间位置
+	int index = IM3X->size() / 2+IM3X->size()%2;
 	if (istrue)
 	{
 		int index_min = 1;
@@ -906,7 +911,8 @@ bool StructData::loadroomCartesianXz(){
 	Data::ValuesPtr IM2X = *it; it++;
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
-	int index = IM2X->size() / 2;
+	//默认取中间位置
+	int index = IM2X->size() / 2+IM2X->size()%2;
 	if (istrue)
 	{
 		int index_min = 1;
@@ -970,7 +976,8 @@ bool StructData::loadroomCartesianYz(){
 	Data::ValuesPtr IM2X = *it; it++;
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
-	int index = IM1X->size() / 2;
+	//默认取中间位置
+	int index = IM1X->size() / 2+IM1X->size()%2;
 	if (istrue)
 	{
 		int index_min = 1;

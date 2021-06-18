@@ -725,6 +725,7 @@ void TreeWidget::drawRow(QPainter *painter, const QStyleOptionViewItem &options,
 
 void TreeWidget::slotNewDocument(const Gui::Document& Doc)
 {
+	//这里添加item
     DocumentItem* item = new DocumentItem(&Doc, this->rootItem);
     this->expandItem(item);
     item->setIcon(0, *documentPixmap);
