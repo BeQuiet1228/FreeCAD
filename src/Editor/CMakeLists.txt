@@ -16,6 +16,16 @@ set(UI_SRC
 	FindDialog.ui
 )
 
+#引入头文件
+include_directories(
+    ${CMAKE_BINARY_DIR}/src
+    ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+add_definitions(-D_EDITOR_)
+
 #生成moc文件
 fc_wrap_cpp(MOC_SRCS ${MOC_HEADER})
 
@@ -62,16 +72,20 @@ SET(EDIT_SRC
 	FindDialog.ui
 	FindDialog.h
 	FindDialog.cpp
+	EidtorExportConfig.hpp
 )
 source_group("moc" FILES ${MOC_SRCS})
 source_group("ui_h" FILES ${Gui_UIC_HDRS})
 source_group("src" FILES ${EDIT_SRC})
 
-add_executable(Editor
+
+	add_library(Editor SHARED
 	main.cpp
 	${EDIT_SRC}
 	${Gui_UIC_HDRS}
 	${MOC_SRCS})
+
+
 
 #链接静态库
 target_link_libraries(Editor ${QT_LIB})

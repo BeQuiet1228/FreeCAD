@@ -8,7 +8,7 @@
 #include <QThread>
 #include <QMutex>
 #include <QKeyEvent>
-#include <SmartContorl/SmartContorlConfig.hpp>
+#include "EidtorExportConfig.hpp"
 class CaseWordListWidget;
 
 QT_BEGIN_NAMESPACE
@@ -22,7 +22,7 @@ class LineNumberArea1;
 class MatchWordsThread;
 class FindDialog;
 
-class SMARTCONTORL_EXPORT CodeEditor : public QPlainTextEdit
+class EIDTOR_EXPORT CodeEditor : public QPlainTextEdit
 {
     Q_OBJECT
 
@@ -62,7 +62,7 @@ private:
 	FindDialog *findDialog;
 };
 
-class SMARTCONTORL_EXPORT LineNumberArea1 : public QWidget
+class EIDTOR_EXPORT LineNumberArea1 : public QWidget
 {
 public:
     LineNumberArea1(CodeEditor *editor) : QWidget(editor) {

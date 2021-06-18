@@ -9,7 +9,7 @@
 #include "myhightlighter.h"
 #include "QFont"
 #include "matchwordsthrea.h"
-#include "codeEdit/codeeditor.h"
+#include "codeeditor.h"
 #include "FindDialog.h"
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 	,findDialog(new FindDialog(this))
