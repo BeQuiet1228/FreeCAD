@@ -29,6 +29,8 @@ public:
 	void clear();
 	QString simplified();
 	bool initCmdType(std::list<M3dCommandType> types);
+	//获取命令的起始行
+	int getStartLine();
 };
 using Cmds = std::list<M3dCommand>;
 class EDITOR_EXPORT M3dCommadAnalysis {
