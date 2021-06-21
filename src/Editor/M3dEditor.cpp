@@ -97,6 +97,7 @@ Cmds M3dCommadAnalysis::slicingCmd()
 		{
 			M3dLine line;
 			line.str = temp;
+			//行号从1开始
 			line.num = i;
 			tempCmd.lines.push_back(line);
 			continue;
@@ -124,6 +125,17 @@ Cmds M3dCommadAnalysis::slicingCmd()
 	return cmds;
 }
 
+M3dCommand::M3dCommand()
+{
+	cmdType = nullptr;
+}
+
+M3dCommand::~M3dCommand()
+{
+	if(cmdType != nullptr)
+		delete cmdType;
+}
+
 /**
 * @brief M3dCommand::clear 清理对象
 * @return void
@@ -143,22 +155,23 @@ QString M3dCommand::simplified()
 	QString str;
 	for (auto iter = lines.begin(); iter != lines.end(); iter++)
 	{
-		str += iter->str;
+		//去掉！开头的注释
+		static QRegExp regx("!.*");
+		int pos = regx.indexIn(iter->str);
+		if (pos != -1)
+			str += iter->str.remove(pos, iter->str.length() - pos);
+		else
+			str += iter->str;
 	}
 	str = str.simplified();
 
-	//注释的正则表达式
+	//去掉z开头的注释
 	//这里使用静态主要因为创建rex对象十分消耗时间
-	static std::vector<QRegExp> annotationRexs = { QRegExp("!.*"),QRegExp("(^|\\s)[zZ](\\s|$)") };
+	static QRegExp rex("(^|\\s)[zZ](\\s|$)");
 
-	//去掉命令中的注释
-	for (auto iter = annotationRexs.begin(); iter != annotationRexs.end(); iter++)
-	{
-		int index = iter->indexIn(str);
-		if(index == -1)
-			continue;
+	int index = rex.indexIn(str);
+	if (index != -1)
 		str.remove(index, str.length() - index);
-	}
 
 	this->text = str;
 	return str;
@@ -176,7 +189,7 @@ bool M3dCommand::initCmdType(std::list<M3dCommandType> types)
 	{
 		if(iter->regx.indexIn(this->text) == -1)
 			continue;
-		cmd = iter->word;
+		setCommadType(*iter);
 		return true;
 	}
 
@@ -190,10 +203,24 @@ bool M3dCommand::initCmdType(std::list<M3dCommandType> types)
 */
 int M3dCommand::getStartLine()
 {
-	if (lines.size() == 0)
+	if (cmdType == nullptr)
 		return 0;
-	auto iter = lines.begin();
-	return iter->num;
+
+	for (auto iter = lines.begin(); iter != lines.end(); iter++)
+	{
+		if (cmdType->regx.indexIn(iter->str) != -1)
+			return iter->num;
+	}
+
+	return 0;
+}
+
+void M3dCommand::setCommadType(const M3dCommandType& type)
+{
+	if (cmdType != nullptr)
+		delete cmdType;
+	cmdType = new M3dCommandType(type);
+	cmd = cmdType->word;
 }
 
 M3dCommandType::M3dCommandType(const QString& w) 

@@ -19,8 +19,8 @@ public:
 class EDITOR_EXPORT M3dCommand
 {
 public:
-	M3dCommand() = default;
-	~M3dCommand() = default;
+	M3dCommand();
+	~M3dCommand();
 public:
 	QString cmd;	//命令
 	QString text;
@@ -31,6 +31,13 @@ public:
 	bool initCmdType(std::list<M3dCommandType> types);
 	//获取命令的起始行
 	int getStartLine();
+
+private:
+	M3dCommandType *cmdType;
+
+private:
+	//设置，命令类型
+	void setCommadType(const M3dCommandType& type);
 };
 using Cmds = std::list<M3dCommand>;
 class EDITOR_EXPORT M3dCommadAnalysis {
