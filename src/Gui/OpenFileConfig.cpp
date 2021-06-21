@@ -121,6 +121,9 @@ void FileFormatM3DText::openOnce(const QString& filePath, App::Document* doc)
 		return;
 	edit->setWindowTitle(QString::fromLocal8Bit(docText->getName()));
 	edit->setText(docText->getContent());
+	//??	
+	Gui::Application::Instance->ToSubItemTree();
+
 }
 
 void FileFormatM2dMod::open(const QStringList& fileList)

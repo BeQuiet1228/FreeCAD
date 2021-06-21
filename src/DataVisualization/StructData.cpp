@@ -319,7 +319,7 @@ bool StructData::loadroom()
 {
 	if (isloadRoom)
 		return true;
-#ifdef MY_DEBUG
+#if MY_DEBUG
 	//测试数据生成时间
 	LARGE_INTEGER startTime;
 	LARGE_INTEGER endTime;
@@ -336,7 +336,7 @@ bool StructData::loadroom()
 	case CARTESIAN:
 		loadroomCartesian(); break;
 	}
-#ifdef MY_DEBUG
+#if MY_DEBUG
 	QueryPerformanceCounter(&endTime);
 	auto interval =(static_cast<double>(endTime.QuadPart) - static_cast<double>(startTime.QuadPart)) / static_cast<double>(cpufer.QuadPart);
 	qDebug() << "processingData(interval):" << interval;
@@ -406,14 +406,15 @@ bool StructData::loadroomPolarRz()
 	Data::ValuesPtr IM2X = *it; it++;
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
-	int index = IM2X->size() / 2;
+	//默认取中间位置
+	int index = IM2X->size() / 2+IM2X->size()%2;
 	if (istrue)
 	{
 		int index_min = 1;
 		float distancemin = 10000.0f;
-		for (auto i = 0; i < IM3X->size(); i++)
+		for (auto i = 0; i < IM2X->size(); i++)
 		{
-			float curdistance = abs(*(IM3X->begin() + i) - _face_point_index);
+			float curdistance = abs(*(IM2X->begin() + i) - _face_point_index);
 			if (curdistance<distancemin)
 			{
 				distancemin = curdistance;
@@ -422,9 +423,6 @@ bool StructData::loadroomPolarRz()
 		}
 		index = index_min;
 	}
-#ifdef MY_DEBUG
-	qDebug() << datasetkmt->size();
-#endif
 	std::map<int, std::vector<QRectF>> allinfo;
 	std::map<int, std::vector<QPoint>> pointlist;//用来判断线段
 	for(auto itersetkmt=datasetkmt->begin();itersetkmt!=datasetkmt->end();)
@@ -433,6 +431,7 @@ bool StructData::loadroomPolarRz()
 		unsigned __int64 x2=*itersetkmt;itersetkmt++;
 		unsigned __int64 x3=*itersetkmt;itersetkmt++;
 		unsigned __int64 proper=*itersetkmt;itersetkmt++;
+		//qDebug() << "x1:" << x1 << "x2:" << x2 << "x3:" << x3 << "proper:" << proper;
 		if (x2 == index&&x3 <= IM3X->size() && x1 <= IM1X->size())
 		{
 			std::list<unsigned __int64> rectpro = isAnAttritbute(proper, RECTPROPER);
@@ -549,7 +548,8 @@ bool StructData::loadroomPolarRtheta()
 		}
 #pragma endregion
 #pragma region 筛选属性
-		int index = IM1X->size() / 2;
+		//默认取中间位置
+		int index = IM1X->size() / 2+IM1X->size()%2;
 		if (istrue)
 		{
 			int index_min = 1;
@@ -596,7 +596,8 @@ bool StructData::loadroomCylindricalRz(){
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
 	QMap<int, QVector<QRectF>> allinfo;
-	int index = IM3X->size() / 2;
+	//默认取中间位置
+	int index = IM3X->size() / 2+IM3X->size()%2;
 	if (istrue)
 	{
 		int index_min = 1;
@@ -711,7 +712,8 @@ bool StructData::loadroomCylindricalRtheta(){
 		}
 #pragma endregion
 #pragma region 筛选属性
-		int index = IM1X->size() / 2;
+		//默认取中间位置
+		int index = IM1X->size() / 2+IM1X->size()%2;
 		if (istrue)
 		{
 			int index_min = 1;
@@ -786,7 +788,8 @@ bool StructData::loadroomCartesianXy(){
 	Data::ValuesPtr IM2X = *it; it++;
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
-	int index = IM3X->size() / 2;
+	//默认取中间位置
+	int index = IM3X->size() / 2+IM3X->size()%2;
 	if (istrue)
 	{
 		int index_min = 1;
@@ -908,7 +911,8 @@ bool StructData::loadroomCartesianXz(){
 	Data::ValuesPtr IM2X = *it; it++;
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
-	int index = IM2X->size() / 2;
+	//默认取中间位置
+	int index = IM2X->size() / 2+IM2X->size()%2;
 	if (istrue)
 	{
 		int index_min = 1;
@@ -972,7 +976,8 @@ bool StructData::loadroomCartesianYz(){
 	Data::ValuesPtr IM2X = *it; it++;
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
-	int index = IM1X->size() / 2;
+	//默认取中间位置
+	int index = IM1X->size() / 2+IM1X->size()%2;
 	if (istrue)
 	{
 		int index_min = 1;

@@ -56,15 +56,18 @@ namespace Gui{
 		}
 		if (ptr == nullptr)
 		{
-			Gui::PlotMDIView* plot = new Gui::PlotMDIView(*guidoc);
-			Gui::MainWindow::getInstance()->addWindow(plot);
-			docM->bindTreeContrue(nullptr, plot->GetViewPtr());
+			ptr = new Gui::PlotMDIView(*guidoc);
+			//Gui::PlotMDIView* plot = new Gui::PlotMDIView(*guidoc);
+			Gui::MainWindow::getInstance()->addWindow(ptr);
+			docM->bindTreeContrue(nullptr, ptr->GetViewPtr());
 			
 		}
 		else
 		{
 			docM->bindTreeContrue(nullptr,ptr->GetViewPtr());
 		}
+		//确保当前页面为活动页
+		MainWindow::getInstance()->setActiveWindow(ptr);
 		if (iter != datainfor.end())
 		{
 			//传入hdf5数据

@@ -4,6 +4,7 @@
 #include <sstream>
 #include "Dataresource.h"
 #include "C_encoding.h"
+#include <QDebug>
 #define  MAX_TYPE_NUMBER 6
 enum emType
 {
@@ -45,6 +46,9 @@ ListTreeWidget::ListTreeWidget(QWidget* parent) :QWidget(parent)
 */
 ListTreeWidget::~ListTreeWidget(){
 	//datainfor.clear();
+#if MY_DEBUG
+	qDebug() << "ListTreeWidget delete";
+#endif
 }
 /**
 * @brief ListTreeWidget::loadHdflist 读取hdf文件
@@ -53,6 +57,8 @@ ListTreeWidget::~ListTreeWidget(){
 */
 void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 {	
+	//增加清理流程
+	clear();
 	//获取到全部信息
 	std::string varString;
 	for (auto index = 0; index < Hdf5Datalist.size();index++)

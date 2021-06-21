@@ -10,6 +10,7 @@
 #include <QFile>
 #include <QMdiArea>
 #include "Application.h"
+
 LuaEditView::LuaEditView(Gui::Document* doc, QWidget* parent /*= 0*/)
 	: MDIView(doc, parent, 0)
 {
@@ -111,6 +112,7 @@ bool LuaEditView::save()
 	}else{
 		saveAs();
 	}
+	Gui::Application::Instance->ToSubItemTree();
 	return true;
 }
 
