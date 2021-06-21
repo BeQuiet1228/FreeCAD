@@ -184,6 +184,18 @@ bool M3dCommand::initCmdType(std::list<M3dCommandType> types)
 }
 
 
+/**
+* @brief M3dCommand::getStartLine 获取命令的起始行
+* @return int
+*/
+int M3dCommand::getStartLine()
+{
+	if (lines.size() == 0)
+		return 0;
+	auto iter = lines.begin();
+	return iter->num;
+}
+
 M3dCommandType::M3dCommandType(const QString& w) 
 	:regx("(^|\\s)" + w + "(\\s|$|;)"), word(w)
 {
