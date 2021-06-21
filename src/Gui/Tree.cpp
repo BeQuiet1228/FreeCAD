@@ -63,6 +63,7 @@ using namespace Gui;
 QPixmap*  TreeWidget::documentPixmap = 0;
 const int TreeWidget::DocumentType = 1000;
 const int TreeWidget::ObjectType = 1001;
+const int TreeWidget::m3dtextType = 1002;
 
 
 /* TRANSLATOR Gui::TreeWidget */
@@ -119,6 +120,9 @@ TreeWidget::TreeWidget(QWidget* parent)
     Application::Instance->signalRenameDocument.connect(boost::bind(&TreeWidget::slotRenameDocument, this, _1));
     Application::Instance->signalActiveDocument.connect(boost::bind(&TreeWidget::slotActiveDocument, this, _1));
     Application::Instance->signalRelabelDocument.connect(boost::bind(&TreeWidget::slotRelabelDocument, this, _1));
+	//2021/6/18 新增信号，用于添加子节点控件
+	Application::Instance->signalAddsubitem.connect(boost::bind(&TreeWidget::addSubItem,this,_1,_2));
+	//
 
     QStringList labels;
     labels << tr("Labels & Attributes");
@@ -478,6 +482,11 @@ void TreeWidget::mouseDoubleClickEvent (QMouseEvent * event)
 			doubleClicked();
 		}
 	}
+	else if (item->type()==TreeWidget::m3dtextType)
+	{
+		qDebug() << "doubleclicked()";
+		//这里添加点击事件
+	}
 
 }
 
@@ -725,12 +734,12 @@ void TreeWidget::drawRow(QPainter *painter, const QStyleOptionViewItem &options,
 
 void TreeWidget::slotNewDocument(const Gui::Document& Doc)
 {
-	//这里添加item
-    DocumentItem* item = new DocumentItem(&Doc, this->rootItem);
-    this->expandItem(item);
-    item->setIcon(0, *documentPixmap);
-    item->setText(0, QString::fromUtf8(Doc.getDocument()->Label.getValue()));
-    DocumentMap[ &Doc ] = item;
+	  DocumentItem* item = new DocumentItem(&Doc, this->rootItem);
+	  this->expandItem(item);
+	  item->setIcon(0, *documentPixmap);
+	  qDebug() << QString::fromUtf8(Doc.getDocument()->Label.getValue());
+	  item->setText(0, QString::fromUtf8(Doc.getDocument()->Label.getValue()));
+	  DocumentMap[ &Doc ] = item;
 }
 
 void TreeWidget::slotDeleteDocument(const Gui::Document& Doc)
@@ -1744,6 +1753,27 @@ void DocumentObjectItem::slotChangeStatusTip(const QString& tip)
 {
     this->setStatusTip(0, tip);
 }
-
+/*****************************************************/
+//2021年6月18日新增代码
+/**
+* @brief  Gui::TreeWidget::addSubItem 添加子节点控件
+* @param  const Gui::Document & doc  
+* @param  const std::string & keyWord  
+* @return void  
+*/
+void TreeWidget::addSubItem(const Gui::Document& doc,const std::string& keyWord){
+	auto iter = DocumentMap.find(&doc);
+	if (iter!=DocumentMap.end())
+	{
+		DocumentItem* mItem = dynamic_cast<DocumentItem*>(iter->second);
+		if (!mItem)
+		{
+			std::cerr << "DocumentItem is nullptr from void TreeWidget::addSubItem(const Gui::Document& doc,const std::string& keyWord)" << std::endl;
+			return;
+		}
+		QTreeWidgetItem* subitem = new QTreeWidgetItem(mItem,TreeWidget::m3dtextType);
+		subitem->setText(0, QString::fromStdString(keyWord));
+	}
+}
 #include "moc_Tree.cpp"
 

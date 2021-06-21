@@ -786,9 +786,10 @@ void Application::slotNewDocument(const App::Document& Doc)
     pDoc->signalRelabelObject.connect(boost::bind(&Gui::Application::slotRelabelObject, this, _1));
     pDoc->signalActivatedObject.connect(boost::bind(&Gui::Application::slotActivatedObject, this, _1));
 
-
+	//这里添加item
     signalNewDocument(*pDoc);
-    
+	//测试用
+	signalAddsubitem(*pDoc,"123");
     //初始化MDI窗口
     pDoc->initMDIView();
 

@@ -116,9 +116,11 @@ public:
     /// signal on activating view
     boost::signal<void (const Gui::MDIView*)> signalActivateView;
     //@}
-
     /** @name methods for Document handling */
     //@{
+	//添加item2021/6/18
+	boost::signal<void(const Gui::Document&,const std::string&)> signalAddsubitem;
+
 protected:
     /// Observer message from the Application
     void slotNewDocument(const App::Document&);

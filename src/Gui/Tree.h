@@ -73,9 +73,10 @@ public:
 
     static const int DocumentType;
     static const int ObjectType;
+	static const int m3dtextType;
 
     void markItem(const App::DocumentObject* Obj,bool mark);
-
+	
 protected:
     /// Observer message from the Selection
     void onSelectionChanged(const SelectionChanges& msg);
@@ -123,7 +124,8 @@ private:
     void slotRelabelDocument(const Gui::Document&);
 
     void changeEvent(QEvent *e);
-
+	//添加item
+	void addSubItem(const Gui::Document&, const std::string&);
 private:
     QAction* createGroupAction;
     QAction* relabelObjectAction;
@@ -240,7 +242,6 @@ private:
     friend class TreeWidget;
     friend class DocumentItem;
 };
-
 /**
  * The dock window containing the tree view.
  * @author Werner Mayer
@@ -252,11 +253,9 @@ class TreeDockWidget : public Gui::DockWindow
 public:
     TreeDockWidget(Gui::Document*  pcDocument,QWidget *parent=0);
     ~TreeDockWidget();
-
 private:
     QTreeWidget* treeWidget;
 };
-
 }
 
 
