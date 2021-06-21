@@ -380,6 +380,7 @@ void ControlTreeWidget::openResultFile(std::string path)
 */
 void ControlTreeWidget::setTreeUnuseable()
 {
+	return;
 	for(auto iter = items.begin();iter != items.end();iter++)
 		(*iter)->setFlags(contourItem->flags() & (~Qt::ItemIsEnabled));
 	timer.start(timeOutCount);
@@ -391,6 +392,7 @@ void ControlTreeWidget::setTreeUnuseable()
 */
 void ControlTreeWidget::setTreeUseable()
 {
+	return;
 	for (auto iter = items.begin(); iter != items.end(); iter++)
 		(*iter)->setFlags(contourItem->flags() | Qt::ItemIsEnabled);
 	Gui::MainWindow::getInstance()->setFocus();
