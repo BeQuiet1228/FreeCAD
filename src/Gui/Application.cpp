@@ -373,6 +373,54 @@ void Application::showPlotSettingDialog()
 	}
 	configWidget->show();
 }
+
+void Application::ToSubItemTree()
+{
+	//测试代码
+	Gui::Document* guidoc = activeDocument();
+	signalClearSub(*guidoc);
+	DocumentM3dText *docText = dynamic_cast<DocumentM3dText*>(guidoc->getDocument());
+	if (!docText)
+	{
+		return;
+	}
+	auto guiDoc = getDocument(docText);
+	auto view=guiDoc->getActiveView();
+	LuaEditView* edit = dynamic_cast<LuaEditView*>(view);
+	if (!edit)
+	{
+		return;
+	}
+	auto cmds = edit->getM3dCmds();
+	for (auto index = cmds.begin(); index !=cmds.end();index++)
+	{
+		//signalAddsubitem2(guidoc,cmds[index].cmd,cmds[index].text,cmds[index].getStartLine());
+		signalAddsubitem2(*guidoc,index->cmd.toStdString(),index->text.toStdString(),index->getStartLine());
+	}
+}
+/**
+* @brief  Gui::Application::GoToLine m3d 光标跳转行
+* @param  int line  行号
+* @return void  
+*/
+void Application::GoToLine(int line)
+{
+	Gui::Document* guidoc = activeDocument();
+	DocumentM3dText *docText = dynamic_cast<DocumentM3dText*>(guidoc->getDocument());
+	if (!docText)
+	{
+		return;
+	}
+	auto guiDoc = getDocument(docText);
+	auto view = guiDoc->getActiveView();
+	LuaEditView* edit = dynamic_cast<LuaEditView*>(view);
+	if (!edit)
+	{
+		return;
+	}
+	edit->gotoLine(line);
+}
+
 } // namespace Gui
 
 Application::Application(bool GUIenabled)
@@ -788,9 +836,7 @@ void Application::slotNewDocument(const App::Document& Doc)
 
 	//这里添加item
     signalNewDocument(*pDoc);
-	//测试用
-	signalAddsubitem(*pDoc,"123");
-    //初始化MDI窗口
+	
     pDoc->initMDIView();
 
     qApp->processEvents(); // make sure to show the window stuff on the right place

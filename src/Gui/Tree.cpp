@@ -122,8 +122,10 @@ TreeWidget::TreeWidget(QWidget* parent)
     Application::Instance->signalRelabelDocument.connect(boost::bind(&TreeWidget::slotRelabelDocument, this, _1));
 	//2021/6/18 新增信号，用于添加子节点控件
 	Application::Instance->signalAddsubitem.connect(boost::bind(&TreeWidget::addSubItem,this,_1,_2));
-	//
-
+	/*Application::Instance->signalAddsubItem2.connect(boost::bind(&TreeWidget::addSubItem2, this, _1, _2));*/
+	Application::Instance->signalAddsubitem2.connect(boost::bind(&TreeWidget::addSubItem2,this,
+		_1,_2,_3,_4));
+	Application::Instance->signalClearSub.connect(boost::bind(&TreeWidget::clearsubItem,this,_1));
     QStringList labels;
     labels << tr("Labels & Attributes");
     this->setHeaderLabels(labels);
@@ -484,8 +486,14 @@ void TreeWidget::mouseDoubleClickEvent (QMouseEvent * event)
 	}
 	else if (item->type()==TreeWidget::m3dtextType)
 	{
-		qDebug() << "doubleclicked()";
+		//qDebug() << "doubleclicked()";
 		//这里添加点击事件
+		auto iter = itemToLine.find(item);
+		if (iter!=itemToLine.end())
+		{
+			//qDebug() << "line:" << iter->second;
+			Gui::Application::Instance->GoToLine(iter->second);
+		}
 	}
 
 }
@@ -1775,5 +1783,84 @@ void TreeWidget::addSubItem(const Gui::Document& doc,const std::string& keyWord)
 		subitem->setText(0, QString::fromStdString(keyWord));
 	}
 }
+
+/**
+* @brief  Gui::TreeWidget::addSubItem2  添加子节点
+* @param  const Gui::Document &  
+* @param  const std::string & GroupName  分类名
+* @param  const std::string KeyName     子节点
+* @param  const int cusline				行号
+* @return void  
+*/
+void TreeWidget::addSubItem2(const Gui::Document& doc, const std::string& GroupName,
+	const std::string& KeyName, const int cusline)
+{
+	//std::map<std::string, std::vector<std::string>> m3dTextItemMap;
+	//std::map <QTreeWidgetItem*, int> itemToLine;
+	//std::map<std::string, QTreeWidget*> groupItems;
+	auto iter = DocumentMap.find(&doc);
+	if (iter != DocumentMap.end())
+	{
+		DocumentItem* mItem = dynamic_cast<DocumentItem*>(iter->second);
+		if (!mItem)
+		{
+			std::cerr << "DocumentItem is nullptr from void TreeWidget::addSubItem(const Gui::Document& doc,const std::string& keyWord)" << std::endl;
+			return;
+		}
+		QTreeWidgetItem* item = nullptr;/* = new QTreeWidgetItem(mItem, TreeWidget::m3dtextType);*/
+		//查找组
+		auto itergroup = groupItems.find(GroupName);
+		if (itergroup!=groupItems.end())
+		{
+			item = itergroup->second;
+		}
+		else
+		{
+			item = new QTreeWidgetItem(mItem, TreeWidget::m3dtextType);
+			item->setText(0,QString::fromStdString(GroupName));
+			groupItems[GroupName] = item;
+		}
+		//添加子节点
+		QTreeWidgetItem* subItems = nullptr;
+		subItems = new QTreeWidgetItem(item,TreeWidget::m3dtextType);
+		subItems->setText(0,QString::fromStdString(KeyName));
+		itemToLine[subItems] = cusline;
+	}
+}
+
+/**
+* @brief  Gui::TreeWidget::clearsubItem
+* @param  const Gui::Document & doc  
+* @return void  
+*/
+void TreeWidget::clearsubItem(const Gui::Document& doc)
+{
+	auto iter = DocumentMap.find(&doc);
+	if (iter!=DocumentMap.end())
+	{
+		//清除该节点下的所有节点
+		DocumentItem* mItem = dynamic_cast<DocumentItem*>(iter->second);
+		if (!mItem)
+		{
+			std::cerr << "DocumentItem is nullptr from void TreeWidget::addSubItem(const Gui::Document& doc,const std::string& keyWord)" << std::endl;
+			return;
+		}
+		//清除该节点下的所有子字节点
+		auto childCount = mItem->childCount();
+		for (auto index = childCount-1; index >=0;index--)
+		{
+			auto childitem = mItem->child(index);
+			auto childitensub = childitem->childCount();
+			for (auto subindex = childitensub-1; subindex >=0;subindex--)
+			{
+				childitem->removeChild(childitem->child(subindex));
+			}
+			mItem->removeChild(mItem->child(index));
+		}
+		itemToLine.clear();
+		groupItems.clear();
+	}
+}
+
 #include "moc_Tree.cpp"
 

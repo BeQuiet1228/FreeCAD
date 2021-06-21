@@ -126,6 +126,9 @@ private:
     void changeEvent(QEvent *e);
 	//添加item
 	void addSubItem(const Gui::Document&, const std::string&);
+	void addSubItem2(const Gui::Document&, const std::string& GroupName, 
+		const std::string& KeyName, const int cusline);
+	void clearsubItem(const Gui::Document&);
 private:
     QAction* createGroupAction;
     QAction* relabelObjectAction;
@@ -142,6 +145,9 @@ private:
     static QPixmap* documentPixmap;
     std::map<const Gui::Document*,DocumentItem*> DocumentMap;
     bool fromOutside;
+	//新添加
+	std::map <QTreeWidgetItem*,int> itemToLine;
+	std::map<std::string, QTreeWidgetItem*> groupItems;
 };
 
 /** The link between the tree and a document.
