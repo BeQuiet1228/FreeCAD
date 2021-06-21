@@ -1,7 +1,7 @@
 #include "LuaEditView.h"
 #include <QFrame>
 #include <QHBoxLayout>
-#include "SmartContorl/codeEdit/codeeditor.h"
+#include "Editor/M3dEditor.h"
 #include "app/Document.h"
 #include "app/DocumentM3dText.h"
 #include "MainWindow.h"
@@ -15,7 +15,7 @@ LuaEditView::LuaEditView(Gui::Document* doc, QWidget* parent /*= 0*/)
 {
 	auto frame = new QFrame(this);
 	auto layout = new QHBoxLayout();
-	codeEditor = new CodeEditor();
+	codeEditor = new M3dEditor();
 	layout->addWidget(codeEditor);
 	layout->setMargin(0);
 	frame->setLayout(layout);
@@ -148,4 +148,14 @@ bool LuaEditView::saveAs()
 void LuaEditView::setReadOnly(const bool& b)
 {
 	codeEditor->setReadOnly(b);
+}
+
+Cmds LuaEditView::getM3dCmds()
+{
+	return codeEditor->getCmds();
+}
+
+void LuaEditView::gotoLine(const int& mun)
+{
+	codeEditor->gotoLine(mun);
 }

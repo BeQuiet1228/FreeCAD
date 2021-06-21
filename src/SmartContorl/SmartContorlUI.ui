@@ -882,7 +882,7 @@ end</string>
   <customwidget>
    <class>CodeEditor</class>
    <extends>QPlainTextEdit</extends>
-   <header>codeEdit/codeeditor.h</header>
+   <header location="global">Editor/codeeditor.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
