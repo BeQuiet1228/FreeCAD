@@ -28,11 +28,6 @@ LuaEditView::LuaEditView(Gui::Document* doc, QWidget* parent /*= 0*/)
 void LuaEditView::setText(const QString& text)
 {
 	codeEditor->setPlainText(text);
-	Cmds cmds = codeEditor->getCmds();
-	for (auto iter = cmds.begin(); iter != cmds.end(); iter++)
-	{
-		std::cerr << iter->text.toStdString() <<"|||" << iter->cmd.toStdString()  <<std::endl;
-	}
 }
 
 bool LuaEditView::onMsg(const char* pMsg, const char** ppReturn)
@@ -153,4 +148,14 @@ bool LuaEditView::saveAs()
 void LuaEditView::setReadOnly(const bool& b)
 {
 	codeEditor->setReadOnly(b);
+}
+
+Cmds LuaEditView::getM3dCmds()
+{
+	return codeEditor->getCmds();
+}
+
+void LuaEditView::gotoLine(const int& mun)
+{
+	codeEditor->gotoLine(mun);
 }

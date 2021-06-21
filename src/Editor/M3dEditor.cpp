@@ -3,6 +3,7 @@
 #include <regex>
 #include <vector>
 #include <QTextIStream>
+#include <QTextCursor>
 M3dEditor::M3dEditor(QWidget* parent /*= 0*/)
 	:CodeEditor(parent)
 {
@@ -27,6 +28,15 @@ Cmds M3dEditor::getCmds()
 {
 	analysis.setText(this->toPlainText());
 	return analysis.analysisText();
+}
+
+void M3dEditor::gotoLine(const int& num)
+{
+	auto cursor = this->textCursor();
+	int pos = this->document()->findBlockByLineNumber(num).position();
+	cursor.setPosition(pos);
+	this->setTextCursor(cursor);
+	this->centerCursor();
 }
 
 M3dCommadAnalysis::M3dCommadAnalysis()

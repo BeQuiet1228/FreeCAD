@@ -52,7 +52,10 @@ public:
 	M3dEditor(QWidget* parent = 0);
 	~M3dEditor();
 
+public:
 	Cmds getCmds();
+	//跳转到指定行
+	void gotoLine(const int& num);
 private:
 	M3dCommadAnalysis analysis;
 };
