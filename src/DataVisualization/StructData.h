@@ -149,6 +149,17 @@ public:
 		return allLines;
 	}
 	void segloadRoom(unsigned  __int64 site1,unsigned __int64 site2);
+	bool getIsface(){
+		return istrue;
+	}
+	_3DPointf getStartPoint()
+	{
+		return mstartpoint;
+	}
+	_3DPointf getEndPoint()
+	{
+		return mendpoint;
+	}
 protected:
 	virtual bool initXYRang(){ return 0; }
 	virtual void restorDeriveData() override{}
@@ -170,6 +181,7 @@ protected:
 	std::vector<DaTaKmt> GetdatasetKmtCylindrical();
 	bool createLines(std::map<int, std::vector<QPoint>> &points,const Data::ValuesPtr &IMX, const Data::ValuesPtr &IMY);
 	std::list<unsigned __int64> isAnAttritbute(unsigned __int64, PROPERTYPE);
+	
 private:
 	//È«²¿ÇÐ¸î¿Õ¼ä
 	std::map<int, std::vector<QRectF>>	allcutroom;

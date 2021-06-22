@@ -1824,11 +1824,17 @@ void TreeWidget::addSubItem2(const Gui::Document& doc, const std::string& GroupN
 			item->setIcon(0,QIcon(treeIcon[0]));
 			groupItems[GroupName] = item;
 		}
-		//添加子节点
+		//判断子节点的长度是否过长
+		std::string substring = KeyName;
+		if (KeyName.length()>15)
+		{
+			substring=KeyName.substr(0, 15);
+			substring = substring + "...";
+		}
 		QTreeWidgetItem* subItems = nullptr;
 		subItems = new QTreeWidgetItem(item,TreeWidget::m3dtextType);
 		subItems->setIcon(0, QIcon(treeIcon[1]));
-		subItems->setText(0,QString::fromStdString(KeyName));
+		subItems->setText(0,QString::fromStdString(substring));
 		itemToLine[subItems] = cusline;
 	}
 }
