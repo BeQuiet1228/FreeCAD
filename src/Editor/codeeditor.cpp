@@ -6,10 +6,10 @@
 #include "casewordlistwidget.h"
 #include <qpainter.h>
 #include <QTextBlock>
-#include "myhightlighter.h"
+#include "M3dHightLighter.h"
 #include "QFont"
 #include "matchwordsthrea.h"
-#include "codeEdit/codeeditor.h"
+#include "codeeditor.h"
 #include "FindDialog.h"
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 	,findDialog(new FindDialog(this))
@@ -31,11 +31,6 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     listWidget->hide();
     //绑定提示框被双击事件
     connect(listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(listWidgetDoubleClicked(QListWidgetItem*)));
-
-    myHightLighter *highLighter = new myHightLighter(this->document());         //设置高亮器
-	QFont f("Microsoft YaHei");
-	f.setPointSize(12);
-	this->setFont(f);
 
 	//给查找窗口设置文本编辑器
 	findDialog->setTextEidt(this);
@@ -284,5 +279,3 @@ void CodeEditor::listWidgetDoubleClicked(QListWidgetItem*)
 {
     insertCaseWordWithListWidget();
 }
-
-#include "codeEdit/moc_codeeditor.cpp"

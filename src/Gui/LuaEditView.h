@@ -3,7 +3,7 @@
 #include <qaction.h>
 #include <QIcon>
 #include "Document.h"
-class CodeEditor;
+#include "Editor/M3dEditor.h"
 class LuaEditView :public Gui::MDIView{
 public:
 	LuaEditView(Gui::Document* doc,QWidget* parent = 0);
@@ -20,8 +20,16 @@ public:
 	//响应保存函数
 	bool save();
 	bool saveAs();
+
+	//设置编辑器只读
+	void setReadOnly(const bool& b);
+
+	//获取编辑器中的命令
+	Cmds getM3dCmds();
+	//跳转到指定行
+	void gotoLine(const int& mun);
 private:
-	CodeEditor *codeEditor;
+	M3dEditor*codeEditor;
 };
 struct SmartContorlAction
 {

@@ -63,7 +63,6 @@ bool TimeRenderer::drawImage()
 	QPointF starPoint, endPoint;
 	starPoint = d->getPoint(startIndex);
 	transitionPoint(starPoint, xScale, xr, yScale, yr);
-	startIndex++;
 	//获取点 并绘制线
 	for (int index = startIndex + 1 ; index < endIndex; index++)
 	{
@@ -260,6 +259,16 @@ QPointF TimeRenderer::findPoint(const QPointF& point)
 		xMin = point.x() - riseLength;
 		yMax = point.y() + riseLength;
 		yMin = point.y() - riseLength;
+
+		/*
+			当rank过大时，又可能会出现范围超过边界，那么mini会为负值，
+			按照当前的算法，会导致获取数据索引不正确，所以这里加判断避免这种情况
+		*/
+		if (xMin < 0)
+			xMin = 0;
+		if (yMin < 0)
+			yMin = 0;
+
 
 		//获取数据对象
 		auto td = std::dynamic_pointer_cast<TimeData>(data);

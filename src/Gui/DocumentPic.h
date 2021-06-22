@@ -16,4 +16,6 @@ public:
 	void releaseH5Object();
 	//获取m3d路径
 	std::string getTextPath();
+	//打开一个h5文件
+	void openH5File(const std::string & path);
 };

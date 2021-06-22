@@ -100,5 +100,3 @@ void MatchWordsThread::run()
     }
      emit matchCaseWordFinished(vipCaseWords,lowCaseWords,word.size());
 }
-
-#include "codeEdit/moc_matchwordsthrea.cpp"

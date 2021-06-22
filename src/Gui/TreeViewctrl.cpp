@@ -36,7 +36,11 @@ namespace Gui{
 		App::Document *doc = App::GetApplication().getActiveDocument();
 		DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
 		if (!docM)
+		{
+			std::cerr << "DocumentManager is null from FreeCadGui void TreeViewCtrl::double_clicked_event(const QModelIndex &index)" << std::endl;
 			return;
+		}
+			
 		//获取plot
 		QStandardItem* currenitem = goodsModel->itemFromIndex(index);
 		//寻找对应的hdf数据
@@ -52,17 +56,18 @@ namespace Gui{
 		}
 		if (ptr == nullptr)
 		{
-			Gui::PlotMDIView* plot = new Gui::PlotMDIView(*guidoc);
-			Gui::MainWindow::getInstance()->addWindow(plot);
-			Plot* mplot = reinterpret_cast<Plot*>(plot->GetViewPtr());
-			docM->bindTreeContrue(nullptr, mplot);
+			ptr = new Gui::PlotMDIView(*guidoc);
+			//Gui::PlotMDIView* plot = new Gui::PlotMDIView(*guidoc);
+			Gui::MainWindow::getInstance()->addWindow(ptr);
+			docM->bindTreeContrue(nullptr, ptr->GetViewPtr());
 			
 		}
 		else
 		{
-			Plot* mplot = reinterpret_cast<Plot*>(ptr->GetViewPtr());
-			docM->bindTreeContrue(nullptr,mplot);
+			docM->bindTreeContrue(nullptr,ptr->GetViewPtr());
 		}
+		//确保当前页面为活动页
+		MainWindow::getInstance()->setActiveWindow(ptr);
 		if (iter != datainfor.end())
 		{
 			//传入hdf5数据

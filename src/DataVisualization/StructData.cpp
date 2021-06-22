@@ -319,7 +319,7 @@ bool StructData::loadroom()
 {
 	if (isloadRoom)
 		return true;
-#ifdef MY_DEBUG
+#if MY_DEBUG
 	//测试数据生成时间
 	LARGE_INTEGER startTime;
 	LARGE_INTEGER endTime;
@@ -336,7 +336,7 @@ bool StructData::loadroom()
 	case CARTESIAN:
 		loadroomCartesian(); break;
 	}
-#ifdef MY_DEBUG
+#if MY_DEBUG
 	QueryPerformanceCounter(&endTime);
 	auto interval =(static_cast<double>(endTime.QuadPart) - static_cast<double>(startTime.QuadPart)) / static_cast<double>(cpufer.QuadPart);
 	qDebug() << "processingData(interval):" << interval;
@@ -406,14 +406,15 @@ bool StructData::loadroomPolarRz()
 	Data::ValuesPtr IM2X = *it; it++;
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
-	int index = IM2X->size() / 2;
+	//默认取中间位置
+	int index = IM2X->size() / 2+IM2X->size()%2;
 	if (istrue)
 	{
 		int index_min = 1;
 		float distancemin = 10000.0f;
-		for (auto i = 0; i < IM3X->size(); i++)
+		for (auto i = 0; i < IM2X->size(); i++)
 		{
-			float curdistance = abs(*(IM3X->begin() + i) - _face_point_index);
+			float curdistance = abs(*(IM2X->begin() + i) - _face_point_index);
 			if (curdistance<distancemin)
 			{
 				distancemin = curdistance;
@@ -422,9 +423,6 @@ bool StructData::loadroomPolarRz()
 		}
 		index = index_min;
 	}
-#ifdef MY_DEBUG
-	qDebug() << datasetkmt->size();
-#endif
 	std::map<int, std::vector<QRectF>> allinfo;
 	std::map<int, std::vector<QPoint>> pointlist;//用来判断线段
 	for(auto itersetkmt=datasetkmt->begin();itersetkmt!=datasetkmt->end();)
@@ -433,22 +431,29 @@ bool StructData::loadroomPolarRz()
 		unsigned __int64 x2=*itersetkmt;itersetkmt++;
 		unsigned __int64 x3=*itersetkmt;itersetkmt++;
 		unsigned __int64 proper=*itersetkmt;itersetkmt++;
+		//qDebug() << "x1:" << x1 << "x2:" << x2 << "x3:" << x3 << "proper:" << proper;
 		if (x2 == index&&x3 <= IM3X->size() && x1 <= IM1X->size())
 		{
-			unsigned __int64 rectpro = isAnAttritbute(proper, RECTPROPER);
-			unsigned __int64 linepro = isAnAttritbute(proper, LINEPROPER);
-			if (rectpro)
+			std::list<unsigned __int64> rectpro = isAnAttritbute(proper, RECTPROPER);
+			std::list<unsigned __int64> linepro = isAnAttritbute(proper, LINEPROPER);
+			if (!rectpro.empty())
 			{
 				QRectF rect;
 				rect.setLeft(*(IM3X->begin() + x3 - 1));
 				rect.setRight(*(IM3X->begin() + x3));
 				rect.setBottom(*(IM1X->begin() + x1 - 1));
 				rect.setTop(*(IM1X->begin() + x1));
-				allinfo[rectpro].push_back(rect);
+				for each (auto  var in rectpro)
+				{
+					allinfo[var].push_back(rect);
+				}
 			}
-			if (linepro)
+			if (!linepro.empty())
 			{
-				pointlist[linepro].push_back(QPoint(x3 - 1, x1 - 1));
+				for each (auto  var in linepro)
+				{
+					pointlist[var].push_back(QPoint(x3 - 1, x1 - 1));
+				}
 			}
 		}
 	}
@@ -543,7 +548,8 @@ bool StructData::loadroomPolarRtheta()
 		}
 #pragma endregion
 #pragma region 筛选属性
-		int index = IM1X->size() / 2;
+		//默认取中间位置
+		int index = IM1X->size() / 2+IM1X->size()%2;
 		if (istrue)
 		{
 			int index_min = 1;
@@ -590,7 +596,8 @@ bool StructData::loadroomCylindricalRz(){
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
 	QMap<int, QVector<QRectF>> allinfo;
-	int index = IM3X->size() / 2;
+	//默认取中间位置
+	int index = IM3X->size() / 2+IM3X->size()%2;
 	if (istrue)
 	{
 		int index_min = 1;
@@ -620,21 +627,27 @@ bool StructData::loadroomCylindricalRz(){
 		unsigned __int64 proper = *itersetkmt; itersetkmt++;
 		if (x3 == index&& x1 <=IM1X->size()&&x2<=IM2X->size())
 		{
-			unsigned __int64 rectPro = isAnAttritbute(proper,RECTPROPER);
-			unsigned __int64 linePro = isAnAttritbute(proper, LINEPROPER);
-			if (rectPro)
+			std::list<unsigned __int64> rectPro = isAnAttritbute(proper,RECTPROPER);
+			std::list<unsigned __int64> linePro = isAnAttritbute(proper, LINEPROPER);
+			if (!rectPro.empty())
 			{
 				QRectF rect;
 				rect.setLeft(*(IM1X->begin() + x1 - 1));
 				rect.setRight(*(IM1X->begin() + x1));
 				rect.setBottom(*(IM2X->begin() + x2 - 1));
 				rect.setTop(*(IM2X->begin() + x2));
-				allcutroom[rectPro].push_back(rect);
+				for each (auto var in rectPro)
+				{
+					allcutroom[var].push_back(rect);
+				}
 			}
-			if (linePro)
+			if (!linePro.empty())
 			{
 				int x = x1 - 1, y = x2 - 1;
-				pointlist[linePro].push_back(QPoint(x, y));
+				for each (auto var in linePro)
+				{
+					pointlist[var].push_back(QPoint(x, y));
+				}
 			}
 		}
 	}
@@ -699,7 +712,8 @@ bool StructData::loadroomCylindricalRtheta(){
 		}
 #pragma endregion
 #pragma region 筛选属性
-		int index = IM1X->size() / 2;
+		//默认取中间位置
+		int index = IM1X->size() / 2+IM1X->size()%2;
 		if (istrue)
 		{
 			int index_min = 1;
@@ -774,7 +788,8 @@ bool StructData::loadroomCartesianXy(){
 	Data::ValuesPtr IM2X = *it; it++;
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
-	int index = IM3X->size() / 2;
+	//默认取中间位置
+	int index = IM3X->size() / 2+IM3X->size()%2;
 	if (istrue)
 	{
 		int index_min = 1;
@@ -851,21 +866,27 @@ bool StructData::loadroomCartesianXy(){
 		unsigned __int64 proper = *itersetkmt; itersetkmt++;
 		if (x3 == index&& x1 <= IM1X->size()&& x2<=IM2X->size())
 		{
-			unsigned __int64 rectPro = isAnAttritbute(proper, RECTPROPER);
-			unsigned __int64 linePro = isAnAttritbute(proper, LINEPROPER);
-			if (rectPro)
+			std::list<unsigned __int64> rectPro = isAnAttritbute(proper, RECTPROPER);
+			std::list<unsigned __int64> linePro = isAnAttritbute(proper, LINEPROPER);
+			if (!rectPro.empty())
 			{
 				QRectF rect;
 				rect.setLeft(*(IM1X->begin() + (x1 - 1)));
 				rect.setRight(*(IM1X->begin() + x1));
 				rect.setBottom(*(IM2X->begin() + (x2 - 1)));
 				rect.setTop(*(IM2X->begin() + x2));
-				allinfo[rectPro].push_back(rect);
+				for each (auto  var in rectPro)
+				{
+					allinfo[var].push_back(rect);
+				}
 			}
-			if (linePro)
+			if (!linePro.empty())
 			{
 				int x = x1 - 1, y = x2 - 1;
-				pointList[linePro].push_back(QPoint(x, y));
+				for each (auto  var in linePro)
+				{
+					pointList[var].push_back(QPoint(x, y));
+				}
 			}
 		}
 	}
@@ -890,7 +911,8 @@ bool StructData::loadroomCartesianXz(){
 	Data::ValuesPtr IM2X = *it; it++;
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
-	int index = IM2X->size() / 2;
+	//默认取中间位置
+	int index = IM2X->size() / 2+IM2X->size()%2;
 	if (istrue)
 	{
 		int index_min = 1;
@@ -919,19 +941,19 @@ bool StructData::loadroomCartesianXz(){
 		unsigned __int64 proper = *itersetkmt; itersetkmt++;
 		if (x2 == index && x1 <= IM1X->size()&&x3<=IM3X->size())
 		{
-			unsigned __int64 rectPro=isAnAttritbute(proper,RECTPROPER);
-			unsigned __int64 linePro=isAnAttritbute(proper,LINEPROPER);
-			if(rectPro){
+			std::list<unsigned __int64> rectPro=isAnAttritbute(proper,RECTPROPER);
+			std::list<unsigned __int64> linePro=isAnAttritbute(proper,LINEPROPER);
+			if(!rectPro.empty()){
 				QRectF rect;
 				rect.setLeft(*(IM1X->begin() + (x1 - 1)));
 				rect.setRight(*(IM1X->begin() + x1));
 				rect.setBottom(*(IM3X->begin() + (x3 - 1)));
 				rect.setTop(*(IM3X->begin() + x3));
-				allcutroom[rectPro].push_back(rect);
+				for each (auto var in rectPro)	allcutroom[var].push_back(rect);
 			}
-			if(linePro){
+			if(!linePro.empty()){
 				int x = x1 - 1, y = x3 - 1;
-				pointList[linePro].push_back(QPoint(x, y));
+				for each (auto var in linePro)	pointList[var].push_back(QPoint(x, y));
 			}
 		}
 	}
@@ -954,7 +976,8 @@ bool StructData::loadroomCartesianYz(){
 	Data::ValuesPtr IM2X = *it; it++;
 	Data::ValuesPtr IM3X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
-	int index = IM1X->size() / 2;
+	//默认取中间位置
+	int index = IM1X->size() / 2+IM1X->size()%2;
 	if (istrue)
 	{
 		int index_min = 1;
@@ -983,44 +1006,70 @@ bool StructData::loadroomCartesianYz(){
 		unsigned __int64 proper = *itersetkmt; itersetkmt++;
 		if (x1 == index &&x2 <=IM2X->size()&&x3<=IM3X->size())
 		{
-			unsigned __int64 rectPro=isAnAttritbute(proper,RECTPROPER);
-			unsigned __int64 linePro=isAnAttritbute(proper,LINEPROPER);
-			if (rectPro)
+			std::list<unsigned __int64> rectPro=isAnAttritbute(proper,RECTPROPER);
+			std::list<unsigned __int64> linePro=isAnAttritbute(proper,LINEPROPER);
+			if (!rectPro.empty())
 			{
 				QRectF rect;
 				rect.setLeft(*(IM2X->begin() + (x2 - 1)));
 				rect.setRight(*(IM2X->begin() + (x2)));
 				rect.setBottom(*(IM3X->begin() + (x3 - 1)));
 				rect.setTop(*(IM3X->begin() + x3));
-				allcutroom[rectPro].push_back(rect);
+				for each (auto var in rectPro)
+				{
+					allcutroom[var].push_back(rect);
+				}
 			}
-			if (linePro)
+			if (!linePro.empty())
 			{
 				int x = x2-1, y = x3-1;
-				pointList[linePro].push_back(QPoint(x,y));
+				for each (auto  var in linePro)
+				{
+					pointList[var].push_back(QPoint(x, y));
+				}
 			}
 		}
 	}
 	createLines(pointList, IM2X, IM3X);
 	return true;
 }
-unsigned __int64 StructData::isAnAttritbute(unsigned __int64 p, PROPERTYPE sp)
+std::list<unsigned __int64> StructData::isAnAttritbute(unsigned __int64 p, PROPERTYPE sp)
 {
+	std::list<unsigned __int64> list;
+#define CPM(a,b)\
+	if((a)&(b)) list.push_back(b);
 	switch (sp)
 	{
 	case StructData::RECTPROPER:
 	{
 		unsigned __int64 rectPro = p & 0xff;
-		return rectPro;
+		list.clear();
+		CPM(rectPro, PERFECTCONDUCTOR);
+		CPM(rectPro, CONDUCTORNEW);
+		CPM(rectPro, DIOLECTRIC);
+		CPM(rectPro, DIELECTIRANDCONDUCTANCE);
+		CPM(rectPro, PERMEABILITY);
+		CPM(rectPro, FREESPACE);
+		CPM(rectPro, FOIL);
+		return list;
 	}
 	case StructData::LINEPROPER:
 	{
+		list.clear();
 		unsigned __int64 linePro = p & 0xff00;
-		return linePro;
+		CPM(linePro,256);
+		CPM(linePro, 512);
+		CPM(linePro, 1024);
+		CPM(linePro, 2048);
+		CPM(linePro, 4096);
+		CPM(linePro, 8192);
+		CPM(linePro, 16384);
+		CPM(linePro, 32768);
+		CPM(linePro, 65536);
+		return list;
 	}
-	default:
-		return 0;
 	}
+#undef CPM(a,b)
 }
 
 /**

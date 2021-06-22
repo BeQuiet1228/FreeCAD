@@ -5,7 +5,7 @@
 #include <qobject.h>
 #include <qlist.h>
 
-class myHightLighter:public QSyntaxHighlighter
+class M3dHightLighter:public QSyntaxHighlighter
 {
 public:
     struct HighlightingRule
@@ -13,7 +13,7 @@ public:
         QRegExp pattern;
         QTextCharFormat format;
     };
-    myHightLighter(QTextDocument *parent);
+    M3dHightLighter(QTextDocument *parent);
     QList<QString> caseWords;
     QList<QString> functions;
     QList<HighlightingRule> rule;
@@ -29,4 +29,4 @@ private:
 	void higlightAnnotation(const QString& text);
 };
 
-#endif // MYHIGHTLIGHTER_H
+#endif // M3dHightLighter_H

@@ -107,6 +107,8 @@ void DataSourceManage::clearMap(){
 */
 void DataSourceManage::loadhdffile(std::string filepath)
 {
+	//增加删除
+	DataClear();
 	Hdf5IO io(filepath);
 	io.initHdf5Data();
 	//获取到hdf5文件

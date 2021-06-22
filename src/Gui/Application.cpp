@@ -300,6 +300,17 @@ void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
 	std::list<Gui::MDIView*> list = doc->getMDIViews();
 	Gui::PlotMDIView* ptr = nullptr;
 	DocumentManager* documentmanager = dynamic_cast<DocumentManager*>(doc->getDocument());
+	if (!documentmanager)
+	{
+		std::cerr << "documentmanager==nullptr from   FreeCADGUI Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)"<<std::endl;
+		return;
+	}
+	ListTreeWidget* m_listTreeWidget = dynamic_cast<ListTreeWidget*>(Gui::MainWindow::getInstance()->mTreeWidget);
+	if (!m_listTreeWidget)
+	{
+		std::cerr << "ListTreeWidget ==nullptr from FreeCADGUI Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)" << std::endl;
+		return;
+	}
 	for each (Gui::MDIView* var in list)
 	{
 		ptr = dynamic_cast<Gui::PlotMDIView*> (var);
@@ -307,26 +318,31 @@ void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
 	}
 	if (ptr != nullptr)
 	{
-		ListTreeWidget* m_listTreeWidget = dynamic_cast<ListTreeWidget*>(Gui::MainWindow::getInstance()->mTreeWidget);
-		Plot* mplot = reinterpret_cast<Plot*>(ptr->GetViewPtr());
-		documentmanager->bindTreeContrue(m_listTreeWidget,mplot);
+		documentmanager->bindTreeContrue(m_listTreeWidget,ptr->GetViewPtr());
 	}
 	else
 	{
-		Gui::PlotMDIView* plot = new Gui::PlotMDIView(*doc);
-		Gui::MainWindow::getInstance()->addWindow(plot);
-		ListTreeWidget* m_ListTreeWidget = dynamic_cast<ListTreeWidget*>(Gui::MainWindow::getInstance()->mTreeWidget);
-		Plot* mplot = reinterpret_cast<Plot*>(plot->GetViewPtr());
-		documentmanager->bindTreeContrue(m_ListTreeWidget,mplot);
+		/*Gui::PlotMDIView* plot */
+		ptr= new Gui::PlotMDIView(*doc);
+		Gui::MainWindow::getInstance()->addWindow(ptr);
+		documentmanager->bindTreeContrue(m_listTreeWidget,ptr->GetViewPtr());
 	}
 	documentmanager->DisplatPlot(data, _type);
+	//保证当前页面为活动页
+	MainWindow::getInstance()->setActiveWindow(ptr);
 }
 void Application::ToStruct(Hdf5Data data)
 {
 	auto doc = Gui::Application::Instance->activeDocument();
 	if (doc)
 	{
-		int structindex=((DocumentManager*)(doc->getDocument()))->ToStructHdf5(data);
+		DocumentManager* documentmanager = dynamic_cast<DocumentManager*>(doc->getDocument());
+		if (!documentmanager)
+		{
+			std::cerr << "documentmanager is null from Free void Application::ToStruct(Hdf5Data data)" << std::endl;
+			return;
+		}
+		int structindex=documentmanager->ToStructHdf5(data);
 		Gui::TreeViewCtrl* m_lisTreeWidget = Gui::MainWindow::getInstance()->mTreeWidget;
 		m_lisTreeWidget->toStructh5df(data, structindex);
 	}
@@ -352,11 +368,59 @@ void Application::showPlotSettingDialog()
 		}
 		if (ptr != nullptr)
 		{
-			configWidget->bindplot((Plot*)ptr->GetViewPtr());
+			configWidget->bindplot(ptr->GetViewPtr());
 		}
 	}
 	configWidget->show();
 }
+
+void Application::ToSubItemTree()
+{
+	//测试代码
+	Gui::Document* guidoc = activeDocument();
+	signalClearSub(*guidoc);
+	DocumentM3dText *docText = dynamic_cast<DocumentM3dText*>(guidoc->getDocument());
+	if (!docText)
+	{
+		return;
+	}
+	auto guiDoc = getDocument(docText);
+	auto view=guiDoc->getActiveView();
+	LuaEditView* edit = dynamic_cast<LuaEditView*>(view);
+	if (!edit)
+	{
+		return;
+	}
+	auto cmds = edit->getM3dCmds();
+	for (auto index = cmds.begin(); index !=cmds.end();index++)
+	{
+		//signalAddsubitem2(guidoc,cmds[index].cmd,cmds[index].text,cmds[index].getStartLine());
+		signalAddsubitem2(*guidoc,index->cmd.toStdString(),index->text.toStdString(),index->getStartLine());
+	}
+}
+/**
+* @brief  Gui::Application::GoToLine m3d 光标跳转行
+* @param  int line  行号
+* @return void  
+*/
+void Application::GoToLine(int line)
+{
+	Gui::Document* guidoc = activeDocument();
+	DocumentM3dText *docText = dynamic_cast<DocumentM3dText*>(guidoc->getDocument());
+	if (!docText)
+	{
+		return;
+	}
+	auto guiDoc = getDocument(docText);
+	auto view = guiDoc->getActiveView();
+	LuaEditView* edit = dynamic_cast<LuaEditView*>(view);
+	if (!edit)
+	{
+		return;
+	}
+	edit->gotoLine(line);
+}
+
 } // namespace Gui
 
 Application::Application(bool GUIenabled)
@@ -770,10 +834,9 @@ void Application::slotNewDocument(const App::Document& Doc)
     pDoc->signalRelabelObject.connect(boost::bind(&Gui::Application::slotRelabelObject, this, _1));
     pDoc->signalActivatedObject.connect(boost::bind(&Gui::Application::slotActivatedObject, this, _1));
 
-
+	//这里添加item
     signalNewDocument(*pDoc);
-    
-    //初始化MDI窗口
+	
     pDoc->initMDIView();
 
     qApp->processEvents(); // make sure to show the window stuff on the right place
