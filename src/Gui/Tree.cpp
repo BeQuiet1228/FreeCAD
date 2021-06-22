@@ -65,7 +65,8 @@ const int TreeWidget::DocumentType = 1000;
 const int TreeWidget::ObjectType = 1001;
 const int TreeWidget::m3dtextType = 1002;
 
-
+//QString treeIcon[] = {"/icons/Group.svg","/icons/ClassBrowser/member.png"};
+QString treeIcon[2] = {};
 /* TRANSLATOR Gui::TreeWidget */
 TreeWidget::TreeWidget(QWidget* parent)
     : QTreeWidget(parent), contextItem(0), fromOutside(false)
@@ -166,6 +167,8 @@ TreeWidget::TreeWidget(QWidget* parent)
     documentPixmap = new QPixmap(Gui::BitmapFactory().pixmap("Document"));
 
 	connect(this, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(ClickTheObj()));
+	treeIcon[0] = QString::fromUtf8(":/icons/Group.svg");
+	treeIcon[1] = QString::fromUtf8(":/icons/ClassBrowser/member.png");
 }
 
 TreeWidget::~TreeWidget()
@@ -1818,11 +1821,13 @@ void TreeWidget::addSubItem2(const Gui::Document& doc, const std::string& GroupN
 		{
 			item = new QTreeWidgetItem(mItem, TreeWidget::m3dtextType);
 			item->setText(0,QString::fromStdString(GroupName));
+			item->setIcon(0,QIcon(treeIcon[0]));
 			groupItems[GroupName] = item;
 		}
 		//添加子节点
 		QTreeWidgetItem* subItems = nullptr;
 		subItems = new QTreeWidgetItem(item,TreeWidget::m3dtextType);
+		subItems->setIcon(0, QIcon(treeIcon[1]));
 		subItems->setText(0,QString::fromStdString(KeyName));
 		itemToLine[subItems] = cusline;
 	}
