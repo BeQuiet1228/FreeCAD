@@ -57,7 +57,7 @@
 #include "View3DInventor.h"
 #include "View3DInventorViewer.h"
 #include "Command.h"
-
+#include "TreeWidgetm3d.h"
 using namespace Gui;
 
 QPixmap*  TreeWidget::documentPixmap = 0;
@@ -66,8 +66,8 @@ const int TreeWidget::ObjectType = 1001;
 const int TreeWidget::m3dtextType = 1002;
 
 //QString treeIcon[] = {"/icons/Group.svg","/icons/ClassBrowser/member.png"};
-QString treeIcon[2] = {};
 /* TRANSLATOR Gui::TreeWidget */
+QString treeIcon[2] = {};
 TreeWidget::TreeWidget(QWidget* parent)
     : QTreeWidget(parent), contextItem(0), fromOutside(false)
 {
@@ -121,12 +121,12 @@ TreeWidget::TreeWidget(QWidget* parent)
     Application::Instance->signalRenameDocument.connect(boost::bind(&TreeWidget::slotRenameDocument, this, _1));
     Application::Instance->signalActiveDocument.connect(boost::bind(&TreeWidget::slotActiveDocument, this, _1));
     Application::Instance->signalRelabelDocument.connect(boost::bind(&TreeWidget::slotRelabelDocument, this, _1));
-	//2021/6/18 新增信号，用于添加子节点控件
-	Application::Instance->signalAddsubitem.connect(boost::bind(&TreeWidget::addSubItem,this,_1,_2));
-	/*Application::Instance->signalAddsubItem2.connect(boost::bind(&TreeWidget::addSubItem2, this, _1, _2));*/
-	Application::Instance->signalAddsubitem2.connect(boost::bind(&TreeWidget::addSubItem2,this,
-		_1,_2,_3,_4));
-	Application::Instance->signalClearSub.connect(boost::bind(&TreeWidget::clearsubItem,this,_1));
+	////2021/6/18 新增信号，用于添加子节点控件
+	//Application::Instance->signalAddsubitem.connect(boost::bind(&TreeWidget::addSubItem,this,_1,_2));
+	///*Application::Instance->signalAddsubItem2.connect(boost::bind(&TreeWidget::addSubItem2, this, _1, _2));*/
+	//Application::Instance->signalAddsubitem2.connect(boost::bind(&TreeWidget::addSubItem2,this,
+	//	_1,_2,_3,_4));
+	//Application::Instance->signalClearSub.connect(boost::bind(&TreeWidget::clearsubItem,this,_1));
     QStringList labels;
     labels << tr("Labels & Attributes");
     this->setHeaderLabels(labels);
@@ -487,17 +487,17 @@ void TreeWidget::mouseDoubleClickEvent (QMouseEvent * event)
 			doubleClicked();
 		}
 	}
-	else if (item->type()==TreeWidget::m3dtextType)
-	{
-		//qDebug() << "doubleclicked()";
-		//这里添加点击事件
-		auto iter = itemToLine.find(item);
-		if (iter!=itemToLine.end())
-		{
-			//qDebug() << "line:" << iter->second;
-			Gui::Application::Instance->GoToLine(iter->second);
-		}
-	}
+	//else if (item->type()==TreeWidget::m3dtextType)
+	//{
+	//	//qDebug() << "doubleclicked()";
+	//	//这里添加点击事件
+	//	//auto iter = itemToLine.find(item);
+	//	//if (iter!=itemToLine.end())
+	//	//{
+	//	//	//qDebug() << "line:" << iter->second;
+	//	//	Gui::Application::Instance->GoToLine(iter->second);
+	//	//}
+	//}
 
 }
 
@@ -748,7 +748,7 @@ void TreeWidget::slotNewDocument(const Gui::Document& Doc)
 	  DocumentItem* item = new DocumentItem(&Doc, this->rootItem);
 	  this->expandItem(item);
 	  item->setIcon(0, *documentPixmap);
-	  qDebug() << QString::fromUtf8(Doc.getDocument()->Label.getValue());
+	  //qDebug() << QString::fromUtf8(Doc.getDocument()->Label.getValue());
 	  item->setText(0, QString::fromUtf8(Doc.getDocument()->Label.getValue()));
 	  DocumentMap[ &Doc ] = item;
 }
@@ -987,10 +987,11 @@ TreeDockWidget::TreeDockWidget(Gui::Document* pcDocument,QWidget *parent)
   : DockWindow(pcDocument,parent)
 {
     setWindowTitle(tr("Tree view"));
-    this->treeWidget = new TreeWidget(this);
+    this->treeWidget = new TreeWidgetm3d(this);
     this->treeWidget->setRootIsDecorated(false);
     ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/TreeView");
-    this->treeWidget->setIndentation(hGrp->GetInt("Indentation", this->treeWidget->indentation()));
+//    this->treeWidget->setIndentation(hGrp->GetInt("Indentation", this->treeWidget->indentation()));
+	treeWidget->setIndentation(hGrp->GetInt("Indentation", treeWidget->indentation()));
 
     QGridLayout* pLayout = new QGridLayout(this);
     pLayout->setSpacing(0);
@@ -1826,11 +1827,11 @@ void TreeWidget::addSubItem2(const Gui::Document& doc, const std::string& GroupN
 		}
 		//判断子节点的长度是否过长
 		std::string substring = KeyName;
-		if (KeyName.length()>15)
+		/*if (KeyName.length() > 15)
 		{
-			substring=KeyName.substr(0, 15);
-			substring = substring + "...";
-		}
+		substring = KeyName.substr(0, 15);
+		substring = substring + "...";
+		}*/
 		QTreeWidgetItem* subItems = nullptr;
 		subItems = new QTreeWidgetItem(item,TreeWidget::m3dtextType);
 		subItems->setIcon(0, QIcon(treeIcon[1]));
@@ -1839,11 +1840,11 @@ void TreeWidget::addSubItem2(const Gui::Document& doc, const std::string& GroupN
 	}
 }
 
-/**
-* @brief  Gui::TreeWidget::clearsubItem
-* @param  const Gui::Document & doc  
-* @return void  
-*/
+///**
+//* @brief  Gui::TreeWidget::clearsubItem
+//* @param  const Gui::Document & doc  
+//* @return void  
+//*/
 void TreeWidget::clearsubItem(const Gui::Document& doc)
 {
 	auto iter = DocumentMap.find(&doc);

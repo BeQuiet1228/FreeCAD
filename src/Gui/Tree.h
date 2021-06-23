@@ -32,7 +32,7 @@
 #include <Gui/DockWindow.h>
 #include <Gui/Selection.h>
 
-
+class  TreeWidgetm3d;
 namespace Gui {
 
 class ViewProviderDocumentObject;
@@ -66,7 +66,7 @@ class TreeWidget : public QTreeWidget, public SelectionObserver
 
 public:
     TreeWidget(QWidget* parent=0);
-    ~TreeWidget();
+    virtual ~TreeWidget();
 
     void scrollItemToTop(Gui::Document*);
     void setItemsSelected (const QList<QTreeWidgetItem *> items, bool select);
@@ -97,7 +97,8 @@ protected:
     bool event(QEvent *e);
     void keyPressEvent(QKeyEvent *event);
     void mouseDoubleClickEvent(QMouseEvent * event);
-
+public:
+	std::map<const Gui::Document*, DocumentItem*> DocumentMap;
 protected Q_SLOTS:
     void onCreateGroup();
     void onRelabelObject();
@@ -109,14 +110,14 @@ protected Q_SLOTS:
 	void doubleClicked();
 	void ClickTheObj();
 
-private Q_SLOTS:
+protected Q_SLOTS:
     void onItemSelectionChanged(void);
     void onItemEntered(QTreeWidgetItem * item);
     void onItemCollapsed(QTreeWidgetItem * item);
     void onItemExpanded(QTreeWidgetItem * item);
     void onTestStatus(void);
 
-private:
+protected:
     void slotNewDocument(const Gui::Document&);
     void slotDeleteDocument(const Gui::Document&);
     void slotRenameDocument(const Gui::Document&);
@@ -126,10 +127,10 @@ private:
     void changeEvent(QEvent *e);
 	//添加item
 	void addSubItem(const Gui::Document&, const std::string&);
-	void addSubItem2(const Gui::Document&, const std::string& GroupName, 
-		const std::string& KeyName, const int cusline);
+	void addSubItem2(const Gui::Document&, const std::string& GroupName,
+	const std::string& KeyName, const int cusline);
 	void clearsubItem(const Gui::Document&);
-private:
+protected:
     QAction* createGroupAction;
     QAction* relabelObjectAction;
     QAction* finishEditingAction;
@@ -143,11 +144,9 @@ private:
     QTreeWidgetItem* rootItem;
     QTimer* statusTimer;
     static QPixmap* documentPixmap;
-    std::map<const Gui::Document*,DocumentItem*> DocumentMap;
-    bool fromOutside;
-	//新添加
-	std::map <QTreeWidgetItem*,int> itemToLine;
+	std::map <QTreeWidgetItem*, int> itemToLine;
 	std::map<std::string, QTreeWidgetItem*> groupItems;
+    bool fromOutside;
 };
 
 /** The link between the tree and a document.
@@ -260,7 +259,7 @@ public:
     TreeDockWidget(Gui::Document*  pcDocument,QWidget *parent=0);
     ~TreeDockWidget();
 private:
-    QTreeWidget* treeWidget;
+	TreeWidgetm3d* treeWidget;
 };
 }
 
