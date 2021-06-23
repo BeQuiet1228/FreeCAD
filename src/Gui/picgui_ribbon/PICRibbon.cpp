@@ -482,10 +482,10 @@ void Ribbon::setScale(QSize& size,bool state) {
 	if (state)
 	{
 		//扩展
-		//for (auto index = 0; index < count(); index++)
-		//{
-		//	unFold(index, size);
-		//}
+		for (auto index = 0; index < count(); index++)
+		{
+			unFold(index, size);
+		}
 	}
 	else
 	{
@@ -512,13 +512,11 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 	unsigned int heightMax = 0;
 	for (auto subindex = picribbontabcontent->contentLayout->count() - 1; subindex >= 0;subindex--)
 	{
-		PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(
-		picribbontabcontent->contentLayout->itemAt(subindex)->widget());
+		PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(picribbontabcontent->contentLayout->itemAt(subindex)->widget());
 		allWidth += group->width();
 		heightMax = (heightMax>group->height()?heightMax:group->height());
 	}
-	int distance = size.width() - allWidth;
-	if (distance<WIGET_INTERVAL)
+	if (size.width()-allWidth<30)
 	{
 		auto subindex = picribbontabcontent->contentLayout->count() - 1;
 		while (subindex>=0)
@@ -533,21 +531,22 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 			{
 				QWidget* parent = reinterpret_cast<QWidget*>(MaindefStie);
 				PICRibbonButtonGroup* newGroup = new PICRibbonButtonGroup(parent);
-				std::list<QAction*> mActions = group->get_action_all().toStdList();
-				newGroup->setMinimumSize(QSize(0, 0));
+				newGroup->setTitle(group->title());
+				std::list<QAction*> mActions = getGroupActions(group->title()).toStdList();
+				newGroup->setMinimumSize(QSize(0,0));
 				newGroup->setMaximumSize(group->size());
 				for (auto iter = mActions.begin(); iter != mActions.end();iter++)
 				{
 					QToolButton *b = new QToolButton;
 					b->setDefaultAction(*iter);
-					newGroup->addButton(b);
+					newGroup->addButton2(b);
 				}
 				mydarWer.insert(std::pair <QString,QWidget*>(group->title(),newGroup));
 				QString myTitle = group->title();
 				this->clearGoup(group->title());
+				picribbontabcontent->addGroup(myTitle);
 				QToolButton* buttom = new QToolButton;
 				picribbontabcontent->addButton(myTitle,buttom);
-				//group->addButton(buttom);
 				QObject::connect(buttom, SIGNAL(clicked()),this,SLOT(buttomclicked()));
 				return toScale(index, size);
 			}
@@ -555,6 +554,7 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 	}
 	return false;
 }
+
 
 /**
 * @brief Ribbon::unFold 展开
