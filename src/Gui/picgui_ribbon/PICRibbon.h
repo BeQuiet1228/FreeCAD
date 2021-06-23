@@ -57,7 +57,7 @@ public:
   PICRibbonTabContent * get_tab_by_name(QString& name);
   virtual QSize getunfoldMinSize() override;
   virtual QSize getcurMinSize() override;
-  virtual void setScale(QSize& size) override;
+  virtual void setScale(QSize& size,bool) override;
 
   //添加一个action
   void addAction(const QString& tabName, const QString& groupName, QAction* action);
@@ -97,6 +97,7 @@ public:
   void setParentWidget(MainWindowDef* parent);
 private:
 	bool toScale(unsigned int index,QSize& size);
+	bool unFold(unsigned int index,QSize& size);
 	void showdrawerGroup(QString GroupName,QToolButton*);
 	unsigned __int64 MaindefStie;
 };

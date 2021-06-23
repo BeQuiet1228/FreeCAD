@@ -7,6 +7,8 @@
 #include <QPainter>
 #include "picgui_ribbon/moc_PICRibbon.cpp"
 #include <iostream>
+
+#define WIGET_INTERVAL (30)
 Ribbon::Ribbon(QWidget *parent)
 	: QTabWidget(parent)
 {
@@ -476,12 +478,26 @@ QSize Ribbon:: getcurMinSize() {
 * @param  QSize & size  
 * @return void  
 */
-void Ribbon::setScale(QSize& size) {
-	for (auto index = 0; index < count();index++)
+void Ribbon::setScale(QSize& size,bool state) {
+	if (state)
 	{
-		toScale(index, size);
+		//扩展
+		//for (auto index = 0; index < count(); index++)
+		//{
+		//	unFold(index, size);
+		//}
+	}
+	else
+	{
+		//缩放
+		for (auto index = 0; index < count(); index++)
+		{
+			toScale(index, size);
+		}
 	}
 }
+
+
 /**
 * @brief  Ribbon::toScale 具体缩放
 * @param  unsigned int index  
@@ -496,11 +512,13 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 	unsigned int heightMax = 0;
 	for (auto subindex = picribbontabcontent->contentLayout->count() - 1; subindex >= 0;subindex--)
 	{
-		PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(picribbontabcontent->contentLayout->itemAt(subindex)->widget());
+		PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(
+		picribbontabcontent->contentLayout->itemAt(subindex)->widget());
 		allWidth += group->width();
 		heightMax = (heightMax>group->height()?heightMax:group->height());
 	}
-	if (size.width()-allWidth<30)
+	int distance = size.width() - allWidth;
+	if (distance<WIGET_INTERVAL)
 	{
 		auto subindex = picribbontabcontent->contentLayout->count() - 1;
 		while (subindex>=0)
@@ -515,22 +533,93 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 			{
 				QWidget* parent = reinterpret_cast<QWidget*>(MaindefStie);
 				PICRibbonButtonGroup* newGroup = new PICRibbonButtonGroup(parent);
-				newGroup->setTitle(group->title());
-				std::list<QAction*> mActions = getGroupActions(group->title()).toStdList();
+				std::list<QAction*> mActions = group->get_action_all().toStdList();
+				newGroup->setMinimumSize(QSize(0, 0));
+				newGroup->setMaximumSize(group->size());
 				for (auto iter = mActions.begin(); iter != mActions.end();iter++)
 				{
 					QToolButton *b = new QToolButton;
 					b->setDefaultAction(*iter);
-					newGroup->addButton2(b);
+					newGroup->addButton(b);
 				}
 				mydarWer.insert(std::pair <QString,QWidget*>(group->title(),newGroup));
 				QString myTitle = group->title();
 				this->clearGoup(group->title());
-				picribbontabcontent->addGroup(myTitle);
 				QToolButton* buttom = new QToolButton;
 				picribbontabcontent->addButton(myTitle,buttom);
+				//group->addButton(buttom);
 				QObject::connect(buttom, SIGNAL(clicked()),this,SLOT(buttomclicked()));
 				return toScale(index, size);
+			}
+		}
+	}
+	return false;
+}
+
+/**
+* @brief Ribbon::unFold 展开
+* @param unsigned int index tab页序号
+* @param QSize & size 大小
+* @return bool
+*/
+bool Ribbon::unFold(unsigned int index, QSize& size)
+{
+	if (!mydarWer.empty())
+	{
+		QWidget* tab = QTabWidget::widget(index);
+		PICRibbonTabContent* picribbontabcontent = dynamic_cast<PICRibbonTabContent*>(tab);
+		unsigned int allWidth = 0;
+		unsigned int heightMax = 0;
+		//获取大小
+		std::map<QString, PICRibbonButtonGroup*> groups;
+		for (auto subindex = picribbontabcontent->contentLayout->count() - 1; subindex >= 0;subindex--)
+		{
+			PICRibbonButtonGroup* picribbonbuttongroup = dynamic_cast<PICRibbonButtonGroup*>(
+				picribbontabcontent->contentLayout->itemAt(subindex)->widget());
+			auto iterwidget = mydarWer.find(picribbonbuttongroup->title());
+			if (iterwidget!=mydarWer.end())
+			{
+				groups.insert(std::pair<QString, PICRibbonButtonGroup*>(picribbonbuttongroup->title(), picribbonbuttongroup));
+			}
+			else
+			{
+				allWidth += picribbonbuttongroup->width();
+				heightMax = (heightMax > picribbonbuttongroup->height() ? heightMax : picribbonbuttongroup->height());
+			}
+		}
+		//展开
+		for (auto myiter = mydarWer.begin(); myiter != mydarWer.end();myiter++)
+		{
+			PICRibbonButtonGroup* subgroup = dynamic_cast<PICRibbonButtonGroup*>(myiter->second);
+			for (auto iter = groups.begin(); iter != groups.end();iter++)
+			{
+				if (iter->first!=subgroup->title())
+				{
+					allWidth+=iter->second->width();
+				}
+			}
+			int Len = allWidth + subgroup->width();
+			int distance = size.width() - Len;
+			if (distance>WIGET_INTERVAL+20)
+			{
+				auto itergroup = groups.find(myiter->first);
+				if (itergroup!=groups.end())
+				{
+					PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(itergroup->second);
+					PICRibbonButtonGroup* mydrawGroup = dynamic_cast<PICRibbonButtonGroup*>(myiter->second);
+					std::list<QAction*> mActions = mydrawGroup->get_action_all().toStdList();
+					auto buttonCount=group->buttonCount();
+					for (auto index = buttonCount - 1; index >= 0;index--)
+						group->removeButton(dynamic_cast<QToolButton*>(group->gridLayout_btn->itemAt(index)->widget()));
+					for (auto iter = mActions.begin(); iter != mActions.end();iter++)
+					{
+						QToolButton* b = new QToolButton;
+						b->setDefaultAction(*iter);
+						group->addButton(b);
+					}
+					mydarWer.erase(myiter);
+					return unFold(index, size);
+				}
 			}
 		}
 	}

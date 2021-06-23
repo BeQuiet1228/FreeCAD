@@ -114,6 +114,7 @@ MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 	}
 	setMinimumSize(0,0);
 	tabWidgetInterface->setParentWidget(this);
+	LastSize = this->size();
 }
 
 
@@ -369,13 +370,15 @@ void MainWindowDef::showOld()
 */
 void MainWindowDef::test()
 {
-	QSize unfoldMinSize = tabWidgetInterface->getunfoldMinSize();
-	QSize widgetCurSize = this->size();
-	std::cerr << (widgetCurSize.width() - unfoldMinSize.width()) << std::endl;
-	if ((widgetCurSize.width()- unfoldMinSize.width()) <= 30)
+	if (LastSize.width()>this->width())
 	{
-		std::cerr << "needScale:" << std::endl;
-		tabWidgetInterface->setScale(this->size());
+		LastSize = this->size();
+		tabWidgetInterface->setScale(this->size(),false);
+	}
+	else if (LastSize.width()<this->width())
+	{
+		LastSize = this->size();
+		tabWidgetInterface->setScale(this->size(), true);
 	}
 }
 #include "moc_MainWindowDef.cpp"
