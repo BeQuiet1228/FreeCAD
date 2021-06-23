@@ -56,7 +56,7 @@ void TreeWidgetm3d::addSubItem2(const Gui::Document& doc, const std::string& Gro
 		}
 		else
 		{
-			item = new QTreeWidgetItem(parentItem);
+			item = new QTreeWidgetItem(parentItem,Gui::TreeWidget::m3dtextType);
 			item->setText(0, QString::fromStdString(GroupName));
 			item->setIcon(0, QIcon(treeIcon2[0]));
 			groupItems[GroupName] = item;
@@ -69,7 +69,7 @@ void TreeWidgetm3d::addSubItem2(const Gui::Document& doc, const std::string& Gro
 		substring = substring + "...";
 		}*/
 		QTreeWidgetItem* subItems = nullptr;
-		subItems = new QTreeWidgetItem(item);
+		subItems = new QTreeWidgetItem(item, Gui::TreeWidget::m3dtextType);
 		subItems->setIcon(0, QIcon(treeIcon2[1]));
 		subItems->setText(0, QString::fromStdString(substring));
 		//item->addChild(subItems);
