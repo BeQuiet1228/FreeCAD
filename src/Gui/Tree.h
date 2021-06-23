@@ -125,11 +125,6 @@ protected:
     void slotRelabelDocument(const Gui::Document&);
 
     void changeEvent(QEvent *e);
-	//添加item
-	void addSubItem(const Gui::Document&, const std::string&);
-	void addSubItem2(const Gui::Document&, const std::string& GroupName,
-	const std::string& KeyName, const int cusline);
-	void clearsubItem(const Gui::Document&);
 protected:
     QAction* createGroupAction;
     QAction* relabelObjectAction;
@@ -144,8 +139,6 @@ protected:
     QTreeWidgetItem* rootItem;
     QTimer* statusTimer;
     static QPixmap* documentPixmap;
-	std::map <QTreeWidgetItem*, int> itemToLine;
-	std::map<std::string, QTreeWidgetItem*> groupItems;
     bool fromOutside;
 };
 
@@ -259,7 +252,7 @@ public:
     TreeDockWidget(Gui::Document*  pcDocument,QWidget *parent=0);
     ~TreeDockWidget();
 private:
-	TreeWidgetm3d* treeWidget;
+	TreeWidget* treeWidget;
 };
 }
 

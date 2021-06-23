@@ -7,6 +7,7 @@
 QString treeIcon2[2] = {};
 TreeWidgetm3d::TreeWidgetm3d(QWidget* parent) :Gui::TreeWidget(parent)
 {
+	/***************************************/
 	//2021/6/18 新增信号，用于添加子节点控件
 	Gui::Application::Instance->signalAddsubitem.connect(boost::bind(&TreeWidgetm3d::addSubItem, this, _1, _2));
 	/*Application::Instance->signalAddsubItem2.connect(boost::bind(&TreeWidget::addSubItem2, this, _1, _2));*/
@@ -37,6 +38,7 @@ void TreeWidgetm3d::addSubItem(const Gui::Document& doc, const std::string& keyW
 }
 void TreeWidgetm3d::addSubItem2(const Gui::Document& doc, const std::string& GroupName,
 	const std::string& KeyName, const int cusline){
+	const Gui::Document *pdoc = &doc;
 	auto iter = DocumentMap.find(&doc);
 	if (iter != DocumentMap.end())
 	{
@@ -75,6 +77,7 @@ void TreeWidgetm3d::addSubItem2(const Gui::Document& doc, const std::string& Gro
 		//item->addChild(subItems);
 		itemToLine[subItems] = cusline;
 	}
+
 }
 void TreeWidgetm3d::clearsubItem(const Gui::Document& doc){
 	auto iter = DocumentMap.find(&doc);
@@ -106,95 +109,17 @@ void TreeWidgetm3d::clearsubItem(const Gui::Document& doc){
 void TreeWidgetm3d::mouseDoubleClickEvent(QMouseEvent * event)
 {
 	QTreeWidgetItem* item = itemAt(event->pos());
-	//if (!item)
-	//	return;
-	//Gui::TreeWidget::mouseDoubleClickEvent(event);
-	//if (item->type()==TreeWidget::m3dtextType)
-	//{
-	//	auto iter = itemToLine.find(item);
-	//	if (iter != itemToLine.end())
-	//	{
-	//		//qDebug() << "line:" << iter->second;
-	//		Gui::Application::Instance->GoToLine(iter->second);
-	//	}
-	//}
+	if (!item)
+		return;
+	Gui::TreeWidget::mouseDoubleClickEvent(event);
+	if (item->type()==TreeWidget::m3dtextType)
+	{
+		auto iter = itemToLine.find(item);
+		if (iter != itemToLine.end())
+		{
+			//qDebug() << "line:" << iter->second;
+			Gui::Application::Instance->GoToLine(iter->second);
+		}
+	}
 }
-
-//void TreeWidgetm3d::onSelectionChanged(const SelectionChanges& msg)
-//{
-//	switch (msg.Type)
-//	{
-//	case SelectionChanges::AddSelection:
-//	{
-//		Gui::Document* pDoc = Application::Instance->getDocument(msg.pDocName);
-//		std::map<const Gui::Document*, DocumentItem*>::iterator it;
-//		it = DocumentMap.find(pDoc);
-//		bool lock = this->blockConnection(true);
-//		if (it != DocumentMap.end())
-//		 it->second->setObjectSelected(msg.pObjectName, true);
-//		this->blockConnection(lock);
-//	}   break;
-//	case SelectionChanges::RmvSelection:
-//	{
-//										   Gui::Document* pDoc = Application::Instance->getDocument(msg.pDocName);
-//										   std::map<const Gui::Document*, DocumentItem*>::iterator it;
-//										   it = DocumentMap.find(pDoc);
-//										   bool lock = this->blockConnection(true);
-//										   if (it != DocumentMap.end())
-//											   it->second->setObjectSelected(msg.pObjectName, false);
-//										   this->blockConnection(lock);
-//	}   break;
-//	case SelectionChanges::SetSelection:
-//	{
-//										   Gui::Document* pDoc = Application::Instance->getDocument(msg.pDocName);
-//										   std::map<const Gui::Document*, DocumentItem*>::iterator it;
-//										   it = DocumentMap.find(pDoc);
-//										   // we get notified from the selection and must only update the selection on the tree,
-//										   // thus no need to notify again the selection. See also onItemSelectionChanged().
-//										   if (it != DocumentMap.end()) {
-//											   bool lock = this->blockConnection(true);
-//											   it->second->selectItems();
-//											   this->blockConnection(lock);
-//										   }
-//	}   break;
-//	case SelectionChanges::ClrSelection:
-//	{
-//										   // clears the complete selection
-//										   if (strcmp(msg.pDocName, "") == 0) {
-//											   this->clearSelection();
-//										   }
-//										   else {
-//											   // clears the selection of the given document
-//											   Gui::Document* pDoc = Application::Instance->getDocument(msg.pDocName);
-//											   std::map<const Gui::Document*, DocumentItem*>::iterator it;
-//											   it = DocumentMap.find(pDoc);
-//											   if (it != DocumentMap.end()) {
-//												   it->second->clearSelection();
-//											   }
-//										   }
-//										   this->update();
-//	}   break;
-//	case SelectionChanges::SetPreselect:
-//	{
-//										   Gui::Document* pDoc = Application::Instance->getDocument(msg.pDocName);
-//										   std::map<const Gui::Document*, DocumentItem*>::iterator it;
-//										   it = DocumentMap.find(pDoc);
-//										   if (it != DocumentMap.end())
-//											   it->second->setObjectHighlighted(msg.pObjectName, true);
-//	}   break;
-//	case SelectionChanges::RmvPreselect:
-//	{
-//										   Gui::Document* pDoc = Application::Instance->getDocument(msg.pDocName);
-//										   std::map<const Gui::Document*, DocumentItem*>::iterator it;
-//										   it = DocumentMap.find(pDoc);
-//										   if (it != DocumentMap.end())
-//											   it->second->setObjectHighlighted(msg.pObjectName, false);
-//	}   break;
-//	default:
-//		break;
-//	}
-//}
-	//std::map <QTreeWidgetItem*, int> itemToLine;
-	//std::map<std::string, QTreeWidgetItem*> groupItems;
-
 #include "moc_TreeWidgetm3d.cpp"

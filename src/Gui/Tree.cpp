@@ -77,6 +77,8 @@ TreeWidget::TreeWidget(QWidget* parent)
     this->setDragEnabled(true);
     this->setAcceptDrops(true);
 	*/
+
+
 	this->setDragEnabled(false);
 	this->setAcceptDrops(false);
 
@@ -121,12 +123,6 @@ TreeWidget::TreeWidget(QWidget* parent)
     Application::Instance->signalRenameDocument.connect(boost::bind(&TreeWidget::slotRenameDocument, this, _1));
     Application::Instance->signalActiveDocument.connect(boost::bind(&TreeWidget::slotActiveDocument, this, _1));
     Application::Instance->signalRelabelDocument.connect(boost::bind(&TreeWidget::slotRelabelDocument, this, _1));
-	////2021/6/18 新增信号，用于添加子节点控件
-	//Application::Instance->signalAddsubitem.connect(boost::bind(&TreeWidget::addSubItem,this,_1,_2));
-	///*Application::Instance->signalAddsubItem2.connect(boost::bind(&TreeWidget::addSubItem2, this, _1, _2));*/
-	//Application::Instance->signalAddsubitem2.connect(boost::bind(&TreeWidget::addSubItem2,this,
-	//	_1,_2,_3,_4));
-	//Application::Instance->signalClearSub.connect(boost::bind(&TreeWidget::clearsubItem,this,_1));
     QStringList labels;
     labels << tr("Labels & Attributes");
     this->setHeaderLabels(labels);
@@ -167,8 +163,6 @@ TreeWidget::TreeWidget(QWidget* parent)
     documentPixmap = new QPixmap(Gui::BitmapFactory().pixmap("Document"));
 
 	connect(this, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(ClickTheObj()));
-	treeIcon[0] = QString::fromUtf8(":/icons/Group.svg");
-	treeIcon[1] = QString::fromUtf8(":/icons/ClassBrowser/member.png");
 }
 
 TreeWidget::~TreeWidget()
@@ -745,12 +739,13 @@ void TreeWidget::drawRow(QPainter *painter, const QStyleOptionViewItem &options,
 
 void TreeWidget::slotNewDocument(const Gui::Document& Doc)
 {
+	const Gui::Document* pDoc = &Doc;
 	  DocumentItem* item = new DocumentItem(&Doc, this->rootItem);
 	  this->expandItem(item);
 	  item->setIcon(0, *documentPixmap);
 	  //qDebug() << QString::fromUtf8(Doc.getDocument()->Label.getValue());
-	  item->setText(0, QString::fromUtf8(Doc.getDocument()->Label.getValue()));
 	  DocumentMap[ &Doc ] = item;
+	  item->setText(0, QString::fromUtf8(Doc.getDocument()->Label.getValue()));
 }
 
 void TreeWidget::slotDeleteDocument(const Gui::Document& Doc)
@@ -987,7 +982,7 @@ TreeDockWidget::TreeDockWidget(Gui::Document* pcDocument,QWidget *parent)
   : DockWindow(pcDocument,parent)
 {
     setWindowTitle(tr("Tree view"));
-    this->treeWidget = new TreeWidgetm3d(this);
+    this->treeWidget = new TreeWidget(this);
     this->treeWidget->setRootIsDecorated(false);
     ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/TreeView");
 //    this->treeWidget->setIndentation(hGrp->GetInt("Indentation", this->treeWidget->indentation()));
@@ -1765,114 +1760,5 @@ void DocumentObjectItem::slotChangeStatusTip(const QString& tip)
 {
     this->setStatusTip(0, tip);
 }
-/*****************************************************/
-//2021年6月18日新增代码
-/**
-* @brief  Gui::TreeWidget::addSubItem 添加子节点控件
-* @param  const Gui::Document & doc  
-* @param  const std::string & keyWord  
-* @return void  
-*/
-void TreeWidget::addSubItem(const Gui::Document& doc,const std::string& keyWord){
-	auto iter = DocumentMap.find(&doc);
-	if (iter!=DocumentMap.end())
-	{
-		DocumentItem* mItem = dynamic_cast<DocumentItem*>(iter->second);
-		if (!mItem)
-		{
-			std::cerr << "DocumentItem is nullptr from void TreeWidget::addSubItem(const Gui::Document& doc,const std::string& keyWord)" << std::endl;
-			return;
-		}
-		QTreeWidgetItem* subitem = new QTreeWidgetItem(mItem,TreeWidget::m3dtextType);
-		subitem->setText(0, QString::fromStdString(keyWord));
-	}
-}
-
-/**
-* @brief  Gui::TreeWidget::addSubItem2  添加子节点
-* @param  const Gui::Document &  
-* @param  const std::string & GroupName  分类名
-* @param  const std::string KeyName     子节点
-* @param  const int cusline				行号
-* @return void  
-*/
-void TreeWidget::addSubItem2(const Gui::Document& doc, const std::string& GroupName,
-	const std::string& KeyName, const int cusline)
-{
-	//std::map<std::string, std::vector<std::string>> m3dTextItemMap;
-	//std::map <QTreeWidgetItem*, int> itemToLine;
-	//std::map<std::string, QTreeWidget*> groupItems;
-	auto iter = DocumentMap.find(&doc);
-	if (iter != DocumentMap.end())
-	{
-		DocumentItem* mItem = dynamic_cast<DocumentItem*>(iter->second);
-		if (!mItem)
-		{
-			std::cerr << "DocumentItem is nullptr from void TreeWidget::addSubItem(const Gui::Document& doc,const std::string& keyWord)" << std::endl;
-			return;
-		}
-		QTreeWidgetItem* item = nullptr;/* = new QTreeWidgetItem(mItem, TreeWidget::m3dtextType);*/
-		//查找组
-		auto itergroup = groupItems.find(GroupName);
-		if (itergroup!=groupItems.end())
-		{
-			item = itergroup->second;
-		}
-		else
-		{
-			item = new QTreeWidgetItem(mItem, TreeWidget::m3dtextType);
-			item->setText(0,QString::fromStdString(GroupName));
-			item->setIcon(0,QIcon(treeIcon[0]));
-			groupItems[GroupName] = item;
-		}
-		//判断子节点的长度是否过长
-		std::string substring = KeyName;
-		/*if (KeyName.length() > 15)
-		{
-		substring = KeyName.substr(0, 15);
-		substring = substring + "...";
-		}*/
-		QTreeWidgetItem* subItems = nullptr;
-		subItems = new QTreeWidgetItem(item,TreeWidget::m3dtextType);
-		subItems->setIcon(0, QIcon(treeIcon[1]));
-		subItems->setText(0,QString::fromStdString(substring));
-		itemToLine[subItems] = cusline;
-	}
-}
-
-///**
-//* @brief  Gui::TreeWidget::clearsubItem
-//* @param  const Gui::Document & doc  
-//* @return void  
-//*/
-void TreeWidget::clearsubItem(const Gui::Document& doc)
-{
-	auto iter = DocumentMap.find(&doc);
-	if (iter!=DocumentMap.end())
-	{
-		//清除该节点下的所有节点
-		DocumentItem* mItem = dynamic_cast<DocumentItem*>(iter->second);
-		if (!mItem)
-		{
-			std::cerr << "DocumentItem is nullptr from void TreeWidget::addSubItem(const Gui::Document& doc,const std::string& keyWord)" << std::endl;
-			return;
-		}
-		//清除该节点下的所有子字节点
-		auto childCount = mItem->childCount();
-		for (auto index = childCount-1; index >=0;index--)
-		{
-			auto childitem = mItem->child(index);
-			auto childitensub = childitem->childCount();
-			for (auto subindex = childitensub-1; subindex >=0;subindex--)
-			{
-				childitem->removeChild(childitem->child(subindex));
-			}
-			mItem->removeChild(mItem->child(index));
-		}
-		itemToLine.clear();
-		groupItems.clear();
-	}
-}
-
 #include "moc_Tree.cpp"
 
