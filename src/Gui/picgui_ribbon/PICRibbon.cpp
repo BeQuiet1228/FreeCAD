@@ -624,14 +624,14 @@ bool Ribbon::unFold(unsigned int index, QSize& size)
 					PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(itergroup->second);
 					PICRibbonButtonGroup* mydrawGroup = dynamic_cast<PICRibbonButtonGroup*>(myiter->second);
 					std::list<QAction*> mActions = mydrawGroup->get_action_all().toStdList();
-					auto buttonCount=group->buttonCount();
-					for (auto index = buttonCount - 1; index >= 0;index--)
-						group->removeButton(dynamic_cast<QToolButton*>(group->gridLayout_btn->itemAt(index)->widget()));
+					QString CusTitle = group->title();
+					this->clearGoup(CusTitle);
+					picribbontabcontent->addGroup(CusTitle);
 					for (auto iter = mActions.begin(); iter != mActions.end();iter++)
 					{
 						QToolButton* b = new QToolButton;
 						b->setDefaultAction(*iter);
-						group->addButton(b);
+						picribbontabcontent->addButton(CusTitle, b);
 					}
 					if (myiter->second->isVisible())
 					{
