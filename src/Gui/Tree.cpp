@@ -67,7 +67,6 @@ const int TreeWidget::m3dtextType = 1002;
 
 //QString treeIcon[] = {"/icons/Group.svg","/icons/ClassBrowser/member.png"};
 /* TRANSLATOR Gui::TreeWidget */
-QString treeIcon[2] = {};
 TreeWidget::TreeWidget(QWidget* parent)
     : QTreeWidget(parent), contextItem(0), fromOutside(false)
 {
