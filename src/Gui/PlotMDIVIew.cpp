@@ -43,6 +43,12 @@ namespace Gui{
 		return true;
 	}
 
+	/**
+	* @brief  Gui::PlotMDIView::onMsg
+	* @param  const char * pMsg  
+	* @param  const char * * ppReturn  
+	* @return bool  
+	*/
 	bool PlotMDIView::onMsg(const char* pMsg, const char** ppReturn)
 	{
 		if (strcmp("Undo", pMsg) == 0)

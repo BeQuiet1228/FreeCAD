@@ -4,6 +4,7 @@
 
 #include <QToolButton>
 #include <QDebug>
+#include <QGridLayout>
 #include "picgui_ribbon/moc_PICRibbonButtonGroup.cpp"
 PICRibbonButtonGroup::PICRibbonButtonGroup(QWidget *parent)
   : QWidget(parent)
@@ -12,6 +13,7 @@ PICRibbonButtonGroup::PICRibbonButtonGroup(QWidget *parent)
 {
   ui->setupUi(this);
   setCursor(Qt::ArrowCursor);//设置鼠标样式
+  gridLayout_btn = ui->gridLayout_btn;
 }
 
 PICRibbonButtonGroup::~PICRibbonButtonGroup()
@@ -53,7 +55,18 @@ void PICRibbonButtonGroup::addButton(QToolButton *button)
 
   ui->gridLayout_btn->addWidget(button, xPos, yPos);
 }
-
+void PICRibbonButtonGroup::addButton2(QToolButton *button)
+{
+	button->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+	button->setMinimumSize(24, 24);
+	button->setAutoRaise(true);
+	button->setIconSize(QSize(20, 20));
+	button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	int btnCount = buttonCount();
+	int xPos = btnCount % 3;
+	int yPos = btnCount / 3;
+	ui->gridLayout_btn->addWidget(button, xPos, yPos);
+}
 void PICRibbonButtonGroup::removeButton(QToolButton *button)
 {
   /// \todo What happens if button is not part of the layout?

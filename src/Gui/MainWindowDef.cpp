@@ -113,6 +113,8 @@ MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 		screens.push_back(rect);
 	}
 	setMinimumSize(0,0);
+	tabWidgetInterface->setParentWidget(this);
+	LastSize = this->size();
 }
 
 
@@ -127,7 +129,7 @@ void MainWindowDef::mouseMoveEvent(QMouseEvent *event)
 	changeCursor(event->pos());
 	changeSize(event->pos());
 
-	test();
+	
 	/*QSize size= tabWidgetInterface->size();
 	qDebug() <<"size--"<< size;*/
 }
@@ -159,6 +161,7 @@ void MainWindowDef::resizeEvent(QResizeEvent *event)
 	QWidget::resizeEvent(event);
 	if (isMax)
 		isMax = false;
+	test();
 }
 
 void MainWindowDef::moveEvent(QMoveEvent *event)
@@ -175,7 +178,6 @@ void MainWindowDef::titleBarMove(QPoint pos)
 		if (posing.y()-screens[index].topLeft().y()<2)
 		{
 			showMax();
-			//qDebug() << "showMax";
 			return ;
 		}
 	}
@@ -368,9 +370,15 @@ void MainWindowDef::showOld()
 */
 void MainWindowDef::test()
 {
-	//»ñÈ¡tabÒ³
-	auto tabs = tabWidgetInterface->getTabs();
-	auto groups=tabWidgetInterface->getGroups();
-	auto action=tabWidgetInterface->getActions();
+	if (LastSize.width()>this->width())
+	{
+		LastSize = this->size();
+		tabWidgetInterface->setScale(this->size(),false);
+	}
+	else if (LastSize.width()<this->width())
+	{
+		LastSize = this->size();
+		tabWidgetInterface->setScale(this->size(), true);
+	}
 }
 #include "moc_MainWindowDef.cpp"

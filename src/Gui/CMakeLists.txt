@@ -413,6 +413,7 @@ SET(Gui_RES_SRCS
     Language/translation.qrc
     iisTaskPanel/src/iisTaskPanel.qrc
     QSint/actionpanel/schemes.qrc
+	picgui_ribbon/picgui_ribbon.qrc
 )
 
 if (BUILD_QT5)
