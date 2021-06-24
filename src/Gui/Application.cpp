@@ -423,6 +423,11 @@ void Application::GoToLine(int line)
 
 } // namespace Gui
 
+/**
+* @brief Gui::Application::Application
+* @param bool GUIenabled
+* @return 
+*/
 Application::Application(bool GUIenabled)
 {
     //App::GetApplication().Attach(this);
@@ -587,6 +592,11 @@ Application::Application(bool GUIenabled)
     }
 }
 
+/**
+* @brief Gui::Application::~Application
+* @param 
+* @return 
+*/
 Application::~Application()
 {
     Base::Console().Log("Destruct Gui::Application\n");
