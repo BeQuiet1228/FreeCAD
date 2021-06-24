@@ -473,10 +473,12 @@ QSize Ribbon:: getcurMinSize() {
 	}
 	return size;
 }
+
 /**
-* @brief  Ribbon::setScale 设置缩放
-* @param  QSize & size  
-* @return void  
+* @brief Ribbon::setScale
+* @param QSize & size
+* @param bool state
+* @return void
 */
 void Ribbon::setScale(QSize& size,bool state) {
 	if (state)
@@ -526,6 +528,15 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 			if (iter != mydarWer.end())
 			{
 				subindex -= 1;
+				PICRibbonButtonGroup* mydarWerGroup = dynamic_cast<PICRibbonButtonGroup*>(iter->second);
+				if (!mydarWerGroup)
+				{
+					std::cerr << "mydarWerGroup is nullptr from bool Ribbon::toScale(unsigned int index,QSize& size)" << std::endl;
+				}
+				else
+				{
+					mydarWerGroup->hide();
+				}
 			}
 			else
 			{
@@ -545,7 +556,12 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 				QString myTitle = group->title();
 				this->clearGoup(group->title());
 				picribbontabcontent->addGroup(myTitle);
-				QToolButton* buttom = new QToolButton;
+				QToolButton* buttom = new QToolButton();
+				QIcon icon(QString::fromUtf8(":/drawer/icons/darwer.svg"));
+				QSize size(32,32);
+				icon.actualSize(size);
+				buttom->setIcon(icon);
+				buttom->setMaximumSize(size);
 				picribbontabcontent->addButton(myTitle,buttom);
 				QObject::connect(buttom, SIGNAL(clicked()),this,SLOT(buttomclicked()));
 				return toScale(index, size);
@@ -600,7 +616,7 @@ bool Ribbon::unFold(unsigned int index, QSize& size)
 			}
 			int Len = allWidth + subgroup->width();
 			int distance = size.width() - Len;
-			if (distance>WIGET_INTERVAL+20)
+			if (distance>WIGET_INTERVAL*2)
 			{
 				auto itergroup = groups.find(myiter->first);
 				if (itergroup!=groups.end())
@@ -616,6 +632,10 @@ bool Ribbon::unFold(unsigned int index, QSize& size)
 						QToolButton* b = new QToolButton;
 						b->setDefaultAction(*iter);
 						group->addButton(b);
+					}
+					if (myiter->second->isVisible())
+					{
+						myiter->second->hide();
 					}
 					mydarWer.erase(myiter);
 					return unFold(index, size);
@@ -675,13 +695,42 @@ void Ribbon::showdrawerGroup(QString GroupName,QToolButton* buttom)
 			newGroup->setAutoFillBackground(true);
 			newGroup->setPalette(pal);
 			//移动
-			//QRect rect = buttom->frameGeometry();
-			QPoint pos=buttom->pos();
-			QPoint GlobalPos=mapToGlobal(pos);
-			newGroup->move(GlobalPos);
+			{
+				
+				PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(buttom->parent());
+				if (!group)
+				{
+					std::cerr << "group is nullptr from void Ribbon::showdrawerGroup(QString GroupName,QToolButton* buttom)" << std::endl;
+					return;
+				}
+				QWidget* mainWiget = reinterpret_cast<QWidget*>(MaindefStie);
+				QPoint widgetPos = mainWiget->mapFromGlobal(mapToGlobal(group->pos()));
+				QSize groupSize = group->size();
+				QRect groupRect;
+				groupRect.setLeft(widgetPos.x());
+				groupRect.setTop(widgetPos.y());
+				groupRect.setWidth(groupSize.width());
+				groupRect.setHeight(groupSize.height());
+				if (groupRect.center().x()+newGroup->size().width()>mainWiget->width())
+				{
+					QPoint centerPos;
+					centerPos.setY(groupRect.center().y()+newGroup->size().height()/2);
+					int distance = mainWiget->width() - (groupRect.center().x() + newGroup->size().width()) - WIGET_INTERVAL;
+					centerPos.setX(groupRect.center().x()+distance);
+					newGroup->move(centerPos);
+				}
+				else
+				{
+					QPoint centerPos;
+					centerPos.setX(groupRect.center().x());
+					centerPos.setY(groupRect.center().y() + newGroup->size().height() / 2);
+					newGroup->move(centerPos);
+				}
+				QSize widgetSize = mainWiget->size();
+
+			}
 			newGroup->show();
 		}
-		
 	}
 	for (auto index = mydarWer.begin(); index != mydarWer.end(); index++)
 	{
@@ -693,6 +742,11 @@ void Ribbon::showdrawerGroup(QString GroupName,QToolButton* buttom)
 	}
 }
 
+/**
+* @brief Ribbon::setParentWidget
+* @param MainWindowDef * parent
+* @return void
+*/
 void Ribbon::setParentWidget(MainWindowDef* parent)
 {
 	MaindefStie = reinterpret_cast<unsigned __int64>(parent);

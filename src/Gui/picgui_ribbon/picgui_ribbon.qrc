@@ -32,7 +32,8 @@
         <file>icons/运行处理选项16.ico</file>
         <file>icons/运行处理选项32.ico</file>
     </qresource>
+	
 	<qresource prefix="/drawer">
-	<file>icons/drawer.svg</file>
+	<file>icons/darwer.svg</file>
 	</qresource>
 </RCC>
