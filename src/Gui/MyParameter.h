@@ -50,6 +50,7 @@ public:
 	void makeLineEnabled(int row);
 	bool isValidWithName(int row);
 	bool isValidWithName(const std::string& param_name, int row);
+	bool isValidWithName(const std::string& param_name);
 	void addEmptyProperty(const QString& name);
 	bool changeProperty(param_type _type, const QString& name, const QString& expression);
 	void addProperty(param_type _type, const QString& name);
