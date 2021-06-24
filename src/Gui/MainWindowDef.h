@@ -84,8 +84,7 @@ private:
 	void changeCursor(const QPoint& pos);
 	//相应拖拽的放大缩小
 	void changeSize(const QPoint& pos);
-	//测试代码
-	void test();
+	void ToDrawer();
 
 public:
 	//添加中心区域的窗口

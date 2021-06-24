@@ -161,7 +161,8 @@ void MainWindowDef::resizeEvent(QResizeEvent *event)
 	QWidget::resizeEvent(event);
 	if (isMax)
 		isMax = false;
-	test();
+	//抽屉功能实现
+	ToDrawer();
 }
 
 void MainWindowDef::moveEvent(QMoveEvent *event)
@@ -364,11 +365,12 @@ void MainWindowDef::showOld()
 	move(oldPoint);
 	show();
 }
+
 /**
-* @brief  MainWindowDef::test
-* @return void  
+* @brief MainWindowDef::ToDrawer  
+* @return void
 */
-void MainWindowDef::test()
+void MainWindowDef::ToDrawer()
 {
 	if (LastSize.width()>this->width())
 	{
