@@ -52,5 +52,3 @@ void FindDialog::on_pushButtonLast_clicked()
 		QMessageBox::information(this, QString::fromLocal8Bit("waring"), QString::fromLocal8Bit("not find text!"), QMessageBox::Ok);
 	}
 }
-
-#include "codeEdit/moc_FindDialog.cpp"

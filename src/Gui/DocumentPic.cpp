@@ -6,6 +6,7 @@
 #include "MainWindow.h"
 #include "View3DInventor.h"
 #include "app/DocumentDataManager.h"
+#include "TreeViewctrl.h"
 DocumentPic::DocumentPic(App::Document* pcDocument, Gui::Application* app)
 	:Gui::Document(pcDocument,app)
 {
@@ -108,7 +109,14 @@ void DocumentPic::openH5File(const std::string& path)
 	DocumentManager* docm = dynamic_cast<DocumentManager*>(appDoc);
 	if (!docm)
 		return;
-
+	//此处增加树控件和documentManager的绑定
+	ListTreeWidget* mlisttreewidget = dynamic_cast<ListTreeWidget*>(Gui::MainWindow::getInstance()->mTreeWidget);
+	if (!mlisttreewidget)
+	{
+		std::cerr << "ListTreeWidget is nullptr from Gui void DocumentPic::openH5File(const std::string& path)" << std::endl;
+		return;
+	}
+	docm->bindTreeContrue(mlisttreewidget, nullptr);
 	docm->loadFile(path);
 }
 

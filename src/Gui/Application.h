@@ -27,7 +27,7 @@
 #include <QPixmap>
 #include <string>
 #include <vector>
-
+//#include "Editor/M3dEditor.h"
 #define  putpix()
 
 #include <App/Application.h>
@@ -116,9 +116,15 @@ public:
     /// signal on activating view
     boost::signal<void (const Gui::MDIView*)> signalActivateView;
     //@}
-
     /** @name methods for Document handling */
     //@{
+	//添加item2021/6/18
+	boost::signal<void(const Gui::Document&,const std::string&)> signalAddsubitem;
+	//添加item2
+	//boost::signal<void(const Gui::Document&, const Cmds&)>signalAddsubItem2;
+	boost::signal<void(const Gui::Document&, const std::string& GroupName, 
+		const std::string KeyName, const int cusline)>signalAddsubitem2;
+	boost::signal<void(const Gui::Document&)> signalClearSub;
 protected:
     /// Observer message from the Application
     void slotNewDocument(const App::Document&);
@@ -264,6 +270,8 @@ private:
 		static void DisplatPlot(Hdf5Data data, int _type = 0);
 		static void ToStruct(Hdf5Data data);
 		static void showPlotSettingDialog();
+		void ToSubItemTree();
+		void GoToLine(int line);
 };
 
 } //namespace Gui

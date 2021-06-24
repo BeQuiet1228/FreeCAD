@@ -18,24 +18,11 @@ SET(UI_SRC
 	SmartContorlUI.ui
 	VariateItemWidget.ui
 	VariateInputDialog.ui
-	codeEdit/FindDialog.ui
 )
 SET(QRC_SRC
 
 )
-SET(CODE_EDIT
-	codeEdit/casewordlistwidget.cpp
-	codeEdit/casewordlistwidget.h
-	codeEdit/codeeditor.cpp
-	codeEdit/codeeditor.h
-	codeEdit/matchwordsthrea.cpp
-	codeEdit/matchwordsthrea.h
-	codeEdit/myhightlighter.cpp
-	codeEdit/myhightlighter.h
-	codeEdit/FindDialog.ui
-	codeEdit/FindDialog.h
-	codeEdit/FindDialog.cpp
-)
+
 SET(LUA_SRC
 	lua/lapi.c
 	lua/lapi.h
@@ -111,11 +98,6 @@ SET(JSON_SRC
 SET(MY_MOC_HDR
 	SmartContorlUI.h
 	SmartContorl.h
-	codeEdit/casewordlistwidget.h
-	codeEdit/codeeditor.h
-	codeEdit/matchwordsthrea.h
-	codeEdit/myhightlighter.h
-	codeEdit/FindDialog.h
 	VariateItemWidget.h
 	VariateInputDialog.h
 	qcustomplot.h
@@ -180,7 +162,6 @@ SET(SmartContorl_src
 	${Gui_QRC_SRCS}
 	${NETWORK_SRC}
 	${LUA_SRC}
-	${CODE_EDIT}
 	${XML_SRC}
 )
 #设置编译生成文件类型
@@ -215,6 +196,7 @@ list(APPEND QT_LIB
     optimized MSVCRT.LIB
     optimized MSVCPRT.LIB
 	HDF5Reader
+	Editor
 	)
 if(contorl_client_dll)
 list(APPEND QT_LIB
@@ -262,5 +244,4 @@ SOURCE_GROUP("Uic" FILES ${Gui_UIC_HDRS})
 
 SOURCE_GROUP("Network" FILES ${NETWORK_SRC})
 SOURCE_GROUP("lua" FILES ${LUA_SRC})
-SOURCE_GROUP("codeEdit" FILES ${CODE_EDIT})
 SOURCE_GROUP("xml" FILES ${XML_SRC})
