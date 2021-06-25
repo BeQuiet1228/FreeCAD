@@ -85,7 +85,7 @@ MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 	connect(ui->btMaxShow, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));
 	connect(ui->titleBar, SIGNAL(doubleClick()), this, SLOT(titleBarDoubleClicked()));
 
-	boundaryWidth = 4;
+	boundaryWidth = 6;
 	/*
 		设置鼠标移动事件追踪。
 		如果不设置此选项，那么仅当鼠标按下时才会触发moveEvent
@@ -128,10 +128,11 @@ void MainWindowDef::mouseMoveEvent(QMouseEvent *event)
 	QWidget::mouseMoveEvent(event);
 	changeCursor(event->pos());
 	changeSize(event->pos());
-
-	
-	/*QSize size= tabWidgetInterface->size();
-	qDebug() <<"size--"<< size;*/
+	if ((cursorState != RIGHT || !leftButtonIsPress))
+		return;
+	//判断当前鼠标位置移动的方向
+	//event->pos().x() > LastPos.x() ? (tabWidgetInterface->setScale(this->size(),true)) : (tabWidgetInterface->setScale(this->size(), false));
+	//LastPos = event->pos();
 }
 
 void MainWindowDef::mousePressEvent(QMouseEvent *event)
@@ -141,6 +142,7 @@ void MainWindowDef::mousePressEvent(QMouseEvent *event)
 	{
 		leftButtonIsPress = true;
 		leftButtonPressPos = event->pos();
+		//LastPos = event->pos();
 	}
 }
 
@@ -162,7 +164,7 @@ void MainWindowDef::resizeEvent(QResizeEvent *event)
 	if (isMax)
 		isMax = false;
 	//抽屉功能实现
-	ToDrawer();
+	//ToDrawer();
 }
 
 void MainWindowDef::moveEvent(QMoveEvent *event)
@@ -264,16 +266,20 @@ void MainWindowDef::changeCursor(const QPoint& pos)
 	{
 		setCursor(Qt::SizeFDiagCursor);
 		cursorState = RIGHT_BOTTOM;
+		//qDebug() << "SetCursor:" << "Qt::SizeFDiagCursor" << "cursorState:" << "RIGHT_BOTTOM";
 	}else if (bbottom)
 	{
 		setCursor(Qt::SizeVerCursor);
 		cursorState = BOTTOM;
+		//qDebug() << "SetCursor:" << "Qt::SizeVerCursor" << "cursorState:" << "BOTTOM";
 	}else if (bright){
 		setCursor(Qt::SizeHorCursor);
 		cursorState = RIGHT;
+		//qDebug() << "SetCursor:" << "Qt::SizeHorCursor" << "cursorState:" << "RIGHT";
 	}else{
 		setCursor(Qt::ArrowCursor);
 		cursorState = NONE;
+		//qDebug() << "SetCursor:" << "Qt::ArrowCursor" << "cursorState:" << "NONE";
 	}
 }
 
@@ -292,20 +298,30 @@ void MainWindowDef::changeSize(const QPoint& pos)
 	w = pos.x() - leftButtonPressPos.x();
 	h = pos.y() - leftButtonPressPos.y();
 	leftButtonPressPos = pos;
+	QSize size=this->size();
 	switch (cursorState)
 	{
 	case BOTTOM:
-		this->resize(this->width(), this->height() + h);
+		//this->resize(this->width(), this->height() + h);
+		size.setHeight(size.height() + h);
 		break;
 	case RIGHT:
-		this->resize(this->width() + w, this->height());
+		//this->resize(this->width() + w, this->height());
+		size.setWidth(size.width() + w);
 		break;
 	case RIGHT_BOTTOM:
-		this->resize(this->width() + w, this->height() + h);
+		//this->resize(this->width() + w, this->height() + h);
+	{
+		size.setWidth(size.width() + w);
+		size.setHeight(size.height() + h);
+	}
 		break;
 	default:
 		break;
 	}
+	this->resize(size);
+	ToDrawer(size);
+	LastSize = this->size();
 }
 
 
@@ -366,21 +382,36 @@ void MainWindowDef::showOld()
 	show();
 }
 
+
 /**
-* @brief MainWindowDef::ToDrawer  
+* @brief MainWindowDef::ToDrawer
 * @return void
+* @Time 2021/6/24
 */
-void MainWindowDef::ToDrawer()
+void MainWindowDef::ToDrawer(QSize& size)
 {
-	if (LastSize.width()>this->width())
+#if 0
+	if (LastSize.width()>size.width())
 	{
-		LastSize = this->size();
-		tabWidgetInterface->setScale(this->size(),false);
+		//LastSize = size;
+		tabWidgetInterface->setScale(size,false);
 	}
-	else if (LastSize.width()<this->width())
+	else if (LastSize.width()<size.width())
 	{
-		LastSize = this->size();
+		//LastSize = size;
+		tabWidgetInterface->setScale(size, true);
+	}
+#else
+	if (LastSize.width()>=this->width())
+	{
+		//LastSize = size;
+		tabWidgetInterface->setScale(this->size(), false);
+	}
+	else if (LastSize.width() < this->width())
+	{
+		//LastSize = size;
 		tabWidgetInterface->setScale(this->size(), true);
 	}
+#endif
 }
 #include "moc_MainWindowDef.cpp"

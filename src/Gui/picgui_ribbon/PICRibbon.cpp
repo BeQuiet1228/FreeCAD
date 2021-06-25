@@ -481,6 +481,7 @@ QSize Ribbon:: getcurMinSize() {
 * @return void
 */
 void Ribbon::setScale(QSize& size,bool state) {
+	int tabCount = count();
 	if (state)
 	{
 		//扩展
@@ -492,6 +493,7 @@ void Ribbon::setScale(QSize& size,bool state) {
 	else
 	{
 		//缩放
+		//QSize cursize=getunfoldMinSize();
 		for (auto index = 0; index < count(); index++)
 		{
 			toScale(index, size);
@@ -512,14 +514,19 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 	PICRibbonTabContent* picribbontabcontent = dynamic_cast<PICRibbonTabContent*>(tab);
 	unsigned int allWidth = 0;
 	unsigned int heightMax = 0;
+	QStringList stream;
 	for (auto subindex = picribbontabcontent->contentLayout->count() - 1; subindex >= 0;subindex--)
 	{
 		PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(picribbontabcontent->contentLayout->itemAt(subindex)->widget());
 		allWidth += group->width();
+		stream << group->title() << QString::number(group->width());
 		heightMax = (heightMax>group->height()?heightMax:group->height());
 	}
-	if (size.width()-allWidth<30)
+	qDebug() << "index:" << index << stream;
+	int distance = size.width() - allWidth;
+	if (distance<WIGET_INTERVAL)
 	{
+		qDebug() << "toscale:" << index << allWidth<<"WidgetSize:"<<size.width();
 		auto subindex = picribbontabcontent->contentLayout->count() - 1;
 		while (subindex>=0)
 		{
@@ -528,15 +535,7 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 			if (iter != mydarWer.end())
 			{
 				subindex -= 1;
-				PICRibbonButtonGroup* mydarWerGroup = dynamic_cast<PICRibbonButtonGroup*>(iter->second);
-				if (!mydarWerGroup)
-				{
-					std::cerr << "mydarWerGroup is nullptr from bool Ribbon::toScale(unsigned int index,QSize& size)" << std::endl;
-				}
-				else
-				{
-					mydarWerGroup->hide();
-				}
+				iter->second->hide();
 			}
 			else
 			{
@@ -558,11 +557,12 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 				picribbontabcontent->addGroup(myTitle);
 				QToolButton* buttom = new QToolButton();
 				QIcon icon(QString::fromUtf8(":/drawer/icons/darwer.svg"));
-				QSize size(32,32);
-				icon.actualSize(size);
+				QSize sizeicon(32,32);
+				icon.actualSize(sizeicon);
 				buttom->setIcon(icon);
-				buttom->setMaximumSize(size);
+				buttom->setMaximumSize(sizeicon);
 				picribbontabcontent->addButton(myTitle,buttom);
+				//picribbontabcontent->resize(100,100);
 				QObject::connect(buttom, SIGNAL(clicked()),this,SLOT(buttomclicked()));
 				return toScale(index, size);
 			}

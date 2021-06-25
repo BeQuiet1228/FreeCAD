@@ -63,6 +63,7 @@ private:
 	bool isMax = false;
 	std::vector<QRect> screens;
 	QSize LastSize;
+	QPoint LastPos;
 public:
 	//选项卡对象
 	TabWidgetInterFace *tabWidgetInterface;
@@ -84,7 +85,7 @@ private:
 	void changeCursor(const QPoint& pos);
 	//相应拖拽的放大缩小
 	void changeSize(const QPoint& pos);
-	void ToDrawer();
+	void ToDrawer(QSize& size);
 
 public:
 	//添加中心区域的窗口
