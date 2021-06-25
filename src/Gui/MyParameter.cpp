@@ -204,6 +204,17 @@ bool MyParameter::isValidWithName(const std::string& param_name, int row) {
     return res;
 }
 
+// 变量名有效性验证
+bool MyParameter::isValidWithName(const std::string& param_name) {
+    bool res = false;
+    std::regex r("^[A-Za-z]\\w*$");
+    if ((!param_name.empty()) && (std::regex_match(param_name, r))) {
+        res = true;
+    }
+    return res;
+}
+
+
 //分析表达式_expression的类型
 param_type MyParameter::typeAnalysis(const QString& text) {
     DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("Param");
@@ -538,13 +549,17 @@ void MyParameter::importText() {
     int cur_row = this->tableWidget->rowCount();
     double all = 0;
     for (int i = 0; i < p.size(); ++i) {
+        int cur_row = this->tableWidget->rowCount();
         startTime = clock();
-        this->tableWidget->item(cur_row - 1 + i, 0)->setText(QString::fromStdString(p[i][0]));
-        while (!isValidWithName(cur_row - 1 + i)) {
-            std::string temp = p[i][0] + "1";
-            this->tableWidget->item(cur_row - 1 + i, 0)->setText(QString::fromStdString(temp));
+        if (this->isValidWithName(p[i][0]))
+        {
+            std::string temp = p[i][0];
+            while (!isValidWithName(temp, cur_row - 1)) {
+                temp = temp + "1";
+            }
+            this->tableWidget->item(cur_row - 1, 0)->setText(QString::fromStdString(temp));
+            this->tableWidget->item(cur_row - 1, 1)->setText(QString::fromStdString(p[i][1]));
         }
-        this->tableWidget->item(cur_row - 1 + i, 1)->setText(QString::fromStdString(p[i][1]));
         endTime = clock();
         all = all + (double)(endTime - startTime) / CLOCKS_PER_SEC;
         std::cerr << p[i][0]  << " :\t" << (double)(endTime - startTime) / CLOCKS_PER_SEC << std::endl;
@@ -662,6 +677,7 @@ void MyParameter::changeParamName() {
     ChangeParamNameDialog* dlg_cpn = new ChangeParamNameDialog(apo);
     dlg_cpn->exec();
     std::string new_name = dlg_cpn->new_name;
+    if (new_name.empty()) return;
     int change_row = dlg_cpn->change_row;
     std::string old_name = this->tableWidget->item(change_row, 0)->text().toStdString();
     std::string expression = this->tableWidget->item(change_row, 1)->text().toStdString();

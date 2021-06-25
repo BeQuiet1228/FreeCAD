@@ -248,7 +248,6 @@ bool ControlTreeWidget::analysisType(const std::string& str, const QString& type
 
 	qstr = lists.at(0);
 	//获取名称和观测排序
-	std::cerr << qstr.toStdString() << "||" << typeName.toStdString() << std::endl;
 	if (qstr.indexOf(typeName) == -1)
 		return false;
 	rank = qstr.remove(typeName);
