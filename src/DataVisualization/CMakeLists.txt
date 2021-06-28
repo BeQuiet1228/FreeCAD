@@ -117,6 +117,8 @@ SET(SRC main.cpp
 	RenderGrid.h
 	DataInformationGetter.cpp
 	DataInformationGetter.h
+	PlotAdapter.cpp
+	PlotAdapter.h
 	)
 SET(SRC_TOOL ConfigWidget.h
 	ConfigWidget.cpp

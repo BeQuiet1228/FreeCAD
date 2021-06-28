@@ -1,5 +1,6 @@
 #include "ContourRenderStateGetter.h"
 #include "ContourRender.h"
+#include "PlotAdapter.h"
 #include <QPen>
 ContourRenderStateGetter::ContourRenderStateGetter(Plot* p)
 	:plot(p)
@@ -82,7 +83,7 @@ void ContourRenderStateGetter::setDisplayMode(const DisplayMod& mod)
 
 std::shared_ptr<ContourRender> ContourRenderStateGetter::getContourRender()
 {
-	auto rd = plot->mainRenderer;
+	auto rd = plot->adapter->mainRenderer;
 	std::shared_ptr<ContourRender> crd = std::dynamic_pointer_cast<ContourRender>(rd);
 	return crd;
 }

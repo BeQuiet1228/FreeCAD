@@ -84,4 +84,9 @@ Q_SIGNALS:
 	void emitSelectRect(QRect);
 	void emitSelectPoint(QPoint);
 	void emitResize(QSize);
+
+public:
+	//从渲染器起始层级
+	static const unsigned int SUB_RENDER_START_RANK = 10;
+	static const unsigned int FIND_POINT_RENDER_RANK = SUB_RENDER_START_RANK + 20;
 };
