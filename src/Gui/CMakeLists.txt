@@ -1273,7 +1273,7 @@ fc_wrap_cpp(ControlTreeWidgetMoc ControlTreeWidget.h)
 SOURCE_GROUP("Control" FILES ${Control_SRC})
 
 
-fc_wrap_cpp(MyParameter_MOC MyParameter.h  DlgInsertParamImp.h DlgDeleteParamImp.h DlgChangeParamNameImp.h)
+fc_wrap_cpp(MyParameter_MOC MyParameter.h  DlgInsertParamImp.h DlgDeleteParamImp.h DlgChangeParamNameImp.h dlgchangenamedialog.h)
 set(lzg_src DlgInsertParamImp.h
 	DlgInsertParamImp.cpp
 	cJSON.c
@@ -1291,12 +1291,15 @@ set(lzg_src DlgInsertParamImp.h
     DlgChangeParamNameImp.h
     DlgChangeParamNameImp.cpp
     DlgChangeParamName.ui
-	${MyParameter_MOC}
+    dlgchangenamedialog.h
+    dlgchangenamedialog.cpp
+   dlgchangenamedialog.ui
+   ${MyParameter_MOC}
 )
 if (BUILD_QT5)
-    QT5_WRAP_UI(lzg_ui DlgInsertParam.ui DlgDeleteParam.ui DlgChangeParamName.ui)
+    QT5_WRAP_UI(lzg_ui DlgInsertParam.ui DlgDeleteParam.ui DlgChangeParamName.ui dlgchangenamedialog.ui)
 else()
-    QT4_WRAP_UI(lzg_ui DlgInsertParam.ui DlgDeleteParam.ui DlgChangeParamName.ui)
+    QT4_WRAP_UI(lzg_ui DlgInsertParam.ui DlgDeleteParam.ui DlgChangeParamName.ui dlgchangenamedialog.ui)
 endif()
 
 source_group("lzg" FILES ${lzg_src})	
