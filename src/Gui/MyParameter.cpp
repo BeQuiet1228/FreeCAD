@@ -700,7 +700,7 @@ void MyParameter::changeParamName() {
     std::string old_name = this->tableWidget->item(change_row, 0)->text().toStdString();
     std::string expression = this->tableWidget->item(change_row, 1)->text().toStdString();
 
-    int max_row = this->tableWidget->rowCount();
+    /*int max_row = this->tableWidget->rowCount();
     std::vector<std::string> temp;
     for (int i = 0; i < max_row - 1; i++)
     {
@@ -712,7 +712,7 @@ void MyParameter::changeParamName() {
             tableWidget->setItem(i, 1, item_expression);
             tableWidget->item(i, 1)->setText(QString::fromStdString(str));
         }
-    }
+    }*/
 
     if (new_name.empty() || (!this->isValidWithName(new_name, change_row))) {
         return;
