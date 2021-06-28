@@ -101,7 +101,7 @@ MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 	tabWidgetInterface = new Ribbon();
 	tabWidgetInterface->setObjectName(QString::fromLocal8Bit("ribbonTabWidget"));
 	ui->widgetTab->layout()->addWidget(tabWidgetInterface);
-	auto desktopWidget = QApplication::desktop();
+	//auto desktopWidget = QApplication::desktop();
 	this->resize(1000, 500);
 	//获取窗口数量
 	unsigned int screenCount = QApplication::desktop()->screenCount();
@@ -164,7 +164,7 @@ void MainWindowDef::resizeEvent(QResizeEvent *event)
 	if (isMax)
 		isMax = false;
 	//抽屉功能实现
-	//ToDrawer();
+	ToDrawer(this->size());
 }
 
 void MainWindowDef::moveEvent(QMoveEvent *event)
@@ -320,8 +320,8 @@ void MainWindowDef::changeSize(const QPoint& pos)
 		break;
 	}
 	this->resize(size);
-	ToDrawer(size);
-	LastSize = this->size();
+	//ToDrawer(size);
+	//LastSize = this->size();
 }
 
 
@@ -404,12 +404,12 @@ void MainWindowDef::ToDrawer(QSize& size)
 #else
 	if (LastSize.width()>=this->width())
 	{
-		//LastSize = size;
+		LastSize = size;
 		tabWidgetInterface->setScale(this->size(), false);
 	}
 	else if (LastSize.width() < this->width())
 	{
-		//LastSize = size;
+		LastSize = size;
 		tabWidgetInterface->setScale(this->size(), true);
 	}
 #endif
