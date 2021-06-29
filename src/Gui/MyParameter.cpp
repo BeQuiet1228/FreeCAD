@@ -552,20 +552,23 @@ void MyParameter::importText() {
     for (int i = 0; i < p.size(); ++i) {
         int cur_row = this->tableWidget->rowCount();
         startTime = clock();
-        if (!this->isValidWithName(p[i][0]))
+        while(!this->isValidWithName(p[i][0]))
         {
             std::string str = p[i][0];
             DlgChangeNameDialog* change_name = new DlgChangeNameDialog(str);
             change_name->exec();
             std::string temp = p[i][0];
-            for (int i = 0; i < p.size(); i++)
+            if (this->isValidWithName(change_name->getName().toStdString()))
             {
-                if (findWholeWordsOnly(p[i][1], temp))
+                p[i][0] = change_name->getName().toStdString();
+                for (int i = 0; i < p.size(); i++)
                 {
-                    p[i][1]= std::regex_replace(p[i][1], std::regex("\\b" + temp + "\\b"), change_name->getName().toStdString());
+                    if (findWholeWordsOnly(p[i][1], temp))
+                    {
+                        p[i][1] = std::regex_replace(p[i][1], std::regex("\\b" + temp + "\\b"), change_name->getName().toStdString());
+                    }
                 }
             }
-            p[i][0] = change_name->getName().toStdString();
             delete change_name;
         }
 
