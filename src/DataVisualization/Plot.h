@@ -18,6 +18,7 @@ class QwtScaleEngine;
 //class QwtScaleWidget;
 class ColorMapWidget;
 class UndoRedoStack;
+class TLabel;
 class DATA_VISUALIZATION_EXPORT Plot:public QWidget{
 	Q_OBJECT
 public:
@@ -36,7 +37,8 @@ private:
 	//坐标轴
 	Axis *AxisL, *AxisB;
 	//图表信息label
-	QLabel* informationLabel;
+	//QLabel* informationLabel;
+	TLabel* informationLabel;
 	//渲染管理器
 	std::shared_ptr<RenderThreadManager> renderManager;
 	//从渲染器
