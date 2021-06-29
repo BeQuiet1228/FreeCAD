@@ -60,6 +60,10 @@ public:
 	//获取图表信息
 	QString getInformationTitile();
 
+	std::string getXTag();
+	std::string getYTag();
+
+
 //虚函数接口
 public:
 	//初始化与plot之间的关系

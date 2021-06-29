@@ -14,6 +14,7 @@
 #include "C_encoding.h"
 #include"ConfigWidget.h"
 #include "PlotAdapter.h"
+#include "CustomConfig.h"
 struct UndoRedoData
 {
 	UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
@@ -86,6 +87,7 @@ Plot::Plot(QWidget* parent /*= 0*/)
 	initData();
 	initGUI();
 	setAxisRightEnabled(true);
+	loadconfig();
 }
 
 Plot::~Plot()
@@ -144,13 +146,10 @@ void Plot::updateAxis()
 	
 
 	//设置横纵坐标单位
-		//获取横纵坐标单位
-// 	auto d = std::dynamic_pointer_cast<XYData>(mainRenderer->data);
-// 	if (d)
-// 	{
-// 		AxisL->setAxisText(QString::fromStdString(d->getYTag()));
-// 		AxisB->setAxisText(QString::fromStdString(d->getXTag()));
-// 	}
+
+ 	AxisL->setAxisText(QString::fromStdString(adapter->getYTag()));
+ 	AxisB->setAxisText(QString::fromStdString(adapter->getXTag()));
+
 	AxisB->_update();
 	AxisL->_update();
 
@@ -560,4 +559,29 @@ void Plot::setAdapter(const std::shared_ptr < PlotAdapter>& adapter)
 	adapter->initPlot(*this);
 }
 
+/**
+* @brief Plot::setRatioDisplay 根据横纵比例显示内容
+* @param double & horizonal
+* @param double & vertical
+* @return void
+* @Time 2021/6/28
+*/
+void Plot::setRatioDisplay(double& horizonal, double& vertical)
+{
+// 	if (!mainRenderer)
+// 		return;
+// 	mainRenderer->setRatioDisplay(horizonal, vertical);
+// 	Data::Rang xr = mainRenderer->getXRang();
+// 	Data::Rang yr = mainRenderer->getYRang();
+// 	for (auto iter = subRenderers.begin(); iter != subRenderers.end(); iter++)
+// 	{
+// 		//(*iter)->setRatioDisplay(horizonal, vertical);
+// 		(*iter)->setXRang(xr);
+// 		(*iter)->setYRang(yr);
+// 	}
+// 	AxisL->setAxisRange(yr.min, yr.max);
+// 	AxisB->setAxisRange(xr.min, xr.max);
+// 	updateAxis();
+// 	reRender();
+}
 #include "moc_Plot.cpp"

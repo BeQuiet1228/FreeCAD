@@ -23,7 +23,12 @@ enum DirectionType{
 	R_Z = R | Z,
 	R_THETA = R | THETA
 };
-
+enum SaveMod{
+	//新建
+	NEWFLODER = 0,
+	//补充
+	PUSHBACK=1,
+};
 class Data{
 public:
 	using Values = std::vector<float>;
@@ -68,6 +73,7 @@ public:
 public:
 	Data(Hdf5Data& h5Data ,const RunMod& mod = SINGLE_THREAD);
 	virtual ~Data();
+	void saveAs(std::string path, SaveMod mod);
 protected:
 	//h5文件数据
 	Hdf5Data h5Data;
@@ -131,6 +137,7 @@ protected:
 	DirectionType directionTyp;
 	//图类型
 	NeedStructType mapType;
+	Hdf5IO* temphdf;
 };
 
 class XYData :public Data{

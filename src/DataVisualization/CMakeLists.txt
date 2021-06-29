@@ -24,6 +24,7 @@ realTimewidget.ui
 SET(MY_MOC_HDR RenderThread.h
 	RenderThreadManager.h
 	Plot.h
+	AxisLable.h
 	Canvas.h
 	Axis.h
 	ListTreeWidget.h
@@ -100,6 +101,8 @@ SET(SRC main.cpp
 	Renderer.h
 	Plot.cpp
 	Plot.h
+	AxisLable.h
+	AxisLable.cpp
 	Canvas.cpp
 	Canvas.h
 	Axis.cpp

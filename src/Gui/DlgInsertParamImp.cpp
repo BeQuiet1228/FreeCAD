@@ -11,7 +11,7 @@ InsertParamDialog::InsertParamDialog(QWidget *parent)
     this->name = QString();
     this->row = -999;
     QObject::connect(this->ui->ok_btn, SIGNAL(clicked(bool)), this, SLOT(insertParam()));
-    QObject::connect(this->ui->ok_btn, SIGNAL(clicked(bool)), this, SLOT(close()));
+    QObject::connect(this->ui->cancel_btn, SIGNAL(clicked(bool)), this, SLOT(close()));
 }
 
 InsertParamDialog::~InsertParamDialog()

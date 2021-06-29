@@ -874,7 +874,7 @@ void Application::slotRelabelDocument(const App::Document& Doc)
 
 	// by mx
 	// To solve the problem that the panel sometimes does not load
-	Base::Interpreter().runString("FreeCADGui.runCommand('Customize_init_panel')");
+	//Base::Interpreter().runString("FreeCADGui.runCommand('Customize_init_panel')");
 
 #ifdef FC_DEBUG
     assert(doc!=d->documents.end());

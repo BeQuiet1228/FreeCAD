@@ -9,7 +9,9 @@
 #include "CustomConfig.h"
 #include "C_encoding.h"
 #include <QDebug>
+#include "AxisLable.h"
 #define ZERO_F (0.000000000001f)	//定义浮点数的零
+#define DEBUG_EDIT (0)
 //局部函数--只限当前cpp内部使用
 int getIntegerBits(__int64 data);
 QFont GetFont(int size);
@@ -48,6 +50,10 @@ QWidget(parent)/*,horizontalAxis(0),verticalAxis(0),isstart(false)*/, CanvasWidg
 	mAxisstyle = AxisBottom;
 	axisvalrange.min = 0;
 	axisvalrange.max = 100;
+	mAxisLable=new AxisLable();
+	mAxisLable->resize(300,200);
+	connect(mAxisLable, SIGNAL(signalCloseEvent()), this, SLOT(axiscloseEvent()));
+#if DEBUG_EDIT
 	//正则表达式---只能输入数值
 	QRegExp rx("^(-?|\\d)(\\d+)?(\\.\\d+)?$");
 	QValidator * validator = new QRegExpValidator(rx, this);
@@ -92,6 +98,7 @@ QWidget(parent)/*,horizontalAxis(0),verticalAxis(0),isstart(false)*/, CanvasWidg
 	AxisUnitedit->setAlignment(Qt::AlignCenter);
 	maxLineedit->setAlignment(Qt::AlignCenter);
 	minLineedit->setAlignment(Qt::AlignCenter);
+#endif
 }
 /**
 * @brief  Axis::~Axis 析构
@@ -196,8 +203,10 @@ void Axis::setAxisRange(double min, double max){
 	axisvalrange.min = min;
 	axisvalrange.max = max;
 	curAxisRang = axisvalrange;
+#if DEBUG_EDIT
 	minLineedit->setVisible(false);
 	maxLineedit->setVisible(false);
+#endif
 }
 /**
 * @brief Axis::SetAxisNumber 设置大刻度个数
@@ -331,18 +340,22 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 			else if (0==number)
 			{
 				mmaxisval.postion = QPointF(startposition.x() - mwidth, startposition.y() - number*Axisinterval);
+#if DEBUG_EDIT
 				//获取最小数据的左边范围
 				minRectf->setRight(_rect.right() - 11);
 				minRectf->setLeft(_rect.left()+1);
 				minRectf->setBottom(_rect.bottom()-1);
 				minRectf->setTop(minRectf->bottom() - rect.height()*2);
+#endif
 			}
 			else{
 				mmaxisval.postion = QPointF(startposition.x() - mwidth, startposition.y() - number*Axisinterval+rect.height());
+#if DEBUG_EDIT
 				maxRectf->setLeft(_rect.left()+1);
 				maxRectf->setRight(_rect.right()-11);
 				maxRectf->setBottom(mmaxisval.postion.y()+rect.height());
 				maxRectf->setTop(1);
+#endif
 			}
 			m_axisval.push_back(mmaxisval);
 		};
@@ -454,18 +467,22 @@ QVector<AXISVAL> Axis::getAxisVal(Axisstyle _Axisstyle, QRectF _rect)
 			else if (0==number)
 			{
 				mmaxisval.postion = QPointF(nextPosition.x(), startposition.y()+rect.height());
+#if DEBUG_EDIT
 				minRectf->setLeft(mmaxisval.postion.x());
 				minRectf->setRight(minRectf->left()+width*2);
 				minRectf->setBottom(mmaxisval.postion.y()+rect.height());
 				minRectf->setTop(minRectf->bottom()-rect.height()*2);
+#endif
 			}
 			else
 			{
 				mmaxisval.postion = QPointF(nextPosition.x()-rect.width(), startposition.y()+rect.height());
+#if DEBUG_EDIT
 				maxRectf->setRight(nextPosition.x());
 				maxRectf->setLeft(maxRectf->right() - width * 2);
 				maxRectf->setBottom(mmaxisval.postion.y() + rect.height());
 				maxRectf->setTop(minRectf->bottom() - rect.height() * 2);
+#endif
 			}
 			m_axisval.push_back(mmaxisval);
 		};
@@ -511,10 +528,12 @@ AXISVAL Axis::GetAxisUnit(Axisstyle _Axisstyle, QRectF _rect){
 		Axisunit = mmaxisval;
 		minWidth = minWidth + rect.height();
 		//
+#if DEBUG_EDIT
 		AxisUnitRectf->setLeft(__rect.left()-height);
 		AxisUnitRectf->setRight(AxisUnitRectf->left()+height);
 		AxisUnitRectf->setBottom(__rect.bottom());
 		AxisUnitRectf->setTop(AxisUnitRectf->bottom()-width);
+#endif
 	}
 		break;
 	case AxisRight:
@@ -530,10 +549,12 @@ AXISVAL Axis::GetAxisUnit(Axisstyle _Axisstyle, QRectF _rect){
 		Axisunit = mmaxisval;
 		minWidth = minWidth + rect.height();
 		//
+#if DEBUG_EDIT
 		AxisUnitRectf->setLeft(__rect.left());
 		AxisUnitRectf->setRight(AxisUnitRectf->left() +rect.height());
 		AxisUnitRectf->setTop(__rect.bottom());
 		AxisUnitRectf->setBottom(AxisUnitRectf->top() + rect.width());
+#endif
 	}
 		break;
 	case AxisTop:
@@ -549,10 +570,12 @@ AXISVAL Axis::GetAxisUnit(Axisstyle _Axisstyle, QRectF _rect){
 		Axisunit = mmaxisval;
 		minHeight = minHeight + rect.height();
 		//
+#if DEBUG_EDIT
 		AxisUnitRectf->setLeft(__rect.left());
 		AxisUnitRectf->setRight(__rect.right());
 		AxisUnitRectf->setTop(__rect.top());
 		AxisUnitRectf->setBottom(__rect.bottom());
+#endif
 	}
 		break;
 	case AxisBottom:
@@ -568,10 +591,12 @@ AXISVAL Axis::GetAxisUnit(Axisstyle _Axisstyle, QRectF _rect){
 		Axisunit = mmaxisval;
 		minHeight = minHeight + rect.height();
 		//
+#if DEBUG_EDIT
 		AxisUnitRectf->setLeft(__rect.left());
 		AxisUnitRectf->setRight(__rect.right());
 		AxisUnitRectf->setTop(__rect.top());
 		AxisUnitRectf->setBottom(__rect.bottom());
+#endif
 	}
 		break;
 	}
@@ -731,6 +756,7 @@ void Axis::resizeEvent(QResizeEvent* event)
 	CanvasSize->setHeight(this->height());
 	AxisResize(true);
 	_update();
+#if DEBUG_EDIT
 	if (minLineedit->isVisible())
 	{
 		minLineedit->resize(QSize(minRectf->width(), minRectf->height()));
@@ -758,6 +784,7 @@ void Axis::resizeEvent(QResizeEvent* event)
 		}break;
 		}
 	}
+#endif
 }
 /**
 * @brief  Axis::autoMinAndMAxSize 设置自动填充大小
@@ -812,6 +839,7 @@ int getIntegerBits(__int64 data)
 */
 void Axis::mouseDoubleClickEvent(QMouseEvent *event){
 	QWidget::mouseDoubleClickEvent(event);
+#if DEBUG_EDIT
 	if (event->button()==Qt::LeftButton)
 	{
 		if (minRectf->contains(event->posF()))
@@ -856,6 +884,22 @@ void Axis::mouseDoubleClickEvent(QMouseEvent *event){
 		else
 			axisRangeChange();
 	}
+#endif
+	if (event->button() == Qt::LeftButton)
+	{
+		if (mAxisLable->isVisible())
+		{
+			axiscloseEvent();
+		}
+		else
+		{
+			mAxisLable->setMinval(QString("%1").arg(axisvalrange.min));
+			mAxisLable->setMaxval(QString("%1").arg(axisvalrange.max));
+			mAxisLable->setAxisUnitval(QString("%1").arg(Axisunit.valsize));
+			mAxisLable->show();
+
+		}
+	}
 }
 /**
 * @brief  Axis::keyReleaseEvent 按键事件
@@ -875,7 +919,7 @@ void Axis::keyReleaseEvent(QKeyEvent *event)
 */
 void Axis::axisRangeChange()
 {
-
+#if DEBUG_EDIT
 	//刻度值范围发生变化
 	{
 		if (minLineedit->isVisible() && maxLineedit->isVisible())
@@ -916,6 +960,7 @@ void Axis::axisRangeChange()
 		axisvalrange = curAxisRang;
 		_update();
 	}
+#endif
 }
 /**
 * @brief  Axis::loadconfig 读取配置
@@ -936,7 +981,20 @@ void Axis::loadconfig()
 		axisParams.AxisValSize = ((axisParams.AxisValSize < 10) ? 10 : (axisParams.AxisValSize));
 	}
 }
-
+void Axis::axiscloseEvent()
+{
+	valrange temp;
+	temp.min = mAxisLable->getMinval();
+	temp.max = mAxisLable->getMaxval();
+	if (temp != axisvalrange && temp.min <= temp.max)
+	{
+		emit sendAxisRang(temp.min, temp.max);
+		axisvalrange = temp;
+	}
+	mAxisunit = mAxisLable->getAxisUnitval();
+	mAxisLable->hide();
+	_update();
+}
 /**
 * @brief  GetPen 获取画笔
 * @param  QColor & rgba  
@@ -961,4 +1019,5 @@ QFont GetFont(int size)
 	mfont.setPixelSize(size);
 	return mfont;
 }
+
 #include "moc_Axis.cpp"

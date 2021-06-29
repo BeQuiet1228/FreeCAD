@@ -173,6 +173,28 @@ QString PlotAdapter::getInformationTitile()
 	return GetEncodingstr(mainRenderer->getInformationTitile().c_str(), ENCODING_GB2312);
 }
 
+std::string PlotAdapter::getXTag()
+{
+	if (!mainRenderer)
+		return "";
+	auto data = mainRenderer->getData();
+	auto xd = std::dynamic_pointer_cast<XYData>(data);
+	if (!xd)
+		return "";
+	return xd->getXTag();
+}
+
+std::string PlotAdapter::getYTag()
+{
+	if (!mainRenderer)
+		return "";
+	auto data = mainRenderer->getData();
+	auto xd = std::dynamic_pointer_cast<XYData>(data);
+	if (!xd)
+		return "";
+	return xd->getYTag();
+}
+
 void PlotAdapter::setRenderRange(const float& xMin, const float xMax, const float& yMin, const float& yMax)
 {
 	Data::Rang xr(xMin, xMax), yr(yMin, yMax);

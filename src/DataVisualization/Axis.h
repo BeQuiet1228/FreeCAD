@@ -2,6 +2,7 @@
 #include <QWidget>
 #include<QVector>
 #include <QLineEdit>
+class AxisLable;
 enum Axisstyle
 {
 	Axisleft,
@@ -57,6 +58,8 @@ public:
 	void paintEvent(QPaintEvent* event);
 Q_SIGNALS:
 	void sendAxisRang(const float& min,const float& max);
+	public Q_SLOTS:
+void axiscloseEvent();
 protected:
 	virtual void resizeEvent(QResizeEvent* event)override;
 	virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
@@ -84,11 +87,13 @@ private:
 	float lastminHeight;
 private:
 	valrange curAxisRang;
+	AxisLable* mAxisLable;
 	//增加实时取值功能2021/4/27
-	QLineEdit* minLineedit;
-	QLineEdit* maxLineedit;
-	QLineEdit* AxisUnitedit;
-	QRectF* minRectf;
-	QRectF* maxRectf;
-	QRectF* AxisUnitRectf;
+	//QLineEdit* minLineedit;
+	//QLineEdit* maxLineedit;
+	//QLineEdit* AxisUnitedit;
+	//QRectF* minRectf;
+	//QRectF* maxRectf;
+	//QRectF* AxisUnitRectf;
+
 };
