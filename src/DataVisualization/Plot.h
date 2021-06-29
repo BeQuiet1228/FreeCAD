@@ -103,6 +103,8 @@ public:
 	void loadconfig();
 	//Equal scale display
 	void EqualScaleDisplay();
+	//根据横纵比例显示
+	void setRatioDisplay(double& horizonal,double& vertical);
 private:
 	//初始化界面
 	void initGUI();

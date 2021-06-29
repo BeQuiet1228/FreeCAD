@@ -128,6 +128,7 @@ void MainWindowDef::mouseMoveEvent(QMouseEvent *event)
 	QWidget::mouseMoveEvent(event);
 	changeCursor(event->pos());
 	changeSize(event->pos());
+
 	if ((cursorState != RIGHT || !leftButtonIsPress))
 		return;
 	//判断当前鼠标位置移动的方向

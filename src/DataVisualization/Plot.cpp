@@ -13,6 +13,7 @@
 #include <QFont>
 #include "C_encoding.h"
 #include"ConfigWidget.h"
+#include "CustomConfig.h"
 struct UndoRedoData
 {
 	UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
@@ -85,6 +86,7 @@ Plot::Plot(QWidget* parent /*= 0*/)
 	initData();
 	setAxisRightEnabled(true);
 	initGUI();
+	loadconfig();
 }
 
 Plot::~Plot()
@@ -653,6 +655,16 @@ void Plot::canvasResize(QSize size)
 }
 void Plot::loadconfig()
 {
+	if (Config::GetInstance()->loadConfig())
+	{
+		auto Group = Config::GetInstance()->getRootGroup();
+		auto axisGroup = Group.getGroup("axis");
+		int infoshow =atoi(axisGroup.getGroup("infoShow").getValue("value").c_str());
+		if (infoshow)
+			informationLabel->show();
+		else
+			informationLabel->hide();
+	}
 	if (!mainRenderer)
 		return;
 	mainRenderer->loadconfig();
@@ -704,6 +716,31 @@ void Plot::EqualScaleDisplay()
 	mainRenderer->setYRang(yr);
 	for (auto iter = subRenderers.begin(); iter != subRenderers.end(); iter++)
 	{
+		(*iter)->setXRang(xr);
+		(*iter)->setYRang(yr);
+	}
+	AxisL->setAxisRange(yr.min, yr.max);
+	AxisB->setAxisRange(xr.min, xr.max);
+	updateAxis();
+	reRender();
+}
+/**
+* @brief Plot::setRatioDisplay 根据横纵比例显示内容
+* @param double & horizonal
+* @param double & vertical
+* @return void
+* @Time 2021/6/28
+*/
+void Plot::setRatioDisplay(double& horizonal, double& vertical)
+{
+	if (!mainRenderer)
+		return;
+	mainRenderer->setRatioDisplay(horizonal, vertical);
+	Data::Rang xr = mainRenderer->getXRang();
+	Data::Rang yr = mainRenderer->getYRang();
+	for (auto iter = subRenderers.begin(); iter != subRenderers.end(); iter++)
+	{
+		//(*iter)->setRatioDisplay(horizonal, vertical);
 		(*iter)->setXRang(xr);
 		(*iter)->setYRang(yr);
 	}

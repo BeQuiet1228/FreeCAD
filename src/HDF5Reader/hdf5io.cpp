@@ -546,7 +546,7 @@ void Hdf5IO::copyToHdf5IO(Hdf5IO& hdf5IO, std::vector<Hdf5Data>& datas)
 */
 void Hdf5IO::creatNewHdf5File(const std::string& fileName)
 {
-	H5Fcreate(fileName.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+	int res=H5Fcreate(fileName.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
 }
 
 void Hdf5IO::creatHdf5File(const std::string& fileName)
@@ -681,4 +681,18 @@ void Hdf5Data::init()
 		return;
 	if (initStructInformation())
 		return;
+}
+int Hdf5IO::creatNewH5File(const std::string& fileName){
+	
+	return H5Fcreate(fileName.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+}
+int Hdf5IO::openH5File(const std::string &fileName)
+{
+	/*return H5Fopen(const char *filename, unsigned flags,
+		hid_t access_plist);*/
+	return 0;
+}
+int Hdf5IO::closeH5File(int H5id)
+{
+	return H5Fclose(H5id);
 }

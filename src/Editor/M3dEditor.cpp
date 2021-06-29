@@ -33,7 +33,7 @@ Cmds M3dEditor::getCmds()
 void M3dEditor::gotoLine(const int& num)
 {
 	auto cursor = this->textCursor();
-	int pos = this->document()->findBlockByLineNumber(num).position();
+	int pos = this->document()->findBlockByNumber(num).position();
 	cursor.setPosition(pos);
 	this->setTextCursor(cursor);
 	this->centerCursor();

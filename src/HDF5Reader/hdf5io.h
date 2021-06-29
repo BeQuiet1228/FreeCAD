@@ -26,7 +26,6 @@ struct CONTROL_EXPORT Hdf5Data
 		CYLINDER,
 		POLAR
 	};
-	
 	//数据分组对象
     Group group;
 	//头部信息
@@ -107,4 +106,8 @@ public:
 	static void copyToHdf5IO(Hdf5IO& hdf5IO, std::vector<Hdf5Data>& datas);
 	static void creatNewHdf5File(const std::string& fileName);
 	static void creatHdf5File(const std::string& fileName);
+	//新增代码
+	static int creatNewH5File(const std::string& fileName);
+	static int openH5File(const std::string &fileName);
+	static int closeH5File(int H5id);
 };
