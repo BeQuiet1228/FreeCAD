@@ -188,6 +188,9 @@ void ConfigWidget::saveclicked()
 		Axisgroup.getGroup("axisvalColor").setSetting("value",axisinfo._4th.toStdString());
 		auto axisvalSize = (ui->axisvalSize->itemText(ui->axisvalSize->currentIndex())).toStdString();
 		Axisgroup.getGroup("axisvalSize").setSetting("value",axisvalSize);
+		if (ui->infoshow->isChecked())Axisgroup.getGroup("infoShow").setSetting("value", "1");
+		else
+			Axisgroup.getGroup("infoShow").setSetting("value", "0");
 	}
 	//Ïà¿Õ¼äÍ¼
 	{
@@ -426,6 +429,17 @@ void ConfigWidget::loadxmlConfig(){
 		QString axisSize = QString::fromStdString(Axisgroup.getGroup("axisSize").getValue("value"));
 		toComboxIndex(ui->fontSize,axisSize);
 		toComboxIndex(ui->axisvalSize,QString::fromStdString(Axisgroup.getGroup("axisvalSize").getValue("value")));
+		int infoshow = atoi(Axisgroup.getGroup("infoShow").getValue("value").c_str());
+		if (infoshow)
+		{
+			ui->infoshow->setChecked(true);
+			ui->infohide->setChecked(false);
+		}
+		else
+		{
+			ui->infoshow->setChecked(false);
+			ui->infohide->setChecked(true);
+		}
 	}
 	//Á£×ÓÍ¼
 	{

@@ -2284,9 +2284,6 @@ StdCmdOpenDataVisualizationConfig::StdCmdOpenDataVisualizationConfig()
 }
 void StdCmdOpenDataVisualizationConfig::activated(int iMsg)
 {
-  //  ConfigWidget* configWidget = new ConfigWidget();
-  //  configWidget->setAttribute(Qt::WA_DeleteOnClose);
-  //  configWidget->show();
 	getGuiApplication()->showPlotSettingDialog();
 }
 

@@ -127,7 +127,7 @@ void MainWindowDef::mouseMoveEvent(QMouseEvent *event)
 	changeCursor(event->pos());
 	changeSize(event->pos());
 
-	test();
+	//test();
 	/*QSize size= tabWidgetInterface->size();
 	qDebug() <<"size--"<< size;*/
 }
