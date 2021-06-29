@@ -131,6 +131,16 @@ void Canvas::initData()
 	selectRect.setHeight(0);
 }
 
+void CanvasItem::setImage(const QImage& image, const QPoint& point /*= QPoint(0, 0)*/)
+{
+	this->image.reset(new QImage(image));
+	this->pos = point;
+#ifdef MY_DEBUG
+	this->image->save("canvas" + QString::number(rank) + ".png", "PNG");
+#endif // MY_DEBUG
+
+}
+
 /**
 * @brief CanvasItem::registerMetaTye 注册自定义信号参数
 * @return void

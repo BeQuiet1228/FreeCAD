@@ -2,6 +2,8 @@
 #include "Renderer.h"
 #include "RenderTask.h"
 #include "RenderThreadManager.h"
+#include "Plot.h"
+#include "C_encoding.h"
 PlotAdapter::PlotAdapter()
 {
 	renderManager.reset(new RenderThreadManager);
@@ -125,6 +127,16 @@ void PlotAdapter::updateGridLine()
 	//renderManager->start();
 }
 
+void PlotAdapter::findPointRender(const float& x, const float& y)
+{
+	//这里的size应该跟之前渲染的size没有区别，所以应该不用重新设置
+	//mainRenderer->setSize(canvas->size());
+	mainRenderer->setFindPosition(QPointF(x, y));
+	RenderTask task(mainRenderer,RenderTask::FIND_POINT, Canvas::FIND_POINT_RENDER_RANK);
+	renderManager->addTask(task);
+	renderManager->start();
+}
+
 Data::Rang PlotAdapter::getXRange()
 {
 	if (!mainRenderer)
@@ -137,6 +149,28 @@ Data::Rang PlotAdapter::getYRange()
 	if (!mainRenderer)
 		return Data::Rang();
 	return mainRenderer->getYRang();
+}
+
+void PlotAdapter::initPlot(Plot& plot)
+{
+	Plot::connect(renderManager.get(), SIGNAL(allWorkFinished()), &plot, SLOT(renderFinished()));
+}
+
+std::list<QAction*> PlotAdapter::getActions()
+{
+	return std::list<QAction*>();
+}
+
+std::list<CanvasItem> PlotAdapter::takeResut()
+{
+	return renderManager->takeResut();
+}
+
+QString PlotAdapter::getInformationTitile()
+{
+	if (!mainRenderer)
+		return "";
+	return GetEncodingstr(mainRenderer->getInformationTitile().c_str(), ENCODING_GB2312);
 }
 
 void PlotAdapter::setRenderRange(const float& xMin, const float xMax, const float& yMin, const float& yMax)
@@ -166,5 +200,14 @@ void PlotAdapter::setRenderYRange(const float& min, const float& max)
 		return;
 	auto xr = mainRenderer->getXRang();
 	setRenderRange(xr.min, xr.max, min, max);
+}
+
+void PlotAdapter::loadConfig()
+{
+	if (!mainRenderer)
+		return;
+	mainRenderer->loadconfig();
+	for (auto iter = subRenderers.begin(); iter != subRenderers.end(); iter++)
+		(*iter)->loadconfig();
 }
 

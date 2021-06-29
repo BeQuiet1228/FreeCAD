@@ -21,10 +21,7 @@ private:
 	QPoint pos;
 	QPen pen;
 public:
-	void setImage(const QImage& image,const QPoint& point = QPoint(0,0)){
-		this->image.reset(new QImage(image));
-		this->pos = point;
-	}
+	void setImage(const QImage& image, const QPoint& point = QPoint(0, 0));
 	void setPen(const QPen& pen){
 		this->pen = pen;
 	}

@@ -75,6 +75,8 @@ public:
 	void loadconfig();
 	//Equal scale display
 	void EqualScaleDisplay();
+	//设置适配器
+	void setAdapter(const std::shared_ptr < PlotAdapter>& adapter);
 	//设置是否显示网格线
 	void setGridLineEnabled(const bool& e) {
 		gridLineEnabled = e;
@@ -83,10 +85,6 @@ public:
 	bool getGridLineEnabled() {
 		return gridLineEnabled;
 	}
-	//设置适配器
-	void setAdapter(std::shared_ptr < PlotAdapter> adapter) {
-		this->adapter = adapter;
-	};
 private:
 	//初始化界面
 	void initGUI();
@@ -105,7 +103,7 @@ public Q_SLOTS:
 	void canvasSelectRect(QRect rect);
 	//画布取点
 	void canvasSelectPoint(QPoint point);
-	void reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender);
+	void reRendererEvent(std::shared_ptr<PlotAdapter>);
 	void reRendererXRang(const float& min, const float& max);
 	void reRendererYRang(const float& min, const float& max);
 	//画布改变大小

@@ -84,8 +84,8 @@ Plot::Plot(QWidget* parent /*= 0*/)
 {
 	setObjectName("visualizationPlot");
 	initData();
-	setAxisRightEnabled(true);
 	initGUI();
+	setAxisRightEnabled(true);
 }
 
 Plot::~Plot()
@@ -246,11 +246,9 @@ void Plot::autoMaxRender()
 */
 void Plot::updateInformationLabel()
 {
-// 	if (!mainRenderer)
-// 		return;
-// 	if (!informationLabel)
-// 		return;
-// 	informationLabel->setText(GetEncodingstr(mainRenderer->getInformationTitile().c_str(),ENCODING_GB2312));
+	if (!informationLabel)
+		return;
+	adapter->getInformationTitile();
 }
 
 /**
@@ -310,8 +308,8 @@ void Plot::initGUI()
 */
 void Plot::initData()
 {
-	//connect(renderManager.get(), SIGNAL(allWorkFinished()), this, SLOT(renderFinished()));
-
+	adapter.reset(new PlotAdapter);
+	adapter->initPlot(*this);
 	scaleEngine = new QwtLinearScaleEngine;
 	axisRightEnabled = false;
 
@@ -331,11 +329,7 @@ void Plot::initData()
 */
 void Plot::findPointRender(const float& x, const float& y)
 {
-// 	mainRenderer->setSize(canvas->size());
-// 	mainRenderer->setFindPosition(QPointF(x, y));
-// 	RenderTask task(mainRenderer,RenderTask::FIND_POINT, FIND_POINT_RENDER_RANK);
-// 	renderManager->addTask(task);
-// 	renderManager->start();
+	adapter->findPointRender(x, y);
 }
 
 
@@ -376,10 +370,15 @@ void Plot::initInformationLabelFont()
 */
 void Plot::renderFinished()
 {
-// 	auto result = renderManager->takeResut();
-// 	for (auto i = result.begin(); i != result.end(); i++)
-// 		canvas->addIteam(*i);
-// 	canvas->update();
+ 	auto result = adapter->takeResut();
+	for (auto i = result.begin(); i != result.end(); i++)
+	{
+		canvas->addIteam(*i);
+	
+	}
+		
+	canvas->update();
+	updateAxis();
 }
 
 /**
@@ -476,16 +475,13 @@ void Plot::keyReleaseEvent(QKeyEvent *event)
 	}
 	
 }
-/**
-* @brief Plot::reRendererEvent 重绘槽函数
-* @param const std::list<std::shared_ptr<Renderer>>& listRender 渲染器列表
-* @return void  
-*/
-void Plot::reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender)
-{
-	//addRenderer(listRender);
-}
  
+void Plot::reRendererEvent(std::shared_ptr<PlotAdapter> ad)
+{
+	setAdapter(ad);
+	reRender();
+}
+
 void Plot::reRendererXRang(const float& min, const float& max){
 	adapter->setRenderXRange(min,max);
 	reRender();
@@ -502,14 +498,10 @@ void Plot::canvasResize(QSize size)
 }
 void Plot::loadconfig()
 {
-// 	if (!mainRenderer)
-// 		return;
-// 	mainRenderer->loadconfig();
-// 	for (auto iter = subRenderers.begin(); iter != subRenderers.end(); iter++)
-// 		(*iter)->loadconfig();
-// 	AxisL->loadconfig();
-// 	AxisB->loadconfig();
-	//reRender();
+	adapter->loadConfig();
+	AxisL->loadconfig();
+	AxisB->loadconfig();
+	reRender();
 }
 void Plot::setappEvent()
 {
@@ -561,4 +553,11 @@ void Plot::EqualScaleDisplay()
 // 	updateAxis();
 // 	reRender();
 }
+
+void Plot::setAdapter(const std::shared_ptr < PlotAdapter>& adapter)
+{
+	this->adapter = adapter;
+	adapter->initPlot(*this);
+}
+
 #include "moc_Plot.cpp"

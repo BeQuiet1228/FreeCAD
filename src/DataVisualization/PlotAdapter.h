@@ -3,9 +3,11 @@
 #include <QSize>
 #include <list>
 #include "Data.h"
+#include "Canvas.h"
+#include <QAction>
 class Renderer;
 class RenderThreadManager;
-
+class Plot;
 class PlotAdapter {
 public:
 	PlotAdapter();
@@ -20,6 +22,8 @@ public:
 	std::list<std::shared_ptr<Renderer>> subRenderers;
 	//主渲染器
 	std::shared_ptr<Renderer> mainRenderer;
+
+//修改框架时从plot中移动过来的函数
 public:
 	//重渲染
 	void reRender(const QSize& size);
@@ -33,10 +37,15 @@ public:
 	void autoMaxRender();
 	//刷新网格线
 	void updateGridLine();
+	//取点渲染
+	void findPointRender(const float& x, const float& y);
 	//设置渲染范围
 	void setRenderRange(const float& xMin, const float xMax, const float& yMin, const float& yMax);
 	void setRenderXRange(const float& min, const float& max);
 	void setRenderYRange(const float& min, const float& max);
+	//载入配置
+	void loadConfig();
+
 	//获取渲染范围 暂时使用
 	Data::Rang getXRange();
 	Data::Rang getYRange();
@@ -45,4 +54,15 @@ public:
 		subRenderers.clear();
 	}
 
+public:
+	//取走渲染结果
+	std::list<CanvasItem> takeResut();
+	//获取图表信息
+	QString getInformationTitile();
+
+//虚函数接口
+public:
+	//初始化与plot之间的关系
+	virtual void initPlot(Plot& plot);
+	virtual std::list<QAction*> getActions();
 };

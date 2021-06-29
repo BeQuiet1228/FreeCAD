@@ -227,3 +227,19 @@ int RendererFactory::findStructDataIndex(const std::vector<Hdf5Data>& datas)
 #endif // MY_DEBUG
 	return -1;
 }
+
+/**
+* @brief RendererFactory::creatPlotAdapter 根据H5数据对象生成一个图表适配器
+* @param Hdf5Data h5d 数据对象
+* @param DirectionType type 方向类型
+* @return PlotAdapterPtr 适配器
+*/
+PlotAdapterPtr RendererFactory::creatPlotAdapter(Hdf5Data h5d, DirectionType type /*= X_Y*/)
+{
+	auto renders = creatRenderers(h5d, type);
+	PlotAdapterPtr adapter;
+	adapter.reset(new PlotAdapter);
+	adapter->addRenderer(renders);
+
+	return adapter;
+}
