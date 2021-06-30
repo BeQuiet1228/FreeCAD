@@ -136,6 +136,8 @@ void Plot::setAxisRightEnabled(const bool& e)
 
 void Plot::updateAxis()
 {
+	if (!adapter)
+		return;
 
 	Data::Rang xr, yr;
 	xr = adapter->getXRange();
@@ -307,8 +309,6 @@ void Plot::initGUI()
 */
 void Plot::initData()
 {
-	adapter.reset(new PlotAdapter);
-	adapter->initPlot(*this);
 	scaleEngine = new QwtLinearScaleEngine;
 	axisRightEnabled = false;
 
@@ -328,6 +328,8 @@ void Plot::initData()
 */
 void Plot::findPointRender(const float& x, const float& y)
 {
+	if (!adapter)
+		return;
 	adapter->findPointRender(x, y);
 }
 
@@ -478,29 +480,37 @@ void Plot::keyReleaseEvent(QKeyEvent *event)
 void Plot::reRendererEvent(std::shared_ptr<PlotAdapter> ad)
 {
 	setAdapter(ad);
-	reRender();
 }
 
 void Plot::reRendererXRang(const float& min, const float& max){
+	if (!adapter)
+		return;
 	adapter->setRenderXRange(min,max);
 	reRender();
 	
 }
 void Plot::reRendererYRang(const float& min, const float& max){
+	if (!adapter)
+		return;
 	adapter->setRenderYRange(min,max);
 	reRender();
 }
 
 void Plot::canvasResize(QSize size)
 {
+	if (!adapter)
+		return;
 	adapter->reRender(size);
 }
 void Plot::loadconfig()
 {
-	adapter->loadConfig();
 	AxisL->loadconfig();
 	AxisB->loadconfig();
 	reRender();
+
+	if (!adapter)
+		return;
+	adapter->loadConfig();
 }
 void Plot::setappEvent()
 {
@@ -557,6 +567,9 @@ void Plot::setAdapter(const std::shared_ptr < PlotAdapter>& adapter)
 {
 	this->adapter = adapter;
 	adapter->initPlot(*this);
+
+	canvas->clearIteam();
+	autoMaxRender();
 }
 
 /**
