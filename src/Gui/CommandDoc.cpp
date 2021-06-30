@@ -1864,6 +1864,9 @@ void StdCmdRunM3d::activated(int iMsg)
             return;
 		std::string path = picDoc->getTextPath();
 		contorl->setM3dPath(path);
+
+		//清空h5文件对象
+		picDoc->releaseH5Object();
 	}
 	contorl->buttonClicked(0);
 }
@@ -1887,11 +1890,6 @@ bool StdCmdRunM3d::isActive(void)
 			mw->hideContorlUI();
 			sMenuText = QT_TR_NOOP("RunM3d");
 			sPixmap = "run";
-            //清空h5文件对象
-            auto doc = Gui::Application::Instance->activeDocument();
-            auto picDoc = dynamic_cast<DocumentPic*>(doc);
-            if (picDoc)
-                picDoc->releaseH5Object();
 		}
 		this->updataActionIcon();
 	}
