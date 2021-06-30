@@ -249,7 +249,7 @@ void Plot::updateInformationLabel()
 {
 	if (!informationLabel)
 		return;
-	adapter->getInformationTitile();
+	informationLabel->setText(adapter->getInformationTitile());
 }
 
 /**

@@ -10,6 +10,7 @@
 #include "exportConfig.hpp"
 #include "Canvas.h"
 #include <QLabel>
+#include <QToolBar>
 class Canvas;
 class Renderer;
 class RenderThreadManager;
