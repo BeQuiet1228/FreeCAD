@@ -46,9 +46,6 @@ public:
 	//载入配置
 	void loadConfig();
 
-	//获取渲染范围 暂时使用
-	Data::Rang getXRange();
-	Data::Rang getYRange();
 	//清理从渲染器
 	void clearSubRenderer() {
 		subRenderers.clear();
@@ -69,4 +66,14 @@ public:
 	//初始化与plot之间的关系
 	virtual void initPlot(Plot& plot);
 	virtual std::list<QAction*> getActions();
+	//获取坐标轴显示状态
+	virtual bool axisLeftIsHide();
+	virtual bool axisRightIsHide();
+	virtual bool axisTopIsHide();
+	virtual bool axisBottomIsHide();
+	//获取坐标轴范围
+	virtual Data::Rang getAxisLeftRange();
+	virtual Data::Rang getAxisRightRange();
+	virtual Data::Rang getAxisTopRange();
+	virtual Data::Rang getAxisBottomRange();
 };

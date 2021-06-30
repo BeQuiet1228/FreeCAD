@@ -140,8 +140,8 @@ void Plot::updateAxis()
 		return;
 
 	Data::Rang xr, yr;
-	xr = adapter->getXRange();
-	yr = adapter->getYRange();
+	xr = adapter->getAxisBottomRange();
+	yr = adapter->getAxisLeftRange();
 
 	AxisL->setAxisRange(yr.min, yr.max);
 	AxisB->setAxisRange(xr.min, xr.max);
@@ -157,22 +157,20 @@ void Plot::updateAxis()
 
 
 
-// 	//显示图例
-// 	if (!axisRightEnabled)
-// 		return;
-// 	auto valueRange = std::dynamic_pointer_cast<RendererValueRangeInterface>(mainRenderer);
-// 	if (!valueRange)
-// 	{
-// 		scaleWIdget->hide();
-// 		return;
-// 	}
-// 
-// 	Data::Rang vr = valueRange->getValueRange();
-// 	QwtInterval interval(vr.min, vr.max);
-// 	scaleWIdget->setColorMap(interval, ConfigWidget::getQwtLinearColorMap());
-// 	scaleWIdget->setScaleDiv(scaleEngine->divideScale(vr.min, vr.max, 6, 8, 0));
-// 	scaleWIdget->setValrange(vr.min, vr.max);
-// 	scaleWIdget->show();
+	//显示图例
+	if (adapter->axisRightIsHide())
+	{
+		setAxisRightEnabled(false);
+		return;
+	}else
+		setAxisRightEnabled(true);
+
+	Data::Rang vr = adapter->getAxisRightRange();
+	QwtInterval interval(vr.min, vr.max);
+	scaleWIdget->setColorMap(interval, ConfigWidget::getQwtLinearColorMap());
+	scaleWIdget->setScaleDiv(scaleEngine->divideScale(vr.min, vr.max, 6, 8, 0));
+	scaleWIdget->setValrange(vr.min, vr.max);
+	scaleWIdget->show();
 }
 
 /**
@@ -237,7 +235,7 @@ void Plot::autoMaxRender()
 
 	//清空撤销恢复栈，将新的操作压入
 	URStack->clear();
-	UndoRedoData URData(adapter->getXRange(), adapter->getYRange());
+	UndoRedoData URData(adapter->getAxisBottomRange(), adapter->getAxisLeftRange());
 	URStack->push(URData);
 }
 
@@ -288,11 +286,14 @@ void Plot::initGUI()
 	informationLabel->setAlignment(Qt::AlignCenter);
 	initInformationLabelFont();
 
+	toolbar = new QToolBar();
+
 	gridLayout->addWidget(canvas, 0, 1, 1, 1);
 	gridLayout->addWidget(AxisL, 0, 0, 1, 1);
 	gridLayout->addWidget(AxisB, 1, 1, 1, 1);
 	gridLayout->addWidget(scaleWIdget, 0, 2, 1, 1);
 	gridLayout->addWidget(informationLabel, 2, 0, 1, 3);
+	gridLayout->addWidget(toolbar, 3, 0, 1, 3);
 
 	gridLayout->setRowStretch(0, 9);
 	gridLayout->setRowStretch(1, 1);
@@ -395,8 +396,8 @@ void Plot::canvasSelectRect(QRect rect)
 		return;
 
 
-	auto xr = adapter->getXRange();
-	auto yr = adapter->getYRange();
+	auto xr = adapter->getAxisBottomRange();
+	auto yr = adapter->getAxisLeftRange();
 	auto size = canvas->size();
 
 	//将矩形框转换为范围

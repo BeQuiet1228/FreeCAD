@@ -11,6 +11,7 @@
 #include "Canvas.h"
 #include <QLabel>
 #include <QToolBar>
+#include <qwt/qwt_scale_widget.h>
 class Canvas;
 class Renderer;
 class RenderThreadManager;
@@ -39,6 +40,8 @@ private:
 	Axis *AxisL, *AxisB;
 	//图表信息label
 	QLabel* informationLabel;
+	//按钮条
+	QToolBar* toolbar;
 	//适配器
 	std::shared_ptr<PlotAdapter> adapter;
 	//QwtScaleWidget *scaleWIdget;

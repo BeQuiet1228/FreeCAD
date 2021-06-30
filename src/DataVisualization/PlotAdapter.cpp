@@ -137,20 +137,6 @@ void PlotAdapter::findPointRender(const float& x, const float& y)
 	renderManager->start();
 }
 
-Data::Rang PlotAdapter::getXRange()
-{
-	if (!mainRenderer)
-		return Data::Rang();
-	return mainRenderer->getXRang();
-}
-
-Data::Rang PlotAdapter::getYRange()
-{
-	if (!mainRenderer)
-		return Data::Rang();
-	return mainRenderer->getYRang();
-}
-
 void PlotAdapter::initPlot(Plot& plot)
 {
 	Plot::connect(renderManager.get(), SIGNAL(allWorkFinished()), &plot, SLOT(renderFinished()));
@@ -159,6 +145,50 @@ void PlotAdapter::initPlot(Plot& plot)
 std::list<QAction*> PlotAdapter::getActions()
 {
 	return std::list<QAction*>();
+}
+
+bool PlotAdapter::axisLeftIsHide()
+{
+	return false;
+}
+
+bool PlotAdapter::axisRightIsHide()
+{
+	return true;
+}
+
+bool PlotAdapter::axisTopIsHide()
+{
+	return true;
+}
+
+bool PlotAdapter::axisBottomIsHide()
+{
+	return false;
+}
+
+Data::Rang PlotAdapter::getAxisLeftRange()
+{
+	if (!mainRenderer)
+		return Data::Rang();
+	mainRenderer->getYRang();
+}
+
+Data::Rang PlotAdapter::getAxisRightRange()
+{
+	return Data::Rang();
+}
+
+Data::Rang PlotAdapter::getAxisTopRange()
+{
+	return Data::Rang();
+}
+
+Data::Rang PlotAdapter::getAxisBottomRange()
+{
+	if (!mainRenderer)
+		return Data::Rang();
+	return mainRenderer->getXRang();
 }
 
 std::list<CanvasItem> PlotAdapter::takeResut()
