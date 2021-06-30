@@ -120,6 +120,10 @@ namespace Gui{
 		}
 		else if (strcmp("AutoMax", pMsg) == 0) {
 			return true;
+		}else if (strcmp("PlotDataExport", pMsg) == 0) {
+			return true;
+		}else if (strcmp("PlotEqualProportion", pMsg) == 0) {
+			return true;
 		}
 		return false;
 	}

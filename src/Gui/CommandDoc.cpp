@@ -77,6 +77,7 @@
 #include "App/DocumentObject.h"
 #include "Gui\DockWindowManager.h"
 #include "DocumentPic.h"
+#include "GuiCommand.h"
 using namespace Gui;
 
 
@@ -130,7 +131,6 @@ void StdCmdOpen::activated(int iMsg)
         formatList += QLatin1String(" *.");
         formatList += QLatin1String(it->c_str());
     }
-	//qDebug() << formatList;
 	//新增在C++中添加文件格式的方法
 	//不与之前的功能有任何冲突
 
@@ -2415,7 +2415,8 @@ void CreateDocCommands(void)
     /*lzg*/
     //自定义变量
     rcCmdMgr.addCommand(new StdCmdMyParameter());
-    
+    //添加自定义的commad
+    creatGuiCommand();
 }
 
 } // namespace Gui
