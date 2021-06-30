@@ -4,15 +4,28 @@
 #include <QWidget>
 #include <QLabel>
 #include <QLineEdit>
-class TlineEdit :public QLineEdit
+#include <QDialog>
+class QPushButton;
+class QPlainTextEdit;
+class QGridLayout;
+class TDialog :public QDialog
 {
 	Q_OBJECT
 public:
-	TlineEdit(QWidget* parent = nullptr);
-	~TlineEdit();
+	TDialog(QWidget* parent = nullptr);
+	~TDialog();
 	void closeEvent(QCloseEvent *e);
+	void SetMsgtext(QString&);
+	QString GetMsgText();
 Q_SIGNALS:
-	void signalCloseEvent();
+	void signalCloseEvent(bool);
+private Q_SLOTS:
+void buttonClicked();
+private:
+	QPushButton* appbutton;
+	QPlainTextEdit* mPlainTextEdit;
+	QGridLayout* gridLayout;
+	
 };
 
 class TLabel:public QLabel
@@ -23,8 +36,10 @@ public:
 	~TLabel();
 	virtual void mouseDoubleClickEvent(QMouseEvent *e) override;
 	public Q_SLOTS:
-	void slotCloseEvent();
+	void slotCloseEvent(bool);
 protected:
-	TlineEdit* mTlineEdit;
+	//TlineEdit* mTlineEdit;
+	TDialog* mTDialog;
+	std::vector<QRect> screens;
 };
 #endif // !TLABEL_H_
