@@ -591,7 +591,7 @@ void Hdf5IO::getGrdData()
  */
 void Hdf5IO::initHdf5Data()
 {
-
+#if 0
     // 获取结构数据
      {
 		 getStructData();
@@ -608,6 +608,10 @@ void Hdf5IO::initHdf5Data()
     {
 		getFildData();
     }
+#endif
+#if 1
+	LoadH5Resource();
+#endif
 }
 
 
@@ -682,17 +686,144 @@ void Hdf5Data::init()
 	if (initStructInformation())
 		return;
 }
+/**
+* @brief Hdf5IO::creatNewH5File
+* @param const std::string & fileName
+* @return int
+* @Time 2021/6/30
+*/
 int Hdf5IO::creatNewH5File(const std::string& fileName){
 	
 	return H5Fcreate(fileName.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
 }
+/**
+* @brief Hdf5IO::openH5File
+* @param const std::string & fileName
+* @return int
+* @Time 2021/6/30
+*/
 int Hdf5IO::openH5File(const std::string &fileName)
 {
 	/*return H5Fopen(const char *filename, unsigned flags,
 		hid_t access_plist);*/
 	return 0;
 }
+/**
+* @brief Hdf5IO::closeH5File
+* @param int H5id
+* @return int
+* @Time 2021/6/30
+*/
 int Hdf5IO::closeH5File(int H5id)
 {
 	return H5Fclose(H5id);
+
+}
+
+/**
+* @brief Hdf5IO::LoadH5Resource 加载H5资源
+* @return void
+* @Time 2021/6/30
+*/
+void Hdf5IO::LoadH5Resource()
+{
+	std::list<Group> groups = getGrouplist();//获取根节点下的所有组
+	//处理所有的Group
+	for (auto iter = groups.begin(); iter != groups.end();iter++)
+		digGroup(*iter);
+}
+
+/**
+* @brief Hdf5IO::digGroup
+* @param Group group
+* @return void
+* @Time 2021/6/30
+*/
+void Hdf5IO::digGroup(Group group)
+{
+	std::string goupName = group.getObjName();
+	std::list<Group> subgroups = getGrouplist(group);
+	std::vector<DataSet> datas = getDataSetlist(group);
+	if (!datas.empty())
+	{
+		Hdf5Data data(this->Hdf5File);
+		data.listDataSet = datas;
+		data.group = group;
+		std::vector<std::string> headList = getHeadValue(group);
+		data.headList = headList;
+		data.init();
+		hdf5DataList.push_back(data);
+	}
+	if (subgroups.empty())
+		return;
+	//采用递归式处理
+	for (auto iter = subgroups.begin(); iter != subgroups.end(); iter++)
+		digGroup(*iter);
+}
+/**
+* @brief Hdf5IO::getGroups
+* @return std::list<H5::Group>
+* @Time 2021/6/30
+*/
+std::list<Group> Hdf5IO::getGrouplist()
+{
+	std::list<Group> groups;
+	int count = this->Hdf5File->getNumObjs();
+	for (auto index = 0; index < count;index++)
+	{
+		Group subgroup;
+		std::string groupName = Hdf5File->getObjnameByIdx(index);
+		getGroup(groupName,subgroup);
+		int childcount = subgroup.getNumObjs();
+		if (childcount>0)//有子节点，不是dataset
+		{
+			groups.push_back(subgroup);
+		}
+	}
+	return groups;
+}
+/**
+* @brief Hdf5IO::getGrouplist
+* @param Group group
+* @return std::list<H5::Group>
+* @Time 2021/6/30
+*/
+std::list<Group> Hdf5IO::getGrouplist(Group group)
+{
+	std::list<Group> groups;
+	int count = group.getNumObjs();
+	for (auto index = 0; index < count;index++)
+	{
+		Group subgroup;
+		std::string subGroupName = group.getObjnameByIdx(index);
+		auto res=getGroup(group,subGroupName,subgroup);
+		if (!res)
+			continue;
+		int childcount = subgroup.getNumObjs();
+		if (childcount>0)
+			groups.push_back(subgroup);
+	}
+	return groups;
+}
+
+/**
+* @brief Hdf5IO::getDataSetlist 获取数据队列
+* @param Group group
+* @return std::vector<H5::DataSet>
+* @Time 2021/6/30
+*/
+std::vector<DataSet> Hdf5IO::getDataSetlist(Group group)
+{
+	std::vector<DataSet> datasetlist;
+	int count = group.getNumObjs();
+	for (auto index = 0; index < count;index++)
+	{
+		DataSet data;
+		std::string datasetName = group.getObjnameByIdx(index);
+		auto res = getDataSet(group, datasetName, data);
+		if (!res)
+			continue;
+		datasetlist.push_back(data);
+	}
+	return datasetlist;
 }
