@@ -308,6 +308,7 @@ set(Gui_MOC_HDRS
     ToolBox.h
     Transform.h
     Tree.h
+	TreeWidgetm3d.h
     TreeView.h
     ProjectView.h
     View3DInventor.h
@@ -646,6 +647,7 @@ SET(Dock_Windows_CPP_SRCS
     SelectionView.cpp
     ToolBox.cpp
     Tree.cpp
+	TreeWidgetm3d.cpp
     TreeView.cpp
     ProjectView.cpp
     DAGView/DAGView.cpp
@@ -662,6 +664,7 @@ SET(Dock_Windows_HPP_SRCS
     SelectionView.h
     ToolBox.h
     Tree.h
+	TreeWidgetm3d.h
     TreeView.h
     ProjectView.h
     DAGView/DAGView.h

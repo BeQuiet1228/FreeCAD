@@ -30,7 +30,7 @@
 
 class QTabWidget;
 class QTreeView;
-
+class TreeWidgetm3d;
 namespace App {
   class PropertyContainer;
 }
@@ -99,7 +99,7 @@ protected:
 private:
     QTabWidget                         * tabs;
     Gui::PropertyView                  * prop;
-    QTreeView                          * tree;
+	TreeWidgetm3d                      * tree;
     Gui::TaskView::TaskView            * taskPanel;
   //Gui::ProjectWidget                 * projectView;
 };
