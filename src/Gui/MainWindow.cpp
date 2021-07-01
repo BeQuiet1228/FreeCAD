@@ -361,6 +361,7 @@ void MainWindow::showControlTree()
 	if (index >= 0)
 		return;
     tab->addTab(controlTreeWidget, GetEncodingstr("观测列表",ENCODING_UTF8));
+    tab->setCurrentWidget(controlTreeWidget);
 }
 
 void MainWindow::hideVisualizationTree()
@@ -388,6 +389,7 @@ void MainWindow::showVisualizationTree()
 	if (index >= 0)
 		return;
 	tab->addTab(mTreeWidget, GetEncodingstr("文件数据", ENCODING_UTF8));
+    tab->setCurrentWidget(mTreeWidget);
 }
 
 void MainWindow::ClearVisualizationTree()
@@ -2007,13 +2009,6 @@ void MainWindow::inittreeContor()
 	ListTreeWidget* m_lisTreeWidget = new ListTreeWidget();
 	int curindex = _tabwidget->count();
 	_tabwidget->insertTab(curindex, m_lisTreeWidget,GetEncodingstr("获取结果",ENCODING_GB2312));
-}
-void MainWindow::inittreeContor(void* _combiview)
-{
-	CombiView* pCombiview = (CombiView*)_combiview;
-	QTabWidget* _tabwidget = pCombiview->getTabPanel();
-	int curindex = _tabwidget->count();
-	_tabwidget->insertTab(curindex, mTreeWidget, tr("获取结果")/*GetEncodingstr("获取结果", ENCODING_GB2312)*/);
 }
 //void MainWindow::DisplatPlot(Hdf5Data data, DocumentManager* ptr, int _type){
 //	std::list<Gui::MDIView*> list = Gui::Application().activeDocument()->getMDIViews();

@@ -430,6 +430,8 @@ SET(Command_CPP_SRCS
     ActionFunction.cpp
     Command.cpp
     CommandDoc.cpp
+	GuiCommand.cpp
+	GuiCommand.h
     CommandFeat.cpp
     CommandMacro.cpp
     CommandStd.cpp

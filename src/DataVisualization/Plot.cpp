@@ -360,6 +360,19 @@ void Plot::updateInformationLabel()
 }
 
 /**
+* @brief Plot::MainRendererDataSaveAs 将主渲染器中的数据保存到指定路径，如果文件已存在则将数据添加到最后
+* @param const std::string & path
+* @return void
+*/
+void Plot::MainRendererDataSaveAs(const std::string& path)
+{
+	if (!mainRenderer)
+		return;
+	auto data = mainRenderer->getData();
+	data->saveAs(path);
+}
+
+/**
 * @brief Plot::initGUI 初始化布局
 * @return void
 */
