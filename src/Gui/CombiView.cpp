@@ -37,7 +37,7 @@
 #include "Tree.h"
 #include "TaskView/TaskView.h"
 #include "propertyeditor/PropertyEditor.h"
-
+#include "TreeWidgetm3d.h"
 using namespace Gui;
 using namespace Gui::DockWnd;
 
@@ -64,7 +64,7 @@ CombiView::CombiView(Gui::Document* pcDocument, QWidget *parent)
     splitter->setOrientation(Qt::Vertical);
 
     // tree widget
-    tree =  new TreeWidget(this);
+	tree = new TreeWidgetm3d(this);
     //tree->setRootIsDecorated(false);
     ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/TreeView");
     tree->setIndentation(hGrp->GetInt("Indentation", tree->indentation()));
