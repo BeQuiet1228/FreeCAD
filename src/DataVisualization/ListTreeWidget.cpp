@@ -203,6 +203,9 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 	{
 		//查看是否有上层的分类
 		std::string dataType = GetType(data.name);
+		//若是未知的图不做处理
+		if (dataType.find("未知图") != std::string::npos)
+			return;
 		iter = parentnode.find(dataType);
 		QStandardItem* parentItem;
 		if (iter != parentnode.end())
@@ -257,12 +260,12 @@ void ListTreeWidget::toStructh5df(Hdf5Data& data, int index)
 	if (data.name.find("struct") == std::string::npos)
 		return;
 	//判断头部文件信息数量
-	if (structHeadCount < data.headList.size())
-	{
-		structHeadCount = data.headList.size();
-	}
-	else
-		return;
+	//if (structHeadCount < data.headList.size())
+	//{
+	//	structHeadCount = data.headList.size();
+	//}
+	//else
+	//	return;
 	std::string dataType = GetType(data.name);
 	auto iter = parentnode.find(dataType);
 	QStandardItem* item;

@@ -654,7 +654,7 @@ bool Hdf5Data::initInformation()
 */
 bool Hdf5Data::initStructInformation()
 {
-	if (headList.size() < 4)
+	if (headList.size() < 5)
 		return false;
 	name = "struct";
 	QString str = QString::fromStdString(headList.at(3));
@@ -741,7 +741,8 @@ void Hdf5IO::LoadH5Resource()
 */
 void Hdf5IO::digGroup(Group group)
 {
-	std::string goupName = group.getObjName();
+	
+	//std::string goupName = group.getObjName();
 	std::list<Group> subgroups = getGrouplist(group);
 	std::vector<DataSet> datas = getDataSetlist(group);
 	if (!datas.empty())

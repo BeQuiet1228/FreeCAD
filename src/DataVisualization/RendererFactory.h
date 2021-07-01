@@ -14,6 +14,8 @@ using DataPtr = std::shared_ptr<Data>;
 class RendererFactory{
 public:
 	RendererFactory(Hdf5Data h5d);
+	//新增默认构造
+	RendererFactory();
 	~RendererFactory() =default;
 
 public:
@@ -36,10 +38,12 @@ public:
 	static int  findStructDataIndex(const std::vector<Hdf5Data>& datas);
 private:
 	Hdf5Data structData;
+	bool ishaveStruct;
 
 public: 
 	void setStructData(const Hdf5Data& data) {
 		this->structData = data;
+		ishaveStruct = true;
 	}
 
 };
