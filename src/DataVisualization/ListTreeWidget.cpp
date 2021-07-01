@@ -239,7 +239,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 */
 void ListTreeWidget::clear()
 {
-	structHeadCount = 0;
+	//structHeadCount = 0;
 	if (goodsModel->hasChildren() > 0)
 	{
 		goodsModel->removeRows(0, goodsModel->rowCount());
