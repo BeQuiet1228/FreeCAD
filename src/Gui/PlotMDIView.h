@@ -23,6 +23,11 @@ namespace Gui{
 
 		virtual bool onMsg(const char* pMsg, const char** ppReturn) override;
 		virtual bool onHasMsg(const char* pMsg) const override;
+
+		//ªÒ»°plot÷∏’Î
+		Plot* getPlot() {
+			return plot;
+		}
 	protected:
 		void resizeEvent(QResizeEvent*);
 	private:

@@ -297,13 +297,11 @@ public:
 	Gui::TreeViewCtrl* mTreeWidget;
 
 public:
-	void initContorlToolBar();
 	void setContorlUI();
 	void showContorlUI();
 	void hideContorlUI();
 	void inintContorlUI();
 	void inittreeContor();
-	void inittreeContor(void*);
 	void addTitleAction(QAction* action);
     //显示和隐藏树控件
     void hideControlTree();

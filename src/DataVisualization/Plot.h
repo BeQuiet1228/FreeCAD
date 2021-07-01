@@ -87,6 +87,8 @@ public:
 	void autoMaxRender();
 	//刷新label显示
 	void updateInformationLabel();
+	//保存主渲染器中的数据
+	void MainRendererDataSaveAs(const std::string& path);
 	//清理从渲染器
 	void clearSubRenderer(){
 		subRenderers.clear();
