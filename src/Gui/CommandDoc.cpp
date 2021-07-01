@@ -1887,7 +1887,6 @@ bool StdCmdRunM3d::isActive(void)
 			sPixmap = "runing";
 		}else{
 			auto mw = Gui::MainWindow::getInstance();
-			mw->hideContorlUI();
 			sMenuText = QT_TR_NOOP("RunM3d");
 			sPixmap = "run";
 		}
