@@ -26,7 +26,7 @@ std::string Structdirection_cartesian[3] = { "X_Y", "Y_Z", "X_Z" };
 * @brief ListTreeWidget::ListTreeWidget 构造函数
 * @param QWidget* parent
 */
-ListTreeWidget::ListTreeWidget(QWidget* parent) :QWidget(parent), structHeadCount(0)
+ListTreeWidget::ListTreeWidget(QWidget* parent) :QWidget(parent)/*, structHeadCount(0)*/
 {
 	//初始化TreeView的风格
 	m_TreeView = new QTreeView(this);
