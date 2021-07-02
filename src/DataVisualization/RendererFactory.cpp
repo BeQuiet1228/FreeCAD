@@ -18,22 +18,28 @@
 #include "Renderer.h"
 #include <iostream>
 RendererFactory::RendererFactory(Hdf5Data h5d)
-	: structData(h5d)
+	: structData(h5d),ishaveStruct(true)
 {
 
 }
+RendererFactory::RendererFactory():ishaveStruct(false)
+{
 
+}
 Renderers RendererFactory::creatRenderers(Hdf5Data h5d, DirectionType type /*= X_Y*/)
 {
 	RendererPtr renderer = creatRenderer(h5d,type);
 
 	Renderers renderers;
 	renderers.push_back(renderer);
+	if (!ishaveStruct)
+		return renderers;
 	if (renderer->getNeedStrucuType() != Data::NEED_STRUCT)
 		return renderers;
 
 	//如果是等位图，那么必须使用观测面初始化结构图
 	auto contourRender = std::dynamic_pointer_cast<ContourRender>(renderer);
+
 	if (contourRender)
 	{
 		auto sRender = creatContourStructRender(contourRender);

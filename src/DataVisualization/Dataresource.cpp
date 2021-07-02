@@ -119,8 +119,16 @@ void DataSourceManage::loadhdffile(std::string filepath)
 	/*****************************************************/
 	//结构图初始化
 	int structindex = RendererFactory::findStructDataIndex(hdfDatelist);
-	Hdf5Data structDate(hdfDatelist.at(structindex));
-	factoryptr = std::shared_ptr<RendererFactory>(new RendererFactory(structDate));
+	if (structindex>=0)
+	{
+		Hdf5Data structDate(hdfDatelist.at(structindex));
+		factoryptr = std::shared_ptr<RendererFactory>(new RendererFactory(structDate));
+	}
+	else
+	{
+		factoryptr = std::shared_ptr<RendererFactory>(new RendererFactory());
+	}
+	
 	/****************************************************/
 	_hdf5io = io;
 }
