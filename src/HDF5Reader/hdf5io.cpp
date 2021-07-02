@@ -741,7 +741,9 @@ void Hdf5IO::LoadH5Resource()
 */
 void Hdf5IO::digGroup(Group group)
 {
+#if 0
 	std::string goupName = group.getObjName();
+	这里增加判断下层的是数据还是组
 	std::list<Group> subgroups = getGrouplist(group);
 	std::vector<DataSet> datas = getDataSetlist(group);
 	if (!datas.empty())
@@ -759,6 +761,46 @@ void Hdf5IO::digGroup(Group group)
 	//采用递归式处理
 	for (auto iter = subgroups.begin(); iter != subgroups.end(); iter++)
 		digGroup(*iter);
+#else
+	/*****************************************/
+	//首先判断下层有没有数据或者组
+	int childCount = group.getNumObjs();
+	if (0 >= childCount)
+		return;
+	//下层有数据，则判断是组还是数据
+	//先判断若是数据的话
+	DataSet temp;
+	bool res = getDataSet(group,group.getObjnameByIdx(0),temp);
+	//如果确实为数据
+	if (res)
+	{
+		std::vector<DataSet> datasets;
+		for (int index = 0; index < childCount; index++)
+		{
+			DataSet data;
+			getDataSet(group,group.getObjnameByIdx(index),data);
+			datasets.push_back(data);
+		}
+		//初始化
+		Hdf5Data data(this->Hdf5File);
+		data.listDataSet = datasets;
+		data.group = group;
+		data.headList = getHeadValue(group);
+		data.init();
+		hdf5DataList.push_back(data);
+		return;
+	}
+	//不是数据，是组
+	else
+	{
+		for (int index = 0; index < childCount; index++)
+		{
+			Group g;
+			getGroup(group,group.getObjnameByIdx(index),g);
+			digGroup(g);
+		}
+	}
+#endif
 }
 /**
 * @brief Hdf5IO::getGroups
