@@ -23,6 +23,7 @@ typedef struct valrange{
 }VARRANGE;
 
 class QGridLayout;
+class ScaleWidget;
 class Axis : public QWidget
 {
 	Q_OBJECT
@@ -36,10 +37,13 @@ public:
 	void SetAxisNumber(int);
 	void loadconfig();
 	void _update();
+public:
+	virtual void resizeEvent(QResizeEvent*) override;
 private:
 	unsigned __int32 AxisNum;
 	QString mAxisunit;
 	valrange axisvalrange;
 	Axisstyle mAxisstyle;
 	QGridLayout* mqgridlayout;
+	ScaleWidget* mQwtScaleWidget;
 };

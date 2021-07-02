@@ -1,8 +1,7 @@
 #include "axis.h"
 #include<QGridLayout>
-#include "qwt/qwt_scale_draw.h"
-#include "qwt/qwt_scale_widget.h"
 #include"qwt/qwt_scale_engine.h"
+#include"ScaleWidget.h"
 Axis::Axis(QWidget* parent):QWidget(parent)
 {
 	//设置默认参数
@@ -11,9 +10,10 @@ Axis::Axis(QWidget* parent):QWidget(parent)
 	mAxisstyle = AxisBottom;
 	axisvalrange.min = 0.0f;
 	axisvalrange.max = 100.0f;
-	mqgridlayout = new QGridLayout;
-	mqgridlayout->setSpacing(0);
-	this->setLayout(mqgridlayout);
+	//mqgridlayout = new QGridLayout;
+	//mqgridlayout->setSpacing(0);
+	//this->setLayout(mqgridlayout);
+	mQwtScaleWidget = new ScaleWidget(this);
 }
 Axis::~Axis()
 {
@@ -46,48 +46,55 @@ void Axis::loadconfig()
 }
 void Axis::_update()
 {
-	int widgetCount = mqgridlayout->count();
-	QwtScaleWidget* mQwtScaleWidget = nullptr;
-	for (int index=widgetCount-1;index>=0;index--)
-	{
-		mQwtScaleWidget = dynamic_cast<QwtScaleWidget*>(mqgridlayout->itemAt(index)->widget());
-		if (mQwtScaleWidget)
-			break;
-	}
-	if (!mQwtScaleWidget)
-	{
-		mQwtScaleWidget = new QwtScaleWidget();
-	}
+	//int widgetCount = mqgridlayout->count();
+	//ScaleWidget* mQwtScaleWidget = nullptr;
+	//for (int index=widgetCount-1;index>=0;index--)
+	//{
+	//	mQwtScaleWidget = dynamic_cast<ScaleWidget*>(mqgridlayout->itemAt(index)->widget());
+	//	if (mQwtScaleWidget)
+	//		break;
+	//}
+	//if (!mQwtScaleWidget)
+	//{
+	//	mQwtScaleWidget = new ScaleWidget(this);
+	//}
 	mQwtScaleWidget->hide();
 	switch (mAxisstyle)
 	{
 	case Axisleft:
 	{
-		//mQwtScaleWidget = new QwtScaleWidget(QwtScaleDraw::LeftScale);
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::LeftScale);
 	}break;
 	case AxisRight:
 	{
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::RightScale);
-		//mQwtScaleWidget = new QwtScaleWidget(QwtScaleDraw::RightScale);
 	}break;
 	case AxisTop:
 	{
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::TopScale);
-		//mQwtScaleWidget = new QwtScaleWidget(QwtScaleDraw::TopScale);
 	}break;
 	case AxisBottom:
 	{
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::BottomScale);
-		//mQwtScaleWidget = new QwtScaleWidget(QwtScaleDraw::BottomScale);
 	
 	}break;
 	}
+	QSize size = this->size();
 	mQwtScaleWidget->setColorBarEnabled(true);
 	QwtLinearScaleEngine * mQwtLinearScaleEngine = new QwtLinearScaleEngine;
 	mQwtScaleWidget->setScaleDiv(mQwtLinearScaleEngine->divideScale(axisvalrange.min, axisvalrange.max, AxisNum, 5));
-	mqgridlayout->addWidget(mQwtScaleWidget, 0, 0);
-	//mQwtScaleWidget->setShown(false);
+	mQwtScaleWidget->setTitle(mAxisunit);
+	//mqgridlayout->addWidget(mQwtScaleWidget, 0, 0);
+	int start, end;
+	mQwtScaleWidget->setMargin(1);
+	mQwtScaleWidget->setSpacing(0);
+	mQwtScaleWidget->getBorderDistHint(start,end);
+	mQwtScaleWidget->setBorderDist(0, 0);
 	mQwtScaleWidget->show();
+}
+
+void  Axis::resizeEvent(QResizeEvent* sizeEvent)
+{
+	mQwtScaleWidget->resize(this->size());
 }
 #include "moc_Axis.cpp"

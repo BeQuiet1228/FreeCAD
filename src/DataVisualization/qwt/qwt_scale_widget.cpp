@@ -103,7 +103,6 @@ void QwtScaleWidget::initScale( QwtScaleDraw::Alignment align )
     d_data->margin = 4;
     d_data->titleOffset = 0;
     d_data->spacing = 2;
-
     d_data->scaleDraw = new QwtScaleDraw;
     d_data->scaleDraw->setAlignment( align );
     d_data->scaleDraw->setLength( 10 );

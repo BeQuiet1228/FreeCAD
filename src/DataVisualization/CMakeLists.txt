@@ -35,8 +35,8 @@ SET(MY_MOC_HDR RenderThread.h
 	ColorTab.h
 	ColorMapWidget.h
 	realTimewidget.h
+	ScaleWidget.h
 	)
-
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
 	TimeRenderer.cpp
@@ -131,6 +131,8 @@ SET(SRC_TOOL ConfigWidget.h
 	ColorMapWidget.cpp
 	realTimewidget.cpp
 	realTimewidget.h
+	ScaleWidget.h
+	ScaleWidget.cpp
 	)
 #处理ui和qrc文件
 if (BUILD_QT5)
