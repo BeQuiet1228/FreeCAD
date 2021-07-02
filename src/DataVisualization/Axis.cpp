@@ -46,7 +46,7 @@ void Axis::_update()
 	int widgetCount = mqgridlayout->count();
 	for (int index=widgetCount;index>=0;index--)
 	{
-		mqgridlayout->itemAt(index).widget()
+		
 	}
 	switch (mAxisstyle)
 	{
