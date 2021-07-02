@@ -370,6 +370,7 @@ void ControlTreeWidget::openResultFile(std::string path)
 	if (picDoc)
 		picDoc->releaseH5Object();
 	picDoc->openH5File(path);
+	//ÏÔÊ¾Ê÷¿Ø¼þ
 	mw->showVisualizationTree();
 }
 

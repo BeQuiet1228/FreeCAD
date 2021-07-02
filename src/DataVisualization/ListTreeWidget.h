@@ -34,6 +34,6 @@ protected:
 	std::map <QStandardItem*, int> datainfor;
 	std::map<std::string, QStandardItem*> parentnode;
 	//结构图头部信息数量;
-	int structHeadCount;
+	//int structHeadCount;
 };
 #endif
