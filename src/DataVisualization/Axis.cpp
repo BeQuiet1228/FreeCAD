@@ -14,6 +14,7 @@ Axis::Axis(QWidget* parent):QWidget(parent)
 	//mqgridlayout->setSpacing(0);
 	//this->setLayout(mqgridlayout);
 	mQwtScaleWidget = new ScaleWidget(this);
+	mQwtScaleWidget->resize(this->size());
 }
 Axis::~Axis()
 {
@@ -64,6 +65,9 @@ void Axis::_update()
 	case Axisleft:
 	{
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::LeftScale);
+		mQwtScaleWidget->scaleDraw()->move(this->width()-1,0);
+		mQwtScaleWidget->scaleDraw()->setLength(this->height()-1);
+		mQwtScaleWidget->scaleDraw()->setLabelAlignment(Qt::AlignTop);
 	}break;
 	case AxisRight:
 	{
@@ -76,7 +80,9 @@ void Axis::_update()
 	case AxisBottom:
 	{
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::BottomScale);
-	
+		mQwtScaleWidget->scaleDraw()->move(0,1);
+		mQwtScaleWidget->scaleDraw()->setLength(this->width()-1);
+		mQwtScaleWidget->scaleDraw()->setLabelAlignment(Qt::AlignRight);
 	}break;
 	}
 	QSize size = this->size();

@@ -182,7 +182,6 @@ void QwtAbstractScaleDraw::draw( QPainter *painter,
 
         const QList<double> &majorTicks =
             d_data->scaleDiv.ticks( QwtScaleDiv::MajorTick );
-        //≤‚ ‘”√¥˙¬Î
         for ( int i = 0; i < majorTicks.count(); i++ )
         {
             const double v = majorTicks[i];
