@@ -11,6 +11,7 @@ public:
 
 public:
 	void setAlignment(QwtScaleDraw::Alignment);
+	void setRange(double min,double max);
 	virtual void resizeEvent(QResizeEvent*) override;
 };
 #endif

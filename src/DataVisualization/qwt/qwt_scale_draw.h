@@ -86,10 +86,10 @@ public:
     QSizeF labelSize( const QFont &, double value ) const;
 
     QRect boundingLabelRect( const QFont &, double value ) const;
-
+    void setRange(double min,double max);
 protected:
     QTransform labelTransformation( const QPointF &, const QSizeF & ) const;
-
+    QTransform labelTransformation(const QPointF& pos, const QSizeF& size, double value) const;
     virtual void drawTick( QPainter *, double value, double len ) const;
     virtual void drawBackbone( QPainter * ) const;
     virtual void drawLabel( QPainter *, double value ) const;
@@ -102,6 +102,10 @@ private:
 
     class PrivateData;
     PrivateData *d_data;
+
+    double min;
+    double max;
+    bool issetRange;
 };
 
 /*!

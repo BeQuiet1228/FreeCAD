@@ -2,6 +2,8 @@
 #include<QGridLayout>
 #include"qwt/qwt_scale_engine.h"
 #include"ScaleWidget.h"
+#include<QMouseEvent>
+#include"AxisLable.h"
 Axis::Axis(QWidget* parent):QWidget(parent)
 {
 	//设置默认参数
@@ -15,6 +17,10 @@ Axis::Axis(QWidget* parent):QWidget(parent)
 	//this->setLayout(mqgridlayout);
 	mQwtScaleWidget = new ScaleWidget(this);
 	mQwtScaleWidget->resize(this->size());
+	mAxisLable = new AxisLable(this);
+	mAxisLable->setModal(true);
+	mAxisLable->resize(300, 200);
+	connect(mAxisLable, SIGNAL(signalCloseEvent()), this, SLOT(axiscloseEvent()));
 }
 Axis::~Axis()
 {
@@ -47,18 +53,6 @@ void Axis::loadconfig()
 }
 void Axis::_update()
 {
-	//int widgetCount = mqgridlayout->count();
-	//ScaleWidget* mQwtScaleWidget = nullptr;
-	//for (int index=widgetCount-1;index>=0;index--)
-	//{
-	//	mQwtScaleWidget = dynamic_cast<ScaleWidget*>(mqgridlayout->itemAt(index)->widget());
-	//	if (mQwtScaleWidget)
-	//		break;
-	//}
-	//if (!mQwtScaleWidget)
-	//{
-	//	mQwtScaleWidget = new ScaleWidget(this);
-	//}
 	mQwtScaleWidget->hide();
 	switch (mAxisstyle)
 	{
@@ -67,7 +61,6 @@ void Axis::_update()
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::LeftScale);
 		mQwtScaleWidget->scaleDraw()->move(this->width()-1,0);
 		mQwtScaleWidget->scaleDraw()->setLength(this->height()-1);
-		mQwtScaleWidget->scaleDraw()->setLabelAlignment(Qt::AlignTop);
 	}break;
 	case AxisRight:
 	{
@@ -82,19 +75,16 @@ void Axis::_update()
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::BottomScale);
 		mQwtScaleWidget->scaleDraw()->move(0,1);
 		mQwtScaleWidget->scaleDraw()->setLength(this->width()-1);
-		mQwtScaleWidget->scaleDraw()->setLabelAlignment(Qt::AlignRight);
 	}break;
 	}
 	QSize size = this->size();
-	mQwtScaleWidget->setColorBarEnabled(true);
+	mQwtScaleWidget->setColorBarEnabled(false);
 	QwtLinearScaleEngine * mQwtLinearScaleEngine = new QwtLinearScaleEngine;
 	mQwtScaleWidget->setScaleDiv(mQwtLinearScaleEngine->divideScale(axisvalrange.min, axisvalrange.max, AxisNum, 5));
+	mQwtScaleWidget->setRange(axisvalrange.min,axisvalrange.max);
 	mQwtScaleWidget->setTitle(mAxisunit);
-	//mqgridlayout->addWidget(mQwtScaleWidget, 0, 0);
-	int start, end;
 	mQwtScaleWidget->setMargin(1);
 	mQwtScaleWidget->setSpacing(0);
-	mQwtScaleWidget->getBorderDistHint(start,end);
 	mQwtScaleWidget->setBorderDist(0, 0);
 	mQwtScaleWidget->show();
 }
@@ -102,5 +92,28 @@ void Axis::_update()
 void  Axis::resizeEvent(QResizeEvent* sizeEvent)
 {
 	mQwtScaleWidget->resize(this->size());
+}
+void Axis::mouseDoubleClickEvent(QMouseEvent* e)
+{
+	if (e->button() != Qt::LeftButton)
+		return;
+	mAxisLable->setMinval(QString("%1").arg(axisvalrange.min));
+	mAxisLable->setMaxval(QString("%1").arg(axisvalrange.max));
+	mAxisLable->setAxisUnitval(QString("%1").arg(mAxisunit));
+	mAxisLable->show();
+}
+void Axis::axiscloseEvent()
+{
+	valrange temp;
+	temp.min = mAxisLable->getMinval();
+	temp.max = mAxisLable->getMaxval();
+	if (temp != axisvalrange && temp.min <= temp.max)
+	{
+		//emit sendAxisRang(temp.min, temp.max);
+		axisvalrange = temp;
+	}
+	mAxisunit = mAxisLable->getAxisUnitval();
+	mAxisLable->hide();
+	_update();
 }
 #include "moc_Axis.cpp"

@@ -16,4 +16,10 @@ void ScaleWidget::resizeEvent(QResizeEvent* e)
 	QWidget* wid=this->parentWidget();
 	//QwtScaleWidget::resizeEvent(e);
 }
+
+void ScaleWidget::setRange(double min, double max)
+{
+	if(min<max)
+	this->scaleDraw()->setRange(min, max);
+}
 #include "moc_ScaleWidget.cpp"

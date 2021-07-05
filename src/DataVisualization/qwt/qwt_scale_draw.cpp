@@ -51,6 +51,7 @@ public:
 QwtScaleDraw::QwtScaleDraw()
 {
     d_data = new QwtScaleDraw::PrivateData;
+    issetRange = false;
     setLength( 100 );
 }
 
@@ -658,7 +659,7 @@ void QwtScaleDraw::drawLabel( QPainter *painter, double value ) const
 
     QSizeF labelSize = lbl.textSize( painter->font() );
 
-	const QTransform transform = labelTransformation(pos, labelSize);
+	const QTransform transform = labelTransformation(pos, labelSize,value);
 
 	
     painter->save();
@@ -668,7 +669,119 @@ void QwtScaleDraw::drawLabel( QPainter *painter, double value ) const
    
     painter->restore();
 }
+//新增代码
+QTransform QwtScaleDraw::labelTransformation(const QPointF& pos, const QSizeF& size, double value) const
+{
+    QTransform transform;
+    transform.translate(pos.x(), pos.y());
+    transform.rotate(labelRotation());
+    if (issetRange)
+    {
+        int valflage =0;
+        if ((abs(value - this->min) < 0.0000001 && abs(value - this->min) > -0.0000001))
+            valflage = -1;
+        if ((abs(value - this->max) < 0.0000001 && abs(value - this->max) > -0.0000001))
+            valflage = 1;
+        double xx=0, yy=0;
+        switch (alignment())
+        {
+        case RightScale:
+        {
+            //待实现
+        }
+            break;
+        case LeftScale:
+        {
+            if (-1==valflage)
+            {
+                xx = -size.width();
+                yy = -size.height();
+            }
+            else if (1==valflage)
+            {
+                xx = -size.width();
+                yy=0;
+            }
+        }
+            break;
+        case TopScale:
+        {
+            //待实现
+        }
+            break;
+        case BottomScale:
+        {
+            if (-1 == valflage)
+            {
+                xx = 0.0;//
+                yy= -(0.5 * size.height());
+            }
+            else if (1 == valflage)
+            {
+                xx=-size.width();
+                yy = -(0.5 * size.height());
+            }
+        }
+            break;
+        }
+        if (0!=valflage)
+        {
+            transform.translate(xx, yy);
+            return transform;
+        }
+    }
+    int flags = labelAlignment();
+    if (flags == 0)
+    {
+        switch (alignment())
+        {
+        case RightScale:
+        {
+            if (flags == 0)
+                flags = Qt::AlignRight | Qt::AlignVCenter;
+            break;
+        }
+        case LeftScale:
+        {
+            if (flags == 0)
+                flags = Qt::AlignLeft | Qt::AlignVCenter;
+            break;
+        }
+        case BottomScale:
+        {
+            if (flags == 0)
+                flags = Qt::AlignHCenter | Qt::AlignBottom;
+            break;
+        }
+        case TopScale:
+        {
+            if (flags == 0)
+                flags = Qt::AlignHCenter | Qt::AlignTop;
+            break;
+        }
+        }
+    }
 
+    double x, y;
+
+    if (flags & Qt::AlignLeft)
+        x = -size.width();
+    else if (flags & Qt::AlignRight)
+        x = 0.0;
+    else // Qt::AlignHCenter
+        x = -(0.5 * size.width());
+
+    if (flags & Qt::AlignTop)
+        y = -size.height();
+    else if (flags & Qt::AlignBottom)
+        y = 0;
+    else // Qt::AlignVCenter
+        y = -(0.5 * size.height());
+
+    transform.translate(x, y);
+
+    return transform;
+}
 /*!
   \brief Find the bounding rectangle for the label.
 
@@ -935,4 +1048,10 @@ void QwtScaleDraw::updateMap()
         sm.setPaintInterval( pos.y() + len, pos.y() );
     else
         sm.setPaintInterval( pos.x(), pos.x() + len );
+}
+void QwtScaleDraw::setRange(double min, double max)
+{
+    this->min = min;
+    this->max = max;
+    issetRange = true;
 }

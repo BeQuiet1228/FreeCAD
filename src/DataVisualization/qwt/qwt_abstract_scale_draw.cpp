@@ -46,6 +46,9 @@ public:
     double minExtent;
 
     QMap<double, QwtText> labelCache;
+    //增加最大最小的参数
+    double minval;
+    double maxval;
 };
 
 /*!
