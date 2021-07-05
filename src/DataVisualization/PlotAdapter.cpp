@@ -140,6 +140,7 @@ void PlotAdapter::findPointRender(const float& x, const float& y)
 void PlotAdapter::initPlot(Plot& plot)
 {
 	Plot::connect(renderManager.get(), SIGNAL(allWorkFinished()), &plot, SLOT(renderFinished()));
+	Plot::connect(this, SIGNAL(updatePlot()), &plot, SLOT(reRender()));
 }
 
 std::list<QAction*> PlotAdapter::getActions()

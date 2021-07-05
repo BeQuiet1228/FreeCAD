@@ -12,7 +12,6 @@ namespace Gui{
 	{
 		plot = new Plot(this);
 		plot->resize(this->size());
-		contourStateGetter = new ContourRenderStateGetter(plot);
 		//bIsPassive = false;
 	}
 	PlotMDIView::~PlotMDIView(){
@@ -53,32 +52,6 @@ namespace Gui{
 		{
 			plot->redo();
 			return true;
-		}else if (strcmp("ContourImageMod", pMsg) == 0)
-		{
-			ContourRenderStateGetter::DisplayMod mod = contourStateGetter->getDisplayMod();
-			mod = ContourRenderStateGetter::DisplayMod(mod ^ ContourRenderStateGetter::IMAGE);
-			contourStateGetter->setDisplayMode(mod);
-			mod = contourStateGetter->getDisplayMod();
-			if ((mod & ContourRenderStateGetter::IMAGE) == ContourRenderStateGetter::IMAGE)
-			{
-				*ppReturn = "on";
-			}else {
-				*ppReturn = "off";
-			}
-			plot->reRender();
-		}else if (strcmp("ContourLineMod", pMsg) == 0) {
-			ContourRenderStateGetter::DisplayMod mod = contourStateGetter->getDisplayMod();
-			mod = ContourRenderStateGetter::DisplayMod(mod ^ ContourRenderStateGetter::CONTOUR);
-			contourStateGetter->setDisplayMode(mod);
-			mod = contourStateGetter->getDisplayMod();
-			if ((mod & ContourRenderStateGetter::CONTOUR) == ContourRenderStateGetter::CONTOUR)
-			{
-				*ppReturn = "on";
-			}
-			else {
-				*ppReturn = "off";
-			}
-			plot->reRender();
 		}else if (strcmp("PlotDisplayMod", pMsg) == 0) {
 			plot->setGridLineEnabled(!plot->getGridLineEnabled());
 			if (plot->getGridLineEnabled())
@@ -104,16 +77,6 @@ namespace Gui{
 		else if (strcmp("Redo", pMsg) == 0)
 		{
 			return true;
-		}
-		else if (strcmp("ContourImageMod", pMsg) == 0)
-		{
-			if (contourStateGetter->enabled())
-				return true;
-		}
-		else if (strcmp("ContourLineMod", pMsg) == 0)
-		{
-			if (contourStateGetter->enabled())
-				return true;
 		}
 		else if (strcmp("PlotDisplayMod", pMsg) == 0) {
 			return true;

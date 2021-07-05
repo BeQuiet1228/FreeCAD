@@ -5,17 +5,19 @@
 #include "Data.h"
 #include "Canvas.h"
 #include <QAction>
+#include <QObject>
 class Renderer;
 class RenderThreadManager;
 class Plot;
-class PlotAdapter {
+class PlotAdapter :public QObject{
+	Q_OBJECT
 public:
 	PlotAdapter();
 	~PlotAdapter();
 
 public:
 
-public:
+protected:
 	//渲染管理器
 	std::shared_ptr<RenderThreadManager> renderManager;
 	//从渲染器
@@ -58,6 +60,7 @@ public:
 	std::list<CanvasItem> takeResut();
 	//获取图表信息
 	QString getInformationTitile();
+	
 
 	std::string getXTag();
 	std::string getYTag();
@@ -78,4 +81,7 @@ public:
 	virtual Data::Rang getAxisRightRange();
 	virtual Data::Rang getAxisTopRange();
 	virtual Data::Rang getAxisBottomRange();
+
+Q_SIGNALS:
+	void updatePlot();
 };

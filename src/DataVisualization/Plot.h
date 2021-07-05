@@ -12,6 +12,7 @@
 #include <QLabel>
 #include <QToolBar>
 #include <qwt/qwt_scale_widget.h>
+#include <QHBoxLayout>
 class Canvas;
 class Renderer;
 class RenderThreadManager;
@@ -40,8 +41,6 @@ private:
 	Axis *AxisL, *AxisB;
 	//图表信息label
 	QLabel* informationLabel;
-	//按钮条
-	QToolBar* toolbar;
 	//适配器
 	std::shared_ptr<PlotAdapter> adapter;
 	//QwtScaleWidget *scaleWIdget;
@@ -57,9 +56,10 @@ private:
 	unsigned int xAxisLevel, yAxisLevel;
 	//是否显示网格线
 	bool gridLineEnabled;
+	//按钮条
+	QWidget* toolbar;
+	QHBoxLayout *toolbarLayout;
 public:
-	//重渲染
-	void reRender();
 	//设置图例是否可用
 	void setAxisRightEnabled(const bool& e);
 	//更新坐标轴
@@ -104,7 +104,11 @@ private:
 	void creatGridRenderTask();
 	//初始化信息框字体
 	void initInformationLabelFont();
+	//更新按钮条
+	void updateToolbar();
 public Q_SLOTS:
+	//重渲染
+	void reRender();
 	//渲染完成
 	void renderFinished();
 	//画布框选

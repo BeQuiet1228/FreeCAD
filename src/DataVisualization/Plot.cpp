@@ -15,6 +15,8 @@
 #include"ConfigWidget.h"
 #include "PlotAdapter.h"
 #include "CustomConfig.h"
+#include "QToolButton"
+#include <QList>
 struct UndoRedoData
 {
 	UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
@@ -298,7 +300,10 @@ void Plot::initGUI()
 	informationLabel->setAlignment(Qt::AlignCenter);
 	initInformationLabelFont();
 
-	toolbar = new QToolBar();
+	//初始化按钮条
+	toolbar = new QWidget();
+	toolbarLayout = new QHBoxLayout;
+	toolbar->setLayout(toolbarLayout);
 
 	gridLayout->addWidget(canvas, 0, 1, 1, 1);
 	gridLayout->addWidget(AxisL, 0, 0, 1, 1);
@@ -376,6 +381,32 @@ void Plot::initInformationLabelFont()
 	QFont font;
 	font.setPointSize(12);
 	informationLabel->setFont(font);
+}
+
+void Plot::updateToolbar()
+{
+	//先清空之前的按钮
+	QList<QToolButton*> btns = toolbar->findChildren<QToolButton*>();
+	for (auto iter = btns.begin(); iter != btns.end(); iter++)
+	{
+		delete* iter;
+	}
+
+
+	if (!adapter)
+		return;
+	auto actions = adapter->getActions();
+
+	for (auto iter = actions.begin(); iter != actions.end(); iter++)
+	{
+		QToolButton *button = new QToolButton();
+		button->setDefaultAction(*iter);
+		button->setMinimumSize(32, 32);
+		button->setAutoRaise(true);
+		button->setIconSize(QSize(20, 20));
+		button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+		toolbar->layout()->addWidget(button);
+	}
 }
 
 /**
@@ -583,6 +614,7 @@ void Plot::setAdapter(const std::shared_ptr < PlotAdapter>& adapter)
 
 	canvas->clearIteam();
 	autoMaxRender();
+	updateToolbar();
 }
 
 /**

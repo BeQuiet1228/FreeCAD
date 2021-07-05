@@ -35,6 +35,8 @@ SET(MY_MOC_HDR RenderThread.h
 	ColorTab.h
 	ColorMapWidget.h
 	realTimewidget.h
+	ContourPlotAdapter.h
+	PlotAdapter.h
 	)
 
 SET(TIME_SRC TimeData.h
@@ -76,6 +78,8 @@ SET(CONTOUR_SRC ContourData.h
 	ContourDataPolar.h
 	ContourRenderStateGetter.cpp
 	ContourRenderStateGetter.h
+	ContourPlotAdapter.cpp
+	ContourPlotAdapter.h
 )
 SET(PHASOR_SRC phasorData.h
 	phasorData.cpp
