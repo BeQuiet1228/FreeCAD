@@ -60,6 +60,7 @@ void Axis::loadconfig()
 		axisvalColor=QStringToQColor(QString::fromStdString( axisGroup.getGroup("axisvalColor").getValue("value")));
 		axisvalSize = atoi( axisGroup.getGroup("axisvalSize").getValue("value").c_str());
 	}
+	_update();
 }
 void Axis::_update()
 {

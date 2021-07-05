@@ -678,13 +678,14 @@ void Plot::loadconfig()
 		else
 			informationLabel->hide();
 	}
+	AxisL->loadconfig();
+	AxisB->loadconfig();
 	if (!mainRenderer)
 		return;
 	mainRenderer->loadconfig();
 	for (auto iter = subRenderers.begin(); iter != subRenderers.end(); iter++)
 		(*iter)->loadconfig();
-	AxisL->loadconfig();
-	AxisB->loadconfig();
+	
 	//reRender();
 }
 void Plot::setappEvent()
