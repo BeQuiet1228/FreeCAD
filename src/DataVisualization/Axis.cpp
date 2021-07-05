@@ -4,6 +4,8 @@
 #include"ScaleWidget.h"
 #include<QMouseEvent>
 #include"AxisLable.h"
+#include "CustomConfig.h"
+#include"C_encoding.h"
 Axis::Axis(QWidget* parent):QWidget(parent)
 {
 	//设置默认参数
@@ -49,7 +51,15 @@ void Axis::SetAxisNumber(int number)
 }
 void Axis::loadconfig()
 {
-
+	if (Config::GetInstance()->loadConfig())
+	{
+		auto Group = Config::GetInstance()->getRootGroup();
+		auto axisGroup = Group.getGroup("axis");
+		mAxisunitSize = atoi(axisGroup.getGroup("axisSize").getValue("value").c_str());
+		axisColor = QStringToQColor(QString::fromStdString(axisGroup.getGroup("axisColor").getValue("value")));
+		axisvalColor=QStringToQColor(QString::fromStdString( axisGroup.getGroup("axisvalColor").getValue("value")));
+		axisvalSize = atoi( axisGroup.getGroup("axisvalSize").getValue("value").c_str());
+	}
 }
 void Axis::_update()
 {
@@ -61,6 +71,7 @@ void Axis::_update()
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::LeftScale);
 		mQwtScaleWidget->scaleDraw()->move(this->width()-1,0);
 		mQwtScaleWidget->scaleDraw()->setLength(this->height()-1);
+		mQwtScaleWidget->scaleDraw()->setPenWidth(1);
 	}break;
 	case AxisRight:
 	{
@@ -75,6 +86,7 @@ void Axis::_update()
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::BottomScale);
 		mQwtScaleWidget->scaleDraw()->move(0,1);
 		mQwtScaleWidget->scaleDraw()->setLength(this->width()-1);
+		mQwtScaleWidget->scaleDraw()->setPenWidth(1);
 	}break;
 	}
 	QSize size = this->size();
@@ -82,16 +94,32 @@ void Axis::_update()
 	QwtLinearScaleEngine * mQwtLinearScaleEngine = new QwtLinearScaleEngine;
 	mQwtScaleWidget->setScaleDiv(mQwtLinearScaleEngine->divideScale(axisvalrange.min, axisvalrange.max, AxisNum, 5));
 	mQwtScaleWidget->setRange(axisvalrange.min,axisvalrange.max);
-	mQwtScaleWidget->setTitle(mAxisunit);
+	//设置单位
+	{
+		QwtText mtext = mQwtScaleWidget->title();
+		QFont mfont=mtext.font();
+		mfont.setPixelSize(mAxisunitSize);
+		mtext.setColor(axisvalColor);
+		mtext.setFont(mfont);
+		mtext.setText(mAxisunit);
+		mQwtScaleWidget->setTitle(mtext);
+	}
+	//设置刻度
+	{
+		mQwtScaleWidget->scaleDraw()->setAxisValColor(axisvalColor);
+		mQwtScaleWidget->scaleDraw()->setAxisColor(axisColor);
+		mQwtScaleWidget->scaleDraw()->setAxisValSize(axisvalSize);
+	}
 	mQwtScaleWidget->setMargin(1);
 	mQwtScaleWidget->setSpacing(0);
 	mQwtScaleWidget->setBorderDist(0, 0);
+	//单位大小
 	mQwtScaleWidget->show();
 }
-
 void  Axis::resizeEvent(QResizeEvent* sizeEvent)
 {
 	mQwtScaleWidget->resize(this->size());
+	_update();
 }
 void Axis::mouseDoubleClickEvent(QMouseEvent* e)
 {

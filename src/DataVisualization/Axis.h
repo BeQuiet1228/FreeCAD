@@ -46,9 +46,14 @@ public Q_SLOTS:
 private:
 	unsigned __int32 AxisNum;
 	QString mAxisunit;
+	
 	valrange axisvalrange;
 	Axisstyle mAxisstyle;
 	QGridLayout* mqgridlayout;
 	ScaleWidget* mQwtScaleWidget;
 	AxisLable* mAxisLable;
+	int mAxisunitSize;//单位大小
+	QColor axisColor;//刻度颜色
+	QColor axisvalColor;//数值颜色
+	int axisvalSize;//数值大小
 };

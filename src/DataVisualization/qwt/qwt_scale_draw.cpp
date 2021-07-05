@@ -409,12 +409,15 @@ QPointF QwtScaleDraw::labelPosition( double value ) const
 */
 void QwtScaleDraw::drawTick( QPainter *painter, double value, double len ) const
 {
-    int c = 0;
     if ( len <= 0 )
         return;
     
     const bool roundingAlignment = QwtPainter::roundingAlignment( painter );
-    
+    {
+        QPen pen = painter->pen();
+        pen.setColor(axisColor);
+        painter->setPen(pen);
+    }
     QPointF pos = d_data->pos;
     
     double tval = scaleMap().transform( value );
@@ -494,9 +497,13 @@ void QwtScaleDraw::drawTick( QPainter *painter, double value, double len ) const
 */
 void QwtScaleDraw::drawBackbone( QPainter *painter ) const
 {
-    int a = 0;
     const bool doAlign = QwtPainter::roundingAlignment( painter );
     
+    {
+        QPen pen = painter->pen();
+        pen.setColor(axisColor);
+        painter->setPen(pen);
+    }
     const QPointF &pos = d_data->pos;
     const double len = d_data->len;
     const int pw = qMax( penWidth(), 1 );
@@ -651,10 +658,18 @@ double QwtScaleDraw::length() const
 */
 void QwtScaleDraw::drawLabel( QPainter *painter, double value ) const
 {
-    int b = 0;
+
     QwtText lbl = tickLabel( painter->font(), value );
     if ( lbl.isEmpty() )
         return;
+    {
+        QPen pen = painter->pen();
+        pen.setColor(this->axisValColor);
+        painter->setPen(pen);
+        QFont font = painter->font();
+        font.setPixelSize(axisvalSize);
+        painter->setFont(font);
+    }
     QPointF pos = labelPosition( value );
 
     QSizeF labelSize = lbl.textSize( painter->font() );
@@ -663,8 +678,10 @@ void QwtScaleDraw::drawLabel( QPainter *painter, double value ) const
 
 	
     painter->save();
-    painter->setWorldTransform( transform, true );
+    painter->setWorldTransform(transform, true);
+    //ÉèÖÃÑÕÉ«
    
+    
     lbl.draw ( painter, QRect( QPoint( 0, 0 ), labelSize.toSize() ) );
    
     painter->restore();
@@ -899,15 +916,7 @@ QRectF QwtScaleDraw::labelRect( const QFont &font, double value ) const
     const QTransform transform = labelTransformation( pos, labelSize );
 
     QRectF br = transform.mapRect( QRectF( QPointF( 0, 0 ), labelSize ) );
-    //if (br.left() < 0)
-    //{
-    //    double _width = br.width();
-    //    double _height = br.height();
-    //    br.setLeft(0);
-    //    br.setWidth(_width);
-    //    br.setHeight(_height);
-    //}
-    //else
+
     br.translate( -pos.x(), -pos.y() );
 
     return br;
@@ -1054,4 +1063,17 @@ void QwtScaleDraw::setRange(double min, double max)
     this->min = min;
     this->max = max;
     issetRange = true;
+}
+
+void QwtScaleDraw::setAxisValColor(QColor color)
+{
+    this->axisValColor = color;
+}
+void QwtScaleDraw::setAxisColor(QColor color)
+{
+    this->axisColor = color;
+}
+void QwtScaleDraw::setAxisValSize(int s)
+{
+    axisvalSize = s;
 }

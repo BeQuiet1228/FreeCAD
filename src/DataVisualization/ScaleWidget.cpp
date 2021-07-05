@@ -22,4 +22,8 @@ void ScaleWidget::setRange(double min, double max)
 	if(min<max)
 	this->scaleDraw()->setRange(min, max);
 }
+void ScaleWidget::setAxisValColor(QColor color)
+{
+	this->scaleDraw()->setAxisValColor(color);
+}
 #include "moc_ScaleWidget.cpp"

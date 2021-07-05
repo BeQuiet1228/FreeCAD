@@ -15,6 +15,7 @@
 #include <qpoint.h>
 #include <qrect.h>
 #include <qtransform.h>
+#include<QColor>
 
 /*!
   \brief A class for drawing scales
@@ -87,6 +88,9 @@ public:
 
     QRect boundingLabelRect( const QFont &, double value ) const;
     void setRange(double min,double max);
+    void setAxisValColor(QColor);
+    void setAxisColor(QColor);
+    void setAxisValSize(int);
 protected:
     QTransform labelTransformation( const QPointF &, const QSizeF & ) const;
     QTransform labelTransformation(const QPointF& pos, const QSizeF& size, double value) const;
@@ -105,6 +109,9 @@ private:
 
     double min;
     double max;
+    QColor axisValColor;
+    QColor axisColor;
+    int axisvalSize;
     bool issetRange;
 };
 

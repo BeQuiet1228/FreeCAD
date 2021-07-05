@@ -12,6 +12,7 @@ public:
 public:
 	void setAlignment(QwtScaleDraw::Alignment);
 	void setRange(double min,double max);
+	void setAxisValColor(QColor);
 	virtual void resizeEvent(QResizeEvent*) override;
 };
 #endif
