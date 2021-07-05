@@ -308,6 +308,7 @@ set(Gui_MOC_HDRS
     ToolBox.h
     Transform.h
     Tree.h
+	TreeWidgetm3d.h
     TreeView.h
     ProjectView.h
     View3DInventor.h
@@ -412,6 +413,7 @@ SET(Gui_RES_SRCS
     Language/translation.qrc
     iisTaskPanel/src/iisTaskPanel.qrc
     QSint/actionpanel/schemes.qrc
+	picgui_ribbon/picgui_ribbon.qrc
 )
 
 if (BUILD_QT5)
@@ -429,6 +431,8 @@ SET(Command_CPP_SRCS
     ActionFunction.cpp
     Command.cpp
     CommandDoc.cpp
+	GuiCommand.cpp
+	GuiCommand.h
     CommandFeat.cpp
     CommandMacro.cpp
     CommandStd.cpp
@@ -646,6 +650,7 @@ SET(Dock_Windows_CPP_SRCS
     SelectionView.cpp
     ToolBox.cpp
     Tree.cpp
+	TreeWidgetm3d.cpp
     TreeView.cpp
     ProjectView.cpp
     DAGView/DAGView.cpp
@@ -662,6 +667,7 @@ SET(Dock_Windows_HPP_SRCS
     SelectionView.h
     ToolBox.h
     Tree.h
+	TreeWidgetm3d.h
     TreeView.h
     ProjectView.h
     DAGView/DAGView.h
@@ -1269,7 +1275,7 @@ fc_wrap_cpp(ControlTreeWidgetMoc ControlTreeWidget.h)
 SOURCE_GROUP("Control" FILES ${Control_SRC})
 
 
-fc_wrap_cpp(MyParameter_MOC MyParameter.h  DlgInsertParamImp.h DlgDeleteParamImp.h DlgChangeParamNameImp.h)
+fc_wrap_cpp(MyParameter_MOC MyParameter.h  DlgInsertParamImp.h DlgDeleteParamImp.h DlgChangeParamNameImp.h dlgchangenamedialog.h)
 set(lzg_src DlgInsertParamImp.h
 	DlgInsertParamImp.cpp
 	cJSON.c
@@ -1287,12 +1293,15 @@ set(lzg_src DlgInsertParamImp.h
     DlgChangeParamNameImp.h
     DlgChangeParamNameImp.cpp
     DlgChangeParamName.ui
-	${MyParameter_MOC}
+    dlgchangenamedialog.h
+    dlgchangenamedialog.cpp
+   dlgchangenamedialog.ui
+   ${MyParameter_MOC}
 )
 if (BUILD_QT5)
-    QT5_WRAP_UI(lzg_ui DlgInsertParam.ui DlgDeleteParam.ui DlgChangeParamName.ui)
+    QT5_WRAP_UI(lzg_ui DlgInsertParam.ui DlgDeleteParam.ui DlgChangeParamName.ui dlgchangenamedialog.ui)
 else()
-    QT4_WRAP_UI(lzg_ui DlgInsertParam.ui DlgDeleteParam.ui DlgChangeParamName.ui)
+    QT4_WRAP_UI(lzg_ui DlgInsertParam.ui DlgDeleteParam.ui DlgChangeParamName.ui dlgchangenamedialog.ui)
 endif()
 
 source_group("lzg" FILES ${lzg_src})	

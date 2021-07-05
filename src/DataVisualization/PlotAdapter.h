@@ -45,6 +45,8 @@ public:
 	void setRenderYRange(const float& min, const float& max);
 	//载入配置
 	void loadConfig();
+	//存储主渲染器的数据
+	void MainRendererDataSaveAs(const std::string& path);
 
 	//清理从渲染器
 	void clearSubRenderer() {

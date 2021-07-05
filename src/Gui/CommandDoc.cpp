@@ -77,6 +77,7 @@
 #include "App/DocumentObject.h"
 #include "Gui\DockWindowManager.h"
 #include "DocumentPic.h"
+#include "GuiCommand.h"
 using namespace Gui;
 
 
@@ -130,7 +131,6 @@ void StdCmdOpen::activated(int iMsg)
         formatList += QLatin1String(" *.");
         formatList += QLatin1String(it->c_str());
     }
-	//qDebug() << formatList;
 	//新增在C++中添加文件格式的方法
 	//不与之前的功能有任何冲突
 
@@ -1864,6 +1864,9 @@ void StdCmdRunM3d::activated(int iMsg)
             return;
 		std::string path = picDoc->getTextPath();
 		contorl->setM3dPath(path);
+
+		//清空h5文件对象
+		picDoc->releaseH5Object();
 	}
 	contorl->buttonClicked(0);
 }
@@ -1884,14 +1887,8 @@ bool StdCmdRunM3d::isActive(void)
 			sPixmap = "runing";
 		}else{
 			auto mw = Gui::MainWindow::getInstance();
-			mw->hideContorlUI();
 			sMenuText = QT_TR_NOOP("RunM3d");
 			sPixmap = "run";
-            //清空h5文件对象
-            auto doc = Gui::Application::Instance->activeDocument();
-            auto picDoc = dynamic_cast<DocumentPic*>(doc);
-            if (picDoc)
-                picDoc->releaseH5Object();
 		}
 		this->updataActionIcon();
 	}
@@ -2415,7 +2412,8 @@ void CreateDocCommands(void)
     /*lzg*/
     //自定义变量
     rcCmdMgr.addCommand(new StdCmdMyParameter());
-    
+    //添加自定义的commad
+    creatGuiCommand();
 }
 
 } // namespace Gui

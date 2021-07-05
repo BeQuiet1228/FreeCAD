@@ -81,6 +81,8 @@ public:
 	void EqualScaleDisplay();
 	//设置适配器
 	void setAdapter(const std::shared_ptr < PlotAdapter>& adapter);
+	//保存主渲染器中的数据
+	void MainRendererDataSaveAs(const std::string& path);
 	//设置是否显示网格线
 	void setGridLineEnabled(const bool& e) {
 		gridLineEnabled = e;

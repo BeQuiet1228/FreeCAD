@@ -16,6 +16,8 @@ using PlotAdapterPtr = std::shared_ptr<PlotAdapter>;
 class RendererFactory{
 public:
 	RendererFactory(Hdf5Data h5d);
+	//新增默认构造
+	RendererFactory();
 	~RendererFactory() =default;
 
 public:
@@ -44,10 +46,12 @@ public:
 
 private:
 	Hdf5Data structData;
+	bool ishaveStruct;
 
 public: 
 	void setStructData(const Hdf5Data& data) {
 		this->structData = data;
+		ishaveStruct = true;
 	}
 
 };

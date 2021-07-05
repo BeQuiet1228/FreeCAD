@@ -263,3 +263,11 @@ void PlotAdapter::loadConfig()
 		(*iter)->loadconfig();
 }
 
+void PlotAdapter::MainRendererDataSaveAs(const std::string& path)
+{
+	if (!mainRenderer)
+		return;
+	auto data = mainRenderer->getData();
+	data->saveAs(path);
+}
+
