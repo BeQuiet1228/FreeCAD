@@ -3,6 +3,7 @@
 #include "hdf5io.h"
 using namespace H5;
 int main(){
+#if 0
 	std::string path = "D:/wandaotongProject/MILO_C_Temp.h5";
 	Hdf5IO io(path);
 
@@ -13,4 +14,5 @@ int main(){
 	printf("%f\n",value[0]);
 	printf("%f\n", value[1]);
 	printf("%f\n", value[2]);
+#endif
 }
