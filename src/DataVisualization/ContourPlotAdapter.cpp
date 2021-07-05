@@ -79,12 +79,23 @@ void ContourPlotAdapter::switchShaderTrigger(bool)
 
 	//着色和等值线必须存在一个
 	bool ok = !contourRd->testDisplayMode(QwtPlotSpectrogram::ImageMode);
-	if (ok || contourRd->testDisplayMode(QwtPlotSpectrogram::ContourMode))
+	if (!(ok || contourRd->testDisplayMode(QwtPlotSpectrogram::ContourMode)))
+		return;
+
+	//如果只开启等值线，那么需要给等值线一个空的画笔，这样等值线才会显示颜色
+	QPen pen;
+	if (!ok)
 	{
-		contourRd->setDisplayMode(QwtPlotSpectrogram::ImageMode, ok);
-		updateAcitonState();
-		Q_EMIT updatePlot();
+		pen.setStyle(Qt::NoPen);
 	}
+	else {
+		pen.setStyle(Qt::SolidLine);
+	}
+	contourRd->setDefaultContourPen(pen);
+
+	contourRd->setDisplayMode(QwtPlotSpectrogram::ImageMode, ok);
+	updateAcitonState();
+	Q_EMIT updatePlot();
 }
 
 void ContourPlotAdapter::switchContourTrigger(bool)
@@ -100,7 +111,7 @@ void ContourPlotAdapter::switchContourTrigger(bool)
 	contourRd->setDisplayMode(QwtPlotSpectrogram::ContourMode, ok);
 	//如果只开启等值线，那么需要给等值线一个空的画笔，这样等值线才会显示颜色
 	QPen pen;
-	if (contourRd->testDisplayMode(QwtPlotSpectrogram::ImageMode))
+	if (!contourRd->testDisplayMode(QwtPlotSpectrogram::ImageMode))
 	{
 		pen.setStyle(Qt::NoPen);
 	}else {
