@@ -414,6 +414,7 @@ void QwtScaleDraw::drawTick( QPainter *painter, double value, double len ) const
     
     const bool roundingAlignment = QwtPainter::roundingAlignment( painter );
     {
+        //这里增加设置标尺的颜色
         QPen pen = painter->pen();
         pen.setColor(axisColor);
         painter->setPen(pen);
@@ -498,8 +499,8 @@ void QwtScaleDraw::drawTick( QPainter *painter, double value, double len ) const
 void QwtScaleDraw::drawBackbone( QPainter *painter ) const
 {
     const bool doAlign = QwtPainter::roundingAlignment( painter );
-    
     {
+        //更改基线的颜色
         QPen pen = painter->pen();
         pen.setColor(axisColor);
         painter->setPen(pen);
@@ -663,11 +664,17 @@ void QwtScaleDraw::drawLabel( QPainter *painter, double value ) const
     if ( lbl.isEmpty() )
         return;
     {
+        //更爱标尺标值的颜色和大小
         QPen pen = painter->pen();
         pen.setColor(this->axisValColor);
         painter->setPen(pen);
         QFont font = painter->font();
-        font.setPixelSize(axisvalSize);
+        //axisvalSize<=0?font.setPixelSize(10):(axisvalSize>20?font.setPixelSize(20):)
+
+        if (axisvalSize <= 0 ||axisvalSize>20)
+            font.setPixelSize(10);
+        else
+            font.setPixelSize(axisvalSize);
         painter->setFont(font);
     }
     QPointF pos = labelPosition( value );
@@ -692,8 +699,16 @@ QTransform QwtScaleDraw::labelTransformation(const QPointF& pos, const QSizeF& s
     QTransform transform;
     transform.translate(pos.x(), pos.y());
     transform.rotate(labelRotation());
+#pragma region  
+    /*
+    这里通过判断传入的value是否与min或者max相等，若相等，则出现特殊情况，
+    valflage==-1时，value的值范围内的最小值，需要做偏移。
+    valflage==1时，value的值为范围内的最大值,需要做偏移。
+    valflage==0时，则value的值在min~max的范围内，跳过下方特殊处理，执行正常处理流程。
+    */
     if (issetRange)
     {
+       
         int valflage =0;
         if ((abs(value - this->min) < 0.0000001 && abs(value - this->min) > -0.0000001))
             valflage = -1;
@@ -747,6 +762,7 @@ QTransform QwtScaleDraw::labelTransformation(const QPointF& pos, const QSizeF& s
             return transform;
         }
     }
+#pragma endregion
     int flags = labelAlignment();
     if (flags == 0)
     {

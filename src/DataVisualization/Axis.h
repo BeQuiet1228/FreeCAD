@@ -41,6 +41,8 @@ public:
 public:
 	virtual void resizeEvent(QResizeEvent*) override;
 	virtual void mouseDoubleClickEvent(QMouseEvent*) override;
+Q_SIGNALS:
+	void sendAxisRang(const float&, const float&);
 public Q_SLOTS:
 	void axiscloseEvent();
 private:
@@ -49,7 +51,6 @@ private:
 	
 	valrange axisvalrange;
 	Axisstyle mAxisstyle;
-	QGridLayout* mqgridlayout;
 	ScaleWidget* mQwtScaleWidget;
 	AxisLable* mAxisLable;
 	int mAxisunitSize;//单位大小

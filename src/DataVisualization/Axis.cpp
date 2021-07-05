@@ -64,14 +64,23 @@ void Axis::loadconfig()
 }
 void Axis::_update()
 {
-	mQwtScaleWidget->hide();
+	QSize size = this->size();
+	//mQwtScaleWidget->hide();
+	mQwtScaleWidget->setColorBarEnabled(false);
+	QwtLinearScaleEngine* mQwtLinearScaleEngine = new QwtLinearScaleEngine;
+	mQwtScaleWidget->setScaleDiv(mQwtLinearScaleEngine->divideScale(axisvalrange.min, axisvalrange.max, AxisNum, 5));
+	mQwtScaleWidget->setRange(axisvalrange.min, axisvalrange.max);
+	mQwtScaleWidget->setMargin(1);
+	mQwtScaleWidget->setSpacing(0);
+	mQwtScaleWidget->setBorderDist(0, 0);
 	switch (mAxisstyle)
 	{
 	case Axisleft:
 	{
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::LeftScale);
 		mQwtScaleWidget->scaleDraw()->move(this->width()-1,0);
-		mQwtScaleWidget->scaleDraw()->setLength(this->height()-1);
+		qDebug() << "axisleft:" << "height:" << size.height();
+		mQwtScaleWidget->scaleDraw()->setLength(size.height()-1);
 		mQwtScaleWidget->scaleDraw()->setPenWidth(1);
 	}break;
 	case AxisRight:
@@ -86,15 +95,13 @@ void Axis::_update()
 	{
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::BottomScale);
 		mQwtScaleWidget->scaleDraw()->move(0,1);
+		qDebug() << "axisbottom:" << "width:" << this->width();
 		mQwtScaleWidget->scaleDraw()->setLength(this->width()-1);
 		mQwtScaleWidget->scaleDraw()->setPenWidth(1);
 	}break;
 	}
-	QSize size = this->size();
-	mQwtScaleWidget->setColorBarEnabled(false);
-	QwtLinearScaleEngine * mQwtLinearScaleEngine = new QwtLinearScaleEngine;
-	mQwtScaleWidget->setScaleDiv(mQwtLinearScaleEngine->divideScale(axisvalrange.min, axisvalrange.max, AxisNum, 5));
-	mQwtScaleWidget->setRange(axisvalrange.min,axisvalrange.max);
+	
+	
 	//设置单位
 	{
 		QwtText mtext = mQwtScaleWidget->title();
@@ -111,11 +118,10 @@ void Axis::_update()
 		mQwtScaleWidget->scaleDraw()->setAxisColor(axisColor);
 		mQwtScaleWidget->scaleDraw()->setAxisValSize(axisvalSize);
 	}
-	mQwtScaleWidget->setMargin(1);
-	mQwtScaleWidget->setSpacing(0);
-	mQwtScaleWidget->setBorderDist(0, 0);
+	
 	//单位大小
-	mQwtScaleWidget->show();
+	//
+	//mQwtScaleWidget->show();
 }
 void  Axis::resizeEvent(QResizeEvent* sizeEvent)
 {
@@ -136,13 +142,13 @@ void Axis::axiscloseEvent()
 	valrange temp;
 	temp.min = mAxisLable->getMinval();
 	temp.max = mAxisLable->getMaxval();
-	if (temp != axisvalrange && temp.min <= temp.max)
-	{
-		//emit sendAxisRang(temp.min, temp.max);
-		axisvalrange = temp;
-	}
 	mAxisunit = mAxisLable->getAxisUnitval();
 	mAxisLable->hide();
+	if (temp != axisvalrange && temp.min <= temp.max)
+	{
+		emit sendAxisRang(temp.min, temp.max);
+		axisvalrange = temp;
+	}
 	_update();
 }
 #include "moc_Axis.cpp"
