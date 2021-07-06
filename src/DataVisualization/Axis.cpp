@@ -22,7 +22,9 @@ Axis::Axis(QWidget* parent):QWidget(parent)
 	mAxisLable = new AxisLable(this);
 	mAxisLable->setModal(true);
 	mAxisLable->resize(300, 200);
+	mGridLayout = new QGridLayout();
 	connect(mAxisLable, SIGNAL(signalCloseEvent()), this, SLOT(axiscloseEvent()));
+	mGridLayout->setSpacing(0);
 }
 Axis::~Axis()
 {
@@ -95,7 +97,6 @@ void Axis::_update()
 	{
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::LeftScale);
 		mQwtScaleWidget->scaleDraw()->move(this->width()-1,0);
-		//qDebug() << "axisleft:" << "height:" << size.height();
 		mQwtScaleWidget->scaleDraw()->setLength(size.height()-1);
 		mQwtScaleWidget->scaleDraw()->setPenWidth(1);
 	}break;
@@ -111,16 +112,11 @@ void Axis::_update()
 	{
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::BottomScale);
 		mQwtScaleWidget->scaleDraw()->move(0,0);
-		//qDebug() << "axisbottom:" << "width:" << this->width();
 		mQwtScaleWidget->scaleDraw()->setLength(this->width()-1);
 		mQwtScaleWidget->scaleDraw()->setPenWidth(1);
+		mGridLayout->addWidget(mQwtScaleWidget,0,0,1,1);
 	}break;
 	}
-	
-	
-	//单位大小
-	//
-	//mQwtScaleWidget->show();
 }
 void  Axis::resizeEvent(QResizeEvent* sizeEvent)
 {
@@ -135,6 +131,13 @@ void Axis::mouseDoubleClickEvent(QMouseEvent* e)
 	mAxisLable->setMaxval(QString("%1").arg(axisvalrange.max));
 	mAxisLable->setAxisUnitval(QString("%1").arg(mAxisunit));
 	mAxisLable->show();
+	//QPointF pos = e->posF();
+	//QRectF Titlerectf = mQwtScaleWidget->getTitileRectf();
+	//if (Titlerectf.contains(pos))
+	//{
+	//	//点击中了label
+	//	qDebug() << "clicked ______ label";
+	//}
 }
 void Axis::axiscloseEvent()
 {

@@ -47,7 +47,7 @@ public:
     int titleOffset;
     int spacing;
     QwtText title;
-
+    QRectF TitleRectf;
     QwtScaleWidget::LayoutFlags layoutFlags;
 
     struct t_colorBar
@@ -684,7 +684,7 @@ void QwtScaleWidget::drawTitle( QPainter *painter,
     QwtText title = d_data->title;
     title.setRenderFlags( flags );
     title.draw( painter, QRectF( 0.0, 0.0, r.width(), r.height() ) );
-
+    d_data->TitleRectf = r;
     painter->restore();
 }
 
@@ -958,4 +958,8 @@ void QwtScaleWidget::setColorMap(
 const QwtColorMap *QwtScaleWidget::colorMap() const
 {
     return d_data->colorBar.colorMap;
+}
+QRectF QwtScaleWidget::getTitileRectf()
+{
+    return d_data->TitleRectf;
 }
