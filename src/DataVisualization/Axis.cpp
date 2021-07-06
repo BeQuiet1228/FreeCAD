@@ -71,7 +71,7 @@ void Axis::_update()
 	mQwtScaleWidget->setScaleDiv(mQwtLinearScaleEngine->divideScale(axisvalrange.min, axisvalrange.max, AxisNum, 5));
 	mQwtScaleWidget->setRange(axisvalrange.min, axisvalrange.max);
 	mQwtScaleWidget->setMargin(1);
-	mQwtScaleWidget->setSpacing(0);
+	mQwtScaleWidget->setSpacing(1);
 	mQwtScaleWidget->setBorderDist(0, 0);
 	switch (mAxisstyle)
 	{
@@ -94,7 +94,7 @@ void Axis::_update()
 	case AxisBottom:
 	{
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::BottomScale);
-		mQwtScaleWidget->scaleDraw()->move(0,1);
+		mQwtScaleWidget->scaleDraw()->move(0,0);
 		qDebug() << "axisbottom:" << "width:" << this->width();
 		mQwtScaleWidget->scaleDraw()->setLength(this->width()-1);
 		mQwtScaleWidget->scaleDraw()->setPenWidth(1);
