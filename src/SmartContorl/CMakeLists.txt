@@ -102,6 +102,7 @@ SET(MY_MOC_HDR
 	VariateInputDialog.h
 	qcustomplot.h
 	SmartContorlInterface.h
+	VariableStorer.h
 	
 )
 SET(MY_MOC_SRC
@@ -155,6 +156,8 @@ SET(SmartContorl_src
 	SmartContorlConfig.hpp
 	VariateChart.h
 	VariateChart.cpp
+	VariableStorer.cpp
+	VariableStorer.h
 	${UI_SRC}
 	${JSON_SRC}
 	${MY_MOC_SRC}
