@@ -47,7 +47,6 @@ public:
     int titleOffset;
     int spacing;
     QwtText title;
-
     QwtScaleWidget::LayoutFlags layoutFlags;
 
     struct t_colorBar
@@ -684,7 +683,6 @@ void QwtScaleWidget::drawTitle( QPainter *painter,
     QwtText title = d_data->title;
     title.setRenderFlags( flags );
     title.draw( painter, QRectF( 0.0, 0.0, r.width(), r.height() ) );
-
     painter->restore();
 }
 

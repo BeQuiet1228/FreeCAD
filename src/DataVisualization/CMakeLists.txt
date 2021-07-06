@@ -33,14 +33,12 @@ SET(MY_MOC_HDR RenderThread.h
 	ConfigWidget.h
 	Arrowctrl.h
 	ColorTab.h
+	TLabel.h
 	ColorMapWidget.h
 	realTimewidget.h
-<<<<<<< HEAD
 	ScaleWidget.h
-=======
 	ContourPlotAdapter.h
 	PlotAdapter.h
->>>>>>> remotes/origin/DataVisualization_2
 	)
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
@@ -142,6 +140,8 @@ SET(SRC_TOOL ConfigWidget.h
 	realTimewidget.h
 	ScaleWidget.h
 	ScaleWidget.cpp
+	TLabel.h
+	TLabel.cpp
 	)
 #处理ui和qrc文件
 if (BUILD_QT5)
