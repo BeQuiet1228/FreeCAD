@@ -10,6 +10,7 @@ ScaleWidget::ScaleWidget(QwtScaleDraw::Alignment a, QWidget* parent):QwtScaleWid
 void ScaleWidget::setAlignment(QwtScaleDraw::Alignment alignment)
 {
 	QwtScaleWidget::setAlignment(alignment);
+	mAlignment = alignment;
 }
 void ScaleWidget::resizeEvent(QResizeEvent* e)
 {
@@ -25,5 +26,48 @@ void ScaleWidget::setRange(double min, double max)
 void ScaleWidget::setAxisValColor(QColor color)
 {
 	this->scaleDraw()->setAxisValColor(color);
+}
+/**
+* @brief ScaleWidget::automatic 自动调整，用来设置相关偏移
+* @return void
+* @Time 2021/7/6
+*/
+void ScaleWidget::automatic()
+{
+	switch (mAlignment)
+	{
+	case QwtScaleDraw::BottomScale:
+	{
+		setAlignment(QwtScaleDraw::BottomScale);
+		scaleDraw()->move(0, 0);
+		scaleDraw()->setLength(this->width() - 1);
+		scaleDraw()->setPenWidth(1);
+	}
+		break;
+	case QwtScaleDraw::TopScale:
+	{
+		setAlignment(QwtScaleDraw::TopScale);
+		scaleDraw()->move(0,this->height()-1);
+		scaleDraw()->setLength(this->width() - 1);
+		scaleDraw()->setPenWidth(1);
+	}
+		break;
+	case QwtScaleDraw::LeftScale:
+	{
+		setAlignment(QwtScaleDraw::LeftScale);
+		scaleDraw()->move(this->width() - 1, 0);
+		scaleDraw()->setLength(this->height() - 1);
+		scaleDraw()->setPenWidth(1);
+	}
+		break;
+	case QwtScaleDraw::RightScale:
+	{
+		setAlignment(QwtScaleDraw::RightScale);
+		scaleDraw()->move(0, 0);
+		scaleDraw()->setLength(this->height() - 1);
+		scaleDraw()->setPenWidth(1);
+	}
+		break;
+	}
 }
 #include "moc_ScaleWidget.cpp"

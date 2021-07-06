@@ -23,7 +23,7 @@ Axis::Axis(QWidget* parent):QWidget(parent)
 	mAxisLable = new AxisLable(this);
 	mAxisLable->setModal(true);
 	mAxisLable->resize(300, 200);
-	mGridLayout = new QGridLayout();
+	//mGridLayout = new QGridLayout();
 	connect(mAxisLable, SIGNAL(signalCloseEvent()), this, SLOT(axiscloseEvent()));
 	//mGridLayout->setSpacing(0);
 	mTDialog = new TDialog(this);
@@ -49,12 +49,37 @@ void Axis::setAxisText(QString name)
 void Axis::setAxixStyle(Axisstyle style)
 {
 	mAxisstyle = style;
+	switch (mAxisstyle)
+	{
+	case Axisleft:
+	{
+		mQwtScaleWidget->setAlignment(QwtScaleDraw::LeftScale);
+	}
+		break;
+	case AxisRight:
+	{
+		mQwtScaleWidget->setAlignment(QwtScaleDraw::RightScale);
+	}
+		break;
+	case AxisTop:
+	{
+		mQwtScaleWidget->setAlignment(QwtScaleDraw::TopScale);
+	}
+		break;
+	case AxisBottom: {
+		mQwtScaleWidget->setAlignment(QwtScaleDraw::BottomScale);
+	}
+		break;
+	default:
+		break;
+	}
 }
 void Axis::SetAxisNumber(int number)
 {
 	if (number > 1)
 		AxisNum = number;
 }
+
 void Axis::loadconfig()
 {
 	if (Config::GetInstance()->loadConfig())
@@ -71,13 +96,12 @@ void Axis::loadconfig()
 void Axis::_update()
 {
 	QSize size = this->size();
-	//mQwtScaleWidget->hide();
 	mQwtScaleWidget->setColorBarEnabled(false);
 	QwtLinearScaleEngine* mQwtLinearScaleEngine = new QwtLinearScaleEngine;
 	mQwtScaleWidget->setScaleDiv(mQwtLinearScaleEngine->divideScale(axisvalrange.min, axisvalrange.max, AxisNum, 5));
 	mQwtScaleWidget->setRange(axisvalrange.min, axisvalrange.max);
 	mQwtScaleWidget->setMargin(1);
-	mQwtScaleWidget->setSpacing(0);
+	mQwtScaleWidget->setSpacing(1);
 	mQwtScaleWidget->setBorderDist(0, 0);
 	//ÉèÖÃµ¥Î»
 	{
@@ -95,31 +119,7 @@ void Axis::_update()
 		mQwtScaleWidget->scaleDraw()->setAxisColor(axisColor);
 		mQwtScaleWidget->scaleDraw()->setAxisValSize(axisvalSize);
 	}
-	switch (mAxisstyle)
-	{
-	case Axisleft:
-	{
-		mQwtScaleWidget->setAlignment(QwtScaleDraw::LeftScale);
-		mQwtScaleWidget->scaleDraw()->move(this->width()-1,0);
-		mQwtScaleWidget->scaleDraw()->setLength(size.height()-1);
-		mQwtScaleWidget->scaleDraw()->setPenWidth(1);
-	}break;
-	case AxisRight:
-	{
-		mQwtScaleWidget->setAlignment(QwtScaleDraw::RightScale);
-	}break;
-	case AxisTop:
-	{
-		mQwtScaleWidget->setAlignment(QwtScaleDraw::TopScale);
-	}break;
-	case AxisBottom:
-	{
-		mQwtScaleWidget->setAlignment(QwtScaleDraw::BottomScale);
-		mQwtScaleWidget->scaleDraw()->move(0,0);
-		mQwtScaleWidget->scaleDraw()->setLength(this->width()-1);
-		mQwtScaleWidget->scaleDraw()->setPenWidth(1);
-	}break;
-	}
+	mQwtScaleWidget->automatic();
 }
 void  Axis::resizeEvent(QResizeEvent* sizeEvent)
 {
@@ -149,7 +149,6 @@ void Axis::mouseDoubleClickEvent(QMouseEvent* e)
 		{
 			mAxisLable->setMinval(QString("%1").arg(axisvalrange.min));
 			mAxisLable->setMaxval(QString("%1").arg(axisvalrange.max));
-			//mAxisLable->setAxisUnitval(QString("%1").arg(mAxisunit));
 			mAxisLable->show();
 		}
 	}
