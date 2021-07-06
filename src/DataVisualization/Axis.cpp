@@ -119,31 +119,6 @@ void Axis::_update()
 		mQwtScaleWidget->scaleDraw()->setAxisColor(axisColor);
 		mQwtScaleWidget->scaleDraw()->setAxisValSize(axisvalSize);
 	}
-	/*switch (mAxisstyle)
-	{
-	case Axisleft:
-	{
-		mQwtScaleWidget->setAlignment(QwtScaleDraw::LeftScale);
-		mQwtScaleWidget->scaleDraw()->move(this->width()-1,0);
-		mQwtScaleWidget->scaleDraw()->setLength(size.height()-1);
-		mQwtScaleWidget->scaleDraw()->setPenWidth(1);
-	}break;
-	case AxisRight:
-	{
-		mQwtScaleWidget->setAlignment(QwtScaleDraw::RightScale);
-	}break;
-	case AxisTop:
-	{
-		mQwtScaleWidget->setAlignment(QwtScaleDraw::TopScale);
-	}break;
-	case AxisBottom:
-	{
-		mQwtScaleWidget->setAlignment(QwtScaleDraw::BottomScale);
-		mQwtScaleWidget->scaleDraw()->move(0,0);
-		mQwtScaleWidget->scaleDraw()->setLength(this->width()-1);
-		mQwtScaleWidget->scaleDraw()->setPenWidth(1);
-	}break;
-	}*/
 	mQwtScaleWidget->automatic();
 }
 void  Axis::resizeEvent(QResizeEvent* sizeEvent)
