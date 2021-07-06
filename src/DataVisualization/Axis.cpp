@@ -73,6 +73,22 @@ void Axis::_update()
 	mQwtScaleWidget->setMargin(1);
 	mQwtScaleWidget->setSpacing(0);
 	mQwtScaleWidget->setBorderDist(0, 0);
+	//设置单位
+	{
+		QwtText mtext = mQwtScaleWidget->title();
+		QFont mfont = mtext.font();
+		mfont.setPixelSize(mAxisunitSize);
+		mtext.setColor(axisvalColor);
+		mtext.setFont(mfont);
+		mtext.setText(mAxisunit);
+		mQwtScaleWidget->setTitle(mtext);
+	}
+	//设置刻度
+	{
+		mQwtScaleWidget->scaleDraw()->setAxisValColor(axisvalColor);
+		mQwtScaleWidget->scaleDraw()->setAxisColor(axisColor);
+		mQwtScaleWidget->scaleDraw()->setAxisValSize(axisvalSize);
+	}
 	switch (mAxisstyle)
 	{
 	case Axisleft:
@@ -101,23 +117,6 @@ void Axis::_update()
 	}break;
 	}
 	
-	
-	//设置单位
-	{
-		QwtText mtext = mQwtScaleWidget->title();
-		QFont mfont=mtext.font();
-		mfont.setPixelSize(mAxisunitSize);
-		mtext.setColor(axisvalColor);
-		mtext.setFont(mfont);
-		mtext.setText(mAxisunit);
-		mQwtScaleWidget->setTitle(mtext);
-	}
-	//设置刻度
-	{
-		mQwtScaleWidget->scaleDraw()->setAxisValColor(axisvalColor);
-		mQwtScaleWidget->scaleDraw()->setAxisColor(axisColor);
-		mQwtScaleWidget->scaleDraw()->setAxisValSize(axisvalSize);
-	}
 	
 	//单位大小
 	//
