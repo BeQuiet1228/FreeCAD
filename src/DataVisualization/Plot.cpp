@@ -5,7 +5,7 @@
 #include "RenderThreadManager.h"
 #include "RenderTask.h"
 #include "Renderer.h"
-#include "ColorMapWidget.h"
+//#include "ColorMapWidget.h"
 #include "qwt/qwt_scale_engine.h"
 #include "ContourRender.h"
 #include <stack>
@@ -17,6 +17,7 @@
 #include "CustomConfig.h"
 #include "QToolButton"
 #include <QList>
+#include "ScaleWidget.h"
 struct UndoRedoData
 {
 	UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
@@ -171,7 +172,8 @@ void Plot::updateAxis()
 	QwtInterval interval(vr.min, vr.max);
 	scaleWIdget->setColorMap(interval, ConfigWidget::getQwtLinearColorMap());
 	scaleWIdget->setScaleDiv(scaleEngine->divideScale(vr.min, vr.max, 6, 8, 0));
-	scaleWIdget->setValrange(vr.min, vr.max);
+	//scaleWIdget->setValrange(vr.min, vr.max);
+	scaleWIdget->setRange(vr.min, vr.max);
 	scaleWIdget->show();
 }
 
@@ -289,10 +291,11 @@ void Plot::initGUI()
 	AxisB->SetAxisNumber(xAxisLevel);
 	connect(AxisL, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererYRang(const float&, const float&)));
 	connect(AxisB, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererXRang(const float&, const float&)));
-	scaleWIdget = new ColorMapWidget(QwtScaleDraw::RightScale, this);
+	//scaleWIdget = new ColorMapWidget(QwtScaleDraw::RightScale, this);
+	scaleWIdget = new ScaleWidget(QwtScaleDraw::RightScale,this);
 	scaleWIdget->setColorBarEnabled(true);
 	scaleWIdget->setColorBarWidth(20);
-	scaleWIdget->setMargin(40);
+	scaleWIdget->setMargin(20);
 
 	informationLabel = new QLabel();
 	//informationLabel->setMargin(40);

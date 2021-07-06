@@ -49,6 +49,30 @@ void Axis::setAxisText(QString name)
 void Axis::setAxixStyle(Axisstyle style)
 {
 	mAxisstyle = style;
+	switch (mAxisstyle)
+	{
+	case Axisleft:
+	{
+		mQwtScaleWidget->setAlignment(QwtScaleDraw::LeftScale);
+	}
+		break;
+	case AxisRight:
+	{
+		mQwtScaleWidget->setAlignment(QwtScaleDraw::RightScale);
+	}
+		break;
+	case AxisTop:
+	{
+		mQwtScaleWidget->setAlignment(QwtScaleDraw::TopScale);
+	}
+		break;
+	case AxisBottom: {
+		mQwtScaleWidget->setAlignment(QwtScaleDraw::BottomScale);
+	}
+		break;
+	default:
+		break;
+	}
 }
 void Axis::SetAxisNumber(int number)
 {
@@ -95,7 +119,7 @@ void Axis::_update()
 		mQwtScaleWidget->scaleDraw()->setAxisColor(axisColor);
 		mQwtScaleWidget->scaleDraw()->setAxisValSize(axisvalSize);
 	}
-	switch (mAxisstyle)
+	/*switch (mAxisstyle)
 	{
 	case Axisleft:
 	{
@@ -119,8 +143,8 @@ void Axis::_update()
 		mQwtScaleWidget->scaleDraw()->setLength(this->width()-1);
 		mQwtScaleWidget->scaleDraw()->setPenWidth(1);
 	}break;
-	}
-
+	}*/
+	mQwtScaleWidget->automatic();
 }
 void  Axis::resizeEvent(QResizeEvent* sizeEvent)
 {

@@ -720,6 +720,16 @@ QTransform QwtScaleDraw::labelTransformation(const QPointF& pos, const QSizeF& s
         case RightScale:
         {
             //´ýÊµÏÖ
+			if (-1 == valflage)
+			{
+                xx = 0.0;
+				yy = -size.height();
+			}
+			else if (1 == valflage)
+			{
+                xx = 0.0;
+				yy = 0;
+			}
         }
             break;
         case LeftScale:
