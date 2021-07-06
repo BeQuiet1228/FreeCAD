@@ -79,7 +79,7 @@ void Axis::_update()
 	{
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::LeftScale);
 		mQwtScaleWidget->scaleDraw()->move(this->width()-1,0);
-		qDebug() << "axisleft:" << "height:" << size.height();
+		//qDebug() << "axisleft:" << "height:" << size.height();
 		mQwtScaleWidget->scaleDraw()->setLength(size.height()-1);
 		mQwtScaleWidget->scaleDraw()->setPenWidth(1);
 	}break;
@@ -94,8 +94,8 @@ void Axis::_update()
 	case AxisBottom:
 	{
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::BottomScale);
-		mQwtScaleWidget->scaleDraw()->move(0,1);
-		qDebug() << "axisbottom:" << "width:" << this->width();
+		mQwtScaleWidget->scaleDraw()->move(0,0);
+		//qDebug() << "axisbottom:" << "width:" << this->width();
 		mQwtScaleWidget->scaleDraw()->setLength(this->width()-1);
 		mQwtScaleWidget->scaleDraw()->setPenWidth(1);
 	}break;
