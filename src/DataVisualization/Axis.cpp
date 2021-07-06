@@ -49,6 +49,7 @@ void Axis::SetAxisNumber(int number)
 	if (number > 1)
 		AxisNum = number;
 }
+
 void Axis::loadconfig()
 {
 	if (Config::GetInstance()->loadConfig())
@@ -65,7 +66,6 @@ void Axis::loadconfig()
 void Axis::_update()
 {
 	QSize size = this->size();
-	//mQwtScaleWidget->hide();
 	mQwtScaleWidget->setColorBarEnabled(false);
 	QwtLinearScaleEngine* mQwtLinearScaleEngine = new QwtLinearScaleEngine;
 	mQwtScaleWidget->setScaleDiv(mQwtLinearScaleEngine->divideScale(axisvalrange.min, axisvalrange.max, AxisNum, 5));
@@ -73,13 +73,28 @@ void Axis::_update()
 	mQwtScaleWidget->setMargin(1);
 	mQwtScaleWidget->setSpacing(1);
 	mQwtScaleWidget->setBorderDist(0, 0);
+	//设置单位
+	{
+		QwtText mtext = mQwtScaleWidget->title();
+		QFont mfont = mtext.font();
+		mfont.setPixelSize(mAxisunitSize);
+		mtext.setColor(axisvalColor);
+		mtext.setFont(mfont);
+		mtext.setText(mAxisunit);
+		mQwtScaleWidget->setTitle(mtext);
+	}
+	//设置刻度
+	{
+		mQwtScaleWidget->scaleDraw()->setAxisValColor(axisvalColor);
+		mQwtScaleWidget->scaleDraw()->setAxisColor(axisColor);
+		mQwtScaleWidget->scaleDraw()->setAxisValSize(axisvalSize);
+	}
 	switch (mAxisstyle)
 	{
 	case Axisleft:
 	{
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::LeftScale);
 		mQwtScaleWidget->scaleDraw()->move(this->width()-1,0);
-		qDebug() << "axisleft:" << "height:" << size.height();
 		mQwtScaleWidget->scaleDraw()->setLength(size.height()-1);
 		mQwtScaleWidget->scaleDraw()->setPenWidth(1);
 	}break;
@@ -95,29 +110,13 @@ void Axis::_update()
 	{
 		mQwtScaleWidget->setAlignment(QwtScaleDraw::BottomScale);
 		mQwtScaleWidget->scaleDraw()->move(0,0);
-		qDebug() << "axisbottom:" << "width:" << this->width();
 		mQwtScaleWidget->scaleDraw()->setLength(this->width()-1);
 		mQwtScaleWidget->scaleDraw()->setPenWidth(1);
 	}break;
 	}
 	
 	
-	//设置单位
-	{
-		QwtText mtext = mQwtScaleWidget->title();
-		QFont mfont=mtext.font();
-		mfont.setPixelSize(mAxisunitSize);
-		mtext.setColor(axisvalColor);
-		mtext.setFont(mfont);
-		mtext.setText(mAxisunit);
-		mQwtScaleWidget->setTitle(mtext);
-	}
-	//设置刻度
-	{
-		mQwtScaleWidget->scaleDraw()->setAxisValColor(axisvalColor);
-		mQwtScaleWidget->scaleDraw()->setAxisColor(axisColor);
-		mQwtScaleWidget->scaleDraw()->setAxisValSize(axisvalSize);
-	}
+	
 	
 	//单位大小
 	//
