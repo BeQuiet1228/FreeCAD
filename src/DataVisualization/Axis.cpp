@@ -150,7 +150,6 @@ void Axis::mouseDoubleClickEvent(QMouseEvent* e)
 		{
 			mAxisLable->setMinval(QString("%1").arg(axisvalrange.min));
 			mAxisLable->setMaxval(QString("%1").arg(axisvalrange.max));
-			//mAxisLable->setAxisUnitval(QString("%1").arg(mAxisunit));
 			mAxisLable->show();
 		}
 	}
