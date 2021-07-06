@@ -25,6 +25,10 @@ public Q_SLOTS:
 
 public:
 	std::list<QAction*> getActions() override;
+
 	bool axisRightIsHide() override;
+
 	Data::Rang getAxisRightRange() override;
+
+	void setAxisRightRange(const float& min, const float& max);
 };

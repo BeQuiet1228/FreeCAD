@@ -255,6 +255,11 @@ void PlotAdapter::setRenderYRange(const float& min, const float& max)
 	setRenderRange(xr.min, xr.max, min, max);
 }
 
+void PlotAdapter::setAxisRightRange(const float& min, const float& max)
+{
+
+}
+
 void PlotAdapter::loadConfig()
 {
 	if (!mainRenderer)

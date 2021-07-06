@@ -117,10 +117,17 @@ void ContourRender::dataInit()
 
 Data::Rang ContourRender::getValueRange()
 {
-	auto d = std::dynamic_pointer_cast<ContourData>(Renderer::data);
-	if (!d)
-		return Data::Rang();
-	return d->getVlaueRange();
+	auto data = QwtPlotSpectrogram::data();
+	auto inter = data->interval(Qt::ZAxis);
+	Data::Rang range(inter.minValue(), inter.maxValue());
+
+	return range;
+}
+
+void ContourRender::setValueRange(const float& min, const float& max)
+{
+	auto data = QwtPlotSpectrogram::data();
+	data->setInterval(Qt::ZAxis, QwtInterval(min, max));
 }
 
 /**

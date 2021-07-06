@@ -4,7 +4,7 @@
 #include "qwt/qwt_plot_spectrogram.h"
 #include "ContourData.h"
 #include "qwt/qwt_color_map.h"
-class ContourRender:public Renderer,public QwtPlotSpectrogram,public RendererValueRangeInterface{
+class ContourRender:public Renderer,public QwtPlotSpectrogram{
 public:
 	ContourRender(std::shared_ptr<ContourData> data);
 	~ContourRender();
@@ -36,7 +36,8 @@ public:
 	void dataInit() override;
 	virtual void loadconfig() override;
 	//获取value范围
-	Data::Rang getValueRange() override;
+	Data::Rang getValueRange();
+	void setValueRange(const  float& min, const float& max);
 	//获取对应的结构体面
 	std::vector<float> getStructFace();
 protected:
