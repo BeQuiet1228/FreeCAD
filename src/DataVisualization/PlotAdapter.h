@@ -41,10 +41,6 @@ public:
 	void updateGridLine();
 	//»°µ„‰÷»æ
 	void findPointRender(const float& x, const float& y);
-	//…Ë÷√‰÷»æ∑∂Œß
-	void setRenderRange(const float& xMin, const float xMax, const float& yMin, const float& yMax);
-	void setRenderXRange(const float& min, const float& max);
-	void setRenderYRange(const float& min, const float& max);
 	//‘ÿ»Î≈‰÷√
 	void loadConfig();
 	//¥Ê¥¢÷˜‰÷»æ∆˜µƒ ˝æ›
@@ -81,6 +77,11 @@ public:
 	virtual Data::Rang getAxisRightRange();
 	virtual Data::Rang getAxisTopRange();
 	virtual Data::Rang getAxisBottomRange();
+	//…Ë÷√‰÷»æ∑∂Œß
+	virtual void setRenderRange(const float& xMin, const float xMax, const float& yMin, const float& yMax);
+	virtual void setRenderXRange(const float& min, const float& max);
+	virtual void setRenderYRange(const float& min, const float& max);
+	virtual void setAxisRightRange(const float& min, const float& max);
 
 Q_SIGNALS:
 	void updatePlot();

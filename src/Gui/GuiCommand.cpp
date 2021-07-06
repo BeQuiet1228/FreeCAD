@@ -20,7 +20,7 @@ GuiCmdPlotDataExport::GuiCmdPlotDataExport()
 
 void GuiCmdPlotDataExport::activated(int iMsg) {
 	QString fn = Gui::FileDialog::getSaveFileName(Gui::MainWindow::getInstance(), QObject::tr("Export data"),
-		QString(), QString::fromLatin1("(*.%1)").arg(QString::fromStdString("h5")));
+		QString(), QString::fromLatin1("(*.h5 *.png)"));
 	if (fn.isEmpty())
 		return;
 	auto view = Gui::MainWindow::getInstance()->activeWindow();

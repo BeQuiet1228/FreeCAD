@@ -146,4 +146,10 @@ Data::Rang ContourPlotAdapter::getAxisRightRange()
 	return contourRd->getValueRange();
 }
 
+void ContourPlotAdapter::setAxisRightRange(const float& min, const float& max)
+{
+	auto contourRd = getContourRender();
+	contourRd->setValueRange(min, max);
+}
+
 #include "moc_ContourPlotAdapter.cpp"
