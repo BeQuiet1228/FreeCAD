@@ -27,7 +27,8 @@ void GuiCmdPlotDataExport::activated(int iMsg) {
 	auto plotView = dynamic_cast<Gui::PlotMDIView*>(view);
 	if (!plotView)
 		return;
-	plotView->getPlot()->MainRendererDataSaveAs(fn.toStdString());
+	//plotView->getPlot()->MainRendererDataSaveAs(fn.toStdString());
+	plotView->getPlot()->SaveAs(fn.toStdString());
 }
 bool GuiCmdPlotDataExport::isActive() {
 	return getGuiApplication()->sendHasMsgToActiveView("PlotDataExport");

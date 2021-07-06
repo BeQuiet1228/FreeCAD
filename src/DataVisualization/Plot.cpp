@@ -642,4 +642,39 @@ void Plot::setRatioDisplay(double& horizonal, double& vertical)
 // 	updateAxis();
 // 	reRender();
 }
+
+/**
+* @brief Plot::SaveAs 保存h5数据
+* @param std::string filename
+* @return void
+* @Time 2021/7/6
+*/
+void Plot::SaveAs(std::string filename)
+{
+	int filenamelen = filename.length();
+	std::string fileFormat = filename.substr(filenamelen-4);
+	//转大写
+	//transform(fileFormat.begin(), fileFormat.end(), fileFormat.begin(), toupper);
+	//转小写
+	transform(fileFormat.begin(), fileFormat.end(), fileFormat.begin(), tolower);
+	if (fileFormat.find("png")!=std::string::npos)
+	{
+		//保存图片
+		bool isvisible= toolbar->isVisible();
+		if (isvisible)
+			toolbar->hide();
+		QPixmap pixmap(this->size());
+		this->render(&pixmap);
+		//保存
+		pixmap.save(QString::fromStdString(filename));
+		if (isvisible)
+			toolbar->show();
+	}
+	else if(fileFormat.find("h5")!=std::string::npos)
+	{
+		//保存为*.h5
+		MainRendererDataSaveAs(filename);
+	}
+	
+}
 #include "moc_Plot.cpp"
