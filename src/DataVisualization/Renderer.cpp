@@ -316,3 +316,5 @@ std::shared_ptr<Data> Renderer::getData()
 {
 	return data;
 }
+
+#include "moc_PlotAdapter.cpp"

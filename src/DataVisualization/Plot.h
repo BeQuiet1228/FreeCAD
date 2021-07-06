@@ -10,6 +10,9 @@
 #include "exportConfig.hpp"
 #include "Canvas.h"
 #include <QLabel>
+#include <QToolBar>
+#include "qwt/qwt_scale_widget.h"
+#include <QHBoxLayout>
 class Canvas;
 class Renderer;
 class RenderThreadManager;
@@ -18,6 +21,7 @@ class QwtScaleEngine;
 //class QwtScaleWidget;
 class ColorMapWidget;
 class UndoRedoStack;
+class PlotAdapter;
 class DATA_VISUALIZATION_EXPORT Plot:public QWidget{
 	Q_OBJECT
 public:
@@ -37,16 +41,8 @@ private:
 	Axis *AxisL, *AxisB;
 	//图表信息label
 	QLabel* informationLabel;
-	//渲染管理器
-	std::shared_ptr<RenderThreadManager> renderManager;
-	//从渲染器
-	std::list<std::shared_ptr<Renderer>> subRenderers;
-	//主渲染器
-	std::shared_ptr<Renderer> mainRenderer;
-	//从渲染器起始层级
-	const unsigned int SUB_RENDER_START_RANK = 10;
-	const unsigned int FIND_POINT_RENDER_RANK = SUB_RENDER_START_RANK + 20;
-	//颜色图例
+	//适配器
+	std::shared_ptr<PlotAdapter> adapter;
 	//QwtScaleWidget *scaleWIdget;
 	ColorMapWidget* scaleWIdget;
 	QwtScaleEngine *scaleEngine;
@@ -60,20 +56,12 @@ private:
 	unsigned int xAxisLevel, yAxisLevel;
 	//是否显示网格线
 	bool gridLineEnabled;
+	//按钮条
+	QWidget* toolbar;
+	QHBoxLayout *toolbarLayout;
 public:
-	//重渲染
-	void reRender();
-	void reRender(const QSize& size);
-	//添加从渲染器
-	void addSubRenderer(const std::shared_ptr<Renderer>& rd);
-	//设置主渲染器
-	void setMainRenderer(const std::shared_ptr<Renderer>& rd);
-	//添加渲染器
-	void addRenderer(const std::list<std::shared_ptr<Renderer>>& listRender);
 	//设置图例是否可用
 	void setAxisRightEnabled(const bool& e);
-	void setRenderXRange(const float& min, const float& max);
-	void setRenderYRange(const float& min, const float& max);
 	//更新坐标轴
 	void updateAxis();
 	//清理取点提示图层
@@ -87,12 +75,14 @@ public:
 	void autoMaxRender();
 	//刷新label显示
 	void updateInformationLabel();
+	//读取配置
+	void loadconfig();
+	//Equal scale display
+	void EqualScaleDisplay();
+	//设置适配器
+	void setAdapter(const std::shared_ptr < PlotAdapter>& adapter);
 	//保存主渲染器中的数据
 	void MainRendererDataSaveAs(const std::string& path);
-	//清理从渲染器
-	void clearSubRenderer(){
-		subRenderers.clear();
-	}
 	//设置是否显示网格线
 	void setGridLineEnabled(const bool& e) {
 		gridLineEnabled = e;
@@ -101,10 +91,6 @@ public:
 	bool getGridLineEnabled() {
 		return gridLineEnabled;
 	}
-	//读取配置
-	void loadconfig();
-	//Equal scale display
-	void EqualScaleDisplay();
 	//根据横纵比例显示
 	void setRatioDisplay(double& horizonal,double& vertical);
 private:
@@ -114,20 +100,22 @@ private:
 	void initData();
 	//点渲染
 	void findPointRender(const float& x, const float& y);
-	//设置渲染范围
-	void setRenderRange(const float& xMin, const float xMax, const float& yMin, const float& yMax);
 	//渲染网格
 	void creatGridRenderTask();
 	//初始化信息框字体
 	void initInformationLabelFont();
+	//更新按钮条
+	void updateToolbar();
 public Q_SLOTS:
+	//重渲染
+	void reRender();
 	//渲染完成
 	void renderFinished();
 	//画布框选
 	void canvasSelectRect(QRect rect);
 	//画布取点
 	void canvasSelectPoint(QPoint point);
-	void reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender);
+	void reRendererEvent(std::shared_ptr<PlotAdapter>);
 	void reRendererXRang(const float& min, const float& max);
 	void reRendererYRang(const float& min, const float& max);
 	//画布改变大小

@@ -6,6 +6,7 @@
 #include "FileDialog.h"
 #include "MainWindow.h"
 #include "PlotMDIView.h"
+#include "DataVisualization/Plot.h"
 DEF_STD_CMD_A(GuiCmdPlotDataExport);
 GuiCmdPlotDataExport::GuiCmdPlotDataExport() 
 	:Command("gui_plot_data_export"){

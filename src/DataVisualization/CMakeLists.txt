@@ -35,7 +35,12 @@ SET(MY_MOC_HDR RenderThread.h
 	ColorTab.h
 	ColorMapWidget.h
 	realTimewidget.h
+<<<<<<< HEAD
 	ScaleWidget.h
+=======
+	ContourPlotAdapter.h
+	PlotAdapter.h
+>>>>>>> remotes/origin/DataVisualization_2
 	)
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
@@ -76,6 +81,8 @@ SET(CONTOUR_SRC ContourData.h
 	ContourDataPolar.h
 	ContourRenderStateGetter.cpp
 	ContourRenderStateGetter.h
+	ContourPlotAdapter.cpp
+	ContourPlotAdapter.h
 )
 SET(PHASOR_SRC phasorData.h
 	phasorData.cpp
@@ -120,6 +127,8 @@ SET(SRC main.cpp
 	RenderGrid.h
 	DataInformationGetter.cpp
 	DataInformationGetter.h
+	PlotAdapter.cpp
+	PlotAdapter.h
 	)
 SET(SRC_TOOL ConfigWidget.h
 	ConfigWidget.cpp
