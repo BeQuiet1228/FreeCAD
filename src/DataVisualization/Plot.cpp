@@ -174,7 +174,9 @@ void Plot::updateAxis()
 	scaleWIdget->setScaleDiv(scaleEngine->divideScale(vr.min, vr.max, 6, 8, 0));
 	//scaleWIdget->setValrange(vr.min, vr.max);
 	scaleWIdget->setRange(vr.min, vr.max);
+	scaleWIdget->automatic();
 	scaleWIdget->show();
+	
 }
 
 /**

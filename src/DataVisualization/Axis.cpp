@@ -79,7 +79,6 @@ void Axis::SetAxisNumber(int number)
 	if (number > 1)
 		AxisNum = number;
 }
-
 void Axis::loadconfig()
 {
 	if (Config::GetInstance()->loadConfig())
