@@ -62,8 +62,8 @@ void AxisLable::initUI()
 	mQGridLayout->addWidget(maxLineedit,1,1);
 	QLabel* label3 = new QLabel(this);
 	label3->setText("AxisUnitedit:");
-	mQGridLayout->addWidget(label3, 2, 0);
-	mQGridLayout->addWidget(AxisUnitedit,2,1);
+	//mQGridLayout->addWidget(label3, 2, 0);
+	//mQGridLayout->addWidget(AxisUnitedit,2,1);
 }
 void AxisLable::setMinval(QString str){
 	minLineedit->setText(str);

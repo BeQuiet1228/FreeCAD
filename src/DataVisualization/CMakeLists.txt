@@ -33,6 +33,7 @@ SET(MY_MOC_HDR RenderThread.h
 	ConfigWidget.h
 	Arrowctrl.h
 	ColorTab.h
+	TLabel.h
 	ColorMapWidget.h
 	realTimewidget.h
 	ScaleWidget.h
@@ -133,6 +134,8 @@ SET(SRC_TOOL ConfigWidget.h
 	realTimewidget.h
 	ScaleWidget.h
 	ScaleWidget.cpp
+	TLabel.h
+	TLabel.cpp
 	)
 #处理ui和qrc文件
 if (BUILD_QT5)

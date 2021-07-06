@@ -14,6 +14,7 @@
 #include "C_encoding.h"
 #include"ConfigWidget.h"
 #include "CustomConfig.h"
+#include "TLabel.h"
 struct UndoRedoData
 {
 	UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
@@ -402,7 +403,8 @@ void Plot::initGUI()
 	scaleWIdget->setColorBarWidth(20);
 	scaleWIdget->setMargin(40);
 
-	informationLabel = new QLabel();
+	//informationLabel = new QLabel();
+	informationLabel = new TLabel();
 	//informationLabel->setMargin(40);
 	//informationLabel->setAlignment(Qt::AlignTop);
 	informationLabel->setAlignment(Qt::AlignCenter);

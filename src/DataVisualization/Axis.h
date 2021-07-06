@@ -25,6 +25,7 @@ typedef struct valrange{
 class QGridLayout;
 class ScaleWidget;
 class AxisLable;
+class TDialog;
 class Axis : public QWidget
 {
 	Q_OBJECT
@@ -45,6 +46,7 @@ Q_SIGNALS:
 	void sendAxisRang(const float&, const float&);
 public Q_SLOTS:
 	void axiscloseEvent();
+	void slotCloseEvent(bool);
 private:
 	unsigned __int32 AxisNum;
 	QString mAxisunit;
@@ -57,4 +59,6 @@ private:
 	QColor axisvalColor;//数值颜色
 	int axisvalSize;//数值大小
 	QGridLayout* mGridLayout;
+	//TLabel* mTLabel;
+	TDialog* mTDialog;
 };

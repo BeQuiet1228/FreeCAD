@@ -6,6 +6,7 @@
 #include"AxisLable.h"
 #include "CustomConfig.h"
 #include"C_encoding.h"
+#include "TLabel.h"
 Axis::Axis(QWidget* parent):QWidget(parent)
 {
 	//设置默认参数
@@ -24,7 +25,10 @@ Axis::Axis(QWidget* parent):QWidget(parent)
 	mAxisLable->resize(300, 200);
 	mGridLayout = new QGridLayout();
 	connect(mAxisLable, SIGNAL(signalCloseEvent()), this, SLOT(axiscloseEvent()));
-	mGridLayout->setSpacing(0);
+	//mGridLayout->setSpacing(0);
+	mTDialog = new TDialog(this);
+	mTDialog->setModal(true);
+	connect(mTDialog,SIGNAL(signalCloseEvent(bool)),this,SLOT(slotCloseEvent(bool)));
 }
 Axis::~Axis()
 {
@@ -114,7 +118,6 @@ void Axis::_update()
 		mQwtScaleWidget->scaleDraw()->move(0,0);
 		mQwtScaleWidget->scaleDraw()->setLength(this->width()-1);
 		mQwtScaleWidget->scaleDraw()->setPenWidth(1);
-		mGridLayout->addWidget(mQwtScaleWidget,0,0,1,1);
 	}break;
 	}
 }
@@ -127,29 +130,100 @@ void Axis::mouseDoubleClickEvent(QMouseEvent* e)
 {
 	if (e->button() != Qt::LeftButton)
 		return;
-	mAxisLable->setMinval(QString("%1").arg(axisvalrange.min));
-	mAxisLable->setMaxval(QString("%1").arg(axisvalrange.max));
-	mAxisLable->setAxisUnitval(QString("%1").arg(mAxisunit));
-	mAxisLable->show();
-	//QPointF pos = e->posF();
-	//QRectF Titlerectf = mQwtScaleWidget->getTitileRectf();
-	//if (Titlerectf.contains(pos))
-	//{
-	//	//点击中了label
-	//	qDebug() << "clicked ______ label";
-	//}
+	
+	QPointF pos=e->posF();
+	QRectF left = QRectF(0.0, 0.0, this->width() / 2, this->height());
+	QRectF right = QRectF(this->width() / 2, 0.0, this->width() / 2, this->height());
+	QRectF top = QRectF(0.0,0.0,this->width(),this->height()/2);
+	QRectF bottom = QRectF(0.0,this->height()/2,this->width(),this->height()/2);
+	switch (mAxisstyle)
+	{
+	case Axisleft:
+	{
+		if (left.contains(pos))
+		{
+			mTDialog->SetMsgtext(mAxisunit);
+			mTDialog->show();
+		}
+		else if (right.contains(pos))
+		{
+			mAxisLable->setMinval(QString("%1").arg(axisvalrange.min));
+			mAxisLable->setMaxval(QString("%1").arg(axisvalrange.max));
+			//mAxisLable->setAxisUnitval(QString("%1").arg(mAxisunit));
+			mAxisLable->show();
+		}
+	}
+		break;
+	case AxisRight:
+	{
+		if (left.contains(pos))
+		{
+			mAxisLable->setMinval(QString("%1").arg(axisvalrange.min));
+			mAxisLable->setMaxval(QString("%1").arg(axisvalrange.max));
+			//mAxisLable->setAxisUnitval(QString("%1").arg(mAxisunit));
+			mAxisLable->show();
+		}
+		else if(right.contains(pos))
+		{
+			mTDialog->SetMsgtext(mAxisunit);
+			mTDialog->show();
+		}
+	}
+		break;
+	case AxisTop:
+	{
+		if (top.contains(pos))
+		{
+			mTDialog->SetMsgtext(mAxisunit);
+			mTDialog->show();
+		}
+		else if (bottom.contains(pos))
+		{
+			mAxisLable->setMinval(QString("%1").arg(axisvalrange.min));
+			mAxisLable->setMaxval(QString("%1").arg(axisvalrange.max));
+			//mAxisLable->setAxisUnitval(QString("%1").arg(mAxisunit));
+			mAxisLable->show();
+		}
+	}
+		break;
+	case AxisBottom:
+	{
+		if (top.contains(pos))
+		{
+			mAxisLable->setMinval(QString("%1").arg(axisvalrange.min));
+			mAxisLable->setMaxval(QString("%1").arg(axisvalrange.max));
+			//mAxisLable->setAxisUnitval(QString("%1").arg(mAxisunit));
+			mAxisLable->show();
+		}
+		else if (bottom.contains(pos))
+		{
+			mTDialog->SetMsgtext(mAxisunit);
+			mTDialog->show();
+		}
+	}
+		break;
+	}
 }
 void Axis::axiscloseEvent()
 {
 	valrange temp;
 	temp.min = mAxisLable->getMinval();
 	temp.max = mAxisLable->getMaxval();
-	mAxisunit = mAxisLable->getAxisUnitval();
+	//mAxisunit = mAxisLable->getAxisUnitval();
 	mAxisLable->hide();
 	if (temp != axisvalrange && temp.min <= temp.max)
 	{
 		emit sendAxisRang(temp.min, temp.max);
 		axisvalrange = temp;
+	}
+	_update();
+}
+void Axis::slotCloseEvent(bool isclose)
+{
+	mAxisunit = mTDialog->GetMsgText();
+	if (isclose)
+	{
+		mTDialog->hide();
 	}
 	_update();
 }
