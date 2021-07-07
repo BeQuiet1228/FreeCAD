@@ -61,7 +61,6 @@ public:
 	void bindplot(Plot* lp);
 public:
 	static QwtLinearColorMap* getQwtLinearColorMap();
-	//static std::map<double, QColor> getColortab();
 Q_SIGNALS:
 	void plotLoadconfig();
 public Q_SLOTS:
