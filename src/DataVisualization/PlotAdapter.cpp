@@ -172,7 +172,7 @@ Data::Rang PlotAdapter::getAxisLeftRange()
 {
 	if (!mainRenderer)
 		return Data::Rang();
-	mainRenderer->getYRang();
+	return mainRenderer->getYRang();
 }
 
 Data::Rang PlotAdapter::getAxisRightRange()
