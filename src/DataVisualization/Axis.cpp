@@ -15,24 +15,20 @@ Axis::Axis(QWidget* parent):QWidget(parent)
 	mAxisstyle = AxisBottom;
 	axisvalrange.min = 0.0f;
 	axisvalrange.max = 100.0f;
-	//mqgridlayout = new QGridLayout;
-	//mqgridlayout->setSpacing(0);
-	//this->setLayout(mqgridlayout);
 	mQwtScaleWidget = new ScaleWidget(this);
 	mQwtScaleWidget->resize(this->size());
-	mAxisLable = new AxisLable(this);
+	mAxisLable = new AxisLable();
 	mAxisLable->setModal(true);
 	mAxisLable->resize(300, 200);
-	//mGridLayout = new QGridLayout();
 	connect(mAxisLable, SIGNAL(signalCloseEvent()), this, SLOT(axiscloseEvent()));
-	//mGridLayout->setSpacing(0);
-	mTDialog = new TDialog(this);
+	mTDialog = new TDialog();
 	mTDialog->setModal(true);
 	connect(mTDialog,SIGNAL(signalCloseEvent(bool)),this,SLOT(slotCloseEvent(bool)));
 }
 Axis::~Axis()
 {
-
+	delete mAxisLable;
+	delete mTDialog;
 }
 void Axis::setAxisRange(double min, double max)
 {
@@ -208,7 +204,7 @@ void Axis::axiscloseEvent()
 	temp.min = mAxisLable->getMinval();
 	temp.max = mAxisLable->getMaxval();
 	//mAxisunit = mAxisLable->getAxisUnitval();
-	mAxisLable->hide();
+	//mAxisLable->hide();
 	if (temp != axisvalrange && temp.min <= temp.max)
 	{
 		emit sendAxisRang(temp.min, temp.max);

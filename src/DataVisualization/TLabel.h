@@ -23,6 +23,7 @@ private Q_SLOTS:
 void buttonClicked();
 private:
 	QPushButton* appbutton;
+	QPushButton* unappbtn;
 	QPlainTextEdit* mPlainTextEdit;
 	QGridLayout* gridLayout;
 	

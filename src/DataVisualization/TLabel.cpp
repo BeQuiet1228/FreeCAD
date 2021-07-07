@@ -16,7 +16,7 @@
 */
 TLabel::TLabel(QWidget* parent) :QLabel(parent){
 	//mTlineEdit = new TlineEdit;
-	mTDialog = new TDialog(this);
+	mTDialog = new TDialog();
 	mTDialog->setModal(true);
 	connect(mTDialog, SIGNAL(signalCloseEvent(bool)), this, SLOT(slotCloseEvent(bool)));
 }
@@ -76,14 +76,17 @@ TDialog::TDialog(QWidget* parent) :QDialog(parent){
 
 	gridLayout = new QGridLayout;;
 	mPlainTextEdit = new QPlainTextEdit();
-	gridLayout->addWidget(mPlainTextEdit,0,0,1,2);
-	appbutton = new QPushButton();
-	appbutton->setText(QString("save"));
+	gridLayout->addWidget(mPlainTextEdit,0,0,3,3);
+	appbutton = new QPushButton(this);
+	appbutton->setText(GetEncodingstr("确定",ENCODING_GB2312));
+	unappbtn=new QPushButton(this);
+	unappbtn->setText(GetEncodingstr("取消",ENCODING_GB2312));
 	gridLayout->addWidget(appbutton,1,1,1,1);
-	gridLayout->setRowStretch(0,9);
-	gridLayout->setRowStretch(1, 1);
-	gridLayout->setColumnStretch(0,9);
-	gridLayout->setColumnStretch(1, 1);
+	gridLayout->addWidget(unappbtn, 1, 2, 1, 1);
+	//gridLayout->setRowStretch(0,9);
+	//gridLayout->setRowStretch(1, 1);
+	//gridLayout->setColumnStretch(0,9);
+	//gridLayout->setColumnStretch(1, 1);
 	this->setLayout(gridLayout);
 	connect(appbutton, SIGNAL(clicked()), this, SLOT(buttonClicked()));
 

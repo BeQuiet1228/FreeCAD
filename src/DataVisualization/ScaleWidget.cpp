@@ -1,11 +1,11 @@
 #include "ScaleWidget.h"
 ScaleWidget::ScaleWidget(QWidget* parent):QwtScaleWidget(parent)
 {
-
+	mAlignment = QwtScaleDraw::LeftScale;
 }
 ScaleWidget::ScaleWidget(QwtScaleDraw::Alignment a, QWidget* parent):QwtScaleWidget(a,parent)
 {
-
+	mAlignment = a;
 }
 void ScaleWidget::setAlignment(QwtScaleDraw::Alignment alignment)
 {
@@ -50,7 +50,7 @@ void ScaleWidget::automatic()
 	{
 		setAlignment(QwtScaleDraw::LeftScale);
 		scaleDraw()->move(this->width() - 1, 0);
-		scaleDraw()->setLength(this->height() - 1);
+		scaleDraw()->setLength(this->height()-1);
 		scaleDraw()->setPenWidth(1);
 	}
 		break;
