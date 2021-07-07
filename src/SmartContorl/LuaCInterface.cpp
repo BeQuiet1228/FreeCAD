@@ -17,7 +17,6 @@ int addVariate(lua_State *L)
 	Variate variate;
 	//获取名称参数
 	variate.name = lua_tostring(L, 1);
-	int iiii = lua_gettop(L);
 	//获取值
 	lua_pushnil(L);
 
@@ -201,6 +200,25 @@ int pcallErrorCallBack(lua_State *luaState)
 }
 
 /**
+* @brief setRunDataMakeType 设置运行数据的生成格式 目前仅有组合 与 穷举两种
+* @param lua_State * luaState
+* @return int
+*/
+int setRunDataMakeType(lua_State* luaState)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	auto contorl = contorlData->smartContorl;
+	
+	std::string type = lua_tostring(luaState, 1);
+	if (type == "conbination")
+		contorl->setRunDataMakeType(SmartContorl::CONBINATION);
+	else if(type == "exhaustivity")
+		contorl->setRunDataMakeType(SmartContorl::EXHAUSTIVITY);
+
+	return 1;
+}
+
+/**
 * @brief registerLuaFunction 向虚拟机中注册lua函数
 * @param lua_State * L
 * @return void
@@ -222,6 +240,7 @@ void registerLuaFunction(lua_State *L)
 	lua_register(L, "getDataSetVlaueSize", getDataSetVlaueSize);
 	lua_register(L, "saveParamsInHistory", saveParamsInHistory);
 	lua_register(L, "cppPrint", cppPrint);
+	lua_register(L, "setRunDataMakeType", setRunDataMakeType);
 }
 
 

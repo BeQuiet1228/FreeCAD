@@ -41,5 +41,7 @@ int saveParamsInHistory(lua_State *luaState);
 int cppPrint(lua_State *luaState);
 //lua脚本运行出错时的错误处理函数
 int pcallErrorCallBack(lua_State *luaState);
+//设置数据生成模式
+int setRunDataMakeType(lua_State* luaState);
 //注册lua函数
 void registerLuaFunction(lua_State *L);

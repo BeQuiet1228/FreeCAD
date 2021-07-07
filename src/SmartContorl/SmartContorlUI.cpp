@@ -27,6 +27,7 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 #ifdef SMART_EXE
 	std::string m3dPath = "E:/test/test.m3d";
 	smartContorl->setM3dPath(m3dPath);
+	loadParameterXml();
 #else
 	//smartContorl->setM3dPath(contorlInterface->getDocumentPath());
 #endif

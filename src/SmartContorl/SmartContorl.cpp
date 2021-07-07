@@ -13,6 +13,7 @@ extern "C"{
 #include "SmartContorlData.h"
 #include <QMessageBox>
 SmartContorl::SmartContorl()
+	:makeRunDataType(CONBINATION)
 {
 	lua_state = luaL_newstate();
 	luaL_openlibs(lua_state);
@@ -111,8 +112,17 @@ void SmartContorl::makeRunData()
 {
 	//将变量组生成多组m3d文本
 	//auto m3ds = Variate::makeStringForVariates(variates);
-	auto m3ds = Variate::combinationStringForVariates(variates);
-
+	std::vector<QString> m3ds;
+	switch (makeRunDataType)
+	{
+	case SmartContorl::CONBINATION:
+		m3ds = Variate::combinationStringForVariates(variates);
+		break;
+	case SmartContorl::EXHAUSTIVITY:
+		m3ds = Variate::makeStringForVariates(variates);
+		break;
+	}
+	
 	fileMaker.setM3dPath(m3dPath);
 	this->chipicDataWait = fileMaker.makeFile(m3ds);
 	
