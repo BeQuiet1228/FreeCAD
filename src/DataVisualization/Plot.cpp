@@ -234,9 +234,9 @@ void Plot::autoMaxRender()
 {
 	if (!adapter)
 		return;
-
+	
+	adapter->autoMaxRender();
 	updateAxis();
-
 	reRender();
 
 	//清空撤销恢复栈，将新的操作压入
