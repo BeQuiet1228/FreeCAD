@@ -16,13 +16,15 @@ private:
 
 	std::shared_ptr<ContourRender> getContourRender();
 private:
-	QAction *switchShader,
-			*switchContour;
+	QAction* switchShader,
+		* switchContour,
+		* adjuLevel;
 
 public Q_SLOTS:
 	void switchShaderTrigger(bool);
 	void switchContourTrigger(bool);
-
+	void adjuLevelTrigger(bool);
+	void Getlevels(std::list<double>&);
 public:
 	std::list<QAction*> getActions() override;
 

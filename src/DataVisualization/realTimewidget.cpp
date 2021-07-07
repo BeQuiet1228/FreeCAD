@@ -6,7 +6,7 @@
 * @param  QWidget * parent  
 * @return   
 */
-realTimewidget::realTimewidget(QWidget* parent) :QWidget(parent), ui(new Ui::realTimewidget)
+realTimewidget::realTimewidget(QWidget* parent) :QDialog(parent), ui(new Ui::realTimewidget)
 {
 	ui->setupUi(this);
 	curRow = -1;
@@ -42,8 +42,13 @@ void realTimewidget::closeEvent(QCloseEvent *event)
 	}
 	std::sort(val.begin(),val.end());
 	val.erase(std::unique(val.begin(),val.end()),val.end());
-	emit GetListDouble(val);
-	disconnect(this, 0);
+	std::list<double> vallist;
+	for (auto iter=val.begin();iter!=val.end();iter++)
+	{
+		vallist.push_back(*iter);
+	}
+	emit GetListDouble(vallist);
+	//disconnect(this, 0);
 	QWidget::closeEvent(event);
 }
 /**
@@ -161,5 +166,72 @@ void realTimewidget::tableWidgetClicked(QTableWidgetItem* item)
 void realTimewidget::insertformatTableItem()
 {
 	
+}
+
+void realTimewidget::BtnClicked()
+{
+	if (sender()==ui->addBtn)
+	{
+		//addClicked();
+	}
+	else if (sender()==ui->deleteBtn)
+	{
+		deleteClicked();
+	}
+}
+void realTimewidget::init(std::list<double>& leves)
+{
+	min = max = *leves.begin();
+	for (auto iter = leves.begin(); iter != leves.end(); iter++)
+	{
+		if (min > *iter) min = *iter;
+		if (max < *iter) max = *iter;
+	}
+	this->setWindowTitle(QString("Rang:(%1~%2)").arg(min).arg(max));
+	//≥ı ºªØ
+	QStringList header;
+	header << "value:" << "Rang:";
+	ui->tableWidget->setColumnCount(2);
+	ui->tableWidget->setHorizontalHeaderLabels(header);
+	ui->tableWidget->setShowGrid(false);
+	auto cloumcount = ui->tableWidget->rowCount();
+	for (int index = cloumcount; index >= 0; index--)
+	{
+		ui->tableWidget->removeRow(index);
+	}
+	for (auto iter = leves.begin(); iter != leves.end(); iter++)
+	{
+		addTableItem(*iter);
+	}
+	ui->tableWidget->resizeColumnsToContents();
+	//ÃÌº”
+	connect(ui->addBtn, SIGNAL(clicked()), this, SLOT(BtnClicked()));
+	connect(ui->deleteBtn, SIGNAL(clicked()), this, SLOT(BtnClicked()));
+	connect(ui->tableWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
+	connect(ui->tableWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
+}
+void realTimewidget::addTableItem(double val)
+{
+	int row = ui->tableWidget->rowCount();
+	ui->tableWidget->insertRow(row);
+	//ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(curval, 0, 'f', GetdecimalBit(val))));
+	ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(val,0,'f',GetdecimalBit(val))));
+	QTableWidgetItem* item = new QTableWidgetItem(QString("%1~%2").arg(min, 0, 'f', GetdecimalBit(min)).arg(max, 0, 'f', GetdecimalBit(max)));
+	item->setFlags(Qt::ItemIsEditable);
+	ui->tableWidget->setItem(row, 1, item);
+}
+int realTimewidget::GetdecimalBit(double& value)
+{
+	__int64 valinter = static_cast<__int64>(value);
+	double fspace = abs(value - static_cast<double>(valinter));
+	unsigned __int32 index = 0;
+	while (fspace > 0.0f)
+	{
+		index++;
+		fspace *= 10;
+		valinter = static_cast<__int64> (fspace);
+		fspace = fspace - static_cast<double>(valinter);
+	}
+	return index;
 }
 #include "moc_realTimewidget.cpp"
