@@ -223,6 +223,7 @@ void QwtPlainTextEngine::textMargins( const QFont &font, const QString &,
   \param flags Bitwise OR of the flags used like in QPainter::drawText
   \param text Text to be rendered
 */
+#include <QDebug>
 void QwtPlainTextEngine::draw( QPainter *painter, const QRectF &rect,
     int flags, const QString& text ) const
 {

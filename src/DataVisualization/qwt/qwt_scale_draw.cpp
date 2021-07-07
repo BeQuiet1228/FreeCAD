@@ -51,6 +51,7 @@ public:
 QwtScaleDraw::QwtScaleDraw()
 {
     d_data = new QwtScaleDraw::PrivateData;
+    issetRange = false;
     setLength( 100 );
 }
 
@@ -410,20 +411,25 @@ void QwtScaleDraw::drawTick( QPainter *painter, double value, double len ) const
 {
     if ( len <= 0 )
         return;
-
+    
     const bool roundingAlignment = QwtPainter::roundingAlignment( painter );
-
+    {
+        //这里增加设置标尺的颜色
+        QPen pen = painter->pen();
+        pen.setColor(axisColor);
+        painter->setPen(pen);
+    }
     QPointF pos = d_data->pos;
-
+    
     double tval = scaleMap().transform( value );
     if ( roundingAlignment )
         tval = qRound( tval );
-
+    
     const int pw = penWidth();
     int a = 0;
     if ( pw > 1 && roundingAlignment )
         a = 1;
-
+    
     switch ( alignment() )
     {
         case LeftScale:
@@ -435,11 +441,11 @@ void QwtScaleDraw::drawTick( QPainter *painter, double value, double len ) const
                 x1 = qRound( x1 );
                 x2 = qRound( x2 );
             }
-
+    
             QwtPainter::drawLine( painter, x1, tval, x2, tval );
             break;
         }
-
+    
         case RightScale:
         {
             double x1 = pos.x();
@@ -449,11 +455,11 @@ void QwtScaleDraw::drawTick( QPainter *painter, double value, double len ) const
                 x1 = qRound( x1 );
                 x2 = qRound( x2 );
             }
-
+    
             QwtPainter::drawLine( painter, x1, tval, x2, tval );
             break;
         }
-
+    
         case BottomScale:
         {
             double y1 = pos.y();
@@ -463,11 +469,11 @@ void QwtScaleDraw::drawTick( QPainter *painter, double value, double len ) const
                 y1 = qRound( y1 );
                 y2 = qRound( y2 );
             }
-
+    
             QwtPainter::drawLine( painter, tval, y1, tval, y2 );
             break;
         }
-
+    
         case TopScale:
         {
             double y1 = pos.y() + a;
@@ -477,7 +483,7 @@ void QwtScaleDraw::drawTick( QPainter *painter, double value, double len ) const
                 y1 = qRound( y1 );
                 y2 = qRound( y2 );
             }
-
+    
             QwtPainter::drawLine( painter, tval, y1, tval, y2 );
             break;
         }
@@ -493,15 +499,20 @@ void QwtScaleDraw::drawTick( QPainter *painter, double value, double len ) const
 void QwtScaleDraw::drawBackbone( QPainter *painter ) const
 {
     const bool doAlign = QwtPainter::roundingAlignment( painter );
-
+    {
+        //更改基线的颜色
+        QPen pen = painter->pen();
+        pen.setColor(axisColor);
+        painter->setPen(pen);
+    }
     const QPointF &pos = d_data->pos;
     const double len = d_data->len;
     const int pw = qMax( penWidth(), 1 );
-
+    
     // pos indicates a border not the center of the backbone line
     // so we need to shift its position depending on the pen width
     // and the alignment of the scale
-
+    
     double off;
     if ( doAlign )
     {
@@ -514,7 +525,7 @@ void QwtScaleDraw::drawBackbone( QPainter *painter ) const
     {
         off = 0.5 * penWidth();
     }
-
+    
     switch ( alignment() )
     {
         case LeftScale:
@@ -522,7 +533,7 @@ void QwtScaleDraw::drawBackbone( QPainter *painter ) const
             double x = pos.x() - off;
             if ( doAlign )
                 x = qRound( x );
-
+    
             QwtPainter::drawLine( painter, x, pos.y(), x, pos.y() + len );
             break;
         }
@@ -531,7 +542,7 @@ void QwtScaleDraw::drawBackbone( QPainter *painter ) const
             double x = pos.x() + off;
             if ( doAlign )
                 x = qRound( x );
-
+    
             QwtPainter::drawLine( painter, x, pos.y(), x, pos.y() + len );
             break;
         }
@@ -540,7 +551,7 @@ void QwtScaleDraw::drawBackbone( QPainter *painter ) const
             double y = pos.y() - off;
             if ( doAlign )
                 y = qRound( y );
-
+    
             QwtPainter::drawLine( painter, pos.x(), y, pos.x() + len, y );
             break;
         }
@@ -549,7 +560,7 @@ void QwtScaleDraw::drawBackbone( QPainter *painter ) const
             double y = pos.y() + off;
             if ( doAlign )
                 y = qRound( y );
-
+    
             QwtPainter::drawLine( painter, pos.x(), y, pos.x() + len, y );
             break;
         }
@@ -648,24 +659,162 @@ double QwtScaleDraw::length() const
 */
 void QwtScaleDraw::drawLabel( QPainter *painter, double value ) const
 {
+
     QwtText lbl = tickLabel( painter->font(), value );
     if ( lbl.isEmpty() )
         return;
+    {
+        //更爱标尺标值的颜色和大小
+        QPen pen = painter->pen();
+        pen.setColor(this->axisValColor);
+        painter->setPen(pen);
+        QFont font = painter->font();
+        //axisvalSize<=0?font.setPixelSize(10):(axisvalSize>20?font.setPixelSize(20):)
 
+        if (axisvalSize <= 0 ||axisvalSize>20)
+            font.setPixelSize(10);
+        else
+            font.setPixelSize(axisvalSize);
+        painter->setFont(font);
+    }
     QPointF pos = labelPosition( value );
 
     QSizeF labelSize = lbl.textSize( painter->font() );
 
-    const QTransform transform = labelTransformation( pos, labelSize );
+	const QTransform transform = labelTransformation(pos, labelSize,value);
 
+	
     painter->save();
-    painter->setWorldTransform( transform, true );
-
+    painter->setWorldTransform(transform, true);
+    //设置颜色
+   
+    
     lbl.draw ( painter, QRect( QPoint( 0, 0 ), labelSize.toSize() ) );
-
+   
     painter->restore();
 }
+//新增代码
+QTransform QwtScaleDraw::labelTransformation(const QPointF& pos, const QSizeF& size, double value) const
+{
+    QTransform transform;
+    transform.translate(pos.x(), pos.y());
+    transform.rotate(labelRotation());
+#pragma region  
+    /*
+    这里通过判断传入的value是否与min或者max相等，若相等，则出现特殊情况，
+    valflage==-1时，value的值范围内的最小值，需要做偏移。
+    valflage==1时，value的值为范围内的最大值,需要做偏移。
+    valflage==0时，则value的值在min~max的范围内，跳过下方特殊处理，执行正常处理流程。
+    */
+    if (issetRange)
+    {
+       
+        int valflage =0;
+        if ((abs(value - this->min) < 0.0000001 && abs(value - this->min) > -0.0000001))
+            valflage = -1;
+        if ((abs(value - this->max) < 0.0000001 && abs(value - this->max) > -0.0000001))
+            valflage = 1;
+        double xx=0, yy=0;
+        switch (alignment())
+        {
+        case RightScale:
+        {
+            //待实现
+        }
+            break;
+        case LeftScale:
+        {
+            if (-1==valflage)
+            {
+                xx = -size.width();
+                yy = -size.height();
+            }
+            else if (1==valflage)
+            {
+                xx = -size.width();
+                yy=0;
+            }
+        }
+            break;
+        case TopScale:
+        {
+            //待实现
+        }
+            break;
+        case BottomScale:
+        {
+            if (-1 == valflage)
+            {
+                xx = 0.0;//
+                yy= -(0.5 * size.height());
+            }
+            else if (1 == valflage)
+            {
+                xx=-size.width();
+                yy = -(0.5 * size.height());
+            }
+        }
+            break;
+        }
+        if (0!=valflage)
+        {
+            transform.translate(xx, yy);
+            return transform;
+        }
+    }
+#pragma endregion
+    int flags = labelAlignment();
+    if (flags == 0)
+    {
+        switch (alignment())
+        {
+        case RightScale:
+        {
+            if (flags == 0)
+                flags = Qt::AlignRight | Qt::AlignVCenter;
+            break;
+        }
+        case LeftScale:
+        {
+            if (flags == 0)
+                flags = Qt::AlignLeft | Qt::AlignVCenter;
+            break;
+        }
+        case BottomScale:
+        {
+            if (flags == 0)
+                flags = Qt::AlignHCenter | Qt::AlignBottom;
+            break;
+        }
+        case TopScale:
+        {
+            if (flags == 0)
+                flags = Qt::AlignHCenter | Qt::AlignTop;
+            break;
+        }
+        }
+    }
 
+    double x, y;
+
+    if (flags & Qt::AlignLeft)
+        x = -size.width();
+    else if (flags & Qt::AlignRight)
+        x = 0.0;
+    else // Qt::AlignHCenter
+        x = -(0.5 * size.width());
+
+    if (flags & Qt::AlignTop)
+        y = -size.height();
+    else if (flags & Qt::AlignBottom)
+        y = 0;
+    else // Qt::AlignVCenter
+        y = -(0.5 * size.height());
+
+    transform.translate(x, y);
+
+    return transform;
+}
 /*!
   \brief Find the bounding rectangle for the label.
 
@@ -783,6 +932,7 @@ QRectF QwtScaleDraw::labelRect( const QFont &font, double value ) const
     const QTransform transform = labelTransformation( pos, labelSize );
 
     QRectF br = transform.mapRect( QRectF( QPointF( 0, 0 ), labelSize ) );
+
     br.translate( -pos.x(), -pos.y() );
 
     return br;
@@ -923,4 +1073,23 @@ void QwtScaleDraw::updateMap()
         sm.setPaintInterval( pos.y() + len, pos.y() );
     else
         sm.setPaintInterval( pos.x(), pos.x() + len );
+}
+void QwtScaleDraw::setRange(double min, double max)
+{
+    this->min = min;
+    this->max = max;
+    issetRange = true;
+}
+
+void QwtScaleDraw::setAxisValColor(QColor color)
+{
+    this->axisValColor = color;
+}
+void QwtScaleDraw::setAxisColor(QColor color)
+{
+    this->axisColor = color;
+}
+void QwtScaleDraw::setAxisValSize(int s)
+{
+    axisvalSize = s;
 }

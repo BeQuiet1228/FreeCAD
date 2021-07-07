@@ -46,6 +46,9 @@ public:
     double minExtent;
 
     QMap<double, QwtText> labelCache;
+    //增加最大最小的参数
+    double minval;
+    double maxval;
 };
 
 /*!
@@ -182,7 +185,6 @@ void QwtAbstractScaleDraw::draw( QPainter *painter,
 
         const QList<double> &majorTicks =
             d_data->scaleDiv.ticks( QwtScaleDiv::MajorTick );
-
         for ( int i = 0; i < majorTicks.count(); i++ )
         {
             const double v = majorTicks[i];

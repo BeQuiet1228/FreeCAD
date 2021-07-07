@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 	QApplication a(argc, argv);
 	CanvasItem::registerMetaTye();
 #if 1
-	std::string path = "D:/MILO_D.h5";
+	std::string path = "D:/wdtProject/FreeCAD/build/Example/3d/MILO_P/MILO_P.h5";
 	
 	Plot p;
 	DataSourceManage manager;
@@ -22,8 +22,8 @@ int main(int argc, char *argv[])
 	manager.loadhdffile(path);
 	p.showMaximized();
 	treectrl.show();
-	ConfigWidget m_configwidget;
-	m_configwidget.show();
+	//ConfigWidget m_configwidget;
+	//m_configwidget.show();
 #endif
 	//pull request test
 	return a.exec();
