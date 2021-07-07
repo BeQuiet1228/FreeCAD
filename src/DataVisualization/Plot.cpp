@@ -294,8 +294,6 @@ void Plot::initGUI()
 	AxisB->SetAxisNumber(xAxisLevel);
 	connect(AxisL, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererYRang(const float&, const float&)));
 	connect(AxisB, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererXRang(const float&, const float&)));
-	//scaleWIdget = new ColorMapWidget(QwtScaleDraw::RightScale, this);
-	//scaleWIdget = new ScaleWidget(QwtScaleDraw::RightScale,this);
 	scaleWIdget = new rightScaleWidget(QwtScaleDraw::RightScale, this);
 	scaleWIdget->setColorBarEnabled(true);
 	scaleWIdget->setColorBarWidth(20);

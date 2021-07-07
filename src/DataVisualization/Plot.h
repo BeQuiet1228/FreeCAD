@@ -18,9 +18,7 @@ class Renderer;
 class RenderThreadManager;
 class Axis;
 class QwtScaleEngine;
-//class QwtScaleWidget;
 class ColorMapWidget;
-//class ScaleWidget;
 class rightScaleWidget;
 class UndoRedoStack;
 class PlotAdapter;
@@ -45,9 +43,6 @@ private:
 	QLabel* informationLabel;
 	//  ≈‰∆˜
 	std::shared_ptr<PlotAdapter> adapter;
-	//QwtScaleWidget *scaleWIdget;
-	//ColorMapWidget* scaleWIdget;
-	//ScaleWidget* scaleWIdget;
 	rightScaleWidget* scaleWIdget;
 	QwtScaleEngine *scaleEngine;
 	//Õº¿˝ «∑Òø…”√
