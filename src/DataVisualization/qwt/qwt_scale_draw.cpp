@@ -1090,7 +1090,8 @@ void QwtScaleDraw::setRange(double min, double max)
     this->max = max;
     issetRange = true;
 }
-
+double QwtScaleDraw::getMinval(){return this->min;}
+double QwtScaleDraw::getMaxval(){return this->max;}
 void QwtScaleDraw::setAxisValColor(QColor color)
 {
     this->axisValColor = color;

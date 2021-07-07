@@ -17,7 +17,8 @@
 #include "CustomConfig.h"
 #include "QToolButton"
 #include <QList>
-#include "ScaleWidget.h"
+//#include "ScaleWidget.h"
+#include "rightScaleWidget.h"
 struct UndoRedoData
 {
 	UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
@@ -293,7 +294,8 @@ void Plot::initGUI()
 	connect(AxisL, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererYRang(const float&, const float&)));
 	connect(AxisB, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererXRang(const float&, const float&)));
 	//scaleWIdget = new ColorMapWidget(QwtScaleDraw::RightScale, this);
-	scaleWIdget = new ScaleWidget(QwtScaleDraw::RightScale,this);
+	//scaleWIdget = new ScaleWidget(QwtScaleDraw::RightScale,this);
+	scaleWIdget = new rightScaleWidget(QwtScaleDraw::RightScale, this);
 	scaleWIdget->setColorBarEnabled(true);
 	scaleWIdget->setColorBarWidth(20);
 	scaleWIdget->setMargin(20);

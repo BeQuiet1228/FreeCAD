@@ -1,6 +1,4 @@
 #include "ScaleWidget.h"
-#include <QMouseEvent>
-#include "TLabel.h"
 ScaleWidget::ScaleWidget(QWidget* parent):QwtScaleWidget(parent)
 {
 
@@ -65,13 +63,5 @@ void ScaleWidget::automatic()
 	}
 		break;
 	}
-}
-void ScaleWidget::mouseDoubleClickEvent(QMouseEvent* e)
-{
-	/*if (e->button() != Qt::LeftButton)
-		return;
-	TDialog* mTDialog = new TDialog();
-	mTDialog->setModal(true);
-	mTDialog->show();*/
 }
 #include "moc_ScaleWidget.cpp"

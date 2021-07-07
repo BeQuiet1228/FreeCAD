@@ -88,6 +88,8 @@ public:
 
     QRect boundingLabelRect( const QFont &, double value ) const;
     void setRange(double min,double max);
+    double getMinval();
+    double getMaxval();
     void setAxisValColor(QColor);
     void setAxisColor(QColor);
     void setAxisValSize(int);

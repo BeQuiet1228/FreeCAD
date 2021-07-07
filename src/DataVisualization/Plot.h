@@ -20,7 +20,8 @@ class Axis;
 class QwtScaleEngine;
 //class QwtScaleWidget;
 class ColorMapWidget;
-class ScaleWidget;
+//class ScaleWidget;
+class rightScaleWidget;
 class UndoRedoStack;
 class PlotAdapter;
 class DATA_VISUALIZATION_EXPORT Plot:public QWidget{
@@ -46,7 +47,8 @@ private:
 	std::shared_ptr<PlotAdapter> adapter;
 	//QwtScaleWidget *scaleWIdget;
 	//ColorMapWidget* scaleWIdget;
-	ScaleWidget* scaleWIdget;
+	//ScaleWidget* scaleWIdget;
+	rightScaleWidget* scaleWIdget;
 	QwtScaleEngine *scaleEngine;
 	//Í¼ÀýÊÇ·ñ¿ÉÓÃ
 	bool axisRightEnabled;

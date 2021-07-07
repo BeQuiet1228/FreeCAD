@@ -15,8 +15,7 @@ public:
 	void setAxisValColor(QColor);
 	virtual void resizeEvent(QResizeEvent*) override;
 	void automatic();
-	virtual void mouseDoubleClickEvent(QMouseEvent* e) override;
-private:
+protected:
 	QwtScaleDraw::Alignment mAlignment;
 };
 #endif

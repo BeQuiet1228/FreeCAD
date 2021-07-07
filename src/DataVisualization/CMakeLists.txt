@@ -37,6 +37,7 @@ SET(MY_MOC_HDR RenderThread.h
 	ColorMapWidget.h
 	realTimewidget.h
 	ScaleWidget.h
+	rightScaleWidget.h
 	ContourPlotAdapter.h
 	PlotAdapter.h
 	)
@@ -140,6 +141,8 @@ SET(SRC_TOOL ConfigWidget.h
 	realTimewidget.h
 	ScaleWidget.h
 	ScaleWidget.cpp
+	rightScaleWidget.h
+	rightScaleWidget.cpp
 	TLabel.h
 	TLabel.cpp
 	)
