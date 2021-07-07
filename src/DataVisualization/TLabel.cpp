@@ -76,25 +76,28 @@ TDialog::TDialog(QWidget* parent) :QDialog(parent){
 
 	gridLayout = new QGridLayout;;
 	mPlainTextEdit = new QPlainTextEdit();
-	gridLayout->addWidget(mPlainTextEdit,0,0,3,3);
+	gridLayout->addWidget(mPlainTextEdit,0,0,1,3);
 	appbutton = new QPushButton(this);
 	appbutton->setText(GetEncodingstr("确定",ENCODING_GB2312));
 	unappbtn=new QPushButton(this);
 	unappbtn->setText(GetEncodingstr("取消",ENCODING_GB2312));
 	gridLayout->addWidget(appbutton,1,1,1,1);
 	gridLayout->addWidget(unappbtn, 1, 2, 1, 1);
-	//gridLayout->setRowStretch(0,9);
-	//gridLayout->setRowStretch(1, 1);
-	//gridLayout->setColumnStretch(0,9);
-	//gridLayout->setColumnStretch(1, 1);
 	this->setLayout(gridLayout);
 	connect(appbutton, SIGNAL(clicked()), this, SLOT(buttonClicked()));
-
-	
+	connect(unappbtn, SIGNAL(clicked()), this, SLOT(buttonClicked()));
 }
 void TDialog::buttonClicked()
 {
-	emit signalCloseEvent(false);
+	if (sender()==appbutton)
+	{
+		emit signalCloseEvent(false);
+	}
+	else if (sender()==unappbtn)
+	{
+		hide();
+	}
+	
 }
 TDialog::~TDialog(){
 
@@ -103,7 +106,8 @@ void TDialog::closeEvent(QCloseEvent *e)
 {
 	//忽略关闭信号
 	e->ignore();
-	emit signalCloseEvent(true);
+	//emit signalCloseEvent(true);
+	hide();
 }
 void TLabel::slotCloseEvent(bool isclose)
 {

@@ -14,6 +14,8 @@ public:
 	void automatic();
 public:
 	virtual void mouseDoubleClickEvent(QMouseEvent* e)override;
+Q_SIGNALS:
+		void signalsetAxisRightRange(const float& min, const float& max);
 public Q_SLOTS:
 	void slotCloseEvent();
 private:

@@ -19,6 +19,7 @@
 #include <QList>
 //#include "ScaleWidget.h"
 #include "rightScaleWidget.h"
+#include "ContourPlotAdapter.h"
 struct UndoRedoData
 {
 	UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
@@ -299,6 +300,7 @@ void Plot::initGUI()
 	scaleWIdget->setColorBarEnabled(true);
 	scaleWIdget->setColorBarWidth(20);
 	scaleWIdget->setMargin(20);
+	connect(scaleWIdget, SIGNAL(signalsetAxisRightRange(const float&, const float&)),this,SLOT(ScaleWidgetRightRange(const float&, const float&)));
 
 	informationLabel = new QLabel();
 	//informationLabel->setMargin(40);
@@ -682,5 +684,9 @@ void Plot::SaveAs(std::string filename)
 		MainRendererDataSaveAs(filename);
 	}
 	
+}
+void Plot::ScaleWidgetRightRange(const float& min, const float& max)
+{
+	adapter->setAxisRightRange(min, max);
 }
 #include "moc_Plot.cpp"

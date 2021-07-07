@@ -123,6 +123,7 @@ public Q_SLOTS:
 	void reRendererEvent(std::shared_ptr<PlotAdapter>);
 	void reRendererXRang(const float& min, const float& max);
 	void reRendererYRang(const float& min, const float& max);
+	void ScaleWidgetRightRange(const float& min, const float& max);
 	//画布改变大小
 	void canvasResize(QSize size);
 	//设置应用事件

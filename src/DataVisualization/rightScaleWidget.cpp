@@ -87,6 +87,7 @@ void rightScaleWidget::slotCloseEvent()
 		setRange(min, max);
 		automatic();
 	}
+	emit signalsetAxisRightRange(min,max);
 	//mAxisLable->hide();
 }
 void rightScaleWidget::automatic()
