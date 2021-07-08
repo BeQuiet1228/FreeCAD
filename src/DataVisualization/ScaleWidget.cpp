@@ -57,7 +57,10 @@ void ScaleWidget::automatic()
 	case QwtScaleDraw::RightScale:
 	{
 		setAlignment(QwtScaleDraw::RightScale);
-		scaleDraw()->move(0, 0);
+		QPointF pos = scaleDraw()->pos();
+		pos.setY(0);
+		//scaleDraw()->move(0, 0);
+		scaleDraw()->move(pos);
 		scaleDraw()->setLength(this->height() - 1);
 		scaleDraw()->setPenWidth(1);
 	}

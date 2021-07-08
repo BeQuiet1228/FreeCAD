@@ -173,9 +173,12 @@ void Plot::updateAxis()
 	Data::Rang vr = adapter->getAxisRightRange();
 	QwtInterval interval(vr.min, vr.max);
 	scaleWIdget->setColorMap(interval, ConfigWidget::getQwtLinearColorMap());
-	scaleWIdget->setScaleDiv(scaleEngine->divideScale(vr.min, vr.max, 6, 8, 0));
-	scaleWIdget->setRange(vr.min, vr.max);
-	scaleWIdget->automatic();
+	scaleWIdget->setAxisRange(vr.min,vr.max);
+	//µ÷ÕûÎ»ÖÃ
+	QPointF pos=scaleWIdget->scaleDraw()->pos();
+	pos.setY(0);
+	scaleWIdget->scaleDraw()->move(pos);
+	scaleWIdget->scaleDraw()->setLength(scaleWIdget->height()-1);
 	scaleWIdget->show();
 	
 }
@@ -288,17 +291,27 @@ void Plot::initGUI()
 	AxisL = new Axis();
 	AxisL->setAxixStyle(Axisleft);
 	AxisL->SetAxisNumber(yAxisLevel);
-	
+	AxisL->setColorBarEnabled(false);
+	AxisL->setMargin(1);
+	AxisL->setSpacing(1);
+	AxisL->setBorderDist(0,0);
 	AxisB = new Axis();
 	AxisB->setAxixStyle(AxisBottom);
 	AxisB->SetAxisNumber(xAxisLevel);
+	AxisB->setColorBarEnabled(false);
+	AxisB->setMargin(1);
+	AxisB->setSpacing(1);
+	AxisB->setBorderDist(0, 0);
 	connect(AxisL, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererYRang(const float&, const float&)));
 	connect(AxisB, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererXRang(const float&, const float&)));
-	scaleWIdget = new rightScaleWidget(QwtScaleDraw::RightScale, this);
+//	scaleWIdget = new rightScaleWidget(QwtScaleDraw::RightScale, this);
+	scaleWIdget = new Axis(this);
+	scaleWIdget->setAxixStyle(Axisstyle::AxisRight);
 	scaleWIdget->setColorBarEnabled(true);
+	scaleWIdget->setLabel(false);
 	scaleWIdget->setColorBarWidth(20);
 	scaleWIdget->setMargin(20);
-	connect(scaleWIdget, SIGNAL(signalsetAxisRightRange(const float&, const float&)),this,SLOT(ScaleWidgetRightRange(const float&, const float&)));
+	connect(scaleWIdget, SIGNAL(sendAxisRang(const float&, const float&)),this,SLOT(ScaleWidgetRightRange(const float&, const float&)));
 
 	informationLabel = new QLabel();
 	//informationLabel->setMargin(40);

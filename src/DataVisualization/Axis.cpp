@@ -7,16 +7,17 @@
 #include "CustomConfig.h"
 #include"C_encoding.h"
 #include "TLabel.h"
-Axis::Axis(QWidget* parent):QWidget(parent)
-{
-	//设置默认参数
+Axis::Axis(QWidget* parent):
+	/*QWidget(parent)*/
+	ScaleWidget(parent)
+{	//设置默认参数
 	AxisNum = 5;
 	mAxisunit = "X(x)";
 	mAxisstyle = AxisBottom;
 	axisvalrange.min = 0.0f;
 	axisvalrange.max = 100.0f;
-	mQwtScaleWidget = new ScaleWidget(this);
-	mQwtScaleWidget->resize(this->size());
+	/*mQwtScaleWidget = new ScaleWidget(this);*/
+	//mQwtScaleWidget->resize(this->size());
 	mAxisLable = new AxisLable();
 	mAxisLable->setModal(true);
 	mAxisLable->resize(300, 200);
@@ -24,6 +25,8 @@ Axis::Axis(QWidget* parent):QWidget(parent)
 	mTDialog = new TDialog();
 	mTDialog->setModal(true);
 	connect(mTDialog,SIGNAL(signalCloseEvent(bool)),this,SLOT(slotCloseEvent(bool)));
+	islabel=true;
+	isAxisdialog=true;
 }
 Axis::~Axis()
 {
@@ -36,6 +39,9 @@ void Axis::setAxisRange(double min, double max)
 	{
 		axisvalrange.min = min;
 		axisvalrange.max = max;
+		QwtLinearScaleEngine* mQwtLinearScaleEngine = new QwtLinearScaleEngine;
+		setScaleDiv(mQwtLinearScaleEngine->divideScale(min, max, AxisNum, 5));
+		setRange(min,max);
 	}
 }
 void Axis::setAxisText(QString name)
@@ -49,21 +55,21 @@ void Axis::setAxixStyle(Axisstyle style)
 	{
 	case Axisleft:
 	{
-		mQwtScaleWidget->setAlignment(QwtScaleDraw::LeftScale);
+		setAlignment(QwtScaleDraw::LeftScale);
 	}
 		break;
 	case AxisRight:
 	{
-		mQwtScaleWidget->setAlignment(QwtScaleDraw::RightScale);
+		setAlignment(QwtScaleDraw::RightScale);
 	}
 		break;
 	case AxisTop:
 	{
-		mQwtScaleWidget->setAlignment(QwtScaleDraw::TopScale);
+		setAlignment(QwtScaleDraw::TopScale);
 	}
 		break;
 	case AxisBottom: {
-		mQwtScaleWidget->setAlignment(QwtScaleDraw::BottomScale);
+		setAlignment(QwtScaleDraw::BottomScale);
 	}
 		break;
 	default:
@@ -90,47 +96,63 @@ void Axis::loadconfig()
 }
 void Axis::_update()
 {
-	QSize size = this->size();
-	mQwtScaleWidget->setColorBarEnabled(false);
-	QwtLinearScaleEngine* mQwtLinearScaleEngine = new QwtLinearScaleEngine;
-	mQwtScaleWidget->setScaleDiv(mQwtLinearScaleEngine->divideScale(axisvalrange.min, axisvalrange.max, AxisNum, 5));
-	mQwtScaleWidget->setRange(axisvalrange.min, axisvalrange.max);
-	mQwtScaleWidget->setMargin(1);
-	mQwtScaleWidget->setSpacing(1);
-	mQwtScaleWidget->setBorderDist(0, 0);
+	//QSize size = this->size();
+	//setColorBarEnabled(false);
+	/*QwtLinearScaleEngine* mQwtLinearScaleEngine = new QwtLinearScaleEngine;
+	setScaleDiv(mQwtLinearScaleEngine->divideScale(axisvalrange.min, axisvalrange.max, AxisNum, 5));*/
+	//setRange(axisvalrange.min, axisvalrange.max);
+	//setMargin(1);
+	//setSpacing(1);
+	//setBorderDist(0, 0);
 	//设置单位
+	if (islabel)
 	{
-		QwtText mtext = mQwtScaleWidget->title();
+		QwtText mtext = title();
 		QFont mfont = mtext.font();
 		mfont.setPixelSize(mAxisunitSize);
 		mtext.setColor(axisvalColor);
 		mtext.setFont(mfont);
 		mtext.setText(mAxisunit);
-		mQwtScaleWidget->setTitle(mtext);
+		setTitle(mtext);
 	}
 	//设置刻度
 	{
-		mQwtScaleWidget->scaleDraw()->setAxisValColor(axisvalColor);
-		mQwtScaleWidget->scaleDraw()->setAxisColor(axisColor);
-		mQwtScaleWidget->scaleDraw()->setAxisValSize(axisvalSize);
+		scaleDraw()->setAxisValColor(axisvalColor);
+		scaleDraw()->setAxisColor(axisColor);
+		scaleDraw()->setAxisValSize(axisvalSize);
 	}
-	mQwtScaleWidget->automatic();
+	automatic();
 }
 void  Axis::resizeEvent(QResizeEvent* sizeEvent)
 {
-	mQwtScaleWidget->resize(this->size());
-	_update();
+	//mQwtScaleWidget->resize(this->size());
+	//_update();
+	automatic();
 }
 void Axis::mouseDoubleClickEvent(QMouseEvent* e)
 {
 	if (e->button() != Qt::LeftButton)
 		return;
-	
+	if (!islabel && !isAxisdialog)
+		return;
 	QPointF pos=e->posF();
 	QRectF left = QRectF(0.0, 0.0, this->width() / 2, this->height());
 	QRectF right = QRectF(this->width() / 2, 0.0, this->width() / 2, this->height());
 	QRectF top = QRectF(0.0,0.0,this->width(),this->height()/2);
 	QRectF bottom = QRectF(0.0,this->height()/2,this->width(),this->height()/2);
+	if (islabel && !isAxisdialog)
+	{
+		mTDialog->SetMsgtext(mAxisunit);
+		mTDialog->show();
+		return;
+	}
+	else if(!islabel&& isAxisdialog)
+	{
+		mAxisLable->setMinval(QString("%1").arg(axisvalrange.min));
+		mAxisLable->setMaxval(QString("%1").arg(axisvalrange.max));
+		mAxisLable->show();
+		return;
+	}
 	switch (mAxisstyle)
 	{
 	case Axisleft:
@@ -205,12 +227,14 @@ void Axis::axiscloseEvent()
 	temp.max = mAxisLable->getMaxval();
 	//mAxisunit = mAxisLable->getAxisUnitval();
 	//mAxisLable->hide();
+	setAxisRange(temp.min,temp.max);
 	if (temp != axisvalrange && temp.min <= temp.max)
 	{
 		emit sendAxisRang(temp.min, temp.max);
 		axisvalrange = temp;
 	}
 	_update();
+	//setAxisRange(temp.min,temp.max);
 }
 void Axis::slotCloseEvent(bool isclose)
 {
@@ -220,5 +244,12 @@ void Axis::slotCloseEvent(bool isclose)
 		mTDialog->hide();
 	}
 	_update();
+}
+void Axis::setLabel(bool b) {
+	islabel = b;
+}
+void Axis::setAxisdialog(bool b)
+{
+	isAxisdialog = b;
 }
 #include "moc_Axis.cpp"

@@ -22,11 +22,13 @@ typedef struct valrange{
 	}
 }VARRANGE;
 
-//class QGridLayout;
+#include"ScaleWidget.h"
 class ScaleWidget;
 class AxisLable;
 class TDialog;
-class Axis : public QWidget
+class Axis :
+	//public QWidget
+	public ScaleWidget
 {
 	Q_OBJECT
 public:
@@ -39,11 +41,14 @@ public:
 	void SetAxisNumber(int);
 	void loadconfig();
 	void _update();
+	void setLabel(bool);
+	void setAxisdialog(bool);
 public:
 	virtual void resizeEvent(QResizeEvent*) override;
 	virtual void mouseDoubleClickEvent(QMouseEvent*) override;
 Q_SIGNALS:
 	void sendAxisRang(const float&, const float&);
+	//void signalsetAxisRightRange(const float& min, const float& max);
 public Q_SLOTS:
 	void axiscloseEvent();
 	void slotCloseEvent(bool);
@@ -52,7 +57,7 @@ private:
 	QString mAxisunit;
 	valrange axisvalrange;
 	Axisstyle mAxisstyle;
-	ScaleWidget* mQwtScaleWidget;
+	//ScaleWidget* mQwtScaleWidget;
 	AxisLable* mAxisLable;
 	int mAxisunitSize;//单位大小
 	QColor axisColor;//刻度颜色
@@ -61,4 +66,6 @@ private:
 	//QGridLayout* mGridLayout;
 	//TLabel* mTLabel;
 	TDialog* mTDialog;
+	bool islabel;
+	bool isAxisdialog;
 };

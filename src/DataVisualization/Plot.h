@@ -43,7 +43,8 @@ private:
 	QLabel* informationLabel;
 	//  ≈‰∆˜
 	std::shared_ptr<PlotAdapter> adapter;
-	rightScaleWidget* scaleWIdget;
+	//rightScaleWidget* scaleWIdget;
+	Axis* scaleWIdget;
 	QwtScaleEngine *scaleEngine;
 	//Õº¿˝ «∑Òø…”√
 	bool axisRightEnabled;
