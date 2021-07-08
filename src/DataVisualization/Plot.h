@@ -11,15 +11,15 @@
 #include "Canvas.h"
 #include <QLabel>
 #include <QToolBar>
-#include <qwt/qwt_scale_widget.h>
+#include "qwt/qwt_scale_widget.h"
 #include <QHBoxLayout>
 class Canvas;
 class Renderer;
 class RenderThreadManager;
 class Axis;
 class QwtScaleEngine;
-//class QwtScaleWidget;
 class ColorMapWidget;
+class rightScaleWidget;
 class UndoRedoStack;
 class PlotAdapter;
 class DATA_VISUALIZATION_EXPORT Plot:public QWidget{
@@ -43,8 +43,8 @@ private:
 	QLabel* informationLabel;
 	//适配器
 	std::shared_ptr<PlotAdapter> adapter;
-	//QwtScaleWidget *scaleWIdget;
-	ColorMapWidget* scaleWIdget;
+	//rightScaleWidget* scaleWIdget;
+	Axis* scaleWIdget;
 	QwtScaleEngine *scaleEngine;
 	//图例是否可用
 	bool axisRightEnabled;
@@ -93,6 +93,7 @@ public:
 	}
 	//根据横纵比例显示
 	void setRatioDisplay(double& horizonal,double& vertical);
+	void SaveAs(std::string);
 private:
 	//初始化界面
 	void initGUI();
@@ -118,6 +119,7 @@ public Q_SLOTS:
 	void reRendererEvent(std::shared_ptr<PlotAdapter>);
 	void reRendererXRang(const float& min, const float& max);
 	void reRendererYRang(const float& min, const float& max);
+	void ScaleWidgetRightRange(const float& min, const float& max);
 	//画布改变大小
 	void canvasResize(QSize size);
 	//设置应用事件

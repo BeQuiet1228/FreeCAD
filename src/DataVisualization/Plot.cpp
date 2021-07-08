@@ -5,7 +5,7 @@
 #include "RenderThreadManager.h"
 #include "RenderTask.h"
 #include "Renderer.h"
-#include "ColorMapWidget.h"
+//#include "ColorMapWidget.h"
 #include "qwt/qwt_scale_engine.h"
 #include "ContourRender.h"
 #include <stack>
@@ -18,6 +18,8 @@
 #include "QToolButton"
 #include <QList>
 #include <QPaintEvent>
+#include "rightScaleWidget.h"
+#include "ContourPlotAdapter.h"
 struct UndoRedoData
 {
 	UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
@@ -171,9 +173,10 @@ void Plot::updateAxis()
 	Data::Rang vr = adapter->getAxisRightRange();
 	QwtInterval interval(vr.min, vr.max);
 	scaleWIdget->setColorMap(interval, ConfigWidget::getQwtLinearColorMap());
-	scaleWIdget->setScaleDiv(scaleEngine->divideScale(vr.min, vr.max, 6, 8, 0));
-	scaleWIdget->setValrange(vr.min, vr.max);
+	scaleWIdget->setAxisRange(vr.min,vr.max);
+	scaleWIdget->_update();
 	scaleWIdget->show();
+	
 }
 
 /**
@@ -285,16 +288,27 @@ void Plot::initGUI()
 	AxisL = new Axis();
 	AxisL->setAxixStyle(Axisleft);
 	AxisL->SetAxisNumber(yAxisLevel);
-	
+	AxisL->setColorBarEnabled(false);
+	AxisL->setMargin(1);
+	AxisL->setSpacing(1);
+	AxisL->setBorderDist(0,0);
 	AxisB = new Axis();
 	AxisB->setAxixStyle(AxisBottom);
 	AxisB->SetAxisNumber(xAxisLevel);
+	AxisB->setColorBarEnabled(false);
+	AxisB->setMargin(1);
+	AxisB->setSpacing(1);
+	AxisB->setBorderDist(0, 0);
 	connect(AxisL, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererYRang(const float&, const float&)));
 	connect(AxisB, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererXRang(const float&, const float&)));
-	scaleWIdget = new ColorMapWidget(QwtScaleDraw::RightScale, this);
+//	scaleWIdget = new rightScaleWidget(QwtScaleDraw::RightScale, this);
+	scaleWIdget = new Axis(this);
+	scaleWIdget->setAxixStyle(Axisstyle::AxisRight);
 	scaleWIdget->setColorBarEnabled(true);
+	scaleWIdget->setLabel(false);
 	scaleWIdget->setColorBarWidth(20);
-	scaleWIdget->setMargin(40);
+	scaleWIdget->setMargin(20);
+	connect(scaleWIdget, SIGNAL(sendAxisRang(const float&, const float&)),this,SLOT(ScaleWidgetRightRange(const float&, const float&)));
 
 	informationLabel = new QLabel();
 	//informationLabel->setMargin(40);
@@ -566,6 +580,7 @@ void Plot::loadconfig()
 {
 	AxisL->loadconfig();
 	AxisB->loadconfig();
+	scaleWIdget->loadconfig();
 	reRender();
 
 	if (!adapter)
@@ -657,5 +672,44 @@ void Plot::setRatioDisplay(double& horizonal, double& vertical)
 // 	AxisB->setAxisRange(xr.min, xr.max);
 // 	updateAxis();
 // 	reRender();
+}
+
+/**
+* @brief Plot::SaveAs 保存h5数据
+* @param std::string filename
+* @return void
+* @Time 2021/7/6
+*/
+void Plot::SaveAs(std::string filename)
+{
+	int filenamelen = filename.length();
+	std::string fileFormat = filename.substr(filenamelen-4);
+	//转大写
+	//transform(fileFormat.begin(), fileFormat.end(), fileFormat.begin(), toupper);
+	//转小写
+	transform(fileFormat.begin(), fileFormat.end(), fileFormat.begin(), tolower);
+	if (fileFormat.find("png")!=std::string::npos)
+	{
+		//保存图片
+		bool isvisible= toolbar->isVisible();
+		if (isvisible)
+			toolbar->hide();
+		QPixmap pixmap(this->size());
+		this->render(&pixmap);
+		//保存
+		pixmap.save(QString::fromStdString(filename));
+		if (isvisible)
+			toolbar->show();
+	}
+	else if(fileFormat.find("h5")!=std::string::npos)
+	{
+		//保存为*.h5
+		MainRendererDataSaveAs(filename);
+	}
+	
+}
+void Plot::ScaleWidgetRightRange(const float& min, const float& max)
+{
+	adapter->setAxisRightRange(min, max);
 }
 #include "moc_Plot.cpp"

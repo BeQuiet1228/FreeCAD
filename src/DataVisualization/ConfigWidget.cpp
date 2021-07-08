@@ -625,6 +625,20 @@ QwtLinearColorMap* ConfigWidget::getQwtLinearColorMap()
 	}
 	
 }
+//std::map<double, QColor> ConfigWidget::getColortab()
+//{
+//	std::map<double, QColor> maptab;
+//	Config::GetInstance()->loadConfig();
+//	ConfigGroup mGroup = Config::GetInstance()->getRootGroup();
+//	if (!mGroup.GroupIsempty("contour"))
+//	{
+//
+//	}
+//	else
+//	{
+//
+//	}
+//}
 void ConfigWidget::bindplot(Plot* lp)
 {
 	if (lp)

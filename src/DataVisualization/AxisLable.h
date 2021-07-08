@@ -22,6 +22,8 @@ public:
 	void closeEvent(QCloseEvent * e);
 Q_SIGNALS:
 	void signalCloseEvent();
+public Q_SLOTS:
+	void BtnClicked();
 private:
 	void initUI();
 private:
@@ -29,6 +31,8 @@ private:
 	QLineEdit* maxLineedit;
 	QLineEdit* AxisUnitedit;
 	QGridLayout* mQGridLayout;
+	QPushButton* mAppBtn;
+	QPushButton* UnAppBtn;
 	//QBoxLayout* boxLayout;
 };
 #endif // !AXISLABLE_H_
