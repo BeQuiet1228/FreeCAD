@@ -135,19 +135,6 @@ void Axis::_update()
 		switch (mAxisstyle)
 		{
 		case Axisleft:
-		{
-			int width = ticklength + axislabelwidth + rect.height() + 10;
-			if (isColorBarEnabled())
-				width += colorBarWidth();
-			setMinimumWidth(width);
-		}
-		break;
-		case AxisBottom:
-		{
-			int height = ticklength + axislabelhight + rect.height() + 10;
-			setMinimumHeight(height);
-		}
-		break;
 		case AxisRight:
 		{
 			int width = ticklength + axislabelwidth + rect.height() + 10;
@@ -156,9 +143,17 @@ void Axis::_update()
 			setMinimumWidth(width);
 		}
 		break;
+		case AxisBottom:
+		case AxisTop:
+		{
+			int height = ticklength + axislabelhight + rect.height() + 10;
+			if (isColorBarEnabled())
+				height += colorBarWidth();
+			setMinimumHeight(height);
+		}
+		break;
 		}
 	}
-	
 	automatic();
 }
 void  Axis::resizeEvent(QResizeEvent* sizeEvent)
@@ -265,14 +260,12 @@ void Axis::axiscloseEvent()
 	temp.max = mAxisLable->getMaxval();
 	//mAxisunit = mAxisLable->getAxisUnitval();
 	//mAxisLable->hide();
-	setAxisRange(temp.min,temp.max);
 	if (temp != axisvalrange && temp.min <= temp.max)
 	{
+		setAxisRange(temp.min, temp.max);
 		emit sendAxisRang(temp.min, temp.max);
-		axisvalrange = temp;
 	}
 	_update();
-	//setAxisRange(temp.min,temp.max);
 }
 void Axis::slotCloseEvent(bool isclose)
 {

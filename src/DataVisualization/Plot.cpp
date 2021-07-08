@@ -316,7 +316,6 @@ void Plot::initGUI()
 	scaleWIdget->setMargin(10);
 	scaleWIdget->setBorderDist(0.0, 0.0);
 	connect(scaleWIdget, SIGNAL(sendAxisRang(const float&, const float&)),this,SLOT(ScaleWidgetRightRange(const float&, const float&)));
-
 	informationLabel = new QLabel();
 	//informationLabel->setMargin(40);
 	//informationLabel->setAlignment(Qt::AlignTop);
