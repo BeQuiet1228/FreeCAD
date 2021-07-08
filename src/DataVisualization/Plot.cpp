@@ -171,6 +171,12 @@ void Plot::updateAxis()
 		setAxisRightEnabled(true);
 
 	Data::Rang vr = adapter->getAxisRightRange();
+	if (/*(vr.max - vr.min) > -0.0000001 && (vr.max - vr.min) < 0.0000001*/
+		vr.min==vr.max)
+	{
+		scaleWIdget->hide();
+		return;
+	}
 	QwtInterval interval(vr.min, vr.max);
 	scaleWIdget->setColorMap(interval, ConfigWidget::getQwtLinearColorMap());
 	scaleWIdget->setAxisRange(vr.min,vr.max);

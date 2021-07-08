@@ -7,6 +7,7 @@
 #include "CustomConfig.h"
 #include"C_encoding.h"
 #include "TLabel.h"
+#include<QFontMetrics>
 Axis::Axis(QWidget* parent):
 	/*QWidget(parent)*/
 	ScaleWidget(parent)
@@ -121,6 +122,43 @@ void Axis::_update()
 		scaleDraw()->setAxisColor(axisColor);
 		scaleDraw()->setAxisValSize(axisvalSize);
 	}
+	{
+		//调整大小
+		QFont mfont;
+		mfont.setPixelSize(axisvalSize);
+		int ticklength = scaleDraw()->maxTickLength();
+		int axislabelhight = scaleDraw()->maxLabelHeight(mfont);
+		int axislabelwidth = scaleDraw()->maxLabelWidth(mfont);
+		mfont.setPixelSize(mAxisunitSize);
+		QFontMetrics fm(mfont);
+		QRect rect = fm.boundingRect(mAxisunit);
+		switch (mAxisstyle)
+		{
+		case Axisleft:
+		{
+			int width = ticklength + axislabelwidth + rect.height() + 10;
+			if (isColorBarEnabled())
+				width += colorBarWidth();
+			setMinimumWidth(width);
+		}
+		break;
+		case AxisBottom:
+		{
+			int height = ticklength + axislabelhight + rect.height() + 10;
+			setMinimumHeight(height);
+		}
+		break;
+		case AxisRight:
+		{
+			int width = ticklength + axislabelwidth + rect.height() + 10;
+			if (isColorBarEnabled())
+				width += colorBarWidth();
+			setMinimumWidth(width);
+		}
+		break;
+		}
+	}
+	
 	automatic();
 }
 void  Axis::resizeEvent(QResizeEvent* sizeEvent)
