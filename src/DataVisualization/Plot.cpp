@@ -17,7 +17,7 @@
 #include "CustomConfig.h"
 #include "QToolButton"
 #include <QList>
-//#include "ScaleWidget.h"
+#include <QPaintEvent>
 #include "rightScaleWidget.h"
 #include "ContourPlotAdapter.h"
 struct UndoRedoData
@@ -277,6 +277,7 @@ void Plot::initGUI()
 	gridLayout = new QGridLayout;
 	//调整画布与坐标轴的间距
 	gridLayout->setSpacing(0);
+	gridLayout->setContentsMargins(1, 20, 1, 1);
 	this->setLayout(gridLayout);
 
 	canvas = new Canvas();
@@ -318,7 +319,10 @@ void Plot::initGUI()
 	//初始化按钮条
 	toolbar = new QWidget();
 	toolbarLayout = new QHBoxLayout;
+	toolbarLayout->setAlignment(Qt::AlignLeft);
+	toolbarLayout->setContentsMargins(0,20,0,0);
 	toolbar->setLayout(toolbarLayout);
+	toolbar->setObjectName("PlotToolbar");
 
 	gridLayout->addWidget(canvas, 0, 1, 1, 1);
 	gridLayout->addWidget(AxisL, 0, 0, 1, 1);
@@ -514,6 +518,17 @@ void Plot::resizeEvent(QResizeEvent *event)
 	//reRender();
 }
 
+void Plot::paintEvent(QPaintEvent* event)
+{
+	QWidget::paintEvent(event);
+	QPainter painter(this);
+	QPen pen;
+	pen.setWidth(1);
+	pen.setColor(QColor(125,125,125));
+	painter.setPen(pen);
+	painter.drawRect(1, 1, this->size().width()-2, this->size().height() -2);
+}
+
 /**
 * @brief Plot::keyReleaseEvent 
 * @param QKeyEvent * event
@@ -565,6 +580,7 @@ void Plot::loadconfig()
 {
 	AxisL->loadconfig();
 	AxisB->loadconfig();
+	scaleWIdget->loadconfig();
 	reRender();
 
 	if (!adapter)
