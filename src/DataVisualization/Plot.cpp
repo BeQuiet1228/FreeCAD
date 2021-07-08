@@ -174,11 +174,7 @@ void Plot::updateAxis()
 	QwtInterval interval(vr.min, vr.max);
 	scaleWIdget->setColorMap(interval, ConfigWidget::getQwtLinearColorMap());
 	scaleWIdget->setAxisRange(vr.min,vr.max);
-	//µ÷ÕûÎ»ÖÃ
-	QPointF pos=scaleWIdget->scaleDraw()->pos();
-	pos.setY(0);
-	scaleWIdget->scaleDraw()->move(pos);
-	scaleWIdget->scaleDraw()->setLength(scaleWIdget->height()-1);
+	scaleWIdget->_update();
 	scaleWIdget->show();
 	
 }
