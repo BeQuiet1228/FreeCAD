@@ -43,5 +43,20 @@ int cppPrint(lua_State *luaState);
 int pcallErrorCallBack(lua_State *luaState);
 //设置数据生成模式
 int setRunDataMakeType(lua_State* luaState);
+//查看变量是否存在
+int variableIsExsit(lua_State* luaState);
+//获取变量值
+int getFileVariable(lua_State* luaState);
+//添加文件变量
+int addFileVariable(lua_State* luaState);
+//打开变量文件
+int openVariableFile(lua_State* luaState);
+//关闭变量文件
+int closeVariableFile(lua_State* luaState);
+//保存变量文件
+int saveVariableFile(lua_State* luaState);
+//清理变量文件对象
+int clearVarableFileVar(lua_State* luaSate);
+
 //注册lua函数
 void registerLuaFunction(lua_State *L);

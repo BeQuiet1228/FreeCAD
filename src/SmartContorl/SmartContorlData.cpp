@@ -2,6 +2,7 @@
 #include "smartcontorl.h"
 #include "CInterfaceStack.h"
 #include <QDir>
+#include "VariableStorer.h"
 std::shared_ptr<SmartContorlData> SmartContorlData::_instance;
 
 SmartContorlData::SmartContorlData()
@@ -9,6 +10,7 @@ SmartContorlData::SmartContorlData()
 	smartContorl = new SmartContorl;
 	resultGetter = new ChipicResultGetter();
 	cStack = new CInterfaceStack;
+	variableStorer = new VariableStorer;
 	//≤‚ ‘¥˙¬Î
 	//getChipicRunResult();
 }
@@ -18,6 +20,7 @@ SmartContorlData::~SmartContorlData()
 	delete smartContorl;
 	delete resultGetter;
 	delete cStack;
+	delete variableStorer;
 }
 
 /**
