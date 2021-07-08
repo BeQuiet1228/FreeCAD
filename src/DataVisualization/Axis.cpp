@@ -126,8 +126,8 @@ void Axis::_update()
 void  Axis::resizeEvent(QResizeEvent* sizeEvent)
 {
 	//mQwtScaleWidget->resize(this->size());
-	//_update();
-	automatic();
+	_update();
+	//automatic();
 }
 void Axis::mouseDoubleClickEvent(QMouseEvent* e)
 {
