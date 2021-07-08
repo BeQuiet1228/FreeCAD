@@ -67,7 +67,7 @@ void realTimewidget::init(float rmin, float rmax)
 	header << "value:"<<"Rang:";
 	ui->tableWidget->setColumnCount(2);
 	ui->tableWidget->setHorizontalHeaderLabels(header);
-	ui->tableWidget->setShowGrid(false);
+	//ui->tableWidget->setShowGrid(false);
 	auto cloumcount = ui->tableWidget->rowCount();
 	for (int index = cloumcount; index >= 0;index--)
 	{
@@ -84,8 +84,8 @@ void realTimewidget::init(float rmin, float rmax)
 	ui->tableWidget->resizeColumnsToContents();
 	connect(ui->addBtn, SIGNAL(clicked()), this, SLOT(addClicked()));
 	connect(ui->deleteBtn, SIGNAL(clicked()), this, SLOT(deleteClicked()));
-	connect(ui->tableWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
-	connect(ui->tableWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
+	//connect(ui->tableWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
+	//connect(ui->tableWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
 }
 
 /**
@@ -99,16 +99,18 @@ void realTimewidget::addClicked(){
 		ui->tableWidget->insertRow(row);
 		float curval = (min + max) / 2;
 		ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(curval, 0, 'f', GetdecimalBit(curval))));
+		//ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(curval)));
 	}
 	else
 	{
 		ui->tableWidget->insertRow(row);
 		float curval = ui->tableWidget->item(row - 1, 0)->text().toFloat();
 		ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(curval, 0, 'f', GetdecimalBit(curval))));
+		//ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(curval)));
 	}
-	QTableWidgetItem* item = new QTableWidgetItem(QString("%1~%2").arg(min,0,'f',GetdecimalBit(min)).arg(max,0,'f',GetdecimalBit(max)));
-	item->setFlags(Qt::ItemIsEditable);
-	ui->tableWidget->setItem(row, 1, item);
+	//QTableWidgetItem* item = new QTableWidgetItem(QString("%1~%2").arg(min,0,'f',GetdecimalBit(min)).arg(max,0,'f',GetdecimalBit(max)));
+	//item->setFlags(Qt::ItemIsEditable);
+	//ui->tableWidget->setItem(row, 1, item);
 }
 
 /**
@@ -146,7 +148,7 @@ int realTimewidget::GetdecimalBit(float& value)
 */
 void realTimewidget::tableWidgetClicked(QTableWidgetItem* item)
 {
-	curRow = ui->tableWidget->currentRow();
+	//curRow = ui->tableWidget->currentRow();
 	/*if (0 == curRow)
 		return;
 	if (lastRow != curRow&&lastRow!=-1)
@@ -188,7 +190,10 @@ void realTimewidget::BtnClicked()
 		{
 			double curval = ui->tableWidget->item(index, 0)->text().toDouble();
 			ui->tableWidget->removeRow(index);
-			if (curval > max || curval < min)	continue;
+			if (curval > max || curval < min)
+			{
+				continue;
+			}
 			val.push_back(curval);
 		}
 		std::sort(val.begin(), val.end());
@@ -210,12 +215,11 @@ void realTimewidget::init(std::list<double>& leves)
 		if (max < *iter) max = *iter;
 	}
 	this->setWindowTitle(QString("Rang:(%1~%2)").arg(min).arg(max));
-	//≥ı ºªØ
 	QStringList header;
 	header << "levelval:" << "Rang:";
 	ui->tableWidget->setColumnCount(1);
 	ui->tableWidget->setHorizontalHeaderLabels(header);
-	ui->tableWidget->setShowGrid(false);
+	//ui->tableWidget->setShowGrid(false);
 	ui->tableWidget->horizontalHeader()->setResizeMode(QHeaderView::ResizeMode::Stretch);
 	auto cloumcount = ui->tableWidget->rowCount();
 	for (int index = cloumcount; index >= 0; index--)	ui->tableWidget->removeRow(index);
@@ -224,14 +228,15 @@ void realTimewidget::init(std::list<double>& leves)
 	connect(ui->addBtn, SIGNAL(clicked()), this, SLOT(BtnClicked()));
 	connect(ui->deleteBtn, SIGNAL(clicked()), this, SLOT(BtnClicked()));
 	connect(ui->saveBtn, SIGNAL(clicked()), this, SLOT(BtnClicked()));
-	connect(ui->tableWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
-	connect(ui->tableWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
+	//connect(ui->tableWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
+	//connect(ui->tableWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
 }
 void realTimewidget::addTableItem(double val)
 {
 	int row = ui->tableWidget->rowCount();
 	ui->tableWidget->insertRow(row);
 	ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(val,0,'f',GetdecimalBit(val))));
+	//ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(val)));
 }
 int realTimewidget::GetdecimalBit(double& value)
 {

@@ -35,7 +35,7 @@ private:
 	Ui::realTimewidget *ui;
 	double min;
 	double max;
-	int curRow;
-	int lastRow;
+	//int curRow;
+	//int lastRow;
 };
 #endif
