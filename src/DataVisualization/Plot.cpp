@@ -307,7 +307,8 @@ void Plot::initGUI()
 	scaleWIdget->setColorBarEnabled(true);
 	scaleWIdget->setLabel(false);
 	scaleWIdget->setColorBarWidth(20);
-	scaleWIdget->setMargin(20);
+	scaleWIdget->setMargin(10);
+	scaleWIdget->setBorderDist(0.0, 0.0);
 	connect(scaleWIdget, SIGNAL(sendAxisRang(const float&, const float&)),this,SLOT(ScaleWidgetRightRange(const float&, const float&)));
 
 	informationLabel = new QLabel();
