@@ -125,6 +125,7 @@ public Q_SLOTS:
 	
 protected:
 	void resizeEvent(QResizeEvent *event) override;
+	void paintEvent(QPaintEvent* event) override;
 protected:
 	void keyReleaseEvent(QKeyEvent *event);
 };
