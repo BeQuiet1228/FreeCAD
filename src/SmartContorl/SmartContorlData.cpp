@@ -61,7 +61,7 @@ bool SmartContorlData::findResultData(const std::string& name)
 	for (; iter != dataList.end(); iter++)
 	{
 		//名称中会有许多多余的空格，暂时先这样去掉
-		if (iter->name == name)
+		if (iter->petName == name)
 			break;
 	}
 	if (iter == dataList.end())

@@ -341,7 +341,17 @@ QString SmartContorlUI::replaceVariate()
 			.arg((*iter)->max).arg((*iter)->mini).arg(count);
 		vars += temp;
 	}
-	auto text = this->ui->textEdit->toPlainText();
+	QString text;
+#ifdef SMART_EXE
+	QFile file(QString::fromLocal8Bit("E:/工作/优化算法/脚本.lua"));
+	file.open(QIODevice::ReadOnly);
+	text = file.readAll();
+	file.close();
+#else
+	text = this->ui->textEdit->toPlainText();
+#endif // SMART_EXE
+
+	
 	text += vars;
 
 	//添加配置

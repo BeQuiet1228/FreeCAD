@@ -645,6 +645,15 @@ bool Hdf5Data::initInformation()
 		return false;
 	name = sl.at(2).toStdString();
 
+	//获取图表别名
+	if (headList.size() < 14)
+		return true;
+	str = QString::fromStdString(headList.at(13));
+	sl = str.split(":");
+	if (sl.size() < 2)
+		return true;
+	petName = sl.at(1).toLower().simplified().toStdString();
+
 	return true;
 }
 

@@ -37,6 +37,8 @@ struct CONTROL_EXPORT Hdf5Data
     std::vector<DataSet> listDataSet;
 	//图名称
 	std::string name;
+	//图别名
+	std::string petName;
 	//坐标系类型
 	CoordinateSystem coordinateSystem;
 	//初始化基本信息

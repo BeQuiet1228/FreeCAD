@@ -7,6 +7,7 @@ public:
 
 public:
 	bool loadFile(const std::string& path);
+	void creatXmlDocument();
 	void closeFile();
 	bool fileIsLoad();
 	bool saveFile(const std::string path);

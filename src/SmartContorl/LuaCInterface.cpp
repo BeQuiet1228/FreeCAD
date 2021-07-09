@@ -348,6 +348,14 @@ int clearVarableFileVar(lua_State* luaSate)
 	return 1;
 }
 
+int creatVarableFileObject(lua_State* luaState)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	auto variableStorer = contorlData->variableStorer;
+	variableStorer->creatXmlDocument();
+	return 1;
+}
+
 /**
 * @brief registerLuaFunction 向虚拟机中注册lua函数
 * @param lua_State * L
@@ -371,6 +379,14 @@ void registerLuaFunction(lua_State *L)
 	lua_register(L, "saveParamsInHistory", saveParamsInHistory);
 	lua_register(L, "cppPrint", cppPrint);
 	lua_register(L, "setRunDataMakeType", setRunDataMakeType);
+	lua_register(L, "variableIsExsit", variableIsExsit);
+	lua_register(L, "getFileVariable", getFileVariable);
+	lua_register(L, "addFileVariable", addFileVariable);
+	lua_register(L, "openVariableFile", openVariableFile);
+	lua_register(L, "closeVariableFile", closeVariableFile);
+	lua_register(L, "saveVariableFile", saveVariableFile);
+	lua_register(L, "clearVarableFileVar", clearVarableFileVar);
+	lua_register(L, "creatVarableFileObject", creatVarableFileObject);
 }
 
 

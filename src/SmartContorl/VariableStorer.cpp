@@ -13,10 +13,13 @@ VariableStorer::~VariableStorer()
 
 bool VariableStorer::loadFile(const std::string& path)
 {
+
 	pugi::xml_document* doc = new pugi::xml_document;
 	auto result = doc->load(path.c_str());
+
 	if (result)
 	{
+		deleteXmlDocument();
 		xmlDocument = doc;
 		filePath = path;
 		return true;
@@ -26,6 +29,12 @@ bool VariableStorer::loadFile(const std::string& path)
 #endif
 	delete doc;
 	return false;
+}
+
+void VariableStorer::creatXmlDocument()
+{
+	deleteXmlDocument();
+	xmlDocument = new pugi::xml_document;
 }
 
 void VariableStorer::closeFile()
@@ -89,6 +98,8 @@ float VariableStorer::getVariableToFloat(const std::string& name)
 void VariableStorer::addVariable(const std::string& name, const std::string& var)
 {
 	auto node = xmlDocument->child("$$Variable$$");
+	if (!node)
+		node = xmlDocument->append_child("$$Variable$$");
 	node.append_attribute(name.c_str()) = var.c_str();
 }
 

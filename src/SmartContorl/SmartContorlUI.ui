@@ -544,6 +544,33 @@ function getF(minif,maxf,avf)
 	end
 end
 
+--保存运行参数
+function saveVarToFile()
+	print(&quot;+++++++++++++++++++++++++++++++++&quot;);
+	openVariableFile(&quot;test&quot;);
+	print(&quot;+++++++++++++++++++++++++++++++++&quot;);
+	local i = 1;
+	while(i &lt; variateCount)
+	do
+		cppPrint(&quot;==================&quot;..i);
+		var = variate[i];
+		addFileVariable(&quot;var&quot;..i..&quot;.name&quot;,var.name,&quot;s&quot;);
+		addFileVariable(&quot;var&quot;..i..&quot;.max&quot;,var.max,&quot;n&quot;);
+		addFileVariable(&quot;var&quot;..i..&quot;.mini&quot;,var.mini,&quot;n&quot;);
+		addFileVariable(&quot;var&quot;..i..&quot;.pgt&quot;,var.pgt,&quot;n&quot;);
+
+		local index = 1;
+		while(index &lt; valueCount)
+		do
+			addFileVariable(&quot;var&quot;..i..&quot;.vit&quot;..index,var.vit[index],&quot;n&quot;);
+			addFileVariable(&quot;var&quot;..i..&quot;.pit&quot;..index,var.pit[index],&quot;n&quot;);
+			addFileVariable(&quot;var&quot;..i..&quot;.pitf&quot;..index,var.pitf[index],&quot;n&quot;);
+		end
+	end
+
+	saveVariableFile(&quot;test&quot;);
+end
+
 --判断两个f哪一个更符合预期
 --如果第一个f更符合预期 则返回true
 function compareF(f1,f2)
@@ -797,6 +824,7 @@ function optimize()
      variates[variateIndex] = tempVariate;
 	 variateIndex = variateIndex + 1;
  end
+ saveVarToFile();
  init();
 end</string>
      </property>
