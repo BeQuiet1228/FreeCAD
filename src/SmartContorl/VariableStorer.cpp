@@ -92,6 +92,11 @@ void VariableStorer::addVariable(const std::string& name, const std::string& var
 	node.append_attribute(name.c_str()) = var.c_str();
 }
 
+void VariableStorer::clearVar()
+{
+	xmlDocument->reset();
+}
+
 /**
 * @brief VariableStorer::deleteXmlDocument  Õ∑≈µÙxml∂‘œÛ 
 * @return void

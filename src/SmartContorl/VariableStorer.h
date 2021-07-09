@@ -13,7 +13,7 @@ public:
 	bool saveFile();
 	bool variableIsExsit(const std::string& name);
 	void addVariable(const std::string& name, const std::string& var);
-	
+	void clearVar();
 	//获取数据
 public:
 	std::string getVariableToString(const std::string& name);
