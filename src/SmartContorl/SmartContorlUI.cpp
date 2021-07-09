@@ -68,7 +68,11 @@ void SmartContorlUI::on_pushButton_clicked()
 	auto str = replaceVariate();
 	smartContorl->chipicCount = this->ui->spinBoxRunCount->value();
 	smartContorl->run(str);
-
+	//int count = this->ui->spinBoxCount->value();
+	//for (auto iter=variateDatas.begin();iter!=variateDatas.end();iter++)
+	//{
+	//	smartContorl->luaInit((*iter)->name.toStdString(),(*iter)->max,(*iter)->mini,count);
+	//}
 	saveParameterXml();
 }
 
