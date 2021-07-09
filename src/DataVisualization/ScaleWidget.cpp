@@ -26,6 +26,12 @@ void ScaleWidget::setAxisValColor(QColor color)
 {
 	this->scaleDraw()->setAxisValColor(color);
 }
+/**
+* @brief ScaleWidget::automatic 自动调整，用来设置相关偏移
+* @return void
+* @Time 2021/7/6
+*/
+
 void ScaleWidget::automatic()
 {
 	switch (mAlignment)
@@ -50,17 +56,21 @@ void ScaleWidget::automatic()
 	{
 		setAlignment(QwtScaleDraw::LeftScale);
 		scaleDraw()->move(this->width() - 1, 0);
-		scaleDraw()->setLength(this->height()-1);
+		scaleDraw()->setLength(this->height() - 1);
 		scaleDraw()->setPenWidth(1);
 	}
 		break;
 	case QwtScaleDraw::RightScale:
 	{
 		setAlignment(QwtScaleDraw::RightScale);
+
 		QPointF pos = scaleDraw()->pos();
 		pos.setY(0);
 		//scaleDraw()->move(0, 0);
 		scaleDraw()->move(pos);
+
+		//scaleDraw()->move(0, 0);
+
 		scaleDraw()->setLength(this->height() - 1);
 		scaleDraw()->setPenWidth(1);
 	}

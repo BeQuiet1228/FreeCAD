@@ -97,14 +97,6 @@ void Axis::loadconfig()
 }
 void Axis::_update()
 {
-	//QSize size = this->size();
-	//setColorBarEnabled(false);
-	/*QwtLinearScaleEngine* mQwtLinearScaleEngine = new QwtLinearScaleEngine;
-	setScaleDiv(mQwtLinearScaleEngine->divideScale(axisvalrange.min, axisvalrange.max, AxisNum, 5));*/
-	//setRange(axisvalrange.min, axisvalrange.max);
-	//setMargin(1);
-	//setSpacing(1);
-	//setBorderDist(0, 0);
 	//ÉèÖÃµ¥Î»
 	if (islabel)
 	{
@@ -258,8 +250,6 @@ void Axis::axiscloseEvent()
 	valrange temp;
 	temp.min = mAxisLable->getMinval();
 	temp.max = mAxisLable->getMaxval();
-	//mAxisunit = mAxisLable->getAxisUnitval();
-	//mAxisLable->hide();
 	if (temp != axisvalrange && temp.min <= temp.max)
 	{
 		setAxisRange(temp.min, temp.max);
