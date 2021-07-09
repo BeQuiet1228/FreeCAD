@@ -30,6 +30,8 @@ void Hdf5IO::setFilePath(const std::string& path, FileOpenMod mod /*= OPEN_EXIST
 			Hdf5File.reset(new H5File(newPath, H5F_ACC_RDWR));
 		else
 			Hdf5File.reset(new H5File(newPath, H5F_ACC_TRUNC));
+
+		this->hdf5DataList.clear();
 	}
 	catch (...)
 	{
