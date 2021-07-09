@@ -153,7 +153,7 @@ void SmartContorl::luaOptimize()
 */
 void SmartContorl::luaLoadFromString(const std::string& lua)
 {
-	//std::cout << lua << std::endl;
+	std::cout << lua << std::endl;
 	luaL_dostring(lua_state,lua.c_str());
 }
 
