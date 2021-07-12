@@ -21,6 +21,8 @@ struct VariateData
 	int count;
 	double max, mini;
 	int stepLength;
+	int Mode;
+	std::vector<double> datas;
 	QListWidgetItem *item = nullptr;
 	VariateItemWidget *widget = nullptr;
 	void deleteUI(){

@@ -27,6 +27,8 @@ SET(QRC_SRC
 SET(CALC_SRC
 smartCalc.h
 smartCalc.cpp
+VariateitemWidget2.h
+VariateitemWidget2.cpp
 )
 SET(LUA_SRC
 	lua/lapi.c
@@ -109,6 +111,7 @@ SET(MY_MOC_HDR
 	SmartContorlInterface.h
 	VariableStorer.h
 	smartCalc.h
+	VariateitemWidget2.h
 	
 )
 SET(MY_MOC_SRC
@@ -118,6 +121,7 @@ SET(MY_MOC_SRC
 	VariateInputDialog.cpp
 	qcustomplot.cpp
 	SmartContorlInterface.cpp
+	VariateitemWidget2.cpp
 )
 SET(NETWORK_SRC
 
