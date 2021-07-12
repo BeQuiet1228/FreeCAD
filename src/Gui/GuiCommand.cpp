@@ -6,6 +6,7 @@
 #include "FileDialog.h"
 #include "MainWindow.h"
 #include "PlotMDIView.h"
+#include "DataVisualization/Plot.h"
 DEF_STD_CMD_A(GuiCmdPlotDataExport);
 GuiCmdPlotDataExport::GuiCmdPlotDataExport() 
 	:Command("gui_plot_data_export"){
@@ -19,14 +20,15 @@ GuiCmdPlotDataExport::GuiCmdPlotDataExport()
 
 void GuiCmdPlotDataExport::activated(int iMsg) {
 	QString fn = Gui::FileDialog::getSaveFileName(Gui::MainWindow::getInstance(), QObject::tr("Export data"),
-		QString(), QString::fromLatin1("(*.%1)").arg(QString::fromStdString("h5")));
+		QString(), QString::fromLatin1("(*.h5 *.png)"));
 	if (fn.isEmpty())
 		return;
 	auto view = Gui::MainWindow::getInstance()->activeWindow();
 	auto plotView = dynamic_cast<Gui::PlotMDIView*>(view);
 	if (!plotView)
 		return;
-	plotView->getPlot()->MainRendererDataSaveAs(fn.toStdString());
+	//plotView->getPlot()->MainRendererDataSaveAs(fn.toStdString());
+	plotView->getPlot()->SaveAs(fn.toStdString());
 }
 bool GuiCmdPlotDataExport::isActive() {
 	return getGuiApplication()->sendHasMsgToActiveView("PlotDataExport");

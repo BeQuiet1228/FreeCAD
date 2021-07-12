@@ -5,6 +5,8 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QCloseEvent>
+#include <QPushButton>
+#include"C_encoding.h"
 AxisLable::AxisLable(QWidget* parent) :QDialog(parent)
 {
 	initUI();
@@ -55,15 +57,20 @@ void AxisLable::initUI()
 	QLabel* lable1 = new QLabel(this);
 	lable1->setText("minLineedit:");
 	mQGridLayout->addWidget(lable1, 0, 0);
-	mQGridLayout->addWidget(minLineedit,0,1);
+	mQGridLayout->addWidget(minLineedit,0,1,1,3);
 	QLabel* label2 = new QLabel(this);
 	label2->setText("maxLineedit:");
 	mQGridLayout->addWidget(label2, 1, 0);
-	mQGridLayout->addWidget(maxLineedit,1,1);
-	QLabel* label3 = new QLabel(this);
-	label3->setText("AxisUnitedit:");
-	mQGridLayout->addWidget(label3, 2, 0);
-	mQGridLayout->addWidget(AxisUnitedit,2,1);
+	mQGridLayout->addWidget(maxLineedit,1,1,1,3);
+	//添加按钮
+	mAppBtn =new QPushButton(this);
+	UnAppBtn=new QPushButton(this);
+	mQGridLayout->addWidget(mAppBtn,2,2,1,1);
+	mQGridLayout->addWidget(UnAppBtn, 2, 3, 1, 1);
+	mAppBtn->setText(GetEncodingstr("确定",ENCODING_GB2312));
+	UnAppBtn->setText(GetEncodingstr("取消", ENCODING_GB2312));
+	connect(mAppBtn, SIGNAL(clicked()),this,SLOT(BtnClicked()));
+	connect(UnAppBtn, SIGNAL(clicked()), this, SLOT(BtnClicked()));
 }
 void AxisLable::setMinval(QString str){
 	minLineedit->setText(str);
@@ -87,7 +94,19 @@ QString AxisLable::getAxisUnitval(){
 }
 void AxisLable::closeEvent(QCloseEvent * e)
 {
-	emit signalCloseEvent();
+	//emit signalCloseEvent();
+	hide();
 	e->ignore();
+}
+void AxisLable::BtnClicked()
+{
+	if (sender()==mAppBtn)
+	{
+		emit signalCloseEvent();
+	}
+	else if (sender()==UnAppBtn)
+	{
+		hide();
+	}
 }
 #include "moc_AxisLable.cpp"

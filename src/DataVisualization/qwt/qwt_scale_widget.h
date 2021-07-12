@@ -114,7 +114,6 @@ public:
     QwtScaleDraw::Alignment alignment() const;
 
     QRectF colorBarRect( const QRectF& ) const;
-
 protected:
     virtual void paintEvent( QPaintEvent * );
     virtual void resizeEvent( QResizeEvent * );
@@ -126,9 +125,10 @@ protected:
 
 private:
     void initScale( QwtScaleDraw::Alignment );
-
+protected:
     class PrivateData;
-    PrivateData *d_data;
+    PrivateData* d_data;
+    
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS( QwtScaleWidget::LayoutFlags )

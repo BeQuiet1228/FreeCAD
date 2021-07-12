@@ -33,10 +33,14 @@ SET(MY_MOC_HDR RenderThread.h
 	ConfigWidget.h
 	Arrowctrl.h
 	ColorTab.h
+	TLabel.h
 	ColorMapWidget.h
 	realTimewidget.h
+	ScaleWidget.h
+	rightScaleWidget.h
+	ContourPlotAdapter.h
+	PlotAdapter.h
 	)
-
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
 	TimeRenderer.cpp
@@ -76,6 +80,8 @@ SET(CONTOUR_SRC ContourData.h
 	ContourDataPolar.h
 	ContourRenderStateGetter.cpp
 	ContourRenderStateGetter.h
+	ContourPlotAdapter.cpp
+	ContourPlotAdapter.h
 )
 SET(PHASOR_SRC phasorData.h
 	phasorData.cpp
@@ -120,6 +126,8 @@ SET(SRC main.cpp
 	RenderGrid.h
 	DataInformationGetter.cpp
 	DataInformationGetter.h
+	PlotAdapter.cpp
+	PlotAdapter.h
 	)
 SET(SRC_TOOL ConfigWidget.h
 	ConfigWidget.cpp
@@ -131,6 +139,12 @@ SET(SRC_TOOL ConfigWidget.h
 	ColorMapWidget.cpp
 	realTimewidget.cpp
 	realTimewidget.h
+	ScaleWidget.h
+	ScaleWidget.cpp
+	rightScaleWidget.h
+	rightScaleWidget.cpp
+	TLabel.h
+	TLabel.cpp
 	)
 #处理ui和qrc文件
 if (BUILD_QT5)

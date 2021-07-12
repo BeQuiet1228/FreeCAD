@@ -1,24 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>realTimewidget</class>
- <widget class="QWidget" name="realTimewidget">
+ <widget class="QDialog" name="realTimewidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>505</width>
-    <height>487</height>
+    <width>348</width>
+    <height>355</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
-  </property>
-  <property name="styleSheet">
-   <string notr="true">QWidget#realTimewidget{
-background-color:gray;
-border:1px solid #0000ff;
-border-radius:6px;
-}</string>
+   <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -45,6 +38,13 @@ border-radius:6px;
       <widget class="QPushButton" name="deleteBtn">
        <property name="text">
         <string>delete</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="saveBtn">
+       <property name="text">
+        <string>save</string>
        </property>
       </widget>
      </item>
