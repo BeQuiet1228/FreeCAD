@@ -302,7 +302,7 @@ int openVariableFile(lua_State* luaState)
 	QFileInfo fileInfo(m3dPath);
 	m3dPath = m3dPath.remove(fileInfo.fileName());
 
-	m3dPath += QString::fromStdString(fileName) + ".var";
+	m3dPath += fileInfo.baseName() + "_" + QString::fromStdString(fileName) + ".var";
 
 	auto variableStorer = contorlData->variableStorer;
 	bool b = variableStorer->loadFile(m3dPath.toStdString());
@@ -330,7 +330,7 @@ int saveVariableFile(lua_State* luaState)
 	QFileInfo fileInfo(m3dPath);
 	m3dPath = m3dPath.remove(fileInfo.fileName());
 
-	m3dPath += QString::fromStdString(fileName) + ".var";
+	m3dPath += fileInfo.baseName() + "_" + QString::fromStdString(fileName) + ".var";
 
 	auto variableStorer = contorlData->variableStorer;
 	bool b = variableStorer->saveFile(m3dPath.toStdString());

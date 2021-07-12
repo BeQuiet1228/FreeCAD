@@ -15,6 +15,8 @@
 #include "VariateChart.h"
 #include "xml/pugixml.hpp"
 #include <QTextCodec>
+#include <QScrollBar>
+#include <QTextCursor>
 SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	:QDialog(parent), ui(new Ui::SmartContorlUI)
 {
@@ -265,10 +267,11 @@ void SmartContorlUI::addListWidgetItem(QListWidgetItem *item, QWidget *widget)
 
 void SmartContorlUI::pringLuaLog(std::string str)
 {
-	auto temp = QString::fromStdString(str);
+	auto temp = QString::fromUtf8(str.c_str());
 	auto text = this->ui->plainTextEdit->toPlainText();
 	text += temp;
 	this->ui->plainTextEdit->setPlainText(text);
+	ui->plainTextEdit->moveCursor(QTextCursor::End);
 }
 
 void SmartContorlUI::on_pushButtonVariateMax_clicked()

@@ -54,7 +54,7 @@ public:
 	//调用lua中的初始化函数
 	void luaInit();
 	//调用lua中的结果筛选函数
-	void luaResultDataFilter();
+	bool luaResultDataFilter();
 	//调用lua中的结果比对函数
 	bool luaResultExpcet();
 	//调用lua中参数优化函数

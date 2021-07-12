@@ -49,11 +49,18 @@ void SmartContorl::luaInit()
 
 /**
 * @brief SmartContorl::luaResultDataFilter 调用lua脚本中的结果筛选函数
-* @return void
+* @return bool
 */
-void SmartContorl::luaResultDataFilter()
+bool SmartContorl::luaResultDataFilter()
 {
-	callLuaFunction("resultDataFilter");
+	callLuaFunction("resultDataFilter",0,1);
+	bool re = false;
+	if (lua_gettop(lua_state) != 0)
+	{
+		re = lua_toboolean(lua_state, -1);
+	}
+
+	return re;
 }
 
 /**
@@ -183,9 +190,20 @@ void SmartContorl::runChipic()
 void SmartContorl::dataOptimize()
 {
 	//运算结果数据筛选
-	this->luaResultDataFilter();
+	bool ok = this->luaResultDataFilter();
 	//清理h5对象 这个暂时放在这里，后续应当写到lua脚本中
 	SmartContorlData::GetInstance()->clearH5Object();
+	//如果结果数据筛选失败，那么给出提示
+	if (!ok)
+	{
+		QMessageBox* msgBox = new QMessageBox;
+		msgBox->setAttribute(Qt::WA_DeleteOnClose);
+		msgBox->setWindowTitle(QString::fromLocal8Bit("提示"));
+		msgBox->setText(QString::fromLocal8Bit("优化结果数据筛选失败，请检查输出H5文件格式是否正确！"));
+		msgBox->show();
+		return;
+	}
+
 	//清空完成运算数据
 	//this->clearFinishData();
 	//判断数据是否符合预期，符合则结束运行
