@@ -16,7 +16,7 @@ ContourRender::ContourRender(std::shared_ptr<ContourData> data)
 	setRenderThreadCount(0);
 
 	setDisplayMode(DisplayMode::ImageMode, true);
-	setDisplayMode(DisplayMode::ContourMode, true);
+	setDisplayMode(DisplayMode::ContourMode, false);
 }
 
 ContourRender::~ContourRender()
