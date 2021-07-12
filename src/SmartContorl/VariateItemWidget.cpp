@@ -6,8 +6,8 @@ VariateItemWidget::VariateItemWidget(QWidget *parent /*= 0*/)
 {
 	ui->setupUi(this);
 	//不显示值个数
-	ui->label_3->hide();
-	ui->labelCount->hide();
+	//ui->label_3->hide();
+	//ui->labelCount->hide();
 }
 
 VariateItemWidget::~VariateItemWidget()
@@ -18,7 +18,7 @@ VariateItemWidget::~VariateItemWidget()
 void VariateItemWidget::setData(std::shared_ptr<VariateData> data)
 {
 	this->ui->labelName->setText(data->name);
-	this->ui->labelCount->setText(QString::number(data->count));
+	this->ui->labelCount->setText(QString::number(data->stepLength));
 	this->ui->labelMax->setText(QString::number(data->max));
 	this->ui->labelMini->setText(QString::number(data->mini));
 }

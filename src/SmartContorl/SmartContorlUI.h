@@ -20,6 +20,7 @@ struct VariateData
 	QString name;
 	int count;
 	double max, mini;
+	int stepLength;
 	QListWidgetItem *item = nullptr;
 	VariateItemWidget *widget = nullptr;
 	void deleteUI(){
