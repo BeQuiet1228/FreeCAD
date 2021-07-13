@@ -692,65 +692,6 @@ void QwtScaleDraw::drawLabel( QPainter *painter, double value ) const
    
     painter->restore();
 }
-//新增代码
-//QTransform QwtScaleDraw::labelTransformation(const QPointF& pos, const QSizeF& size, double value) const
-//{
-//    QTransform transform;
-//    transform.translate(pos.x(), pos.y());
-//    transform.rotate(labelRotation());
-//    int flags = labelAlignment();
-//    if (flags == 0)
-//    {
-//        switch (alignment())
-//        {
-//        case RightScale:
-//        {
-//            if (flags == 0)
-//                flags = Qt::AlignRight | Qt::AlignVCenter;
-//            break;
-//        }
-//        case LeftScale:
-//        {
-//            if (flags == 0)
-//                flags = Qt::AlignLeft | Qt::AlignVCenter;
-//            break;
-//        }
-//        case BottomScale:
-//        {
-//            if (flags == 0)
-//                flags = Qt::AlignHCenter | Qt::AlignBottom;
-//            break;
-//        }
-//        case TopScale:
-//        {
-//            if (flags == 0)
-//                flags = Qt::AlignHCenter | Qt::AlignTop;
-//            break;
-//        }
-//        }
-//    }
-//    double x, y;
-//
-//    if (flags & Qt::AlignLeft)
-//        x = -size.width();
-//    else if (flags & Qt::AlignRight)
-//        x = 0.0;
-//    else // Qt::AlignHCenter
-//        x = -(0.5 * size.width());
-//
-//    if (flags & Qt::AlignTop)
-//        y = -size.height();
-//    else if (flags & Qt::AlignBottom)
-//        y = 0;
-//    else // Qt::AlignVCenter
-//        y = -(0.5 * size.height());
-//
-//    transform.translate(x, y);
-//
-//    return transform;
-//}
-
-
 /**
 * @brief QwtScaleDraw::labelTransformation label位置调整
 * @param const QPointF & pos
