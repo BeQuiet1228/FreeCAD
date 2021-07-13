@@ -413,12 +413,13 @@ int QwtScaleWidget::spacing() const
 void QwtScaleWidget::paintEvent( QPaintEvent *event )
 {
     QPainter painter( this );
+    //QRect rect = event->rect();
+    //qDebug() << "paint:"<<rect;
     painter.setClipRegion( event->region() );
 
     QStyleOption opt;
     opt.init(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
-
     draw( &painter );
 }
 
