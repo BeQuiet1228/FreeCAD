@@ -39,6 +39,7 @@ SET(MY_MOC_HDR RenderThread.h
 	ScaleWidget.h
 	rightScaleWidget.h
 	ContourPlotAdapter.h
+	phasorPlotAdapter.h
 	PlotAdapter.h
 	)
 SET(TIME_SRC TimeData.h
@@ -89,6 +90,8 @@ SET(PHASOR_SRC phasorData.h
 	phasorRenderer.cpp
 	DirData.cpp
 	DirData.h
+	phasorPlotAdapter.cpp
+	phasorPlotAdapter.h
 )
 SET(CONFIG_SRC CustomConfig.cpp
 	CustomConfig.h
