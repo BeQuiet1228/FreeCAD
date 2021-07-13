@@ -2,6 +2,7 @@
 #include "smartcontorl.h"
 #include "CInterfaceStack.h"
 #include <QDir>
+#include "VariableStorer.h"
 std::shared_ptr<SmartContorlData> SmartContorlData::_instance;
 
 SmartContorlData::SmartContorlData()
@@ -9,6 +10,7 @@ SmartContorlData::SmartContorlData()
 	smartContorl = new SmartContorl;
 	resultGetter = new ChipicResultGetter();
 	cStack = new CInterfaceStack;
+	variableStorer = new VariableStorer;
 	//测试代码
 	//getChipicRunResult();
 }
@@ -18,6 +20,7 @@ SmartContorlData::~SmartContorlData()
 	delete smartContorl;
 	delete resultGetter;
 	delete cStack;
+	delete variableStorer;
 }
 
 /**
@@ -58,7 +61,7 @@ bool SmartContorlData::findResultData(const std::string& name)
 	for (; iter != dataList.end(); iter++)
 	{
 		//名称中会有许多多余的空格，暂时先这样去掉
-		if (iter->name == name)
+		if (iter->petName == name)
 			break;
 	}
 	if (iter == dataList.end())

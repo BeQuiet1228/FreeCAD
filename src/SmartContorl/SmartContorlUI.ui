@@ -68,6 +68,36 @@
          </layout>
         </item>
         <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_17">
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBoxContinue">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>根据上一次的优化数据继续</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
            <widget class="QPushButton" name="pushButtonAddVariate">
@@ -504,7 +534,14 @@
          </widget>
         </item>
         <item>
-         <widget class="QPlainTextEdit" name="plainTextEdit"/>
+         <widget class="QPlainTextEdit" name="plainTextEdit">
+          <property name="styleSheet">
+           <string notr="true">font: 12pt &quot;微软雅黑&quot;;</string>
+          </property>
+          <property name="plainText">
+           <string/>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -544,6 +581,88 @@ function getF(minif,maxf,avf)
 	end
 end
 
+--保存运行参数
+function saveVarToFile()
+	creatVarableFileObject();
+	addFileVariable(&quot;pgtF&quot;,pgtF,&quot;n&quot;);
+	local i = 1;
+	while(i &lt; variateCount + 1)
+	do
+		var = variates[i];
+		addFileVariable(&quot;var&quot;..i..&quot;.name&quot;,var.name,&quot;s&quot;);
+		addFileVariable(&quot;var&quot;..i..&quot;.max&quot;,var.max,&quot;n&quot;);
+		addFileVariable(&quot;var&quot;..i..&quot;.mini&quot;,var.mini,&quot;n&quot;);
+		addFileVariable(&quot;var&quot;..i..&quot;.pgt&quot;,var.pgt,&quot;n&quot;);
+
+		local index = 1;
+		while(index &lt; valueCount + 1)
+		do
+			addFileVariable(&quot;var&quot;..i..&quot;.variate&quot;..index,var.variate[index],&quot;n&quot;)
+			addFileVariable(&quot;var&quot;..i..&quot;.vit&quot;..index,var.vit[index],&quot;n&quot;);
+			addFileVariable(&quot;var&quot;..i..&quot;.pit&quot;..index,var.pit[index],&quot;n&quot;);
+			addFileVariable(&quot;var&quot;..i..&quot;.pitF&quot;..index,var.pitF[index],&quot;n&quot;);
+			index = index + 1;
+		end
+		i = i + 1;
+	end
+	
+	saveVariableFile(&quot;test&quot;);
+	closeVariableFile();
+end
+--读取运行参数
+function loadVarToFile()
+	if(not openVariableFile(&quot;test&quot;))
+	then
+		return false;
+	end
+
+	pgtF = getFileVariable(&quot;pgtF&quot;,&quot;n&quot;);
+
+	local i = 1;
+	while(i &lt; variateCount + 1)
+	do
+		local var = {};
+		var.name = getFileVariable(&quot;var&quot;..i..&quot;.name&quot;,&quot;s&quot;);
+		var.max = getFileVariable(&quot;var&quot;..i..&quot;.max&quot;,&quot;n&quot;);
+		var.mini = getFileVariable(&quot;var&quot;..i..&quot;.mini&quot;,&quot;n&quot;);
+		var.pgt = getFileVariable(&quot;var&quot;..i..&quot;.pgt&quot;,&quot;n&quot;);
+
+		print(&quot;vaar.name:&quot;..var.name);
+
+		var.vit = {};
+		var.pit = {};
+		var.pitF = {};
+		var.variate = {};
+		local index = 1;
+		while(index &lt; valueCount + 1)
+		do
+			var.variate[index] = getFileVariable(&quot;var&quot;..i..&quot;.variate&quot;..index,&quot;n&quot;);
+			print(&quot;,var.variate&quot;..index..&quot;:&quot;..var.variate[index]);
+			var.vit[index] = getFileVariable(&quot;var&quot;..i..&quot;.vit&quot;..index,&quot;n&quot;);
+			var.pit[index] = getFileVariable(&quot;var&quot;..i..&quot;.pit&quot;..index,&quot;n&quot;);
+			var.pitF[index] = getFileVariable(&quot;var&quot;..i..&quot;.pitF&quot;..index,&quot;n&quot;);
+			index = index + 1;
+		end
+		variates[i] = var;
+		i = i + 1;
+	end
+end
+
+function printInformation()
+	if(variateCount &lt; 1)
+	then
+		return;
+	end
+	cppPrint(&quot;——————第&quot;..getHistorySize()..&quot;轮历史最优数据——————&quot;);
+	cppPrint(&quot;F = &quot;..pgtF);
+	local i = 1;
+	while(i &lt; variateCount + 1)
+	do
+		local var = variates[i];
+		cppPrint(var.name..&quot; = &quot;..var.pgt);
+		i = i + 1;
+	end
+end
 --判断两个f哪一个更符合预期
 --如果第一个f更符合预期 则返回true
 function compareF(f1,f2)
@@ -617,7 +736,12 @@ function rand()
 	return math.random();
 end
 function init()
- cppPrint(&quot;call init&quot;);
+ 
+ --判断是否按上次的优化数据继续优化
+ if(continue)
+ then
+	loadVarToFile();
+ end
  local index = 1;
  while(index &lt; variateCount + 1)
  do
@@ -629,7 +753,7 @@ function init()
 		log = log..variates[index].variate[i]..&quot;,&quot;;
 		i = i + 1;
 	end
-	cppPrint(log);
+	--cppPrint(log);
 	--往c中添加变量
 	addVariate(variates[index].name,variates[index].variate);
 	index = index + 1;
@@ -641,18 +765,19 @@ function resultDataFilter()
  do
 	if(not openH5File())
 	then
-		cppPrint(&quot;open h5file false!&quot;);
+		print(&quot;open h5file false1!&quot;);
+		return false;
 	end
 	if(not findResultData(observeName))
 	then
-		cppPrint(&quot;find result false!&quot;);
-		return;
+		print(&quot;find result false2!&quot;);
+		return false;
 	end
  
 	if(not openDataSet())
 	then
-		cppPrint(&quot;open data set false!&quot;);
-		return;
+		print(&quot;open data set false3!&quot;);
+		return false;
 	end
 	local valueSize = getDataSetVlaueSize();
 	local i = 0;
@@ -692,7 +817,6 @@ function resultDataFilter()
  while(index &lt; groupSize)
  do
 	local F = getParam(groupIndex,index,0);
-	cppPrint(&quot;f= &quot;..F);
 	local pitF = variates[1].pitF[index + 1];
 	print(&quot;pitf=&quot;..pitF..&quot;,F=&quot;..F..&quot;,x=&quot;..variates[1].variate[index + 1]);
 	if(compareF(F,pitF))
@@ -724,10 +848,10 @@ function resultDataFilter()
     end
 	index = index + 1;
  end
+ return true;
 end
 
 function resultExpcet()
- cppPrint(&quot;call result expcet&quot;);
   --如果超过最大优化次数 则也停止优化
  if(getHistorySize() &gt;= optimizeMaxCount)
  then
@@ -753,7 +877,6 @@ then
 end
 end
 function optimize()
- cppPrint(&quot;call optimize&quot;);
  local variateIndex = 1;
  while(variateIndex &lt; variateCount + 1)
  do
@@ -797,6 +920,8 @@ function optimize()
      variates[variateIndex] = tempVariate;
 	 variateIndex = variateIndex + 1;
  end
+ printInformation();
+ saveVarToFile();
  init();
 end</string>
      </property>

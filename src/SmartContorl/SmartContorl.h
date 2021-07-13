@@ -45,12 +45,16 @@ public:
 		//参数设置
 		std::vector<Variate> variates;
 	};
+	enum MakeRunDataType {
+		CONBINATION,	//组合
+		EXHAUSTIVITY	//穷举
 
+	};
 public:
 	//调用lua中的初始化函数
 	void luaInit();
 	//调用lua中的结果筛选函数
-	void luaResultDataFilter();
+	bool luaResultDataFilter();
 	//调用lua中的结果比对函数
 	bool luaResultExpcet();
 	//调用lua中参数优化函数
@@ -115,6 +119,9 @@ public:
 	std::vector<HistoryData> getHistoryDatas(){
 		return historyDatas;
 	}
+	void  setRunDataMakeType(const MakeRunDataType& type) {
+		this->makeRunDataType = type;
+	}
 public:
 	//同时运行chipic的个数
 	unsigned int chipicCount = 6;
@@ -139,6 +146,8 @@ private:
 	ChipicManager *chipicManager;
 	//运行一次的所有信息
 	HistoryData runData;
+	//运行数据的成成模式
+	MakeRunDataType makeRunDataType;
 	//优化算法整个模块的运行状态
 	bool runing = false;
 	//暂时写一个参数来确定是否要响应已经完成的chipic启动新的chipic。这里为了保证优化时每次都一个一个的启动

@@ -716,6 +716,9 @@ void Plot::SaveAs(std::string filename)
 }
 void Plot::ScaleWidgetRightRange(const float& min, const float& max)
 {
+	if (!adapter)
+		return;
 	adapter->setAxisRightRange(min, max);
+	reRender();
 }
 #include "moc_Plot.cpp"
