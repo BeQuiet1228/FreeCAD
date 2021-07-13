@@ -637,7 +637,7 @@ void QwtScaleWidget::drawTitle( QPainter *painter,
         case QwtScaleDraw::LeftScale:
             angle = -90.0;
             flags |= Qt::AlignTop;
-            r.setRect( r.left(), r.bottom(),
+            r.setRect( r.left()+6, r.bottom(),
                 r.height(), r.width() - d_data->titleOffset );
             break;
 
