@@ -45,7 +45,8 @@ public:
 	void loadConfig();
 	//存储主渲染器的数据
 	void MainRendererDataSaveAs(const std::string& path);
-
+	//根据横纵比例显示
+	void setRatioDisplay(const double& horizonal,const double& vertical);
 	//清理从渲染器
 	void clearSubRenderer() {
 		subRenderers.clear();

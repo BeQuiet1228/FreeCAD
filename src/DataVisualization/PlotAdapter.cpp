@@ -277,3 +277,17 @@ void PlotAdapter::MainRendererDataSaveAs(const std::string& path)
 	data->saveAs(path);
 }
 
+void PlotAdapter::setRatioDisplay(const double& horizonal,const double& vertical)
+{
+	if (!mainRenderer)
+		return;
+	mainRenderer->setRatioDisplay(horizonal, vertical);
+	Data::Rang xr = mainRenderer->getXRang();
+	Data::Rang yr = mainRenderer->getYRang();
+	for (auto iter = subRenderers.begin(); iter != subRenderers.end(); iter++)
+	{
+ 		(*iter)->setXRang(xr);
+ 		(*iter)->setYRang(yr);
+ 	}
+}
+

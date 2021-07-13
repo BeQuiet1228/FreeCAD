@@ -92,7 +92,7 @@ public:
 		return gridLineEnabled;
 	}
 	//根据横纵比例显示
-	void setRatioDisplay(double& horizonal,double& vertical);
+	void setRatioDisplay(const double& horizonal,const double& vertical);
 	void SaveAs(std::string);
 private:
 	//初始化界面
