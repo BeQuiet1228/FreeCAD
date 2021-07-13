@@ -13,6 +13,7 @@
 #include<QListWidgetItem>
 #include<QDebug>
 #include"VariateitemWidget2.h"
+void SplitString(const std::string& s, std::vector<std::string>& v, const std::string& c);
 smartCalc::smartCalc(QWidget* parent) :QDialog(parent),ui(new Ui::smartCalc)
 {
 	ui->setupUi(this);
@@ -166,17 +167,26 @@ void smartCalc::loadParameterXml()
 	{
 		std::shared_ptr<VariateData> data;
 		data.reset(new VariateData);
-		data->count = configNode.attribute("RunMaxCount").as_int();
+		//data->count = configNode.attribute("RunMaxCount").as_int();
 		data->name = QString::fromStdString(iter->name());
 		data->max = iter->attribute("Max").as_double();
 		data->mini = iter->attribute("Mini").as_double();
 		//data->stepLength = configNode.attribute("RunMaxCount").as_int();
 		data->stepLength = iter->attribute("stepLength").as_int();
+		data->Mode = iter->attribute("Mode").as_int();
+		if (2==data->Mode)
+		{
+			std::vector<std::string> v;
+			SplitString(iter->attribute("datas").as_string(), v,",");
+			std::vector<double> vals;
+			for (auto strit=v.begin();strit!=v.end();strit++)
+				vals.push_back(atof(strit->c_str()));
+			data->datas = vals;
+		}
 		data->item = new QListWidgetItem();
 		data->widget = new VariateItemWidget();
 		data->widget->setData(data);
 		variateDatas.push_back(data);
-
 		this->ui->listWidgetVariate->addItem(data->item);
 		auto size = data->widget->size();
 		data->item->setSizeHint(size);
@@ -269,17 +279,30 @@ void smartCalc::saveParameterXml()
 	//configNode.append_attribute("Omega") = ui->lineEditOmega->text().toStdString().c_str();
 	for (auto i = variateDatas.begin(); i != variateDatas.end(); i++)
 	{
-		if (1 != (*i)->Mode)
-			continue;
 		auto node = parNode.append_child((*i)->name.toStdString().c_str());
 		std::string max = QString::number((*i)->max).toStdString();
 		std::string mini = QString::number((*i)->mini).toStdString();
 		std::string steplength = QString::number((*i)->stepLength).toStdString();
-		/*std::string mode = QString::number((*i)->Mode).toStdString();
-		node.append_attribute("Mode")=mode.c_str();*/
+		std::string mode = QString::number((*i)->Mode).toStdString();
+		node.append_attribute("Mode")=mode.c_str();
 		node.append_attribute("Max") = max.c_str();
 		node.append_attribute("Mini") = mini.c_str();
 		node.append_attribute("stepLength") = steplength.c_str();
+		//如果为模式2，需要存下数组队列
+		
+		if (2==(*i)->Mode){
+			QString qdatas = "";
+			std::vector<double> vals = (*i)->datas;
+			for (auto iter=vals.begin();iter!=vals.end();iter++)
+			{
+				qdatas += QString::number(*iter);
+				qdatas += ",";
+			}
+
+			std::string sdatas = qdatas.toStdString();
+			sdatas=sdatas.substr(0,sdatas.length()-1);
+			node.append_attribute("datas")=sdatas.c_str();
+		}
 	}
 	auto path = smartContorl->getM3dPath();
 	path = path.left(path.length() - 4) + ".cc";
@@ -304,5 +327,21 @@ void smartCalc::pringLuaLog(std::string str)
 	//auto text = this->ui->plainTextEdit->toPlainText();
 	//text += temp;
 	//this->ui->plainTextEdit->setPlainText(text);
+}
+
+void SplitString(const std::string& s, std::vector<std::string>& v, const std::string& c)
+{
+	std::string::size_type pos1, pos2;
+	pos2 = s.find(c);
+	pos1 = 0;
+	while (std::string::npos != pos2)
+	{
+		v.push_back(s.substr(pos1, pos2 - pos1));
+
+		pos1 = pos2 + c.size();
+		pos2 = s.find(c, pos1);
+	}
+	if (pos1 != s.length())
+		v.push_back(s.substr(pos1));
 }
 #include"moc_smartCalc.cpp"
