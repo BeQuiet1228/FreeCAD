@@ -120,7 +120,7 @@ void Plot::reRender()
 	//创建坐标轴网格渲染任务
 	creatGridRenderTask();
 	//更新信息显示label
-	updateInformationLabel();
+	//updateInformationLabel();
 	adapter->reRender(this->canvas->size());
 }
 
@@ -155,8 +155,8 @@ void Plot::updateAxis()
 
 	//设置横纵坐标单位
 
- 	AxisL->setAxisText(QString::fromStdString(adapter->getYTag()));
- 	AxisB->setAxisText(QString::fromStdString(adapter->getXTag()));
+ 	//AxisL->setAxisText(QString::fromStdString(adapter->getYTag()));
+ 	//AxisB->setAxisText(QString::fromStdString(adapter->getXTag()));
 
 	AxisB->_update();
 	AxisL->_update();
@@ -258,9 +258,13 @@ void Plot::autoMaxRender()
 */
 void Plot::updateInformationLabel()
 {
+	//添加单位信息
+	AxisL->setAxisText(QString::fromStdString(adapter->getYTag()));
+	AxisB->setAxisText(QString::fromStdString(adapter->getXTag()));
 	if (!informationLabel)
 		return;
 	informationLabel->setText(adapter->getInformationTitile());
+	
 }
 
 /**
@@ -619,6 +623,7 @@ void Plot::setAdapter(const std::shared_ptr < PlotAdapter>& adapter)
 	canvas->clearIteam();
 	autoMaxRender();
 	updateToolbar();
+	updateInformationLabel();
 }
 
 /**
