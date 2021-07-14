@@ -404,11 +404,13 @@ void MainWindowDef::ToDrawer(QSize& size)
 #else
 	if (LastSize.width()>=this->width())
 	{
+		//qDebug() << "to_scale_smare";
 		LastSize = size;
 		tabWidgetInterface->setScale(this->size(), false);
 	}
 	else if (LastSize.width() < this->width())
 	{
+		//qDebug() << "To_Scale_Big";
 		LastSize = size;
 		tabWidgetInterface->setScale(this->size(), true);
 	}
