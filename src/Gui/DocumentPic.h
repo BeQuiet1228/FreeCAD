@@ -18,4 +18,12 @@ public:
 	std::string getTextPath();
 	//打开一个h5文件
 	void openH5File(const std::string & path);
+	//运行仿真程序
+	void runChipic();
+	//停止仿真程序
+	void stopChipic();
+	//并行运行
+	void paralleRunChipic();
+	//显示粒子群优化算法窗口
+	void showParticleSwarmOptimizationView();
 };

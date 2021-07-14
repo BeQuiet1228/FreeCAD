@@ -1,6 +1,7 @@
 #include "PreCompiled.h"
 #include "PlotMDIView.h"
 #include "DataVisualization/Plot.h"
+#include "View3dMDI.h"
 TYPESYSTEM_SOURCE_ABSTRACT(Gui::PlotMDIView, Gui::MDIView);
 namespace Gui{
 	/**
@@ -44,6 +45,9 @@ namespace Gui{
 
 	bool PlotMDIView::onMsg(const char* pMsg, const char** ppReturn)
 	{
+		if (View3dMDI::onMsgChipic(pMsg, ppReturn, getGuiDocument()))
+			return true;
+
 		if (strcmp("Undo", pMsg) == 0)
 		{
 			plot->undo();
@@ -86,6 +90,11 @@ namespace Gui{
 		}else if (strcmp("PlotDataExport", pMsg) == 0) {
 			return true;
 		}else if (strcmp("PlotEqualProportion", pMsg) == 0) {
+			return true;
+		}else if (strcmp("RunChipic", pMsg) == 0) {
+			auto doc = getAppDocument();
+			if (doc->classID == 5)
+				return false;
 			return true;
 		}
 		return false;

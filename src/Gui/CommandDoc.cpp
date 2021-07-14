@@ -78,6 +78,7 @@
 #include "Gui\DockWindowManager.h"
 #include "DocumentPic.h"
 #include "GuiCommand.h"
+#include "ParticleSwarmOptimizationMDI.h"
 using namespace Gui;
 
 
@@ -1849,26 +1850,9 @@ void StdCmdRunM3d::activated(int iMsg)
 
 	//调用保存
 	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
+    getGuiApplication()->sendMsgToActiveView("RunChipic");
+	
 
-	auto contorl = ContorlInterface::GetInstance();
-	if (!runState)
-	{
-        //设置主界面上的ui
-		auto mw = Gui::MainWindow::getInstance();
-		mw->setContorlUI();
-
-        //设置运行路
-        Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
-        auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
-        if (!picDoc)
-            return;
-		std::string path = picDoc->getTextPath();
-		contorl->setM3dPath(path);
-
-		//清空h5文件对象
-		picDoc->releaseH5Object();
-	}
-	contorl->buttonClicked(0);
 }
 bool StdCmdRunM3d::isActive(void)
 {
@@ -1892,11 +1876,7 @@ bool StdCmdRunM3d::isActive(void)
 		}
 		this->updataActionIcon();
 	}
-
-
-	if (App::GetApplication().getActiveDocument())
-		return true;
-	return false;
+    return getGuiApplication()->sendHasMsgToActiveView("RunChipic");
 }
 
 Gui::Action * StdCmdRunM3d::createAction(void)
@@ -2113,26 +2093,13 @@ void StdCmdParalleRun::activated(int iMsg)
 	Q_UNUSED(iMsg);
 	auto mw = MainWindow::getInstance();
 	mw->inintContorlUI();
-	mw->setContorlUI();
 	//调用保存
 	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
-	auto contorl = ContorlInterface::GetInstance();
-
-	//设置运行路
-	Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
-	auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
-	if (!picDoc)
-		return;
-	std::string path = picDoc->getTextPath();
-	contorl->setM3dPath(path);
-	contorl->buttonClicked(1);
+    getGuiApplication()->sendMsgToActiveView("ParalleRunChipic");
 }
 bool StdCmdParalleRun::isActive(void)
 {
-	auto contorl = ContorlInterface::GetInstance();
-	if (App::GetApplication().getActiveDocument() && (!contorl->hasChipicRuning()))
-		return true;
-	return false;
+    return getGuiApplication()->sendHasMsgToActiveView("ParalleRunChipic");
 }
 DEF_STD_CMD_A(StdCmdSmartContorl);
 
@@ -2152,20 +2119,11 @@ void StdCmdSmartContorl::activated(int iMsg)
 {
 	Q_UNUSED(iMsg);
 	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
-	//设置运行路
-	Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
-	auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
-	if (!picDoc)
-		return;
-	std::string path = picDoc->getTextPath();
-    SmartContorlInterface::showSmartControlUI(path);
+    getGuiApplication()->sendMsgToActiveView("showPSOView");
 }
 bool StdCmdSmartContorl::isActive(void)
 {
-	auto contorl = ContorlInterface::GetInstance();
-	if (App::GetApplication().getActiveDocument() && (!contorl->hasChipicRuning()))
-		return true;
-	return false;
+    return getGuiApplication()->sendHasMsgToActiveView("showPSOView");
 }
 
 DEF_STD_CMD_A(StdCmdOpenLog);

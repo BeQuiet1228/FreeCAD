@@ -17,6 +17,14 @@ void SmartContorlInterface::showSmartControlUI(const std::string& path)
 	contorlUi->setAttribute(Qt::WA_DeleteOnClose);
 }
 
+QWidget* SmartContorlInterface::creatSmartControlUI(const std::string& path)
+{
+	auto contorlUi = new SmartContorlUI();
+	contorlUi->setTextPath(path);
+	contorlUi->loadParameterXml();
+	return contorlUi;
+}
+
 void SmartContorlInterface::buttonClicked(int type){
 
 	if (ContorlButtonBar::ButtonType(type) == ContorlButtonBar::SMART_CONTORL)

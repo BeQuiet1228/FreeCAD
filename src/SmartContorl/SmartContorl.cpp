@@ -357,6 +357,7 @@ void SmartContorl::saveCurrentData()
 		stream << "F=" <<(*i)->resultData->getValue(0) << "\n";
 	}
 	stream << "-------------------------------------\n";
+	file.close();
 
 }
 

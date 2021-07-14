@@ -10,7 +10,7 @@
 #include <QFile>
 #include <QMdiArea>
 #include "Application.h"
-
+#include "View3dMDI.h"
 LuaEditView::LuaEditView(Gui::Document* doc, QWidget* parent /*= 0*/)
 	: MDIView(doc, parent, 0)
 {
@@ -33,6 +33,9 @@ void LuaEditView::setText(const QString& text)
 
 bool LuaEditView::onMsg(const char* pMsg, const char** ppReturn)
 {
+	if(View3dMDI::onMsgChipic(pMsg,ppReturn,getGuiDocument()))
+		return true;
+
 	if (strcmp("Undo", pMsg) == 0) {
 		codeEditor->undo();
 		return true;
@@ -63,11 +66,15 @@ bool LuaEditView::onMsg(const char* pMsg, const char** ppReturn)
 		this->codeEditor->showFindDialog();
 		return true;
 	}
+
 	return false;
 }
 
 bool LuaEditView::onHasMsg(const char* pMsg) const
 {
+	if (View3dMDI::onHasMsgChipic(pMsg))
+		return true;
+
 	if (strcmp("Undo", pMsg) == 0) {
 		return true;
 	}

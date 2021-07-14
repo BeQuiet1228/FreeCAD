@@ -7,6 +7,11 @@
 #include "View3DInventor.h"
 #include "app/DocumentDataManager.h"
 #include "TreeViewctrl.h"
+#include "Contorl/ContorlInterface.h"
+#include "ParticleSwarmOptimizationMDI.h"
+#include "MDIView.h"
+#include "View3DInventor.h"
+#include "View3dMDI.h"
 DocumentPic::DocumentPic(App::Document* pcDocument, Gui::Application* app)
 	:Gui::Document(pcDocument,app)
 {
@@ -118,5 +123,67 @@ void DocumentPic::openH5File(const std::string& path)
 	}
 	docm->bindTreeContrue(mlisttreewidget, nullptr);
 	docm->loadFile(path);
+}
+
+void DocumentPic::runChipic()
+{
+	//设置主界面上的ui
+	auto control = ContorlInterface::GetInstance();
+	auto mw = Gui::MainWindow::getInstance();
+	/*
+		如果有仿真程序正在运行，那么实现停止功能。
+		如果没有仿真程序运行，那么实现开始功能
+	*/
+	if (!control->hasChipicRuning()){
+		mw->setContorlUI();
+		std::string path = this->getTextPath();
+		control->setM3dPath(path);
+
+		//清空h5文件对象
+		this->releaseH5Object();
+	}else
+	{
+		mw->hideContorlUI();
+	}
+	
+
+	control->buttonClicked(0);
+}
+
+void DocumentPic::stopChipic()
+{
+	auto control = ContorlInterface::GetInstance();
+	control->buttonClicked(0);
+}
+
+void DocumentPic::paralleRunChipic()
+{
+	auto mw = Gui::MainWindow::getInstance();
+	mw->setContorlUI();
+	auto contorl = ContorlInterface::GetInstance();
+	contorl->setM3dPath(getTextPath());
+	contorl->buttonClicked(1);
+}
+
+void DocumentPic::showParticleSwarmOptimizationView()
+{
+	/*
+	*	判断主窗口中是否已经含有优化算法窗口。
+	*	如果已经含有则将窗口置为活动。
+	*	如果不含有则增加。
+	*/
+	auto mw = Gui::MainWindow::getInstance();
+	auto views = mw->windows();
+	for (auto iter = views.begin(); iter != views.end(); iter++)
+	{
+		auto psoView = dynamic_cast<ParticleSwarmOptimizationMDI*> (*iter);
+		if (!psoView)
+			continue;
+		mw->setActiveWindow(psoView);
+		return;
+	}
+	ParticleSwarmOptimizationMDI* mdi = new ParticleSwarmOptimizationMDI(this);
+	mdi->init(getTextPath());
+	mw->addWindow(mdi);
 }
 
