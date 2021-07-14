@@ -14,6 +14,7 @@
 #include "ColorTab.h"
 #include <sstream>
 #include "Plot.h"
+#include "SysInfo.h"
 /**
 * @brief ConfigWidget::ConfigWidget
 * @param QWidget* panter
@@ -97,6 +98,13 @@ void ConfigWidget::initUI()
 	connect(ui->applicButtom, SIGNAL(clicked()), this, SLOT(saveclicked()));
 	//取消
 	connect(ui->cancleButtom,SIGNAL(clicked()), this, SLOT(canclelicked()));
+
+	//字体
+	std::vector<QString> fonts= SysInfo::GetInstance()->getfonts();
+	for (auto iter=fonts.begin();iter!=fonts.end();iter++)
+	{
+		ui->fontStyle->addItem(*iter);
+	}
 }
 
 /**
@@ -191,6 +199,10 @@ void ConfigWidget::saveclicked()
 		if (ui->infoshow->isChecked())Axisgroup.getGroup("infoShow").setSetting("value", "1");
 		else
 			Axisgroup.getGroup("infoShow").setSetting("value", "0");
+		//存储字体
+		std::string mfont = ui->fontStyle->itemText(ui->fontStyle->currentIndex()).toStdString();
+		Axisgroup.getGroup("font").setSetting("value", mfont);
+		//Axisgroup.getGroup("font").setSetting("value");
 	}
 	//相空间图
 	{
@@ -439,6 +451,18 @@ void ConfigWidget::loadxmlConfig(){
 		{
 			ui->infoshow->setChecked(false);
 			ui->infohide->setChecked(true);
+		}
+		std::string mfont=Axisgroup.getGroup("font").getValue("value");
+		QString sfont = QString::fromStdString(mfont);
+		//遍历
+		for (auto i=0;i<ui->fontStyle->count();i++)
+		{
+			if (ui->fontStyle->itemText(i)==sfont)
+			{
+				ui->fontStyle->setCurrentIndex(i);
+				break;
+			}
+			
 		}
 	}
 	//粒子图

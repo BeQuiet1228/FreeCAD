@@ -20,6 +20,7 @@
 #include <QPaintEvent>
 #include "rightScaleWidget.h"
 #include "ContourPlotAdapter.h"
+#include "TLabel.h"
 struct UndoRedoData
 {
 	UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
@@ -316,7 +317,7 @@ void Plot::initGUI()
 	scaleWIdget->setMargin(10);
 	scaleWIdget->setBorderDist(0.0, 0.0);
 	connect(scaleWIdget, SIGNAL(sendAxisRang(const float&, const float&)),this,SLOT(ScaleWidgetRightRange(const float&, const float&)));
-	informationLabel = new QLabel();
+	informationLabel = new TLabel();
 	//informationLabel->setMargin(40);
 	//informationLabel->setAlignment(Qt::AlignTop);
 	informationLabel->setAlignment(Qt::AlignCenter);
@@ -587,6 +588,7 @@ void Plot::loadconfig()
 	AxisL->loadconfig();
 	AxisB->loadconfig();
 	scaleWIdget->loadconfig();
+	informationLabel->loadconfig();
 	reRender();
 
 	if (!adapter)

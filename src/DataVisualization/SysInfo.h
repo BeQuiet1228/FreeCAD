@@ -9,11 +9,14 @@ class SysInfo
 {
 public:
 	static SysInfo* GetInstance();
+	std::vector<QString> getfonts();
 private:
 	void init();
 	SysInfo();
 	~SysInfo();
-	bool isinit;
+private:
+bool isinit;
+std::vector<QString> fonts;
 };
 
 #endif

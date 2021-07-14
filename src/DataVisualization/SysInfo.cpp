@@ -24,21 +24,15 @@ void SysInfo::init()
 {
 	//»ñÈ¡×ÖÌå
 	{
-		std::vector<QString> fonts;
 		fonts.clear();
 		QFontDatabase database;
 		foreach (const QString &family , database.families(QFontDatabase::SimplifiedChinese))
-		{
-			qDebug() << family;
 			fonts.push_back(QString("%1").arg(family));
-		}
 		foreach (const QString &family ,database.families())
-		{
-			qDebug() << family;
 			fonts.push_back(QString("%1").arg(family));
-		}
-
-		qDebug() << fonts.size();
 	}
-	
+}
+std::vector<QString> SysInfo::getfonts()
+{
+	return fonts;
 }

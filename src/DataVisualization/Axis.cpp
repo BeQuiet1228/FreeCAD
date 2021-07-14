@@ -92,16 +92,25 @@ void Axis::loadconfig()
 		axisColor = QStringToQColor(QString::fromStdString(axisGroup.getGroup("axisColor").getValue("value")));
 		axisvalColor=QStringToQColor(QString::fromStdString( axisGroup.getGroup("axisvalColor").getValue("value")));
 		axisvalSize = atoi( axisGroup.getGroup("axisvalSize").getValue("value").c_str());
+		unitFont = QString::fromStdString(axisGroup.getGroup("font").getValue("value"));
+		
+		
+		//QFont unitFont;
+		//QFont axisFont;
 	}
 	_update();
 }
 void Axis::_update()
 {
+	QFont mfont= font();
+	mfont.setFamily(unitFont);
+	setFont(mfont);
 	//…Ë÷√µ•Œª
 	if (islabel)
 	{
 		QwtText mtext = title();
 		QFont mfont = mtext.font();
+		mfont.setFamily(unitFont);
 		mfont.setPixelSize(mAxisunitSize);
 		mtext.setColor(axisvalColor);
 		mtext.setFont(mfont);

@@ -22,6 +22,7 @@ class ColorMapWidget;
 class rightScaleWidget;
 class UndoRedoStack;
 class PlotAdapter;
+class TLabel;
 class DATA_VISUALIZATION_EXPORT Plot:public QWidget{
 	Q_OBJECT
 public:
@@ -40,7 +41,8 @@ private:
 	//坐标轴
 	Axis *AxisL, *AxisB;
 	//图表信息label
-	QLabel* informationLabel;
+	//QLabel* informationLabel;
+	TLabel* informationLabel;
 	//适配器
 	std::shared_ptr<PlotAdapter> adapter;
 	//rightScaleWidget* scaleWIdget;

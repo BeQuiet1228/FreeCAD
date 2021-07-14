@@ -68,4 +68,7 @@ private:
 	TDialog* mTDialog;
 	bool islabel;
 	bool isAxisdialog;
+	//QFont unitFont;
+	//QFont axisFont;
+	QString unitFont;
 };
