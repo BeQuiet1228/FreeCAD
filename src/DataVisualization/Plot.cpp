@@ -608,43 +608,7 @@ void Plot::setappEvent()
 */
 void Plot::EqualScaleDisplay()
 {
-// 	if (!mainRenderer)
-// 		return;
-// 	float sizeWidth=canvas->size().width();
-// 	float sizeHeight = canvas->size().height();
-// 	Data::Rang xr = mainRenderer->getXRang();
-// 	Data::Rang yr = mainRenderer->getYRang();
-// 	float xlength = xr.max - xr.min;
-// 	float ylength = yr.max - yr.min;
-// 	/*
-// 	这里为了保证画布的比例为1:1,首先需要判断长宽比
-// 	width：height=xlength:ylength 实现这个条件
-// 	*/
-// 	if (sizeWidth>sizeHeight)
-// 	{
-// 		(xlength > ylength) ? (ylength = sizeHeight / sizeWidth*xlength) : (xlength = sizeWidth / sizeHeight*ylength);
-// 	}
-// 	else if (sizeHeight>sizeHeight)
-// 	{
-// 		(ylength>xlength) ? (xlength = sizeWidth / sizeHeight*ylength) : (ylength = sizeHeight / sizeWidth*xlength);
-// 	}
-// 	else
-// 	{
-// 		(xlength>ylength) ? (ylength = xlength) : (xlength = ylength);
-// 	}
-// 	xr.max = xr.min + xlength;
-// 	yr.max = yr.min + ylength;
-// 	mainRenderer->setXRang(xr);
-// 	mainRenderer->setYRang(yr);
-// 	for (auto iter = subRenderers.begin(); iter != subRenderers.end(); iter++)
-// 	{
-// 		(*iter)->setXRang(xr);
-// 		(*iter)->setYRang(yr);
-// 	}
-// 	AxisL->setAxisRange(yr.min, yr.max);
-// 	AxisB->setAxisRange(xr.min, xr.max);
-// 	updateAxis();
-// 	reRender();
+	setRatioDisplay(1,1);
 }
 
 void Plot::setAdapter(const std::shared_ptr < PlotAdapter>& adapter)
@@ -664,23 +628,18 @@ void Plot::setAdapter(const std::shared_ptr < PlotAdapter>& adapter)
 * @return void
 * @Time 2021/6/28
 */
-void Plot::setRatioDisplay(double& horizonal, double& vertical)
+void Plot::setRatioDisplay(const double& horizonal, const double& vertical)
 {
-// 	if (!mainRenderer)
-// 		return;
-// 	mainRenderer->setRatioDisplay(horizonal, vertical);
-// 	Data::Rang xr = mainRenderer->getXRang();
-// 	Data::Rang yr = mainRenderer->getYRang();
-// 	for (auto iter = subRenderers.begin(); iter != subRenderers.end(); iter++)
-// 	{
-// 		//(*iter)->setRatioDisplay(horizonal, vertical);
-// 		(*iter)->setXRang(xr);
-// 		(*iter)->setYRang(yr);
-// 	}
-// 	AxisL->setAxisRange(yr.min, yr.max);
-// 	AxisB->setAxisRange(xr.min, xr.max);
-// 	updateAxis();
-// 	reRender();
+	if (!adapter)
+		return;
+	adapter->setRatioDisplay(horizonal, vertical);
+
+	Data::Rang xr = adapter->getAxisBottomRange();
+	Data::Rang yr = adapter->getAxisLeftRange();
+	AxisL->setAxisRange(yr.min, yr.max);
+	AxisB->setAxisRange(xr.min, xr.max);
+	updateAxis();
+	reRender();
 }
 
 /**
