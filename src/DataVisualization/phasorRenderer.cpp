@@ -439,3 +439,8 @@ Data::Rang phasorRenderer::getValueRange()
 	ra.max = 1;
 	return ra;
 }
+phasorData::DISMODE phasorRenderer::getMode()
+{
+	std::shared_ptr<phasorData> d = std::dynamic_pointer_cast<phasorData>(data);
+	return d->GetdisMode();
+}

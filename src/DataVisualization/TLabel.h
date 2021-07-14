@@ -36,6 +36,7 @@ public:
 	explicit TLabel(QWidget* parent=nullptr);
 	~TLabel();
 	virtual void mouseDoubleClickEvent(QMouseEvent *e) override;
+	void loadconfig();
 	public Q_SLOTS:
 	void slotCloseEvent(bool);
 protected:

@@ -17,6 +17,7 @@
 #include "phasorRenderer.h"
 #include "Renderer.h"
 #include "ContourPlotAdapter.h"
+#include "phasorPlotAdapter.h"
 #include <iostream>
 RendererFactory::RendererFactory(Hdf5Data h5d)
 	: structData(h5d),ishaveStruct(true)
@@ -248,7 +249,12 @@ PlotAdapterPtr RendererFactory::creatPlotAdapter(Hdf5Data h5d, DirectionType typ
 
 	if (h5d.name == "CONTOUR") {
 		adapter.reset(new ContourPlotAdapter(renders));
-	}else {
+	}
+	else if(h5d.name=="VECTOR")
+	{
+		adapter.reset(new PhasorPlotAdapter(renders));
+	}
+	else {
 		adapter.reset(new PlotAdapter);
 		adapter->addRenderer(renders);
 	}

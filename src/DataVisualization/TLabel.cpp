@@ -6,8 +6,7 @@
 #include <QPlainTextEdit>
 #include<QGridLayout>
 #include "C_encoding.h"
-#include<QApplication>
-#include <QDesktopWidget>
+#include "CustomConfig.h"
 /**
 * @brief TLabel::TLabel
 * @param QWidget * parent
@@ -45,9 +44,9 @@ void TLabel::mouseDoubleClickEvent(QMouseEvent *e){
 		else
 		{
 			mTDialog->SetMsgtext(this->text());
-			QWidget* parent = dynamic_cast<QWidget*>(this->parent());
+			/*QWidget* parent = dynamic_cast<QWidget*>(this->parent());
 			QPoint pos = parent->mapToGlobal(QPoint(0,0));
-			mTDialog->move(pos);
+			mTDialog->move(pos);*/
 			mTDialog->show();
 		}
 	}
@@ -115,6 +114,24 @@ void TLabel::slotCloseEvent(bool isclose)
 	if (isclose)
 	{
 		mTDialog->hide();
+	}
+}
+/**
+* @brief TLabel::loadconfig 加载配置
+* @return void
+* @Time 2021/7/14
+*/
+void TLabel::loadconfig()
+{
+	//获取字体
+	if (Config::GetInstance()->loadConfig())
+	{
+		auto Group = Config::GetInstance()->getRootGroup();
+		auto axisGroup = Group.getGroup("axis");
+		QString unitfontstr = QString::fromStdString( axisGroup.getGroup("font").getValue("value"));
+		QFont mfont = font();
+		mfont.setFamily(unitfontstr);
+		setFont(mfont);
 	}
 }
 #include "moc_TLabel.cpp"

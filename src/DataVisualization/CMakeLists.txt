@@ -39,6 +39,7 @@ SET(MY_MOC_HDR RenderThread.h
 	ScaleWidget.h
 	rightScaleWidget.h
 	ContourPlotAdapter.h
+	phasorPlotAdapter.h
 	PlotAdapter.h
 	)
 SET(TIME_SRC TimeData.h
@@ -89,6 +90,8 @@ SET(PHASOR_SRC phasorData.h
 	phasorRenderer.cpp
 	DirData.cpp
 	DirData.h
+	phasorPlotAdapter.cpp
+	phasorPlotAdapter.h
 )
 SET(CONFIG_SRC CustomConfig.cpp
 	CustomConfig.h
@@ -145,6 +148,8 @@ SET(SRC_TOOL ConfigWidget.h
 	rightScaleWidget.cpp
 	TLabel.h
 	TLabel.cpp
+	SysInfo.h
+	SysInfo.cpp
 	)
 #处理ui和qrc文件
 if (BUILD_QT5)
