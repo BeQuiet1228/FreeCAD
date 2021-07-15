@@ -15,6 +15,7 @@ GuiCmdPlotDataExport::GuiCmdPlotDataExport()
 	sToolTipText = QT_TR_NOOP("export plot data under a new file name");
 	sWhatsThis = "gui_plot_data_export";
 	sStatusTip = QT_TR_NOOP("export plot data under a new file name");
+	sPixmap = "help-supertube";
 	eType = 0;
 }
 
@@ -42,6 +43,7 @@ GuiCmdPlotEqualProportion::GuiCmdPlotEqualProportion()
 	sToolTipText = QT_TR_NOOP("set plot proportion 1:1");
 	sWhatsThis = "gui_plot_equal_proportion";
 	sStatusTip = QT_TR_NOOP("set plot proportion 1:1");
+	sPixmap = "help-supertube";
 	eType = 0;
 }
 

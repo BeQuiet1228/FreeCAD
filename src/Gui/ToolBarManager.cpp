@@ -207,7 +207,8 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 	CommandManager& cmdManager = Application::Instance->commandManager();
 	auto mainwindow = MainWindow::getInstance();
 	auto tabWidget = mainwindow->mainWindowDef->tabWidgetInterface;
-	tabWidget->clearAllAction();
+    tabWidget->clearAllAction();
+
 	auto groupItems = toolBarItems->getItems();
 	for(auto group = groupItems.begin();group!= groupItems.end();group++)
 	{
@@ -251,7 +252,10 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 				|| (*group)->command() == "观测设置" || (*group)->command() == "其他设置"
 				|| (*group)->command() == "定时器设置"){
 				tabName = QString::fromLocal8Bit("物理设置");
-			}
+            }else if ((*group)->command() == "DataVisualization") {
+				tabName = QString::fromLocal8Bit("开始");
+				groupName = QString::fromLocal8Bit("后处理");
+            }
 			tabWidget->addAction(tabName,groupName, qAction);	
 		}
 	}
