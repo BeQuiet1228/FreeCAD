@@ -2377,11 +2377,11 @@ void CreateDocCommands(void)
 	rcCmdMgr.addCommand(new StdCmdOpenCommandBook);
 	rcCmdMgr.addCommand(new StdCmdOpenUserBook);
 	rcCmdMgr.addCommand(new StdCmdRunSuperTube);
-    rcCmdMgr.addCommand(new StdCmdContourImageMod);
-    rcCmdMgr.addCommand(new StdCmdContourLineMod);
+    //rcCmdMgr.addCommand(new StdCmdContourImageMod);
+    //rcCmdMgr.addCommand(new StdCmdContourLineMod);
     rcCmdMgr.addCommand(new StdCmdOpenDataVisualizationConfig);
     rcCmdMgr.addCommand(new StdCmdDataVisualizationAutoMax);
-    rcCmdMgr.addCommand(new StdCmdDataVisualizationPlotDisplayGridMod);
+    //rcCmdMgr.addCommand(new StdCmdDataVisualizationPlotDisplayGridMod);
 
     rcCmdMgr.addCommand(new StdCmdSave());
     rcCmdMgr.addCommand(new StdCmdSaveAs());

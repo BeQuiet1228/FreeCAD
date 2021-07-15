@@ -252,12 +252,6 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 				|| (*group)->command() == "定时器设置"){
 				tabName = QString::fromLocal8Bit("物理设置");
 			}
-			if (tabWidget->hasAction(qAction))
-			{
-
-				std::cerr << qAction->text().toStdString() << std::endl;
-				continue;
-			}
 			tabWidget->addAction(tabName,groupName, qAction);	
 		}
 	}
