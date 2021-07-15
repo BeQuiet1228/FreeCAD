@@ -18,11 +18,18 @@ SET(UI_SRC
 	SmartContorlUI.ui
 	VariateItemWidget.ui
 	VariateInputDialog.ui
+	smartCalc.ui
 )
 SET(QRC_SRC
 
 )
 
+SET(CALC_SRC
+smartCalc.h
+smartCalc.cpp
+VariateitemWidget2.h
+VariateitemWidget2.cpp
+)
 SET(LUA_SRC
 	lua/lapi.c
 	lua/lapi.h
@@ -103,6 +110,8 @@ SET(MY_MOC_HDR
 	qcustomplot.h
 	SmartContorlInterface.h
 	VariableStorer.h
+	smartCalc.h
+	VariateitemWidget2.h
 	
 )
 SET(MY_MOC_SRC
@@ -112,6 +121,7 @@ SET(MY_MOC_SRC
 	VariateInputDialog.cpp
 	qcustomplot.cpp
 	SmartContorlInterface.cpp
+	VariateitemWidget2.cpp
 )
 SET(NETWORK_SRC
 
@@ -158,6 +168,7 @@ SET(SmartContorl_src
 	VariateChart.cpp
 	VariableStorer.cpp
 	VariableStorer.h
+	${CALC_SRC}
 	${UI_SRC}
 	${JSON_SRC}
 	${MY_MOC_SRC}
@@ -248,3 +259,4 @@ SOURCE_GROUP("Uic" FILES ${Gui_UIC_HDRS})
 SOURCE_GROUP("Network" FILES ${NETWORK_SRC})
 SOURCE_GROUP("lua" FILES ${LUA_SRC})
 SOURCE_GROUP("xml" FILES ${XML_SRC})
+SOURCE_GROUP("calc" FILES ${CALC_SRC})

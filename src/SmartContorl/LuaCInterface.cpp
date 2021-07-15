@@ -215,7 +215,6 @@ int setRunDataMakeType(lua_State* luaState)
 		contorl->setRunDataMakeType(SmartContorl::CONBINATION);
 	else if(type == "exhaustivity")
 		contorl->setRunDataMakeType(SmartContorl::EXHAUSTIVITY);
-
 	return 1;
 }
 

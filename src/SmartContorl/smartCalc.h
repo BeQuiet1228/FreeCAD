@@ -1,0 +1,42 @@
+#pragma once
+#ifndef SMARTCALC_H_
+#define SMARTCALC_H_
+#include <QWidget>
+#include<QDialog>
+#include<vector>
+#include<memory>
+struct VariateData;
+class SmartContorl;
+class QListWidgetItem;
+namespace Ui {
+	class smartCalc;
+}
+class smartCalc 
+	:public QDialog
+{
+	Q_OBJECT
+public:
+	explicit smartCalc(QWidget* parent = nullptr);
+public:
+	void initUI();
+	void initData();
+public Q_SLOTS:
+	void BtnClicked(bool);
+	void addListWidgetItem(QListWidgetItem* item, QWidget* widget);
+	void pringLuaLog(std::string str);
+protected:
+	void addButton(bool);
+	void deleteButton(bool);
+	void run(bool);
+	void qPrint(std::string str);
+	QString replaceVariate();
+	void loadParameterXml();
+	void saveParameterXml();
+private:
+	//变量列表
+	std::vector<std::shared_ptr<VariateData>> variateDatas;
+	SmartContorl* smartContorl;
+private:
+	Ui::smartCalc* ui;
+};
+#endif

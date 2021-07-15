@@ -21,7 +21,7 @@ std::shared_ptr<VariateData> VariateInputDialog::getData()
 	data->name = this->ui->lineEditName->text();
 	data->max = this->ui->lineEditMax->text().toDouble();
 	data->mini = this->ui->lineEditMini->text().toDouble();
-
+	data->stepLength = this->ui->stepsize->text().toInt();
 	return data;
 }
 

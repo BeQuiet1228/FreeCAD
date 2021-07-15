@@ -44,9 +44,71 @@ SmartContorl::~SmartContorl()
 */
 void SmartContorl::luaInit()
 {
+	int callBack = getLuaErrorCallBackFunction();
 	callLuaFunction("init");
+#if 0
+	//获取方法
+	lua_State* L = luaL_newstate();
+	if (!L)
+		return;
+	luaL_openlibs(L);
+	int ret = luaL_dofile(L,"C://Users//DELL//Desktop//test.lua");
+	int res=lua_getglobal(L,"init");
+	//压入参数
+	std::string name = "RAA";
+	double max = 0.5;
+	double min = 0.1;
+	int count = 3;
+	std::string s1=lua_pushstring(L,name.c_str());
+	lua_pushnumber(L,max);
+	lua_pushnumber(L,min);
+	lua_pushnumber(L,count);
+	if ((res = lua_pcall(L, 4, 0,0))!=0)//参数数量,参数返回值，错误输出函数
+	{
+		printf("err %s\n",lua_tostring(lua_state,-1));
+		lua_pop(lua_state, 1);//若有错误则弹出
+		printf("top = %d \n", lua_gettop(lua_state));
+	}
+	lua_close(L);
+#endif
+#if 0
+	int res = lua_getglobal(lua_state,"init2");
+	//获取变量
+	std::string name = "RCC";
+	double max = 0.5;
+	double min = 0.1;
+	int count = 3;
+	std::string s1 = lua_pushstring(lua_state, name.c_str());
+	lua_pushnumber(lua_state, max);
+	lua_pushnumber(lua_state, min);
+	lua_pushnumber(lua_state, count);
+	if ((res = lua_pcall(lua_state, 4, 0, 0)) != 0)//参数数量,参数返回值，错误输出函数
+	{
+		printf("err %s\n", lua_tostring(lua_state, -1));
+		lua_pop(lua_state, 1);//若有错误则弹出
+		printf("top = %d \n", lua_gettop(lua_state));
+	}
+#endif
 }
-
+//void SmartContorl::luaInit(std::string _name, double _max, double _min, int _count)
+//{
+//	int res = lua_getglobal(lua_state, "init2");
+//	//获取变量
+//	std::string name = _name;
+//	double max = _max;
+//	double min = _min;
+//	int count = _count;
+//	std::string s1 = lua_pushstring(lua_state, name.c_str());
+//	lua_pushnumber(lua_state, max);
+//	lua_pushnumber(lua_state, min);
+//	lua_pushnumber(lua_state, count);
+//	if ((res = lua_pcall(lua_state, 4, 0, 0)) != 0)//参数数量,参数返回值，错误输出函数
+//	{
+//		printf("err %s\n", lua_tostring(lua_state, -1));
+//		lua_pop(lua_state, 1);//若有错误则弹出
+//		printf("top = %d \n", lua_gettop(lua_state));
+//	}
+//}
 /**
 * @brief SmartContorl::luaResultDataFilter 调用lua脚本中的结果筛选函数
 * @return bool
@@ -98,6 +160,7 @@ void SmartContorl::luaOptimize()
 */
 void SmartContorl::luaLoadFromString(const std::string& lua)
 {
+	std::cout << lua << std::endl;
 	luaL_dostring(lua_state,lua.c_str());
 }
 
@@ -428,8 +491,10 @@ void SmartContorl::printLuaError(const int& error)
 void SmartContorl::callLuaFunction(const std::string& functionName, const int& paramCount, const int& returnCount)
 {
 	int callBack = getLuaErrorCallBackFunction();
-
+	//获取方法init
 	lua_getglobal(lua_state, functionName.c_str());
+	//传人参数
+
 	int erro = lua_pcall(lua_state, paramCount, returnCount, callBack);
 	printLuaError(erro);
 }
