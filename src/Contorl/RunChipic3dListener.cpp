@@ -324,6 +324,7 @@ void RunChipic3dListener::run()
 		//每次循环睡眠10ms,避免cpu被占用
 		Sleep(10);
 	}
+	int a = 0;
 }
 
 /**

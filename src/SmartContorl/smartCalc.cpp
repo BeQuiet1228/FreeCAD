@@ -3,7 +3,7 @@
 #include"ui_smartCalc.h"
 #include"VariateInputDialog.h"
 #include"SmartContorlUI.h"
-#include"VariateItemWidget.h"
+#include"VariateitemDialog.h"
 #include"QMessageBox"
 #include"QTextStream"
 #include <SmartContorlData.h>
@@ -18,7 +18,7 @@ smartCalc::smartCalc(QWidget* parent) :QDialog(parent),ui(new Ui::smartCalc)
 {
 	ui->setupUi(this);
 	initUI();
-	initData();
+	//initData();
 }
 void smartCalc::initUI()
 {
@@ -58,7 +58,7 @@ void smartCalc::BtnClicked(bool b)
 }
 void smartCalc::addButton(bool b)
 {
-	qPrint("addbutton");
+	//qPrint("addbutton");
 	//获取输入模式
 	if (ui->Mode1->isChecked())
 	{
@@ -71,7 +71,7 @@ void smartCalc::addButton(bool b)
 			data->count = this->ui->spinBoxRunCount->value();
 			data->Mode = 1;
 			data->item = new QListWidgetItem();
-			data->widget = new VariateItemWidget();
+			data->widget = new VariateitemDialog();
 			data->widget->setData(data);
 			variateDatas.push_back(data);
 
@@ -113,7 +113,7 @@ void smartCalc::addButton(bool b)
 }
 void smartCalc::deleteButton(bool b)
 {
-	qPrint("deletebutton");
+	//qPrint("deletebutton");
 	auto items = this->ui->listWidgetVariate->selectedItems();
 	if (items.size() < 1)
 		return;
@@ -184,7 +184,7 @@ void smartCalc::loadParameterXml()
 			data->datas = vals;
 		}
 		data->item = new QListWidgetItem();
-		data->widget = new VariateItemWidget();
+		data->widget = new VariateitemDialog();
 		data->widget->setData(data);
 		variateDatas.push_back(data);
 		this->ui->listWidgetVariate->addItem(data->item);
@@ -257,6 +257,8 @@ QString smartCalc::replaceVariate()
 	//temp = QString("accuracy = %1/100;\n").arg(this->ui->lineEditAccuracy->text());
 	//config += temp;
 	//text = config + text;
+
+	qPrint(text);
 	return text;
 }
 void smartCalc::saveParameterXml()
@@ -311,10 +313,14 @@ void smartCalc::saveParameterXml()
 	std::string ret = gbk->fromUnicode(path).data();
 	doc.save_file(ret.c_str());
 }
+void smartCalc::qPrint(QString str)
+{
+	ui->plainTextEdit->appendPlainText(str);
+}
 void smartCalc::qPrint(std::string str)
 {
-	/*auto temp = QString::fromStdString(str);
-	ui->plainTextEdit->appendPlainText(temp);*/
+	auto temp = QString::fromStdString(str);
+	ui->plainTextEdit->appendPlainText(temp);
 }
 void smartCalc::addListWidgetItem(QListWidgetItem* item, QWidget* widget)
 {
@@ -324,9 +330,9 @@ void smartCalc::addListWidgetItem(QListWidgetItem* item, QWidget* widget)
 void smartCalc::pringLuaLog(std::string str)
 {
 	auto temp = QString::fromStdString(str);
-	//auto text = this->ui->plainTextEdit->toPlainText();
-	//text += temp;
-	//this->ui->plainTextEdit->setPlainText(text);
+	auto text = this->ui->plainTextEdit->toPlainText();
+	text += temp;
+	this->ui->plainTextEdit->setPlainText(text);
 }
 
 void SplitString(const std::string& s, std::vector<std::string>& v, const std::string& c)
@@ -343,5 +349,36 @@ void SplitString(const std::string& s, std::vector<std::string>& v, const std::s
 	}
 	if (pos1 != s.length())
 		v.push_back(s.substr(pos1));
+}
+/**
+* @brief smartCalc::afferscriptpath 传入脚本路径
+* @param std::string path
+* @return void
+* @Time 2021/7/15
+*/
+void smartCalc::afferscriptpath(std::string path)
+{
+	scriptPath = path;
+}
+/**
+* @brief smartCalc::afferm3dpath 传入m3d的路径
+* @param std::string path
+* @return void
+* @Time 2021/7/15
+*/
+void smartCalc::afferm3dpath(std::string path)
+{
+	m3dPath = path;
+	auto contorData = SmartContorlData::GetInstance();
+	smartContorl = contorData->smartContorl;
+	auto contorlInterface = ContorlInterface::GetInstance();
+	std::string m3dPath = path;
+	smartContorl->setM3dPath(m3dPath);
+	loadParameterXml();
+	connect(smartContorl, SIGNAL(addDataBar(QListWidgetItem*, QWidget*)), this, SLOT(addListWidgetItem(QListWidgetItem*, QWidget*)));
+	connect(smartContorl, SIGNAL(smartContorlLog(std::string)), this, SLOT(pringLuaLog(std::string)));
+
+	this->setModal(true);
+	setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint);
 }
 #include"moc_smartCalc.cpp"

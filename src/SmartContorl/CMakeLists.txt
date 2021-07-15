@@ -29,6 +29,8 @@ smartCalc.h
 smartCalc.cpp
 VariateitemWidget2.h
 VariateitemWidget2.cpp
+VariateitemDialog.h
+VariateitemDialog.cpp
 )
 SET(LUA_SRC
 	lua/lapi.c
@@ -112,6 +114,7 @@ SET(MY_MOC_HDR
 	VariableStorer.h
 	smartCalc.h
 	VariateitemWidget2.h
+	VariateitemDialog.h
 	
 )
 SET(MY_MOC_SRC

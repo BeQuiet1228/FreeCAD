@@ -11,7 +11,8 @@ public:
 	VariateItemWidget(QWidget *parent = 0);
 	~VariateItemWidget();
 	//ÉèÖÃÊı¾İ
-	void setData(std::shared_ptr<VariateData> data);
-private:
+	virtual void setData(std::shared_ptr<VariateData> data);
+protected:
+protected:
 	Ui::VariateIteamWidget_UI *ui;
 };

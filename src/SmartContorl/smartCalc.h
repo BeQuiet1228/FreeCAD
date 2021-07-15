@@ -20,6 +20,10 @@ public:
 public:
 	void initUI();
 	void initData();
+	void afferm3dpath(std::string path);
+private:
+	void afferscriptpath(std::string path);
+	
 public Q_SLOTS:
 	void BtnClicked(bool);
 	void addListWidgetItem(QListWidgetItem* item, QWidget* widget);
@@ -29,6 +33,7 @@ protected:
 	void deleteButton(bool);
 	void run(bool);
 	void qPrint(std::string str);
+	void qPrint(QString str);
 	QString replaceVariate();
 	void loadParameterXml();
 	void saveParameterXml();
@@ -38,5 +43,9 @@ private:
 	SmartContorl* smartContorl;
 private:
 	Ui::smartCalc* ui;
+	//传入的脚本路径
+	std::string scriptPath;
+	//生成的m3d路径
+	std::string m3dPath;
 };
 #endif
