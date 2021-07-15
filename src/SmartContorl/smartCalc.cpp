@@ -99,7 +99,7 @@ void smartCalc::addButton(bool b)
 			data->mini = *(datas.begin());
 			data->Mode = 2;
 			data->item = new QListWidgetItem();
-			data->widget = new VariateItemWidget();
+			data->widget = new VariateitemDialog();
 			data->widget->setData(data);
 			variateDatas.push_back(data);
 			this->ui->listWidgetVariate->addItem(data->item);
@@ -220,7 +220,9 @@ QString smartCalc::replaceVariate()
 	//text += vars;
 	QString text="";
 	//获取全部文本
-	QFile f("C://Users//DELL//Desktop//opt.lua");
+	//QFile f("C://Users//DELL//Desktop//opt.lua");
+	//QFile f("D://wdtProject//FreeCAD//FreeCAD//src//SmartContorl//opt.lua");
+	QFile f(scriptPath.c_str());
 	if (!f.open(QIODevice::ReadOnly | QIODevice::Text))//打开指定文件
 		QMessageBox::about(NULL, "文件", "文件打开失败");
 	QTextStream txtInput(&f);

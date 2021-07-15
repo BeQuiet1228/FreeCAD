@@ -20,10 +20,8 @@ public:
 public:
 	void initUI();
 	void initData();
-	void afferm3dpath(std::string path);
-private:
 	void afferscriptpath(std::string path);
-	
+	void afferm3dpath(std::string path);
 public Q_SLOTS:
 	void BtnClicked(bool);
 	void addListWidgetItem(QListWidgetItem* item, QWidget* widget);
