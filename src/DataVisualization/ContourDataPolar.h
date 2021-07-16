@@ -19,4 +19,7 @@ public:
 
 	double value(double x, double y) const;
 
+
+	static double FastAtan2(double y, double x);
+	static double FastAtan( double x);
 };
