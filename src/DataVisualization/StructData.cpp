@@ -528,21 +528,21 @@ bool StructData::loadroomPolarRtheta()
 				tempCurcir.R_excir = r_val[index_R + 1];
 				//内圈切点
 				tempCurcir.inner1 = QPointF(
-					tempCurcir.R_inner*cos(rand_val[index_rand]) + p0.x(),
-					p0.y() - tempCurcir.R_inner*sin(rand_val[index_rand]));
+					(tempCurcir.R_inner * cos(rand_val[index_rand]) + p0.x()),
+					(p0.y() - tempCurcir.R_inner * sin(rand_val[index_rand])));
 				tempCurcir.inner2 = QPointF(
-					tempCurcir.R_inner*cos(rand_val[index_rand + 1]) + p0.x(),
-					p0.y() - tempCurcir.R_inner*sin(rand_val[index_rand + 1]));
+					(tempCurcir.R_inner * cos(rand_val[index_rand + 1]) + p0.x()),
+					(p0.y() - tempCurcir.R_inner * sin(rand_val[index_rand + 1])));
 				//外圈切点
 				tempCurcir.excir1 = QPointF(
-					tempCurcir.R_excir*cos(rand_val[index_rand] + p0.x()),
-					p0.y() - tempCurcir.R_excir*sin(rand_val[index_rand]));
+					(tempCurcir.R_excir * cos(rand_val[index_rand] + p0.x())),
+					(p0.y() - tempCurcir.R_excir * sin(rand_val[index_rand])));
 				tempCurcir.excir2 = QPointF(
-					tempCurcir.R_excir*cos(rand_val[index_rand + 1] + p0.x()),
-					p0.y() - tempCurcir.R_excir*sin(rand_val[index_rand + 1]));
+					(tempCurcir.R_excir * cos(rand_val[index_rand + 1] + p0.x())),
+					(p0.y() - tempCurcir.R_excir * sin(rand_val[index_rand + 1])));
 				//开始角度，结束角度
-				tempCurcir.startAngle = rand_val[index_rand];
-				tempCurcir.endAngle = rand_val[index_rand + 1];
+				tempCurcir.startAngle = -rand_val[index_rand];
+				tempCurcir.endAngle = -rand_val[index_rand + 1];
 				CutCirlist.push_back(tempCurcir);
 			}
 		}
@@ -659,6 +659,7 @@ bool StructData::loadroomCylindricalRz(){
 * @return bool
 */
 bool StructData::loadroomCylindricalRtheta(){
+	qreal pi = 3.141592653589793;
 	if (pointXSize < 2 || pointYSize < 2)
 		return false;
 	{
@@ -685,6 +686,12 @@ bool StructData::loadroomCylindricalRtheta(){
 		{
 			for (auto index_rand = 0; index_rand < rand_val.size() - 1; index_rand++)
 			{
+				/*qreal startangle = (rand_val[index_rand] + pi)>(2 * pi)?
+					(rand_val[index_rand] + pi - 2 * pi):(rand_val[index_rand]+pi);
+				qreal endangle = (rand_val[index_rand + 1] + pi)>(2 * pi)?
+					(rand_val[index_rand+1]+pi-2*pi):(rand_val[index_rand+1]);*/
+				qreal startangle = rand_val[index_rand];
+				qreal endangle = rand_val[index_rand + 1];
 				CutCir tempCurcir;
 				//内圈半径
 				tempCurcir.R_inner = r_val[index_R];
@@ -692,21 +699,21 @@ bool StructData::loadroomCylindricalRtheta(){
 				tempCurcir.R_excir = r_val[index_R + 1];
 				//内圈切点
 				tempCurcir.inner1 = QPointF(
-					tempCurcir.R_inner*cos(rand_val[index_rand]) + p0.x(),
-					p0.y() - tempCurcir.R_inner*sin(rand_val[index_rand]));
+					(tempCurcir.R_inner * cos(startangle) + p0.x()),
+					(p0.y() - tempCurcir.R_inner * sin(startangle)));
 				tempCurcir.inner2 = QPointF(
-					tempCurcir.R_inner*cos(rand_val[index_rand + 1]) + p0.x(),
-					p0.y() - tempCurcir.R_inner*sin(rand_val[index_rand + 1]));
+					(tempCurcir.R_inner * cos(endangle) + p0.x()),
+					(p0.y() - tempCurcir.R_inner * sin(endangle)));
 				//外圈切点
 				tempCurcir.excir1 = QPointF(
-					tempCurcir.R_excir*cos(rand_val[index_rand] + p0.x()),
-					p0.y() - tempCurcir.R_excir*sin(rand_val[index_rand]));
+					(tempCurcir.R_excir * cos(startangle + p0.x())),
+					(p0.y() - tempCurcir.R_excir * sin(startangle)));
 				tempCurcir.excir2 = QPointF(
-					tempCurcir.R_excir*cos(rand_val[index_rand + 1] + p0.x()),
-					p0.y() - tempCurcir.R_excir*sin(rand_val[index_rand + 1]));
+					(tempCurcir.R_excir * cos(endangle + p0.x())),
+					(p0.y() - tempCurcir.R_excir * sin(endangle)));
 				//开始角度，结束角度
-				tempCurcir.startAngle = rand_val[index_rand];
-				tempCurcir.endAngle = rand_val[index_rand + 1];
+				tempCurcir.startAngle = startangle;
+				tempCurcir.endAngle = endangle;
 				CutCirlist.push_back(tempCurcir);
 			}
 		}

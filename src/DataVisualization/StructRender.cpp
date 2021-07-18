@@ -438,6 +438,7 @@ bool StructRender::drawImageRandspace(){
 		}
 	}
 	auto nImg = img.mirrored(false, true);
+	//auto nImg = img;
 //#define _Debug
 #ifdef _Debug
 	static int index = 0;
@@ -625,8 +626,8 @@ bool StructRender::drawPointCir(){
 	_point.y = getSize().height() - _point.y;
 	painter.drawPoint(QPointF(_point.x, _point.y));
 	std::map<QString, float> list;
-	list["X"] = _point.d1;
-	list["Y"] = _point.d2;
+	list["R"] = _point.d1;
+	list["THETA"] = _point.d2;
 	displayPointInformation(&painter, &QPointF(_point.x, _point.y), list);
 	setImage(img);
 	return true;
@@ -712,32 +713,40 @@ StructData::structpoint StructRender::findApointCylindrical(QPointF _curpoint)
 	{
 		mpoint.x = map[key][index].inner1.x();
 		mpoint.y = map[key][index].inner1.y();
-		mpoint.d1 = __map[key][index].inner1.x();
-		mpoint.d2 = __map[key][index].inner1.y();
+		//mpoint.d1 = __map[key][index].inner1.x();
+		//mpoint.d2 = __map[key][index].inner1.y();
+		mpoint.d1 = __map[key][index].R_inner;
+		mpoint.d1 = __map[key][index].startAngle;
 	}
 		break;
 	case 1:
 	{
 		mpoint.x = map[key][index].inner2.x();
 		mpoint.y = map[key][index].inner2.y();
-		mpoint.d1 = __map[key][index].inner2.x();
-		mpoint.d2 = __map[key][index].inner2.y();
+		//mpoint.d1 = __map[key][index].inner2.x();
+		//mpoint.d2 = __map[key][index].inner2.y();
+		mpoint.d1 = __map[key][index].R_inner;
+		mpoint.d2 = __map[key][index].endAngle;
 	}
 		break;
 	case 2:
 	{
 		mpoint.x = map[key][index].excir1.x();
 		mpoint.y = map[key][index].excir1.y();
-		mpoint.d1 = __map[key][index].excir1.x();
-		mpoint.d2 = __map[key][index].excir1.y();
+		//mpoint.d1 = __map[key][index].excir1.x();
+		//mpoint.d2 = __map[key][index].excir1.y();
+		mpoint.d1 = __map[key][index].R_excir;
+		mpoint.d2 = __map[key][index].startAngle;
 	}
 		break;
 	case 3:
 	{
 		mpoint.x = map[key][index].excir2.x();
 		mpoint.y = map[key][index].excir2.y();
-		mpoint.d1 = __map[key][index].excir2.x();
-		mpoint.d2 = __map[key][index].excir2.y();
+		//mpoint.d1 = __map[key][index].excir2.x();
+		//mpoint.d2 = __map[key][index].excir2.y();
+		mpoint.d1 = __map[key][index].R_excir;
+		mpoint.d2 = __map[key][index].endAngle;
 	}
 		break;
 	}
