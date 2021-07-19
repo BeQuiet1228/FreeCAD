@@ -252,6 +252,9 @@ PlotAdapterPtr RendererFactory::creatPlotAdapter(Hdf5Data h5d, DirectionType typ
 	else if(h5d.name=="VECTOR")
 	{
 		adapter.reset(new PhasorPlotAdapter(renders));
+	}else if (h5d.name == "PHASESPACE" && (*renders.begin())->getNeedStrucuType() ==Data::NEED_STRUCT) {
+		adapter.reset(new PlotAdapterNeedStruct);
+		adapter->addRenderer(renders);
 	}
 	else {
 		adapter.reset(new PlotAdapter);

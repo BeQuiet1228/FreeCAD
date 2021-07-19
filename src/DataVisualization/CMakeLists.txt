@@ -41,6 +41,7 @@ SET(MY_MOC_HDR RenderThread.h
 	ContourPlotAdapter.h
 	phasorPlotAdapter.h
 	PlotAdapter.h
+	PlotAdapterNeedStruct.h
 	)
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
@@ -131,6 +132,8 @@ SET(SRC main.cpp
 	DataInformationGetter.h
 	PlotAdapter.cpp
 	PlotAdapter.h
+	PlotAdapterNeedStruct.h
+	PlotAdapterNeedStruct.cpp
 	)
 SET(SRC_TOOL ConfigWidget.h
 	ConfigWidget.cpp

@@ -128,7 +128,7 @@ void ContourPlotAdapter::switchContourTrigger(bool)
 
 std::list<QAction*> ContourPlotAdapter::getActions()
 {
-	std::list<QAction*> actions;
+	std::list<QAction*> actions = PlotAdapterNeedStruct::getActions();
 	actions.push_back(switchShader);
 	actions.push_back(switchContour);
 	actions.push_back(adjuLevel);
