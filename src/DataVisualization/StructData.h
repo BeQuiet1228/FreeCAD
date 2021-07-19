@@ -102,9 +102,9 @@ public:
 		//µç×è
 		FOIL = 128,
 		//
-		PORT,
-		DRIVER,
-		INDUCTOR
+		PORT,//PORT 2**8/256£¬2**9/512£¬2**10/1024
+		DRIVER,//DRIVER--2^11/2048,2^12/4096,2^13/8192
+		INDUCTOR//INDUCTOR--2^14/16384,2^15/32768,2^16/65536
 	};
 	StructData(Hdf5Data& heData, DirectionType _type,const RunMod& mod=SINGLE_THREAD);
 	StructData(Hdf5Data& heData,_3DPointf startpoint,_3DPointf endpoint,const RunMod& mod=SINGLE_THREAD);

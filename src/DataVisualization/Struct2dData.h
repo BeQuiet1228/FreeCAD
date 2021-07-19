@@ -4,16 +4,10 @@
 #include "Data.h"
 #include<map>
 #include <vector>
+#include "StructData.h"
 class Struct2dData:public XYData
 {
 public:
-	struct datasetkmtinfo
-	{
-		unsigned int data1;
-		unsigned int data2;
-		unsigned int data3;
-		unsigned int data4;
-	};
 	Struct2dData(Hdf5Data& heData, const RunMod& mode = SINGLE_THREAD);
 	~Struct2dData();
 protected:
@@ -23,21 +17,7 @@ protected:
 public:
 	virtual bool loadPoint();
 	virtual unsigned int findIndexFromXValueL(const float&x) override;
-	std::map<int, std::map<int, std::vector<QPointF>>> GetAllinfo(){
-		return allinfo;
-	}
-	std::vector<QPointF> ALLPOINTF()
-	{
-		return ALLPointf;
-	}
-	int getposxSize()
-	{
-		return posxSize;
-	}
-	int getposySize()
-	{
-		return posySize;
-	}
+	std::list<unsigned __int64> isAnAttribute(unsigned __int64 p, StructData::PROPERTYPE);
 public:
 	Rang getXRang()
 	{
@@ -59,6 +39,25 @@ public:
 		std::lock_guard<std::mutex> am(yRangMutex);
 		yRang = yr;
 	}
+	int getposxSize()
+	{
+		return posxSize;
+	}
+	int getposySize()
+	{
+		return posySize;
+	}
+	std::map<int, std::map<int, std::vector<QPointF>>> GetAllinfo() {
+		return allinfo;
+	}
+	std::map<int, std::map<int, std::vector<QPointF>>> getLineF()
+	{
+		return lineinfo;
+	}
+	std::vector<QPointF> ALLPOINTF()
+	{
+		return ALLPointf;
+	}
 private:
 	//xy的范围
 	Rang xRang, yRang;
@@ -67,6 +66,7 @@ private:
 	int posxSize;
 	int posySize;
 	std::map<int, std::map<int, std::vector<QPointF>>> allinfo;
+	std::map<int, std::map<int, std::vector<QPointF>>> lineinfo;
 	//全部点位，(包括多边型内部的网格点)
 	std::vector<QPointF> ALLPointf;
  };
