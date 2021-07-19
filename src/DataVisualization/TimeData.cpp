@@ -83,6 +83,10 @@ QPointF TimeData::getPointHard(const unsigned int& index)
 unsigned int TimeData::findIndexFromXValueL(const float& x)
 {
 	auto xr = getXRang();
+	//如果范围小于最小值，那么直接返回第一个数值的索引
+	if (x < xr.min)
+		return 0;
+
 	double step = xr.length() / getPointSize();
 	unsigned int index = (x - xr.min )/ step;
 	//如果索引超出范围则返回0

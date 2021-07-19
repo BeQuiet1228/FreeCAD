@@ -40,7 +40,7 @@ public:
 	}
 	//绘制取点信息
 	void displayPointInformation(QPainter*, QPointF*, std::map<QString, float>);
-	void setRatioDisplay(double& horizontal, double& vertical);
+	void setRatioDisplay(const double& horizontal,const double& vertical);
 	std::shared_ptr<Data> getData();
 private:
 	//渲染图

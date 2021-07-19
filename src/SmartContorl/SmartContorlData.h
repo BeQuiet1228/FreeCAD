@@ -6,6 +6,7 @@
 class SmartContorl;
 class ChipicResultGetter;
 class CInterfaceStack;
+class VariableStorer;
 class SmartContorlData{
 
 public:
@@ -33,6 +34,8 @@ public:
 	Hdf5IO hdf5IO;
 	//lua接口栈
 	CInterfaceStack *cStack;
+	//本地变量获取器
+	VariableStorer* variableStorer;
 public:
 	//打开当前hdf5文件
 	bool openActiveH5File();

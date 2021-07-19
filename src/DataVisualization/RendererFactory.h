@@ -5,12 +5,14 @@
 #include <list>
 #include "Data.h"
 #include "StructData.h"
+#include "PlotAdapter.h"
 class Data;
 class Renderer;
 class ContourRender;
 using RendererPtr = std::shared_ptr<Renderer>;
 using Renderers = std::list<RendererPtr>;
 using DataPtr = std::shared_ptr<Data>;
+using PlotAdapterPtr = std::shared_ptr<PlotAdapter>;
 class RendererFactory{
 public:
 	RendererFactory(Hdf5Data h5d);
@@ -36,6 +38,12 @@ public:
 
 	//寻找结构图
 	static int  findStructDataIndex(const std::vector<Hdf5Data>& datas);
+
+//框架改动之后的新接口
+	PlotAdapterPtr creatPlotAdapter(Hdf5Data h5d, DirectionType type = X_Y);
+public:
+
+
 private:
 	Hdf5Data structData;
 	bool ishaveStruct;

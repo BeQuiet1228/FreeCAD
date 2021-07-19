@@ -30,6 +30,8 @@ void Hdf5IO::setFilePath(const std::string& path, FileOpenMod mod /*= OPEN_EXIST
 			Hdf5File.reset(new H5File(newPath, H5F_ACC_RDWR));
 		else
 			Hdf5File.reset(new H5File(newPath, H5F_ACC_TRUNC));
+
+		this->hdf5DataList.clear();
 	}
 	catch (...)
 	{
@@ -644,6 +646,15 @@ bool Hdf5Data::initInformation()
 	if (sl.size() < 3)
 		return false;
 	name = sl.at(2).toStdString();
+
+	//获取图表别名
+	if (headList.size() < 14)
+		return true;
+	str = QString::fromStdString(headList.at(13));
+	sl = str.split(":");
+	if (sl.size() < 2)
+		return true;
+	petName = sl.at(1).toLower().simplified().toStdString();
 
 	return true;
 }

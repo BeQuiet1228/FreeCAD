@@ -1,15 +1,20 @@
 <RCC>
-    <qresource prefix="/Tree" >
-	<file>TreeFile1.png</file>
-	<file>TreeFile2.png</file>
+    <qresource prefix="/Tree">
+        <file>TreeFile1.png</file>
+        <file>TreeFile2.png</file>
     </qresource>
-	<qresource prefix="/Arrow">
-	<file>arrow1.png</file>
-	</qresource>
-	
-	<qresource prefix="/struct">
-	<file>C.png</file>
-	<file>a.png</file>
-	<file>s.png</file>
-	</qresource>
+    <qresource prefix="/Arrow">
+        <file>arrow1.png</file>
+    </qresource>
+    <qresource prefix="/struct">
+        <file>C.png</file>
+        <file>a.png</file>
+        <file>s.png</file>
+    </qresource>
+    <qresource prefix="/ActionIcon">
+        <file>contour_image_off.svg</file>
+        <file>contour_image_on.svg</file>
+        <file>contour_line_off.svg</file>
+        <file>contour_line_on.svg</file>
+    </qresource>
 </RCC>

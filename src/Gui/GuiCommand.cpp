@@ -6,6 +6,7 @@
 #include "FileDialog.h"
 #include "MainWindow.h"
 #include "PlotMDIView.h"
+#include "DataVisualization/Plot.h"
 DEF_STD_CMD_A(GuiCmdPlotDataExport);
 GuiCmdPlotDataExport::GuiCmdPlotDataExport() 
 	:Command("gui_plot_data_export"){
@@ -14,19 +15,21 @@ GuiCmdPlotDataExport::GuiCmdPlotDataExport()
 	sToolTipText = QT_TR_NOOP("export plot data under a new file name");
 	sWhatsThis = "gui_plot_data_export";
 	sStatusTip = QT_TR_NOOP("export plot data under a new file name");
+	sPixmap = "help-supertube";
 	eType = 0;
 }
 
 void GuiCmdPlotDataExport::activated(int iMsg) {
 	QString fn = Gui::FileDialog::getSaveFileName(Gui::MainWindow::getInstance(), QObject::tr("Export data"),
-		QString(), QString::fromLatin1("(*.%1)").arg(QString::fromStdString("h5")));
+		QString(), QString::fromLatin1("(*.h5 *.png)"));
 	if (fn.isEmpty())
 		return;
 	auto view = Gui::MainWindow::getInstance()->activeWindow();
 	auto plotView = dynamic_cast<Gui::PlotMDIView*>(view);
 	if (!plotView)
 		return;
-	plotView->getPlot()->MainRendererDataSaveAs(fn.toStdString());
+	//plotView->getPlot()->MainRendererDataSaveAs(fn.toStdString());
+	plotView->getPlot()->SaveAs(fn.toStdString());
 }
 bool GuiCmdPlotDataExport::isActive() {
 	return getGuiApplication()->sendHasMsgToActiveView("PlotDataExport");
@@ -40,6 +43,7 @@ GuiCmdPlotEqualProportion::GuiCmdPlotEqualProportion()
 	sToolTipText = QT_TR_NOOP("set plot proportion 1:1");
 	sWhatsThis = "gui_plot_equal_proportion";
 	sStatusTip = QT_TR_NOOP("set plot proportion 1:1");
+	sPixmap = "help-supertube";
 	eType = 0;
 }
 

@@ -16,6 +16,8 @@
 #include "phasorData.h"
 #include "phasorRenderer.h"
 #include "Renderer.h"
+#include "ContourPlotAdapter.h"
+#include "phasorPlotAdapter.h"
 #include <iostream>
 RendererFactory::RendererFactory(Hdf5Data h5d)
 	: structData(h5d),ishaveStruct(true)
@@ -36,7 +38,6 @@ Renderers RendererFactory::creatRenderers(Hdf5Data h5d, DirectionType type /*= X
 		return renderers;
 	if (renderer->getNeedStrucuType() != Data::NEED_STRUCT)
 		return renderers;
-
 	//如果是等位图，那么必须使用观测面初始化结构图
 	auto contourRender = std::dynamic_pointer_cast<ContourRender>(renderer);
 
@@ -232,4 +233,30 @@ int RendererFactory::findStructDataIndex(const std::vector<Hdf5Data>& datas)
 	std::cerr << "RendererFactory::findHdf5Data not found struct data!" << std::endl;
 #endif // MY_DEBUG
 	return -1;
+}
+
+/**
+* @brief RendererFactory::creatPlotAdapter 根据H5数据对象生成一个图表适配器
+* @param Hdf5Data h5d 数据对象
+* @param DirectionType type 方向类型
+* @return PlotAdapterPtr 适配器
+*/
+PlotAdapterPtr RendererFactory::creatPlotAdapter(Hdf5Data h5d, DirectionType type /*= X_Y*/)
+{
+	auto renders = creatRenderers(h5d, type);
+	PlotAdapterPtr adapter;
+
+	if (h5d.name == "CONTOUR") {
+		adapter.reset(new ContourPlotAdapter(renders));
+	}
+	else if(h5d.name=="VECTOR")
+	{
+		adapter.reset(new PhasorPlotAdapter(renders));
+	}
+	else {
+		adapter.reset(new PlotAdapter);
+		adapter->addRenderer(renders);
+	}
+
+	return adapter;
 }

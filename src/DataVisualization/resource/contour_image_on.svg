@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>开启着色</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="99.6558129%" id="linearGradient-1">
+            <stop stop-color="#8CCBFF" offset="0%"></stop>
+            <stop stop-color="#3F81B8" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#FCC400" offset="0%"></stop>
+            <stop stop-color="#70FF04" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-3">
+            <stop stop-color="#70FF04" offset="0%"></stop>
+            <stop stop-color="#FC1400" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-4">
+            <stop stop-color="#FFA84F" offset="0%"></stop>
+            <stop stop-color="#B0FE00" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="新增图标5.25输出" transform="translate(-329.000000, -78.000000)">
+            <g id="开启着色" transform="translate(329.000000, 78.000000)">
+                <g id="Group" transform="translate(2.000000, 2.000000)" fill="url(#linearGradient-1)" stroke="#1A1A1A" stroke-width="0.5">
+                    <ellipse id="Combined-Shape" cx="6.06666667" cy="6.24" rx="6.06666667" ry="6.24"></ellipse>
+                </g>
+                <path d="M8.32830811,10.7776489 C9.20620932,10.6913386 9.99931621,10.2106575 10.1932983,9.85125732 C10.5108032,9.26300049 7.26396491,9.26300049 6.60253906,8.66357422 C5.72915052,7.87205385 7.32842712,6 6.5,6 C5.67157288,6 4.7578125,6.8954305 4.7578125,8 C4.7578125,8.58773844 4.91958285,9.85034537 5.80169678,10.4285889 C6.57738857,10.9370705 8.06673901,10.8033649 8.32830811,10.7776489 Z" id="椭圆形" fill="url(#linearGradient-2)"></path>
+                <path d="M8.14788325,8.09508379 C8.93246693,8.01212284 9.80292749,8.64728614 9.97613745,8.28788595 C10.105743,8.01896238 9.40588832,6.93887381 8.38908518,7.00271636 C7.1816824,7.07852619 5.63902529,8.35106084 6.07570954,8.66395479 C6.6756198,9.0938038 7.42223308,8.17181318 8.14788325,8.09508379 Z" id="椭圆形备份-2" fill="url(#linearGradient-3)" transform="translate(7.995790, 7.888825) rotate(-129.000000) translate(-7.995790, -7.888825) "></path>
+                <path d="M10.0746447,7.28541707 C11.4553566,7.28541707 12.636314,8.29245779 12.636314,7.74017304 C12.636314,7.18788829 11.4986364,5.940942 10.036799,6.0021761 C8.57496167,6.06341021 7.43196988,7.20817527 7.43196988,7.76046002 C7.43196988,8.31274477 8.69393286,7.28541707 10.0746447,7.28541707 Z" id="椭圆形" fill="url(#linearGradient-4)" transform="translate(10.034142, 6.961785) rotate(53.000000) translate(-10.034142, -6.961785) "></path>
+                <circle id="椭圆形" stroke="#1A1A1A" stroke-width="0.2" cx="8" cy="8" r="3.9"></circle>
+                <circle id="椭圆形备份" stroke="#1A1A1A" stroke-width="0.2" cx="8" cy="8" r="4.9"></circle>
+                <line x1="8" y1="11.9102173" x2="8" y2="14.48" id="路径-83" stroke="#1A1A1A" stroke-width="0.2"></line>
+                <line x1="12" y1="8" x2="14.133333" y2="8" id="路径-85" stroke="#1A1A1A" stroke-width="0.2"></line>
+                <line x1="8" y1="2" x2="8" y2="4.1050415" id="路径-87" stroke="#1A1A1A" stroke-width="0.2"></line>
+                <line x1="4.08428955" y1="8" x2="2" y2="8" id="路径-88" stroke="#1A1A1A" stroke-width="0.2"></line>
+                <line x1="11.0194092" y1="5.56427002" x2="12.5334473" y2="4" id="路径-89" stroke="#1A1A1A" stroke-width="0.2"></line>
+                <line x1="5.01416016" y1="5.45898438" x2="3.61419678" y2="4" id="路径-90" stroke="#1A1A1A" stroke-width="0.2"></line>
+                <line x1="10.7886353" y1="10.7776489" x2="12.3777466" y2="12.3980713" id="路径-91" stroke="#1A1A1A" stroke-width="0.2"></line>
+                <line x1="5.22546387" y1="10.7776489" x2="3.72784424" y2="12.5842896" id="路径-92" stroke="#1A1A1A" stroke-width="0.2"></line>
+            </g>
+        </g>
+    </g>
+</svg>

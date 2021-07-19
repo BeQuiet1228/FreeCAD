@@ -15,6 +15,8 @@
 #include "VariateChart.h"
 #include "xml/pugixml.hpp"
 #include <QTextCodec>
+#include <QScrollBar>
+#include <QTextCursor>
 SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	:QDialog(parent), ui(new Ui::SmartContorlUI)
 {
@@ -27,6 +29,7 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 #ifdef SMART_EXE
 	std::string m3dPath = "E:/test/test.m3d";
 	smartContorl->setM3dPath(m3dPath);
+	loadParameterXml();
 #else
 	//smartContorl->setM3dPath(contorlInterface->getDocumentPath());
 #endif
@@ -264,10 +267,11 @@ void SmartContorlUI::addListWidgetItem(QListWidgetItem *item, QWidget *widget)
 
 void SmartContorlUI::pringLuaLog(std::string str)
 {
-	auto temp = QString::fromStdString(str);
+	auto temp = QString::fromUtf8(str.c_str());
 	auto text = this->ui->plainTextEdit->toPlainText();
 	text += temp;
 	this->ui->plainTextEdit->setPlainText(text);
+	ui->plainTextEdit->moveCursor(QTextCursor::End);
 }
 
 void SmartContorlUI::on_pushButtonVariateMax_clicked()
@@ -340,7 +344,19 @@ QString SmartContorlUI::replaceVariate()
 			.arg((*iter)->max).arg((*iter)->mini).arg(count);
 		vars += temp;
 	}
-	auto text = this->ui->textEdit->toPlainText();
+	QString text;
+#ifdef SMART_EXE
+	{
+		QFile file(QString::fromLocal8Bit("E:/工作/优化算法/脚本.lua"));
+		file.open(QIODevice::ReadOnly);
+		text = file.readAll();
+		file.close();
+	}
+#else
+	text = this->ui->textEdit->toPlainText();
+#endif // SMART_EXE
+
+	
 	text += vars;
 
 	//添加配置
@@ -367,7 +383,23 @@ QString SmartContorlUI::replaceVariate()
 	config += temp;
 	temp = QString("accuracy = %1/100;\n").arg(this->ui->lineEditAccuracy->text());
 	config += temp;
+
+	//是否按照上次优化数据计息
+	if (this->ui->checkBoxContinue->checkState() == Qt::Checked)
+		config += "continue = true;\n";
+	else
+		config += "continue = false;\n";
+
 	text = config + text;
+
+#ifdef SMART_EXE //输出拼接之后的脚本
+	{
+		QFile file(QString::fromLocal8Bit("./SmartControl.lua"));
+		file.open(QIODevice::ReadWrite);
+		file.write(text.toUtf8());
+		file.close();
+	}
+#endif // SMART_EXE
 	return text;
 }
 
@@ -389,6 +421,7 @@ void SmartContorlUI::saveParameterXml()
 	configNode.append_attribute("C1") = ui->lineEditC1->text().toStdString().c_str();
 	configNode.append_attribute("C2") = ui->lineEditC2->text().toStdString().c_str();
 	configNode.append_attribute("Omega") = ui->lineEditOmega->text().toStdString().c_str();
+	configNode.append_attribute("Continue") = ui->checkBoxContinue->checkState();
 
 	for (auto i = variateDatas.begin(); i != variateDatas.end(); i++)
 	{
@@ -436,7 +469,7 @@ void SmartContorlUI::loadParameterXml()
 	ui->lineEditC1->setText(QString::number(configNode.attribute("C1").as_double()));
 	ui->lineEditC2->setText(QString::number(configNode.attribute("C2").as_double()));
 	ui->lineEditOmega->setText(QString::number(configNode.attribute("Omega").as_double()));
-
+	ui->checkBoxContinue->setCheckState(Qt::CheckState(configNode.attribute("Continue").as_int()));
 	for (auto iter = parNode.begin(); iter != parNode.end(); iter++)
 	{
 		std::shared_ptr<VariateData> data;

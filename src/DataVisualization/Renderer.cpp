@@ -74,7 +74,7 @@ QSize Renderer::getSize()
 * @return void
 * @Time 2021/6/28
 */
-void Renderer::setRatioDisplay(double& horizontal, double& vertical)
+void Renderer::setRatioDisplay(const double& horizontal,const double& vertical)
 {
 	QSize size = getSize();
 	float sizeWidth = size.width();
@@ -316,3 +316,5 @@ std::shared_ptr<Data> Renderer::getData()
 {
 	return data;
 }
+
+#include "moc_PlotAdapter.cpp"
