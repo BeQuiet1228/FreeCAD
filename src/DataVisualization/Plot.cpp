@@ -601,6 +601,12 @@ void Plot::setappEvent()
 	updateAxis();
 	reRender();
 }
+
+void Plot::rmoveCanvasItem(unsigned int rank)
+{
+	canvas->removeItem(rank);
+}
+
 /**
 * @brief  Plot::EqualScaleDisplay 按等比例显示
 * @return void  

@@ -126,6 +126,8 @@ public Q_SLOTS:
 	void canvasResize(QSize size);
 	//设置应用事件
 	void setappEvent();
+	//清空画布指定itme
+	void rmoveCanvasItem(unsigned int rank);
 	
 protected:
 	void resizeEvent(QResizeEvent *event) override;

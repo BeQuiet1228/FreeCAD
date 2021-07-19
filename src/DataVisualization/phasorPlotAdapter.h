@@ -1,12 +1,12 @@
 #pragma once
 #ifndef PHASORPLOTADAPTER_H_ 
 #define PHASORPLOTADAPTER_H_
-#include "PlotAdapter.h"
+#include "PlotAdapterNeedStruct.h"
 #include <QObject>
 #include "phasorRenderer.h"
 #include <memory>
 
-class PhasorPlotAdapter :public PlotAdapter
+class PhasorPlotAdapter :public PlotAdapterNeedStruct
 {
 	Q_OBJECT
 public:
