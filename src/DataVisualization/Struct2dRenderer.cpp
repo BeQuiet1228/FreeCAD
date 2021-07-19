@@ -161,31 +161,75 @@ QPointF Struct2DRenderer::GetApos(QPointF& A_pos)
 	auto yr = getYRang();
 	std::shared_ptr<Struct2dData> d = std::dynamic_pointer_cast<Struct2dData> (data);
 	std::map<int, std::map<int, std::vector<QPointF>>> map = d->GetAllinfo();
-	int data1=0, data2=0, data3=0;
-	unsigned int minDistance = ~0;
-	for (auto iter1 = map.begin(); iter1 != map.end();iter1++)
+	std::map<int, std::map<int, std::vector<QPointF>>> lines = d->getLineF();
+	
+	//获取全部的点位
+	std::vector<QPointF> poss;
+	//
+	for (auto iter=map.begin();iter!=map.end();iter++)
 	{
-		for (auto iter2 = iter1->second.begin(); iter2 != iter1->second.end();iter2++)
+		auto itercolor = color_tab.find(iter->first);
+		if (itercolor!=color_tab.end())
 		{
-			for (auto index3 = 0; index3 < iter2->second.size();index3++)
+			for (auto iter2 = iter->second.begin(); iter2 != iter->second.end(); iter2++)
 			{
-				QPointF p1 = iter2->second[index3];
-				transitionPoint(p1, xScale, xr, yScale, yr);
-				unsigned int Cur_Distance = sqrt((p1.x() - A_pos.x())*(p1.x() - A_pos.x()) + (p1.y() - A_pos.y())*(p1.y() - A_pos.y()));
-				if (minDistance>Cur_Distance)
-				{
-					data1 = iter1->first;
-					data2 = iter2->first;
-					data3 = index3;
-					minDistance = Cur_Distance;
-				}
+				poss.insert(poss.end(), iter2->second.begin(), iter2->second.end());
 			}
 		}
 	}
-	//获取最小的点
-	QPointF dpos = map[data1][data2][data3];
+	//
+	for (auto iter=lines.begin();iter!=lines.end();iter++)
+	{
+		auto itercolor = pixmap.find(iter->first);
+		if (itercolor!=pixmap.end())
+		{
+			for (auto iter2 = iter->second.begin(); iter2 != iter->second.end(); iter2++)
+			{
+				poss.insert(poss.end(), iter2->second.begin(), iter2->second.end());
+			}
+		}
+	}
+	unsigned int minDistance = ~0;
+	QPointF srcpos;
+	for (auto iter=poss.begin();iter!=poss.end();iter++)
+	{
+		QPointF p1 = *iter;
+		transitionPoint(p1,xScale,xr,yScale,yr);
+		unsigned int Cur_Distance = sqrt((p1.x() - A_pos.x()) * (p1.x() - A_pos.x()) + (p1.y() - A_pos.y()) * (p1.y() - A_pos.y()));
+		if (minDistance>Cur_Distance)
+		{
+			srcpos = *iter;
+			minDistance = Cur_Distance;
+		}
+	}
+	QPointF dpos = srcpos;
 	QPointF apos = dpos;
 	transitionPoint(apos, xScale, xr, yScale, yr);
+	//int data1=0, data2=0, data3=0;
+	//unsigned int minDistance = ~0;
+	//for (auto iter1 = map.begin(); iter1 != map.end();iter1++)
+	//{
+	//	for (auto iter2 = iter1->second.begin(); iter2 != iter1->second.end();iter2++)
+	//	{
+	//		for (auto index3 = 0; index3 < iter2->second.size();index3++)
+	//		{
+	//			QPointF p1 = iter2->second[index3];
+	//			transitionPoint(p1, xScale, xr, yScale, yr);
+	//			unsigned int Cur_Distance = sqrt((p1.x() - A_pos.x())*(p1.x() - A_pos.x()) + (p1.y() - A_pos.y())*(p1.y() - A_pos.y()));
+	//			if (minDistance>Cur_Distance)
+	//			{
+	//				data1 = iter1->first;
+	//				data2 = iter2->first;
+	//				data3 = index3;
+	//				minDistance = Cur_Distance;
+	//			}
+	//		}
+	//	}
+	//}
+	////获取最小的点
+	//QPointF dpos = map[data1][data2][data3];
+	//QPointF apos = dpos;
+	//transitionPoint(apos, xScale, xr, yScale, yr);
 	A_pos = apos;
 	return dpos;
 }
