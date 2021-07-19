@@ -1,5 +1,5 @@
 #include "ContourDataPolar.h"
-#include <qmath.h>
+#include "qwt/qwt_math.h"
 ContourDataPolar::ContourDataPolar(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
 	:ContourData(h5Data,mod)
 {
@@ -46,7 +46,7 @@ QwtMatrixRasterData* ContourDataPolar::getQwtMatrixRasterData()
 	rasterData->setInterval(Qt::XAxis,
 		QwtInterval(xr.min, xr.max, QwtInterval::ExcludeMaximum));
 	rasterData->setInterval(Qt::YAxis,
-		QwtInterval(0, yr.max, QwtInterval::ExcludeMaximum));
+		QwtInterval(yr.min, yr.max, QwtInterval::ExcludeMaximum));
 
 	Rang vr = getVlaueRange();
 	rasterData->setInterval(Qt::ZAxis, QwtInterval(vr.min, vr.max));
@@ -63,8 +63,41 @@ bool ContourDataPolar::loadPoint()
 	Rang yr = getYRang();
 	yr.min = 0;
 	yr.max = 2 * M_PI;
-	setYRang(yr);
+	//setYRang(yr);
 	return ok;
+}
+
+//! Approximation of arc tangent ( error below 0,005 radians )
+double PolarMatrixRasterData::FastAtan(double x)
+{
+	if (x < -1.0)
+		return -M_PI_2 - x / (x * x + 0.28);
+
+	if (x > 1.0)
+		return M_PI_2 - x / (x * x + 0.28);
+
+	return x / (1.0 + x * x * 0.28);
+}
+
+//! Approximation of arc tangent ( error below 0,005 radians )
+ double PolarMatrixRasterData::FastAtan2(double y, double x)
+{
+	if (x > 0)
+		return FastAtan(y / x);
+
+	if (x < 0)
+	{
+		const double d = FastAtan(y / x);
+		return (y >= 0) ? d + M_PI : d - M_PI;
+	}
+
+	if (y < 0.0)
+		return -M_PI_2;
+
+	if (y > 0.0)
+		return M_PI_2;
+
+	return 0.0;
 }
 
 double PolarMatrixRasterData::value(double x, double y) const
@@ -73,9 +106,9 @@ double PolarMatrixRasterData::value(double x, double y) const
 	theta = qAtan2(x, y);
 	r = sqrt(pow(x, 2) + pow(y, 2));
 
-	if (theta < 0.0)
+	theta = FastAtan2(y, x);
+	if (theta < 0 && theta < interval(Qt::YAxis).minValue())
 		theta += 2 * M_PI;
-
 
 	return QwtMatrixRasterData::value(r, theta);
 }

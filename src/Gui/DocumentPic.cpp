@@ -64,6 +64,19 @@ App::Document* DocumentPic::getAppDocument()
 */
 void DocumentPic::releaseH5Object()
 {
+	auto mw = Gui::MainWindow::getInstance();
+	auto view = mw->windows();
+
+	for (auto iter = view.begin(); iter != view.end(); iter++)
+	{
+		auto plot = dynamic_cast<Gui::PlotMDIView*>(*iter);
+		if (plot)
+		{
+			mw->removeWindow(plot);
+		}
+			
+	}
+
 	auto doc = getAppDocument();
 	if (doc == nullptr)
 		return;
@@ -71,6 +84,7 @@ void DocumentPic::releaseH5Object()
 	auto dataDoc = dynamic_cast<DocumentManager*>(doc);
 	if (!dataDoc)
 		return;
+
 
 	dataDoc->restoreH5Data();
 }

@@ -88,6 +88,29 @@
     </message>
 </context>
 <context>
+    <name>ChangeParamName</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished">对话框</translation>
+    </message>
+    <message>
+        <source>需要修改的变量名：</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>修改后变量名</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">确定</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">取消</translation>
+    </message>
+</context>
+<context>
     <name>CmdTestConsoleOutput</name>
     <message>
         <source>Standard-Test</source>
@@ -123,43 +146,30 @@
 <context>
     <name>ControlTreeWidget</name>
     <message>
-        <source>Contour</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PhaseSpace</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Observe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Range</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Vector</source>
-        <translation type="unfinished">向量</translation>
+        <translation type="obsolete">向量</translation>
+    </message>
+</context>
+<context>
+    <name>DeleteDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished">对话框</translation>
     </message>
     <message>
-        <source>=</source>
+        <source>ok</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>/1/</source>
+        <source>analyze</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>_Temp.h5</source>
+        <source>delete param name：</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>/</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>_gather.h5</source>
+        <source>cancel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -184,6 +194,29 @@
     <message>
         <source>OK</source>
         <translation type="unfinished">确定</translation>
+    </message>
+</context>
+<context>
+    <name>DlgChangeNameDialog</name>
+    <message>
+        <source>DlgChangeNameDialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>取消</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>确定</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>名字不符合规范：</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>修改后的名字：</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4020,10 +4053,6 @@ Do you want to save your changes?</source>
 Do you want to copy them, too?</source>
         <translation type="obsolete">所选物件与未选取物件有依赖,要一起复制它们吗?</translation>
     </message>
-    <message>
-        <source>»ñÈ¡½á¹û</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>Gui::ManualAlignment</name>
@@ -4702,6 +4731,36 @@ Do you want to specify another directory?</source>
     </message>
 </context>
 <context>
+    <name>GuiCmdPlotDataExport</name>
+    <message>
+        <source>Vislization</source>
+        <translation>可视化</translation>
+    </message>
+    <message>
+        <source>Plot data export...</source>
+        <translation>图表导出</translation>
+    </message>
+    <message>
+        <source>export plot data under a new file name</source>
+        <translation>将图表数据导出到新的文件中</translation>
+    </message>
+</context>
+<context>
+    <name>GuiCmdPlotEqualProportion</name>
+    <message>
+        <source>Vislization</source>
+        <translation>可视化</translation>
+    </message>
+    <message>
+        <source>Plot proportion...</source>
+        <translation>图表等比例</translation>
+    </message>
+    <message>
+        <source>set plot proportion 1:1</source>
+        <translation>将图表按照1：1的比例显示</translation>
+    </message>
+</context>
+<context>
     <name>MAC_APPLICATION_MENU</name>
     <message>
         <source>Services</source>
@@ -5260,7 +5319,11 @@ Be aware the point where you click matters.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>ä½&#xa0;ç¡®å®è¦å&#x85;³é­å·¥ç¨å¹¶å&#x85;³é­ä»¿çç¨åºåï¼QAQ</source>
+        <source>ä½ ç¡®å®è¦å³é­å·¥ç¨å¹¶å³é­ä»¿çç¨åºåï¼QAQ</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export data</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

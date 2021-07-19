@@ -5,7 +5,6 @@
 #include "RenderThreadManager.h"
 #include "RenderTask.h"
 #include "Renderer.h"
-//#include "ColorMapWidget.h"
 #include "qwt/qwt_scale_engine.h"
 #include "ContourRender.h"
 #include <stack>

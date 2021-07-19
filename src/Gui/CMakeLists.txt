@@ -1115,6 +1115,7 @@ SET(Workbench_CPP_SRCS
     WorkbenchFactory.cpp
     WorkbenchManager.cpp
     WorkbenchPyImp.cpp
+	DataVisualizationWorkbench.cpp
 )
 SET(Workbench_SRCS
     ${Workbench_CPP_SRCS}
@@ -1125,6 +1126,7 @@ SET(Workbench_SRCS
     Workbench.h
     WorkbenchFactory.h
     WorkbenchManager.h
+	DataVisualizationWorkbench.h
 )
 SOURCE_GROUP("Workbench" FILES ${Workbench_SRCS})
 

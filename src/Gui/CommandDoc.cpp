@@ -1851,7 +1851,7 @@ void StdCmdRunM3d::activated(int iMsg)
 	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
 
 	auto contorl = ContorlInterface::GetInstance();
-	if (!runState)
+	if (!contorl->hasChipicRuning())
 	{
         //设置主界面上的ui
 		auto mw = Gui::MainWindow::getInstance();
@@ -1867,7 +1867,17 @@ void StdCmdRunM3d::activated(int iMsg)
 
 		//清空h5文件对象
 		picDoc->releaseH5Object();
-	}
+    }else {
+		//设置主界面上的ui
+		auto mw = Gui::MainWindow::getInstance();
+		mw->hideContorlUI();
+		//清空h5文件对象
+		Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
+		auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
+		if (!picDoc)
+			return;
+		picDoc->releaseH5Object();
+    }
 	contorl->buttonClicked(0);
 }
 bool StdCmdRunM3d::isActive(void)
@@ -2410,11 +2420,11 @@ void CreateDocCommands(void)
 	rcCmdMgr.addCommand(new StdCmdOpenCommandBook);
 	rcCmdMgr.addCommand(new StdCmdOpenUserBook);
 	rcCmdMgr.addCommand(new StdCmdRunSuperTube);
-    rcCmdMgr.addCommand(new StdCmdContourImageMod);
-    rcCmdMgr.addCommand(new StdCmdContourLineMod);
+    //rcCmdMgr.addCommand(new StdCmdContourImageMod);
+    //rcCmdMgr.addCommand(new StdCmdContourLineMod);
     rcCmdMgr.addCommand(new StdCmdOpenDataVisualizationConfig);
     rcCmdMgr.addCommand(new StdCmdDataVisualizationAutoMax);
-    rcCmdMgr.addCommand(new StdCmdDataVisualizationPlotDisplayGridMod);
+    //rcCmdMgr.addCommand(new StdCmdDataVisualizationPlotDisplayGridMod);
 
     rcCmdMgr.addCommand(new StdCmdSave());
     rcCmdMgr.addCommand(new StdCmdSaveAs());
