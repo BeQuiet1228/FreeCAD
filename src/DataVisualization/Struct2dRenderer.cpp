@@ -318,10 +318,16 @@ bool Struct2DRenderer::getPloy_grid(){
 	}
 #pragma region 
 	//绘制横向切割线
+	QPen lastpen1 = painter1.pen();
+	QPen newPen;
+	newPen.setWidth(1);
+	newPen.setColor(color_pen[3]);
+	painter1.setPen(newPen);
 	QVector<QLineF> liney = GetCutLine_y();
 	QVector<QLineF> linex = GetCurLine_x();
 	painter1.drawLines(linex);
 	painter1.drawLines(liney);
+	
 #pragma endregion
 	painter1.setCompositionMode(QPainter::CompositionMode_SourceOver);
 	painter1.drawImage(0, 0, img2);
@@ -336,6 +342,7 @@ bool Struct2DRenderer::getPloy_grid(){
 		painter1.setPen(var.pen);
 		painter1.drawLine(var.line);
 	}
+	painter1.setPen(lastpen1);
 	//绘制线段
 	std::map<int, std::map<int, std::vector<QPointF>>> mlines = d->getLineF();
 	for (auto iter = mlines.begin(); iter != mlines.end(); iter++)
