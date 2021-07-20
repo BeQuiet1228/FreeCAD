@@ -11,12 +11,21 @@ VariateItemWidget::VariateItemWidget(QWidget *parent /*= 0*/)
 	ui->labelMode->hide();
 	ui->label_8->hide();
 }
-
+void VariateItemWidget::initUi()
+{
+	int MaxHeight = 0;
+	//MaxHeight += ui->labelMode->size().height();
+	MaxHeight += ui->labelName->size().height();
+	//MaxHeight += ui->labelCount->size().height();
+	MaxHeight += ui->labelMax->size().height();
+	MaxHeight += ui->labelMini->size().height();
+	MaxHeight += 10;
+	this->setMaximumHeight(MaxHeight);
+}
 VariateItemWidget::~VariateItemWidget()
 {
 
 }
-
 void VariateItemWidget::setData(std::shared_ptr<VariateData> data)
 {
 	this->ui->labelName->setText(data->name);

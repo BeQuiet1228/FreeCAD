@@ -10,4 +10,5 @@ public :
 	~VariateitemDialog();
 	//…Ë÷√
 	void setData(std::shared_ptr<VariateData> data);
+	void initUi();
 };

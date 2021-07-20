@@ -485,6 +485,7 @@ void SmartContorlUI::loadParameterXml()
 		data->mini = iter->attribute("Mini").as_double();
 		data->item = new QListWidgetItem();
 		data->widget = new VariateItemWidget();
+		data->widget->initUi();
 		data->widget->setData(data);
 		variateDatas.push_back(data);
 

@@ -12,6 +12,7 @@ public:
 	~VariateItemWidget();
 	//ÉèÖÃÊı¾İ
 	virtual void setData(std::shared_ptr<VariateData> data);
+	virtual void initUi();
 protected:
 protected:
 	Ui::VariateIteamWidget_UI *ui;

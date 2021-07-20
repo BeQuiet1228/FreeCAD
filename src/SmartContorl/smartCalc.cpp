@@ -22,7 +22,7 @@ smartCalc::smartCalc(QWidget* parent) :QDialog(parent),ui(new Ui::smartCalc)
 }
 void smartCalc::initUI()
 {
-	ui->ObjectName->setText("text");
+//	ui->ObjectName->setText("text");
 	//ÊäÈëÄ£Ê½£º
 	{
 		ui->Mode1->setChecked(true);
@@ -72,6 +72,7 @@ void smartCalc::addButton(bool b)
 			data->Mode = 1;
 			data->item = new QListWidgetItem();
 			data->widget = new VariateitemDialog();
+			data->widget->initUi();
 			data->widget->setData(data);
 			variateDatas.push_back(data);
 
@@ -100,6 +101,7 @@ void smartCalc::addButton(bool b)
 			data->Mode = 2;
 			data->item = new QListWidgetItem();
 			data->widget = new VariateitemDialog();
+			data->widget->initUi();
 			data->widget->setData(data);
 			variateDatas.push_back(data);
 			this->ui->listWidgetVariate->addItem(data->item);
@@ -130,8 +132,6 @@ void smartCalc::deleteButton(bool b)
 }
 void smartCalc::run(bool)
 {
-	//auto str = replaceVariate();
-	//C:\Users\DELL\Desktop\opt.lua
 	auto str = replaceVariate();
 	smartContorl->run(str);
 	saveParameterXml();
@@ -140,7 +140,8 @@ void smartCalc::loadParameterXml()
 {
 	pugi::xml_document document;
 	auto path = smartContorl->getM3dPath();
-	path = path.left(path.length() - 4) + ".cc";
+	qPrint(path);
+	path = path.left(path.length() - 4) + "_bat.cc";
 	auto gbk = QTextCodec::codecForName("gb2312");
 
 	std::string ret = gbk->fromUnicode(path).data();
@@ -185,6 +186,7 @@ void smartCalc::loadParameterXml()
 		}
 		data->item = new QListWidgetItem();
 		data->widget = new VariateitemDialog();
+		data->widget->initUi();
 		data->widget->setData(data);
 		variateDatas.push_back(data);
 		this->ui->listWidgetVariate->addItem(data->item);
@@ -309,7 +311,7 @@ void smartCalc::saveParameterXml()
 		}
 	}
 	auto path = smartContorl->getM3dPath();
-	path = path.left(path.length() - 4) + ".cc";
+	path = path.left(path.length() - 4) + "_bat.cc";
 	auto gbk = QTextCodec::codecForName("gb2312");
 
 	std::string ret = gbk->fromUnicode(path).data();
@@ -317,12 +319,12 @@ void smartCalc::saveParameterXml()
 }
 void smartCalc::qPrint(QString str)
 {
-	ui->plainTextEdit->appendPlainText(str);
+	//ui->plainTextEdit->appendPlainText(str);
 }
 void smartCalc::qPrint(std::string str)
 {
 	auto temp = QString::fromStdString(str);
-	ui->plainTextEdit->appendPlainText(temp);
+	//ui->plainTextEdit->appendPlainText(temp);
 }
 void smartCalc::addListWidgetItem(QListWidgetItem* item, QWidget* widget)
 {
@@ -331,10 +333,7 @@ void smartCalc::addListWidgetItem(QListWidgetItem* item, QWidget* widget)
 }
 void smartCalc::pringLuaLog(std::string str)
 {
-	auto temp = QString::fromStdString(str);
-	auto text = this->ui->plainTextEdit->toPlainText();
-	text += temp;
-	this->ui->plainTextEdit->setPlainText(text);
+	qPrint(str);
 }
 
 void SplitString(const std::string& s, std::vector<std::string>& v, const std::string& c)
