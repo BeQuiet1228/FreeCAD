@@ -32,7 +32,7 @@ void SmartContorlInterface::showSmartCalc(const std::string& path)
 {
 	auto calc =new smartCalc();
 	calc->afferm3dpath(path);
-	calc->afferscriptpath("D://wdtProject//FreeCAD//FreeCAD//src//SmartContorl//opt.lua");
+	calc->afferscriptpath("C:\\Users\\DELL\\Desktop\\opt.lua");
 	calc->show();
 	calc->setAttribute(Qt::WA_DeleteOnClose);
 	//calc->setTextPath();

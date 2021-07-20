@@ -151,6 +151,8 @@ void Axis::_update()
 			if (isColorBarEnabled())
 				height += colorBarWidth();
 			setMinimumHeight(height);
+			
+			
 		}
 		break;
 		}

@@ -14,6 +14,19 @@ VariateitemDialog::VariateitemDialog(QWidget* parent)
 	ui->labelCount->	show();
 	ui->labelMode->		show();
 	ui->label_8->		show();
+	//
+	
+}
+void VariateitemDialog::initUi()
+{
+	int MaxHeight = 0;
+	MaxHeight += ui->labelMode->size().height();
+	MaxHeight += ui->labelName->size().height();
+	MaxHeight += ui->labelCount->size().height();
+	MaxHeight += ui->labelMax->size().height();
+	MaxHeight += ui->labelMini->size().height();
+	MaxHeight += 2;
+	this->setMaximumHeight(MaxHeight);
 }
 /**
 * @brief VariateitemDialog::~VariateitemDialog Îö¹¹
