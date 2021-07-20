@@ -21,7 +21,7 @@ GuiCmdPlotDataExport::GuiCmdPlotDataExport()
 
 void GuiCmdPlotDataExport::activated(int iMsg) {
 	QString fn = Gui::FileDialog::getSaveFileName(Gui::MainWindow::getInstance(), QObject::tr("Export data"),
-		QString(), QString::fromLatin1("(*.h5 *.png)"));
+		QString(), QString::fromLatin1("(*.png *.h5)"));
 	if (fn.isEmpty())
 		return;
 	auto view = Gui::MainWindow::getInstance()->activeWindow();
@@ -29,7 +29,7 @@ void GuiCmdPlotDataExport::activated(int iMsg) {
 	if (!plotView)
 		return;
 	//plotView->getPlot()->MainRendererDataSaveAs(fn.toStdString());
-	plotView->getPlot()->SaveAs(fn.toStdString());
+	plotView->getPlot()->SaveAs(fn.toUtf8().data());
 }
 bool GuiCmdPlotDataExport::isActive() {
 	return getGuiApplication()->sendHasMsgToActiveView("PlotDataExport");
