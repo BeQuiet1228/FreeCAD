@@ -668,6 +668,7 @@ bool Hdf5Data::initStructInformation()
 	if (headList.size() < 5)
 		return false;
 	name = "struct";
+#if 0
 	QString str = QString::fromStdString(headList.at(3));
 	QStringList sl = str.split("=");
 	if (sl.size() < 2)
@@ -682,7 +683,20 @@ bool Hdf5Data::initStructInformation()
 		coordinateSystem = POLAR;
 	else if (str == "cartesian")
 		coordinateSystem = CARTESIAN;
-
+#else 
+	std::string str = headList.at(3);
+	if (str.find("system") == std::string::npos)
+		return false;
+	//
+	if (str.find("cylindrical") != std::string::npos)
+		coordinateSystem = CYLINDER;
+	else if (str.find("polar") != std::string::npos)
+		coordinateSystem = POLAR;
+	else if (str.find("cartesian") != std::string::npos)
+		coordinateSystem = CARTESIAN;
+	else
+		return false;
+#endif
 	return true;
 }
 
