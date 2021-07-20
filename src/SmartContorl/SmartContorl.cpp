@@ -12,6 +12,7 @@ extern "C"{
 #include <QTextIStream>
 #include "SmartContorlData.h"
 #include <QMessageBox>
+#include "Contorl/MessageTransition.h"
 SmartContorl::SmartContorl()
 	:makeRunDataType(CONBINATION)
 {

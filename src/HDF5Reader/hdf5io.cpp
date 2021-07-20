@@ -665,14 +665,18 @@ bool Hdf5Data::initInformation()
 */
 bool Hdf5Data::initStructInformation()
 {
-	if (headList.size() < 5)
+	if (headList.size() < 4)
 		return false;
-	name = "struct";
 	QString str = QString::fromStdString(headList.at(3));
+	str = str.simplified();
 	QStringList sl = str.split("=");
 	if (sl.size() < 2)
 		return false;
 	if (sl.at(0) != "system")
+		return false;
+	str = sl.at(1);
+	sl = str.split("$");
+	if (sl.size() < 3)
 		return false;
 	str = sl.at(1);
 	str = str.simplified();
@@ -683,6 +687,10 @@ bool Hdf5Data::initStructInformation()
 	else if (str == "cartesian")
 		coordinateSystem = CARTESIAN;
 
+	if (sl.at(2) != "STRUCTRUE")
+		return false;
+
+	name = "struct";
 	return true;
 }
 
