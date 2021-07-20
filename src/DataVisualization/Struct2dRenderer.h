@@ -27,13 +27,14 @@ public:
 	virtual void dataInit() override;
 	virtual void loadconfig() override;
 public:
-	void SetColor(int,QColor);
-	void SetPen(int ,QPen);
+
 	bool getPloy_grid();
 	bool drawPloy();
 private:
 	QVector<QLineF> Getlines(std::vector<QPointF> points);
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d);
+	void transitionLineF(QLineF& line, const float& xScale, const float& yScale, const Data::Rang& xr, const Data::Rang& yr);
+	void DrawLine(QPainter& painter, QVector<QLineF>& lines, int mPorper);
 	void transitionPoint(QPointF& point, const float& xScale, const Data::Rang& xr, const float& yScale, const Data::Rang& yr)
 	{
 		point.setX(transitionX(point.x(), xScale, xr));
@@ -52,8 +53,8 @@ private:
 	QVector<QLineF> GetCutLine_y();
 private:
 	QMap<int, QColor> color_tab;
-	QMap<int, QColor> color_line;
-	QMap<int, QPen> pen_tab;
+	QMap<int, QColor> color_pen;
+	std::map<unsigned __int64, QPixmap> pixmap;
 	bool isAA;
 };
 #endif

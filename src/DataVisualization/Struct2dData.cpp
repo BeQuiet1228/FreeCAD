@@ -82,33 +82,38 @@ bool Struct2dData::initdata(){
 	Data::ValuesPtr IM1X = *it; it++;
 	Data::ValuesPtr IM2X = *it; it++;
 	Data::ValuesPtr datasetkmt = *it;
-	std::vector<datasetkmtinfo> datasetkmtlist;
-	//装入
-	for (auto iterdataset = datasetkmt->begin(); iterdataset != datasetkmt->end();)
+	for (auto iter= datasetkmt->begin();iter!=datasetkmt->end();)
 	{
-		datasetkmtinfo _datasetkmtinfo;
-		_datasetkmtinfo.data1 = *iterdataset; iterdataset++;
-		_datasetkmtinfo.data2 = *iterdataset; iterdataset++;
-		_datasetkmtinfo.data3 = *iterdataset; iterdataset++;
-		_datasetkmtinfo.data4 = *iterdataset; iterdataset++;
-		datasetkmtlist.push_back(_datasetkmtinfo);
-	}
-	//装入成功
-	//获取所有点位
-	ALLPointf.clear();
-	ALLPointf.reserve(IM2X->size()*IM1X->size());
-	for (auto y = 0; y < IM2X->size(); y++)
-	{
-		for (auto x = 0; x < IM1X->size();x++)
+		unsigned __int64 x1 = *iter; iter++;
+		unsigned __int64 x2 = *iter; iter++;
+		unsigned __int64 x3 = *iter; iter++;
+		unsigned __int64 x4 = *iter; iter++;
+
+		std::list<unsigned __int64> rectPro = isAnAttribute(x3, StructData::RECTPROPER);
+		std::list<unsigned __int64> linePro = isAnAttribute(x3,StructData::LINEPROPER);
+
+		if (!rectPro.empty())
 		{
-		
-			ALLPointf.push_back(QPointF(*(IM1X->begin() + x), *(IM2X->begin() + y)));
+			for each (auto var in rectPro)
+				allinfo[var][x4].push_back(QPointF(*(IM1X->begin() + (x1 - 1)),*(IM2X->begin()+(x2-1))));
+		}
+		if (!linePro.empty())
+		{
+			for each (auto var in linePro)
+				lineinfo[var][x4].push_back(QPointF(*(IM1X->begin()+(x1-1)),*(IM2X->begin()+(x2-1))));
 		}
 	}
-	allinfo.clear();
-	for each(datasetkmtinfo i in datasetkmtlist)
+
+	//存放全部点位
+	ALLPointf.clear();
+	ALLPointf.reserve(IM2X->size() * IM1X->size());
+	for (auto y = 0; y < IM2X->size(); y++)
 	{
-		allinfo[i.data3][i.data4].push_back(QPointF(*(IM1X->begin() + i.data1-1), *(IM2X->begin() + i.data2-1)));
+		for (auto x = 0; x < IM1X->size(); x++)
+		{
+
+			ALLPointf.push_back(QPointF(*(IM1X->begin() + x), *(IM2X->begin() + y)));
+		}
 	}
 	return true;
 }
@@ -119,4 +124,46 @@ bool Struct2dData::initdata(){
 */
 unsigned int Struct2dData::findIndexFromXValueL(const float&x){
 	return 0;
+}
+std::list<unsigned __int64> Struct2dData::isAnAttribute(unsigned __int64 p, StructData::PROPERTYPE sp)
+{
+	std::list<unsigned __int64> list;
+#define CPM(a,b)\
+	if((a)&(b)) list.push_back(b);
+
+	switch (sp)
+	{
+	case StructData::RECTPROPER:
+	{
+		unsigned __int64 pro = p & 0xff;
+		list.clear();
+
+		CPM(pro,StructData::PERFECTCONDUCTOR);
+		CPM(pro,StructData::CONDUCTORNEW);
+		CPM(pro,StructData::DIOLECTRIC);
+		CPM(pro,StructData::DIELECTIRANDCONDUCTANCE);
+		CPM(pro,StructData::PERMEABILITY);
+		CPM(pro,StructData::FREESPACE);
+		CPM(pro,StructData::FOIL);
+
+		return list;
+	}
+	case StructData::LINEPROPER:
+	{
+		list.clear();
+		unsigned __int64 linepro = p & 0xff00;
+		
+		CPM(linepro, 256);
+		CPM(linepro, 512);
+		CPM(linepro, 1024);
+		CPM(linepro, 2048);
+		CPM(linepro, 4096);
+		CPM(linepro, 8192);
+		CPM(linepro, 16384);
+		CPM(linepro, 32768);
+		CPM(linepro, 65536);
+
+		return list;
+	}
+	}
 }
