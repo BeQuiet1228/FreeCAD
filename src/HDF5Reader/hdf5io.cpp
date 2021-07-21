@@ -659,15 +659,42 @@ bool Hdf5Data::initInformation()
 	return true;
 }
 
-/**
-* @brief Hdf5Data::initStructInformation 初始化结构图信息
-* @return bool
-*/
-bool Hdf5Data::initStructInformation()
+bool Hdf5Data::initM3dStructInformation()
 {
 	if (headList.size() < 4)
 		return false;
 	QString str = QString::fromStdString(headList.at(3));
+	str = str.simplified();
+	QStringList sl = str.split("=");
+	if (sl.size() < 2)
+		return false;
+	if (sl.at(0) != "system")
+		return false;
+	str = sl.at(1);
+	sl = str.split("$");
+	if (sl.size() < 3)
+		return false;
+	str = sl.at(1);
+	str = str.simplified();
+	if (str == "cylindrical")
+		coordinateSystem = CYLINDER;
+	else if (str == "polar")
+		coordinateSystem = POLAR;
+	else if (str == "cartesian")
+		coordinateSystem = CARTESIAN;
+
+	if (sl.at(2) != "STRUCTRUE")
+		return false;
+
+	name = "struct";
+	return true;
+}
+
+bool Hdf5Data::initM2dStructInformation()
+{
+	if (headList.size() < 4)
+		return false;
+	QString str = QString::fromStdString(headList.at(2));
 	str = str.simplified();
 	QStringList sl = str.split("=");
 	if (sl.size() < 2)
@@ -702,7 +729,9 @@ void Hdf5Data::init()
 {
 	if (initInformation())
 		return;
-	if (initStructInformation())
+	if (initM3dStructInformation())
+		return;
+	if (initM2dStructInformation())
 		return;
 }
 /**

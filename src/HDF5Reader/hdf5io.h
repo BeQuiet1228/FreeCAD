@@ -43,7 +43,8 @@ struct CONTROL_EXPORT Hdf5Data
 	CoordinateSystem coordinateSystem;
 	//初始化基本信息
 	bool initInformation();
-	bool initStructInformation();
+	bool initM3dStructInformation();
+	bool initM2dStructInformation();
 	void init();
 
 };
