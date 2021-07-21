@@ -184,7 +184,7 @@ protected:
 	std::vector<DaTaKmt> GetdatasetKmtCylindrical();
 	bool createLines(std::map<int, std::vector<QPoint>> &points,const Data::ValuesPtr &IMX, const Data::ValuesPtr &IMY);
 	std::list<unsigned __int64> isAnAttritbute(unsigned __int64, PROPERTYPE);
-	
+	void setXYTag(DirectionType);
 private:
 	//È«²¿ÇÐ¸î¿Õ¼ä
 	std::map<int, std::vector<QRectF>>	allcutroom;

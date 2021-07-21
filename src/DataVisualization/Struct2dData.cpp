@@ -62,6 +62,8 @@ bool Struct2dData::loadPoint(){
 	//获取横纵坐标的个数
 	posxSize = (*it)->size(); it++;
 	posySize = (*it)->size();
+	setXTag("Z(m)");
+	setYTag("R(m)");
 	//初始化范围
 	initXYRang();
 	initdata();

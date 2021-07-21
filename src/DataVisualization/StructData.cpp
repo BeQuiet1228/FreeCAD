@@ -139,6 +139,7 @@ XYData(heData,mod),istrue(true),mstartpoint(startpoint),mendpoint(endpoint),islo
 */
 bool StructData::loadPoint()
 {
+	setXYTag(mType);
 	switch (mCtype)
 	{
 	case POLAR:
@@ -148,6 +149,7 @@ bool StructData::loadPoint()
 	case CARTESIAN:
 		return loadPointCartesian();
 	}
+	
 }
 /**
 * @brief StructData::loadPointCartesian 加载点位-cartesian坐标系
@@ -1146,4 +1148,40 @@ unsigned int __stdcall  functhread(void*lp)
 	SetEvent(threadSites::threadEvent);
 	llp->lp->segloadRoom(llp->site1, llp->site2);
 	return 0;
+}
+void StructData::setXYTag(DirectionType type)
+{
+	switch (type)
+	{
+	case X_Y:
+	{
+		setXTag("X(m)");
+		setYTag("Y(m)");
+	}
+		break;
+	case X_Z:
+	{
+		setXTag("X(m)");
+		setYTag("Z(m)");
+	}
+		break;
+	case Y_Z:
+	{
+		setXTag("Y(m)");
+		setYTag("Z(m)");
+	}
+		break;
+	case R_Z:
+	{
+		setXTag("Z(m)");
+		setYTag("R(m)");
+	}
+		break;
+	case R_THETA:
+	{
+		setXTag("R*cos(Pin)");
+		setYTag("R*sin(Pin)");
+	}
+		break;
+	}
 }
