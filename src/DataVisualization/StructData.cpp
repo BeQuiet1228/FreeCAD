@@ -532,18 +532,18 @@ bool StructData::loadroomPolarRtheta()
 				tempCurcir.R_excir = r_val[index_R + 1];
 				//内圈切点
 				tempCurcir.inner1 = QPointF(
-					(tempCurcir.R_inner * cos(startAngle) + p0.x()),
-					(p0.y() - tempCurcir.R_inner * sin(startAngle)));
+					(tempCurcir.R_inner * cos(startAngle)),
+					(tempCurcir.R_inner * sin(startAngle)));
 				tempCurcir.inner2 = QPointF(
-					(tempCurcir.R_inner * cos(endAngle) + p0.x()),
-					(p0.y() - tempCurcir.R_inner * sin(endAngle)));
+					(tempCurcir.R_inner * cos(endAngle)),
+					(tempCurcir.R_inner * sin(endAngle)));
 				//外圈切点
 				tempCurcir.excir1 = QPointF(
-					(tempCurcir.R_excir * cos(startAngle + p0.x())),
-					(p0.y() - tempCurcir.R_excir * sin(startAngle)));
+					(tempCurcir.R_excir * cos(startAngle)),
+					(tempCurcir.R_excir * sin(startAngle)));
 				tempCurcir.excir2 = QPointF(
-					(tempCurcir.R_excir * cos(endAngle + p0.x())),
-					(p0.y() - tempCurcir.R_excir * sin(endAngle)));
+					(tempCurcir.R_excir * cos(endAngle)),
+					(tempCurcir.R_excir * sin(endAngle)));
 				//开始角度，结束角度
 				tempCurcir.startAngle = startAngle;
 				tempCurcir.endAngle = endAngle;
@@ -703,18 +703,18 @@ bool StructData::loadroomCylindricalRtheta(){
 				tempCurcir.R_excir = r_val[index_R + 1];
 				//内圈切点
 				tempCurcir.inner1 = QPointF(
-					(tempCurcir.R_inner * cos(startangle) + p0.x()),
-					(p0.y()- tempCurcir.R_inner * sin(startangle)));
+					(tempCurcir.R_inner * cos(startangle)),
+					(tempCurcir.R_inner * sin(startangle)));
 				tempCurcir.inner2 = QPointF(
-					(tempCurcir.R_inner * cos(endangle) + p0.x()),
-					(p0.y() - tempCurcir.R_inner * sin(endangle)));
+					(tempCurcir.R_inner * cos(endangle)),
+					(tempCurcir.R_inner * sin(endangle)));
 				//外圈切点
 				tempCurcir.excir1 = QPointF(
-					(tempCurcir.R_excir * cos(startangle) + p0.x()),
-					(p0.y() - tempCurcir.R_excir * sin(startangle)));
+					(tempCurcir.R_excir * cos(startangle)),
+					(tempCurcir.R_excir * sin(startangle)));
 				tempCurcir.excir2 = QPointF(
-					(tempCurcir.R_excir * cos(endangle) + p0.x()),
-					(p0.y() - tempCurcir.R_excir * sin(endangle)));
+					(tempCurcir.R_excir * cos(endangle)),
+					(tempCurcir.R_excir * sin(endangle)));
 				//开始角度，结束角度
 				tempCurcir.startAngle = startangle;
 				tempCurcir.endAngle = endangle;
