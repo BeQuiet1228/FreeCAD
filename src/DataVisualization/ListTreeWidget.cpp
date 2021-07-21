@@ -211,15 +211,14 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 		art3.erase(art3.find("-#"), art3.size());
 		ss << art3;
 		//观测类型
-		std::string art14 = data.headList[13];
+		//std::string art14 = data.headList[13];
 		//观测对象
 		art3 = getSStr(data.headList[2]);
 		//观测时刻
 		std::string art12 = getSStr(data.headList[11]);
 		{
-			art14.erase(0, art14.find("=") + 1);
-			art14.erase(art14.find(" "), art14.size());
-			art3.erase(0, art3.find("$") + 1);
+			int pos = art3.find("$");
+			art3 = (pos == std::string::npos) ? ("") : (art3.erase(0, art3.find("$") + 1));
 			{
 				std::stringstream s1;
 				s1<<art12.substr(art12.find("OF") + 2, (art12.find("VS") - (art12.find("OF") + 2)))
@@ -229,7 +228,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 			}
 			//art12.erase(0, art12.find("TIME"));
 		}
-		subss << art14<<"_" << art3 <<"_" << art12;
+		subss << art3 <<"." << art12;
 	}
 		break;
 	case emType::RANGE:
