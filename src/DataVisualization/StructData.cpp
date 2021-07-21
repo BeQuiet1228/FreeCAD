@@ -720,7 +720,8 @@ bool StructData::loadroomCylindricalRtheta(){
 #pragma endregion
 #pragma region 筛选属性
 		//默认取中间位置
-		int index = IM1X->size() / 2+IM1X->size()%2;
+	int index = IM1X->size() / 2+IM1X->size()%2;
+//		int index = 4;
 		if (istrue)
 		{
 			int index_min = 1;

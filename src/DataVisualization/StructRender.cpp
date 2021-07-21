@@ -237,7 +237,14 @@ bool StructRender::setDefaultRang(){
 			}
 		}
 			break;
+		case R_THETA:
+		{
+			xr = d->getXRang();
+			yr = d->getYRang();
 		}
+			break;
+		}
+
 		d->setXRang(xr);
 		d->setYRang(yr);
 	}
@@ -439,10 +446,10 @@ bool StructRender::drawImageRandspace(){
 	}
 	auto nImg = img.mirrored(false, true);
 	//auto nImg = img;
-//#define _Debug
+#define _Debug
 #ifdef _Debug
 	static int index = 0;
-	QString _path = QString("C:/Users/ASUS/Desktop/save/savepmg_%1.png").arg(index++);
+	QString _path = QString("C:/Users/DELL/Desktop/h5/savepmg_%1.png").arg(index++);
 	bool res = nImg.save(_path);
 #undef _Debug
 #endif
