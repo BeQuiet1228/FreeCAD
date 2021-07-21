@@ -71,6 +71,12 @@ bool ParticleData::loadPointHard()
 	}else {
 		xIndex = 2;
 		yIndex = 1;
+
+		//跟换横纵标签
+		auto xtag = getYTag();
+		auto ytag = getXTag();
+		setXTag(xtag);
+		setYTag(ytag);
 	}
 	//获取粒子数据
 	Particle p;
