@@ -168,6 +168,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 		}
 	}
 	std::stringstream ss;
+	std::stringstream subss;
 	auto getSStr = [&](std::string str)->std::string{
 		std::string res;
 		res = str;
@@ -179,20 +180,104 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 	//字符串拼接
 	switch (_type)
 	{
-	case emType::CONTOUR:	
+	case emType::VECTOR:
+	{
 		ss << getSStr(data.headList[2]) << getSStr(data.headList[14]);
+		std::string art3 = getSStr(data.headList[2]);
+		std::string art14 = getSStr(data.headList[13]);
+		{
+			art3.erase(0,art3.find("$")+1);
+			art14.erase(0,art14.find("TIME"));
+		}
+		subss << art3 << "_" << art14;
+	}
+	break;
+	case emType::CONTOUR:
+	{
+		ss << getSStr(data.headList[2]) << getSStr(data.headList[14]);
+		std::string art3=getSStr(data.headList[2]);
+		std::string art13 = getSStr(data.headList[12]);
+		{
+			art3.erase(0,art3.find("$")+1);
+			art13.erase(0,art13.find("TIME"));
+		}
+		subss <<art3 <<"_" << art13;
+	}
 		break;
 	case emType::PHASEPACE:
-		ss << getSStr(data.headList[2]);
+	{
+		//ss << getSStr(data.headList[2]);
+		std::string art3 = getSStr(data.headList[2]);
+		art3.erase(art3.find("-#"), art3.size());
+		ss << art3;
+		//观测类型
+		//std::string art14 = data.headList[13];
+		//观测对象
+		art3 = getSStr(data.headList[2]);
+		//观测时刻
+		std::string art12 = getSStr(data.headList[11]);
+		{
+			int pos = art3.find("$");
+			art3 = (pos == std::string::npos) ? ("") : (art3.erase(0, art3.find("$") + 1));
+			{
+				std::stringstream s1;
+				s1<<art12.substr(art12.find("OF") + 2, (art12.find("VS") - (art12.find("OF") + 2)))
+					<< "_" << art12.substr(art12.find("VS") + 2, (art12.find("AT") - (art12.find("VS") + 2)));
+				s1 << art12.substr(art12.find("TIME"),(art12.size() - (art12.find("TIME"))));
+				art12 = s1.str();
+			}
+			//art12.erase(0, art12.find("TIME"));
+		}
+		subss << art3 <<"." << art12;
+	}
 		break;
 	case emType::RANGE:
-		ss << getSStr(data.headList[2]) << getSStr(data.headList[13]);
+	{
+		std::string art3 = getSStr(data.headList[2]);
+		art3.erase(art3.find("-#"), art3.size());
+		ss << art3;
+		//ss << getSStr(data.headList[2]) << getSStr(data.headList[13]);
+		//观测类型
+		std::string art14 = data.headList[13];
+		//观测对象
+		art3 = getSStr(data.headList[2]);
+		//观测时刻
+		std::string art12 = getSStr(data.headList[11]);
+		{
+			art14.erase(0,art14.find("=")+1);
+			art14.erase(art14.find(" "),art14.size());
+			art3.erase(0,art3.find("$")+1);
+			art12.erase(0,art12.find("TIME"));
+		}
+		subss << art14<<"_" << art3<<"_" << art12;
+	}
 		break;
-	case emType::VECTOR:
+	/*case emType::VECTOR:
 		ss << getSStr(data.headList[2]) << getSStr(data.headList[11]);
-		break;
+		break;*/
 	case emType::OBSERVE:
-		ss << getSStr(data.headList[2]) << getSStr(data.headList[13]);
+	{
+		//ss << getSStr(data.headList[2]) << getSStr(data.headList[13]);
+		std::string art3 = getSStr(data.headList[2]);
+		art3.erase(art3.find("-#"),art3.size());
+		ss << art3;
+		std::string art14 = getSStr(data.headList[13]);
+		{
+			transform(art14.begin(), art14.end(), art14.begin(), toupper);
+			//transform(fileFormat.begin(), fileFormat.end(), fileFormat.begin(), tolower);
+			int pos = 0;
+			while (std::string::npos != (pos = art14.find("MAGINTUDE"))) art14.erase(pos,9);
+			while (std::string::npos != (pos = art14.find("OF"))) art14.erase(pos,2);
+			while (std::string::npos != (pos = art14.find("COMPONENT"))) art14.erase(pos, 9);
+			
+			//art14.erase(std::remove_if(art14.begin(), art14.end(), "MAGINTUDE"), art14.end());
+			//art14.erase(std::remove_if(art14.begin(), art14.end(), "OF"), art14.end());
+			//art14.erase(std::remove_if(art14.begin(), art14.end(), "COMPONENT"), art14.end());
+		}
+		art3 = getSStr(data.headList[2]);
+		art3.erase(0,art3.find("$")+1);
+		subss <<art14<<"_" << art3;
+	}
 		break;
 	}
 	observingstr = ss.str();
@@ -228,8 +313,8 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 		observeItem = iter->second;
 	}
 	int row = observeItem->rowCount();
-	ss<<"_"<<row;
-	QStandardItem* childItem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(ss.str().c_str(),ENCODING_GB2312));
+	//ss<<"_"<<row;
+	QStandardItem* childItem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(/*ss.str().c_str()*/subss.str().c_str(),ENCODING_GB2312));
 	datainfor[childItem] = index;
 	observeItem->setChild(row, childItem);
 }
