@@ -19,7 +19,11 @@ public:
 	//新增默认构造
 	RendererFactory();
 	~RendererFactory() =default;
-
+	enum STRUCTTYPE
+	{
+		MOD_2D = 2,
+		MOD_3D
+	};
 public:
 	Renderers creatRenderers(Hdf5Data h5d,DirectionType type = X_Y);
 	RendererPtr creatContourStructRender(std::shared_ptr<ContourRender>& contourRender);
@@ -33,7 +37,7 @@ public:
 	static DataPtr creatInterspaceData(Hdf5Data h5d);
 
 	static RendererPtr creatStructRender(Hdf5Data h5d, DirectionType type = X_Y);
-	static RendererPtr creatStructRender(Hdf5Data h5d, const _3DPointf& start,const _3DPointf& end);
+	static RendererPtr creatStructRender(Hdf5Data h5d, STRUCTTYPE md,const _3DPointf& start,const _3DPointf& end);
 	static RendererPtr creatVectorRender(Hdf5Data h5d);
 
 	//寻找结构图

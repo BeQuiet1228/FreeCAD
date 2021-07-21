@@ -74,8 +74,23 @@ bool Struct2DRenderer::setDefaultRang(){
 	auto _Struct2DData = std::dynamic_pointer_cast<Struct2dData>(data);
 	if (!_Struct2DData)
 		return false;
-	setXRang(_Struct2DData->getXRang());
-	setYRang(_Struct2DData->getYRang());
+	if (_Struct2DData->istrue)
+	{
+		Data::Rang xr;
+		Data::Rang yr;
+		xr.min = _Struct2DData->mstart.x();
+		xr.max = _Struct2DData->mend.x();
+		yr.min = _Struct2DData->mstart.y();
+		yr.max = _Struct2DData->mend.y();
+		setXRang(xr);
+		setYRang(yr);
+	}
+	else
+	{
+		setXRang(_Struct2DData->getXRang());
+		setYRang(_Struct2DData->getYRang());
+	}
+	
 	return true;
 }
 /**
