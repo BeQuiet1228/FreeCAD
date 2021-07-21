@@ -237,7 +237,14 @@ bool StructRender::setDefaultRang(){
 			}
 		}
 			break;
+		case R_THETA:
+		{
+			xr = d->getXRang();
+			yr = d->getYRang();
 		}
+			break;
+		}
+
 		d->setXRang(xr);
 		d->setYRang(yr);
 	}
@@ -293,7 +300,7 @@ QVector<QPainterPath> StructRender::GetPath(std::vector<StructData::CutCir>& _ve
 		excirrect.setBottom(p0.y() + VR);
 		excirrect.setRight(p0.x()+ HR);
 
-		path.arcTo(excirrect, iterrect->startAngle*w1, ((iterrect->endAngle*w1) - (iterrect->startAngle*w1)));
+		path.arcTo(excirrect, -iterrect->startAngle*w1, -((iterrect->endAngle*w1) - (iterrect->startAngle*w1)));
 		path.lineTo(iterrect->inner2);
 		HR = iterrect->R_inner*xScale;
 		VR = iterrect->R_inner*yScale;
@@ -301,7 +308,7 @@ QVector<QPainterPath> StructRender::GetPath(std::vector<StructData::CutCir>& _ve
 		excirrect.setTop(p0.y() - VR);
 		excirrect.setBottom(p0.y() + VR);
 		excirrect.setRight(p0.x() + HR);
-		path.arcTo(excirrect, iterrect->endAngle*w1, ((iterrect->startAngle*w1) - (iterrect->endAngle*w1)));
+		path.arcTo(excirrect, -iterrect->endAngle*w1, -((iterrect->startAngle*w1) - (iterrect->endAngle*w1)));
 		pathlist.push_back(path);
 #pragma  endregion
 	}
@@ -437,12 +444,12 @@ bool StructRender::drawImageRandspace(){
 				painter.drawPath(*iterpath);
 		}
 	}
-	auto nImg = img.mirrored(false, false);
+	auto nImg = img.mirrored(false, true);
 	//auto nImg = img;
-//#define _Debug
+#define _Debug
 #ifdef _Debug
 	static int index = 0;
-	QString _path = QString("C:/Users/ASUS/Desktop/save/savepmg_%1.png").arg(index++);
+	QString _path = QString("C:/Users/DELL/Desktop/h5/savepmg_%1.png").arg(index++);
 	bool res = nImg.save(_path);
 #undef _Debug
 #endif
@@ -621,10 +628,10 @@ bool StructRender::drawPointCir(){
 	painter.setPen(pen);
 	//获取当前点位
 	QPointF A_Point = this->getFindPosition();
-	A_Point.setY(getSize().height()-A_Point.y());
+	//A_Point.setY(getSize().height()-A_Point.y());
 	StructData::structpoint _point = findApointCylindrical(A_Point);
 	//坐标翻转
-	//_point.y = getSize().height() - _point.y;
+	_point.y = getSize().height() - _point.y;
 	painter.drawPoint(QPointF(_point.x, _point.y));
 	std::map<QString, float> list;
 	list["R"] = _point.d1;

@@ -9,6 +9,7 @@ class Struct2dData:public XYData
 {
 public:
 	Struct2dData(Hdf5Data& heData, const RunMod& mode = SINGLE_THREAD);
+	Struct2dData(Hdf5Data& heData,QPointF start,QPointF end,const RunMod& mode = SINGLE_THREAD);
 	~Struct2dData();
 protected:
 	virtual void restorDeriveData() override;
@@ -69,5 +70,10 @@ private:
 	std::map<int, std::map<int, std::vector<QPointF>>> lineinfo;
 	//全部点位，(包括多边型内部的网格点)
 	std::vector<QPointF> ALLPointf;
+	//去点选择范围
+public:
+	QPointF mstart;
+	QPointF mend;
+	bool istrue;
  };
 #endif

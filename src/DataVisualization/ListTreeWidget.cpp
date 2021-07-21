@@ -399,6 +399,9 @@ void ListTreeWidget::toStructh5df(Hdf5Data& data, int index)
 		structstr.erase(std::remove_if(structstr.begin(), structstr.end(), isspace), structstr.end());
 		int _j = structstr.find("=");
 		structstr.erase(0, _j + 1);
+		int pos1 = structstr.find("$");
+		int pos2=structstr.find("$",pos1+1);
+		structstr=structstr.substr(pos1+1, pos2 - pos1-1);
 		QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(structstr.c_str(), ENCODING_GB2312));
 		int row = item->rowCount();
 		item->setChild(row, subitem);

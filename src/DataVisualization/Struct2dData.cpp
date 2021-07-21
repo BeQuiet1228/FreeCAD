@@ -5,7 +5,7 @@
 * @param  const RunMod & mode  
 * @return   
 */
-Struct2dData::Struct2dData(Hdf5Data& heData, const RunMod& mode):XYData(heData,mode){
+Struct2dData::Struct2dData(Hdf5Data& heData, const RunMod& mode):XYData(heData,mode),istrue(false){
 }
 /**
 * @brief  Struct2dData::~Struct2dData
@@ -168,4 +168,11 @@ std::list<unsigned __int64> Struct2dData::isAnAttribute(unsigned __int64 p, Stru
 		return list;
 	}
 	}
+}
+
+Struct2dData::Struct2dData(Hdf5Data& heData, QPointF start, QPointF end, const RunMod& mode)
+	:XYData(heData, mode),istrue(true)
+{
+	mstart = start;
+	mend = end;
 }
