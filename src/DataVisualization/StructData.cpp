@@ -690,12 +690,8 @@ bool StructData::loadroomCylindricalRtheta(){
 		{
 			for (auto index_rand = 0; index_rand < rand_val.size() - 1; index_rand++)
 			{
-				/*qreal startangle = (rand_val[index_rand] + pi)>(2 * pi)?
-					(rand_val[index_rand] + pi - 2 * pi):(rand_val[index_rand]+pi);
-				qreal endangle = (rand_val[index_rand + 1] + pi)>(2 * pi)?
-					(rand_val[index_rand+1]+pi-2*pi):(rand_val[index_rand+1]);*/
-				qreal startangle = rand_val[index_rand]/*+M_PI*/;
-				qreal endangle = rand_val[index_rand + 1]/*+M_PI*/;
+				qreal startangle = rand_val[index_rand];
+				qreal endangle = rand_val[index_rand + 1];
 				CutCir tempCurcir;
 				//ÄÚÈ¦°ë¾¶
 				tempCurcir.R_inner = r_val[index_R];
