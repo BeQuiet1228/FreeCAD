@@ -69,14 +69,14 @@ bool ContourData::loadPoint()
 	auto xIter = xg->begin();
 	auto yIter = yg->begin();
 	auto vIter = vg->begin();
-
+	width = xg->size();
+	height = yg->size();
 
 	Rang vr;
 	vr.min = vr.max = *vIter;
 	Grid tempGrid;
 	if (isTruedir()) {
-		width = xg->size();
-		height = yg->size();
+
 		for (; yIter != yg->end() && vIter != vg->end(); yIter++)
 		{
 			for (xIter = xg->begin(); xIter != xg->end() && vIter != vg->end(); xIter++)
@@ -97,8 +97,6 @@ bool ContourData::loadPoint()
 
 		}
 	}else {
-		height = xg->size();
-		width = yg->size();
 		for (int h = 0; h < yg->size(); h++)
 		{
 			
