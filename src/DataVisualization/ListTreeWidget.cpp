@@ -182,24 +182,32 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 	{
 	case emType::VECTOR:
 	{
-		ss << getSStr(data.headList[2]) << getSStr(data.headList[14]);
 		std::string art3 = getSStr(data.headList[2]);
 		std::string art14 = getSStr(data.headList[13]);
+		std::string art12 = getSStr(data.headList[11]);
 		{
+			//transform(art12.begin(),art12.end(),art12.begin(),toupper);
+			//int pos = 0;
+			/*while (std::string::npos != (pos = art12.find("VECTOR"))) art12.erase(pos, 6);
+			while (std::string::npos != (pos = art12.find("OF"))) art12.erase(pos, 2);
+			while (std::string::npos != (pos = art12.find("PLOT"))) art12.erase(pos, 2);*/
+			art12.erase(0,art12.find("("));
 			art3.erase(0,art3.find("$")+1);
-			art14.erase(0,art14.find("TIME"));
+			art14.erase(0,art14.find("TIME:")+5);
 		}
+		ss << "PLOT" << art12;
 		subss << art3 << "_" << art14;
 	}
 	break;
 	case emType::CONTOUR:
 	{
-		ss << getSStr(data.headList[2]) << getSStr(data.headList[14]);
+		
 		std::string art3=getSStr(data.headList[2]);
+		ss <<art3.substr(0,art3.find("-#"));
 		std::string art13 = getSStr(data.headList[12]);
 		{
 			art3.erase(0,art3.find("$")+1);
-			art13.erase(0,art13.find("TIME"));
+			art13.erase(0,art13.find("TIME")+4);
 		}
 		subss <<art3 <<"_" << art13;
 	}
@@ -223,7 +231,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 				std::stringstream s1;
 				s1<<art12.substr(art12.find("OF") + 2, (art12.find("VS") - (art12.find("OF") + 2)))
 					<< "_" << art12.substr(art12.find("VS") + 2, (art12.find("AT") - (art12.find("VS") + 2)));
-				s1 << art12.substr(art12.find("TIME"),(art12.size() - (art12.find("TIME"))));
+				s1 << "_"<<art12.substr(art12.find("TIME") + 5, (art12.size() - (art12.find("TIME") + 5)));
 				art12 = s1.str();
 			}
 			//art12.erase(0, art12.find("TIME"));
@@ -247,7 +255,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 			art14.erase(0,art14.find("=")+1);
 			art14.erase(art14.find(" "),art14.size());
 			art3.erase(0,art3.find("$")+1);
-			art12.erase(0,art12.find("TIME"));
+			art12.erase(0,art12.find("TIME")+5);
 		}
 		subss << art14<<"_" << art3<<"_" << art12;
 	}
