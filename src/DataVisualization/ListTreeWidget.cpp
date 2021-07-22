@@ -354,51 +354,18 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 	{
 		//根据时间进行排序
 		QStandardItem* childItem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(/*ss.str().c_str()*/subss.str().c_str(), ENCODING_GB2312));
-		std::vector<QStandardItem*> childitems;
-#if 0
-		bool isbreak=false;
-		for (int rowindex=0;rowindex<row;rowindex++)
-		{
-			QStandardItem* item = observeItem->child(rowindex);
-			auto oberiter = datainfor.find(item);
-			if (oberiter->second.time>mitemInfo.time)
-			{
-				childitems.push_back((childItem));
-				isbreak = true;
-			}
-			childitems.push_back((item));
-		}
-		if (!isbreak)
-			childitems.push_back((childItem));
-		for (auto rowindex=0; rowindex <childitems.size();rowindex++)
-		{
-			observeItem->setChild(rowindex,(childitems[rowindex]));
-		}
-#endif
 		datainfor[childItem] = mitemInfo;
-		//if (row == 1)
-		//{
-		//	QStandardItem* item = observeItem->child(0);
-		//	observeItem->setChild(row, childItem);
-		//	auto iter = datainfor.find(item);
-		//	if (iter->second.time>mitemInfo.time)
-		//	{
-		//		observeItem->insertRow();
-		//	}
-		//}
-		
-		for (int rowindex=row-1;rowindex>=0;rowindex--)
+		int currow = 0;
+		for (int rowindex=0;rowindex< row;rowindex++)
 		{
 			QStandardItem* item=observeItem->child(rowindex);
 			auto iter=datainfor.find(item);
-			if (iter->second.time<mitemInfo.time)
-			{
-			//	currow = rowindex;
-				break;
-			}
+			auto res=(iter->second.time < mitemInfo.time);
+			if (res)	currow = rowindex+1;
 		}
 		observeItem->insertRow(currow,childItem);
 	}
+	return;
 }
 /**
 * @brief  ListTreeWidget::clear 清除树控件
