@@ -32,6 +32,7 @@ void smartCalc::initUI()
 	connect(ui->addPushbutton,SIGNAL(clicked(bool)),this,SLOT(BtnClicked(bool)));
 	connect(ui->deletePushbutton,SIGNAL(clicked(bool)),this,SLOT(BtnClicked(bool)));
 	connect(ui->run,SIGNAL(clicked(bool)),this,SLOT(BtnClicked(bool)));
+	connect(ui->stop, SIGNAL(clicked(bool)), this, SLOT(BtnClicked(bool)));
 }
 void smartCalc::initData()
 {
@@ -55,6 +56,12 @@ void smartCalc::BtnClicked(bool b)
 		deleteButton(b);
 	else if(sender()==ui->run)
 		run(b);
+	else if (sender() == ui->stop)
+	{
+		smartContorl->stop();
+		auto data = SmartContorlData::GetInstance();
+		data->clear();
+	}
 }
 void smartCalc::addButton(bool b)
 {
