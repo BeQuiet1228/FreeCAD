@@ -367,6 +367,9 @@ void ControlTreeWidget::treeDoubleClickTimeOut()
 
 void ControlTreeWidget::openResultFile(std::string path)
 {
+	auto control = ContorlInterface::GetInstance();
+	if (control->chipicRunModIsAuto())
+		return;
 	auto mw = Gui::MainWindow::getInstance();
 	mw->hideContorlUI();
 
