@@ -3,6 +3,7 @@ extern "C"{
 #include <lua/lua.h>
 #include <lua/lualib.h>
 #include <lua/lauxlib.h>
+#include <transition/transition.h>
 }
 #include <iostream>
 #include "LuaCInterface.h"
@@ -12,7 +13,9 @@ extern "C"{
 #include <QTextIStream>
 #include "SmartContorlData.h"
 #include <QMessageBox>
-#include "Contorl/MessageTransition.h"
+#include <QTextCodec>
+
+
 SmartContorl::SmartContorl()
 	:makeRunDataType(CONBINATION)
 {
@@ -614,8 +617,8 @@ void SmartContorl::chipicErrorClose(unsigned long threadID)
 	{
 		QMessageBox *msgBox = new QMessageBox;
 		msgBox->setAttribute(Qt::WA_DeleteOnClose);
-		msgBox->setWindowTitle(QString::fromLocal8Bit("提示"));
-		msgBox->setText(QString::fromLocal8Bit("m3d文本出错，导致优化算法停止运行，文本路径:%1").arg(m3dPath));
+		msgBox->setWindowTitle(gbkStdstringToQstring("提示"));
+		msgBox->setText(gbkStdstringToQstring("m3d文本出错，导致优化算法停止运行，文本路径:%1").arg(chipicData->m3dPath));
 		msgBox->show();
 		this->stop();
 		return;

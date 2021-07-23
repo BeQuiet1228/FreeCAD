@@ -303,9 +303,15 @@ void ControlTreeWidget::itemDouble_clicke(QTreeWidgetItem* item, int column)
 
 void ControlTreeWidget::outputStructFile(unsigned long threadID)
 {
+	auto control = ContorlInterface::GetInstance();
+	if (!control->hasManualChipicRuning())
+		return;
+
 	QString filePath = makeFilePath(threadID);
 	if (filePath == QString::fromStdString(""))
 		return;
+
+
 
 	//打开结构图文件 获取结构图对象
 	Hdf5IO tempIO;
