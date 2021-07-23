@@ -145,6 +145,7 @@ void ListTreeWidget::double_clicked_event(const QModelIndex &index)
 	if (iter != datainfor.end())
 	{
 		//传入hdf5数据
+		qDebug() <<"-----------------------" << iter->second.index;
 		std::string name = (index.data().toString()).toStdString();
 		emit _transfromRenderer(name, iter->second.index);
 	}
@@ -174,10 +175,20 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 	auto getSStr = [&](std::string str)->std::string{
 		std::string res;
 		res = str;
-		res.erase(std::remove_if(res.begin(),res.end(),isspace),res.end());
+		//res.erase(std::remove_if(res.begin(),res.end(),isspace),res.end());
 		int pos = res.find("=");
 		res.erase(0, pos + 1);
-		return res;
+		QString qres = QString::fromStdString(res);
+		qres = qres.simplified();
+		//qres=qres.replace(" ","_");
+		return qres.toStdString();
+	};
+	auto replaceStr = [&](std::string str)->std::string
+	{
+		QString qstr = QString::fromStdString(str);
+		qstr = qstr.simplified();
+		qstr = qstr.replace(QRegExp("\\s{1,}"), "_");
+		return qstr.toStdString();
 	};
 	//字符串拼接
 	switch (_type)
@@ -198,7 +209,9 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 			art14.erase(0,art14.find("TIME:")+5);
 		}
 		ss << "PLOT" << art12;
-		subss << art3 << "_" << art14;
+		//测试
+		//subss << art12 << " ";
+		subss << art3 << " " << art14;
 		{
 			//获取时间
 			std::string mt = art14;
@@ -208,15 +221,18 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 	break;
 	case emType::CONTOUR:
 	{
-		
+		//等位图
 		std::string art3=getSStr(data.headList[2]);
+		//std::string art3=std::remove_space
 		ss <<art3.substr(0,art3.find("-#"));
 		std::string art13 = getSStr(data.headList[12]);
 		{
 			art3.erase(0,art3.find("$")+1);
 			art13.erase(0,art13.find("TIME")+4);
 		}
-		subss <<art3 <<"_" << art13;
+		//测试
+		//subss << ss.str()<<" ";
+		subss <<art3 <<" " << art13;
 		{
 			//保存时间
 			std::string mt = art13;
@@ -226,6 +242,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 		break;
 	case emType::PHASEPACE:
 	{
+		//相空间图
 		//ss << getSStr(data.headList[2]);
 		std::string art3 = getSStr(data.headList[2]);
 		art3.erase(art3.find("-#"), art3.size());
@@ -249,13 +266,13 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 			{
 				std::stringstream s1;
 				s1<<art12.substr(art12.find("OF") + 2, (art12.find("VS") - (art12.find("OF") + 2)))
-					<< "_" << art12.substr(art12.find("VS") + 2, (art12.find("AT") - (art12.find("VS") + 2)));
-				s1 << "_"<<art12.substr(art12.find("TIME") + 5, (art12.size() - (art12.find("TIME") + 5)));
+					<< " " << art12.substr(art12.find("VS") + 2, (art12.find("AT") - (art12.find("VS") + 2)));
+				s1 << " "<<art12.substr(art12.find("TIME") + 5, (art12.size() - (art12.find("TIME") + 5)));
 				art12 = s1.str();
 			}
 			//art12.erase(0, art12.find("TIME"));
 		}
-		subss << art3 <<"." << art12;
+		subss << art3 <<" " << art12;
 	}
 		break;
 	case emType::RANGE:
@@ -276,7 +293,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 			art3.erase(0,art3.find("$")+1);
 			art12.erase(0,art12.find("TIME")+5);
 		}
-		subss << art14<<"_" << art3<<"_" << art12;
+		subss << art14<<" " << art3<<" " << art12;
 		{
 			std::string mt = art12;
 			mitemInfo.time = QString::fromStdString(mt.erase(mt.find("SEC"), mt.size())).toDouble();
@@ -307,11 +324,13 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 		}
 		art3 = getSStr(data.headList[2]);
 		art3.erase(0,art3.find("$")+1);
-		subss <<art14<<"_" << art3;
+		subss <<art14<<" "<< art3;
 	}
 		break;
 	}
-	observingstr = ss.str();
+
+	observingstr =replaceStr(ss.str());
+
 	auto iter = parentnode.find(observingstr);
 	QStandardItem* observeItem;
 	//没有记录该观测面
@@ -346,14 +365,14 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 	int row = observeItem->rowCount();
 	if (row==0 || mitemInfo.time<0.0)
 	{
-		QStandardItem* childItem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(/*ss.str().c_str()*/subss.str().c_str(), ENCODING_GB2312));
+		QStandardItem* childItem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(replaceStr(subss.str()).c_str(), ENCODING_GB2312));
 		datainfor[childItem] = mitemInfo;
 		observeItem->setChild(row, childItem);
 	}
 	else
 	{
 		//根据时间进行排序
-		QStandardItem* childItem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(/*ss.str().c_str()*/subss.str().c_str(), ENCODING_GB2312));
+		QStandardItem* childItem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(replaceStr(subss.str()).c_str(), ENCODING_GB2312));
 		datainfor[childItem] = mitemInfo;
 		int currow = 0;
 		for (int rowindex=0;rowindex< row;rowindex++)
