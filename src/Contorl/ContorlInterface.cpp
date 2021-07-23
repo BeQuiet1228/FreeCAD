@@ -146,6 +146,12 @@ unsigned int ContorlInterface::getChipicThreadCount(unsigned long threadID)
 	return manager->getChipicThreadCount(threadID);
 }
 
+bool ContorlInterface::chipicRunModIsAuto()
+{
+	auto manager = getChipicManager();
+	return	(manager->getRunType() == ChipicManager::AUTO);
+}
+
 /**
 * @brief ContorlInterface::getChipicManager 返回chipic管理器指针  这个指针由contorl对象管理 
 * @return ChipicManager*
