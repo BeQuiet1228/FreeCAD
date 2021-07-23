@@ -42,6 +42,7 @@ public:
   ///
   /// \param[in] button The button
   void removeButton(QToolButton *button);
+  void removeButtons();
   QList<QAction*> get_action_all();
 protected:
 	void paintEvent(QPaintEvent *event);

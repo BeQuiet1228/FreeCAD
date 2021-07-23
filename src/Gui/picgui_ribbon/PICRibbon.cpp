@@ -8,7 +8,7 @@
 #include <QPainter>
 #include "picgui_ribbon/moc_PICRibbon.cpp"
 #include <iostream>
-
+#include"darWer.h"
 #define WIGET_INTERVAL (30)
 Ribbon::Ribbon(QWidget *parent)
 	: QTabWidget(parent)
@@ -491,10 +491,13 @@ void Ribbon::setScale(QSize& size,bool state) {
 	}
 	else
 	{
+		int curindex=QTabWidget::currentIndex();
 		for (auto index = 0; index < count(); index++)
 		{
+			/*QTabWidget::setCurrentIndex(index);*/
 			toScale(index, size);
 		}
+		QTabWidget::setCurrentIndex(curindex);
 	}
 }
 /**
@@ -505,6 +508,7 @@ void Ribbon::setScale(QSize& size,bool state) {
 */
 bool Ribbon::toScale(unsigned int index,QSize& size)
 {
+	QTabWidget::setCurrentIndex(index);
 #if 0
 	QWidget* tab = QTabWidget::widget(index);
 	PICRibbonTabContent* picribbontabcontent = dynamic_cast<PICRibbonTabContent*>(tab);
@@ -563,22 +567,53 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 		}
 	}
 #endif
-
+	auto sunlist = [&](std::vector<float>& a)->float {
+		float width = 0.0f;
+		for (auto iter = a.begin(); iter != a.end(); iter++)
+		{
+			qDebug() << *iter;
+			width += *(iter);
+		}
+			
+		return width;
+	};
 	//收缩
-	//step1:获取tab页的大小
+	//step1:获取tab页
 	QWidget* tab = QTabWidget::widget(index);
-	QSize qsize = tab->size();
 	//step2:获取各组件的大小
 	PICRibbonTabContent* mtab = dynamic_cast<PICRibbonTabContent*>(tab);
-	for (auto subindex = 0; subindex < mtab->contentLayout->count(); subindex++)
+	float widthmax = 0;
+	std::vector<PICRibbonButtonGroup*> groups;
+	for (auto groupindex=0;groupindex<mtab->contentLayout->count();groupindex++)
 	{
-		PICRibbonButtonGroup* mSubwidget = dynamic_cast<PICRibbonButtonGroup*>
-			(mtab->contentLayout->itemAt(subindex)->widget());
-		QSize subsize = mSubwidget->size();
-		qDebug() << index << ":" << "subsize:" << subsize;
+		PICRibbonButtonGroup* groupbutton = dynamic_cast<PICRibbonButtonGroup*>
+			(mtab->contentLayout->itemAt(groupindex)->widget());
+		groups.push_back(groupbutton);
+		widthmax += groupbutton->size().width();
 	}
-	//step3:获取某组下的QToolButton的大小
-	
+	//step3:检查大小差,判断是否需要收进抽屉
+	//qDebug()<<index<<":" << widthmax << size << abs(size.width() - widthmax);
+	if (size.width() - widthmax > 24)
+		return false;
+	//step4:开始收进抽屉
+	qDebug() << "toScale:" << index;
+	for(int groupindex=groups.size()-1; groupindex >=0; groupindex--)
+	{
+		auto iter = mydarWer.find(groups[groupindex]->title());
+		if (/*iter==mydarWer.end()*/true)
+		{
+			//step5:可以缩放
+			QWidget* parent = reinterpret_cast<QWidget*>(MaindefStie);
+			std::list<QAction*> mActions = groups[groupindex]->get_action_all().toStdList();
+			darWer* newgroup = new darWer(parent);
+			newgroup->insertbutton(mActions);
+			//step6:放入用来存储抽屉的表中
+			mydarWer.insert(std::pair<QString,QWidget*>(groups[groupindex]->title(),newgroup));
+			//step7:清除
+			groups[groupindex]->removeButtons();
+			break;
+		}
+	}
 	return true;
 }
 
@@ -691,7 +726,7 @@ bool Ribbon::unFold(unsigned int index, QSize& size)
 	//step1:获取tab页的大小
 	QWidget* tab = QTabWidget::widget(index);
 	QSize qsize = tab->size();
-	qDebug() << "tabsize:" << index << "-->" << qsize;
+
 	return true;
 }
 /**

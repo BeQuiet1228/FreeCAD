@@ -39,6 +39,7 @@ int PICRibbonButtonGroup::buttonCount() const
 
 void PICRibbonButtonGroup::addButton(QToolButton *button)
 {
+  button->setParent(this);
   button->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
   button->setMinimumSize(24, 24);
   button->setAutoRaise(true);
@@ -48,11 +49,6 @@ void PICRibbonButtonGroup::addButton(QToolButton *button)
 
   int xPos = btnCount % 3;
   int yPos = btnCount / 3;
-
-//  qDebug()<<btnCount;
-//  qDebug()<<xPos;
-//  qDebug()<<yPos;
-
   ui->gridLayout_btn->addWidget(button, xPos, yPos);
 }
 void PICRibbonButtonGroup::addButton2(QToolButton *button)
@@ -93,4 +89,14 @@ void PICRibbonButtonGroup::paintEvent(QPaintEvent *event)
 
 	style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }
-
+void PICRibbonButtonGroup::removeButtons()
+{
+	//全部清理
+	//QList<QToolButton*> list_b = this->findChildren<QToolButton*>();
+	std::list<QToolButton*> list_b = this->findChildren<QToolButton*>().toStdList();
+	for each (auto var in list_b)
+	{
+		removeButton(var);
+		var->hide();
+	}
+}
