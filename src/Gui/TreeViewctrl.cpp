@@ -72,7 +72,7 @@ namespace Gui{
 		{
 			//传入hdf5数据
 			std::string name = (index.data().toString()).toStdString();
-			docM->_ToRenderer(name, iter->second);
+			docM->_ToRenderer(name, iter->second.index);
 		}
 	}
 	/**

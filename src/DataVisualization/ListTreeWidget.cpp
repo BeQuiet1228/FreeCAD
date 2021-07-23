@@ -146,7 +146,7 @@ void ListTreeWidget::double_clicked_event(const QModelIndex &index)
 	{
 		//传入hdf5数据
 		std::string name = (index.data().toString()).toStdString();
-		emit _transfromRenderer(name, iter->second);
+		emit _transfromRenderer(name, iter->second.index);
 	}
 }
 /**
@@ -157,6 +157,8 @@ void ListTreeWidget::double_clicked_event(const QModelIndex &index)
 */
 void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 	std::string observingstr;
+	itemInfo mitemInfo;
+	mitemInfo.index = index;
 	//获取观测面
 	int _type = -1;
 	for (auto i = 0; i < MAX_TYPE_NUMBER;i++)
@@ -182,26 +184,44 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 	{
 	case emType::VECTOR:
 	{
-		ss << getSStr(data.headList[2]) << getSStr(data.headList[14]);
 		std::string art3 = getSStr(data.headList[2]);
 		std::string art14 = getSStr(data.headList[13]);
+		std::string art12 = getSStr(data.headList[11]);
 		{
+			//transform(art12.begin(),art12.end(),art12.begin(),toupper);
+			//int pos = 0;
+			/*while (std::string::npos != (pos = art12.find("VECTOR"))) art12.erase(pos, 6);
+			while (std::string::npos != (pos = art12.find("OF"))) art12.erase(pos, 2);
+			while (std::string::npos != (pos = art12.find("PLOT"))) art12.erase(pos, 2);*/
+			art12.erase(0,art12.find("("));
 			art3.erase(0,art3.find("$")+1);
-			art14.erase(0,art14.find("TIME"));
+			art14.erase(0,art14.find("TIME:")+5);
 		}
+		ss << "PLOT" << art12;
 		subss << art3 << "_" << art14;
+		{
+			//获取时间
+			std::string mt = art14;
+			mitemInfo.time = QString::fromStdString(mt.erase(mt.find("SEC"), mt.size())).toDouble();
+		}
 	}
 	break;
 	case emType::CONTOUR:
 	{
-		ss << getSStr(data.headList[2]) << getSStr(data.headList[14]);
+		
 		std::string art3=getSStr(data.headList[2]);
+		ss <<art3.substr(0,art3.find("-#"));
 		std::string art13 = getSStr(data.headList[12]);
 		{
 			art3.erase(0,art3.find("$")+1);
-			art13.erase(0,art13.find("TIME"));
+			art13.erase(0,art13.find("TIME")+4);
 		}
 		subss <<art3 <<"_" << art13;
+		{
+			//保存时间
+			std::string mt = art13;
+			mitemInfo.time = QString::fromStdString(mt.erase(mt.find("SEC"),mt.size())).toDouble();
+		}
 	}
 		break;
 	case emType::PHASEPACE:
@@ -217,13 +237,20 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 		//观测时刻
 		std::string art12 = getSStr(data.headList[11]);
 		{
+			//获取时间
+			std::string mt = art12;
+			mt.erase(0,mt.find("TIME:")+5);
+			mt.erase(mt.find("SEC"), mt.size());
+			mitemInfo.time = QString::fromStdString(mt).toDouble();
+		}
+		{
 			int pos = art3.find("$");
 			art3 = (pos == std::string::npos) ? ("") : (art3.erase(0, art3.find("$") + 1));
 			{
 				std::stringstream s1;
 				s1<<art12.substr(art12.find("OF") + 2, (art12.find("VS") - (art12.find("OF") + 2)))
 					<< "_" << art12.substr(art12.find("VS") + 2, (art12.find("AT") - (art12.find("VS") + 2)));
-				s1 << art12.substr(art12.find("TIME"),(art12.size() - (art12.find("TIME"))));
+				s1 << "_"<<art12.substr(art12.find("TIME") + 5, (art12.size() - (art12.find("TIME") + 5)));
 				art12 = s1.str();
 			}
 			//art12.erase(0, art12.find("TIME"));
@@ -247,9 +274,13 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 			art14.erase(0,art14.find("=")+1);
 			art14.erase(art14.find(" "),art14.size());
 			art3.erase(0,art3.find("$")+1);
-			art12.erase(0,art12.find("TIME"));
+			art12.erase(0,art12.find("TIME")+5);
 		}
 		subss << art14<<"_" << art3<<"_" << art12;
+		{
+			std::string mt = art12;
+			mitemInfo.time = QString::fromStdString(mt.erase(mt.find("SEC"), mt.size())).toDouble();
+		}
 	}
 		break;
 	/*case emType::VECTOR:
@@ -313,10 +344,28 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 		observeItem = iter->second;
 	}
 	int row = observeItem->rowCount();
-	//ss<<"_"<<row;
-	QStandardItem* childItem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(/*ss.str().c_str()*/subss.str().c_str(),ENCODING_GB2312));
-	datainfor[childItem] = index;
-	observeItem->setChild(row, childItem);
+	if (row==0 || mitemInfo.time<0.0)
+	{
+		QStandardItem* childItem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(/*ss.str().c_str()*/subss.str().c_str(), ENCODING_GB2312));
+		datainfor[childItem] = mitemInfo;
+		observeItem->setChild(row, childItem);
+	}
+	else
+	{
+		//根据时间进行排序
+		QStandardItem* childItem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(/*ss.str().c_str()*/subss.str().c_str(), ENCODING_GB2312));
+		datainfor[childItem] = mitemInfo;
+		int currow = 0;
+		for (int rowindex=0;rowindex< row;rowindex++)
+		{
+			QStandardItem* item=observeItem->child(rowindex);
+			auto iter=datainfor.find(item);
+			auto res=(iter->second.time < mitemInfo.time);
+			if (res)	currow = rowindex+1;
+		}
+		observeItem->insertRow(currow,childItem);
+	}
+	return;
 }
 /**
 * @brief  ListTreeWidget::clear 清除树控件
@@ -341,16 +390,10 @@ void ListTreeWidget::clear()
 */
 void ListTreeWidget::toStructh5df(Hdf5Data& data, int index)
 {
-
+	itemInfo mitemInfo;
+	mitemInfo.index = index;
 	if (data.name.find("struct") == std::string::npos)
 		return;
-	//判断头部文件信息数量
-	//if (structHeadCount < data.headList.size())
-	//{
-	//	structHeadCount = data.headList.size();
-	//}
-	//else
-	//	return;
 	std::string dataType = GetType(data.name);
 	auto iter = parentnode.find(dataType);
 	QStandardItem* item;
@@ -374,7 +417,7 @@ void ListTreeWidget::toStructh5df(Hdf5Data& data, int index)
 			{
 				int subrow = item->rowCount();
 				QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]), QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
-				datainfor[subitem] = index;
+				datainfor[subitem] = mitemInfo;
 				item->setChild(subrow, subitem);
 			}
 		}
@@ -386,7 +429,7 @@ void ListTreeWidget::toStructh5df(Hdf5Data& data, int index)
 			{
 				int subrow = item->rowCount();
 				QStandardItem* subItem = new QStandardItem(QIcon(Treeicon[1]), QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
-				datainfor[subItem] = index;
+				datainfor[subItem] = mitemInfo;
 				item->setChild(subrow, subItem);
 			}
 		}
@@ -405,7 +448,7 @@ void ListTreeWidget::toStructh5df(Hdf5Data& data, int index)
 		QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(structstr.c_str(), ENCODING_GB2312));
 		int row = item->rowCount();
 		item->setChild(row, subitem);
-		datainfor[subitem] = index;
+		datainfor[subitem] = mitemInfo;
 	}
 }
 #include "moc_ListTreeWidget.cpp"
