@@ -23,7 +23,10 @@ std::string StructDirection[] = { "Phi-Z",
 void DataSourceManage::tranfromRenderer(std::string name,int index){
 	if (index > hdfDatelist.size())
 		return;
-	auto iter = RendererManger.find(name);
+	QString str = QString::fromStdString(name);
+	str += QString("_%1").arg(index);
+	std::string newname = str.toStdString();
+	auto iter = RendererManger.find(newname);
 	if (iter!=RendererManger.end())
 	{
 		auto  ad = iter->second;
@@ -67,7 +70,7 @@ void DataSourceManage::tranfromRenderer(std::string name,int index){
 		}
 		auto ad = factoryptr->creatPlotAdapter(hdfDatelist[index]);
 		//先装入队列
-		RendererManger[name] = ad;
+		RendererManger[newname] = ad;
 		emit _reRendererEvent(ad);
 	}
 }

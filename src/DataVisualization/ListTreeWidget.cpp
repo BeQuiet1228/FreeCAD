@@ -145,6 +145,7 @@ void ListTreeWidget::double_clicked_event(const QModelIndex &index)
 	if (iter != datainfor.end())
 	{
 		//传入hdf5数据
+		qDebug() <<"-----------------------" << iter->second.index;
 		std::string name = (index.data().toString()).toStdString();
 		emit _transfromRenderer(name, iter->second.index);
 	}
@@ -208,6 +209,8 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 			art14.erase(0,art14.find("TIME:")+5);
 		}
 		ss << "PLOT" << art12;
+		//测试
+		//subss << art12 << " ";
 		subss << art3 << " " << art14;
 		{
 			//获取时间
@@ -227,6 +230,8 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 			art3.erase(0,art3.find("$")+1);
 			art13.erase(0,art13.find("TIME")+4);
 		}
+		//测试
+		//subss << ss.str()<<" ";
 		subss <<art3 <<" " << art13;
 		{
 			//保存时间
