@@ -3,7 +3,6 @@ extern "C"{
 #include <lua/lua.h>
 #include <lua/lualib.h>
 #include <lua/lauxlib.h>
-#include <transition/transition.h>
 }
 #include <iostream>
 #include "LuaCInterface.h"
@@ -15,6 +14,14 @@ extern "C"{
 #include <QMessageBox>
 #include <QTextCodec>
 
+QString gbkStdstringToQstring(const std::string& str)
+{
+	QTextCodec* pCodec = QTextCodec::codecForName("gb2312");
+	if (!pCodec) return "";
+
+	QString qstr = pCodec->toUnicode(str.c_str(), str.length());
+	return qstr;
+}
 
 SmartContorl::SmartContorl()
 	:makeRunDataType(CONBINATION)
@@ -263,11 +270,11 @@ void SmartContorl::dataOptimize()
 	//如果结果数据筛选失败，那么给出提示
 	if (!ok)
 	{
-// 		QMessageBox* msgBox = new QMessageBox;
-// 		msgBox->setAttribute(Qt::WA_DeleteOnClose);
-// 		msgBox->setWindowTitle(QString::fromLocal8Bit("提示"));
-// 		msgBox->setText(QString::fromLocal8Bit("优化结果数据筛选失败，请检查输出H5文件格式是否正确！"));
-// 		msgBox->show();
+		QMessageBox* msgBox = new QMessageBox;
+		msgBox->setAttribute(Qt::WA_DeleteOnClose);
+		msgBox->setWindowTitle(QString::fromLocal8Bit("提示"));
+		msgBox->setText(QString::fromLocal8Bit("优化结果数据筛选失败，请检查输出H5文件格式是否正确！"));
+		msgBox->show();
 		callLuaFunction("init");
 		//运行优化之后的参数
 		this->makeRunData();

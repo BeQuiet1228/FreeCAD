@@ -1,4 +1,4 @@
-#include "transition.h"
+#include <SmartContorl/transition.h>
 #include <QTextCodec>
 QString gbkStdstringToQstring(const std::string& str)
 {

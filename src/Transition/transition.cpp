@@ -14,7 +14,7 @@ QString gbkStdstringToQstring(const std::string& str)
 * @param const std::string & str
 * @return std::string
 */
-std::string utf8StdstringToGbkStdstring(const std::string& str)
+std::string utf8StdstringToGbkSdstring(const std::string& str)
 {
 	auto gbk = QTextCodec::codecForName("gb2312");
 

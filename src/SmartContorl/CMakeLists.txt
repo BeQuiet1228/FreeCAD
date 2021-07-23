@@ -171,8 +171,6 @@ SET(SmartContorl_src
 	VariateChart.cpp
 	VariableStorer.cpp
 	VariableStorer.h
-	transition.h
-	transition.cpp
 	${CALC_SRC}
 	${UI_SRC}
 	${JSON_SRC}
