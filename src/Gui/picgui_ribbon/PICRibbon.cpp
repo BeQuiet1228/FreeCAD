@@ -482,7 +482,6 @@ QSize Ribbon:: getcurMinSize() {
 * @return void
 */
 void Ribbon::setScale(QSize& size,bool state) {
-	int tabCount = count();
 	if (state)
 	{
 		for (auto index = 0; index < count(); index++)
@@ -506,6 +505,7 @@ void Ribbon::setScale(QSize& size,bool state) {
 */
 bool Ribbon::toScale(unsigned int index,QSize& size)
 {
+#if 0
 	QWidget* tab = QTabWidget::widget(index);
 	PICRibbonTabContent* picribbontabcontent = dynamic_cast<PICRibbonTabContent*>(tab);
 	unsigned int allWidth = 0;
@@ -562,6 +562,24 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 			return true;
 		}
 	}
+#endif
+
+	//收缩
+	//step1:获取tab页的大小
+	QWidget* tab = QTabWidget::widget(index);
+	QSize qsize = tab->size();
+	//step2:获取各组件的大小
+	PICRibbonTabContent* mtab = dynamic_cast<PICRibbonTabContent*>(tab);
+	for (auto subindex = 0; subindex < mtab->contentLayout->count(); subindex++)
+	{
+		PICRibbonButtonGroup* mSubwidget = dynamic_cast<PICRibbonButtonGroup*>
+			(mtab->contentLayout->itemAt(subindex)->widget());
+		QSize subsize = mSubwidget->size();
+		qDebug() << index << ":" << "subsize:" << subsize;
+	}
+	//step3:获取某组下的QToolButton的大小
+	
+	return true;
 }
 
 
@@ -573,6 +591,7 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 */
 bool Ribbon::unFold(unsigned int index, QSize& size)
 {
+#if 0
 	if (mydarWer.empty())
 		return false;
 	QWidget* tabwidget = QTabWidget::widget(index);
@@ -667,6 +686,13 @@ bool Ribbon::unFold(unsigned int index, QSize& size)
 	}
 #endif
 	return  true;
+#endif
+	//展开
+	//step1:获取tab页的大小
+	QWidget* tab = QTabWidget::widget(index);
+	QSize qsize = tab->size();
+	qDebug() << "tabsize:" << index << "-->" << qsize;
+	return true;
 }
 /**
 * @brief  Ribbon::buttomclicked 按钮事件
