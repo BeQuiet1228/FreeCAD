@@ -206,7 +206,7 @@ void smartCalc::loadParameterXml()
 QString smartCalc::replaceVariate()
 {
 	//Ìí¼Ó²ÎÊý
-	int count = this->ui->spinBoxRunCount->value();
+	//int count = this->ui->spinBoxRunCount->value();
 	QString vars = "\n";
 	QString temp = "";
 	for (auto iter = variateDatas.begin(); iter != variateDatas.end(); iter++)
@@ -214,7 +214,7 @@ QString smartCalc::replaceVariate()
 		if (1==(*iter)->Mode)
 		{
 			temp = QString("addVarMod1(\"%1\",%2,%3,%4);\n").arg((*iter)->name)
-				.arg((*iter)->max).arg((*iter)->mini).arg(count);
+				.arg((*iter)->max).arg((*iter)->mini).arg((*iter)->stepLength);
 			vars += temp;
 		}
 		else if (2==(*iter)->Mode)
@@ -328,6 +328,7 @@ void smartCalc::saveParameterXml()
 void smartCalc::qPrint(QString str)
 {
 	//ui->plainTextEdit->appendPlainText(str);
+	qPrint(str.toStdString());
 }
 void smartCalc::qPrint(std::string str)
 {
