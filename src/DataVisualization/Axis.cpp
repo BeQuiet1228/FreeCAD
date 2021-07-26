@@ -106,7 +106,7 @@ void Axis::_update()
 	mfont.setFamily(unitFont);
 	setFont(mfont);
 	//设置单位
-	if (islabel)
+	/*if (islabel)
 	{
 		QwtText mtext = title();
 		QFont mfont = mtext.font();
@@ -116,7 +116,7 @@ void Axis::_update()
 		mtext.setFont(mfont);
 		mtext.setText(mAxisunit);
 		setTitle(mtext);
-	}
+	}*/
 	//设置刻度
 	{
 		scaleDraw()->setAxisValColor(axisvalColor);
@@ -169,6 +169,7 @@ void Axis::mouseDoubleClickEvent(QMouseEvent* e)
 {
 	if (e->button() != Qt::LeftButton)
 		return;
+#if 0
 	if (!islabel && !isAxisdialog)
 		return;
 	QPointF pos=e->posF();
@@ -255,6 +256,11 @@ void Axis::mouseDoubleClickEvent(QMouseEvent* e)
 	}
 		break;
 	}
+#endif
+	//
+	mAxisLable->setMinval(QString("%1").arg(axisvalrange.min));
+	mAxisLable->setMaxval(QString("%1").arg(axisvalrange.max));
+	mAxisLable->show();
 }
 void Axis::axiscloseEvent()
 {
