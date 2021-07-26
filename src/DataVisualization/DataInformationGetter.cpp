@@ -83,3 +83,13 @@ std::string DataInformationGetter::getVectorParam(const std::string& head)
 	return str.toStdString();
 }
 
+std::string DataInformationGetter::getObserveParam(const std::string& head)
+{
+	QString str = QString::fromStdString(head);
+	auto  sl = str.split(" ");
+	if (sl.size() == 0)
+		return "";
+	str = sl.at(0);
+	return str.toStdString();
+}
+

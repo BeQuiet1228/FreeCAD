@@ -40,7 +40,7 @@ std::string TimeData::getInformationTitle()
 	std::string title;
 	const std::string end = "  ";
 	title += "观察分量:";
-	title += DataInformationGetter::getObserveObejct(headList.at(2)) + end;
+	title += DataInformationGetter::getObserveParam(headList.at(13)) + end;
 	title += "观测面:";
 	title += DataInformationGetter::getObserveFace(headList.at(15)) + end;
 
