@@ -140,6 +140,7 @@ void smartCalc::deleteButton(bool b)
 void smartCalc::run(bool)
 {
 	auto str = replaceVariate();
+	smartContorl->chipicCount = this->ui->spinBoxRunCount->value();
 	smartContorl->run(str);
 	saveParameterXml();
 }
@@ -158,7 +159,7 @@ void smartCalc::loadParameterXml()
 	auto parNode = document.child("Parameter");
 	auto configNode = document.child("Config");
 	//ui->spinBoxOptimizeCount->setValue(configNode.attribute("OptimizeCount").as_int());
-	//ui->spinBoxRunCount->setValue(configNode.attribute("RunMaxCount").as_int());
+	ui->spinBoxRunCount->setValue(configNode.attribute("RunMaxCount").as_int());
 	//ui->spinBoxCount->setValue(configNode.attribute("RunCount").as_int());
 	//ui->lineEditName->setText(QString::fromStdString(configNode.attribute("ObserveName").as_string()));
 	//ui->lineEditMaxTime->setText(QString::number(configNode.attribute("MaxTime").as_int()));
