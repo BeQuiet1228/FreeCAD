@@ -86,7 +86,11 @@ std::string DataInformationGetter::getVectorParam(const std::string& head)
 std::string DataInformationGetter::getObserveParam(const std::string& head)
 {
 	QString str = QString::fromStdString(head);
-	auto  sl = str.split(" ");
+	auto  sl = str.split("=");
+	if (sl.size() < 2)
+		return "";
+	str = sl.at(1);
+	sl = str.split(" ");
 	if (sl.size() == 0)
 		return "";
 	str = sl.at(0);
