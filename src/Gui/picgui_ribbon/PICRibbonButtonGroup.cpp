@@ -92,11 +92,10 @@ void PICRibbonButtonGroup::paintEvent(QPaintEvent *event)
 void PICRibbonButtonGroup::removeButtons()
 {
 	//全部清理
-	//QList<QToolButton*> list_b = this->findChildren<QToolButton*>();
 	std::list<QToolButton*> list_b = this->findChildren<QToolButton*>().toStdList();
 	for each (auto var in list_b)
 	{
 		removeButton(var);
-		var->hide();
+		delete var;
 	}
 }
