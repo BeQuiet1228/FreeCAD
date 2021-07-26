@@ -696,7 +696,7 @@ bool Ribbon::unFold(unsigned int index, QSize& size)
 			widthmax -= groups[iter]->size().width();
 			PICRibbonButtonGroup* curgroup = dynamic_cast<PICRibbonButtonGroup*>(iterdar->second);
 			widthmax += curgroup->size().width();
-			if (widthmax+24<size.width())
+			if (widthmax<size.width())
 			{
 				groups[iter]->removeButtons();
 				std::list<QAction*> actions = curgroup->get_action_all().toStdList();
@@ -708,6 +708,8 @@ bool Ribbon::unFold(unsigned int index, QSize& size)
 				}
 				groups[iter]->setMaximumSize(iterdar->second->size());
 				mydarWer.erase(iterdar);
+				QWidget* mainwidget = reinterpret_cast<QWidget*>(MaindefStie);
+				//mainwidget->setMaximumWidth(size.width()+24);
 				unFold(index, size);
 			}
 			
