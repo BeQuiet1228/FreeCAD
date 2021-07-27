@@ -13,6 +13,7 @@
 #include<QListWidgetItem>
 #include<QDebug>
 #include"VariateitemWidget2.h"
+#include"smartDialog.h"
 void SplitString(const std::string& s, std::vector<std::string>& v, const std::string& c);
 smartCalc::smartCalc(QWidget* parent) :QDialog(parent),ui(new Ui::smartCalc)
 {
@@ -70,7 +71,8 @@ void smartCalc::addButton(bool b)
 	if (ui->Mode1->isChecked())
 	{
 		//模式1,用户添加变量名，输入范围，步长
-		VariateInputDialog d;
+		//VariateInputDialog d;
+		smartDialog d;
 		d.exec();
 		if (d.okClicked)
 		{
