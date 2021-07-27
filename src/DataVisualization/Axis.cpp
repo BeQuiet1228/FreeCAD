@@ -17,8 +17,6 @@ Axis::Axis(QWidget* parent):
 	mAxisstyle = AxisBottom;
 	axisvalrange.min = 0.0f;
 	axisvalrange.max = 100.0f;
-	/*mQwtScaleWidget = new ScaleWidget(this);*/
-	//mQwtScaleWidget->resize(this->size());
 	mAxisLable = new AxisLable();
 	mAxisLable->setModal(true);
 	mAxisLable->resize(300, 200);
@@ -82,7 +80,7 @@ void Axis::SetAxisNumber(int number)
 	if (number > 1)
 		AxisNum = number;
 }
-void Axis::loadconfig()
+void Axis::loadconfig() 
 {
 	if (Config::GetInstance()->loadConfig())
 	{

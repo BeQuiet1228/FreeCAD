@@ -13,6 +13,7 @@
 #include <QToolBar>
 #include "qwt/qwt_scale_widget.h"
 #include <QHBoxLayout>
+class CombAxis;
 class Canvas;
 class Renderer;
 class RenderThreadManager;
@@ -39,7 +40,8 @@ private:
 	//画布
 	Canvas *canvas;
 	//坐标轴
-	Axis *AxisL, *AxisB;
+	//Axis *AxisL, *AxisB;
+	CombAxis * AxisL, * AxisB;
 	//图表信息label
 	//QLabel* informationLabel;
 	TLabel* informationLabel;

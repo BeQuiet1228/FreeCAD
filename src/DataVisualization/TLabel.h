@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QDialog>
+#include"Axis.h"
 class QPushButton;
 class QPlainTextEdit;
 class QGridLayout;
@@ -37,11 +38,15 @@ public:
 	~TLabel();
 	virtual void mouseDoubleClickEvent(QMouseEvent *e) override;
 	void loadconfig();
+	void setStyle(Axisstyle);
 	public Q_SLOTS:
 	void slotCloseEvent(bool);
+protected:
+	void paintEvent(QPaintEvent* event);
 protected:
 	//TlineEdit* mTlineEdit;
 	TDialog* mTDialog;
 	std::vector<QRect> screens;
+	Axisstyle mAxisstyle;
 };
 #endif // !TLABEL_H_

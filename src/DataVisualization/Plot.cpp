@@ -20,6 +20,7 @@
 #include "rightScaleWidget.h"
 #include "ContourPlotAdapter.h"
 #include "TLabel.h"
+#include"CombAxis.h"
 struct UndoRedoData
 {
 	UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
@@ -295,14 +296,14 @@ void Plot::initGUI()
 	connect(canvas, SIGNAL(emitSelectPoint(QPoint)), this, SLOT(canvasSelectPoint(QPoint)));
 	connect(canvas, SIGNAL(emitResize(QSize)), this, SLOT(canvasResize(QSize)));
 
-	AxisL = new Axis();
+	AxisL = new CombAxis();
 	AxisL->setAxixStyle(Axisleft);
 	AxisL->SetAxisNumber(yAxisLevel);
 	AxisL->setColorBarEnabled(false);
 	AxisL->setMargin(1);
 	AxisL->setSpacing(1);
 	AxisL->setBorderDist(0,0);
-	AxisB = new Axis();
+	AxisB = new CombAxis();
 	AxisB->setAxixStyle(AxisBottom);
 	AxisB->SetAxisNumber(xAxisLevel);
 	AxisB->setColorBarEnabled(false);

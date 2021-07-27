@@ -7,6 +7,7 @@
 #include<QGridLayout>
 #include "C_encoding.h"
 #include "CustomConfig.h"
+#include<QPainter>
 /**
 * @brief TLabel::TLabel
 * @param QWidget * parent
@@ -131,7 +132,16 @@ void TLabel::loadconfig()
 		QString unitfontstr = QString::fromStdString( axisGroup.getGroup("font").getValue("value"));
 		QFont mfont = font();
 		mfont.setFamily(unitfontstr);
+		//mfont.setPixelSize(atoi(axisGroup.getGroup("axisSize").getValue("value").c_str()));
 		setFont(mfont);
 	}
+}
+void TLabel::setStyle(Axisstyle axisstyle)
+{
+	mAxisstyle = axisstyle;
+}
+void TLabel::paintEvent(QPaintEvent* event)
+{
+	QLabel::paintEvent(event);
 }
 #include "moc_TLabel.cpp"
