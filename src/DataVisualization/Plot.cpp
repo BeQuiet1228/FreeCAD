@@ -263,8 +263,7 @@ void Plot::updateInformationLabel()
 	AxisB->setAxisText(QString::fromStdString(adapter->getXTag()));
 	if (!informationLabel)
 		return;
-	informationLabel->setText(adapter->getInformationTitile());
-	
+	informationLabel->setTextstr(adapter->getInformationTitile());
 }
 
 /**

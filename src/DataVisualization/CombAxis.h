@@ -24,7 +24,6 @@ public:
 	void loadconfig();
 	//QLabel的相关接口
 	void setAxisText(QString str);
-	
 	//单独的接口
 	void setView(Axisstyle);
 protected:
@@ -37,6 +36,5 @@ private:
 public:
 	Axis* mAxis;
 	TLabel* mtlabel;
-
 };
 #endif

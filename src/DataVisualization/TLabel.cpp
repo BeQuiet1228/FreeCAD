@@ -44,7 +44,7 @@ void TLabel::mouseDoubleClickEvent(QMouseEvent *e){
 		}
 		else
 		{
-			mTDialog->SetMsgtext(this->text());
+			mTDialog->SetMsgtext(mtitle);
 			/*QWidget* parent = dynamic_cast<QWidget*>(this->parent());
 			QPoint pos = parent->mapToGlobal(QPoint(0,0));
 			mTDialog->move(pos);*/
@@ -75,7 +75,7 @@ QString TDialog::GetMsgText()
 TDialog::TDialog(QWidget* parent) :QDialog(parent){
 
 	gridLayout = new QGridLayout;;
-	mPlainTextEdit = new QPlainTextEdit();
+	mPlainTextEdit = new QPlainTextEdit(this);
 	gridLayout->addWidget(mPlainTextEdit,0,0,1,3);
 	appbutton = new QPushButton(this);
 	appbutton->setText(GetEncodingstr("È·¶¨",ENCODING_GB2312));
@@ -111,7 +111,7 @@ void TDialog::closeEvent(QCloseEvent *e)
 }
 void TLabel::slotCloseEvent(bool isclose)
 {
-	this->setText(mTDialog->GetMsgText());
+	this->setTextstr(mTDialog->GetMsgText());
 	if (isclose)
 	{
 		mTDialog->hide();
@@ -167,7 +167,7 @@ void TLabel::drawTitle(QPainter* painter)
 	painter->translate(r.x(),r.y());
 	QwtText title;
 	title.setFont(this->font());
-	title.setText(this->text());
+	title.setText(mtitle);
 	int flag = title.renderFlags() & ~(Qt::AlignTop|Qt::AlignBottom|Qt::AlignVCenter);
 	flag |= Qt::AlignVCenter;
 	title.setRenderFlags(flag);
@@ -188,34 +188,35 @@ void TLabel::drawTitle(QPainter* painter)
 	title.draw(painter,QRectF(0.0,0.0,r.width(),r.height()));
 	painter->restore();
 }
-QSizeF TLabel::TextSize()
-{
-	QwtText title;
-	title.setFont(this->font());
-	title.setText(this->text());
-	return title.textSize();
-}
-void TLabel::Autosize()
-{
-	QSizeF size = TextSize();
-	switch (mAxisstyle)
-	{
-	case Axisleft:
-	case AxisRight:
-		setMaximumWidth(size.height()+10);
-		break;
-	case AxisTop:
-	case AxisBottom:
-		setMaximumHeight(size.height()+10);
-		break;
-	default:
-		break;
-	}
-}
 void TLabel::setColor(QColor color)
 {
 	QPalette palette=this->palette();
 	palette.setColor(QPalette::WindowText,color);
 	this->setPalette(palette);
+}
+void TLabel::resizeEvent(QResizeEvent* eventsize){
+}
+void TLabel::setTextstr(QString str)
+{
+	mtitle = str;
+	switch (mAxisstyle)
+	{
+	case Axisleft:
+	case AxisRight:
+	{
+		QwtText mtext;
+		mtext.setFont(this->font());
+		mtext.setText(str);
+		QSizeF size = mtext.textSize();
+		this->setMinimumWidth(size.height()+10);
+		update();
+	}
+	break;
+	case AxisTop:
+	case AxisBottom:
+	default:
+		setText(str);
+		break;
+	}
 }
 #include "moc_TLabel.cpp"

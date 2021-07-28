@@ -44,8 +44,7 @@ void CombAxis::_update()
 }
 void CombAxis::setAxisText(QString str)
 {
-	mtlabel->setText(str);
-	//mtlabel->Autosize();
+	mtlabel->setTextstr(str);
 }
 void CombAxis::setAxixStyle(Axisstyle mAxisstyle)
 {

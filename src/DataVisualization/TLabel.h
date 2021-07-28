@@ -28,7 +28,6 @@ private:
 	QPushButton* unappbtn;
 	QPlainTextEdit* mPlainTextEdit;
 	QGridLayout* gridLayout;
-	
 };
 
 class TLabel:public QLabel
@@ -42,16 +41,17 @@ public:
 	void setStyle(Axisstyle);
 	public Q_SLOTS:
 	void slotCloseEvent(bool);
-	QSizeF TextSize();
-	void Autosize();
 	void setColor(QColor);
+	void setTextstr(QString);
 protected:
 	void paintEvent(QPaintEvent* event);
 	void drawTitle(QPainter*);
+	virtual void resizeEvent(QResizeEvent*) override;
 protected:
 	//TlineEdit* mTlineEdit;
 	TDialog* mTDialog;
 	std::vector<QRect> screens;
 	Axisstyle mAxisstyle;
+	QString mtitle;
 };
 #endif // !TLABEL_H_
