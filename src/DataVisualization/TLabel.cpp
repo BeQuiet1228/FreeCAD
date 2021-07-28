@@ -142,6 +142,80 @@ void TLabel::setStyle(Axisstyle axisstyle)
 }
 void TLabel::paintEvent(QPaintEvent* event)
 {
-	QLabel::paintEvent(event);
+	QPainter* painter=new QPainter(this);
+	switch (mAxisstyle)
+	{
+	case Axisleft:
+	case AxisRight:
+		drawTitle(painter);
+		break;
+	case AxisTop:
+	case AxisBottom:
+	default:
+		QLabel::paintEvent(event);
+		break;
+	}
+	delete painter;
+}
+void TLabel::drawTitle(QPainter* painter)
+{
+	painter->save();
+	QRectF r = QRectF(QPointF(0.0,0.0),QPointF(this->width(),this->height()));
+	r.setRect(r.left(),r.bottom(),r.height(),r.width());
+	painter->setFont(this->font());
+	painter->setPen(this->palette().color(QPalette::Text));
+	painter->translate(r.x(),r.y());
+	QwtText title;
+	title.setFont(this->font());
+	title.setText(this->text());
+	int flag = title.renderFlags() & ~(Qt::AlignTop|Qt::AlignBottom|Qt::AlignVCenter);
+	flag |= Qt::AlignVCenter;
+	title.setRenderFlags(flag);
+	QColor color = this->palette().windowText().color();
+	QPen pen = painter->pen();
+	pen.setColor(color);
+	painter->setPen(pen);
+	painter->setRenderHint(QPainter::Antialiasing, true);
+	switch (mAxisstyle)
+	{
+	case Axisleft:
+		painter->rotate(-90);
+		break;
+	case AxisRight:
+		painter->rotate(90);
+		break;
+	}
+	title.draw(painter,QRectF(0.0,0.0,r.width(),r.height()));
+	painter->restore();
+}
+QSizeF TLabel::TextSize()
+{
+	QwtText title;
+	title.setFont(this->font());
+	title.setText(this->text());
+	return title.textSize();
+}
+void TLabel::Autosize()
+{
+	QSizeF size = TextSize();
+	switch (mAxisstyle)
+	{
+	case Axisleft:
+	case AxisRight:
+		setMaximumWidth(size.height()+10);
+		break;
+	case AxisTop:
+	case AxisBottom:
+		setMaximumHeight(size.height()+10);
+		break;
+	default:
+		break;
+	}
+}
+void TLabel::setColor(QColor color)
+{
+	QPalette palette=this->palette();
+	palette.setColor(QPalette::WindowText,color);
+	this->setPalette(palette);
 }
 #include "moc_TLabel.cpp"

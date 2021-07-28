@@ -14,6 +14,7 @@ Axis::Axis(QWidget* parent):
 {	//设置默认参数
 	AxisNum = 5;
 	mAxisunit = "X(x)";
+	//mAxisunit = "";
 	mAxisstyle = AxisBottom;
 	axisvalrange.min = 0.0f;
 	axisvalrange.max = 100.0f;
@@ -91,10 +92,6 @@ void Axis::loadconfig()
 		axisvalColor=QStringToQColor(QString::fromStdString( axisGroup.getGroup("axisvalColor").getValue("value")));
 		axisvalSize = atoi( axisGroup.getGroup("axisvalSize").getValue("value").c_str());
 		unitFont = QString::fromStdString(axisGroup.getGroup("font").getValue("value"));
-		
-		
-		//QFont unitFont;
-		//QFont axisFont;
 	}
 	_update();
 }
@@ -104,17 +101,6 @@ void Axis::_update()
 	mfont.setFamily(unitFont);
 	setFont(mfont);
 	//设置单位
-	/*if (islabel)
-	{
-		QwtText mtext = title();
-		QFont mfont = mtext.font();
-		mfont.setFamily(unitFont);
-		mfont.setPixelSize(mAxisunitSize);
-		mtext.setColor(axisvalColor);
-		mtext.setFont(mfont);
-		mtext.setText(mAxisunit);
-		setTitle(mtext);
-	}*/
 	//设置刻度
 	{
 		scaleDraw()->setAxisValColor(axisvalColor);
@@ -130,13 +116,14 @@ void Axis::_update()
 		int axislabelwidth = scaleDraw()->maxLabelWidth(mfont);
 		mfont.setPixelSize(mAxisunitSize);
 		QFontMetrics fm(mfont);
+		//qDebug() << mAxisunit;
 		QRect rect = fm.boundingRect(mAxisunit);
 		switch (mAxisstyle)
 		{
 		case Axisleft:
 		case AxisRight:
 		{
-			int width = ticklength + axislabelwidth + rect.height() + 10;
+			int width = ticklength + axislabelwidth +20 /*rect.height() + 10*/;
 			if (isColorBarEnabled())
 				width += colorBarWidth();
 			setMinimumWidth(width);
@@ -149,8 +136,6 @@ void Axis::_update()
 			if (isColorBarEnabled())
 				height += colorBarWidth();
 			setMinimumHeight(height);
-			
-			
 		}
 		break;
 		}
@@ -159,9 +144,7 @@ void Axis::_update()
 }
 void  Axis::resizeEvent(QResizeEvent* sizeEvent)
 {
-	//mQwtScaleWidget->resize(this->size());
 	_update();
-	//automatic();
 }
 void Axis::mouseDoubleClickEvent(QMouseEvent* e)
 {

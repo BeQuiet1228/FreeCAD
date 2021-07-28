@@ -1,5 +1,7 @@
 #include"CombAxis.h"
 #include<QGridLayout>
+#include"CustomConfig.h"
+#include"C_encoding.h"
 CombAxis::CombAxis(QWidget* parent):QWidget(parent)
 {
 	mAxis = new Axis(this);
@@ -17,12 +19,10 @@ CombAxis::~CombAxis()
 void CombAxis::setLeft(){
 	layout->addWidget(mtlabel,0,0,1,1);
 	layout->addWidget(mAxis,0,1,1,1);
-	mtlabel->setText("123");
 }
 void CombAxis::setRight(){
 	layout->addWidget(mAxis,0,0,1,1);
 	layout->addWidget(mtlabel,0,1,1,1);
-	mtlabel->setText("123");
 }
 void CombAxis::setTop(){
 	layout->addWidget(mtlabel,0,0,1,1);
@@ -32,7 +32,6 @@ void CombAxis::setTop(){
 void CombAxis::setBottom(){
 	layout->addWidget(mAxis,0,0,1,1);
 	layout->addWidget(mtlabel,1,0,1,1);
-	mtlabel->setText("123");
 }
 void CombAxis::setAxisRange(float min, float max)
 {
@@ -41,10 +40,12 @@ void CombAxis::setAxisRange(float min, float max)
 void CombAxis::_update()
 {
 	mAxis->_update();
+
 }
 void CombAxis::setAxisText(QString str)
 {
 	mtlabel->setText(str);
+	//mtlabel->Autosize();
 }
 void CombAxis::setAxixStyle(Axisstyle mAxisstyle)
 {
@@ -75,7 +76,21 @@ void CombAxis::setBorderDist(float start, float end)
 void CombAxis::loadconfig()
 {
 	mAxis->loadconfig();
-	mtlabel->loadconfig();
+	//mtlabel->loadconfig();
+	//获取字体相关的数据
+	if (Config::GetInstance()->loadConfig())
+	{
+		auto Group = Config::GetInstance()->getRootGroup();
+		auto axisGroup = Group.getGroup("axis");
+		QString unitfontstr = QString::fromStdString(axisGroup.getGroup("font").getValue("value"));
+		QFont mfont = font();
+		mfont.setFamily(unitfontstr);
+		mfont.setPixelSize(atoi(axisGroup.getGroup("axisSize").getValue("value").c_str()));
+		QColor color = QStringToQColor(QString::fromStdString(axisGroup.getGroup("axisvalColor").getValue("value")));
+		mtlabel->setColor(color);
+		mtlabel->setFont(mfont);
+	}
+
 }
 //用于组合控件的拼接
 void CombAxis::setView(Axisstyle mAxisstyle)

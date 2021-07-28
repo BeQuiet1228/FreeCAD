@@ -9,6 +9,7 @@
 class QPushButton;
 class QPlainTextEdit;
 class QGridLayout;
+class QPainter;
 class TDialog :public QDialog
 {
 	Q_OBJECT
@@ -41,8 +42,12 @@ public:
 	void setStyle(Axisstyle);
 	public Q_SLOTS:
 	void slotCloseEvent(bool);
+	QSizeF TextSize();
+	void Autosize();
+	void setColor(QColor);
 protected:
 	void paintEvent(QPaintEvent* event);
+	void drawTitle(QPainter*);
 protected:
 	//TlineEdit* mTlineEdit;
 	TDialog* mTDialog;

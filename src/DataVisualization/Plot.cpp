@@ -310,8 +310,8 @@ void Plot::initGUI()
 	AxisB->setMargin(1);
 	AxisB->setSpacing(1);
 	AxisB->setBorderDist(0, 0);
-	connect(AxisL, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererYRang(const float&, const float&)));
-	connect(AxisB, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererXRang(const float&, const float&)));
+	connect(AxisL->mAxis, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererYRang(const float&, const float&)));
+	connect(AxisB->mAxis, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererXRang(const float&, const float&)));
 //	scaleWIdget = new rightScaleWidget(QwtScaleDraw::RightScale, this);
 	scaleWIdget = new Axis(this);
 	scaleWIdget->setAxixStyle(Axisstyle::AxisRight);
