@@ -125,29 +125,33 @@ void Axis::_update()
 	}
 	{
 		//调整大小
-		QFont mfont;
-		mfont.setPixelSize(axisvalSize);
+		//QFont mfont;
+		//mfont.setPixelSize(axisvalSize);
 		int ticklength = scaleDraw()->maxTickLength();
 		int axislabelhight = scaleDraw()->maxLabelHeight(mfont);
 		int axislabelwidth = scaleDraw()->maxLabelWidth(mfont);
-		mfont.setPixelSize(mAxisunitSize);
-		QFontMetrics fm(mfont);
-		QRect rect = fm.boundingRect(mAxisunit);
+		//mfont.setPixelSize(mAxisunitSize);
+		//QFontMetrics fm(mfont);
+		//QRect rect = fm.boundingRect(mAxisunit);
+		
+		QSizeF fontsize= title().textSize();
 		switch (mAxisstyle)
 		{
 		case Axisleft:
+			//qDebug() << axislabelwidth;
 		case AxisRight:
 		{
-			int width = ticklength + axislabelwidth + rect.height() + 10;
+			int width = ticklength + axislabelwidth + fontsize.height() + 10;
 			if (isColorBarEnabled())
 				width += colorBarWidth();
 			setMinimumWidth(width);
+			
 		}
 		break;
 		case AxisBottom:
 		case AxisTop:
 		{
-			int height = ticklength + axislabelhight + rect.height() + 10;
+			int height = ticklength + axislabelhight + fontsize.height() + 10;
 			if (isColorBarEnabled())
 				height += colorBarWidth();
 			setMinimumHeight(height);

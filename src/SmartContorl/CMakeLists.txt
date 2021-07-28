@@ -27,6 +27,8 @@ SET(QRC_SRC
 SET(CALC_SRC
 smartCalc.h
 smartCalc.cpp
+smartDialog.h
+smartDialog.cpp
 VariateitemWidget2.h
 VariateitemWidget2.cpp
 VariateitemDialog.h
@@ -113,6 +115,7 @@ SET(MY_MOC_HDR
 	SmartContorlInterface.h
 	VariableStorer.h
 	smartCalc.h
+	smartDialog.h
 	VariateitemWidget2.h
 	VariateitemDialog.h
 	

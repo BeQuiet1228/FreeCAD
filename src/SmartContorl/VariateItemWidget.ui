@@ -79,7 +79,7 @@
         </size>
        </property>
        <property name="text">
-        <string>步长：</string>
+        <string>个数：</string>
        </property>
       </widget>
      </item>

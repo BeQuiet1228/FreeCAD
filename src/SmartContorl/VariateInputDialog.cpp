@@ -6,6 +6,8 @@ VariateInputDialog::VariateInputDialog(QWidget *parent /*= 0*/)
 	:QDialog(parent), ui(new Ui::VariateInputDialog_UI)
 {
 	ui->setupUi(this);
+	ui->label_5->hide();
+	ui->stepsize->hide();
 	this->setModal(true);
 }
 

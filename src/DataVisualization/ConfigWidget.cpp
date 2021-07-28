@@ -115,8 +115,15 @@ void ConfigWidget::initUI()
 */
 void ConfigWidget::structInfoClicked(int _property, QPushButton* button)
 {
-	
-	QColor color= QColorDialog::getColor(Qt::white, this, "pick Color", QColorDialog::ShowAlphaChannel);
+
+	QColor color = button->palette().button().color();
+	QColorDialog dlg(this);
+	dlg.setOption(QColorDialog::ShowAlphaChannel);
+	dlg.setCurrentColor(color);
+	if (dlg.exec()==QColorDialog::Accepted)
+	{
+		color = dlg.currentColor();
+	}
 	QPalette qpalette = button->palette();
 	qpalette.setColor(QPalette::Button,color);
 	button->setPalette(qpalette);
@@ -289,12 +296,22 @@ void ConfigWidget::axisColorclicked(){
 
 QColor ConfigWidget::setbuttomColor(QPushButton* button)
 {
-	QColor color=QColorDialog::getColor(Qt::white, this, "pick Color", QColorDialog::ShowAlphaChannel);
-	QPalette qpalette =button->palette();
-	qpalette.setColor(QPalette::Button, color);
-	button->setPalette(qpalette);
-	button->setText(QString("#%1").arg(QColorToQstring(color)));
-	return color;
+	QColor lastColor=button->palette().button().color();
+	{
+		QColorDialog dlg(this);
+		dlg.setOptions(QColorDialog::ShowAlphaChannel);
+		dlg.setCurrentColor(lastColor);
+		if (dlg.exec()==QColorDialog::Accepted)
+		{
+			QColor color = dlg.currentColor();
+			QPalette qpalette = button->palette();
+			qpalette.setColor(QPalette::Button, color);
+			button->setPalette(qpalette);
+			button->setText(QString("#%1").arg(QColorToQstring(color)));
+			return color;
+		}
+	}
+	return lastColor;
 }
 
 /**
@@ -330,7 +347,12 @@ void ConfigWidget::DriverClicked(){ structInfoClicked(Mas::DRIVER, ui->Driver); 
 * @return void  
 */
 void ConfigWidget::structinfolineClicked(int _property, QPushButton* button){
-	QColor color = QColorDialog::getColor(Qt::white, this, "pick Color", QColorDialog::ShowAlphaChannel);
+	QColor color = button->palette().button().color();
+	QColorDialog dlg(this);
+	dlg.setOption(QColorDialog::ShowAlphaChannel);
+	dlg.setCurrentColor(color);
+	if (dlg.exec() == QColorDialog::Accepted)
+		color = dlg.currentColor();
 	QPalette qpalette = button->palette();
 	qpalette.setColor(QPalette::Button, color);
 	button->setPalette(qpalette);
@@ -577,7 +599,13 @@ void ConfigWidget::radioButton2(bool flag){
 * @return void  
 */
 void ConfigWidget::setfirstColor(){
-	QColor color = QColorDialog::getColor(Qt::white, this, "pick Color", QColorDialog::ShowAlphaChannel);
+	QColor color = ui->firstColorBtn->palette().button().color();
+	//QColor color = QColorDialog::getColor(Qt::white, this, "pick Color", QColorDialog::ShowAlphaChannel);
+	QColorDialog dlg(this);
+	dlg.setOption(QColorDialog::ShowAlphaChannel);
+	dlg.setCurrentColor(color);
+	if (dlg.exec()==QColorDialog::Accepted)
+		color = dlg.currentColor();
 	QPalette qpalette = ui->firstColorBtn->palette();
 	qpalette.setColor(QPalette::Button, color);
 	ui->firstColorBtn->setPalette(qpalette);
@@ -589,7 +617,13 @@ void ConfigWidget::setfirstColor(){
 * @return void  
 */
 void ConfigWidget::setendColor(){
-	QColor color = QColorDialog::getColor(Qt::black, this, "pick Color", QColorDialog::ShowAlphaChannel);
+
+	QColor color = ui->endColorBtn->palette().button().color();
+	QColorDialog dlg(this);
+	dlg.setOption(QColorDialog::ShowAlphaChannel);
+	dlg.setCurrentColor(color);
+	if (dlg.exec() == QColorDialog::Accepted)
+		color = dlg.currentColor();
 	QPalette qpalette = ui->endColorBtn->palette();
 	qpalette.setColor(QPalette::Button, color);
 	ui->endColorBtn->setPalette(qpalette);
