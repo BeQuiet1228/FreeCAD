@@ -2736,11 +2736,11 @@ Specify another directory, please.</source>
     </message>
     <message>
         <source>默认单位设置</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>长度：</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>mm</source>
@@ -6215,7 +6215,7 @@ Be aware the point where you click matters.</source>
     <name>StdCmdMyParameter</name>
     <message>
         <source>My_Parameter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">变量模块</translation>
     </message>
     <message>
         <source>Std_My_Parameter</source>
@@ -6805,6 +6805,17 @@ Be aware the point where you click matters.</source>
     <message>
         <source>Show all selected objects</source>
         <translation>显示所有选择的对象</translation>
+    </message>
+</context>
+<context>
+    <name>StdCmdSmartCalc</name>
+    <message>
+        <source>File</source>
+        <translation type="unfinished">文件</translation>
+    </message>
+    <message>
+        <source>SmartCalc</source>
+        <translation type="unfinished">批处理</translation>
     </message>
 </context>
 <context>
