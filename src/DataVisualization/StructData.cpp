@@ -2,9 +2,9 @@
 #include <QPoint>
 #include<thread>
 #ifdef MY_DEBUG
-#include<windows.h>
 #include <QDebug>
 #endif
+#include<windows.h>
 #define THRESHOLD (1000000)  //限定门限
 #include <process.h>
 //#include <math.h>
@@ -1153,7 +1153,7 @@ bool StructData::createLines(std::map<int, std::vector<QPoint>>& points,const Da
 */
 void StructData::segloadRoom(unsigned  __int64 site1, unsigned __int64 site2)
 {
-	qDebug() << site1 << site2;
+	//qDebug() << site1 << site2;
 }
 unsigned int __stdcall  functhread(void*lp)
 {

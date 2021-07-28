@@ -35,7 +35,9 @@ void Hdf5IO::setFilePath(const std::string& path, FileOpenMod mod /*= OPEN_EXIST
 	}
 	catch (...)
 	{
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::setFilePath open hdf5 file failed!" << std::endl;
+#endif // DEBUG
 	}
 
 }
@@ -51,7 +53,9 @@ Group Hdf5IO::getGroup(const Group &group,const std::string &groupName,bool &ok)
 		g = group.openGroup(groupName);
 		ok = true;
 	}catch (...){
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::getGroup failde! group name:" + groupName << std::endl;
+#endif
 		ok = false;
 	}
     return g;
@@ -67,7 +71,9 @@ Group Hdf5IO::getGroup(const std::string &groupName,bool &ok)
 		ok = true;
 		g = OpenH5File(*Hdf5File,groupName,ok);
 	}catch (...){
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::getGroup failde! group name:" + groupName << std::endl;
+#endif
 		ok = false;
 	}
     return g;
@@ -87,7 +93,9 @@ bool Hdf5IO::getGroup(const Group& fatherGroup, const std::string groupName, Gro
 		group = fatherGroup.openGroup(groupName);
 	}
 	catch (...){
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::getGroup failde! group name:" + groupName << std::endl;
+#endif
 		return false;
 	}
 	return true;
@@ -104,7 +112,9 @@ bool Hdf5IO::getGroup(const std::string groupName, Group& group)
 	try{
 		return getGroup(*Hdf5File, groupName, group);
 	}catch (...){
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::getGroup failde! group name:" + groupName << std::endl;
+#endif
 		return false;
 	}
 	return true;
@@ -123,7 +133,9 @@ bool Hdf5IO::getGroup(H5File& file, const std::string& groupName, Group& group)
 	{
 		group = file.openGroup(groupName);
 	}catch (...){
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::getGroup get group for h5file failde! group name:" + groupName;
+#endif
 		return false;
 	}
 	return true;
@@ -142,7 +154,9 @@ bool Hdf5IO::getDataSet(const Group& group, const std::string& dataSetName, Data
 	{
 		dataSet = group.openDataSet(dataSetName);
 	}catch (...){
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::getDataSet get data set failde! data set name:" + dataSetName;
+#endif
 		return false;
 	}
 
@@ -273,7 +287,9 @@ Group Hdf5IO::OpenH5File(H5File &file, const std::string &groupName, bool &ok)
 	   ok = true;
     }catch(...)
     {
+#ifdef MY_DEBUG
        std::cerr << "获取数据组失败，数据组名:" + groupName;
+#endif
 	   ok = false;
     }
 
@@ -284,7 +300,6 @@ Group Hdf5IO::OpenH5File(H5File &file, const std::string &groupName, bool &ok)
  */
 Group Hdf5IO::OpenGroup(Group &group, const std::string &groupName,bool &ok)
 {
-    std::cerr << "获取数据组：" + groupName;
     Group g;
     try
     {
@@ -292,7 +307,9 @@ Group Hdf5IO::OpenGroup(Group &group, const std::string &groupName,bool &ok)
 	   ok = true;
     }catch(...)
     {
+#ifdef MY_DEBUG
        std::cerr << "获取数据组失败，数据组名:" + groupName;
+#endif
 	   ok = false;
     }
 
@@ -303,7 +320,6 @@ Group Hdf5IO::OpenGroup(Group &group, const std::string &groupName,bool &ok)
  */
 DataSet Hdf5IO::OpenGroupDataset(Group &group, const std::string &datasetName, bool &ok)
 {
-    std::cerr << "获取数据库：" + datasetName;
     DataSet d;
     try
     {
@@ -311,7 +327,9 @@ DataSet Hdf5IO::OpenGroupDataset(Group &group, const std::string &datasetName, b
 	   ok = true;
     }catch(...)
     {
+#ifdef MY_DEBUG
        std::cerr << "获取数据库组失败，数据库名:" + datasetName;
+#endif
 	   ok = false;
     }
 
