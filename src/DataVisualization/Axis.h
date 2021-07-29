@@ -27,7 +27,6 @@ class ScaleWidget;
 class AxisLable;
 class TDialog;
 class Axis :
-	//public QWidget
 	public ScaleWidget
 {
 	Q_OBJECT
@@ -36,13 +35,10 @@ public:
 	~Axis();
 public:
 	void setAxisRange(double min,double max);
-	void setAxisText(QString);
 	void setAxixStyle(Axisstyle);
 	void SetAxisNumber(int);
 	void loadconfig();
 	void _update();
-	void setLabel(bool);
-	void setAxisdialog(bool);
 public:
 	virtual void resizeEvent(QResizeEvent*) override;
 	virtual void mouseDoubleClickEvent(QMouseEvent*) override;
@@ -51,24 +47,14 @@ Q_SIGNALS:
 	//void signalsetAxisRightRange(const float& min, const float& max);
 public Q_SLOTS:
 	void axiscloseEvent();
-	void slotCloseEvent(bool);
 private:
 	unsigned __int32 AxisNum;
-	QString mAxisunit;
 	valrange axisvalrange;
 	Axisstyle mAxisstyle;
 	//ScaleWidget* mQwtScaleWidget;
 	AxisLable* mAxisLable;
-	int mAxisunitSize;//单位大小
 	QColor axisColor;//刻度颜色
 	QColor axisvalColor;//数值颜色
 	int axisvalSize;//数值大小
-	//QGridLayout* mGridLayout;
-	//TLabel* mTLabel;
-	TDialog* mTDialog;
-	bool islabel;
-	bool isAxisdialog;
-	//QFont unitFont;
-	//QFont axisFont;
 	QString unitFont;
 };

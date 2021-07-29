@@ -315,14 +315,11 @@ void Plot::initGUI()
 	scaleWIdget = new Axis(this);
 	scaleWIdget->setAxixStyle(Axisstyle::AxisRight);
 	scaleWIdget->setColorBarEnabled(true);
-	scaleWIdget->setLabel(false);
 	scaleWIdget->setColorBarWidth(20);
 	scaleWIdget->setMargin(10);
 	scaleWIdget->setBorderDist(0.0, 0.0);
 	connect(scaleWIdget, SIGNAL(sendAxisRang(const float&, const float&)),this,SLOT(ScaleWidgetRightRange(const float&, const float&)));
 	informationLabel = new TLabel();
-	//informationLabel->setMargin(40);
-	//informationLabel->setAlignment(Qt::AlignTop);
 	informationLabel->setAlignment(Qt::AlignCenter);
 	informationLabel->setContentsMargins(0, 10, 0, 0);
 	initInformationLabelFont();

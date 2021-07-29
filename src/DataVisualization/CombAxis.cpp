@@ -16,6 +16,12 @@ CombAxis::~CombAxis()
 {
 
 }
+
+/**
+* @brief CombAxis::setLeft 根据方向调整布局
+* @return void
+* @Time 2021/7/29
+*/
 void CombAxis::setLeft(){
 	layout->addWidget(mtlabel,0,0,1,1);
 	layout->addWidget(mAxis,0,1,1,1);
@@ -33,6 +39,9 @@ void CombAxis::setBottom(){
 	layout->addWidget(mAxis,0,0,1,1);
 	layout->addWidget(mtlabel,1,0,1,1);
 }
+/*
+通过该接口传入Axis的对应的接口，避免修改之前的代码
+*/
 void CombAxis::setAxisRange(float min, float max)
 {
 	mAxis->setAxisRange(min,max);
@@ -91,7 +100,13 @@ void CombAxis::loadconfig()
 	}
 
 }
-//用于组合控件的拼接
+
+/**
+* @brief CombAxis::setView 用于设置视图的组合
+* @param Axisstyle mAxisstyle
+* @return void
+* @Time 2021/7/29
+*/
 void CombAxis::setView(Axisstyle mAxisstyle)
 {
 	switch (mAxisstyle)

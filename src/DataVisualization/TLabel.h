@@ -46,7 +46,6 @@ public:
 protected:
 	void paintEvent(QPaintEvent* event);
 	void drawTitle(QPainter*);
-	virtual void resizeEvent(QResizeEvent*) override;
 protected:
 	//TlineEdit* mTlineEdit;
 	TDialog* mTDialog;

@@ -136,6 +136,12 @@ void TLabel::loadconfig()
 		setFont(mfont);
 	}
 }
+/**
+* @brief TLabel::setStyle 设置方向
+* @param Axisstyle axisstyle
+* @return void
+* @Time 2021/7/29
+*/
 void TLabel::setStyle(Axisstyle axisstyle)
 {
 	mAxisstyle = axisstyle;
@@ -157,6 +163,12 @@ void TLabel::paintEvent(QPaintEvent* event)
 	}
 	delete painter;
 }
+/**
+* @brief TLabel::drawTitle 绘制label
+* @param QPainter * painter
+* @return void
+* @Time 2021/7/29
+*/
 void TLabel::drawTitle(QPainter* painter)
 {
 	painter->save();
@@ -188,14 +200,24 @@ void TLabel::drawTitle(QPainter* painter)
 	title.draw(painter,QRectF(0.0,0.0,r.width(),r.height()));
 	painter->restore();
 }
+/**
+* @brief TLabel::setColor 设置颜色
+* @param QColor color
+* @return void
+* @Time 2021/7/29
+*/
 void TLabel::setColor(QColor color)
 {
 	QPalette palette=this->palette();
 	palette.setColor(QPalette::WindowText,color);
 	this->setPalette(palette);
 }
-void TLabel::resizeEvent(QResizeEvent* eventsize){
-}
+/**
+* @brief TLabel::setTextstr 传入label信息
+* @param QString str
+* @return void
+* @Time 2021/7/29
+*/
 void TLabel::setTextstr(QString str)
 {
 	mtitle = str;

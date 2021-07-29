@@ -13,7 +13,6 @@ Axis::Axis(QWidget* parent):
 	ScaleWidget(parent)
 {	//设置默认参数
 	AxisNum = 5;
-	mAxisunit = "X(x)";
 	//mAxisunit = "";
 	mAxisstyle = AxisBottom;
 	axisvalrange.min = 0.0f;
@@ -22,17 +21,18 @@ Axis::Axis(QWidget* parent):
 	mAxisLable->setModal(true);
 	mAxisLable->resize(300, 200);
 	connect(mAxisLable, SIGNAL(signalCloseEvent()), this, SLOT(axiscloseEvent()));
-	mTDialog = new TDialog();
-	mTDialog->setModal(true);
-	connect(mTDialog,SIGNAL(signalCloseEvent(bool)),this,SLOT(slotCloseEvent(bool)));
-	islabel=true;
-	isAxisdialog=true;
 }
 Axis::~Axis()
 {
 	delete mAxisLable;
-	delete mTDialog;
 }
+/**
+* @brief Axis::setAxisRange 设置数值范围
+* @param double min
+* @param double max
+* @return void
+* @Time 2021/7/29
+*/
 void Axis::setAxisRange(double min, double max)
 {
 	if (min < max)
@@ -44,10 +44,12 @@ void Axis::setAxisRange(double min, double max)
 		setRange(min,max);
 	}
 }
-void Axis::setAxisText(QString name)
-{
-	mAxisunit = name;
-}
+/**
+* @brief Axis::setAxixStyle 设置刻度绘制方向
+* @param Axisstyle style
+* @return void
+* @Time 2021/7/29
+*/
 void Axis::setAxixStyle(Axisstyle style)
 {
 	mAxisstyle = style;
@@ -76,18 +78,28 @@ void Axis::setAxixStyle(Axisstyle style)
 		break;
 	}
 }
+/**
+* @brief Axis::SetAxisNumber 设置大刻度的个数
+* @param int number
+* @return void
+* @Time 2021/7/29
+*/
 void Axis::SetAxisNumber(int number)
 {
 	if (number > 1)
 		AxisNum = number;
 }
+/**
+* @brief Axis::loadconfig 读取配置
+* @return void
+* @Time 2021/7/29
+*/
 void Axis::loadconfig() 
 {
 	if (Config::GetInstance()->loadConfig())
 	{
 		auto Group = Config::GetInstance()->getRootGroup();
 		auto axisGroup = Group.getGroup("axis");
-		mAxisunitSize = atoi(axisGroup.getGroup("axisSize").getValue("value").c_str());
 		axisColor = QStringToQColor(QString::fromStdString(axisGroup.getGroup("axisColor").getValue("value")));
 		axisvalColor=QStringToQColor(QString::fromStdString( axisGroup.getGroup("axisvalColor").getValue("value")));
 		axisvalSize = atoi( axisGroup.getGroup("axisvalSize").getValue("value").c_str());
@@ -250,21 +262,5 @@ void Axis::axiscloseEvent()
 		emit sendAxisRang(temp.min, temp.max);
 	}
 	_update();
-}
-void Axis::slotCloseEvent(bool isclose)
-{
-	mAxisunit = mTDialog->GetMsgText();
-	if (isclose)
-	{
-		mTDialog->hide();
-	}
-	_update();
-}
-void Axis::setLabel(bool b) {
-	islabel = b;
-}
-void Axis::setAxisdialog(bool b)
-{
-	isAxisdialog = b;
 }
 #include "moc_Axis.cpp"
