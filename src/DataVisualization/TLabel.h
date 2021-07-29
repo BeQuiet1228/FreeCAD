@@ -5,9 +5,11 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QDialog>
+#include"Axis.h"
 class QPushButton;
 class QPlainTextEdit;
 class QGridLayout;
+class QPainter;
 class TDialog :public QDialog
 {
 	Q_OBJECT
@@ -26,7 +28,6 @@ private:
 	QPushButton* unappbtn;
 	QPlainTextEdit* mPlainTextEdit;
 	QGridLayout* gridLayout;
-	
 };
 
 class TLabel:public QLabel
@@ -37,11 +38,19 @@ public:
 	~TLabel();
 	virtual void mouseDoubleClickEvent(QMouseEvent *e) override;
 	void loadconfig();
+	void setStyle(Axisstyle);
 	public Q_SLOTS:
 	void slotCloseEvent(bool);
+	void setColor(QColor);
+	void setTextstr(QString);
+protected:
+	void paintEvent(QPaintEvent* event);
+	void drawTitle(QPainter*);
 protected:
 	//TlineEdit* mTlineEdit;
 	TDialog* mTDialog;
 	std::vector<QRect> screens;
+	Axisstyle mAxisstyle;
+	QString mtitle;
 };
 #endif // !TLABEL_H_

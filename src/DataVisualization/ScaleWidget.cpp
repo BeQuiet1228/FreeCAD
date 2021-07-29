@@ -66,11 +66,7 @@ void ScaleWidget::automatic()
 
 		QPointF pos = scaleDraw()->pos();
 		pos.setY(0);
-		//scaleDraw()->move(0, 0);
 		scaleDraw()->move(pos);
-
-		//scaleDraw()->move(0, 0);
-
 		scaleDraw()->setLength(this->height() - 1);
 		scaleDraw()->setPenWidth(1);
 	}

@@ -13,27 +13,26 @@ Axis::Axis(QWidget* parent):
 	ScaleWidget(parent)
 {	//设置默认参数
 	AxisNum = 5;
-	mAxisunit = "X(x)";
+	//mAxisunit = "";
 	mAxisstyle = AxisBottom;
 	axisvalrange.min = 0.0f;
 	axisvalrange.max = 100.0f;
-	/*mQwtScaleWidget = new ScaleWidget(this);*/
-	//mQwtScaleWidget->resize(this->size());
 	mAxisLable = new AxisLable();
 	mAxisLable->setModal(true);
 	mAxisLable->resize(300, 200);
 	connect(mAxisLable, SIGNAL(signalCloseEvent()), this, SLOT(axiscloseEvent()));
-	mTDialog = new TDialog();
-	mTDialog->setModal(true);
-	connect(mTDialog,SIGNAL(signalCloseEvent(bool)),this,SLOT(slotCloseEvent(bool)));
-	islabel=true;
-	isAxisdialog=true;
 }
 Axis::~Axis()
 {
 	delete mAxisLable;
-	delete mTDialog;
 }
+/**
+* @brief Axis::setAxisRange 设置数值范围
+* @param double min
+* @param double max
+* @return void
+* @Time 2021/7/29
+*/
 void Axis::setAxisRange(double min, double max)
 {
 	if (min < max)
@@ -45,10 +44,12 @@ void Axis::setAxisRange(double min, double max)
 		setRange(min,max);
 	}
 }
-void Axis::setAxisText(QString name)
-{
-	mAxisunit = name;
-}
+/**
+* @brief Axis::setAxixStyle 设置刻度绘制方向
+* @param Axisstyle style
+* @return void
+* @Time 2021/7/29
+*/
 void Axis::setAxixStyle(Axisstyle style)
 {
 	mAxisstyle = style;
@@ -77,26 +78,32 @@ void Axis::setAxixStyle(Axisstyle style)
 		break;
 	}
 }
+/**
+* @brief Axis::SetAxisNumber 设置大刻度的个数
+* @param int number
+* @return void
+* @Time 2021/7/29
+*/
 void Axis::SetAxisNumber(int number)
 {
 	if (number > 1)
 		AxisNum = number;
 }
-void Axis::loadconfig()
+/**
+* @brief Axis::loadconfig 读取配置
+* @return void
+* @Time 2021/7/29
+*/
+void Axis::loadconfig() 
 {
 	if (Config::GetInstance()->loadConfig())
 	{
 		auto Group = Config::GetInstance()->getRootGroup();
 		auto axisGroup = Group.getGroup("axis");
-		mAxisunitSize = atoi(axisGroup.getGroup("axisSize").getValue("value").c_str());
 		axisColor = QStringToQColor(QString::fromStdString(axisGroup.getGroup("axisColor").getValue("value")));
 		axisvalColor=QStringToQColor(QString::fromStdString( axisGroup.getGroup("axisvalColor").getValue("value")));
 		axisvalSize = atoi( axisGroup.getGroup("axisvalSize").getValue("value").c_str());
 		unitFont = QString::fromStdString(axisGroup.getGroup("font").getValue("value"));
-		
-		
-		//QFont unitFont;
-		//QFont axisFont;
 	}
 	_update();
 }
@@ -106,17 +113,6 @@ void Axis::_update()
 	mfont.setFamily(unitFont);
 	setFont(mfont);
 	//设置单位
-	if (islabel)
-	{
-		QwtText mtext = title();
-		QFont mfont = mtext.font();
-		mfont.setFamily(unitFont);
-		mfont.setPixelSize(mAxisunitSize);
-		mtext.setColor(axisvalColor);
-		mtext.setFont(mfont);
-		mtext.setText(mAxisunit);
-		setTitle(mtext);
-	}
 	//设置刻度
 	{
 		scaleDraw()->setAxisValColor(axisvalColor);
@@ -125,38 +121,29 @@ void Axis::_update()
 	}
 	{
 		//调整大小
-		//QFont mfont;
-		//mfont.setPixelSize(axisvalSize);
+		QFont mfont;
+		mfont.setPixelSize(axisvalSize);
 		int ticklength = scaleDraw()->maxTickLength();
 		int axislabelhight = scaleDraw()->maxLabelHeight(mfont);
 		int axislabelwidth = scaleDraw()->maxLabelWidth(mfont);
-		//mfont.setPixelSize(mAxisunitSize);
-		//QFontMetrics fm(mfont);
-		//QRect rect = fm.boundingRect(mAxisunit);
-		
-		QSizeF fontsize= title().textSize();
 		switch (mAxisstyle)
 		{
 		case Axisleft:
-			//qDebug() << axislabelwidth;
 		case AxisRight:
 		{
-			int width = ticklength + axislabelwidth + fontsize.height() + 10;
+			int width = ticklength + axislabelwidth +20;
 			if (isColorBarEnabled())
 				width += colorBarWidth();
 			setMinimumWidth(width);
-			
 		}
 		break;
 		case AxisBottom:
 		case AxisTop:
 		{
-			int height = ticklength + axislabelhight + fontsize.height() + 10;
+			int height = ticklength + axislabelhight+20;
 			if (isColorBarEnabled())
 				height += colorBarWidth();
 			setMinimumHeight(height);
-			
-			
 		}
 		break;
 		}
@@ -165,14 +152,13 @@ void Axis::_update()
 }
 void  Axis::resizeEvent(QResizeEvent* sizeEvent)
 {
-	//mQwtScaleWidget->resize(this->size());
 	_update();
-	//automatic();
 }
 void Axis::mouseDoubleClickEvent(QMouseEvent* e)
 {
 	if (e->button() != Qt::LeftButton)
 		return;
+#if 0
 	if (!islabel && !isAxisdialog)
 		return;
 	QPointF pos=e->posF();
@@ -259,6 +245,11 @@ void Axis::mouseDoubleClickEvent(QMouseEvent* e)
 	}
 		break;
 	}
+#endif
+	//
+	mAxisLable->setMinval(QString("%1").arg(axisvalrange.min));
+	mAxisLable->setMaxval(QString("%1").arg(axisvalrange.max));
+	mAxisLable->show();
 }
 void Axis::axiscloseEvent()
 {
@@ -271,21 +262,5 @@ void Axis::axiscloseEvent()
 		emit sendAxisRang(temp.min, temp.max);
 	}
 	_update();
-}
-void Axis::slotCloseEvent(bool isclose)
-{
-	mAxisunit = mTDialog->GetMsgText();
-	if (isclose)
-	{
-		mTDialog->hide();
-	}
-	_update();
-}
-void Axis::setLabel(bool b) {
-	islabel = b;
-}
-void Axis::setAxisdialog(bool b)
-{
-	isAxisdialog = b;
 }
 #include "moc_Axis.cpp"
