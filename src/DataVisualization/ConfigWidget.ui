@@ -1098,7 +1098,7 @@ background-color: rgb(255, 255, 255);
                  </size>
                 </property>
                 <property name="text">
-                 <string>电导新材料：</string>
+                 <string>电导：</string>
                 </property>
                </widget>
               </item>
@@ -1371,7 +1371,7 @@ background-color: rgb(255, 255, 255);
                  </size>
                 </property>
                 <property name="text">
-                 <string>电介质与电导：</string>
+                 <string>复合材料：</string>
                 </property>
                </widget>
               </item>
@@ -1464,7 +1464,7 @@ background-color: rgb(255, 255, 255);
                  </size>
                 </property>
                 <property name="text">
-                 <string>自由空间：</string>
+                 <string>吸收边界：</string>
                 </property>
                </widget>
               </item>
@@ -1557,7 +1557,7 @@ background-color: rgb(255, 255, 255);
                  </size>
                 </property>
                 <property name="text">
-                 <string>电阻：</string>
+                 <string>金属箔片：</string>
                 </property>
                </widget>
               </item>
@@ -1647,7 +1647,7 @@ background-color: rgb(255, 255, 255);
             <item>
              <widget class="QLabel" name="label_23">
               <property name="text">
-               <string>PORT：</string>
+               <string>端口：</string>
               </property>
              </widget>
             </item>
@@ -1661,7 +1661,7 @@ background-color: rgb(255, 255, 255);
             <item>
              <widget class="QLabel" name="label_24">
               <property name="text">
-               <string>DRIVER:</string>
+               <string>电流源：</string>
               </property>
              </widget>
             </item>
@@ -1675,7 +1675,7 @@ background-color: rgb(255, 255, 255);
             <item>
              <widget class="QLabel" name="label_25">
               <property name="text">
-               <string>INDUCTOR:</string>
+               <string>导电杆：</string>
               </property>
              </widget>
             </item>
