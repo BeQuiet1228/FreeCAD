@@ -1,6 +1,7 @@
 #include "Data.h"
 #include<fstream>
 #include<stdio.h>
+#include <QDir>
 Data::Data(Hdf5Data& h5Data,const RunMod& mod)
 	:h5Data(h5Data), sourceData(new ListValues)
 	, sourceDataMutex(new std::mutex), runMod(mod), sourceDataIsLoad(false), headList(h5Data.headList)
@@ -239,8 +240,9 @@ std::vector<std::string> Data::autoHeaderInfo()
 
 void Data::saveAs(std::string path, SaveMod mod)
 {
-	std::fstream f(path);
-	bool isGood = f.good();
+	QDir dir(QString::fromStdString(path));
+
+	bool isGood = dir.exists();
 	int res = -1;
 	if (!isGood || mod==NEWFLODER)
 	{
