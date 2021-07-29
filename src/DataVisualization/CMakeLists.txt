@@ -190,7 +190,7 @@ SET(DataVisualization_src
 	${Gui_QRC_SRCS}
 	${AXIS_SRC}
 	)
-add_definitions(-DMY_DEBUG -D_DATA_VISUALIZATION_)
+add_definitions( -D_DATA_VISUALIZATION_)
 if(DataVisualizationDll)
 add_definitions(-DDATA_VISUALIZATIONG_DLL)
 add_library(DataVisualization SHARED ${DataVisualization_src})

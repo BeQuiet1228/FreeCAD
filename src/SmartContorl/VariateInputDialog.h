@@ -14,7 +14,7 @@ public:
 	std::shared_ptr<VariateData> getData();
 	//ok按钮是否被点击
 	bool okClicked = false;
-private:
+protected:
 	Ui::VariateInputDialog_UI *ui;
 	//数据对象
 	std::shared_ptr<VariateData> data;

@@ -27,6 +27,8 @@ SET(QRC_SRC
 SET(CALC_SRC
 smartCalc.h
 smartCalc.cpp
+smartDialog.h
+smartDialog.cpp
 VariateitemWidget2.h
 VariateitemWidget2.cpp
 VariateitemDialog.h
@@ -113,6 +115,7 @@ SET(MY_MOC_HDR
 	SmartContorlInterface.h
 	VariableStorer.h
 	smartCalc.h
+	smartDialog.h
 	VariateitemWidget2.h
 	VariateitemDialog.h
 	
@@ -193,7 +196,7 @@ SET(SmartContorl_src
 if(smart_contorl_exe)
 	add_executable(SmartContorl ${SmartContorl_src}) # 生成可执行文件
 	SET(OUTPUT_BINDIR ${CMAKE_CURRENT_BINARY_DIR}/../../bin) #设置可执行文件输出目录
-	add_definitions( -DMY_DEBUG -DMY_LOG -D_SMARTCONTORL_ -DSMART_EXE)
+	add_definitions( -DMY_LOG -D_SMARTCONTORL_ -DSMART_EXE)
 endif()
 if(smart_contorl_dll)
 	add_definitions(-DMY_LOG -D_SMARTCONTORL_)

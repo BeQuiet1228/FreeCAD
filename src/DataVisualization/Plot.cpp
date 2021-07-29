@@ -332,12 +332,17 @@ void Plot::initGUI()
 	toolbar->setLayout(toolbarLayout);
 	toolbar->setObjectName("PlotToolbar");
 
+	//Ôö¼ÓÓÒ±ß¾à
+	QWidget* space = new QWidget(this);
+	space->setMinimumWidth(20);
+
 	gridLayout->addWidget(canvas, 0, 1, 1, 1);
+	gridLayout->addWidget(space, 0, 3, 1, 1);
 	gridLayout->addWidget(AxisL, 0, 0, 1, 1);
 	gridLayout->addWidget(AxisB, 1, 1, 1, 1);
 	gridLayout->addWidget(scaleWIdget, 0, 2, 1, 1);
-	gridLayout->addWidget(informationLabel, 2, 0, 1, 3);
-	gridLayout->addWidget(toolbar, 3, 0, 1, 3);
+	gridLayout->addWidget(informationLabel, 2, 0, 1, 4);
+	gridLayout->addWidget(toolbar, 3, 0, 1, 4);
 
 	gridLayout->setRowStretch(0, 9);
 	gridLayout->setRowStretch(1, 1);

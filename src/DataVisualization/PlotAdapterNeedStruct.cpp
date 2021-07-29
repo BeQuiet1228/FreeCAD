@@ -53,7 +53,6 @@ void PlotAdapterNeedStruct::reRender(const QSize& size)
 {
 	if (mainRenderer)
 	{
-		std::cerr << "reRender" << std::endl;
 		mainRenderer->setSize(size);
 		RenderTask task(mainRenderer);
 		renderManager->addTask(task);

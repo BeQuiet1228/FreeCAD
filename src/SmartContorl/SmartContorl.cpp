@@ -270,11 +270,11 @@ void SmartContorl::dataOptimize()
 	//如果结果数据筛选失败，那么给出提示
 	if (!ok)
 	{
-		QMessageBox* msgBox = new QMessageBox;
-		msgBox->setAttribute(Qt::WA_DeleteOnClose);
-		msgBox->setWindowTitle(QString::fromLocal8Bit("提示"));
-		msgBox->setText(QString::fromLocal8Bit("优化结果数据筛选失败，请检查输出H5文件格式是否正确！"));
-		msgBox->show();
+// 		QMessageBox* msgBox = new QMessageBox;
+// 		msgBox->setAttribute(Qt::WA_DeleteOnClose);
+// 		msgBox->setWindowTitle(QString::fromLocal8Bit("提示"));
+// 		msgBox->setText(QString::fromLocal8Bit("优化结果数据筛选失败，请检查输出H5文件格式是否正确！"));
+// 		msgBox->show();
 		callLuaFunction("init");
 		//运行优化之后的参数
 		this->makeRunData();
