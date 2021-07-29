@@ -248,6 +248,10 @@ bool phasorRenderer::drawImageScence(){
 		break;
 	case phasorData::DISMODE::sizeToLen:
 	{
+		QPen pen = painter.pen();
+		pen.setColor(penColor);
+		pen.setWidth(penSize);
+		painter.setPen(pen);
 		std::vector<float> sizeScale = d->getScaleVal();//获取大小系数
 		for (auto i = 0; i < p1.size(); i++)
 		{
