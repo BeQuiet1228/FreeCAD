@@ -14,7 +14,7 @@
 * @return 
 * @Time 2021/6/29
 */
-TLabel::TLabel(QWidget* parent) :QLabel(parent){
+TLabel::TLabel(QWidget* parent) :QLabel(parent),mAxisstyle(AxisBottom){
 	//mTlineEdit = new TlineEdit;
 	mTDialog = new TDialog();
 	mTDialog->setModal(true);
