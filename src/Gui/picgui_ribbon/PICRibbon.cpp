@@ -577,7 +577,6 @@ void Ribbon::showdrawerGroup(QString GroupName,QToolButton* buttom)
 			newGroup->setPalette(pal);
 			//移动
 			{
-				
 				PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(buttom->parent());
 				if (!group)
 				{
