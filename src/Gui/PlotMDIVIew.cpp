@@ -12,7 +12,6 @@ namespace Gui{
 	{
 		plot = new Plot(this);
 		plot->resize(this->size());
-		contourStateGetter = new ContourRenderStateGetter(plot);
 		//bIsPassive = false;
 	}
 	PlotMDIView::~PlotMDIView(){
@@ -43,12 +42,6 @@ namespace Gui{
 		return true;
 	}
 
-	/**
-	* @brief  Gui::PlotMDIView::onMsg
-	* @param  const char * pMsg  
-	* @param  const char * * ppReturn  
-	* @return bool  
-	*/
 	bool PlotMDIView::onMsg(const char* pMsg, const char** ppReturn)
 	{
 		if (strcmp("Undo", pMsg) == 0)
@@ -59,32 +52,6 @@ namespace Gui{
 		{
 			plot->redo();
 			return true;
-		}else if (strcmp("ContourImageMod", pMsg) == 0)
-		{
-			ContourRenderStateGetter::DisplayMod mod = contourStateGetter->getDisplayMod();
-			mod = ContourRenderStateGetter::DisplayMod(mod ^ ContourRenderStateGetter::IMAGE);
-			contourStateGetter->setDisplayMode(mod);
-			mod = contourStateGetter->getDisplayMod();
-			if ((mod & ContourRenderStateGetter::IMAGE) == ContourRenderStateGetter::IMAGE)
-			{
-				*ppReturn = "on";
-			}else {
-				*ppReturn = "off";
-			}
-			plot->reRender();
-		}else if (strcmp("ContourLineMod", pMsg) == 0) {
-			ContourRenderStateGetter::DisplayMod mod = contourStateGetter->getDisplayMod();
-			mod = ContourRenderStateGetter::DisplayMod(mod ^ ContourRenderStateGetter::CONTOUR);
-			contourStateGetter->setDisplayMode(mod);
-			mod = contourStateGetter->getDisplayMod();
-			if ((mod & ContourRenderStateGetter::CONTOUR) == ContourRenderStateGetter::CONTOUR)
-			{
-				*ppReturn = "on";
-			}
-			else {
-				*ppReturn = "off";
-			}
-			plot->reRender();
 		}else if (strcmp("PlotDisplayMod", pMsg) == 0) {
 			plot->setGridLineEnabled(!plot->getGridLineEnabled());
 			if (plot->getGridLineEnabled())
@@ -111,20 +78,14 @@ namespace Gui{
 		{
 			return true;
 		}
-		else if (strcmp("ContourImageMod", pMsg) == 0)
-		{
-			if (contourStateGetter->enabled())
-				return true;
-		}
-		else if (strcmp("ContourLineMod", pMsg) == 0)
-		{
-			if (contourStateGetter->enabled())
-				return true;
-		}
 		else if (strcmp("PlotDisplayMod", pMsg) == 0) {
 			return true;
 		}
 		else if (strcmp("AutoMax", pMsg) == 0) {
+			return true;
+		}else if (strcmp("PlotDataExport", pMsg) == 0) {
+			return true;
+		}else if (strcmp("PlotEqualProportion", pMsg) == 0) {
 			return true;
 		}
 		return false;

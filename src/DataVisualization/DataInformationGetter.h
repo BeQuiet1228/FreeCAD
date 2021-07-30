@@ -12,4 +12,8 @@ public:
 	static std::string getObserveFace(const std::string& head);
 	//获取观测时间
 	static std::string getObserveTime(const std::string& head);
+	//获取矢量图的观测参数
+	static std::string getVectorParam(const std::string& head);
+	//获取时间观测图的观测分量
+	static std::string getObserveParam(const std::string& head);
 };

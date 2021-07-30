@@ -14,6 +14,7 @@
 #include "ColorTab.h"
 #include <sstream>
 #include "Plot.h"
+#include "SysInfo.h"
 /**
 * @brief ConfigWidget::ConfigWidget
 * @param QWidget* panter
@@ -97,6 +98,13 @@ void ConfigWidget::initUI()
 	connect(ui->applicButtom, SIGNAL(clicked()), this, SLOT(saveclicked()));
 	//取消
 	connect(ui->cancleButtom,SIGNAL(clicked()), this, SLOT(canclelicked()));
+
+	//字体
+	std::vector<QString> fonts= SysInfo::GetInstance()->getfonts();
+	for (auto iter=fonts.begin();iter!=fonts.end();iter++)
+	{
+		ui->fontStyle->addItem(*iter);
+	}
 }
 
 /**
@@ -107,8 +115,15 @@ void ConfigWidget::initUI()
 */
 void ConfigWidget::structInfoClicked(int _property, QPushButton* button)
 {
-	
-	QColor color= QColorDialog::getColor(Qt::white, this, "pick Color", QColorDialog::ShowAlphaChannel);
+
+	QColor color = button->palette().button().color();
+	QColorDialog dlg(this);
+	dlg.setOption(QColorDialog::ShowAlphaChannel);
+	dlg.setCurrentColor(color);
+	if (dlg.exec()==QColorDialog::Accepted)
+	{
+		color = dlg.currentColor();
+	}
 	QPalette qpalette = button->palette();
 	qpalette.setColor(QPalette::Button,color);
 	button->setPalette(qpalette);
@@ -188,6 +203,13 @@ void ConfigWidget::saveclicked()
 		Axisgroup.getGroup("axisvalColor").setSetting("value",axisinfo._4th.toStdString());
 		auto axisvalSize = (ui->axisvalSize->itemText(ui->axisvalSize->currentIndex())).toStdString();
 		Axisgroup.getGroup("axisvalSize").setSetting("value",axisvalSize);
+		if (ui->infoshow->isChecked())Axisgroup.getGroup("infoShow").setSetting("value", "1");
+		else
+			Axisgroup.getGroup("infoShow").setSetting("value", "0");
+		//存储字体
+		std::string mfont = ui->fontStyle->itemText(ui->fontStyle->currentIndex()).toStdString();
+		Axisgroup.getGroup("font").setSetting("value", mfont);
+		//Axisgroup.getGroup("font").setSetting("value");
 	}
 	//相空间图
 	{
@@ -274,12 +296,22 @@ void ConfigWidget::axisColorclicked(){
 
 QColor ConfigWidget::setbuttomColor(QPushButton* button)
 {
-	QColor color=QColorDialog::getColor(Qt::white, this, "pick Color", QColorDialog::ShowAlphaChannel);
-	QPalette qpalette =button->palette();
-	qpalette.setColor(QPalette::Button, color);
-	button->setPalette(qpalette);
-	button->setText(QString("#%1").arg(QColorToQstring(color)));
-	return color;
+	QColor lastColor=button->palette().button().color();
+	{
+		QColorDialog dlg(this);
+		dlg.setOptions(QColorDialog::ShowAlphaChannel);
+		dlg.setCurrentColor(lastColor);
+		if (dlg.exec()==QColorDialog::Accepted)
+		{
+			QColor color = dlg.currentColor();
+			QPalette qpalette = button->palette();
+			qpalette.setColor(QPalette::Button, color);
+			button->setPalette(qpalette);
+			button->setText(QString("#%1").arg(QColorToQstring(color)));
+			return color;
+		}
+	}
+	return lastColor;
 }
 
 /**
@@ -315,7 +347,12 @@ void ConfigWidget::DriverClicked(){ structInfoClicked(Mas::DRIVER, ui->Driver); 
 * @return void  
 */
 void ConfigWidget::structinfolineClicked(int _property, QPushButton* button){
-	QColor color = QColorDialog::getColor(Qt::white, this, "pick Color", QColorDialog::ShowAlphaChannel);
+	QColor color = button->palette().button().color();
+	QColorDialog dlg(this);
+	dlg.setOption(QColorDialog::ShowAlphaChannel);
+	dlg.setCurrentColor(color);
+	if (dlg.exec() == QColorDialog::Accepted)
+		color = dlg.currentColor();
 	QPalette qpalette = button->palette();
 	qpalette.setColor(QPalette::Button, color);
 	button->setPalette(qpalette);
@@ -426,6 +463,29 @@ void ConfigWidget::loadxmlConfig(){
 		QString axisSize = QString::fromStdString(Axisgroup.getGroup("axisSize").getValue("value"));
 		toComboxIndex(ui->fontSize,axisSize);
 		toComboxIndex(ui->axisvalSize,QString::fromStdString(Axisgroup.getGroup("axisvalSize").getValue("value")));
+		int infoshow = atoi(Axisgroup.getGroup("infoShow").getValue("value").c_str());
+		if (infoshow)
+		{
+			ui->infoshow->setChecked(true);
+			ui->infohide->setChecked(false);
+		}
+		else
+		{
+			ui->infoshow->setChecked(false);
+			ui->infohide->setChecked(true);
+		}
+		std::string mfont=Axisgroup.getGroup("font").getValue("value");
+		QString sfont = QString::fromStdString(mfont);
+		//遍历
+		for (auto i=0;i<ui->fontStyle->count();i++)
+		{
+			if (ui->fontStyle->itemText(i)==sfont)
+			{
+				ui->fontStyle->setCurrentIndex(i);
+				break;
+			}
+			
+		}
 	}
 	//粒子图
 	{
@@ -539,7 +599,13 @@ void ConfigWidget::radioButton2(bool flag){
 * @return void  
 */
 void ConfigWidget::setfirstColor(){
-	QColor color = QColorDialog::getColor(Qt::white, this, "pick Color", QColorDialog::ShowAlphaChannel);
+	QColor color = ui->firstColorBtn->palette().button().color();
+	//QColor color = QColorDialog::getColor(Qt::white, this, "pick Color", QColorDialog::ShowAlphaChannel);
+	QColorDialog dlg(this);
+	dlg.setOption(QColorDialog::ShowAlphaChannel);
+	dlg.setCurrentColor(color);
+	if (dlg.exec()==QColorDialog::Accepted)
+		color = dlg.currentColor();
 	QPalette qpalette = ui->firstColorBtn->palette();
 	qpalette.setColor(QPalette::Button, color);
 	ui->firstColorBtn->setPalette(qpalette);
@@ -551,7 +617,13 @@ void ConfigWidget::setfirstColor(){
 * @return void  
 */
 void ConfigWidget::setendColor(){
-	QColor color = QColorDialog::getColor(Qt::black, this, "pick Color", QColorDialog::ShowAlphaChannel);
+
+	QColor color = ui->endColorBtn->palette().button().color();
+	QColorDialog dlg(this);
+	dlg.setOption(QColorDialog::ShowAlphaChannel);
+	dlg.setCurrentColor(color);
+	if (dlg.exec() == QColorDialog::Accepted)
+		color = dlg.currentColor();
 	QPalette qpalette = ui->endColorBtn->palette();
 	qpalette.setColor(QPalette::Button, color);
 	ui->endColorBtn->setPalette(qpalette);
@@ -611,6 +683,20 @@ QwtLinearColorMap* ConfigWidget::getQwtLinearColorMap()
 	}
 	
 }
+//std::map<double, QColor> ConfigWidget::getColortab()
+//{
+//	std::map<double, QColor> maptab;
+//	Config::GetInstance()->loadConfig();
+//	ConfigGroup mGroup = Config::GetInstance()->getRootGroup();
+//	if (!mGroup.GroupIsempty("contour"))
+//	{
+//
+//	}
+//	else
+//	{
+//
+//	}
+//}
 void ConfigWidget::bindplot(Plot* lp)
 {
 	if (lp)

@@ -16,6 +16,7 @@
 #include "DlgDeleteParamImp.h"
 #include "DlgChangeParamNameImp.h"
 #include "AboutParameter.h"
+#include "dlgchangenamedialog.h"
 
 //#include "DlgExpressionInput.h"
 
@@ -203,6 +204,17 @@ bool MyParameter::isValidWithName(const std::string& param_name, int row) {
     }
     return res;
 }
+
+// 变量名有效性验证
+bool MyParameter::isValidWithName(const std::string& param_name) {
+    bool res = false;
+    std::regex r("^[A-Za-z]\\w*$");
+    if ((!param_name.empty()) && (std::regex_match(param_name, r))) {
+        res = true;
+    }
+    return res;
+}
+
 
 //分析表达式_expression的类型
 param_type MyParameter::typeAnalysis(const QString& text) {
@@ -538,13 +550,37 @@ void MyParameter::importText() {
     int cur_row = this->tableWidget->rowCount();
     double all = 0;
     for (int i = 0; i < p.size(); ++i) {
+        int cur_row = this->tableWidget->rowCount();
         startTime = clock();
-        this->tableWidget->item(cur_row - 1 + i, 0)->setText(QString::fromStdString(p[i][0]));
-        while (!isValidWithName(cur_row - 1 + i)) {
-            std::string temp = p[i][0] + "1";
-            this->tableWidget->item(cur_row - 1 + i, 0)->setText(QString::fromStdString(temp));
+        while(!this->isValidWithName(p[i][0]))
+        {
+            std::string str = p[i][0];
+            DlgChangeNameDialog* change_name = new DlgChangeNameDialog(str);
+            change_name->exec();
+            std::string temp = p[i][0];
+            if (this->isValidWithName(change_name->getName().toStdString()))
+            {
+                p[i][0] = change_name->getName().toStdString();
+                for (int i = 0; i < p.size(); i++)
+                {
+                    if (findWholeWordsOnly(p[i][1], temp))
+                    {
+                        p[i][1] = std::regex_replace(p[i][1], std::regex("\\b" + temp + "\\b"), change_name->getName().toStdString());
+                    }
+                }
+            }
+            delete change_name;
         }
-        this->tableWidget->item(cur_row - 1 + i, 1)->setText(QString::fromStdString(p[i][1]));
+
+        if (this->isValidWithName(p[i][0]))
+        {
+            std::string temp = p[i][0];
+            while (!isValidWithName(temp, cur_row - 1)) {
+                temp = temp + "1";
+            }
+            this->tableWidget->item(cur_row - 1, 0)->setText(QString::fromStdString(temp));
+            this->tableWidget->item(cur_row - 1, 1)->setText(QString::fromStdString(p[i][1]));
+        }
         endTime = clock();
         all = all + (double)(endTime - startTime) / CLOCKS_PER_SEC;
         std::cerr << p[i][0]  << " :\t" << (double)(endTime - startTime) / CLOCKS_PER_SEC << std::endl;
@@ -662,9 +698,25 @@ void MyParameter::changeParamName() {
     ChangeParamNameDialog* dlg_cpn = new ChangeParamNameDialog(apo);
     dlg_cpn->exec();
     std::string new_name = dlg_cpn->new_name;
+    if (new_name.empty()) return;
     int change_row = dlg_cpn->change_row;
     std::string old_name = this->tableWidget->item(change_row, 0)->text().toStdString();
     std::string expression = this->tableWidget->item(change_row, 1)->text().toStdString();
+
+    /*int max_row = this->tableWidget->rowCount();
+    std::vector<std::string> temp;
+    for (int i = 0; i < max_row - 1; i++)
+    {
+        QString af_expression = tableWidget->item(i, 1)->text();
+        if(findWholeWordsOnly(af_expression.toStdString(), old_name));
+        {
+            std::string str=std::regex_replace(af_expression.toStdString(), std::regex("\\b" + old_name + "\\b"), new_name);
+            QTableWidgetItem* item_expression = new QTableWidgetItem();
+            tableWidget->setItem(i, 1, item_expression);
+            tableWidget->item(i, 1)->setText(QString::fromStdString(str));
+        }
+    }*/
+
     if (new_name.empty() || (!this->isValidWithName(new_name, change_row))) {
         return;
     }

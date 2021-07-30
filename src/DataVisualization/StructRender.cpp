@@ -237,7 +237,14 @@ bool StructRender::setDefaultRang(){
 			}
 		}
 			break;
+		case R_THETA:
+		{
+			xr = d->getXRang();
+			yr = d->getYRang();
 		}
+			break;
+		}
+
 		d->setXRang(xr);
 		d->setYRang(yr);
 	}
@@ -269,8 +276,8 @@ void StructRender::dataInit(){
 */
 QVector<QPainterPath> StructRender::GetPath(std::vector<StructData::CutCir>& _vector, const Data::Rang& xr, const Data::Rang& yr, const float& xScale, const float& yScale)
 {
-	qreal pi = 3.141592653589793;
-	qreal w1 = 180 / pi;
+	//qreal pi = 3.141592653589793;
+	qreal w1 = 180 / M_PI;
 	QPointF p0(0.0, 0.0);
 	transitionPoint(p0, xScale, xr, yScale, yr);
 	QVector<QPainterPath> pathlist;
@@ -290,18 +297,18 @@ QVector<QPainterPath> StructRender::GetPath(std::vector<StructData::CutCir>& _ve
 		float VR = iterrect->R_excir*yScale;
 		excirrect.setLeft(p0.x() - HR);
 		excirrect.setTop(p0.y() - VR);
-		excirrect.setBottom(excirrect.top() + 2 * VR);
-		excirrect.setRight(excirrect.left() + 2 * HR);
+		excirrect.setBottom(p0.y() + VR);
+		excirrect.setRight(p0.x()+ HR);
 
-		path.arcTo(excirrect, iterrect->startAngle*w1, ((iterrect->endAngle*w1) - (iterrect->startAngle*w1)));
+		path.arcTo(excirrect, -iterrect->startAngle*w1, -((iterrect->endAngle*w1) - (iterrect->startAngle*w1)));
 		path.lineTo(iterrect->inner2);
 		HR = iterrect->R_inner*xScale;
 		VR = iterrect->R_inner*yScale;
 		excirrect.setLeft(p0.x() - HR);
 		excirrect.setTop(p0.y() - VR);
-		excirrect.setBottom(excirrect.top() + 2 * VR);
-		excirrect.setRight(excirrect.left() + 2 * HR);
-		path.arcTo(excirrect, iterrect->endAngle*w1, ((iterrect->startAngle*w1) - (iterrect->endAngle*w1)));
+		excirrect.setBottom(p0.y() + VR);
+		excirrect.setRight(p0.x() + HR);
+		path.arcTo(excirrect, -iterrect->endAngle*w1, -((iterrect->startAngle*w1) - (iterrect->endAngle*w1)));
 		pathlist.push_back(path);
 #pragma  endregion
 	}
@@ -438,10 +445,11 @@ bool StructRender::drawImageRandspace(){
 		}
 	}
 	auto nImg = img.mirrored(false, true);
-//#define _Debug
+	//auto nImg = img;
+#define _Debug
 #ifdef _Debug
 	static int index = 0;
-	QString _path = QString("C:/Users/ASUS/Desktop/save/savepmg_%1.png").arg(index++);
+	QString _path = QString("C:/Users/DELL/Desktop/h5/savepmg_%1.png").arg(index++);
 	bool res = nImg.save(_path);
 #undef _Debug
 #endif
@@ -620,13 +628,14 @@ bool StructRender::drawPointCir(){
 	painter.setPen(pen);
 	//获取当前点位
 	QPointF A_Point = this->getFindPosition();
+	//A_Point.setY(getSize().height()-A_Point.y());
 	StructData::structpoint _point = findApointCylindrical(A_Point);
 	//坐标翻转
 	_point.y = getSize().height() - _point.y;
 	painter.drawPoint(QPointF(_point.x, _point.y));
 	std::map<QString, float> list;
-	list["X"] = _point.d1;
-	list["Y"] = _point.d2;
+	list["R"] = _point.d1;
+	list["THETA"] = _point.d2;
 	displayPointInformation(&painter, &QPointF(_point.x, _point.y), list);
 	setImage(img);
 	return true;
@@ -712,32 +721,40 @@ StructData::structpoint StructRender::findApointCylindrical(QPointF _curpoint)
 	{
 		mpoint.x = map[key][index].inner1.x();
 		mpoint.y = map[key][index].inner1.y();
-		mpoint.d1 = __map[key][index].inner1.x();
-		mpoint.d2 = __map[key][index].inner1.y();
+		//mpoint.d1 = __map[key][index].inner1.x();
+		//mpoint.d2 = __map[key][index].inner1.y();
+		mpoint.d1 = __map[key][index].R_inner;
+		mpoint.d1 = __map[key][index].startAngle;
 	}
 		break;
 	case 1:
 	{
 		mpoint.x = map[key][index].inner2.x();
 		mpoint.y = map[key][index].inner2.y();
-		mpoint.d1 = __map[key][index].inner2.x();
-		mpoint.d2 = __map[key][index].inner2.y();
+		//mpoint.d1 = __map[key][index].inner2.x();
+		//mpoint.d2 = __map[key][index].inner2.y();
+		mpoint.d1 = __map[key][index].R_inner;
+		mpoint.d2 = __map[key][index].endAngle;
 	}
 		break;
 	case 2:
 	{
 		mpoint.x = map[key][index].excir1.x();
 		mpoint.y = map[key][index].excir1.y();
-		mpoint.d1 = __map[key][index].excir1.x();
-		mpoint.d2 = __map[key][index].excir1.y();
+		//mpoint.d1 = __map[key][index].excir1.x();
+		//mpoint.d2 = __map[key][index].excir1.y();
+		mpoint.d1 = __map[key][index].R_excir;
+		mpoint.d2 = __map[key][index].startAngle;
 	}
 		break;
 	case 3:
 	{
 		mpoint.x = map[key][index].excir2.x();
 		mpoint.y = map[key][index].excir2.y();
-		mpoint.d1 = __map[key][index].excir2.x();
-		mpoint.d2 = __map[key][index].excir2.y();
+		//mpoint.d1 = __map[key][index].excir2.x();
+		//mpoint.d2 = __map[key][index].excir2.y();
+		mpoint.d1 = __map[key][index].R_excir;
+		mpoint.d2 = __map[key][index].endAngle;
 	}
 		break;
 	}
@@ -762,7 +779,8 @@ void StructRender::loadconfig()
 	LoadColor(StructData::DIELECTIRANDCONDUCTANCE);
 	LoadColor(StructData::FREESPACE);
 	LoadColor(StructData::FOIL);
-	//线段-----PORT 2**8/256，2**9/512，2**10/1024
+	//线段
+	//PORT 2**8/256，2**9/512，2**10/1024
 	//DRIVER--2^11/2048,2^12/4096,2^13/8192
 	//INDUCTOR--2^14/16384,2^15/32768,2^16/65536
 	QPixmap mapc(lineicon[0]);

@@ -30,10 +30,14 @@ void Hdf5IO::setFilePath(const std::string& path, FileOpenMod mod /*= OPEN_EXIST
 			Hdf5File.reset(new H5File(newPath, H5F_ACC_RDWR));
 		else
 			Hdf5File.reset(new H5File(newPath, H5F_ACC_TRUNC));
+
+		this->hdf5DataList.clear();
 	}
 	catch (...)
 	{
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::setFilePath open hdf5 file failed!" << std::endl;
+#endif // DEBUG
 	}
 
 }
@@ -49,7 +53,9 @@ Group Hdf5IO::getGroup(const Group &group,const std::string &groupName,bool &ok)
 		g = group.openGroup(groupName);
 		ok = true;
 	}catch (...){
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::getGroup failde! group name:" + groupName << std::endl;
+#endif
 		ok = false;
 	}
     return g;
@@ -65,7 +71,9 @@ Group Hdf5IO::getGroup(const std::string &groupName,bool &ok)
 		ok = true;
 		g = OpenH5File(*Hdf5File,groupName,ok);
 	}catch (...){
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::getGroup failde! group name:" + groupName << std::endl;
+#endif
 		ok = false;
 	}
     return g;
@@ -85,7 +93,9 @@ bool Hdf5IO::getGroup(const Group& fatherGroup, const std::string groupName, Gro
 		group = fatherGroup.openGroup(groupName);
 	}
 	catch (...){
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::getGroup failde! group name:" + groupName << std::endl;
+#endif
 		return false;
 	}
 	return true;
@@ -102,7 +112,9 @@ bool Hdf5IO::getGroup(const std::string groupName, Group& group)
 	try{
 		return getGroup(*Hdf5File, groupName, group);
 	}catch (...){
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::getGroup failde! group name:" + groupName << std::endl;
+#endif
 		return false;
 	}
 	return true;
@@ -121,7 +133,9 @@ bool Hdf5IO::getGroup(H5File& file, const std::string& groupName, Group& group)
 	{
 		group = file.openGroup(groupName);
 	}catch (...){
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::getGroup get group for h5file failde! group name:" + groupName;
+#endif
 		return false;
 	}
 	return true;
@@ -140,7 +154,9 @@ bool Hdf5IO::getDataSet(const Group& group, const std::string& dataSetName, Data
 	{
 		dataSet = group.openDataSet(dataSetName);
 	}catch (...){
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::getDataSet get data set failde! data set name:" + dataSetName;
+#endif
 		return false;
 	}
 
@@ -271,7 +287,9 @@ Group Hdf5IO::OpenH5File(H5File &file, const std::string &groupName, bool &ok)
 	   ok = true;
     }catch(...)
     {
+#ifdef MY_DEBUG
        std::cerr << "获取数据组失败，数据组名:" + groupName;
+#endif
 	   ok = false;
     }
 
@@ -282,7 +300,6 @@ Group Hdf5IO::OpenH5File(H5File &file, const std::string &groupName, bool &ok)
  */
 Group Hdf5IO::OpenGroup(Group &group, const std::string &groupName,bool &ok)
 {
-    std::cerr << "获取数据组：" + groupName;
     Group g;
     try
     {
@@ -290,7 +307,9 @@ Group Hdf5IO::OpenGroup(Group &group, const std::string &groupName,bool &ok)
 	   ok = true;
     }catch(...)
     {
+#ifdef MY_DEBUG
        std::cerr << "获取数据组失败，数据组名:" + groupName;
+#endif
 	   ok = false;
     }
 
@@ -301,7 +320,6 @@ Group Hdf5IO::OpenGroup(Group &group, const std::string &groupName,bool &ok)
  */
 DataSet Hdf5IO::OpenGroupDataset(Group &group, const std::string &datasetName, bool &ok)
 {
-    std::cerr << "获取数据库：" + datasetName;
     DataSet d;
     try
     {
@@ -309,7 +327,9 @@ DataSet Hdf5IO::OpenGroupDataset(Group &group, const std::string &datasetName, b
 	   ok = true;
     }catch(...)
     {
+#ifdef MY_DEBUG
        std::cerr << "获取数据库组失败，数据库名:" + datasetName;
+#endif
 	   ok = false;
     }
 
@@ -546,7 +566,7 @@ void Hdf5IO::copyToHdf5IO(Hdf5IO& hdf5IO, std::vector<Hdf5Data>& datas)
 */
 void Hdf5IO::creatNewHdf5File(const std::string& fileName)
 {
-	H5Fcreate(fileName.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+	int res=H5Fcreate(fileName.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
 }
 
 void Hdf5IO::creatHdf5File(const std::string& fileName)
@@ -591,7 +611,7 @@ void Hdf5IO::getGrdData()
  */
 void Hdf5IO::initHdf5Data()
 {
-
+#if 0
     // 获取结构数据
      {
 		 getStructData();
@@ -608,6 +628,10 @@ void Hdf5IO::initHdf5Data()
     {
 		getFildData();
     }
+#endif
+#if 1
+	LoadH5Resource();
+#endif
 }
 
 
@@ -641,23 +665,32 @@ bool Hdf5Data::initInformation()
 		return false;
 	name = sl.at(2).toStdString();
 
+	//获取图表别名
+	if (headList.size() < 14)
+		return true;
+	str = QString::fromStdString(headList.at(13));
+	sl = str.split(":");
+	if (sl.size() < 2)
+		return true;
+	petName = sl.at(1).toLower().simplified().toStdString();
+
 	return true;
 }
 
-/**
-* @brief Hdf5Data::initStructInformation 初始化结构图信息
-* @return bool
-*/
-bool Hdf5Data::initStructInformation()
+bool Hdf5Data::initM3dStructInformation()
 {
 	if (headList.size() < 4)
 		return false;
-	name = "struct";
 	QString str = QString::fromStdString(headList.at(3));
+	str = str.simplified();
 	QStringList sl = str.split("=");
 	if (sl.size() < 2)
 		return false;
 	if (sl.at(0) != "system")
+		return false;
+	str = sl.at(1);
+	sl = str.split("$");
+	if (sl.size() < 3)
 		return false;
 	str = sl.at(1);
 	str = str.simplified();
@@ -668,6 +701,41 @@ bool Hdf5Data::initStructInformation()
 	else if (str == "cartesian")
 		coordinateSystem = CARTESIAN;
 
+	if (sl.at(2) != "STRUCTRUE")
+		return false;
+
+	name = "struct";
+	return true;
+}
+
+bool Hdf5Data::initM2dStructInformation()
+{
+	if (headList.size() < 4)
+		return false;
+	QString str = QString::fromStdString(headList.at(2));
+	str = str.simplified();
+	QStringList sl = str.split("=");
+	if (sl.size() < 2)
+		return false;
+	if (sl.at(0) != "system")
+		return false;
+	str = sl.at(1);
+	sl = str.split("$");
+	if (sl.size() < 3)
+		return false;
+	str = sl.at(1);
+	str = str.simplified();
+	if (str == "cylindrical")
+		coordinateSystem = CYLINDER;
+	else if (str == "polar")
+		coordinateSystem = POLAR;
+	else if (str == "cartesian")
+		coordinateSystem = CARTESIAN;
+
+	if (sl.at(2) != "STRUCTRUE")
+		return false;
+
+	name = "struct";
 	return true;
 }
 
@@ -679,6 +747,190 @@ void Hdf5Data::init()
 {
 	if (initInformation())
 		return;
-	if (initStructInformation())
+	if (initM3dStructInformation())
 		return;
+	if (initM2dStructInformation())
+		return;
+}
+/**
+* @brief Hdf5IO::creatNewH5File
+* @param const std::string & fileName
+* @return int
+* @Time 2021/6/30
+*/
+int Hdf5IO::creatNewH5File(const std::string& fileName){
+	
+	return H5Fcreate(fileName.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+}
+/**
+* @brief Hdf5IO::openH5File
+* @param const std::string & fileName
+* @return int
+* @Time 2021/6/30
+*/
+int Hdf5IO::openH5File(const std::string &fileName)
+{
+	/*return H5Fopen(const char *filename, unsigned flags,
+		hid_t access_plist);*/
+	return 0;
+}
+/**
+* @brief Hdf5IO::closeH5File
+* @param int H5id
+* @return int
+* @Time 2021/6/30
+*/
+int Hdf5IO::closeH5File(int H5id)
+{
+	return H5Fclose(H5id);
+
+}
+
+/**
+* @brief Hdf5IO::LoadH5Resource 加载H5资源
+* @return void
+* @Time 2021/6/30
+*/
+void Hdf5IO::LoadH5Resource()
+{
+	std::list<Group> groups = getGrouplist();//获取根节点下的所有组
+	//处理所有的Group
+	for (auto iter = groups.begin(); iter != groups.end();iter++)
+		digGroup(*iter);
+}
+
+/**
+* @brief Hdf5IO::digGroup
+* @param Group group
+* @return void
+* @Time 2021/6/30
+*/
+void Hdf5IO::digGroup(Group group)
+{
+#if 0
+	这里增加判断下层的是数据还是组
+	std::list<Group> subgroups = getGrouplist(group);
+	std::vector<DataSet> datas = getDataSetlist(group);
+	if (!datas.empty())
+	{
+		Hdf5Data data(this->Hdf5File);
+		data.listDataSet = datas;
+		data.group = group;
+		std::vector<std::string> headList = getHeadValue(group);
+		data.headList = headList;
+		data.init();
+		hdf5DataList.push_back(data);
+	}
+	if (subgroups.empty())
+		return;
+	//采用递归式处理
+	for (auto iter = subgroups.begin(); iter != subgroups.end(); iter++)
+		digGroup(*iter);
+#else
+	/*****************************************/
+	//首先判断下层有没有数据或者组
+	int childCount = group.getNumObjs();
+	if (0 >= childCount)
+		return;
+	//下层有数据，则判断是组还是数据
+	//先判断若是数据的话
+	DataSet temp;
+	bool res = getDataSet(group,group.getObjnameByIdx(0),temp);
+	//如果确实为数据
+	if (res)
+	{
+		std::vector<DataSet> datasets;
+		for (int index = 0; index < childCount; index++)
+		{
+			DataSet data;
+			getDataSet(group,group.getObjnameByIdx(index),data);
+			datasets.push_back(data);
+		}
+		//初始化
+		Hdf5Data data(this->Hdf5File);
+		data.listDataSet = datasets;
+		data.group = group;
+		data.headList = getHeadValue(group);
+		data.init();
+		hdf5DataList.push_back(data);
+		return;
+	}
+	//不是数据，是组
+	else
+	{
+		for (int index = 0; index < childCount; index++)
+		{
+			Group g;
+			getGroup(group,group.getObjnameByIdx(index),g);
+			digGroup(g);
+		}
+	}
+#endif
+}
+/**
+* @brief Hdf5IO::getGroups
+* @return std::list<H5::Group>
+* @Time 2021/6/30
+*/
+std::list<Group> Hdf5IO::getGrouplist()
+{
+	std::list<Group> groups;
+	int count = this->Hdf5File->getNumObjs();
+	for (auto index = 0; index < count;index++)
+	{
+		Group subgroup;
+		std::string groupName = Hdf5File->getObjnameByIdx(index);
+		getGroup(groupName,subgroup);
+		int childcount = subgroup.getNumObjs();
+		if (childcount>0)//有子节点，不是dataset
+		{
+			groups.push_back(subgroup);
+		}
+	}
+	return groups;
+}
+/**
+* @brief Hdf5IO::getGrouplist
+* @param Group group
+* @return std::list<H5::Group>
+* @Time 2021/6/30
+*/
+std::list<Group> Hdf5IO::getGrouplist(Group group)
+{
+	std::list<Group> groups;
+	int count = group.getNumObjs();
+	for (auto index = 0; index < count;index++)
+	{
+		Group subgroup;
+		std::string subGroupName = group.getObjnameByIdx(index);
+		auto res=getGroup(group,subGroupName,subgroup);
+		if (!res)
+			continue;
+		int childcount = subgroup.getNumObjs();
+		if (childcount>0)
+			groups.push_back(subgroup);
+	}
+	return groups;
+}
+
+/**
+* @brief Hdf5IO::getDataSetlist 获取数据队列
+* @param Group group
+* @return std::vector<H5::DataSet>
+* @Time 2021/6/30
+*/
+std::vector<DataSet> Hdf5IO::getDataSetlist(Group group)
+{
+	std::vector<DataSet> datasetlist;
+	int count = group.getNumObjs();
+	for (auto index = 0; index < count;index++)
+	{
+		DataSet data;
+		std::string datasetName = group.getObjnameByIdx(index);
+		auto res = getDataSet(group, datasetName, data);
+		if (!res)
+			continue;
+		datasetlist.push_back(data);
+	}
+	return datasetlist;
 }

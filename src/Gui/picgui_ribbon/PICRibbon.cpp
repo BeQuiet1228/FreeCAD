@@ -11,10 +11,12 @@
 #include"darWer.h"
 #define WIGET_INTERVAL (30)
 Ribbon::Ribbon(QWidget *parent)
-	: QTabWidget(parent)
+  : QTabWidget(parent)
 {
 	mydarWer.clear();
 	setCursor(Qt::ArrowCursor);
+	QTabWidget* widget = dynamic_cast<QTabWidget*>(this);
+	QObject::connect(widget, SIGNAL(currentChanged(int)), this, SLOT(SlotcurrentChanged(int)));
 }
 
 void Ribbon::addTab(const QString &tabName)
@@ -164,22 +166,6 @@ PICRibbonTabContent *Ribbon::get_tab_by_name(QString &name)
 	PICRibbonTabContent *ribbonTabContent = static_cast<PICRibbonTabContent*>(tab);
 	return ribbonTabContent;
 }
-
-
-
-
-
-
-
-
-
-/**
-* @brief  Ribbon::addAction
-* @param  const QString & tabName  
-* @param  const QString & groupName  
-* @param  QAction * action  
-* @return void  
-*/
 void Ribbon::addAction(const QString &tabName, const QString &groupName, QAction *action)
 {
 	QToolButton *b = new QToolButton;
@@ -187,10 +173,6 @@ void Ribbon::addAction(const QString &tabName, const QString &groupName, QAction
 	this->addButton(tabName, groupName, b);
 }
 
-/**
-* @brief  Ribbon::clearAllAction
-* @return void  
-*/
 void Ribbon::clearAllAction()
 {
 	this->clear();
@@ -233,10 +215,6 @@ void Ribbon::clearGoup(const QString &groupName)
 	//    }
 }
 
-/**
-* @brief  Ribbon::getTabs
-* @return QT_NAMESPACE::QList<QT_NAMESPACE::QString>  
-*/
 QList<QString> Ribbon::getTabs()
 {
 	QList<QString> list;
@@ -249,10 +227,6 @@ QList<QString> Ribbon::getTabs()
 	return list;
 }
 
-/**
-* @brief  Ribbon::getGroups 获取组
-* @return QT_NAMESPACE::QList<QT_NAMESPACE::QString>  
-*/
 QList<QString> Ribbon::getGroups()
 {
 	QList<PICRibbonTabContent *> list_t = get_tab_all();
@@ -268,11 +242,6 @@ QList<QString> Ribbon::getGroups()
 	return list;
 }
 
-/**
-* @brief  Ribbon::getGroup
-* @param  const QString & tabName  
-* @return QT_NAMESPACE::QList<QT_NAMESPACE::QString>  
-*/
 QList<QString> Ribbon::getGroup(const QString &tabName)
 {
 	QString name_t = tabName;
@@ -286,10 +255,6 @@ QList<QString> Ribbon::getGroup(const QString &tabName)
 	return list;
 }
 
-/**
-* @brief  Ribbon::getActions
-* @return QT_NAMESPACE::QList<QAction *>  
-*/
 QList<QAction *> Ribbon::getActions()
 {
 	QList<PICRibbonTabContent *> list_t = get_tab_all();
@@ -304,11 +269,6 @@ QList<QAction *> Ribbon::getActions()
 	return list;
 }
 
-/**
-* @brief  Ribbon::getTabActions
-* @param  const QString & tabName  
-* @return QT_NAMESPACE::QList<QAction *>  
-*/
 QList<QAction *> Ribbon::getTabActions(const QString &tabName)
 {
 
@@ -347,12 +307,6 @@ QList<QAction *> Ribbon::getGroupActions(const QString &groupName)
 }
 
 
-/**
-* @brief  Ribbon::setTabOlder
-* @param  const QString & tabName  
-* @param  const int older  
-* @return void  
-*/
 void Ribbon::setTabOlder(const QString &tabName, const int older)
 {
 	QString name_t = tabName;
@@ -360,11 +314,6 @@ void Ribbon::setTabOlder(const QString &tabName, const int older)
 	QTabWidget::insertTab(older, t, name_t);
 }
 
-/**
-* @brief  Ribbon::hasAction
-* @param  const QAction * action  
-* @return bool  
-*/
 bool Ribbon::hasAction(const QAction *action)
 {
 	QList<QAction*> list = this->getActions();
@@ -428,53 +377,6 @@ void Ribbon::setGroupSequence(const QString &tabName, const QString &groupName, 
 		}
 	}
 }
-
-/**
-* @brief  Ribbon::getunfoldMinSize 获取扩展大小门限
-* @return QT_NAMESPACE::QSize  
-*/
-QSize Ribbon:: getunfoldMinSize() {
-	QSize size;
-	QWidget* tab = nullptr;
-	unsigned int widgetMax = 0;
-	unsigned int widgetMaxHeight = 0;
-	for (auto index = 0; index < count();index++)
-	{
-		tab = QTabWidget::widget(index);
-		PICRibbonTabContent* picribbontabcontent = dynamic_cast<PICRibbonTabContent*>(tab);
-		unsigned int curallwidth = 0;
-		unsigned int curallheight = 0;
-		for (auto index2 = 0; index2 < picribbontabcontent->contentLayout->count();index2++)
-		{
-			PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(picribbontabcontent->contentLayout->itemAt(index2)->widget());
-			curallwidth += group->size().width();
-			curallheight = (curallheight<group->size().height()?group->size().height():curallheight);
-		}
-		if (curallwidth>widgetMax)
-		{
-			widgetMax = curallwidth;
-		}
-		if (curallheight>widgetMaxHeight)
-		{
-			widgetMaxHeight = curallheight;
-		}
-	}
-	size.setWidth(widgetMax);
-	size.setHeight(widgetMaxHeight);
-	return size;
-}
-/**
-* @brief  Ribbon::getcurMinSize 获取当前最小大小
-* @return QT_NAMESPACE::QSize  
-*/
-QSize Ribbon:: getcurMinSize() {
-	QSize size;
-	{
-
-	}
-	return size;
-}
-
 /**
 * @brief Ribbon::setScale
 * @param QSize & size
@@ -503,6 +405,7 @@ void Ribbon::setScale(QSize& size, bool state) {
 */
 bool Ribbon::toScale(unsigned int index,QSize& size)
 {
+	HidemyDar();
 	QTabWidget::setCurrentIndex(index);
 	//收缩
 	//step1:获取tab页
@@ -516,12 +419,14 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 		PICRibbonButtonGroup* groupbutton = dynamic_cast<PICRibbonButtonGroup*>
 			(mtab->contentLayout->itemAt(groupindex)->widget());
 		groups.push_back(groupbutton);
-		qDebug() << groupbutton->size().width();
+		//qDebug() << groupbutton->size().width();
 		widthmax += groupbutton->size().width();
 	}
 	//step3:检查大小差,判断是否需要收进抽屉
 	if (size.width() - widthmax > 24)
 		return false;
+	qDebug() << "Size:" << size.width();
+	qDebug() << "toScale:" << "index=" << index << "widmax=" << widthmax;
 	//step4:开始收进抽屉
 	for(int groupindex=groups.size()-1; groupindex >=0; groupindex--)
 	{
@@ -562,8 +467,6 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 	}
 	return true;
 }
-
-
 /**
 * @brief Ribbon::unFold 展开
 * @param unsigned int index tab页序号
@@ -572,105 +475,11 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 */
 bool Ribbon::unFold(unsigned int index, QSize& size)
 {
-#if 0
-	if (mydarWer.empty())
-		return false;
-	QWidget* tabwidget = QTabWidget::widget(index);
-	PICRibbonTabContent* tabContent = dynamic_cast<PICRibbonTabContent*>(tabwidget);
-#if 1
-	PICRibbonButtonGroup* scaleWidget = nullptr;
-	int allWidth = 0;
-	bool istrue = false;
-	for (int index = 0; index < tabContent->contentLayout->count(); index++)
-	{
-		PICRibbonButtonGroup* tempGroup = dynamic_cast<PICRibbonButtonGroup*>(
-			tabContent->contentLayout->itemAt(index)->widget());
-		auto iter= mydarWer.find(tempGroup->title());
-		allWidth += tempGroup->width();
-		if (iter!=mydarWer.end()&& !istrue)
-		{
-			scaleWidget = tempGroup;
-			istrue = true;
-		}
-	}
-	if (!scaleWidget)
-		return false;
-	allWidth -= scaleWidget->width();
-	auto iter = mydarWer.find(scaleWidget->title());
-	PICRibbonButtonGroup* mydarWerGroup = dynamic_cast<PICRibbonButtonGroup*>(iter->second);
-	allWidth += mydarWerGroup->width();
-	int distance = size.width() - allWidth;
-	if (WIGET_INTERVAL * 2 >= distance)
-		return false;
-	int indexes= tabContent->getGroupIndex(mydarWerGroup);
-	PICRibbonButtonGroup* newGroup = new PICRibbonButtonGroup;
-	newGroup->setTitle(mydarWerGroup->title());
-	std::list<QAction*> list = mydarWerGroup->get_action_all().toStdList();
-	for (auto iteraction = list.begin(); iteraction != list.end();iteraction++)
-	{
-		QToolButton *b = new QToolButton;
-		b->setDefaultAction(*iteraction);
-		newGroup->addButton(b);
-	}
-	tabContent->SlotOnGroup(newGroup, indexes);
-	mydarWer.erase(iter);
-	return unFold(index,size);
-#else 
-	/********************************************************************************/
-	//展开的组
-	std::map<QString, PICRibbonButtonGroup*> groupsunfold;
-	//存储的组
-	std::map<QString, PICRibbonButtonGroup*>groupsstored;
-	//开始遍历对应的group
-	int allwidth = 0;
-	for (auto index = 0; index < tabContent->contentLayout->count(); index++)
-	{
-		PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(
-			tabContent->contentLayout->itemAt(index)->widget());
-		if (mydarWer.find(group->title()) != mydarWer.end())
-		{
-			groupsstored.insert(std::pair<QString, PICRibbonButtonGroup*>(group->title(), group));
-		}
-		else
-		{
-			groupsunfold.insert(std::pair<QString, PICRibbonButtonGroup*>(group->title(), group));
-			allwidth += group->width();
-		}
-	}
-	//展开的实现
-	if (groupsstored.empty())
-		return false;
-	int stroedwidth = (groupsstored.begin())->second->width();
-	int stroedCount = groupsstored.size() - 1;
-	for (auto storediter = groupsstored.begin(); storediter != groupsstored.end(); storediter++)
-	{
-		//获取当前的折叠总大小
-		int tabwidth = allwidth + stroedwidth*stroedCount;
-		//获取当前被隐藏的组的大小并替换调当前被折叠组
-		tabwidth += (mydarWer.find(storediter->first)->second->width());
-		int distance = size.width() - tabwidth;
-		if (WIGET_INTERVAL * 2 >= distance)
-			continue;
-		//这里开始替换
-		PICRibbonButtonGroup* mydarwer1 = dynamic_cast<PICRibbonButtonGroup*>(mydarWer.find(storediter->first)->second);
-		std::list<QAction*> actionlist = mydarwer1->get_action_all().toStdList();
-		tabContent->removeGroup(storediter->first);
-		for (auto iteraction = actionlist.begin(); iteraction != actionlist.end(); iteraction++)
-		{
-			QToolButton* b = new QToolButton;
-			b->setDefaultAction(*iteraction);
-			tabContent->addButton(storediter->first, b);
-		}
-		allwidth += mydarwer1->width();
-		mydarWer.erase(mydarWer.find(storediter->first));
-		stroedCount--;
-	}
-#endif
-	return  true;
-#endif
 	//展开
 	//step0:
 	if (mydarWer.empty()) return true;
+	//关闭相关的抽屉
+	HidemyDar();
 	//step1:设置当前页面
 	QTabWidget::setCurrentIndex(index);
 	//step2:获取tab页
@@ -712,7 +521,6 @@ bool Ribbon::unFold(unsigned int index, QSize& size)
 				//mainwidget->setMaximumWidth(size.width()+24);
 				unFold(index, size);
 			}
-			
 			break;
 		}
 	}
@@ -764,7 +572,7 @@ void Ribbon::showdrawerGroup(QString GroupName,QToolButton* buttom)
 		{
 			newGroup->setWindowFlags(Qt::FramelessWindowHint);
 			QPalette pal = newGroup->palette();
-			pal.setColor(QPalette::Background, Qt::white);
+			pal.setColor(QPalette::Background, QColor(189,193,196,255));
 			newGroup->setAutoFillBackground(true);
 			newGroup->setPalette(pal);
 			//移动
@@ -823,4 +631,27 @@ void Ribbon::showdrawerGroup(QString GroupName,QToolButton* buttom)
 void Ribbon::setParentWidget(MainWindowDef* parent)
 {
 	MaindefStie = reinterpret_cast<unsigned __int64>(parent);
+}
+
+/**
+* @brief Ribbon::SlotcurrentChanged tab切换页面的槽函数
+* @param int index
+* @return void
+* @Time 2021/7/29
+*/
+void Ribbon::SlotcurrentChanged(int index)
+{
+	HidemyDar();
+}
+/**
+* @brief Ribbon::HidemyDar 隐藏抽屉
+* @return void
+* @Time 2021/7/29
+*/
+void Ribbon::HidemyDar()
+{
+	if (mydarWer.empty())
+		return;
+	for (auto iter = mydarWer.begin(); iter != mydarWer.end(); iter++)
+		iter->second->hide();
 }

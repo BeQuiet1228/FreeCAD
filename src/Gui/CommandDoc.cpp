@@ -77,6 +77,7 @@
 #include "App/DocumentObject.h"
 #include "Gui\DockWindowManager.h"
 #include "DocumentPic.h"
+#include "GuiCommand.h"
 using namespace Gui;
 
 
@@ -130,7 +131,6 @@ void StdCmdOpen::activated(int iMsg)
         formatList += QLatin1String(" *.");
         formatList += QLatin1String(it->c_str());
     }
-	//qDebug() << formatList;
 	//新增在C++中添加文件格式的方法
 	//不与之前的功能有任何冲突
 
@@ -1851,7 +1851,7 @@ void StdCmdRunM3d::activated(int iMsg)
 	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
 
 	auto contorl = ContorlInterface::GetInstance();
-	if (!runState)
+	if (!contorl->hasChipicRuning())
 	{
         //设置主界面上的ui
 		auto mw = Gui::MainWindow::getInstance();
@@ -1864,7 +1864,20 @@ void StdCmdRunM3d::activated(int iMsg)
             return;
 		std::string path = picDoc->getTextPath();
 		contorl->setM3dPath(path);
-	}
+
+		//清空h5文件对象
+		picDoc->releaseH5Object();
+    }else {
+		//设置主界面上的ui
+		auto mw = Gui::MainWindow::getInstance();
+		mw->hideContorlUI();
+		//清空h5文件对象
+		Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
+		auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
+		if (!picDoc)
+			return;
+		picDoc->releaseH5Object();
+    }
 	contorl->buttonClicked(0);
 }
 bool StdCmdRunM3d::isActive(void)
@@ -1884,14 +1897,8 @@ bool StdCmdRunM3d::isActive(void)
 			sPixmap = "runing";
 		}else{
 			auto mw = Gui::MainWindow::getInstance();
-			mw->hideContorlUI();
 			sMenuText = QT_TR_NOOP("RunM3d");
 			sPixmap = "run";
-            //清空h5文件对象
-            auto doc = Gui::Application::Instance->activeDocument();
-            auto picDoc = dynamic_cast<DocumentPic*>(doc);
-            if (picDoc)
-                picDoc->releaseH5Object();
 		}
 		this->updataActionIcon();
 	}
@@ -2170,7 +2177,40 @@ bool StdCmdSmartContorl::isActive(void)
 		return true;
 	return false;
 }
+/*添加组件*/
+DEF_STD_CMD_A(StdCmdSmartCalc);
+StdCmdSmartCalc::StdCmdSmartCalc()
+    :Command("Std_Smart_Calc")
+{
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("SmartCalc");
+    sToolTipText = QT_TR_NOOP("SmartCalc");
+    sWhatsThis = "Std_Paralle_Run";
+    sStatusTip = QT_TR_NOOP("SmartCalc");
+    sPixmap = "smartContorl";
+}
 
+void StdCmdSmartCalc::activated(int Msg)
+{
+    Q_UNUSED(Msg);
+    //打开路径
+    doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
+    //设置运行路径
+    Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
+    auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
+    if (!picDoc)
+        return;
+    std::string path = picDoc->getTextPath();
+    SmartContorlInterface::showSmartCalc(path);
+}
+bool StdCmdSmartCalc::isActive(void)
+{
+    //return true;
+    auto contorl = ContorlInterface::GetInstance();
+    if (App::GetApplication().getActiveDocument() && (!contorl->hasChipicRuning()))
+        return true;
+    return false;
+}
 DEF_STD_CMD_A(StdCmdOpenLog);
 
 StdCmdOpenLog::StdCmdOpenLog()
@@ -2284,9 +2324,6 @@ StdCmdOpenDataVisualizationConfig::StdCmdOpenDataVisualizationConfig()
 }
 void StdCmdOpenDataVisualizationConfig::activated(int iMsg)
 {
-  //  ConfigWidget* configWidget = new ConfigWidget();
-  //  configWidget->setAttribute(Qt::WA_DeleteOnClose);
-  //  configWidget->show();
 	getGuiApplication()->showPlotSettingDialog();
 }
 
@@ -2383,11 +2420,11 @@ void CreateDocCommands(void)
 	rcCmdMgr.addCommand(new StdCmdOpenCommandBook);
 	rcCmdMgr.addCommand(new StdCmdOpenUserBook);
 	rcCmdMgr.addCommand(new StdCmdRunSuperTube);
-    rcCmdMgr.addCommand(new StdCmdContourImageMod);
-    rcCmdMgr.addCommand(new StdCmdContourLineMod);
+    //rcCmdMgr.addCommand(new StdCmdContourImageMod);
+    //rcCmdMgr.addCommand(new StdCmdContourLineMod);
     rcCmdMgr.addCommand(new StdCmdOpenDataVisualizationConfig);
     rcCmdMgr.addCommand(new StdCmdDataVisualizationAutoMax);
-    rcCmdMgr.addCommand(new StdCmdDataVisualizationPlotDisplayGridMod);
+    //rcCmdMgr.addCommand(new StdCmdDataVisualizationPlotDisplayGridMod);
 
     rcCmdMgr.addCommand(new StdCmdSave());
     rcCmdMgr.addCommand(new StdCmdSaveAs());
@@ -2418,7 +2455,9 @@ void CreateDocCommands(void)
     /*lzg*/
     //自定义变量
     rcCmdMgr.addCommand(new StdCmdMyParameter());
-    
+	rcCmdMgr.addCommand(new StdCmdSmartCalc());
+    //添加自定义的commad
+    creatGuiCommand();
 }
 
 } // namespace Gui

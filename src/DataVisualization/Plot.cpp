@@ -5,7 +5,6 @@
 #include "RenderThreadManager.h"
 #include "RenderTask.h"
 #include "Renderer.h"
-#include "ColorMapWidget.h"
 #include "qwt/qwt_scale_engine.h"
 #include "ContourRender.h"
 #include <stack>
@@ -13,6 +12,14 @@
 #include <QFont>
 #include "C_encoding.h"
 #include"ConfigWidget.h"
+#include "PlotAdapter.h"
+#include "CustomConfig.h"
+#include "QToolButton"
+#include <QList>
+#include <QPaintEvent>
+#include "rightScaleWidget.h"
+#include "ContourPlotAdapter.h"
+#include "TLabel.h"
 struct UndoRedoData
 {
 	UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
@@ -83,8 +90,9 @@ Plot::Plot(QWidget* parent /*= 0*/)
 {
 	setObjectName("visualizationPlot");
 	initData();
-	setAxisRightEnabled(true);
 	initGUI();
+	setAxisRightEnabled(true);
+	loadconfig();
 }
 
 Plot::~Plot()
@@ -104,97 +112,15 @@ Plot::~Plot()
 */
 void Plot::reRender()
 {
-	reRender(this->canvas->size());
-}
-
-void Plot::reRender(const QSize& size)
-{
+	if (!adapter)
+		return;
 	//清理寻点的画布
 	clearFindPoint();
 	//创建坐标轴网格渲染任务
 	creatGridRenderTask();
 	//更新信息显示label
-	updateInformationLabel();
-
-	if (mainRenderer)
-	{
-		std::cerr << "reRender" << std::endl;
-		mainRenderer->setSize(size);
-		RenderTask task(mainRenderer);
-		renderManager->addTask(task);
-	}
-	unsigned int rank = SUB_RENDER_START_RANK;
-	for (auto rdIter = subRenderers.begin(); rdIter != subRenderers.end(); rdIter++)
-	{
-		(*rdIter)->setSize(size);
-		RenderTask task(*rdIter, RenderTask::MAP, rank);
-		renderManager->addTask(task);
-		rank++;
-	}
-
-	renderManager->start();
-}
-
-/**
-* @brief Plot::addSubRenderer 添加附属渲染器 渲染一些附加内容，这些内容会自动覆盖到主渲染器渲染的内容之上（层级按照添加顺序覆盖）。
-* @param const std::shared_ptr<Renderer> & rd
-* @return void
-*/
-void Plot::addSubRenderer(const std::shared_ptr<Renderer>& rd)
-{
-	rd->dataInit();
-	rd->loadconfig();
-
-	if (mainRenderer)
-	{
-		Data::Rang xr, yr;
-		xr = mainRenderer->getXRang();
-		yr = mainRenderer->getYRang();
-		rd->setXRang(xr);
-		rd->setYRang(yr);
-	}else{
-		//rd->setDefaultRang(canvas->size());
-		rd->setDefaultRang();
-	}
-
-	subRenderers.push_back(rd);
-}
-
-/**
-* @brief Plot::setMainRenderer
-* @param const std::shared_ptr<Renderer> & rd
-* @return void
-*/
-void Plot::setMainRenderer(const std::shared_ptr<Renderer>& rd)
-{
-	//初始化数据
-	rd->loadconfig();
-	rd->dataInit();
-	//rd->setDefaultRang(canvas->size());
-	rd->setDefaultRang();
-	mainRenderer = rd;
-	autoMaxRender();
-}
-
-/**
-* @brief Plot::addRenderer 添加渲染器 这个操作会清空之前的渲染器，第一个渲染器默认为主渲染器。
-* @param const std::list<std::shared_ptr<Renderer>> & listRender
-* @return void
-*/
-void Plot::addRenderer(const std::list<std::shared_ptr<Renderer>>& listRender)
-{
-	if (listRender.size() < 1)
-		return;
-	clearSubRenderer();
-	auto iter = listRender.begin();
-	auto mRedner = *iter;
-	iter++;
-	for (; iter != listRender.end(); iter++)
-	{
-		addSubRenderer(*iter); 
-	}
-	setMainRenderer(mRedner);
-	canvas->clearIteam();
+	//updateInformationLabel();
+	adapter->reRender(this->canvas->size());
 }
 
 /**
@@ -215,46 +141,48 @@ void Plot::setAxisRightEnabled(const bool& e)
 
 void Plot::updateAxis()
 {
-	if (!mainRenderer)
+	if (!adapter)
 		return;
 
 	Data::Rang xr, yr;
-	xr = mainRenderer->getXRang();
-	yr = mainRenderer->getYRang();
+	xr = adapter->getAxisBottomRange();
+	yr = adapter->getAxisLeftRange();
 
 	AxisL->setAxisRange(yr.min, yr.max);
 	AxisB->setAxisRange(xr.min, xr.max);
 	
 
 	//设置横纵坐标单位
-		//获取横纵坐标单位
-	auto d = std::dynamic_pointer_cast<XYData>(mainRenderer->data);
-	if (d)
-	{
-		AxisL->setAxisText(QString::fromStdString(d->getYTag()));
-		AxisB->setAxisText(QString::fromStdString(d->getXTag()));
-	}
+
+ 	//AxisL->setAxisText(QString::fromStdString(adapter->getYTag()));
+ 	//AxisB->setAxisText(QString::fromStdString(adapter->getXTag()));
+
 	AxisB->_update();
 	AxisL->_update();
 
 
 
 	//显示图例
-	if (!axisRightEnabled)
+	if (adapter->axisRightIsHide())
+	{
+		setAxisRightEnabled(false);
 		return;
-	auto valueRange = std::dynamic_pointer_cast<RendererValueRangeInterface>(mainRenderer);
-	if (!valueRange)
+	}else
+		setAxisRightEnabled(true);
+
+	Data::Rang vr = adapter->getAxisRightRange();
+	if (/*(vr.max - vr.min) > -0.0000001 && (vr.max - vr.min) < 0.0000001*/
+		vr.min==vr.max)
 	{
 		scaleWIdget->hide();
 		return;
 	}
-
-	Data::Rang vr = valueRange->getValueRange();
 	QwtInterval interval(vr.min, vr.max);
 	scaleWIdget->setColorMap(interval, ConfigWidget::getQwtLinearColorMap());
-	scaleWIdget->setScaleDiv(scaleEngine->divideScale(vr.min, vr.max, 6, 8, 0));
-	scaleWIdget->setValrange(vr.min, vr.max);
+	scaleWIdget->setAxisRange(vr.min,vr.max);
+	scaleWIdget->_update();
 	scaleWIdget->show();
+	
 }
 
 /**
@@ -263,7 +191,7 @@ void Plot::updateAxis()
 */
 void Plot::clearFindPoint()
 {
-	canvas->removeItem(FIND_POINT_RENDER_RANK);
+	canvas->removeItem(Canvas::FIND_POINT_RENDER_RANK);
 }
 
 /**
@@ -277,7 +205,7 @@ void Plot::undo()
 		return;
 	Data::Rang& xr = data.xr;
 	Data::Rang& yr = data.yr;
-	setRenderRange(xr.min, xr.max, yr.min, yr.max);
+	adapter->setRenderRange(xr.min, xr.max, yr.min, yr.max);
 	updateAxis();
 	reRender();
 }
@@ -289,7 +217,7 @@ void Plot::redo()
 		return;
 	Data::Rang& xr = data.xr;
 	Data::Rang& yr = data.yr;
-	setRenderRange(xr.min, xr.max, yr.min, yr.max);
+	adapter->setRenderRange(xr.min, xr.max, yr.min, yr.max);
 	updateAxis();
 	reRender();
 }
@@ -300,8 +228,8 @@ void Plot::redo()
 */
 void Plot::updateGridLine()
 {
-	creatGridRenderTask();
-	renderManager->start();
+// 	creatGridRenderTask();
+// 	renderManager->start();
 }
 
 /**
@@ -310,37 +238,16 @@ void Plot::updateGridLine()
 */
 void Plot::autoMaxRender()
 {
-	if (!mainRenderer)
+	if (!adapter)
 		return;
-
-	//获取渲染器中最大的默认渲染范围
-	//mainRenderer->setDefaultRang(canvas->size());
-	mainRenderer->setDefaultRang();
-	auto xr = mainRenderer->getXRang();
-	auto yr = mainRenderer->getYRang();
-
-	for (auto rder = subRenderers.begin(); rder != subRenderers.end(); rder++)
-	{
-		(*rder)->setDefaultRang();
-		Data::Rang sxr = (*rder)->getXRang();
-		Data::Rang syr = (*rder)->getYRang();
-
-		xr.max = sxr.max > xr.max ? sxr.max : xr.max;
-		xr.min = sxr.min < xr.min ? sxr.min : xr.min;
-
-		yr.max = syr.max > yr.max ? syr.max : yr.max;
-		yr.min = syr.min < yr.min ? syr.min : yr.min;
-	}
-
-	setRenderRange(xr.min, xr.max, yr.min, yr.max);
-
+	
+	adapter->autoMaxRender();
 	updateAxis();
-
 	reRender();
 
 	//清空撤销恢复栈，将新的操作压入
 	URStack->clear();
-	UndoRedoData URData(xr, yr);
+	UndoRedoData URData(adapter->getAxisBottomRange(), adapter->getAxisLeftRange());
 	URStack->push(URData);
 }
 
@@ -350,11 +257,25 @@ void Plot::autoMaxRender()
 */
 void Plot::updateInformationLabel()
 {
-	if (!mainRenderer)
-		return;
+	//添加单位信息
+	AxisL->setAxisText(QString::fromStdString(adapter->getYTag()));
+	AxisB->setAxisText(QString::fromStdString(adapter->getXTag()));
 	if (!informationLabel)
 		return;
-	informationLabel->setText(GetEncodingstr(mainRenderer->getInformationTitile().c_str(),ENCODING_GB2312));
+	informationLabel->setText(adapter->getInformationTitile());
+	
+}
+
+/**
+* @brief Plot::MainRendererDataSaveAs 将主渲染器中的数据保存到指定路径，如果文件已存在则将数据添加到最后
+* @param const std::string & path
+* @return void
+*/
+void Plot::MainRendererDataSaveAs(const std::string& path)
+{
+	if (!adapter)
+		return;
+	adapter->MainRendererDataSaveAs(path);
 }
 
 /**
@@ -366,6 +287,7 @@ void Plot::initGUI()
 	gridLayout = new QGridLayout;
 	//调整画布与坐标轴的间距
 	gridLayout->setSpacing(0);
+	gridLayout->setContentsMargins(1, 20, 1, 1);
 	this->setLayout(gridLayout);
 
 	canvas = new Canvas();
@@ -376,28 +298,54 @@ void Plot::initGUI()
 	AxisL = new Axis();
 	AxisL->setAxixStyle(Axisleft);
 	AxisL->SetAxisNumber(yAxisLevel);
-	
+	AxisL->setColorBarEnabled(false);
+	AxisL->setMargin(1);
+	AxisL->setSpacing(1);
+	AxisL->setBorderDist(0,0);
 	AxisB = new Axis();
 	AxisB->setAxixStyle(AxisBottom);
 	AxisB->SetAxisNumber(xAxisLevel);
+	AxisB->setColorBarEnabled(false);
+	AxisB->setMargin(1);
+	AxisB->setSpacing(1);
+	AxisB->setBorderDist(0, 0);
 	connect(AxisL, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererYRang(const float&, const float&)));
 	connect(AxisB, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererXRang(const float&, const float&)));
-	scaleWIdget = new ColorMapWidget(QwtScaleDraw::RightScale, this);
+//	scaleWIdget = new rightScaleWidget(QwtScaleDraw::RightScale, this);
+	scaleWIdget = new Axis(this);
+	scaleWIdget->setAxixStyle(Axisstyle::AxisRight);
 	scaleWIdget->setColorBarEnabled(true);
+	scaleWIdget->setLabel(false);
 	scaleWIdget->setColorBarWidth(20);
-	scaleWIdget->setMargin(40);
-
-	informationLabel = new QLabel();
+	scaleWIdget->setMargin(10);
+	scaleWIdget->setBorderDist(0.0, 0.0);
+	connect(scaleWIdget, SIGNAL(sendAxisRang(const float&, const float&)),this,SLOT(ScaleWidgetRightRange(const float&, const float&)));
+	informationLabel = new TLabel();
 	//informationLabel->setMargin(40);
 	//informationLabel->setAlignment(Qt::AlignTop);
 	informationLabel->setAlignment(Qt::AlignCenter);
+	informationLabel->setContentsMargins(0, 10, 0, 0);
 	initInformationLabelFont();
 
+	//初始化按钮条
+	toolbar = new QWidget();
+	toolbarLayout = new QHBoxLayout;
+	toolbarLayout->setAlignment(Qt::AlignLeft);
+	toolbarLayout->setContentsMargins(0,20,0,0);
+	toolbar->setLayout(toolbarLayout);
+	toolbar->setObjectName("PlotToolbar");
+
+	//增加右边距
+	QWidget* space = new QWidget(this);
+	space->setMinimumWidth(20);
+
 	gridLayout->addWidget(canvas, 0, 1, 1, 1);
+	gridLayout->addWidget(space, 0, 3, 1, 1);
 	gridLayout->addWidget(AxisL, 0, 0, 1, 1);
 	gridLayout->addWidget(AxisB, 1, 1, 1, 1);
 	gridLayout->addWidget(scaleWIdget, 0, 2, 1, 1);
-	gridLayout->addWidget(informationLabel, 2, 0, 1, 3);
+	gridLayout->addWidget(informationLabel, 2, 0, 1, 4);
+	gridLayout->addWidget(toolbar, 3, 0, 1, 4);
 
 	gridLayout->setRowStretch(0, 9);
 	gridLayout->setRowStretch(1, 1);
@@ -414,9 +362,6 @@ void Plot::initGUI()
 */
 void Plot::initData()
 {
-	renderManager.reset(new RenderThreadManager);
-	connect(renderManager.get(), SIGNAL(allWorkFinished()), this, SLOT(renderFinished()));
-
 	scaleEngine = new QwtLinearScaleEngine;
 	axisRightEnabled = false;
 
@@ -436,73 +381,29 @@ void Plot::initData()
 */
 void Plot::findPointRender(const float& x, const float& y)
 {
-	mainRenderer->setSize(canvas->size());
-	mainRenderer->setFindPosition(QPointF(x, y));
-	RenderTask task(mainRenderer,RenderTask::FIND_POINT, FIND_POINT_RENDER_RANK);
-	renderManager->addTask(task);
-	renderManager->start();
-}
-
-/**
-* @brief Plot::setRenderRange 设置所有渲染器的渲染范围
-* @param const float & xMin
-* @param const float xMax
-* @param const float & yMin
-* @param const float & yMax
-* @return void
-*/
-void Plot::setRenderRange(const float& xMin, const float xMax, const float& yMin, const float& yMax)
-{
-	Data::Rang xr(xMin, xMax), yr(yMin, yMax);
-	mainRenderer->setXRang(xr);
-	mainRenderer->setYRang(yr);
-	//设置其他渲染器的范围
-	for (auto iter = subRenderers.begin(); iter != subRenderers.end(); iter++)
-	{
-		(*iter)->setYRang(yr);
-		(*iter)->setXRang(xr);
-	}
-
-
-	//设置坐标轴刻度
-	AxisL->setAxisRange(yr.min, yr.max);
-	AxisB->setAxisRange(xr.min, xr.max);
-	updateAxis();
-}
-
-void Plot::setRenderXRange(const float& min, const float& max)
-{
-	if (!mainRenderer)
+	if (!adapter)
 		return;
-	auto yr = mainRenderer->getYRang();
-	setRenderRange(min, max, yr.min, yr.max);
+	adapter->findPointRender(x, y);
 }
 
-void Plot::setRenderYRange(const float& min, const float& max)
-{
-	if (!mainRenderer)
-		return;
-	auto xr = mainRenderer->getXRang();
-	setRenderRange(xr.min, xr.max, min, max);
-}
 
 void Plot::creatGridRenderTask()
 {
-	const unsigned int GRID_RENDER_RANK = FIND_POINT_RENDER_RANK - 1;
-
-	canvas->removeItem(GRID_RENDER_RANK);
-
-	if (!gridLineEnabled)
-		return;
-
-	std::shared_ptr<RenderGrid> gr = std::dynamic_pointer_cast<RenderGrid>(gridRender);
-	gr->setXLevel(xAxisLevel);
-	gr->setYLevel(yAxisLevel);
-
-	gridRender->setSize(canvas->size());
-	RenderTask task(gridRender);
-	task.rank = GRID_RENDER_RANK;
-	renderManager->addTask(task);
+// 	const unsigned int GRID_RENDER_RANK = FIND_POINT_RENDER_RANK - 1;
+// 
+// 	canvas->removeItem(GRID_RENDER_RANK);
+// 
+// 	if (!gridLineEnabled)
+// 		return;
+// 
+// 	std::shared_ptr<RenderGrid> gr = std::dynamic_pointer_cast<RenderGrid>(gridRender);
+// 	gr->setXLevel(xAxisLevel);
+// 	gr->setYLevel(yAxisLevel);
+// 
+// 	gridRender->setSize(canvas->size());
+// 	RenderTask task(gridRender);
+// 	task.rank = GRID_RENDER_RANK;
+// 	renderManager->addTask(task);
 }
 
 
@@ -517,16 +418,47 @@ void Plot::initInformationLabelFont()
 	informationLabel->setFont(font);
 }
 
+void Plot::updateToolbar()
+{
+	//先清空之前的按钮
+	QList<QToolButton*> btns = toolbar->findChildren<QToolButton*>();
+	for (auto iter = btns.begin(); iter != btns.end(); iter++)
+	{
+		delete* iter;
+	}
+
+
+	if (!adapter)
+		return;
+	auto actions = adapter->getActions();
+
+	for (auto iter = actions.begin(); iter != actions.end(); iter++)
+	{
+		QToolButton *button = new QToolButton();
+		button->setDefaultAction(*iter);
+		button->setMinimumSize(32, 32);
+		button->setAutoRaise(true);
+		button->setIconSize(QSize(20, 20));
+		button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+		toolbar->layout()->addWidget(button);
+	}
+}
+
 /**
 * @brief Plot::renderFinished 渲染完成槽
 * @return void
 */
 void Plot::renderFinished()
 {
-	auto result = renderManager->takeResut();
+ 	auto result = adapter->takeResut();
 	for (auto i = result.begin(); i != result.end(); i++)
+	{
 		canvas->addIteam(*i);
+	
+	}
+		
 	canvas->update();
+	updateAxis();
 }
 
 /**
@@ -542,9 +474,9 @@ void Plot::canvasSelectRect(QRect rect)
 		return;
 
 
-	auto xr = mainRenderer->getXRang();
-	auto yr = mainRenderer->getYRang();
-	auto size = mainRenderer->getSize();
+	auto xr = adapter->getAxisBottomRange();
+	auto yr = adapter->getAxisLeftRange();
+	auto size = canvas->size();
 
 	//将矩形框转换为范围
 	float xMax, xMin, yMax, yMin;
@@ -573,7 +505,7 @@ void Plot::canvasSelectRect(QRect rect)
 	URStack->push(unData);
 
 	//设置渲染范围
-	setRenderRange(xr.min, xr.max, yr.min, yr.max);
+	adapter->setRenderRange(xr.min, xr.max, yr.min, yr.max);
 	//重绘
 	reRender(); 
 	//跟新坐标轴
@@ -585,7 +517,7 @@ void Plot::canvasSelectPoint(QPoint point)
 	float x, y;
 	x = point.x();
 	//因为屏幕坐标系的原点在左上角，而实际坐标系的远点在左下角。所以这里的y范围需要做一下翻转
-	auto size = mainRenderer->getSize();
+	auto size = canvas->size();
 	y = size.height() - point.y();
 
 	findPointRender(x, y);
@@ -600,6 +532,17 @@ void Plot::resizeEvent(QResizeEvent *event)
 {
 	QWidget::resizeEvent(event);
 	//reRender();
+}
+
+void Plot::paintEvent(QPaintEvent* event)
+{
+	QWidget::paintEvent(event);
+	QPainter painter(this);
+	QPen pen;
+	pen.setWidth(1);
+	pen.setColor(QColor(125,125,125));
+	painter.setPen(pen);
+	painter.drawRect(1, 1, this->size().width()-2, this->size().height() -2);
 }
 
 /**
@@ -623,44 +566,43 @@ void Plot::keyReleaseEvent(QKeyEvent *event)
 	}
 	
 }
-/**
-* @brief Plot::reRendererEvent 重绘槽函数
-* @param const std::list<std::shared_ptr<Renderer>>& listRender 渲染器列表
-* @return void  
-*/
-void Plot::reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender)
-{
-	addRenderer(listRender);
-}
  
+void Plot::reRendererEvent(std::shared_ptr<PlotAdapter> ad)
+{
+	setAdapter(ad);
+}
+
 void Plot::reRendererXRang(const float& min, const float& max){
-	setRenderXRange(min,max);
+	if (!adapter)
+		return;
+	adapter->setRenderXRange(min,max);
 	reRender();
 	
 }
 void Plot::reRendererYRang(const float& min, const float& max){
-	setRenderYRange(min,max);
+	if (!adapter)
+		return;
+	adapter->setRenderYRange(min,max);
 	reRender();
 }
 
 void Plot::canvasResize(QSize size)
 {
-	if (!mainRenderer)
+	if (!adapter)
 		return;
-	if (mainRenderer->getSize() == size)
-		return;
-	reRender(size);
+	adapter->reRender(size);
 }
 void Plot::loadconfig()
 {
-	if (!mainRenderer)
-		return;
-	mainRenderer->loadconfig();
-	for (auto iter = subRenderers.begin(); iter != subRenderers.end(); iter++)
-		(*iter)->loadconfig();
 	AxisL->loadconfig();
 	AxisB->loadconfig();
-	//reRender();
+	scaleWIdget->loadconfig();
+	informationLabel->loadconfig();
+	reRender();
+
+	if (!adapter)
+		return;
+	adapter->loadConfig();
 }
 void Plot::setappEvent()
 {
@@ -668,48 +610,92 @@ void Plot::setappEvent()
 	updateAxis();
 	reRender();
 }
+
+void Plot::rmoveCanvasItem(unsigned int rank)
+{
+	canvas->removeItem(rank);
+}
+
 /**
 * @brief  Plot::EqualScaleDisplay 按等比例显示
 * @return void  
 */
 void Plot::EqualScaleDisplay()
 {
-	if (!mainRenderer)
+	setRatioDisplay(1,1);
+}
+
+void Plot::setAdapter(const std::shared_ptr < PlotAdapter>& adapter)
+{
+	this->adapter = adapter;
+	adapter->initPlot(*this);
+
+	canvas->clearIteam();
+	autoMaxRender();
+	updateToolbar();
+	updateInformationLabel();
+}
+
+/**
+* @brief Plot::setRatioDisplay 根据横纵比例显示内容
+* @param double & horizonal
+* @param double & vertical
+* @return void
+* @Time 2021/6/28
+*/
+void Plot::setRatioDisplay(const double& horizonal, const double& vertical)
+{
+	if (!adapter)
 		return;
-	float sizeWidth=canvas->size().width();
-	float sizeHeight = canvas->size().height();
-	Data::Rang xr = mainRenderer->getXRang();
-	Data::Rang yr = mainRenderer->getYRang();
-	float xlength = xr.max - xr.min;
-	float ylength = yr.max - yr.min;
-	/*
-	这里为了保证画布的比例为1:1,首先需要判断长宽比
-	width：height=xlength:ylength 实现这个条件
-	*/
-	if (sizeWidth>sizeHeight)
-	{
-		(xlength > ylength) ? (ylength = sizeHeight / sizeWidth*xlength) : (xlength = sizeWidth / sizeHeight*ylength);
-	}
-	else if (sizeHeight>sizeHeight)
-	{
-		(ylength>xlength) ? (xlength = sizeWidth / sizeHeight*ylength) : (ylength = sizeHeight / sizeWidth*xlength);
-	}
-	else
-	{
-		(xlength>ylength) ? (ylength = xlength) : (xlength = ylength);
-	}
-	xr.max = xr.min + xlength;
-	yr.max = yr.min + ylength;
-	mainRenderer->setXRang(xr);
-	mainRenderer->setYRang(yr);
-	for (auto iter = subRenderers.begin(); iter != subRenderers.end(); iter++)
-	{
-		(*iter)->setXRang(xr);
-		(*iter)->setYRang(yr);
-	}
+	adapter->setRatioDisplay(horizonal, vertical);
+
+	Data::Rang xr = adapter->getAxisBottomRange();
+	Data::Rang yr = adapter->getAxisLeftRange();
 	AxisL->setAxisRange(yr.min, yr.max);
 	AxisB->setAxisRange(xr.min, xr.max);
 	updateAxis();
+	reRender();
+}
+
+/**
+* @brief Plot::SaveAs 保存h5数据
+* @param std::string filename
+* @return void
+* @Time 2021/7/6
+*/
+void Plot::SaveAs(std::string filename)
+{
+	int filenamelen = filename.length();
+	std::string fileFormat = filename.substr(filenamelen-4);
+	//转大写
+	//transform(fileFormat.begin(), fileFormat.end(), fileFormat.begin(), toupper);
+	//转小写
+	transform(fileFormat.begin(), fileFormat.end(), fileFormat.begin(), tolower);
+	if (fileFormat.find("png")!=std::string::npos)
+	{
+		//保存图片
+		bool isvisible= toolbar->isVisible();
+		if (isvisible)
+			toolbar->hide();
+		QPixmap pixmap(this->size());
+		this->render(&pixmap);
+		//保存
+		pixmap.save(QString::fromStdString(filename));
+		if (isvisible)
+			toolbar->show();
+	}
+	else if(fileFormat.find("h5")!=std::string::npos)
+	{
+		//保存为*.h5
+		MainRendererDataSaveAs(filename);
+	}
+	
+}
+void Plot::ScaleWidgetRightRange(const float& min, const float& max)
+{
+	if (!adapter)
+		return;
+	adapter->setAxisRightRange(min, max);
 	reRender();
 }
 #include "moc_Plot.cpp"

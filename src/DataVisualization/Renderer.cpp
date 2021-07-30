@@ -67,7 +67,38 @@ QSize Renderer::getSize()
 	return imageSize;
 }
 
-
+/**
+* @brief Renderer::setRatioDisplay 据横纵比例设置刻度范围
+* @param double & horizontal
+* @param double & vertical
+* @return void
+* @Time 2021/6/28
+*/
+void Renderer::setRatioDisplay(const double& horizontal,const double& vertical)
+{
+	QSize size = getSize();
+	float sizeWidth = size.width();
+	float sizeHeight = size.height();
+	Data::Rang xr = getXRang();
+	Data::Rang yr = getYRang();
+	float xlenth = xr.max - xr.min;
+	float ylenth = yr.max - yr.min;
+	if (horizontal==0.0f ||vertical==0.0f)
+		return;
+	float scale_coef = horizontal / vertical;
+	{
+		float newxlength = sizeWidth / sizeHeight*(ylenth*vertical) / horizontal;
+		float newylength = sizeHeight / sizeWidth*(xlenth*horizontal) / vertical;
+		if (newxlength >= xlenth)		xlenth = newxlength;
+		else if (newylength >= ylenth)	ylenth = newylength;
+		else
+			std::cerr << "xlength And yLength err from void Plot::setRatioDisplay(double& horizonal, double& vertical)" << std::endl;
+		xr.max = xr.min + xlenth;
+		yr.max = yr.min + ylenth;
+		setXRang(xr);
+		setYRang(yr);
+	}
+}
 /**
 * @brief Renderer::setFindPosition 设置查找点的位置
 * @param const QPointF & pos
@@ -280,3 +311,10 @@ void Renderer::displayPointInformation(QPainter* painter, QPointF* point , std::
 bool Renderer::setDefaultRang(QSize& size){
 	return setDefaultRang(); 
 }
+
+std::shared_ptr<Data> Renderer::getData()
+{
+	return data;
+}
+
+#include "moc_PlotAdapter.cpp"

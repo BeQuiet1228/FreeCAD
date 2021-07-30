@@ -6,8 +6,8 @@
 #include<map>
 #include "ListTreeWidget.h"
 #include "exportConfig.hpp"
-//#include "RendererFactory.h"
 class Plot;
+class PlotAdapter;
 class RendererFactory;
 class Renderer;
 using RendererPtr = std::shared_ptr < Renderer > ;
@@ -31,7 +31,7 @@ public:
 	//bool isbind();
 Q_SIGNALS:
 	void _loadhdflist(std::vector<Hdf5Data>& Hdf5Data);
-	void _reRendererEvent(const std::list<std::shared_ptr<Renderer>>& listRender);
+	void _reRendererEvent(std::shared_ptr<PlotAdapter>);
 	void toTreeNewData(Hdf5Data& data,int index);
 public Q_SLOTS :
 	void tranfromRenderer(std::string name, int index);
@@ -41,7 +41,7 @@ private:
 	Renderers CreateRendererList(Hdf5Data& data);
 	Renderers CreateRenderer(Hdf5Data& data, int _type);
 private:
-	std::map<std::string,Renderers> RendererManger;
+	std::map<std::string,std::shared_ptr<PlotAdapter>> RendererManger;
 	std::vector<Hdf5Data> hdfDatelist;
 	Hdf5Data structData;
 	int structindex;

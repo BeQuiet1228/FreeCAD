@@ -142,7 +142,6 @@ void MainWindowDef::mousePressEvent(QMouseEvent *event)
 	{
 		leftButtonIsPress = true;
 		leftButtonPressPos = event->pos();
-		//LastPos = event->pos();
 	}
 }
 
@@ -181,6 +180,7 @@ void MainWindowDef::titleBarMove(QPoint pos)
 		if (posing.y()-screens[index].topLeft().y()<2)
 		{
 			showMax();
+			//qDebug() << "showMax";
 			return ;
 		}
 	}
@@ -266,20 +266,16 @@ void MainWindowDef::changeCursor(const QPoint& pos)
 	{
 		setCursor(Qt::SizeFDiagCursor);
 		cursorState = RIGHT_BOTTOM;
-		//qDebug() << "SetCursor:" << "Qt::SizeFDiagCursor" << "cursorState:" << "RIGHT_BOTTOM";
 	}else if (bbottom)
 	{
 		setCursor(Qt::SizeVerCursor);
 		cursorState = BOTTOM;
-		//qDebug() << "SetCursor:" << "Qt::SizeVerCursor" << "cursorState:" << "BOTTOM";
 	}else if (bright){
 		setCursor(Qt::SizeHorCursor);
 		cursorState = RIGHT;
-		//qDebug() << "SetCursor:" << "Qt::SizeHorCursor" << "cursorState:" << "RIGHT";
 	}else{
 		setCursor(Qt::ArrowCursor);
 		cursorState = NONE;
-		//qDebug() << "SetCursor:" << "Qt::ArrowCursor" << "cursorState:" << "NONE";
 	}
 }
 
@@ -298,30 +294,20 @@ void MainWindowDef::changeSize(const QPoint& pos)
 	w = pos.x() - leftButtonPressPos.x();
 	h = pos.y() - leftButtonPressPos.y();
 	leftButtonPressPos = pos;
-	QSize size=this->size();
 	switch (cursorState)
 	{
 	case BOTTOM:
-		//this->resize(this->width(), this->height() + h);
-		size.setHeight(size.height() + h);
+		this->resize(this->width(), this->height() + h);
 		break;
 	case RIGHT:
-		//this->resize(this->width() + w, this->height());
-		size.setWidth(size.width() + w);
+		this->resize(this->width() + w, this->height());
 		break;
 	case RIGHT_BOTTOM:
-		//this->resize(this->width() + w, this->height() + h);
-	{
-		size.setWidth(size.width() + w);
-		size.setHeight(size.height() + h);
-	}
+		this->resize(this->width() + w, this->height() + h);
 		break;
 	default:
 		break;
 	}
-	this->resize(size);
-	//ToDrawer(size);
-	//LastSize = this->size();
 }
 
 
@@ -381,12 +367,9 @@ void MainWindowDef::showOld()
 	move(oldPoint);
 	show();
 }
-
-
 /**
-* @brief MainWindowDef::ToDrawer
-* @return void
-* @Time 2021/6/24
+* @brief  MainWindowDef::test
+* @return void  
 */
 void MainWindowDef::ToDrawer(QSize& size)
 {

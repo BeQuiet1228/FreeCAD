@@ -10,6 +10,7 @@
 #include "C_encoding.h"
 #include <math.h>
 #include "ConfigWidget.h"
+#include "ContourDataPolar.h"
 ContourRenderPolar::ContourRenderPolar(std::shared_ptr<ContourData> data)
 	:ContourRender(data)
 {
@@ -82,7 +83,7 @@ bool ContourRenderPolar::drawPointImage()
 	x = transitionDataToScreen(x, xScale, getXRang());
 	y = transitionDataToScreen(y, yScale, getYRang());
 	//坐标翻转（因为坐标系原点不一致的关系）
-	//y = getSize().height() - y;
+	y = getSize().height() - y;
 
 	//新建画布 画笔
 	QImage img(getSize(), QImage::Format_ARGB32);
@@ -151,14 +152,9 @@ ContourData::Grid ContourRenderPolar::findPoint()
 	float r, theta;
 	r = std::sqrt(std::pow(x, 2) + std::pow(y, 2));
 	//这里使用y判断象限 然后调整theta的值
-	if (y < 0)
-	{
-		theta = std::acos(x / r);
-	}else {
-		theta = 2*M_PI - std::acos(x / r);
-	}
-	
-	std::cerr << "R:" << r << ",THETA:" << theta << std::endl;
+	theta = PolarMatrixRasterData::FastAtan2(y, x);
+	if (theta < 0 && theta < interval(Qt::YAxis).minValue())
+		theta += 2 * M_PI;
 
 	auto d = std::dynamic_pointer_cast<ContourData>(Renderer::data);
 

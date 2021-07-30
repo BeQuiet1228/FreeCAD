@@ -71,6 +71,12 @@ bool ParticleData::loadPointHard()
 	}else {
 		xIndex = 2;
 		yIndex = 1;
+
+		//跟换横纵标签
+		auto xtag = getYTag();
+		auto ytag = getXTag();
+		setXTag(xtag);
+		setYTag(ytag);
 	}
 	//获取粒子数据
 	Particle p;
@@ -177,8 +183,8 @@ void ParticleData::transitionData()
 	{
 		for (auto part = particles.begin(); part != particles.end(); part++)
 		{
-			part->x = part->d1*sin(part->d2);
-			part->y = part->d1*cos(part->d2);
+			part->x = part->d1*cos(part->d2);
+			part->y = part->d1*sin(part->d2);
 		}
 	}else{
 		for (auto part = particles.begin(); part != particles.end(); part++)

@@ -26,7 +26,7 @@ std::string Structdirection_cartesian[3] = { "X_Y", "Y_Z", "X_Z" };
 * @brief ListTreeWidget::ListTreeWidget 构造函数
 * @param QWidget* parent
 */
-ListTreeWidget::ListTreeWidget(QWidget* parent) :QWidget(parent)
+ListTreeWidget::ListTreeWidget(QWidget* parent) :QWidget(parent)/*, structHeadCount(0)*/
 {
 	//初始化TreeView的风格
 	m_TreeView = new QTreeView(this);
@@ -145,8 +145,9 @@ void ListTreeWidget::double_clicked_event(const QModelIndex &index)
 	if (iter != datainfor.end())
 	{
 		//传入hdf5数据
+		qDebug() <<"-----------------------" << iter->second.index;
 		std::string name = (index.data().toString()).toStdString();
-		emit _transfromRenderer(name, iter->second);
+		emit _transfromRenderer(name, iter->second.index);
 	}
 }
 /**
@@ -157,6 +158,8 @@ void ListTreeWidget::double_clicked_event(const QModelIndex &index)
 */
 void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 	std::string observingstr;
+	itemInfo mitemInfo;
+	mitemInfo.index = index;
 	//获取观测面
 	int _type = -1;
 	for (auto i = 0; i < MAX_TYPE_NUMBER;i++)
@@ -168,34 +171,166 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 		}
 	}
 	std::stringstream ss;
+	std::stringstream subss;
 	auto getSStr = [&](std::string str)->std::string{
 		std::string res;
 		res = str;
-		res.erase(std::remove_if(res.begin(),res.end(),isspace),res.end());
+		//res.erase(std::remove_if(res.begin(),res.end(),isspace),res.end());
 		int pos = res.find("=");
 		res.erase(0, pos + 1);
-		return res;
+		QString qres = QString::fromStdString(res);
+		qres = qres.simplified();
+		//qres=qres.replace(" ","_");
+		return qres.toStdString();
+	};
+	auto replaceStr = [&](std::string str)->std::string
+	{
+		QString qstr = QString::fromStdString(str);
+		qstr = qstr.simplified();
+		qstr = qstr.replace(QRegExp("\\s{1,}"), "_");
+		return qstr.toStdString();
 	};
 	//字符串拼接
 	switch (_type)
 	{
-	case emType::CONTOUR:	
-		ss << getSStr(data.headList[2]) << getSStr(data.headList[14]);
+	case emType::VECTOR:
+	{
+		std::string art3 = getSStr(data.headList[2]);
+		std::string art14 = getSStr(data.headList[13]);
+		std::string art12 = getSStr(data.headList[11]);
+		{
+			//transform(art12.begin(),art12.end(),art12.begin(),toupper);
+			//int pos = 0;
+			/*while (std::string::npos != (pos = art12.find("VECTOR"))) art12.erase(pos, 6);
+			while (std::string::npos != (pos = art12.find("OF"))) art12.erase(pos, 2);
+			while (std::string::npos != (pos = art12.find("PLOT"))) art12.erase(pos, 2);*/
+			art12.erase(0,art12.find("("));
+			art3.erase(0,art3.find("$")+1);
+			art14.erase(0,art14.find("TIME:")+5);
+		}
+		ss << "PLOT" << art12;
+		//测试
+		//subss << art12 << " ";
+		subss << art3 << " " << art14;
+		{
+			//获取时间
+			std::string mt = art14;
+			mitemInfo.time = QString::fromStdString(mt.erase(mt.find("SEC"), mt.size())).toDouble();
+		}
+	}
+	break;
+	case emType::CONTOUR:
+	{
+		//等位图
+		std::string art3=getSStr(data.headList[2]);
+		//std::string art3=std::remove_space
+		ss <<art3.substr(0,art3.find("-#"));
+		std::string art13 = getSStr(data.headList[12]);
+		{
+			art3.erase(0,art3.find("$")+1);
+			art13.erase(0,art13.find("TIME")+4);
+		}
+		//测试
+		//subss << ss.str()<<" ";
+		subss <<art3 <<" " << art13;
+		{
+			//保存时间
+			std::string mt = art13;
+			mitemInfo.time = QString::fromStdString(mt.erase(mt.find("SEC"),mt.size())).toDouble();
+		}
+	}
 		break;
 	case emType::PHASEPACE:
-		ss << getSStr(data.headList[2]);
+	{
+		//相空间图
+		//ss << getSStr(data.headList[2]);
+		std::string art3 = getSStr(data.headList[2]);
+		art3.erase(art3.find("-#"), art3.size());
+		ss << art3;
+		//观测类型
+		//std::string art14 = data.headList[13];
+		//观测对象
+		art3 = getSStr(data.headList[2]);
+		//观测时刻
+		std::string art12 = getSStr(data.headList[11]);
+		{
+			//获取时间
+			std::string mt = art12;
+			mt.erase(0,mt.find("TIME:")+5);
+			mt.erase(mt.find("SEC"), mt.size());
+			mitemInfo.time = QString::fromStdString(mt).toDouble();
+		}
+		{
+			int pos = art3.find("$");
+			art3 = (pos == std::string::npos) ? ("") : (art3.erase(0, art3.find("$") + 1));
+			{
+				std::stringstream s1;
+				s1<<art12.substr(art12.find("OF") + 2, (art12.find("VS") - (art12.find("OF") + 2)))
+					<< " " << art12.substr(art12.find("VS") + 2, (art12.find("AT") - (art12.find("VS") + 2)));
+				s1 << " "<<art12.substr(art12.find("TIME") + 5, (art12.size() - (art12.find("TIME") + 5)));
+				art12 = s1.str();
+			}
+			//art12.erase(0, art12.find("TIME"));
+		}
+		subss << art3 <<" " << art12;
+	}
 		break;
 	case emType::RANGE:
-		ss << getSStr(data.headList[2]) << getSStr(data.headList[13]);
+	{
+		std::string art3 = getSStr(data.headList[2]);
+		art3.erase(art3.find("-#"), art3.size());
+		ss << art3;
+		//ss << getSStr(data.headList[2]) << getSStr(data.headList[13]);
+		//观测类型
+		std::string art14 = data.headList[13];
+		//观测对象
+		art3 = getSStr(data.headList[2]);
+		//观测时刻
+		std::string art12 = getSStr(data.headList[11]);
+		{
+			art14.erase(0,art14.find("=")+1);
+			art14.erase(art14.find(" "),art14.size());
+			art3.erase(0,art3.find("$")+1);
+			art12.erase(0,art12.find("TIME")+5);
+		}
+		subss << art14<<" " << art3<<" " << art12;
+		{
+			std::string mt = art12;
+			mitemInfo.time = QString::fromStdString(mt.erase(mt.find("SEC"), mt.size())).toDouble();
+		}
+	}
 		break;
-	case emType::VECTOR:
+	/*case emType::VECTOR:
 		ss << getSStr(data.headList[2]) << getSStr(data.headList[11]);
-		break;
+		break;*/
 	case emType::OBSERVE:
-		ss << getSStr(data.headList[2]) << getSStr(data.headList[13]);
+	{
+		//ss << getSStr(data.headList[2]) << getSStr(data.headList[13]);
+		std::string art3 = getSStr(data.headList[2]);
+		art3.erase(art3.find("-#"),art3.size());
+		ss << art3;
+		std::string art14 = getSStr(data.headList[13]);
+		{
+			transform(art14.begin(), art14.end(), art14.begin(), toupper);
+			//transform(fileFormat.begin(), fileFormat.end(), fileFormat.begin(), tolower);
+			int pos = 0;
+			while (std::string::npos != (pos = art14.find("MAGINTUDE"))) art14.erase(pos,9);
+			while (std::string::npos != (pos = art14.find("OF"))) art14.erase(pos,2);
+			while (std::string::npos != (pos = art14.find("COMPONENT"))) art14.erase(pos, 9);
+			
+			//art14.erase(std::remove_if(art14.begin(), art14.end(), "MAGINTUDE"), art14.end());
+			//art14.erase(std::remove_if(art14.begin(), art14.end(), "OF"), art14.end());
+			//art14.erase(std::remove_if(art14.begin(), art14.end(), "COMPONENT"), art14.end());
+		}
+		art3 = getSStr(data.headList[2]);
+		art3.erase(0,art3.find("$")+1);
+		subss <<art14<<" "<< art3;
+	}
 		break;
 	}
-	observingstr = ss.str();
+
+	observingstr =replaceStr(ss.str());
+
 	auto iter = parentnode.find(observingstr);
 	QStandardItem* observeItem;
 	//没有记录该观测面
@@ -203,6 +338,9 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 	{
 		//查看是否有上层的分类
 		std::string dataType = GetType(data.name);
+		//若是未知的图不做处理
+		if (dataType.find("未知图") != std::string::npos)
+			return;
 		iter = parentnode.find(dataType);
 		QStandardItem* parentItem;
 		if (iter != parentnode.end())
@@ -225,10 +363,28 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 		observeItem = iter->second;
 	}
 	int row = observeItem->rowCount();
-	ss<<"_"<<row;
-	QStandardItem* childItem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(ss.str().c_str(),ENCODING_GB2312));
-	datainfor[childItem] = index;
-	observeItem->setChild(row, childItem);
+	if (row==0 || mitemInfo.time<0.0)
+	{
+		QStandardItem* childItem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(replaceStr(subss.str()).c_str(), ENCODING_GB2312));
+		datainfor[childItem] = mitemInfo;
+		observeItem->setChild(row, childItem);
+	}
+	else
+	{
+		//根据时间进行排序
+		QStandardItem* childItem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(replaceStr(subss.str()).c_str(), ENCODING_GB2312));
+		datainfor[childItem] = mitemInfo;
+		int currow = 0;
+		for (int rowindex=0;rowindex< row;rowindex++)
+		{
+			QStandardItem* item=observeItem->child(rowindex);
+			auto iter=datainfor.find(item);
+			auto res=(iter->second.time < mitemInfo.time);
+			if (res)	currow = rowindex+1;
+		}
+		observeItem->insertRow(currow,childItem);
+	}
+	return;
 }
 /**
 * @brief  ListTreeWidget::clear 清除树控件
@@ -236,6 +392,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 */
 void ListTreeWidget::clear()
 {
+	//structHeadCount = 0;
 	if (goodsModel->hasChildren() > 0)
 	{
 		goodsModel->removeRows(0, goodsModel->rowCount());
@@ -252,6 +409,8 @@ void ListTreeWidget::clear()
 */
 void ListTreeWidget::toStructh5df(Hdf5Data& data, int index)
 {
+	itemInfo mitemInfo;
+	mitemInfo.index = index;
 	if (data.name.find("struct") == std::string::npos)
 		return;
 	std::string dataType = GetType(data.name);
@@ -277,7 +436,7 @@ void ListTreeWidget::toStructh5df(Hdf5Data& data, int index)
 			{
 				int subrow = item->rowCount();
 				QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]), QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
-				datainfor[subitem] = index;
+				datainfor[subitem] = mitemInfo;
 				item->setChild(subrow, subitem);
 			}
 		}
@@ -289,7 +448,7 @@ void ListTreeWidget::toStructh5df(Hdf5Data& data, int index)
 			{
 				int subrow = item->rowCount();
 				QStandardItem* subItem = new QStandardItem(QIcon(Treeicon[1]), QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
-				datainfor[subItem] = index;
+				datainfor[subItem] = mitemInfo;
 				item->setChild(subrow, subItem);
 			}
 		}
@@ -302,10 +461,13 @@ void ListTreeWidget::toStructh5df(Hdf5Data& data, int index)
 		structstr.erase(std::remove_if(structstr.begin(), structstr.end(), isspace), structstr.end());
 		int _j = structstr.find("=");
 		structstr.erase(0, _j + 1);
+		int pos1 = structstr.find("$");
+		int pos2=structstr.find("$",pos1+1);
+		structstr=structstr.substr(pos1+1, pos2 - pos1-1);
 		QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(structstr.c_str(), ENCODING_GB2312));
 		int row = item->rowCount();
 		item->setChild(row, subitem);
-		datainfor[subitem] = index;
+		datainfor[subitem] = mitemInfo;
 	}
 }
 #include "moc_ListTreeWidget.cpp"

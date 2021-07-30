@@ -35,7 +35,7 @@ void ContorlDataBar::updateUI()
 {
 	//设置提示信息、提示信息中有分割符  需要替换
 	auto title = MessageTransition::gbkStdstringToQstring(chipic->title);
-	title = title.replace("@#$", "\n");
+	title = title.replace("@#$", "");
 	ui->labelHint->setText(title);
 	//设置粒子数目
 	ui->labelParticle->setText(QString::number(chipic->particleCount));

@@ -23,11 +23,14 @@ std::string StructDirection[] = { "Phi-Z",
 void DataSourceManage::tranfromRenderer(std::string name,int index){
 	if (index > hdfDatelist.size())
 		return;
-	auto iter = RendererManger.find(name);
+	QString str = QString::fromStdString(name);
+	str += QString("_%1").arg(index);
+	std::string newname = str.toStdString();
+	auto iter = RendererManger.find(newname);
 	if (iter!=RendererManger.end())
 	{
-		Renderers rd = iter->second;
-		emit _reRendererEvent(rd);
+		auto  ad = iter->second;
+		emit _reRendererEvent(ad);
 	}
 	else
 	{
@@ -60,15 +63,15 @@ void DataSourceManage::tranfromRenderer(std::string name,int index){
 			default:
 				break;
 			}
-			Renderers rd = CreateRenderer(hdfDatelist[index], type);
-			RendererManger[name] = rd;
-			emit _reRendererEvent(rd);
+			auto ad = factoryptr->creatPlotAdapter(hdfDatelist[index], type);
+			RendererManger[name] = ad;
+			emit _reRendererEvent(ad);
 			return;
 		}
-		Renderers renderer = CreateRendererList(hdfDatelist[index]);
+		auto ad = factoryptr->creatPlotAdapter(hdfDatelist[index]);
 		//先装入队列
-		RendererManger[name] = renderer;
-		emit _reRendererEvent(renderer);
+		RendererManger[newname] = ad;
+		emit _reRendererEvent(ad);
 	}
 }
 /**
@@ -119,8 +122,16 @@ void DataSourceManage::loadhdffile(std::string filepath)
 	/*****************************************************/
 	//结构图初始化
 	int structindex = RendererFactory::findStructDataIndex(hdfDatelist);
-	Hdf5Data structDate(hdfDatelist.at(structindex));
-	factoryptr = std::shared_ptr<RendererFactory>(new RendererFactory(structDate));
+	if (structindex>=0)
+	{
+		Hdf5Data structDate(hdfDatelist.at(structindex));
+		factoryptr = std::shared_ptr<RendererFactory>(new RendererFactory(structDate));
+	}
+	else
+	{
+		factoryptr = std::shared_ptr<RendererFactory>(new RendererFactory());
+	}
+	
 	/****************************************************/
 	_hdf5io = io;
 }
@@ -148,7 +159,7 @@ void DataSourceManage::init(ListTreeWidget* ptr,Plot* _plot){
 	}
 	if (plotSite!=0&& plotPtrsite!=plotSite)
 	{
-		connect(this, SIGNAL(_reRendererEvent(const std::list<std::shared_ptr<Renderer>>&)), _plot, SLOT(reRendererEvent(const std::list<std::shared_ptr<Renderer>>&)));
+		connect(this, SIGNAL(_reRendererEvent(std::shared_ptr<PlotAdapter>)), _plot, SLOT(reRendererEvent(std::shared_ptr<PlotAdapter>)));
 		plotPtrsite = plotSite;
 	}
 }
@@ -179,11 +190,11 @@ DataSourceManage::~DataSourceManage(){
 */
 void DataSourceManage::DisPlayPlot(Hdf5Data data, int _type)
 {
-	Renderers rds = factoryptr->creatRenderers(data, (DirectionType)_type);
+	auto adapter = factoryptr->creatPlotAdapter(data, (DirectionType)_type);
 	//保存当前的hdf5Data
 	hdfDatelist.push_back(data);
 	emit toTreeNewData(data, hdfDatelist.size() - 1);
-	emit _reRendererEvent(rds);
+	emit _reRendererEvent(adapter);
 }
 
 /**

@@ -8,6 +8,7 @@ public:
 	~SmartContorlInterface() = default;
 	void  init();
 	static void showSmartControlUI(const std::string& path);
+	static void showSmartCalc(const std::string& path);
 public slots:
 	void buttonClicked(int type);
 };

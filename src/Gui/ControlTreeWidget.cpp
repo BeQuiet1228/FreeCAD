@@ -248,7 +248,6 @@ bool ControlTreeWidget::analysisType(const std::string& str, const QString& type
 
 	qstr = lists.at(0);
 	//获取名称和观测排序
-	std::cerr << qstr.toStdString() << "||" << typeName.toStdString() << std::endl;
 	if (qstr.indexOf(typeName) == -1)
 		return false;
 	rank = qstr.remove(typeName);
@@ -304,9 +303,15 @@ void ControlTreeWidget::itemDouble_clicke(QTreeWidgetItem* item, int column)
 
 void ControlTreeWidget::outputStructFile(unsigned long threadID)
 {
+	auto control = ContorlInterface::GetInstance();
+	if (!control->hasManualChipicRuning())
+		return;
+
 	QString filePath = makeFilePath(threadID);
 	if (filePath == QString::fromStdString(""))
 		return;
+
+
 
 	//打开结构图文件 获取结构图对象
 	Hdf5IO tempIO;
@@ -362,6 +367,9 @@ void ControlTreeWidget::treeDoubleClickTimeOut()
 
 void ControlTreeWidget::openResultFile(std::string path)
 {
+	auto control = ContorlInterface::GetInstance();
+	if (control->chipicRunModIsAuto())
+		return;
 	auto mw = Gui::MainWindow::getInstance();
 	mw->hideContorlUI();
 
@@ -371,6 +379,8 @@ void ControlTreeWidget::openResultFile(std::string path)
 	if (picDoc)
 		picDoc->releaseH5Object();
 	picDoc->openH5File(path);
+	//显示树控件
+	mw->showVisualizationTree();
 }
 
 

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <map>
 #include <memory>
 using namespace  H5;
 class Hdf5IO;
@@ -26,7 +27,6 @@ struct CONTROL_EXPORT Hdf5Data
 		CYLINDER,
 		POLAR
 	};
-	
 	//数据分组对象
     Group group;
 	//头部信息
@@ -37,11 +37,14 @@ struct CONTROL_EXPORT Hdf5Data
     std::vector<DataSet> listDataSet;
 	//图名称
 	std::string name;
+	//图别名
+	std::string petName;
 	//坐标系类型
 	CoordinateSystem coordinateSystem;
 	//初始化基本信息
 	bool initInformation();
-	bool initStructInformation();
+	bool initM3dStructInformation();
+	bool initM2dStructInformation();
 	void init();
 
 };
@@ -61,6 +64,7 @@ public:
 	//设置文件路径
 	void setFilePath(const std::string& path,FileOpenMod mod = OPEN_EXIST);
     void initHdf5Data();
+	
     std::vector<Hdf5Data> hdf5DataList;
 	//获取数据库中的值
 	static bool getValue(const Group& group, const std::string& datasetName,VectorF &values);
@@ -107,4 +111,15 @@ public:
 	static void copyToHdf5IO(Hdf5IO& hdf5IO, std::vector<Hdf5Data>& datas);
 	static void creatNewHdf5File(const std::string& fileName);
 	static void creatHdf5File(const std::string& fileName);
+	//新增代码
+	static int creatNewH5File(const std::string& fileName);
+	static int openH5File(const std::string &fileName);
+	static int closeH5File(int H5id);
+private:
+	//新增方法2021/6/30
+	void LoadH5Resource();
+	std::list<Group> getGrouplist();
+	std::list<Group> getGrouplist(Group);
+	std::vector<DataSet> getDataSetlist(Group);
+	void digGroup(Group);
 };

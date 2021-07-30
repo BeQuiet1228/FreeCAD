@@ -3,7 +3,8 @@
 #include "SmartContorl.h"
 #include <iostream>
 #include <sstream>
-
+#include "VariableStorer.h"
+#include <QFileInfo>
 
 /**
 * @brief addVariate 添加变量组
@@ -17,7 +18,6 @@ int addVariate(lua_State *L)
 	Variate variate;
 	//获取名称参数
 	variate.name = lua_tostring(L, 1);
-	int iiii = lua_gettop(L);
 	//获取值
 	lua_pushnil(L);
 
@@ -201,6 +201,161 @@ int pcallErrorCallBack(lua_State *luaState)
 }
 
 /**
+* @brief setRunDataMakeType 设置运行数据的生成格式 目前仅有组合 与 穷举两种
+* @param lua_State * luaState
+* @return int
+*/
+int setRunDataMakeType(lua_State* luaState)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	auto contorl = contorlData->smartContorl;
+	
+	std::string type = lua_tostring(luaState, 1);
+	if (type == "conbination")
+		contorl->setRunDataMakeType(SmartContorl::CONBINATION);
+	else if(type == "exhaustivity")
+		contorl->setRunDataMakeType(SmartContorl::EXHAUSTIVITY);
+	return 1;
+}
+
+/**
+* @brief variableIsExsit	查看本地变量是否存在
+* @param lua_State * luaState
+* @return int
+*/
+int variableIsExsit(lua_State* luaState)
+{
+	std::string name = lua_tostring(luaState, 1);
+	
+	auto contorlData = SmartContorlData::GetInstance();
+	auto variableStorer = contorlData->variableStorer;
+
+	bool b = variableStorer->variableIsExsit(name);
+	lua_pushboolean(luaState,b);
+
+	return 1;
+}
+
+/**
+* @brief getFileVariable 获取文件变量  变量类型 s - string, i - int,n - double
+* @param lua_State * luaState
+* @return int
+*/
+int getFileVariable(lua_State* luaState)
+{
+	std::string name = lua_tostring(luaState, 1);
+	std::string type = lua_tostring(luaState, 2);
+
+	auto contorlData = SmartContorlData::GetInstance();
+	auto variableStorer = contorlData->variableStorer;
+
+	if (type == "s"){
+		std::string variable = variableStorer->getVariableToString(name);
+		lua_pushstring(luaState, variable.c_str());
+	}
+	else if (type == "i") {
+		int variable = variableStorer->getVariableToInt(name);
+		lua_pushinteger(luaState,variable);
+	}
+	else if (type == "n") {
+		double variable = variableStorer->getVariableToDouble(name);
+		lua_pushnumber(luaState,variable);
+	}
+	return 1;
+}
+
+
+int addFileVariable(lua_State* luaState)
+{
+	std::string name = lua_tostring(luaState, 1);
+	std::string type = lua_tostring(luaState, 3);
+
+	std::string value;
+
+	if (type == "s") {
+		value = lua_tostring(luaState, 2);
+	}
+	else if (type == "i") {
+		int va = lua_tointeger(luaState, 2);
+		value = QString::number(va).toStdString();
+	}
+	else if (type == "n") {
+		double va = lua_tonumber(luaState,2);
+		value = QString::number(va).toStdString();
+	}
+
+	auto contorlData = SmartContorlData::GetInstance();
+	auto variableStorer = contorlData->variableStorer;
+
+	variableStorer->addVariable(name, value);
+	return 1;
+}
+
+int openVariableFile(lua_State* luaState)
+{
+	std::string fileName = lua_tostring(luaState, 1);
+	auto contorlData = SmartContorlData::GetInstance();
+	auto control = contorlData->smartContorl;
+	QString m3dPath = control->getM3dPath();
+
+	QFileInfo fileInfo(m3dPath);
+	m3dPath = m3dPath.remove(fileInfo.fileName());
+
+	m3dPath += fileInfo.baseName() + "_" + QString::fromStdString(fileName) + ".var";
+
+	auto variableStorer = contorlData->variableStorer;
+	bool b = variableStorer->loadFile(m3dPath.toStdString());
+	lua_pushboolean(luaState, b);
+
+	return 1;
+}
+
+int closeVariableFile(lua_State* luaState)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	auto variableStorer = contorlData->variableStorer;
+	variableStorer->closeFile();
+
+	return 1;
+}
+
+int saveVariableFile(lua_State* luaState)
+{
+	std::string fileName = lua_tostring(luaState, 1);
+	auto contorlData = SmartContorlData::GetInstance();
+	auto control = contorlData->smartContorl;
+	QString m3dPath = control->getM3dPath();
+
+	QFileInfo fileInfo(m3dPath);
+	m3dPath = m3dPath.remove(fileInfo.fileName());
+
+	m3dPath += fileInfo.baseName() + "_" + QString::fromStdString(fileName) + ".var";
+
+	auto variableStorer = contorlData->variableStorer;
+	bool b = variableStorer->saveFile(m3dPath.toStdString());
+	lua_pushboolean(luaState, b);
+
+	return 1;
+}
+
+int clearVarableFileVar(lua_State* luaSate)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	auto variableStorer = contorlData->variableStorer;
+	variableStorer->clearVar();
+
+	return 1;
+}
+
+int creatVarableFileObject(lua_State* luaState)
+{
+	auto contorlData = SmartContorlData::GetInstance();
+	auto variableStorer = contorlData->variableStorer;
+	variableStorer->creatXmlDocument();
+	return 1;
+}
+
+/**
 * @brief registerLuaFunction 向虚拟机中注册lua函数
 * @param lua_State * L
 * @return void
@@ -222,6 +377,15 @@ void registerLuaFunction(lua_State *L)
 	lua_register(L, "getDataSetVlaueSize", getDataSetVlaueSize);
 	lua_register(L, "saveParamsInHistory", saveParamsInHistory);
 	lua_register(L, "cppPrint", cppPrint);
+	lua_register(L, "setRunDataMakeType", setRunDataMakeType);
+	lua_register(L, "variableIsExsit", variableIsExsit);
+	lua_register(L, "getFileVariable", getFileVariable);
+	lua_register(L, "addFileVariable", addFileVariable);
+	lua_register(L, "openVariableFile", openVariableFile);
+	lua_register(L, "closeVariableFile", closeVariableFile);
+	lua_register(L, "saveVariableFile", saveVariableFile);
+	lua_register(L, "clearVarableFileVar", clearVarableFileVar);
+	lua_register(L, "creatVarableFileObject", creatVarableFileObject);
 }
 
 

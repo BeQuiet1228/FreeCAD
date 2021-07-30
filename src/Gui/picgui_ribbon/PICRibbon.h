@@ -55,9 +55,7 @@ public:
 
   QList<PICRibbonTabContent *> get_tab_all();
   PICRibbonTabContent * get_tab_by_name(QString& name);
-  virtual QSize getunfoldMinSize() override;
-  virtual QSize getcurMinSize() override;
-  virtual void setScale(QSize& size,bool) override;
+  virtual void setScale(QSize& size,bool);
 
   //添加一个action
   void addAction(const QString& tabName, const QString& groupName, QAction* action);
@@ -94,11 +92,12 @@ public:
   public Q_SLOTS:
   void buttomclicked();
   void setParentWidget(MainWindowDef* parent);
+  void SlotcurrentChanged(int);
 private:
 	bool toScale(unsigned int index,QSize& size);
 	bool unFold(unsigned int index,QSize& size);
 	void showdrawerGroup(QString GroupName,QToolButton*);
-
+	void HidemyDar();
 	unsigned __int64 MaindefStie;
 };
 

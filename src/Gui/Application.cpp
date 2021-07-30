@@ -135,6 +135,7 @@
 #include "TreeViewctrl.h"
 #include "DocumentPic.h"
 #include "DataVisualization/ConfigWidget.h"
+#include "DataVisualizationWorkbench.h"
 using namespace Gui;
 using namespace Gui::DockWnd;
 using namespace std;
@@ -884,7 +885,7 @@ void Application::slotRelabelDocument(const App::Document& Doc)
 
 	// by mx
 	// To solve the problem that the panel sometimes does not load
-	Base::Interpreter().runString("FreeCADGui.runCommand('Customize_init_panel')");
+	//Base::Interpreter().runString("FreeCADGui.runCommand('Customize_init_panel')");
 
 #ifdef FC_DEBUG
     assert(doc!=d->documents.end());
@@ -1796,7 +1797,7 @@ void Application::initTypes(void)
     Gui::PythonBaseWorkbench                    ::init();
     Gui::PythonBlankWorkbench                   ::init();
     Gui::PythonWorkbench                        ::init();
-
+    DataVisualizationWorkbench                  ::init();
     // register transaction type
     new App::TransactionProducer<TransactionViewProvider>
             (ViewProviderDocumentObject::getClassTypeId());

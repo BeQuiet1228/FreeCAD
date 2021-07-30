@@ -1,7 +1,5 @@
 #pragma  once
 #include <QWidget>
-#include<QVector>
-#include <QLineEdit>
 enum Axisstyle
 {
 	Axisleft,
@@ -9,10 +7,6 @@ enum Axisstyle
 	AxisTop,
 	AxisBottom
 };
-typedef struct{
-	QString valsize;
-	QPointF postion;
-}AXISVAL;
 typedef struct valrange{
 	double min;
 	double max;
@@ -28,67 +22,53 @@ typedef struct valrange{
 	}
 }VARRANGE;
 
-class Axis : public QWidget
+#include"ScaleWidget.h"
+class ScaleWidget;
+class AxisLable;
+class TDialog;
+class Axis :
+	//public QWidget
+	public ScaleWidget
 {
 	Q_OBJECT
 public:
 	explicit Axis(QWidget *parent = nullptr);
 	~Axis();
-private:
 public:
-	//添加功能函数
+	void setAxisRange(double min,double max);
 	void setAxisText(QString);
-	void setAxisRange(double min, double max);
-	//设置大刻度个数
-	void SetAxisNumber(int);
-	void _update();
 	void setAxixStyle(Axisstyle);
-	void AxisCanvans(QSizeF);
-	void SetCanvas(QWidget* mCanvas);
-	void AxisResize(bool, QSize _size = QSize(0, 0));
-	void autoMinAndMAxSize();
+	void SetAxisNumber(int);
 	void loadconfig();
-private:
-	QVector<QLineF> Getlines(Axisstyle, QRectF);
-	QVector<AXISVAL> getAxisVal(Axisstyle, QRectF);
-	AXISVAL GetAxisUnit(Axisstyle _Axisstyle, QRectF _rect);
-	void axisRangeChange();
+	void _update();
+	void setLabel(bool);
+	void setAxisdialog(bool);
 public:
-	void paintEvent(QPaintEvent* event);
+	virtual void resizeEvent(QResizeEvent*) override;
+	virtual void mouseDoubleClickEvent(QMouseEvent*) override;
 Q_SIGNALS:
-	void sendAxisRang(const float& min,const float& max);
-protected:
-	virtual void resizeEvent(QResizeEvent* event)override;
-	virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
-	virtual void keyReleaseEvent(QKeyEvent *event) override;
-		//获取科学计数法的字符串
-	QVector<QString> GetScientific_notation();
+	void sendAxisRang(const float&, const float&);
+	//void signalsetAxisRightRange(const float& min, const float& max);
+public Q_SLOTS:
+	void axiscloseEvent();
+	void slotCloseEvent(bool);
 private:
-	bool isstart;
-	unsigned int Axisnumber;//大刻度个数
-	QString mAxisunit;//单位
-	valrange axisvalrange;//刻度数值区间
-	QRectF AxisRect;
+	unsigned __int32 AxisNum;
+	QString mAxisunit;
+	valrange axisvalrange;
 	Axisstyle mAxisstyle;
-private:
-	QVector<QLineF> lines;
-	QVector<AXISVAL> m_axisval;
-	AXISVAL Axisunit;
-	QSizeF* CanvasSize;
-	QWidget* CanvasWidget;
-	//设置最小宽高
-	float minWidth;
-	float minHeight;
-	//之前的最小宽高
-	float lastminWidth;
-	float lastminHeight;
-private:
-	valrange curAxisRang;
-	//增加实时取值功能2021/4/27
-	QLineEdit* minLineedit;
-	QLineEdit* maxLineedit;
-	QLineEdit* AxisUnitedit;
-	QRectF* minRectf;
-	QRectF* maxRectf;
-	QRectF* AxisUnitRectf;
+	//ScaleWidget* mQwtScaleWidget;
+	AxisLable* mAxisLable;
+	int mAxisunitSize;//单位大小
+	QColor axisColor;//刻度颜色
+	QColor axisvalColor;//数值颜色
+	int axisvalSize;//数值大小
+	//QGridLayout* mGridLayout;
+	//TLabel* mTLabel;
+	TDialog* mTDialog;
+	bool islabel;
+	bool isAxisdialog;
+	//QFont unitFont;
+	//QFont axisFont;
+	QString unitFont;
 };

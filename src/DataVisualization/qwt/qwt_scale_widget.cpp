@@ -47,7 +47,6 @@ public:
     int titleOffset;
     int spacing;
     QwtText title;
-
     QwtScaleWidget::LayoutFlags layoutFlags;
 
     struct t_colorBar
@@ -103,7 +102,6 @@ void QwtScaleWidget::initScale( QwtScaleDraw::Alignment align )
     d_data->margin = 4;
     d_data->titleOffset = 0;
     d_data->spacing = 2;
-
     d_data->scaleDraw = new QwtScaleDraw;
     d_data->scaleDraw->setAlignment( align );
     d_data->scaleDraw->setLength( 10 );
@@ -415,12 +413,13 @@ int QwtScaleWidget::spacing() const
 void QwtScaleWidget::paintEvent( QPaintEvent *event )
 {
     QPainter painter( this );
+    //QRect rect = event->rect();
+    //qDebug() << "paint:"<<rect;
     painter.setClipRegion( event->region() );
 
     QStyleOption opt;
     opt.init(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
-
     draw( &painter );
 }
 
@@ -638,7 +637,7 @@ void QwtScaleWidget::drawTitle( QPainter *painter,
         case QwtScaleDraw::LeftScale:
             angle = -90.0;
             flags |= Qt::AlignTop;
-            r.setRect( r.left(), r.bottom(),
+            r.setRect( r.left()+6, r.bottom(),
                 r.height(), r.width() - d_data->titleOffset );
             break;
 
@@ -685,7 +684,6 @@ void QwtScaleWidget::drawTitle( QPainter *painter,
     QwtText title = d_data->title;
     title.setRenderFlags( flags );
     title.draw( painter, QRectF( 0.0, 0.0, r.width(), r.height() ) );
-
     painter->restore();
 }
 

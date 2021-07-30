@@ -21,4 +21,5 @@ private:
 public slots:
 	void on_pushButtonNext_clicked();
 	void on_pushButtonLast_clicked();
+	void on_pushButton_replace();
 };

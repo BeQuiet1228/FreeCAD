@@ -24,6 +24,7 @@ realTimewidget.ui
 SET(MY_MOC_HDR RenderThread.h
 	RenderThreadManager.h
 	Plot.h
+	AxisLable.h
 	Canvas.h
 	Axis.h
 	ListTreeWidget.h
@@ -32,10 +33,16 @@ SET(MY_MOC_HDR RenderThread.h
 	ConfigWidget.h
 	Arrowctrl.h
 	ColorTab.h
+	TLabel.h
 	ColorMapWidget.h
 	realTimewidget.h
+	ScaleWidget.h
+	rightScaleWidget.h
+	ContourPlotAdapter.h
+	phasorPlotAdapter.h
+	PlotAdapter.h
+	PlotAdapterNeedStruct.h
 	)
-
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
 	TimeRenderer.cpp
@@ -75,6 +82,8 @@ SET(CONTOUR_SRC ContourData.h
 	ContourDataPolar.h
 	ContourRenderStateGetter.cpp
 	ContourRenderStateGetter.h
+	ContourPlotAdapter.cpp
+	ContourPlotAdapter.h
 )
 SET(PHASOR_SRC phasorData.h
 	phasorData.cpp
@@ -82,6 +91,8 @@ SET(PHASOR_SRC phasorData.h
 	phasorRenderer.cpp
 	DirData.cpp
 	DirData.h
+	phasorPlotAdapter.cpp
+	phasorPlotAdapter.h
 )
 SET(CONFIG_SRC CustomConfig.cpp
 	CustomConfig.h
@@ -100,6 +111,8 @@ SET(SRC main.cpp
 	Renderer.h
 	Plot.cpp
 	Plot.h
+	AxisLable.h
+	AxisLable.cpp
 	Canvas.cpp
 	Canvas.h
 	Axis.cpp
@@ -117,6 +130,10 @@ SET(SRC main.cpp
 	RenderGrid.h
 	DataInformationGetter.cpp
 	DataInformationGetter.h
+	PlotAdapter.cpp
+	PlotAdapter.h
+	PlotAdapterNeedStruct.h
+	PlotAdapterNeedStruct.cpp
 	)
 SET(SRC_TOOL ConfigWidget.h
 	ConfigWidget.cpp
@@ -128,6 +145,14 @@ SET(SRC_TOOL ConfigWidget.h
 	ColorMapWidget.cpp
 	realTimewidget.cpp
 	realTimewidget.h
+	ScaleWidget.h
+	ScaleWidget.cpp
+	rightScaleWidget.h
+	rightScaleWidget.cpp
+	TLabel.h
+	TLabel.cpp
+	SysInfo.h
+	SysInfo.cpp
 	)
 #处理ui和qrc文件
 if (BUILD_QT5)
@@ -155,7 +180,7 @@ SET(DataVisualization_src
 	${SRC_TOOL}
 	${Gui_QRC_SRCS}
 	)
-add_definitions(-DMY_DEBUG -D_DATA_VISUALIZATION_)
+add_definitions( -D_DATA_VISUALIZATION_)
 if(DataVisualizationDll)
 add_definitions(-DDATA_VISUALIZATIONG_DLL)
 add_library(DataVisualization SHARED ${DataVisualization_src})

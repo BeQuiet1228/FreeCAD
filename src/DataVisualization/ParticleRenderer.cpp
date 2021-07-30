@@ -114,8 +114,17 @@ bool ParticleRenderer::drawPointImage()
 	//绘制点
 	painter.drawPoint(tPoint);
 	std::map<QString, float> list;
-	list["X"] = partical.d1;
-	list["Y"] = partical.d2;
+
+	//根据坐标系不同，显示的标签不同
+	if(data->getDirectionType() == R_THETA)
+	{ 
+		list["R"] = partical.d1;
+		list["Theta"] = partical.d2;
+	}else {
+		list["Y"] = partical.d1;
+		list["X"] = partical.d2;
+	}
+	
 	displayPointInformation(&painter, &tPoint, list);
 	setImage(img);
 	return true;

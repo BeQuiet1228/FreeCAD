@@ -14,7 +14,12 @@ class DATA_VISUALIZATION_EXPORT ListTreeWidget:public QWidget
 public:
 	explicit ListTreeWidget(QWidget* parent=nullptr);
 	~ListTreeWidget();
-	
+	struct  itemInfo
+	{
+		itemInfo() :index(-1), time(-1.0f) {}
+		int index;
+		double time;
+	};
 protected:
 	virtual void resizeEvent(QResizeEvent * event) override;
 	std::string GetType(std::string name);
@@ -31,7 +36,9 @@ public:
 protected:
 	QTreeView* m_TreeView;
 	QStandardItemModel *goodsModel;
-	std::map <QStandardItem*, int> datainfor;
+	std::map <QStandardItem*, itemInfo> datainfor;
 	std::map<std::string, QStandardItem*> parentnode;
+	//结构图头部信息数量;
+	//int structHeadCount;
 };
 #endif

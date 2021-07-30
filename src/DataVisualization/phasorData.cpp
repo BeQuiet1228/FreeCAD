@@ -360,7 +360,7 @@ std::string phasorData::getInformationTitle()
 	title += "观察时间";
 	title += DataInformationGetter::getObserveTime(headList.at(13)) + end;
 	title += "观察分量:";
-	title += DataInformationGetter::getObserveObejct(headList.at(2)) + end;
+	title += DataInformationGetter::getVectorParam(headList.at(11)) + end;
 
 	return title;
 }

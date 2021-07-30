@@ -1,9 +1,10 @@
 #include "Data.h"
-
+#include<fstream>
+#include<stdio.h>
 Data::Data(Hdf5Data& h5Data,const RunMod& mod)
 	:h5Data(h5Data), sourceData(new ListValues)
 	, sourceDataMutex(new std::mutex), runMod(mod), sourceDataIsLoad(false), headList(h5Data.headList)
-	, directionTyp(NONE), mapType(NEEDLESS_STRUCT)
+	, directionTyp(NONE), mapType(NEEDLESS_STRUCT), temphdf(nullptr)
 {
 	
 }
@@ -234,4 +235,22 @@ void XYData::initDiretion()
 std::vector<std::string> Data::autoHeaderInfo()
 {
 	return h5Data.headList;
+}
+
+void Data::saveAs(std::string path, SaveMod mod)
+{
+	std::fstream f(path);
+	bool isGood = f.good();
+	int res = -1;
+	if (!isGood || mod==NEWFLODER)
+	{
+		res = Hdf5IO::creatNewH5File(path);
+	}
+	Hdf5IO* temp = new Hdf5IO(path);
+	Hdf5Data *newData = new Hdf5Data(h5Data);
+	Hdf5IO::copyToHdf5IO(*temp,*newData);
+	if (-1!=res)
+	res=Hdf5IO::closeH5File(res);
+	delete temp;
+	delete newData;
 }

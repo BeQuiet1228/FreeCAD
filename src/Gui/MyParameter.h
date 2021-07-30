@@ -16,6 +16,7 @@ enum param_type {type_int = 0, type_float, type_length, type_angle, type_other, 
 
 class InsertParamDialog;
 class DeleteParamDialog;
+class DlgChangeNameDialog;
 
 class MyParameter : public QWidget {
 	Q_OBJECT
@@ -43,13 +44,14 @@ public:
 	QWidget* text_import;
 	InsertParamDialog* insert_param_dlg;
 	DeleteParamDialog* delete_param_dlg;
-
+	DlgChangeNameDialog* change_name;
 // 与tableWideget相关的函数
 public:
 	void addNewLine(int row);
 	void makeLineEnabled(int row);
 	bool isValidWithName(int row);
 	bool isValidWithName(const std::string& param_name, int row);
+	bool isValidWithName(const std::string& param_name);
 	void addEmptyProperty(const QString& name);
 	bool changeProperty(param_type _type, const QString& name, const QString& expression);
 	void addProperty(param_type _type, const QString& name);

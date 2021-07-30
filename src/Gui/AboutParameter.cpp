@@ -24,6 +24,7 @@ std::vector<std::string> findLinkWithParam(const std::string& param_name, std::v
 				continue;
 			}
 			else if (findWholeWordsOnly(it->second, i)) {
+				//it->second == "wang";
 				all_changed_name.push_back(it->first);
 				break;
 			}

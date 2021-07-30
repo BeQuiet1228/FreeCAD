@@ -69,15 +69,14 @@ bool ContourData::loadPoint()
 	auto xIter = xg->begin();
 	auto yIter = yg->begin();
 	auto vIter = vg->begin();
-
 	width = xg->size();
 	height = yg->size();
-
 
 	Rang vr;
 	vr.min = vr.max = *vIter;
 	Grid tempGrid;
 	if (isTruedir()) {
+
 		for (; yIter != yg->end() && vIter != vg->end(); yIter++)
 		{
 			for (xIter = xg->begin(); xIter != xg->end() && vIter != vg->end(); xIter++)
@@ -198,7 +197,7 @@ ContourData::Grid ContourData::findGrid(const float& x, const float& y)
 	//获取宽度索引
 	for (; w < width;w++)
 	{
-		grid = grids.at(+ w);
+		grid = grids.at(w);
 		if (grid.x > x)
 		{
 			break;
@@ -216,7 +215,7 @@ ContourData::Grid ContourData::findGrid(const float& x, const float& y)
 
 	int index = w + h*width;
 #ifdef MY_DEBUG
-	if (index > grids.size())
+	if (index >= grids.size())
 	{
 		std::cerr << "ContourData::findGrid index out of range" << std::endl;
 		Grid g;
