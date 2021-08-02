@@ -641,11 +641,11 @@ void Ribbon::SlotcurrentChanged(int index)
 	HidemyDar();
 	//stpe1:获取全部页面计数
 	unsigned int mCount=this->count();
-	for (unsigned int i=0;i<mCount;i++)
-	{
-		PICRibbonTabContent* widget = dynamic_cast<PICRibbonTabContent*>(QTabWidget::widget(i));
-		(i == index) ? (widget->show()) : (widget->hide());
-	}
+	//for (unsigned int i=0;i<mCount;i++)
+	//{
+	//	PICRibbonTabContent* widget = dynamic_cast<PICRibbonTabContent*>(QTabWidget::widget(i));
+	//	(i == index) ? (widget->show()) : (widget->hide());
+	//}
 }
 /**
 * @brief Ribbon::HidemyDar 隐藏抽屉
