@@ -22,14 +22,14 @@ Ribbon::Ribbon(QWidget *parent)
 void Ribbon::addTab(const QString &tabName)
 {
   // Note: superclass QTabWidget also has a function addTab()
+  
   PICRibbonTabContent *ribbonTabContent = new PICRibbonTabContent;
   QTabWidget::addTab(ribbonTabContent, tabName);
   this->setAttribute(Qt::WA_StyledBackground);
-
 }
 void Ribbon::addTab(const QIcon &tabIcon, const QString &tabName)
 {
-  // Note: superclass QTabWidget also has a function addTab()
+  //Note: superclass QTabWidget also has a function addTab()
   PICRibbonTabContent *ribbonTabContent = new PICRibbonTabContent;
   QTabWidget::addTab(ribbonTabContent, tabIcon, tabName);
 }
@@ -387,15 +387,17 @@ void Ribbon::setScale(QSize& size, bool state) {
 	int curindex = QTabWidget::currentIndex();
 	if (state)
 	{
-		for (auto index = 0; index < count(); index++)
-			unFold(index, size);
+		//for (auto index = 0; index < count(); index++)
+		//	unFold(index, size);
+		unFold(curindex, size);
 	}
 	else
 	{
-		for (auto index = 0; index < count(); index++)
-			toScale(index, size);
+		//for (auto index = 0; index < count(); index++)
+		//	toScale(index, size);
+		toScale(curindex, size);
 	}
-	QTabWidget::setCurrentIndex(curindex);
+	//QTabWidget::setCurrentIndex(curindex);
 }
 /**
 * @brief  Ribbon::toScale 具体缩放
@@ -419,14 +421,11 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 		PICRibbonButtonGroup* groupbutton = dynamic_cast<PICRibbonButtonGroup*>
 			(mtab->contentLayout->itemAt(groupindex)->widget());
 		groups.push_back(groupbutton);
-		//qDebug() << groupbutton->size().width();
 		widthmax += groupbutton->size().width();
 	}
 	//step3:检查大小差,判断是否需要收进抽屉
 	if (size.width() - widthmax > 24)
 		return false;
-	qDebug() << "Size:" << size.width();
-	qDebug() << "toScale:" << "index=" << index << "widmax=" << widthmax;
 	//step4:开始收进抽屉
 	for(int groupindex=groups.size()-1; groupindex >=0; groupindex--)
 	{
@@ -475,7 +474,6 @@ bool Ribbon::toScale(unsigned int index,QSize& size)
 */
 bool Ribbon::unFold(unsigned int index, QSize& size)
 {
-	//展开
 	//step0:
 	if (mydarWer.empty()) return true;
 	//关闭相关的抽屉
@@ -641,6 +639,13 @@ void Ribbon::setParentWidget(MainWindowDef* parent)
 void Ribbon::SlotcurrentChanged(int index)
 {
 	HidemyDar();
+	//stpe1:获取全部页面计数
+	unsigned int mCount=this->count();
+	for (unsigned int i=0;i<mCount;i++)
+	{
+		PICRibbonTabContent* widget = dynamic_cast<PICRibbonTabContent*>(QTabWidget::widget(i));
+		(i == index) ? (widget->show()) : (widget->hide());
+	}
 }
 /**
 * @brief Ribbon::HidemyDar 隐藏抽屉

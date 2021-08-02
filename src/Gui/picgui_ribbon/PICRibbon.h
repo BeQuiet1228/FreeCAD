@@ -89,6 +89,7 @@ public:
   void setGroupSequence(const QString &tabName, const QString &groupName, int sequence);
   //抽屉功能
   std::map<QString, QWidget*> mydarWer;
+  std::map<QString, QWidget*> mTabWidget;
   public Q_SLOTS:
   void buttomclicked();
   void setParentWidget(MainWindowDef* parent);
