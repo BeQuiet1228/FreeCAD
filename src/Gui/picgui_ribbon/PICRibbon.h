@@ -98,8 +98,10 @@ private:
 	bool toScale(unsigned int index,QSize& size);
 	bool unFold(unsigned int index,QSize& size);
 	void showdrawerGroup(QString GroupName,QToolButton*);
+	void setZoominfo(unsigned int index,QSize& size);
 	void HidemyDar();
 	unsigned __int64 MaindefStie;
+	
 };
 
 #endif // RIBBONTABWIDGET_H
