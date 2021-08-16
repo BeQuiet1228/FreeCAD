@@ -807,6 +807,7 @@ function resultDataFilter()
 	local av = add/addCount;
 	local f = getF(mini,max,av);
 	addParam(f);
+	closeH5File();
  end
  saveParamsInHistory();
  local groupIndex = getHistorySize() - 1;

@@ -150,10 +150,10 @@ int main( int argc, char ** argv )
     _putenv("PYTHONPATH=");
     // https://forum.freecadweb.org/viewtopic.php?f=4&t=18288
     // https://forum.freecadweb.org/viewtopic.php?f=3&t=20515
-    const char* fc_py_home = getenv("FC_PYTHONHOME");
-    if (fc_py_home)
-        _putenv_s("PYTHONHOME", fc_py_home);
-    else
+ //   const char* fc_py_home = getenv("FC_PYTHONHOME");
+ //   if (fc_py_home)
+ //       _putenv_s("PYTHONHOME", fc_py_home);
+ //   else
         _putenv("PYTHONHOME=");
 #endif
 

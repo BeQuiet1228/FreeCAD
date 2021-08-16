@@ -588,7 +588,8 @@ void Hdf5IO::creatHdf5File(const std::string& fileName)
 */
 void Hdf5IO::deleteH5File()
 {
-
+	Hdf5File.reset();
+	hdf5DataList.clear();
 }
 
 /**
