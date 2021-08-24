@@ -131,7 +131,7 @@ void Axis::_update()
 		case Axisleft:
 		case AxisRight:
 		{
-			int width = ticklength + axislabelwidth +20;
+			int width = ticklength + axislabelwidth +30;
 			if (isColorBarEnabled())
 				width += colorBarWidth();
 			setMinimumWidth(width);
@@ -140,7 +140,7 @@ void Axis::_update()
 		case AxisBottom:
 		case AxisTop:
 		{
-			int height = ticklength + axislabelhight+20;
+			int height = ticklength + axislabelhight+30;
 			if (isColorBarEnabled())
 				height += colorBarWidth();
 			setMinimumHeight(height);
