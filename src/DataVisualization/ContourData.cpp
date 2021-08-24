@@ -402,8 +402,7 @@ DefineMatrixRasterData::~DefineMatrixRasterData()
 
 double DefineMatrixRasterData::value(double x, double y) const
 {
-
-	if (!(isInScal(xScale,x)&&isInScal(yScale,y)))
+	if ((!isInScal(xScale,x)) ||(!isInScal(yScale,y)))
 		return qQNaN();
 
 	double value;
@@ -524,5 +523,5 @@ bool DefineMatrixRasterData::isInScal(const std::vector<float>& scale, const dou
 	if (scale.size() < 2)
 		return false;
 	
-	return pos > *scale.begin() && pos < *scale.rbegin();
+	return pos >= *scale.begin() && pos <= *scale.rbegin();
 }
