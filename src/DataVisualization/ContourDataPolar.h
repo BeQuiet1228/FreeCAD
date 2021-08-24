@@ -12,7 +12,7 @@ public:
 	bool loadPoint() override;
 };
 
-class PolarMatrixRasterData :public QwtMatrixRasterData{
+class PolarMatrixRasterData :public DefineMatrixRasterData{
 public:
 	PolarMatrixRasterData() = default;
 	~PolarMatrixRasterData() = default;
