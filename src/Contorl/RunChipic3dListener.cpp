@@ -8,6 +8,7 @@ RunChipic3dListener::RunChipic3dListener()
 {
 	workThreadFlag = false;
 	mainThreadID = 0;
+	sendMsgFailedCount = 0;
 }
 
 
@@ -350,18 +351,20 @@ bool RunChipic3dListener::sendMessage(UINT Msg, WPARAM wParam, LPARAM lParam)
 #endif // MY_DEBUG
 
 	//判断消息发送失败的错误代码是否是程序已关闭  如果程序已关闭则发送关闭消息 释放管理器对象。
-	if (!b)
-	{
-		auto erroCode = GetLastError();
-		if (erroCode == 1444)
-		{
-			//回执一个chipic关闭消息，通知管理器释放对象
-			std::string aj = MessageTransition::creatCloseChipicJsonMessage(getThreadId(),1);
-			auto getter = JsonMessageGetter::GetInstance();
-			getter->addJsonMessage(aj);
-		}
-	}
-	
+	if (b)
+		return b;
+	auto erroCode = GetLastError();
+	if (erroCode != 1444)
+		return b;
+	sendMsgFailedCount++;
+	if (sendMsgFailedCount < 3)
+		return b;
+
+	//回执一个chipic关闭消息，通知管理器释放对象
+	std::string aj = MessageTransition::creatCloseChipicJsonMessage(getThreadId(),1);
+	auto getter = JsonMessageGetter::GetInstance();
+	getter->addJsonMessage(aj);
+
 	return b;
 }
 
