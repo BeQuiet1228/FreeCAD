@@ -1,6 +1,8 @@
 #include "realTimewidget.h"
 #include "ui_realTimewidget.h"
 #include <QLineEdit>
+#define MAX64 (0x7fffffffffffffff)
+#include<math.h>
 /**
 * @brief  realTimewidget::realTimewidget
 * @param  QWidget * parent  
@@ -240,14 +242,18 @@ void realTimewidget::addTableItem(double val)
 }
 int realTimewidget::GetdecimalBit(double& value)
 {
-	__int64 valinter = static_cast<__int64>(value);
-	double fspace = abs(value - static_cast<double>(valinter));
+	double absvalue = abs(value);
+	double maxdouble =static_cast<double>(MAX64);
+	if (absvalue > maxdouble)return 1;
+	unsigned __int64 valinter =static_cast<unsigned __int64>(absvalue);
+	/*static_cast<unsigned __int64>(absvalue);*/
+	double fspace = abs(absvalue - static_cast<double>(valinter));
 	unsigned __int32 index = 0;
 	while (fspace > 0.0f)
 	{
 		index++;
 		fspace *= 10;
-		valinter = static_cast<__int64> (fspace);
+		valinter = static_cast<unsigned __int64> (fspace);
 		fspace = fspace - static_cast<double>(valinter);
 	}
 	return index;
