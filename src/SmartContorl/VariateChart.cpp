@@ -76,7 +76,7 @@ void VariateChart::setDatas(const QVector<double>& key, const QVector<QVector<do
 	for (auto i = values.begin(); i != values.end(); i++)
 	{
 		QColor color(qSin(count*0.3) * 100 + 100, qSin(count*0.6 + 0.7) * 100 + 100, qSin(count*0.4 + 0.6) * 100 + 100);
-		setData(key, *i,color,pointShapes.at(count),QString(name + "%1").arg(count));
+		setData(key, *i,color,getPointShape(count),QString(name + "%1").arg(count));
 		count++;
 	}
 }
@@ -103,5 +103,11 @@ void VariateChart::initPointShape()
 	pointShapes << QCPScatterStyle::ssPeace;
 	pointShapes << QCPScatterStyle::ssCustom;
 
+}
+
+QCPScatterStyle::ScatterShape VariateChart::getPointShape(const unsigned int& index)
+{
+	int i = index % pointShapes.size();
+	return pointShapes.at(i);
 }
 
