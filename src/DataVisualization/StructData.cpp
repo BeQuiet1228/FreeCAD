@@ -581,7 +581,11 @@ bool StructData::loadroomPolarRtheta()
 		{
 			if (var.point1 == index&&var.point3 < rand_val.size())
 			{
-				listcir[var.pointproperty].push_back(CutCirlist[(var.point2 - 1)*CutNum + (var.point3 - 1)]);
+				__int64 cutCirSize = (var.point2 - 1) * CutNum + (var.point3 - 1);
+				if (cutCirSize < CutCirlist.size())
+				{
+					listcir[var.pointproperty].push_back(CutCirlist[(var.point2 - 1) * CutNum + (var.point3 - 1)]);
+				}
 			}
 		}
 #pragma endregion 
@@ -686,6 +690,25 @@ bool StructData::loadroomCylindricalRtheta(){
 		Data::ValuesPtr IM2X = *it; it++;
 		Data::ValuesPtr IM3X = *it; it++;
 		Data::ValuesPtr datasetkmt = *it;
+		//默认取中间位置
+		int index = IM1X->size() / 2 + IM1X->size() % 2;
+		//		int index = 4;
+		if (istrue)
+		{
+			int index_min = 1;
+			float distancemin = 10000.0f;
+			_face_point_index;
+			for (auto i = 0; i < IM1X->size(); i++)
+			{
+				float curdistance = abs(*(IM1X->begin() + i) - _face_point_index);
+				if (curdistance < distancemin)
+				{
+					distancemin = curdistance;
+					index_min = i + 1;
+				}
+			}
+			index = index_min;
+		}
 		//原点
 		QPointF p0 = QPointF(0.0, 0.0);
 		//获取所有半径
@@ -728,32 +751,17 @@ bool StructData::loadroomCylindricalRtheta(){
 		}
 #pragma endregion
 #pragma region 筛选属性
-		//默认取中间位置
-	int index = IM1X->size() / 2+IM1X->size()%2;
-//		int index = 4;
-		if (istrue)
-		{
-			int index_min = 1;
-			float distancemin = 10000.0f;
-			_face_point_index;
-			for (auto i = 0; i < IM1X->size(); i++)
-			{
-				float curdistance = abs(*(IM1X->begin() + i) - _face_point_index);
-				if (curdistance < distancemin)
-				{
-					distancemin = curdistance;
-					index_min = i + 1;
-				}
-			}
-			index = index_min;
-		}
 		int CutNum = rand_val.size() - 1;
 		std::vector<DaTaKmt> datakmtinfo = GetdatasetKmtCylindrical();
 		for each (DaTaKmt var in datakmtinfo)
 		{
 			if (var.point1 == index && var.point3 < rand_val.size())
 			{
-				listcir[var.pointproperty].push_back(CutCirlist[(var.point2 - 1)*CutNum + (var.point3 - 1)]);
+				__int64 cutCirSize = (var.point2 - 1) * CutNum + (var.point3 - 1);
+				if (cutCirSize < CutCirlist.size())
+				{
+					listcir[var.pointproperty].push_back(CutCirlist[(var.point2 - 1) * CutNum + (var.point3 - 1)]);
+				}
 			}
 		}
 #pragma endregion 
