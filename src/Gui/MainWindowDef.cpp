@@ -163,7 +163,7 @@ void MainWindowDef::resizeEvent(QResizeEvent *event)
 	if (isMax)
 		isMax = false;
 	//抽屉功能实现
-	ToDrawer(this->size());
+	//ToDrawer(this->size());
 }
 
 void MainWindowDef::moveEvent(QMoveEvent *event)

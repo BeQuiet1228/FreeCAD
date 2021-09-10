@@ -581,7 +581,12 @@ bool StructData::loadroomPolarRtheta()
 		{
 			if (var.point1 == index&&var.point3 < rand_val.size())
 			{
-				listcir[var.pointproperty].push_back(CutCirlist[(var.point2 - 1)*CutNum + (var.point3 - 1)]);
+				__int64 CurCirSize = (var.point2 - 1) * CutNum + (var.point3 - 1);
+				if (CurCirSize < CutCirlist.size())
+				{
+					listcir[var.pointproperty].push_back(CutCirlist[(var.point2 - 1) * CutNum + (var.point3 - 1)]);
+				}
+					
 			}
 		}
 #pragma endregion 
@@ -753,7 +758,11 @@ bool StructData::loadroomCylindricalRtheta(){
 		{
 			if (var.point1 == index && var.point3 < rand_val.size())
 			{
-				listcir[var.pointproperty].push_back(CutCirlist[(var.point2 - 1)*CutNum + (var.point3 - 1)]);
+				__int64 CutCirSize = (var.point2 - 1) * CutNum + (var.point3 - 1);
+				if (CutCirSize < CutCirlist.size())
+				{
+					listcir[var.pointproperty].push_back(CutCirlist[(var.point2 - 1) * CutNum + (var.point3 - 1)]);
+				}
 			}
 		}
 #pragma endregion 
