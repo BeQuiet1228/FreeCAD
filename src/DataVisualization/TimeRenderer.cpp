@@ -48,7 +48,8 @@ bool TimeRenderer::drawImage()
 	//获取数据索引的范围
 	int startIndex(0), endIndex(0);
 	startIndex = d->findIndexFromXValueL(xr.min);
-	endIndex = d->findIndexFromXValueL(xr.max);
+	endIndex = d->findIndexFromXValueR(xr.max);
+
 
 	//新建画布 画笔
 	QImage img(getSize(), QImage::Format_ARGB32);

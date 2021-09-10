@@ -48,4 +48,30 @@ protected:
 	std::mutex ValueRangMutex;
 	//网格大小
 	unsigned int width, height;
+	//网格标尺
+	std::vector<float> xScale, yScale;
+};
+
+class DefineMatrixRasterData :public QwtMatrixRasterData {
+public:
+	DefineMatrixRasterData();
+	~DefineMatrixRasterData();
+
+public:
+	virtual double value(double x, double y) const override;
+
+	void setXScale(const std::vector<float>& xScale) {
+		this->xScale = xScale;
+	}
+	void setYScale(const std::vector<float>& yscale) {
+		this->yScale = yscale;
+	}
+
+private:
+	std::vector<float> xScale, yScale;
+
+private:
+	int findIndex(const std::vector<float>& scale, const double& pos) const;
+
+	bool isInScal(const std::vector<float>& scale, const double& pos) const;
 };

@@ -68,7 +68,31 @@ private:
     void update();
 
     class PrivateData;
+protected:
     PrivateData *d_data;
 };
 
+class QWT_EXPORT QwtMatrixRasterData::PrivateData
+{
+public:
+	PrivateData() :
+		resampleMode(QwtMatrixRasterData::NearestNeighbour),
+		numColumns(0)
+	{
+	}
+
+	inline double value(int row, int col) const
+	{
+		return values.data()[row * numColumns + col];
+	}
+
+	QwtMatrixRasterData::ResampleMode resampleMode;
+
+	QVector<double> values;
+	int numColumns;
+	int numRows;
+
+	double dx;
+	double dy;
+};
 #endif

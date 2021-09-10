@@ -20,6 +20,7 @@
 #include "rightScaleWidget.h"
 #include "ContourPlotAdapter.h"
 #include "TLabel.h"
+#include"CombAxis.h"
 struct UndoRedoData
 {
 	UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
@@ -262,8 +263,7 @@ void Plot::updateInformationLabel()
 	AxisB->setAxisText(QString::fromStdString(adapter->getXTag()));
 	if (!informationLabel)
 		return;
-	informationLabel->setText(adapter->getInformationTitile());
-	
+	informationLabel->setTextstr(adapter->getInformationTitile());
 }
 
 /**
@@ -295,34 +295,31 @@ void Plot::initGUI()
 	connect(canvas, SIGNAL(emitSelectPoint(QPoint)), this, SLOT(canvasSelectPoint(QPoint)));
 	connect(canvas, SIGNAL(emitResize(QSize)), this, SLOT(canvasResize(QSize)));
 
-	AxisL = new Axis();
+	AxisL = new CombAxis();
 	AxisL->setAxixStyle(Axisleft);
 	AxisL->SetAxisNumber(yAxisLevel);
 	AxisL->setColorBarEnabled(false);
 	AxisL->setMargin(1);
 	AxisL->setSpacing(1);
 	AxisL->setBorderDist(0,0);
-	AxisB = new Axis();
+	AxisB = new CombAxis();
 	AxisB->setAxixStyle(AxisBottom);
 	AxisB->SetAxisNumber(xAxisLevel);
 	AxisB->setColorBarEnabled(false);
 	AxisB->setMargin(1);
 	AxisB->setSpacing(1);
 	AxisB->setBorderDist(0, 0);
-	connect(AxisL, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererYRang(const float&, const float&)));
-	connect(AxisB, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererXRang(const float&, const float&)));
+	connect(AxisL->mAxis, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererYRang(const float&, const float&)));
+	connect(AxisB->mAxis, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererXRang(const float&, const float&)));
 //	scaleWIdget = new rightScaleWidget(QwtScaleDraw::RightScale, this);
 	scaleWIdget = new Axis(this);
 	scaleWIdget->setAxixStyle(Axisstyle::AxisRight);
 	scaleWIdget->setColorBarEnabled(true);
-	scaleWIdget->setLabel(false);
 	scaleWIdget->setColorBarWidth(20);
 	scaleWIdget->setMargin(10);
 	scaleWIdget->setBorderDist(0.0, 0.0);
 	connect(scaleWIdget, SIGNAL(sendAxisRang(const float&, const float&)),this,SLOT(ScaleWidgetRightRange(const float&, const float&)));
 	informationLabel = new TLabel();
-	//informationLabel->setMargin(40);
-	//informationLabel->setAlignment(Qt::AlignTop);
 	informationLabel->setAlignment(Qt::AlignCenter);
 	informationLabel->setContentsMargins(0, 10, 0, 0);
 	initInformationLabelFont();

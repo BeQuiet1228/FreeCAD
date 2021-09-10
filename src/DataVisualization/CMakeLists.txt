@@ -27,6 +27,7 @@ SET(MY_MOC_HDR RenderThread.h
 	AxisLable.h
 	Canvas.h
 	Axis.h
+	CombAxis.h
 	ListTreeWidget.h
 	Dataresource.h
 	DoubleSilder.h
@@ -104,6 +105,14 @@ SET(LISTTREE_SRC ListTreeWidget.h
 	ListTreeWidget.cpp
 	Dataresource.h
 	Dataresource.cpp)
+SET(AXIS_SRC
+	Axis.cpp
+	Axis.h
+	AxisLable.cpp
+	AxisLable.h
+	CombAxis.cpp
+	CombAxis.h
+	)
 SET(SRC main.cpp
 	Data.h
 	Data.cpp
@@ -111,12 +120,12 @@ SET(SRC main.cpp
 	Renderer.h
 	Plot.cpp
 	Plot.h
-	AxisLable.h
-	AxisLable.cpp
+	#AxisLable.h
+	#AxisLable.cpp
 	Canvas.cpp
 	Canvas.h
-	Axis.cpp
-	Axis.h
+	#Axis.cpp
+	#Axis.h
 	RenderTask.cpp
 	RenderTask.h
 	RenderThreadManager.cpp
@@ -179,6 +188,7 @@ SET(DataVisualization_src
 	${CHAR_ENCODE}
 	${SRC_TOOL}
 	${Gui_QRC_SRCS}
+	${AXIS_SRC}
 	)
 add_definitions( -D_DATA_VISUALIZATION_)
 if(DataVisualizationDll)
@@ -211,6 +221,7 @@ SOURCE_GROUP("character_encoding" FILES ${CHAR_ENCODE})
 SOURCE_GROUP("tool" FILES ${SRC_TOOL})
 SOURCE_GROUP("uifile" FILES ${UI_SRC})
 SOURCE_GROUP("qrcfile" FILES ${QRC_SRC})
+SOURCE_GROUP("axis" FILES ${AXIS_SRC})
 #增加包含目录
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}

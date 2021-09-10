@@ -40,7 +40,9 @@ QwtMatrixRasterData* ContourDataPolar::getQwtMatrixRasterData()
 		grid++;
 #endif			
 	}
-	QwtMatrixRasterData *rasterData = new PolarMatrixRasterData;
+	PolarMatrixRasterData*rasterData = new PolarMatrixRasterData;
+	rasterData->setXScale(xScale);
+	rasterData->setYScale(yScale);
 	rasterData->setValueMatrix(data, width);
 
 	rasterData->setInterval(Qt::XAxis,
@@ -110,5 +112,5 @@ double PolarMatrixRasterData::value(double x, double y) const
 	if (theta < 0 && theta < interval(Qt::YAxis).minValue())
 		theta += 2 * M_PI;
 
-	return QwtMatrixRasterData::value(r, theta);
+	return DefineMatrixRasterData::value(r, theta);
 }

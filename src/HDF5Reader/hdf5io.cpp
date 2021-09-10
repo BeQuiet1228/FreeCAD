@@ -566,12 +566,20 @@ void Hdf5IO::copyToHdf5IO(Hdf5IO& hdf5IO, std::vector<Hdf5Data>& datas)
 */
 void Hdf5IO::creatNewHdf5File(const std::string& fileName)
 {
-	int res=H5Fcreate(fileName.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+	auto gbk = QTextCodec::codecForName("gb2312");
+
+	QString temp = QString::fromUtf8(fileName.c_str());
+	std::string newPath = gbk->fromUnicode(temp).data();
+	int res=H5Fcreate(newPath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
 }
 
 void Hdf5IO::creatHdf5File(const std::string& fileName)
 {
-	H5Fcreate(fileName.c_str(), H5F_ACC_RDWR, H5P_DEFAULT, H5P_DEFAULT);
+	auto gbk = QTextCodec::codecForName("gb2312");
+
+	QString temp = QString::fromUtf8(fileName.c_str());
+	std::string newPath = gbk->fromUnicode(temp).data();
+	H5Fcreate(newPath.c_str(), H5F_ACC_RDWR, H5P_DEFAULT, H5P_DEFAULT);
 }
 
 /**
@@ -580,7 +588,8 @@ void Hdf5IO::creatHdf5File(const std::string& fileName)
 */
 void Hdf5IO::deleteH5File()
 {
-
+	Hdf5File.reset();
+	hdf5DataList.clear();
 }
 
 /**
@@ -759,8 +768,11 @@ void Hdf5Data::init()
 * @Time 2021/6/30
 */
 int Hdf5IO::creatNewH5File(const std::string& fileName){
-	
-	return H5Fcreate(fileName.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+	auto gbk = QTextCodec::codecForName("gb2312");
+
+	QString temp = QString::fromUtf8(fileName.c_str());
+	std::string newPath = gbk->fromUnicode(temp).data();
+	return H5Fcreate(newPath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
 }
 /**
 * @brief Hdf5IO::openH5File
