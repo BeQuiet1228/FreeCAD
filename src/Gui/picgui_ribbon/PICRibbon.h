@@ -90,10 +90,13 @@ public:
   //抽屉功能
   std::map<QString, QWidget*> mydarWer;
   std::map<QString, QWidget*> mTabWidget;
-  public Q_SLOTS:
+
+  std::map<QString, std::map<QString, QWidget*>> mMyDarWer;
+public Q_SLOTS:
   void buttomclicked();
   void setParentWidget(MainWindowDef* parent);
   void SlotcurrentChanged(int);
+  void slotTimerOut();
 private:
 	bool toScale(unsigned int index,QSize& size);
 	bool unFold(unsigned int index,QSize& size);
@@ -101,7 +104,7 @@ private:
 	void setZoominfo(unsigned int index,QSize& size);
 	void HidemyDar();
 	unsigned __int64 MaindefStie;
-	
+	QTimer* timer;
 };
 
 #endif // RIBBONTABWIDGET_H
