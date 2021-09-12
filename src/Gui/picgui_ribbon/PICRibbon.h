@@ -11,6 +11,7 @@ class GuiExport Ribbon : public TabWidgetInterFace,QObject
   Q_OBJECT
 public:
   explicit Ribbon(QWidget *parent = 0);
+  ~Ribbon();
   /// Add a tab to the ribbon.
   ///
   /// \param[in] tabName Name of the tab
@@ -55,7 +56,6 @@ public:
 
   QList<PICRibbonTabContent *> get_tab_all();
   PICRibbonTabContent * get_tab_by_name(QString& name);
-  virtual void setScale(QSize& size,bool);
 
   //添加一个action
   void addAction(const QString& tabName, const QString& groupName, QAction* action);
@@ -88,9 +88,7 @@ public:
   //改变一个分组位置,sequence参数为新的位置,最小为0
   void setGroupSequence(const QString &tabName, const QString &groupName, int sequence);
   //抽屉功能
-  std::map<QString, QWidget*> mydarWer;
   std::map<QString, QWidget*> mTabWidget;
-
   std::map<QString, std::map<QString, QWidget*>> mMyDarWer;
 public Q_SLOTS:
   void buttomclicked();
@@ -98,10 +96,7 @@ public Q_SLOTS:
   void SlotcurrentChanged(int);
   void slotTimerOut();
 private:
-	bool toScale(unsigned int index,QSize& size);
-	bool unFold(unsigned int index,QSize& size);
 	void showdrawerGroup(QString GroupName,QToolButton*);
-	void setZoominfo(unsigned int index,QSize& size);
 	void HidemyDar();
 	unsigned __int64 MaindefStie;
 	QTimer* timer;

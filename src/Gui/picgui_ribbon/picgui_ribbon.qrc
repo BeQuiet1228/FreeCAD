@@ -35,5 +35,7 @@
 	
 	<qresource prefix="/drawer">
 	<file>icons/darwer.svg</file>
+	<file>icons/zhankai.svg</file>
+	<file>icons/shousuo.svg</file>
 	</qresource>
 </RCC>

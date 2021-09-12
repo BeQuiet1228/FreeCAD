@@ -8,13 +8,19 @@
 #include <QPainter>
 #include "picgui_ribbon/moc_PICRibbon.cpp"
 #include <iostream>
-#include"darWer.h"
-#define WIGET_INTERVAL (30)
 #define DEBUGINNG 0
+#ifndef WIGET_INTERVAL
+#define WIGET_INTERVAL (30)
+#endif
+#ifndef NO_INSTANCE
+#define NO_INSTANCE (386)
+#endif
+#ifndef DARWER_SIZE
+#define DARWER_SIZE (118)
+#endif
 Ribbon::Ribbon(QWidget *parent)
   : QTabWidget(parent)
 {
-	mydarWer.clear();
 	setCursor(Qt::ArrowCursor);
 	QTabWidget* widget = dynamic_cast<QTabWidget*>(this);
 	QObject::connect(widget, SIGNAL(currentChanged(int)), this, SLOT(SlotcurrentChanged(int)));
@@ -75,34 +81,7 @@ void Ribbon::removeTab(const QString &tabName)
 void Ribbon::addGroup(const QString &tabName, const QString &groupName)
 {
   // Find ribbon tab
-#if DEBUGINNG
-  QWidget *tab = nullptr;
-  for (int i = 0; i < count(); i++)
-  {
-    if (tabText(i).toLower() == tabName.toLower())
-    {
-      tab = QTabWidget::widget(i);
-      break;
-    }
-  }
 
-  if (tab != nullptr)
-  {
-    // Tab found
-    // Add ribbon group
-    PICRibbonTabContent *ribbonTabContent = static_cast<PICRibbonTabContent*>(tab);
-    ribbonTabContent->addGroup(groupName);
-  }
-  else
-  {
-    // Tab not found
-    // Create tab
-    addTab(tabName);
-
-    // Add ribbon group
-    addGroup(tabName, groupName);
-  }
-#else
 	QWidget* tab = nullptr;
 	auto iter = mTabWidget.find(tabName);
 	if (iter!=mTabWidget.end())
@@ -117,40 +96,12 @@ void Ribbon::addGroup(const QString &tabName, const QString &groupName)
 		addTab(tabName);
 		addGroup(tabName,groupName);
 	}
-#endif
 }
 
 void Ribbon::addButton(const QString &tabName, const QString &groupName, QToolButton *button)
 {
   // Find ribbon tab
-#if DEBUGINNG
-  QWidget *tab = nullptr;
-  for (int i = 0; i < count(); i++)
-  {
-    if (tabText(i).toLower() == tabName.toLower())
-    {
-      tab = QTabWidget::widget(i);
-      break;
-    }
-  }
 
-  if (tab != nullptr)
-  {
-    // Tab found
-    // Add ribbon button
-    PICRibbonTabContent *ribbonTabContent = static_cast<PICRibbonTabContent*>(tab);
-    ribbonTabContent->addButton(groupName, button);
-  }
-  else
-  {
-    // Tab not found.
-    // Create tab
-    addTab(tabName);
-
-    // Add ribbon button
-    addButton(tabName, groupName, button);
-  }
-#else
 	bool isbreak = false;
 	for (int i = 0; i < count(); i++)
 	{
@@ -187,7 +138,6 @@ void Ribbon::addButton(const QString &tabName, const QString &groupName, QToolBu
 		addTab(tabName);
 		addButton(tabName, groupName, button);
 	}
-#endif
 }
 
 void Ribbon::removeButton(const QString &tabName, const QString &groupName, QToolButton *button)
@@ -250,12 +200,10 @@ void Ribbon::addAction(const QString &tabName, const QString &groupName, QAction
 	b->setDefaultAction(action);
 	this->addButton(tabName, groupName, b);
 }
-
 void Ribbon::clearAllAction()
 {
 	this->clear();
 }
-
 void Ribbon::clearTab(const QString &tabName)
 {
 	QString name_t = tabName;
@@ -264,9 +212,7 @@ void Ribbon::clearTab(const QString &tabName)
 	for (int i = 0; i<list_g_name.count(); i++) {
 		t->removeGroup(list_g_name.at(i));
 	}
-
 }
-
 void Ribbon::clearGoup(const QString &groupName)
 {
 	PICRibbonButtonGroup * g = nullptr;
@@ -285,7 +231,6 @@ void Ribbon::clearGoup(const QString &groupName)
 		}
 	}
 }
-
 QList<QString> Ribbon::getTabs()
 {
 	QList<QString> list;
@@ -297,7 +242,6 @@ QList<QString> Ribbon::getTabs()
 	}
 	return list;
 }
-
 QList<QString> Ribbon::getGroups()
 {
 	QList<PICRibbonTabContent *> list_t = get_tab_all();
@@ -376,8 +320,6 @@ QList<QAction *> Ribbon::getGroupActions(const QString &groupName)
 	return list;
 
 }
-
-
 void Ribbon::setTabOlder(const QString &tabName, const int older)
 {
 	QString name_t = tabName;
@@ -448,158 +390,6 @@ void Ribbon::setGroupSequence(const QString &tabName, const QString &groupName, 
 	}
 }
 /**
-* @brief Ribbon::setScale
-* @param QSize & size
-* @param bool state
-* @return void
-*/
-void Ribbon::setScale(QSize& size, bool state) {
-	int curindex = QTabWidget::currentIndex();
-	if (state)
-	{
-	//	//for (auto index = 0; index < count(); index++)
-	//	//	unFold(index, size);
-		unFold(curindex, size);
-	}
-	else
-	{
-	//	//for (auto index = 0; index < count(); index++)
-	//	//	toScale(index, size);
-		toScale(curindex, size);
-	}
-	//QTabWidget::setCurrentIndex(curindex);
-}
-/**
-* @brief  Ribbon::toScale 具体缩放
-* @param  unsigned int index  
-* @param  QSize & size  
-* @return bool  
-*/
-bool Ribbon::toScale(unsigned int index,QSize& size)
-{
-	HidemyDar();
-	//收缩
-	//step1:获取tab页
-	QString tabName = QTabWidget::tabText(index);
-	auto iter = mTabWidget.find(tabName);
-	if (iter == mTabWidget.end()) return false;
-	//step2:获取各组件的大小
-	//PICRibbonTabContent* mtab = dynamic_cast<PICRibbonTabContent*>(tab);
-	PICRibbonTabContent* mtab = dynamic_cast<PICRibbonTabContent*>(iter->second);
-	float widthmax = 0;
-	std::vector<PICRibbonButtonGroup*> groups;
-	for (auto groupindex=0;groupindex<mtab->contentLayout->count();groupindex++)
-	{
-		PICRibbonButtonGroup* groupbutton = dynamic_cast<PICRibbonButtonGroup*>
-			(mtab->contentLayout->itemAt(groupindex)->widget());
-		groups.push_back(groupbutton);
-		widthmax += groupbutton->size().width();
-	}
-	//step3:检查大小差,判断是否需要收进抽屉
-	if (size.width() - widthmax > 24)
-		return false;
-	//step4:开始收进抽屉
-	for(int groupindex=groups.size()-1; groupindex >=0; groupindex--)
-	{
-		auto iter = mydarWer.find(groups[groupindex]->title());
-		if (iter==mydarWer.end())
-		{
-			//step5:可以缩放
-			QWidget* parent = reinterpret_cast<QWidget*>(MaindefStie);
-			std::list<QAction*> mActions = groups[groupindex]->get_action_all().toStdList();
-			PICRibbonButtonGroup* newgroup = new PICRibbonButtonGroup(parent);
-			for (auto iteraction = mActions.begin(); iteraction != mActions.end(); iteraction++)
-			{
-				QToolButton* b = new QToolButton;
-				b->setDefaultAction(*iteraction);
-				newgroup->addButton(b);
-			}
-			//QSize size = groups[groupindex]->size();
-			//newgroup->setMaximumSize(groups[groupindex]->size());
-			newgroup->resize(groups[groupindex]->size());
-			newgroup->setTitle(groups[groupindex]->title());
-			//step6:放入用来存储抽屉的表中
-			mydarWer.insert(std::pair<QString,QWidget*>(groups[groupindex]->title(),newgroup));
-			//step7:清除
-			groups[groupindex]->removeButtons();
-			//step8:插入抽屉按钮
-			{
-				QToolButton* darwerbutton = new QToolButton();
-				QIcon icon(QString::fromUtf8(":/drawer/icons/darwer.svg"));
-				QSize sizeicon(32,32);
-				darwerbutton->setIcon(icon);
-				darwerbutton->setMaximumSize(sizeicon);
-				groups[groupindex]->addButton(darwerbutton);
-				//groups[groupindex]->setMaximumWidth(118);
-				groups[groupindex]->resize(QSize(118,101));
-				QObject::connect(darwerbutton,SIGNAL(clicked()),this,SLOT(buttomclicked()));
-			}
-			toScale(index,size);
-			break;
-		}
-	}
-	return true;
-}
-/**
-* @brief Ribbon::unFold 展开
-* @param unsigned int index tab页序号
-* @param QSize & size 大小
-* @return bool
-*/
-bool Ribbon::unFold(unsigned int index, QSize& size)
-{
-	//step0:
-	if (mydarWer.empty()) return true;
-	//关闭相关的抽屉
-	HidemyDar();
-	//step1:设置当前页面
-	//QTabWidget::setCurrentIndex(index);
-	//step2:获取tab页
-	//QWidget* tab = QTabWidget::widget(index);
-	QString tabName = QTabWidget::tabText(index);
-	auto iter = mTabWidget.find(tabName);
-	if (iter == mTabWidget.end()) return false;
-	//step3:获取个组件的大小
-	PICRibbonTabContent* mtab = dynamic_cast<PICRibbonTabContent*>(iter->second);
-	std::vector<PICRibbonButtonGroup*> groups;
-	float widthmax = 0;
-	for (auto groupindex=0;groupindex<mtab->contentLayout->count();groupindex++)
-	{
-		PICRibbonButtonGroup* groupbutton = dynamic_cast<PICRibbonButtonGroup*>
-			(mtab->contentLayout->itemAt(groupindex)->widget());
-		groups.push_back(groupbutton);
-		widthmax += groupbutton->size().width();
-	}
-	//step4:检查恢复控件后的大小
-	for(auto iter=0;iter<groups.size();iter++)
-	{
-		auto iterdar = mydarWer.find(groups[iter]->title());
-		if (iterdar!=mydarWer.end())
-		{
-			//step5:按顺序展开
-			widthmax -= groups[iter]->size().width();
-			PICRibbonButtonGroup* curgroup = dynamic_cast<PICRibbonButtonGroup*>(iterdar->second);
-			widthmax += curgroup->size().width();
-			if (widthmax<size.width())
-			{
-				groups[iter]->removeButtons();
-				std::list<QAction*> actions = curgroup->get_action_all().toStdList();
-				for (auto iteraction=actions.begin();iteraction!=actions.end();iteraction++)
-				{
-					QToolButton* b = new QToolButton();
-					b->setDefaultAction(*iteraction);
-					groups[iter]->addButton(b);
-				}
-				groups[iter]->setMaximumSize(iterdar->second->size());
-				mydarWer.erase(iterdar);
-				unFold(index, size);
-			}
-			break;
-		}
-	}
-	return true;
-}
-/**
 * @brief  Ribbon::buttomclicked 按钮事件
 * @return void  
 */
@@ -643,10 +433,14 @@ void Ribbon::showdrawerGroup(QString GroupName,QToolButton* buttom)
 		PICRibbonButtonGroup* newGroup = dynamic_cast<PICRibbonButtonGroup*>(iter->second);
 		if (newGroup->isVisible())
 		{
+			QIcon icon(QString::fromUtf8(":/drawer/icons/shousuo.svg"));
+			buttom->setIcon(icon);
 			newGroup->hide();
 		}
 		else
 		{
+			QIcon icon(QString::fromUtf8(":/drawer/icons/zhankai.svg"));
+			buttom->setIcon(icon);
 			newGroup->setWindowFlags(Qt::FramelessWindowHint);
 			QPalette pal = newGroup->palette();
 			pal.setColor(QPalette::Background, QColor(189,193,196,255));
@@ -728,10 +522,6 @@ void Ribbon::SlotcurrentChanged(int index)
 	tab->setParent(mwidget);
 	tab->show();
 	tab->resize(QSize(167255,101));
-
-	//调整收缩
-	//toScale(index, this->size());
-	//setZoominfo(index,this->size());
 }
 /**
 * @brief Ribbon::HidemyDar 隐藏抽屉
@@ -740,41 +530,35 @@ void Ribbon::SlotcurrentChanged(int index)
 */
 void Ribbon::HidemyDar()
 {
-	if (mMyDarWer.empty())	return;
-	for(auto iter=mMyDarWer.begin();iter!=mMyDarWer.end();iter++)
+	//if (mMyDarWer.empty())	return;
+	//for(auto iter=mMyDarWer.begin();iter!=mMyDarWer.end();iter++)
+	//{
+	//	for (auto iter2 = iter->second.begin(); iter2 != iter->second.end(); iter2++)
+	//	{
+	//		if (iter2->second->isVisible())
+	//		{
+	//			auto tabWidget = mTabWidget.find(iter->first);
+	//
+	//			iter2->second->hide();
+	//		}
+	//	}
+	//}
+	for (auto index = 0; index < count(); index++)
 	{
-		for (auto iter2 = iter->second.begin(); iter2 != iter->second.end(); iter2++)
+		QString tabName = QTabWidget::tabText(index);
+		auto iter = mTabWidget.find(tabName);
+		PICRibbonTabContent* picribbontabcontent = dynamic_cast<PICRibbonTabContent*>(iter->second);
+		for (auto subindex = 0; subindex < picribbontabcontent->contentLayout->count(); ++subindex)
 		{
-			iter2->second->hide();
+			PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>
+				(picribbontabcontent->contentLayout->itemAt(subindex)->widget());
+			auto itMyDarWer = mMyDarWer[tabName].find(group->title());
+			if (itMyDarWer!= mMyDarWer[tabName].end())
+			{
+				itMyDarWer->second->hide();
+			}
 		}
 	}
-}
-void Ribbon::setZoominfo(unsigned int index, QSize& size)
-{
-	//step1:先全部展开
-	QString tabName = QTabWidget::tabText(index);
-	auto iter = mTabWidget.find(tabName);
-	if (iter == mTabWidget.end())	return;
-	PICRibbonTabContent* tab = dynamic_cast<PICRibbonTabContent*>(iter->second);
-	for (int i=0;i<tab->contentLayout->count();i++)
-	{
-		PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>
-			(tab->contentLayout->itemAt(i)->widget());
-		auto iter = mydarWer.find(group->title());
-		if (iter == mydarWer.end()) continue;
-		group->removeButtons();
-		std::list<QAction*> actions=dynamic_cast<PICRibbonButtonGroup*>
-			(iter->second)->get_action_all().toStdList();
-		for (auto iteraction=actions.begin();iteraction!=actions.end();iteraction++)
-		{
-			QToolButton* b = new QToolButton();
-			b->setDefaultAction(*iteraction);
-			group->addButton(b);
-		}
-		mydarWer.erase(iter);
-	}
-	//step2:收缩
-	//toScale(index, size);
 }
 void Ribbon::slotTimerOut()
 {
@@ -798,7 +582,7 @@ void Ribbon::slotTimerOut()
 			PICRibbonButtonGroup* groupButton = dynamic_cast<PICRibbonButtonGroup*>
 				(mTab->contentLayout->itemAt(groupIndex)->widget());
 			groups.push_back(groupButton);
-			if (386 == groupButton->size().width())
+			if (NO_INSTANCE == groupButton->size().width())
 				return;
 			mtabItemSize += groupButton->size().width();
 		}
@@ -856,17 +640,17 @@ void Ribbon::slotTimerOut()
 					newGroup->setTitle(groups[groupIndex]->title());
 					mMyDarWer[tabName][groups[groupIndex]->title()] = dynamic_cast<QWidget*>(newGroup);
 					mtabItemSize = mtabItemSize - groups[groupIndex]->size().width();
-					mtabItemSize = mtabItemSize + 118;
+					mtabItemSize = mtabItemSize + DARWER_SIZE;
 					groups[groupIndex]->removeButtons();
 					//插入抽屉按钮
 					{
 						QToolButton* darwerButton = new QToolButton();
-						QIcon icon(QString::fromUtf8(":/drawer/icons/darwer.svg"));
+						QIcon icon(QString::fromUtf8(":/drawer/icons/shousuo.svg"));
 						QSize sizeicon(32,32);
 						darwerButton->setIcon(icon);
 						darwerButton->setMaximumSize(sizeicon);
 						groups[groupIndex]->addButton(darwerButton);
-						groups[groupIndex]->resize(118,101);
+						groups[groupIndex]->resize(DARWER_SIZE,101);
 						QObject::connect(darwerButton,SIGNAL(clicked()),this,SLOT(buttomclicked()));
 					}
 					if (parentSize.width() > mtabItemSize)
@@ -876,8 +660,14 @@ void Ribbon::slotTimerOut()
 			HidemyDar();
 			if (groups.size() == mMyDarWer[tabName].size())
 			{
-				parent->setMinimumWidth(groups.size() * 118+100);
+				parent->setMinimumWidth(groups.size() * DARWER_SIZE +100);
 			}
 		}
 	}
+}
+Ribbon::~Ribbon()
+{
+	mTabWidget.clear();
+	mMyDarWer.clear();
+	timer->stop();
 }
