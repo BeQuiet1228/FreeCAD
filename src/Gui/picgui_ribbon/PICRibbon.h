@@ -6,6 +6,7 @@
 #include "TabWidgetInterface.hpp"
 #include "PICRibbonTabContent.h"
 class MainWindowDef;
+class QToolButton;
 class GuiExport Ribbon : public TabWidgetInterFace,QObject
 {
   Q_OBJECT
@@ -90,6 +91,7 @@ public:
   //抽屉功能
   std::map<QString, QWidget*> mTabWidget;
   std::map<QString, std::map<QString, QWidget*>> mMyDarWer;
+  std::map<QString, std::map<QString, QToolButton*>>qToolButtons;
 public Q_SLOTS:
   void buttomclicked();
   void setParentWidget(MainWindowDef* parent);
@@ -98,6 +100,8 @@ public Q_SLOTS:
 private:
 	void showdrawerGroup(QString GroupName,QToolButton*);
 	void HidemyDar();
+	void hideDar();
+	void hidebtn();
 	unsigned __int64 MaindefStie;
 	QTimer* timer;
 };
