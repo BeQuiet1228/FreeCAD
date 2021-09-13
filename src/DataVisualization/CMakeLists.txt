@@ -27,6 +27,7 @@ SET(MY_MOC_HDR RenderThread.h
 	AxisLable.h
 	Canvas.h
 	Axis.h
+	CombAxis.h
 	ListTreeWidget.h
 	Dataresource.h
 	DoubleSilder.h
@@ -39,7 +40,9 @@ SET(MY_MOC_HDR RenderThread.h
 	ScaleWidget.h
 	rightScaleWidget.h
 	ContourPlotAdapter.h
+	phasorPlotAdapter.h
 	PlotAdapter.h
+	PlotAdapterNeedStruct.h
 	)
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
@@ -89,6 +92,8 @@ SET(PHASOR_SRC phasorData.h
 	phasorRenderer.cpp
 	DirData.cpp
 	DirData.h
+	phasorPlotAdapter.cpp
+	phasorPlotAdapter.h
 )
 SET(CONFIG_SRC CustomConfig.cpp
 	CustomConfig.h
@@ -100,6 +105,14 @@ SET(LISTTREE_SRC ListTreeWidget.h
 	ListTreeWidget.cpp
 	Dataresource.h
 	Dataresource.cpp)
+SET(AXIS_SRC
+	Axis.cpp
+	Axis.h
+	AxisLable.cpp
+	AxisLable.h
+	CombAxis.cpp
+	CombAxis.h
+	)
 SET(SRC main.cpp
 	Data.h
 	Data.cpp
@@ -107,12 +120,12 @@ SET(SRC main.cpp
 	Renderer.h
 	Plot.cpp
 	Plot.h
-	AxisLable.h
-	AxisLable.cpp
+	#AxisLable.h
+	#AxisLable.cpp
 	Canvas.cpp
 	Canvas.h
-	Axis.cpp
-	Axis.h
+	#Axis.cpp
+	#Axis.h
 	RenderTask.cpp
 	RenderTask.h
 	RenderThreadManager.cpp
@@ -128,6 +141,8 @@ SET(SRC main.cpp
 	DataInformationGetter.h
 	PlotAdapter.cpp
 	PlotAdapter.h
+	PlotAdapterNeedStruct.h
+	PlotAdapterNeedStruct.cpp
 	)
 SET(SRC_TOOL ConfigWidget.h
 	ConfigWidget.cpp
@@ -145,6 +160,8 @@ SET(SRC_TOOL ConfigWidget.h
 	rightScaleWidget.cpp
 	TLabel.h
 	TLabel.cpp
+	SysInfo.h
+	SysInfo.cpp
 	)
 #处理ui和qrc文件
 if (BUILD_QT5)
@@ -171,8 +188,9 @@ SET(DataVisualization_src
 	${CHAR_ENCODE}
 	${SRC_TOOL}
 	${Gui_QRC_SRCS}
+	${AXIS_SRC}
 	)
-add_definitions(-DMY_DEBUG -D_DATA_VISUALIZATION_)
+add_definitions( -D_DATA_VISUALIZATION_)
 if(DataVisualizationDll)
 add_definitions(-DDATA_VISUALIZATIONG_DLL)
 add_library(DataVisualization SHARED ${DataVisualization_src})
@@ -203,6 +221,7 @@ SOURCE_GROUP("character_encoding" FILES ${CHAR_ENCODE})
 SOURCE_GROUP("tool" FILES ${SRC_TOOL})
 SOURCE_GROUP("uifile" FILES ${UI_SRC})
 SOURCE_GROUP("qrcfile" FILES ${QRC_SRC})
+SOURCE_GROUP("axis" FILES ${AXIS_SRC})
 #增加包含目录
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}

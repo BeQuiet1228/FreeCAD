@@ -1852,7 +1852,37 @@ void StdCmdRunM3d::activated(int iMsg)
 	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
     getGuiApplication()->sendMsgToActiveView("RunChipic");
 	
+#if 0  //新的结构将运行代码放入了主窗口，所以这里的代码暂时不需要
+	auto contorl = ContorlInterface::GetInstance();
+	if (!contorl->hasChipicRuning())
+	{
+        //设置主界面上的ui
+		auto mw = Gui::MainWindow::getInstance();
+		mw->setContorlUI();
 
+        //设置运行路
+        Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
+        auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
+        if (!picDoc)
+            return;
+		std::string path = picDoc->getTextPath();
+		contorl->setM3dPath(path);
+
+		//清空h5文件对象
+		picDoc->releaseH5Object();
+    }else {
+		//设置主界面上的ui
+		auto mw = Gui::MainWindow::getInstance();
+		mw->hideContorlUI();
+		//清空h5文件对象
+		Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
+		auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
+		if (!picDoc)
+			return;
+		picDoc->releaseH5Object();
+    }
+	contorl->buttonClicked(0);
+#endif // _DEBUG
 }
 bool StdCmdRunM3d::isActive(void)
 {
@@ -2125,7 +2155,40 @@ bool StdCmdSmartContorl::isActive(void)
 {
     return getGuiApplication()->sendHasMsgToActiveView("showPSOView");
 }
+/*添加组件*/
+DEF_STD_CMD_A(StdCmdSmartCalc);
+StdCmdSmartCalc::StdCmdSmartCalc()
+    :Command("Std_Smart_Calc")
+{
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("SmartCalc");
+    sToolTipText = QT_TR_NOOP("SmartCalc");
+    sWhatsThis = "Std_Paralle_Run";
+    sStatusTip = QT_TR_NOOP("SmartCalc");
+    sPixmap = "smartContorl";
+}
 
+void StdCmdSmartCalc::activated(int Msg)
+{
+    Q_UNUSED(Msg);
+    //打开路径
+    doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
+    //设置运行路径
+    Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
+    auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
+    if (!picDoc)
+        return;
+    std::string path = picDoc->getTextPath();
+    SmartContorlInterface::showSmartCalc(path);
+}
+bool StdCmdSmartCalc::isActive(void)
+{
+    //return true;
+    auto contorl = ContorlInterface::GetInstance();
+    if (App::GetApplication().getActiveDocument() && (!contorl->hasChipicRuning()))
+        return true;
+    return false;
+}
 DEF_STD_CMD_A(StdCmdOpenLog);
 
 StdCmdOpenLog::StdCmdOpenLog()
@@ -2335,11 +2398,11 @@ void CreateDocCommands(void)
 	rcCmdMgr.addCommand(new StdCmdOpenCommandBook);
 	rcCmdMgr.addCommand(new StdCmdOpenUserBook);
 	rcCmdMgr.addCommand(new StdCmdRunSuperTube);
-    rcCmdMgr.addCommand(new StdCmdContourImageMod);
-    rcCmdMgr.addCommand(new StdCmdContourLineMod);
+    //rcCmdMgr.addCommand(new StdCmdContourImageMod);
+    //rcCmdMgr.addCommand(new StdCmdContourLineMod);
     rcCmdMgr.addCommand(new StdCmdOpenDataVisualizationConfig);
     rcCmdMgr.addCommand(new StdCmdDataVisualizationAutoMax);
-    rcCmdMgr.addCommand(new StdCmdDataVisualizationPlotDisplayGridMod);
+    //rcCmdMgr.addCommand(new StdCmdDataVisualizationPlotDisplayGridMod);
 
     rcCmdMgr.addCommand(new StdCmdSave());
     rcCmdMgr.addCommand(new StdCmdSaveAs());
@@ -2370,6 +2433,7 @@ void CreateDocCommands(void)
     /*lzg*/
     //自定义变量
     rcCmdMgr.addCommand(new StdCmdMyParameter());
+	rcCmdMgr.addCommand(new StdCmdSmartCalc());
     //添加自定义的commad
     creatGuiCommand();
 }

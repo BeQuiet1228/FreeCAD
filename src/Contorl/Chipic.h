@@ -89,6 +89,8 @@ private:
 	bool disposChipicFinished(const Message& msg);
 	//处理chipic输出图繁忙消息
 	bool disposChipicBusy(const Message& msg);
+	//重启状态检测定时器
+	void restartTimeoutTimer();
 public:
 	//运行状态
 	bool runState;

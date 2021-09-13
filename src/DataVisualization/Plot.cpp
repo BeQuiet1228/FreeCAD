@@ -5,7 +5,6 @@
 #include "RenderThreadManager.h"
 #include "RenderTask.h"
 #include "Renderer.h"
-//#include "ColorMapWidget.h"
 #include "qwt/qwt_scale_engine.h"
 #include "ContourRender.h"
 #include <stack>
@@ -20,6 +19,8 @@
 #include <QPaintEvent>
 #include "rightScaleWidget.h"
 #include "ContourPlotAdapter.h"
+#include "TLabel.h"
+#include"CombAxis.h"
 struct UndoRedoData
 {
 	UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
@@ -119,7 +120,7 @@ void Plot::reRender()
 	//创建坐标轴网格渲染任务
 	creatGridRenderTask();
 	//更新信息显示label
-	updateInformationLabel();
+	//updateInformationLabel();
 	adapter->reRender(this->canvas->size());
 }
 
@@ -154,8 +155,8 @@ void Plot::updateAxis()
 
 	//设置横纵坐标单位
 
- 	AxisL->setAxisText(QString::fromStdString(adapter->getYTag()));
- 	AxisB->setAxisText(QString::fromStdString(adapter->getXTag()));
+ 	//AxisL->setAxisText(QString::fromStdString(adapter->getYTag()));
+ 	//AxisB->setAxisText(QString::fromStdString(adapter->getXTag()));
 
 	AxisB->_update();
 	AxisL->_update();
@@ -257,9 +258,12 @@ void Plot::autoMaxRender()
 */
 void Plot::updateInformationLabel()
 {
+	//添加单位信息
+	AxisL->setAxisText(QString::fromStdString(adapter->getYTag()));
+	AxisB->setAxisText(QString::fromStdString(adapter->getXTag()));
 	if (!informationLabel)
 		return;
-	informationLabel->setText(adapter->getInformationTitile());
+	informationLabel->setTextstr(adapter->getInformationTitile());
 }
 
 /**
@@ -291,35 +295,33 @@ void Plot::initGUI()
 	connect(canvas, SIGNAL(emitSelectPoint(QPoint)), this, SLOT(canvasSelectPoint(QPoint)));
 	connect(canvas, SIGNAL(emitResize(QSize)), this, SLOT(canvasResize(QSize)));
 
-	AxisL = new Axis();
+	AxisL = new CombAxis();
 	AxisL->setAxixStyle(Axisleft);
 	AxisL->SetAxisNumber(yAxisLevel);
 	AxisL->setColorBarEnabled(false);
 	AxisL->setMargin(1);
 	AxisL->setSpacing(1);
 	AxisL->setBorderDist(0,0);
-	AxisB = new Axis();
+	AxisB = new CombAxis();
 	AxisB->setAxixStyle(AxisBottom);
 	AxisB->SetAxisNumber(xAxisLevel);
 	AxisB->setColorBarEnabled(false);
 	AxisB->setMargin(1);
 	AxisB->setSpacing(1);
 	AxisB->setBorderDist(0, 0);
-	connect(AxisL, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererYRang(const float&, const float&)));
-	connect(AxisB, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererXRang(const float&, const float&)));
+	connect(AxisL->mAxis, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererYRang(const float&, const float&)));
+	connect(AxisB->mAxis, SIGNAL(sendAxisRang(const float&, const float&)), this, SLOT(reRendererXRang(const float&, const float&)));
 //	scaleWIdget = new rightScaleWidget(QwtScaleDraw::RightScale, this);
 	scaleWIdget = new Axis(this);
 	scaleWIdget->setAxixStyle(Axisstyle::AxisRight);
 	scaleWIdget->setColorBarEnabled(true);
-	scaleWIdget->setLabel(false);
 	scaleWIdget->setColorBarWidth(20);
 	scaleWIdget->setMargin(10);
 	scaleWIdget->setBorderDist(0.0, 0.0);
 	connect(scaleWIdget, SIGNAL(sendAxisRang(const float&, const float&)),this,SLOT(ScaleWidgetRightRange(const float&, const float&)));
-	informationLabel = new QLabel();
-	//informationLabel->setMargin(40);
-	//informationLabel->setAlignment(Qt::AlignTop);
+	informationLabel = new TLabel();
 	informationLabel->setAlignment(Qt::AlignCenter);
+	informationLabel->setContentsMargins(0, 10, 0, 0);
 	initInformationLabelFont();
 
 	//初始化按钮条
@@ -330,12 +332,17 @@ void Plot::initGUI()
 	toolbar->setLayout(toolbarLayout);
 	toolbar->setObjectName("PlotToolbar");
 
+	//增加右边距
+	QWidget* space = new QWidget(this);
+	space->setMinimumWidth(20);
+
 	gridLayout->addWidget(canvas, 0, 1, 1, 1);
+	gridLayout->addWidget(space, 0, 3, 1, 1);
 	gridLayout->addWidget(AxisL, 0, 0, 1, 1);
 	gridLayout->addWidget(AxisB, 1, 1, 1, 1);
 	gridLayout->addWidget(scaleWIdget, 0, 2, 1, 1);
-	gridLayout->addWidget(informationLabel, 2, 0, 1, 3);
-	gridLayout->addWidget(toolbar, 3, 0, 1, 3);
+	gridLayout->addWidget(informationLabel, 2, 0, 1, 4);
+	gridLayout->addWidget(toolbar, 3, 0, 1, 4);
 
 	gridLayout->setRowStretch(0, 9);
 	gridLayout->setRowStretch(1, 1);
@@ -587,6 +594,7 @@ void Plot::loadconfig()
 	AxisL->loadconfig();
 	AxisB->loadconfig();
 	scaleWIdget->loadconfig();
+	informationLabel->loadconfig();
 	reRender();
 
 	if (!adapter)
@@ -599,6 +607,12 @@ void Plot::setappEvent()
 	updateAxis();
 	reRender();
 }
+
+void Plot::rmoveCanvasItem(unsigned int rank)
+{
+	canvas->removeItem(rank);
+}
+
 /**
 * @brief  Plot::EqualScaleDisplay 按等比例显示
 * @return void  
@@ -616,6 +630,7 @@ void Plot::setAdapter(const std::shared_ptr < PlotAdapter>& adapter)
 	canvas->clearIteam();
 	autoMaxRender();
 	updateToolbar();
+	updateInformationLabel();
 }
 
 /**

@@ -15,7 +15,7 @@ public:
 	QPointF getPoint(const unsigned int& index);
 	QPointF getPointHard(const unsigned int& index);
 	//根据值寻找一个索引
-	unsigned int findIndexFromXValueL(const float& x) override;
+	virtual unsigned int findIndexFromXValueL(const float& x) override;
 	//载入点数据
 	bool loadPoint() override;
 	//获取信息

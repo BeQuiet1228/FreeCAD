@@ -17,6 +17,7 @@
 #include "phasorRenderer.h"
 #include "Renderer.h"
 #include "ContourPlotAdapter.h"
+#include "phasorPlotAdapter.h"
 #include <iostream>
 RendererFactory::RendererFactory(Hdf5Data h5d)
 	: structData(h5d),ishaveStruct(true)
@@ -37,7 +38,6 @@ Renderers RendererFactory::creatRenderers(Hdf5Data h5d, DirectionType type /*= X
 		return renderers;
 	if (renderer->getNeedStrucuType() != Data::NEED_STRUCT)
 		return renderers;
-
 	//如果是等位图，那么必须使用观测面初始化结构图
 	auto contourRender = std::dynamic_pointer_cast<ContourRender>(renderer);
 
@@ -158,22 +158,29 @@ RendererPtr RendererFactory::creatStructRender(Hdf5Data h5d, DirectionType type)
 * @param const _3DPointf & end
 * @return RendererPtr
 */
-RendererPtr RendererFactory::creatStructRender(Hdf5Data h5d, const _3DPointf& start, const _3DPointf& end)
+RendererPtr RendererFactory::creatStructRender(Hdf5Data h5d, STRUCTTYPE md, const _3DPointf& start, const _3DPointf& end)
 {
-	//auto res = (start == end);
-	//if (0!=res)
-	if ((start == end))
+	switch (md)
+	{
+	case RendererFactory::MOD_2D:
+	{
+		QPointF start2d, end2d;
+		start2d.setX(start._1st);
+		start2d.setY(start._2rd);
+		end2d.setX(end._1st);
+		end2d.setY(end._2rd);
+		std::shared_ptr<Struct2dData> _structdata(new Struct2dData(h5d,start2d,end2d));
+		Struct2DRenderer* struct2drenderer = new Struct2DRenderer(_structdata);
+		return RendererPtr(struct2drenderer);
+	}
+		break;
+	case RendererFactory::MOD_3D:
 	{
 		std::shared_ptr<StructData> _structdata(new StructData(h5d, start, end));
 		StructRender* _StructureRenderer = new StructRender(_structdata);
 		return RendererPtr(_StructureRenderer);
 	}
-	else
-	{
-		//增加2d结构图的接口
-		std::shared_ptr<Struct2dData> _structdata(new Struct2dData(h5d));
-		Struct2DRenderer* struct2drenderer = new Struct2DRenderer(_structdata);
-		return RendererPtr(struct2drenderer);
+		break;
 	}
 }
 
@@ -186,12 +193,17 @@ RendererPtr RendererFactory::creatContourStructRender(std::shared_ptr<ContourRen
 	auto v = contourRender->getStructFace();
 	if (v.size() < 4)
 		return RendererPtr();
-
+	STRUCTTYPE md;
 	//让数据兼容2d等位图数据
 	if (v.size() == 4)
 	{
-	/*2d不分结构图方向，所以这里什么也不需要做 */
-
+		/*2d不分结构图方向，所以这里什么也不需要做 */
+		start._1st = v[0];
+		start._2rd = v[1];
+		end._1st = v[2];
+		end._2rd = v[3];
+		md = MOD_2D;
+	
 	}else {
 		start._1st = v[0];
 		start._2rd = v[1];
@@ -199,12 +211,9 @@ RendererPtr RendererFactory::creatContourStructRender(std::shared_ptr<ContourRen
 		end._1st = v[3];
 		end._2rd = v[4];
 		end._3th = v[5];
-
+		md = MOD_3D;
 	}
-
-	
-
-	RendererPtr structRenderer = creatStructRender(structData, start, end);
+	RendererPtr structRenderer = creatStructRender(structData,md, start, end);
 	return structRenderer;
 }
 
@@ -248,7 +257,15 @@ PlotAdapterPtr RendererFactory::creatPlotAdapter(Hdf5Data h5d, DirectionType typ
 
 	if (h5d.name == "CONTOUR") {
 		adapter.reset(new ContourPlotAdapter(renders));
-	}else {
+	}
+	else if(h5d.name=="VECTOR")
+	{
+		adapter.reset(new PhasorPlotAdapter(renders));
+	}else if (h5d.name == "PHASESPACE" && (*renders.begin())->getNeedStrucuType() ==Data::NEED_STRUCT) {
+		adapter.reset(new PlotAdapterNeedStruct);
+		adapter->addRenderer(renders);
+	}
+	else {
 		adapter.reset(new PlotAdapter);
 		adapter->addRenderer(renders);
 	}

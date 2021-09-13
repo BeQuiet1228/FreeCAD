@@ -15,12 +15,13 @@ GuiCmdPlotDataExport::GuiCmdPlotDataExport()
 	sToolTipText = QT_TR_NOOP("export plot data under a new file name");
 	sWhatsThis = "gui_plot_data_export";
 	sStatusTip = QT_TR_NOOP("export plot data under a new file name");
+	sPixmap = "help-supertube";
 	eType = 0;
 }
 
 void GuiCmdPlotDataExport::activated(int iMsg) {
 	QString fn = Gui::FileDialog::getSaveFileName(Gui::MainWindow::getInstance(), QObject::tr("Export data"),
-		QString(), QString::fromLatin1("(*.h5 *.png)"));
+		QString(), QString::fromLatin1("(*.png *.h5)"));
 	if (fn.isEmpty())
 		return;
 	auto view = Gui::MainWindow::getInstance()->activeWindow();
@@ -28,7 +29,7 @@ void GuiCmdPlotDataExport::activated(int iMsg) {
 	if (!plotView)
 		return;
 	//plotView->getPlot()->MainRendererDataSaveAs(fn.toStdString());
-	plotView->getPlot()->SaveAs(fn.toStdString());
+	plotView->getPlot()->SaveAs(fn.toUtf8().data());
 }
 bool GuiCmdPlotDataExport::isActive() {
 	return getGuiApplication()->sendHasMsgToActiveView("PlotDataExport");
@@ -42,6 +43,7 @@ GuiCmdPlotEqualProportion::GuiCmdPlotEqualProportion()
 	sToolTipText = QT_TR_NOOP("set plot proportion 1:1");
 	sWhatsThis = "gui_plot_equal_proportion";
 	sStatusTip = QT_TR_NOOP("set plot proportion 1:1");
+	sPixmap = "help-supertube";
 	eType = 0;
 }
 

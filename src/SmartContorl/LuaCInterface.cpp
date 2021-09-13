@@ -66,8 +66,8 @@ int openH5File(lua_State *luaState)
 
 int closeH5File(lua_State *luaState)
 {
-	/*auto contorlData = SmartContorlData::GetInstance();
-	bool b = contorlData->openActiveH5File();*/
+	auto contorlData = SmartContorlData::GetInstance();
+	contorlData->clearH5Object();
 	return 1;
 }
 
@@ -215,7 +215,6 @@ int setRunDataMakeType(lua_State* luaState)
 		contorl->setRunDataMakeType(SmartContorl::CONBINATION);
 	else if(type == "exhaustivity")
 		contorl->setRunDataMakeType(SmartContorl::EXHAUSTIVITY);
-
 	return 1;
 }
 
@@ -367,6 +366,7 @@ void registerLuaFunction(lua_State *L)
 	lua_register(L, "nextResult", nextResult);
 	lua_register(L, "findResultData", findResultData);
 	lua_register(L, "openDataSet", openDataSet);
+	lua_register(L, "closeH5File", closeH5File);
 	lua_register(L, "getValue", getValue);
 	lua_register(L, "openH5File", openH5File);
 	lua_register(L, "getHistorySize", getHistorySize);

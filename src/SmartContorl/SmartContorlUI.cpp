@@ -27,7 +27,8 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	auto contorlInterface = ContorlInterface::GetInstance();
 
 #ifdef SMART_EXE
-	std::string m3dPath = "E:/test/test.m3d";
+	//std::string m3dPath = "E:/test/test.m3d";
+	std::string m3dPath = "D:/wdtProject/test/test.m3d";
 	smartContorl->setM3dPath(m3dPath);
 	loadParameterXml();
 #else
@@ -71,7 +72,11 @@ void SmartContorlUI::on_pushButton_clicked()
 	auto str = replaceVariate();
 	smartContorl->chipicCount = this->ui->spinBoxRunCount->value();
 	smartContorl->run(str);
-
+	//int count = this->ui->spinBoxCount->value();
+	//for (auto iter=variateDatas.begin();iter!=variateDatas.end();iter++)
+	//{
+	//	smartContorl->luaInit((*iter)->name.toStdString(),(*iter)->max,(*iter)->mini,count);
+	//}
 	saveParameterXml();
 }
 
@@ -482,6 +487,7 @@ void SmartContorlUI::loadParameterXml()
 		data->mini = iter->attribute("Mini").as_double();
 		data->item = new QListWidgetItem();
 		data->widget = new VariateItemWidget();
+		data->widget->initUi();
 		data->widget->setData(data);
 		variateDatas.push_back(data);
 

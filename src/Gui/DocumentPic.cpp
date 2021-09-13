@@ -69,6 +69,19 @@ App::Document* DocumentPic::getAppDocument()
 */
 void DocumentPic::releaseH5Object()
 {
+	auto mw = Gui::MainWindow::getInstance();
+	auto view = mw->windows();
+
+	for (auto iter = view.begin(); iter != view.end(); iter++)
+	{
+		auto plot = dynamic_cast<Gui::PlotMDIView*>(*iter);
+		if (plot)
+		{
+			mw->removeWindow(plot);
+		}
+			
+	}
+
 	auto doc = getAppDocument();
 	if (doc == nullptr)
 		return;
@@ -76,6 +89,7 @@ void DocumentPic::releaseH5Object()
 	auto dataDoc = dynamic_cast<DocumentManager*>(doc);
 	if (!dataDoc)
 		return;
+
 
 	dataDoc->restoreH5Data();
 }
@@ -134,19 +148,20 @@ void DocumentPic::runChipic()
 		如果有仿真程序正在运行，那么实现停止功能。
 		如果没有仿真程序运行，那么实现开始功能
 	*/
-	if (!control->hasChipicRuning()){
+	if (!control->hasChipicRuning())
+	{
+		//设置主界面上的ui
 		mw->setContorlUI();
-		std::string path = this->getTextPath();
-		control->setM3dPath(path);
-
+		//设置运行路
+		control->setM3dPath(getTextPath());
 		//清空h5文件对象
 		this->releaseH5Object();
-	}else
-	{
-		mw->hideContorlUI();
 	}
-	
-
+	else {
+		//设置主界面上的ui
+		mw->hideContorlUI();
+		this->releaseH5Object();
+	}
 	control->buttonClicked(0);
 }
 

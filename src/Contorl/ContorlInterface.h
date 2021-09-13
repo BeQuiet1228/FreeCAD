@@ -61,5 +61,7 @@ public:
 	QString getM3dPathForThreadID(unsigned long threadID);
 	//获取chipic运行的线程数量
 	unsigned int getChipicThreadCount(unsigned long threadID);
+	//chipic运行模式是否是自动
+	bool chipicRunModIsAuto();
 
 };

@@ -680,10 +680,9 @@ void QwtScaleDraw::drawLabel( QPainter *painter, double value ) const
     QPointF pos = labelPosition( value );
 
     QSizeF labelSize = lbl.textSize( painter->font() );
-
-	const QTransform transform = labelTransformation(pos, labelSize,value);
-
-	
+    //qDebug() << "pos:" << pos << "labelSize:" << labelSize;
+	//const QTransform transform = labelTransformation(pos, labelSize,value);
+    const QTransform transform= labelTransformation(pos, labelSize, painter);
     painter->save();
     painter->setWorldTransform(transform, true);
     //设置颜色
@@ -693,136 +692,69 @@ void QwtScaleDraw::drawLabel( QPainter *painter, double value ) const
    
     painter->restore();
 }
-//新增代码
-QTransform QwtScaleDraw::labelTransformation(const QPointF& pos, const QSizeF& size, double value) const
+/**
+* @brief QwtScaleDraw::labelTransformation label位置调整
+* @param const QPointF & pos
+* @param const QSizeF & size
+* @param QPainter * painter
+* @return QT_NAMESPACE::QTransform
+* @Time 2021/7/13
+*/
+QTransform QwtScaleDraw::labelTransformation(const QPointF& pos, const QSizeF& size, QPainter* painter)const
 {
     QTransform transform;
-    transform.translate(pos.x(), pos.y());
+    transform.translate(pos.x(),pos.y());
     transform.rotate(labelRotation());
-#pragma region  
-    /*
-    这里通过判断传入的value是否与min或者max相等，若相等，则出现特殊情况，
-    valflage==-1时，value的值范围内的最小值，需要做偏移。
-    valflage==1时，value的值为范围内的最大值,需要做偏移。
-    valflage==0时，则value的值在min~max的范围内，跳过下方特殊处理，执行正常处理流程。
-    */
-    if (issetRange)
+    double xx = 0, yy = 0;
+    QRect windowrect = painter->window();
+    switch (alignment())
     {
-       
-        int valflage =0;
-        if ((abs(value - this->min) < 0.0000001 && abs(value - this->min) > -0.0000001))
-            valflage = -1;
-        if ((abs(value - this->max) < 0.0000001 && abs(value - this->max) > -0.0000001))
-            valflage = 1;
-        double xx=0, yy=0;
-        switch (alignment())
-        {
-        case RightScale:
-        {
-            //待实现
-			if (-1 == valflage)
-			{
-                xx = 0.0;
-				yy = -size.height();
-			}
-			else if (1 == valflage)
-			{
-                xx = 0.0;
-				yy = 0;
-			}
-        }
-            break;
-        case LeftScale:
-        {
-            if (-1==valflage)
-            {
-                xx = -size.width();
-                yy = -size.height();
-            }
-            else if (1==valflage)
-            {
-                xx = -size.width();
-                yy=0;
-            }
-        }
-            break;
-        case TopScale:
-        {
-            //待实现
-        }
-            break;
-        case BottomScale:
-        {
-            if (-1 == valflage)
-            {
-                xx = 0.0;//
-                yy= -(0.5 * size.height());
-            }
-            else if (1 == valflage)
-            {
-                xx=-size.width();
-                yy = -(0.5 * size.height());
-            }
-        }
-            break;
-        }
-        if (0!=valflage)
-        {
-            transform.translate(xx, yy);
-            return transform;
-        }
-    }
-#pragma endregion
-    int flags = labelAlignment();
-    if (flags == 0)
+    case RightScale:
     {
-        switch (alignment())
-        {
-        case RightScale:
-        {
-            if (flags == 0)
-                flags = Qt::AlignRight | Qt::AlignVCenter;
-            break;
-        }
-        case LeftScale:
-        {
-            if (flags == 0)
-                flags = Qt::AlignLeft | Qt::AlignVCenter;
-            break;
-        }
-        case BottomScale:
-        {
-            if (flags == 0)
-                flags = Qt::AlignHCenter | Qt::AlignBottom;
-            break;
-        }
-        case TopScale:
-        {
-            if (flags == 0)
-                flags = Qt::AlignHCenter | Qt::AlignTop;
-            break;
-        }
-        }
+        xx = 0.0;
+        if (0 > pos.y() - size.height() / 2)
+            yy = 0.0;
+        else if (windowrect.height() < pos.y() + size.height())
+            yy = -size.height();
+        else
+            yy = -(0.5 * size.height());
     }
-
-    double x, y;
-
-    if (flags & Qt::AlignLeft)
-        x = -size.width();
-    else if (flags & Qt::AlignRight)
-        x = 0.0;
-    else // Qt::AlignHCenter
-        x = -(0.5 * size.width());
-
-    if (flags & Qt::AlignTop)
-        y = -size.height();
-    else if (flags & Qt::AlignBottom)
-        y = 0;
-    else // Qt::AlignVCenter
-        y = -(0.5 * size.height());
-
-    transform.translate(x, y);
-
+    break;
+    case LeftScale:
+    {
+        xx = -size.width();
+        if (0 > pos.y() - size.height() / 2)
+            yy = 0;
+        else if (windowrect.height() < pos.y() + size.height())
+            yy = -(size.height());
+        else
+            yy = -(0.5 * size.height());
+    }
+    break;
+    case TopScale:
+    {
+        yy = -size.height();
+        if (0 > pos.x() - size.width() / 2)
+            xx = 0.0;
+        else if (windowrect.width() < pos.x() + size.width())
+            xx = -size.width();
+        else
+            xx = -(0.5 * size.width());
+    }
+    break;
+    case BottomScale:
+    {
+        yy = -(0.5 * size.height());
+        if (0 > pos.x() - size.width())
+            xx = 0.0;
+        else if (windowrect.width() < pos.x() + size.width())
+            xx = -size.width();
+        else
+            xx = -(0.5 * size.width());
+    }
+    break;
+    }
+    transform.translate(xx, yy);
     return transform;
 }
 /*!

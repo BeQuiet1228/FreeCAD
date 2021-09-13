@@ -62,3 +62,38 @@ std::string DataInformationGetter::getObserveTime(const std::string& head)
 	return str.toStdString();
 }
 
+std::string DataInformationGetter::getVectorParam(const std::string& head)
+{
+	//Æ¥Åä²ÎÊý
+	QRegExp rx("\\(.*\\)");
+	QString str = QString::fromStdString(head);
+	rx.setMinimal(true);
+	QStringList list;
+	int pos = 0;
+
+	while ((pos = rx.indexIn(str, pos)) != -1) {
+		list << rx.cap(0);
+		pos += rx.matchedLength();
+	}
+
+	if (list.size() == 0)
+		return "";
+
+	str = list.at(0);
+	return str.toStdString();
+}
+
+std::string DataInformationGetter::getObserveParam(const std::string& head)
+{
+	QString str = QString::fromStdString(head);
+	auto  sl = str.split("=");
+	if (sl.size() < 2)
+		return "";
+	str = sl.at(1);
+	sl = str.split(" ");
+	if (sl.size() == 0)
+		return "";
+	str = sl.at(0);
+	return str.toStdString();
+}
+

@@ -2,11 +2,13 @@
 #include <QPoint>
 #include<thread>
 #ifdef MY_DEBUG
-#include<windows.h>
 #include <QDebug>
 #endif
+#include<windows.h>
 #define THRESHOLD (1000000)  //限定门限
 #include <process.h>
+//#include <math.h>
+
 namespace threadSites{
 
 	typedef struct lps
@@ -137,6 +139,7 @@ XYData(heData,mod),istrue(true),mstartpoint(startpoint),mendpoint(endpoint),islo
 */
 bool StructData::loadPoint()
 {
+	setXYTag(mType);
 	switch (mCtype)
 	{
 	case POLAR:
@@ -146,6 +149,7 @@ bool StructData::loadPoint()
 	case CARTESIAN:
 		return loadPointCartesian();
 	}
+	
 }
 /**
 * @brief StructData::loadPointCartesian 加载点位-cartesian坐标系
@@ -436,8 +440,18 @@ bool StructData::loadroomPolarRz()
 		{
 			std::list<unsigned __int64> rectpro = isAnAttritbute(proper, RECTPROPER);
 			std::list<unsigned __int64> linepro = isAnAttritbute(proper, LINEPROPER);
+			if (!linepro.empty())
+			{
+				for each (auto  var in linepro)
+				{
+					pointlist[var].push_back(QPoint(x3 - 1, x1 - 1));
+				}
+			}
 			if (!rectpro.empty())
 			{
+				//添加限定条件
+				if (x3 == IM3X->size() || x1 == IM1X->size())
+					continue;
 				QRectF rect;
 				rect.setLeft(*(IM3X->begin() + x3 - 1));
 				rect.setRight(*(IM3X->begin() + x3));
@@ -448,13 +462,7 @@ bool StructData::loadroomPolarRz()
 					allinfo[var].push_back(rect);
 				}
 			}
-			if (!linepro.empty())
-			{
-				for each (auto  var in linepro)
-				{
-					pointlist[var].push_back(QPoint(x3 - 1, x1 - 1));
-				}
-			}
+			
 		}
 	}
 	//开始生成线段
@@ -522,27 +530,29 @@ bool StructData::loadroomPolarRtheta()
 			for (auto index_rand = 0; index_rand < rand_val.size() - 1; index_rand++)
 			{
 				CutCir tempCurcir;
+				float startAngle = rand_val[index_rand];
+				float endAngle = rand_val[index_rand + 1];
 				//内圈半径
 				tempCurcir.R_inner = r_val[index_R];
 				//外圈半径
 				tempCurcir.R_excir = r_val[index_R + 1];
 				//内圈切点
 				tempCurcir.inner1 = QPointF(
-					tempCurcir.R_inner*cos(rand_val[index_rand]) + p0.x(),
-					p0.y() - tempCurcir.R_inner*sin(rand_val[index_rand]));
+					(tempCurcir.R_inner * cos(startAngle)),
+					(tempCurcir.R_inner * sin(startAngle)));
 				tempCurcir.inner2 = QPointF(
-					tempCurcir.R_inner*cos(rand_val[index_rand + 1]) + p0.x(),
-					p0.y() - tempCurcir.R_inner*sin(rand_val[index_rand + 1]));
+					(tempCurcir.R_inner * cos(endAngle)),
+					(tempCurcir.R_inner * sin(endAngle)));
 				//外圈切点
 				tempCurcir.excir1 = QPointF(
-					tempCurcir.R_excir*cos(rand_val[index_rand] + p0.x()),
-					p0.y() - tempCurcir.R_excir*sin(rand_val[index_rand]));
+					(tempCurcir.R_excir * cos(startAngle)),
+					(tempCurcir.R_excir * sin(startAngle)));
 				tempCurcir.excir2 = QPointF(
-					tempCurcir.R_excir*cos(rand_val[index_rand + 1] + p0.x()),
-					p0.y() - tempCurcir.R_excir*sin(rand_val[index_rand + 1]));
+					(tempCurcir.R_excir * cos(endAngle)),
+					(tempCurcir.R_excir * sin(endAngle)));
 				//开始角度，结束角度
-				tempCurcir.startAngle = rand_val[index_rand];
-				tempCurcir.endAngle = rand_val[index_rand + 1];
+				tempCurcir.startAngle = startAngle;
+				tempCurcir.endAngle = endAngle;
 				CutCirlist.push_back(tempCurcir);
 			}
 		}
@@ -629,8 +639,18 @@ bool StructData::loadroomCylindricalRz(){
 		{
 			std::list<unsigned __int64> rectPro = isAnAttritbute(proper,RECTPROPER);
 			std::list<unsigned __int64> linePro = isAnAttritbute(proper, LINEPROPER);
+			if (!linePro.empty())
+			{
+				int x = x1 - 1, y = x2 - 1;
+				for each (auto var in linePro)
+				{
+					pointlist[var].push_back(QPoint(x, y));
+				}
+			}
 			if (!rectPro.empty())
 			{
+				if (x1 == IM1X->size() || x2 == IM2X->size())
+					continue;
 				QRectF rect;
 				rect.setLeft(*(IM1X->begin() + x1 - 1));
 				rect.setRight(*(IM1X->begin() + x1));
@@ -641,14 +661,7 @@ bool StructData::loadroomCylindricalRz(){
 					allcutroom[var].push_back(rect);
 				}
 			}
-			if (!linePro.empty())
-			{
-				int x = x1 - 1, y = x2 - 1;
-				for each (auto var in linePro)
-				{
-					pointlist[var].push_back(QPoint(x, y));
-				}
-			}
+			
 		}
 	}
 	createLines(pointlist, IM1X,IM2X);
@@ -659,6 +672,7 @@ bool StructData::loadroomCylindricalRz(){
 * @return bool
 */
 bool StructData::loadroomCylindricalRtheta(){
+	//qreal pi = 3.141592653589793;
 	if (pointXSize < 2 || pointYSize < 2)
 		return false;
 	{
@@ -685,6 +699,8 @@ bool StructData::loadroomCylindricalRtheta(){
 		{
 			for (auto index_rand = 0; index_rand < rand_val.size() - 1; index_rand++)
 			{
+				qreal startangle = rand_val[index_rand];
+				qreal endangle = rand_val[index_rand + 1];
 				CutCir tempCurcir;
 				//内圈半径
 				tempCurcir.R_inner = r_val[index_R];
@@ -692,28 +708,29 @@ bool StructData::loadroomCylindricalRtheta(){
 				tempCurcir.R_excir = r_val[index_R + 1];
 				//内圈切点
 				tempCurcir.inner1 = QPointF(
-					tempCurcir.R_inner*cos(rand_val[index_rand]) + p0.x(),
-					p0.y() - tempCurcir.R_inner*sin(rand_val[index_rand]));
+					(tempCurcir.R_inner * cos(startangle)),
+					(tempCurcir.R_inner * sin(startangle)));
 				tempCurcir.inner2 = QPointF(
-					tempCurcir.R_inner*cos(rand_val[index_rand + 1]) + p0.x(),
-					p0.y() - tempCurcir.R_inner*sin(rand_val[index_rand + 1]));
+					(tempCurcir.R_inner * cos(endangle)),
+					(tempCurcir.R_inner * sin(endangle)));
 				//外圈切点
 				tempCurcir.excir1 = QPointF(
-					tempCurcir.R_excir*cos(rand_val[index_rand] + p0.x()),
-					p0.y() - tempCurcir.R_excir*sin(rand_val[index_rand]));
+					(tempCurcir.R_excir * cos(startangle)),
+					(tempCurcir.R_excir * sin(startangle)));
 				tempCurcir.excir2 = QPointF(
-					tempCurcir.R_excir*cos(rand_val[index_rand + 1] + p0.x()),
-					p0.y() - tempCurcir.R_excir*sin(rand_val[index_rand + 1]));
+					(tempCurcir.R_excir * cos(endangle)),
+					(tempCurcir.R_excir * sin(endangle)));
 				//开始角度，结束角度
-				tempCurcir.startAngle = rand_val[index_rand];
-				tempCurcir.endAngle = rand_val[index_rand + 1];
+				tempCurcir.startAngle = startangle;
+				tempCurcir.endAngle = endangle;
 				CutCirlist.push_back(tempCurcir);
 			}
 		}
 #pragma endregion
 #pragma region 筛选属性
 		//默认取中间位置
-		int index = IM1X->size() / 2+IM1X->size()%2;
+	int index = IM1X->size() / 2+IM1X->size()%2;
+//		int index = 4;
 		if (istrue)
 		{
 			int index_min = 1;
@@ -868,8 +885,18 @@ bool StructData::loadroomCartesianXy(){
 		{
 			std::list<unsigned __int64> rectPro = isAnAttritbute(proper, RECTPROPER);
 			std::list<unsigned __int64> linePro = isAnAttritbute(proper, LINEPROPER);
+			if (!linePro.empty())
+			{
+				int x = x1 - 1, y = x2 - 1;
+				for each (auto  var in linePro)
+				{
+					pointList[var].push_back(QPoint(x, y));
+				}
+			}
 			if (!rectPro.empty())
 			{
+				if (x1 == IM1X->size() || x2 == IM2X->size())
+					continue;
 				QRectF rect;
 				rect.setLeft(*(IM1X->begin() + (x1 - 1)));
 				rect.setRight(*(IM1X->begin() + x1));
@@ -880,14 +907,7 @@ bool StructData::loadroomCartesianXy(){
 					allinfo[var].push_back(rect);
 				}
 			}
-			if (!linePro.empty())
-			{
-				int x = x1 - 1, y = x2 - 1;
-				for each (auto  var in linePro)
-				{
-					pointList[var].push_back(QPoint(x, y));
-				}
-			}
+			
 		}
 	}
 	allcutroom.swap(allinfo);
@@ -943,7 +963,13 @@ bool StructData::loadroomCartesianXz(){
 		{
 			std::list<unsigned __int64> rectPro=isAnAttritbute(proper,RECTPROPER);
 			std::list<unsigned __int64> linePro=isAnAttritbute(proper,LINEPROPER);
+			if (!linePro.empty()) {
+				int x = x1 - 1, y = x3 - 1;
+				for each (auto var in linePro)	pointList[var].push_back(QPoint(x, y));
+			}
 			if(!rectPro.empty()){
+				if (x1 == IM1X->size() || x3 == IM3X->size())
+					continue;
 				QRectF rect;
 				rect.setLeft(*(IM1X->begin() + (x1 - 1)));
 				rect.setRight(*(IM1X->begin() + x1));
@@ -951,10 +977,7 @@ bool StructData::loadroomCartesianXz(){
 				rect.setTop(*(IM3X->begin() + x3));
 				for each (auto var in rectPro)	allcutroom[var].push_back(rect);
 			}
-			if(!linePro.empty()){
-				int x = x1 - 1, y = x3 - 1;
-				for each (auto var in linePro)	pointList[var].push_back(QPoint(x, y));
-			}
+			
 		}
 	}
 	createLines(pointList, IM1X, IM3X);
@@ -1008,8 +1031,18 @@ bool StructData::loadroomCartesianYz(){
 		{
 			std::list<unsigned __int64> rectPro=isAnAttritbute(proper,RECTPROPER);
 			std::list<unsigned __int64> linePro=isAnAttritbute(proper,LINEPROPER);
+			if (!linePro.empty())
+			{
+				int x = x2 - 1, y = x3 - 1;
+				for each (auto  var in linePro)
+				{
+					pointList[var].push_back(QPoint(x, y));
+				}
+			}
 			if (!rectPro.empty())
 			{
+				if (x2 == IM2X->size() || x3 == IM3X->size())
+					continue;
 				QRectF rect;
 				rect.setLeft(*(IM2X->begin() + (x2 - 1)));
 				rect.setRight(*(IM2X->begin() + (x2)));
@@ -1020,14 +1053,7 @@ bool StructData::loadroomCartesianYz(){
 					allcutroom[var].push_back(rect);
 				}
 			}
-			if (!linePro.empty())
-			{
-				int x = x2-1, y = x3-1;
-				for each (auto  var in linePro)
-				{
-					pointList[var].push_back(QPoint(x, y));
-				}
-			}
+			
 		}
 	}
 	createLines(pointList, IM2X, IM3X);
@@ -1127,7 +1153,7 @@ bool StructData::createLines(std::map<int, std::vector<QPoint>>& points,const Da
 */
 void StructData::segloadRoom(unsigned  __int64 site1, unsigned __int64 site2)
 {
-	qDebug() << site1 << site2;
+	//qDebug() << site1 << site2;
 }
 unsigned int __stdcall  functhread(void*lp)
 {
@@ -1135,4 +1161,40 @@ unsigned int __stdcall  functhread(void*lp)
 	SetEvent(threadSites::threadEvent);
 	llp->lp->segloadRoom(llp->site1, llp->site2);
 	return 0;
+}
+void StructData::setXYTag(DirectionType type)
+{
+	switch (type)
+	{
+	case X_Y:
+	{
+		setXTag("X(m)");
+		setYTag("Y(m)");
+	}
+		break;
+	case X_Z:
+	{
+		setXTag("X(m)");
+		setYTag("Z(m)");
+	}
+		break;
+	case Y_Z:
+	{
+		setXTag("Y(m)");
+		setYTag("Z(m)");
+	}
+		break;
+	case R_Z:
+	{
+		setXTag("Z(m)");
+		setYTag("R(m)");
+	}
+		break;
+	case R_THETA:
+	{
+		setXTag("R*cos(Pin)");
+		setYTag("R*sin(Pin)");
+	}
+		break;
+	}
 }

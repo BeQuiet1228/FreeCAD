@@ -35,7 +35,9 @@ void Hdf5IO::setFilePath(const std::string& path, FileOpenMod mod /*= OPEN_EXIST
 	}
 	catch (...)
 	{
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::setFilePath open hdf5 file failed!" << std::endl;
+#endif // DEBUG
 	}
 
 }
@@ -51,7 +53,9 @@ Group Hdf5IO::getGroup(const Group &group,const std::string &groupName,bool &ok)
 		g = group.openGroup(groupName);
 		ok = true;
 	}catch (...){
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::getGroup failde! group name:" + groupName << std::endl;
+#endif
 		ok = false;
 	}
     return g;
@@ -67,7 +71,9 @@ Group Hdf5IO::getGroup(const std::string &groupName,bool &ok)
 		ok = true;
 		g = OpenH5File(*Hdf5File,groupName,ok);
 	}catch (...){
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::getGroup failde! group name:" + groupName << std::endl;
+#endif
 		ok = false;
 	}
     return g;
@@ -87,7 +93,9 @@ bool Hdf5IO::getGroup(const Group& fatherGroup, const std::string groupName, Gro
 		group = fatherGroup.openGroup(groupName);
 	}
 	catch (...){
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::getGroup failde! group name:" + groupName << std::endl;
+#endif
 		return false;
 	}
 	return true;
@@ -104,7 +112,9 @@ bool Hdf5IO::getGroup(const std::string groupName, Group& group)
 	try{
 		return getGroup(*Hdf5File, groupName, group);
 	}catch (...){
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::getGroup failde! group name:" + groupName << std::endl;
+#endif
 		return false;
 	}
 	return true;
@@ -123,7 +133,9 @@ bool Hdf5IO::getGroup(H5File& file, const std::string& groupName, Group& group)
 	{
 		group = file.openGroup(groupName);
 	}catch (...){
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::getGroup get group for h5file failde! group name:" + groupName;
+#endif
 		return false;
 	}
 	return true;
@@ -142,7 +154,9 @@ bool Hdf5IO::getDataSet(const Group& group, const std::string& dataSetName, Data
 	{
 		dataSet = group.openDataSet(dataSetName);
 	}catch (...){
+#ifdef MY_DEBUG
 		std::cerr << "Hdf5IO::getDataSet get data set failde! data set name:" + dataSetName;
+#endif
 		return false;
 	}
 
@@ -273,7 +287,9 @@ Group Hdf5IO::OpenH5File(H5File &file, const std::string &groupName, bool &ok)
 	   ok = true;
     }catch(...)
     {
+#ifdef MY_DEBUG
        std::cerr << "获取数据组失败，数据组名:" + groupName;
+#endif
 	   ok = false;
     }
 
@@ -284,7 +300,6 @@ Group Hdf5IO::OpenH5File(H5File &file, const std::string &groupName, bool &ok)
  */
 Group Hdf5IO::OpenGroup(Group &group, const std::string &groupName,bool &ok)
 {
-    std::cerr << "获取数据组：" + groupName;
     Group g;
     try
     {
@@ -292,7 +307,9 @@ Group Hdf5IO::OpenGroup(Group &group, const std::string &groupName,bool &ok)
 	   ok = true;
     }catch(...)
     {
+#ifdef MY_DEBUG
        std::cerr << "获取数据组失败，数据组名:" + groupName;
+#endif
 	   ok = false;
     }
 
@@ -303,7 +320,6 @@ Group Hdf5IO::OpenGroup(Group &group, const std::string &groupName,bool &ok)
  */
 DataSet Hdf5IO::OpenGroupDataset(Group &group, const std::string &datasetName, bool &ok)
 {
-    std::cerr << "获取数据库：" + datasetName;
     DataSet d;
     try
     {
@@ -311,7 +327,9 @@ DataSet Hdf5IO::OpenGroupDataset(Group &group, const std::string &datasetName, b
 	   ok = true;
     }catch(...)
     {
+#ifdef MY_DEBUG
        std::cerr << "获取数据库组失败，数据库名:" + datasetName;
+#endif
 	   ok = false;
     }
 
@@ -548,12 +566,20 @@ void Hdf5IO::copyToHdf5IO(Hdf5IO& hdf5IO, std::vector<Hdf5Data>& datas)
 */
 void Hdf5IO::creatNewHdf5File(const std::string& fileName)
 {
-	int res=H5Fcreate(fileName.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+	auto gbk = QTextCodec::codecForName("gb2312");
+
+	QString temp = QString::fromUtf8(fileName.c_str());
+	std::string newPath = gbk->fromUnicode(temp).data();
+	int res=H5Fcreate(newPath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
 }
 
 void Hdf5IO::creatHdf5File(const std::string& fileName)
 {
-	H5Fcreate(fileName.c_str(), H5F_ACC_RDWR, H5P_DEFAULT, H5P_DEFAULT);
+	auto gbk = QTextCodec::codecForName("gb2312");
+
+	QString temp = QString::fromUtf8(fileName.c_str());
+	std::string newPath = gbk->fromUnicode(temp).data();
+	H5Fcreate(newPath.c_str(), H5F_ACC_RDWR, H5P_DEFAULT, H5P_DEFAULT);
 }
 
 /**
@@ -562,7 +588,8 @@ void Hdf5IO::creatHdf5File(const std::string& fileName)
 */
 void Hdf5IO::deleteH5File()
 {
-
+	Hdf5File.reset();
+	hdf5DataList.clear();
 }
 
 /**
@@ -659,20 +686,20 @@ bool Hdf5Data::initInformation()
 	return true;
 }
 
-/**
-* @brief Hdf5Data::initStructInformation 初始化结构图信息
-* @return bool
-*/
-bool Hdf5Data::initStructInformation()
+bool Hdf5Data::initM3dStructInformation()
 {
-	if (headList.size() < 5)
+	if (headList.size() < 4)
 		return false;
-	name = "struct";
 	QString str = QString::fromStdString(headList.at(3));
+	str = str.simplified();
 	QStringList sl = str.split("=");
 	if (sl.size() < 2)
 		return false;
 	if (sl.at(0) != "system")
+		return false;
+	str = sl.at(1);
+	sl = str.split("$");
+	if (sl.size() < 3)
 		return false;
 	str = sl.at(1);
 	str = str.simplified();
@@ -683,6 +710,41 @@ bool Hdf5Data::initStructInformation()
 	else if (str == "cartesian")
 		coordinateSystem = CARTESIAN;
 
+	if (sl.at(2) != "STRUCTRUE")
+		return false;
+
+	name = "struct";
+	return true;
+}
+
+bool Hdf5Data::initM2dStructInformation()
+{
+	if (headList.size() < 4)
+		return false;
+	QString str = QString::fromStdString(headList.at(2));
+	str = str.simplified();
+	QStringList sl = str.split("=");
+	if (sl.size() < 2)
+		return false;
+	if (sl.at(0) != "system")
+		return false;
+	str = sl.at(1);
+	sl = str.split("$");
+	if (sl.size() < 3)
+		return false;
+	str = sl.at(1);
+	str = str.simplified();
+	if (str == "cylindrical")
+		coordinateSystem = CYLINDER;
+	else if (str == "polar")
+		coordinateSystem = POLAR;
+	else if (str == "cartesian")
+		coordinateSystem = CARTESIAN;
+
+	if (sl.at(2) != "STRUCTRUE")
+		return false;
+
+	name = "struct";
 	return true;
 }
 
@@ -694,7 +756,9 @@ void Hdf5Data::init()
 {
 	if (initInformation())
 		return;
-	if (initStructInformation())
+	if (initM3dStructInformation())
+		return;
+	if (initM2dStructInformation())
 		return;
 }
 /**
@@ -704,8 +768,11 @@ void Hdf5Data::init()
 * @Time 2021/6/30
 */
 int Hdf5IO::creatNewH5File(const std::string& fileName){
-	
-	return H5Fcreate(fileName.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+	auto gbk = QTextCodec::codecForName("gb2312");
+
+	QString temp = QString::fromUtf8(fileName.c_str());
+	std::string newPath = gbk->fromUnicode(temp).data();
+	return H5Fcreate(newPath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
 }
 /**
 * @brief Hdf5IO::openH5File

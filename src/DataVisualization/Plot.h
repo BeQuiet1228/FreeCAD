@@ -13,6 +13,7 @@
 #include <QToolBar>
 #include "qwt/qwt_scale_widget.h"
 #include <QHBoxLayout>
+class CombAxis;
 class Canvas;
 class Renderer;
 class RenderThreadManager;
@@ -22,6 +23,7 @@ class ColorMapWidget;
 class rightScaleWidget;
 class UndoRedoStack;
 class PlotAdapter;
+class TLabel;
 class DATA_VISUALIZATION_EXPORT Plot:public QWidget{
 	Q_OBJECT
 public:
@@ -38,9 +40,11 @@ private:
 	//画布
 	Canvas *canvas;
 	//坐标轴
-	Axis *AxisL, *AxisB;
+	//Axis *AxisL, *AxisB;
+	CombAxis * AxisL, * AxisB;
 	//图表信息label
-	QLabel* informationLabel;
+	//QLabel* informationLabel;
+	TLabel* informationLabel;
 	//适配器
 	std::shared_ptr<PlotAdapter> adapter;
 	//rightScaleWidget* scaleWIdget;
@@ -124,6 +128,8 @@ public Q_SLOTS:
 	void canvasResize(QSize size);
 	//设置应用事件
 	void setappEvent();
+	//清空画布指定itme
+	void rmoveCanvasItem(unsigned int rank);
 	
 protected:
 	void resizeEvent(QResizeEvent *event) override;

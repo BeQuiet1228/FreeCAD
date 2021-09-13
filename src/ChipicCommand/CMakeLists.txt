@@ -1,6 +1,6 @@
 #设置预定义
 if(WIN32)
-#add_definitions(-D_CONTORL_ -DMY_DEBUG)
+#add_definitions(-D_CONTORL_)
 add_definitions(-D_CONTORL_ )
 endif(WIN32)
 #设置项目名称

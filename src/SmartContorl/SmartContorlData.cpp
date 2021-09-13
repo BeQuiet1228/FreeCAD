@@ -56,12 +56,15 @@ bool SmartContorlData::openActiveH5File()
 */
 bool SmartContorlData::findResultData(const std::string& name)
 {
+	//将名称转换为小写
+	QString temp = QString::fromStdString(name);
+ 	std::string lowerName = temp.toLower().toStdString();
 	std::vector<Hdf5Data> &dataList = hdf5IO.hdf5DataList;
 	auto iter = dataList.begin();
 	for (; iter != dataList.end(); iter++)
 	{
 		//名称中会有许多多余的空格，暂时先这样去掉
-		if (iter->petName == name)
+		if (iter->petName == lowerName)
 			break;
 	}
 	if (iter == dataList.end())
@@ -150,5 +153,6 @@ void SmartContorlData::clear()
 
 void SmartContorlData::clearH5Object()
 {
+	this->cStack->clear();
 	hdf5IO.deleteH5File();
 }

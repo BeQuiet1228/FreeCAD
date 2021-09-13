@@ -1,6 +1,7 @@
 #include "SmartContorlInterface.h"
 #include "Contorl\ContorlInterface.h"
 #include "SmartContorlUI.h"
+#include "smartCalc.h"
 void SmartContorlInterface::init(){
 
 	auto contorl = ContorlInterface::GetInstance();
@@ -33,5 +34,15 @@ void SmartContorlInterface::buttonClicked(int type){
 		contorlUi->show();
 		contorlUi->setAttribute(Qt::WA_DeleteOnClose);
 	}
+}
+
+void SmartContorlInterface::showSmartCalc(const std::string& path)
+{
+	auto calc =new smartCalc();
+	calc->afferm3dpath(path);
+	calc->afferscriptpath("./opt.lua");
+	calc->show();
+	calc->setAttribute(Qt::WA_DeleteOnClose);
+	//calc->setTextPath();
 }
 #include "moc_SmartContorlInterface.cpp"

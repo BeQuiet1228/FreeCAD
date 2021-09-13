@@ -6,6 +6,8 @@ VariateInputDialog::VariateInputDialog(QWidget *parent /*= 0*/)
 	:QDialog(parent), ui(new Ui::VariateInputDialog_UI)
 {
 	ui->setupUi(this);
+	ui->label_5->hide();
+	ui->stepsize->hide();
 	this->setModal(true);
 }
 
@@ -21,7 +23,7 @@ std::shared_ptr<VariateData> VariateInputDialog::getData()
 	data->name = this->ui->lineEditName->text();
 	data->max = this->ui->lineEditMax->text().toDouble();
 	data->mini = this->ui->lineEditMini->text().toDouble();
-
+	data->stepLength = this->ui->stepsize->text().toInt();
 	return data;
 }
 

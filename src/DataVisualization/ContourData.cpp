@@ -4,6 +4,7 @@
 #include <math.h>
 #include <QRegExp>
 #include <DataInformationGetter.h>
+#include <qnumeric.h>
 ContourData::ContourData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
 	:DirData(h5Data, mod), height(0), width(0)
 {
@@ -69,15 +70,14 @@ bool ContourData::loadPoint()
 	auto xIter = xg->begin();
 	auto yIter = yg->begin();
 	auto vIter = vg->begin();
-
 	width = xg->size();
 	height = yg->size();
-
 
 	Rang vr;
 	vr.min = vr.max = *vIter;
 	Grid tempGrid;
 	if (isTruedir()) {
+
 		for (; yIter != yg->end() && vIter != vg->end(); yIter++)
 		{
 			for (xIter = xg->begin(); xIter != xg->end() && vIter != vg->end(); xIter++)
@@ -117,6 +117,9 @@ bool ContourData::loadPoint()
 			}
 		}
 	}
+
+	xScale = *(xg.get());
+	yScale = *(yg.get());
 	//初始化数据范围
 	setValueRang(vr);
 	Rang xr, yr;
@@ -169,7 +172,11 @@ QwtMatrixRasterData* ContourData::getQwtMatrixRasterData()
 		grid++;
 #endif			
 	}
-	QwtMatrixRasterData *rasterData = new QwtMatrixRasterData;
+	//QwtMatrixRasterData *rasterData = new QwtMatrixRasterData;
+	DefineMatrixRasterData* rasterData = new DefineMatrixRasterData;
+	rasterData->setXScale(xScale);
+	rasterData->setYScale(yScale);
+
 	rasterData->setValueMatrix(data, width);
 
 	rasterData->setInterval(Qt::XAxis,
@@ -198,7 +205,7 @@ ContourData::Grid ContourData::findGrid(const float& x, const float& y)
 	//获取宽度索引
 	for (; w < width;w++)
 	{
-		grid = grids.at(+ w);
+		grid = grids.at(w);
 		if (grid.x > x)
 		{
 			break;
@@ -216,7 +223,7 @@ ContourData::Grid ContourData::findGrid(const float& x, const float& y)
 
 	int index = w + h*width;
 #ifdef MY_DEBUG
-	if (index > grids.size())
+	if (index >= grids.size())
 	{
 		std::cerr << "ContourData::findGrid index out of range" << std::endl;
 		Grid g;
@@ -381,4 +388,140 @@ Data::Rang ContourData::getAxisRangeFromName(const std::string& name)
 
 	}
 	return r;
+}
+
+DefineMatrixRasterData::DefineMatrixRasterData()
+{
+
+}
+
+DefineMatrixRasterData::~DefineMatrixRasterData()
+{
+
+}
+
+double DefineMatrixRasterData::value(double x, double y) const
+{
+	if ((!isInScal(xScale,x)) ||(!isInScal(yScale,y)))
+		return qQNaN();
+
+	double value;
+
+	switch (d_data->resampleMode)
+	{
+	case BilinearInterpolation:
+	{
+		int col1 = findIndex(xScale, x);;
+		int row1 = findIndex(yScale, y);;
+		int col2 = col1 + 1;
+		int row2 = row1 + 1;
+		
+		double xp, yp;
+		xp = (x - xScale.at(col1)) / (xScale.at(col2) - xScale.at(col1));
+		yp = (y - yScale.at(row1)) / (yScale.at(row2) - yScale.at(row1));
+
+		double v1, v2, v3, v4;
+		v1 = d_data->value(row1, col1);
+		v2 = d_data->value(row1, col2);
+		v3 = d_data->value(row2, col1);
+		v4 = d_data->value(row2, col2);
+
+		double vi1, vi2;
+		vi1 = v1 + (v2 - v1)*xp;
+		vi2 = v3 + (v4 - v3) * xp;
+		value = vi1 + (vi2 - vi1) * yp;
+
+		break;
+	}
+	case NearestNeighbour:
+	default:
+	{
+		int row = findIndex(yScale,y);
+		int col = findIndex(xScale,x);
+
+		// In case of intervals, where the maximum is included
+		// we get out of bound for row/col, when the value for the
+		// maximum is requested. Instead we return the value
+		// from the last row/col
+
+		if (row >= d_data->numRows)
+			row = d_data->numRows - 1;
+
+		if (col >= d_data->numColumns)
+			col = d_data->numColumns - 1;
+
+		value = d_data->value(row, col);
+	}
+	}
+
+	return value;
+}
+
+/**
+* @brief DefineMatrixRasterData::findIndex 根据位置查找在标尺中所在的索引
+* @param const std::vector<float> & scale 标尺
+* @param const float & pos 位置
+* @return int 索引
+*/
+int DefineMatrixRasterData::findIndex(const std::vector<float>& scale, const double& pos) const
+{
+
+
+
+#if 0
+    int i;
+
+	for (int index = 0; index < scale.size(); index++)
+	{
+        if (pos < scale.at(index)){
+            //return index - 1;
+            i = index - 1;
+            break;
+        }
+            
+	}
+
+	unsigned int index = scale.size() / 2;
+
+	float p;
+	unsigned int add = 0;
+	for (; index > 0 && index < scale.size();)
+	{
+		p = scale.at(index + add);
+		if (p < pos)
+		{
+			add += index;
+		}
+		index = index / 2;
+	}
+
+    if (add != i)
+    {
+        int a;
+        a++;
+    }
+
+	return add;
+#else
+	unsigned int fm,am;
+	fm = 0;
+	am = scale.size() - 1;
+	unsigned int index;
+
+	if (pos < scale.at(fm) || pos > scale.at(am))
+		return -1;
+	while ((am - fm) > 1) {
+		index = (am - fm) / 2;
+		scale.at(index + fm) > pos ? am = index + fm : fm += index;
+	}
+	return fm;
+#endif
+}
+
+bool DefineMatrixRasterData::isInScal(const std::vector<float>& scale, const double& pos) const
+{
+	if (scale.size() < 2)
+		return false;
+	
+	return pos >= *scale.begin() && pos <= *scale.rbegin();
 }

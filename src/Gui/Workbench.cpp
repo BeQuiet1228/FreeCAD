@@ -620,14 +620,18 @@ ToolBarItem* StdWorkbench::setupToolBars() const
 
 	ToolBarItem* edit = new ToolBarItem(root);
 	edit->setCommand("edit");
-	*edit << "Std_Cut"<< "Std_Copy" << "Std_Paste" << "Std_Findm" << "Std_Undo" << "Std_Redo" << "Std_Contour_Image_Mod"
-        << "Std_Contour_Line_Mod" << "Std_Open_Data_Visualization_Config"<< "Std_Data_Visualization_Auto_Max" << "Std_Data_Visualization_Plot_Display_Grid_Mod"
-        << "gui_plot_data_export" << "gui_plot_equal_proportion";
+    *edit << "Std_Cut" << "Std_Copy" << "Std_Paste" << "Std_Findm" << "Std_Undo" << "Std_Redo";
 
 
 	ToolBarItem* run = new ToolBarItem(root);
 	run->setCommand("run");
-	*run << "Std_Run_M3d" << "Std_Paralle_Run" << "Std_Smart_Contrl" << "Std_Connect_Way" << "Std_Open_Log";
+	*run << "Std_Run_M3d" << "Std_Paralle_Run" << "Std_Smart_Contrl" << "Std_Connect_Way" << "Std_Open_Log"<<"Std_Smart_Calc";
+
+	ToolBarItem* visu = new ToolBarItem(root);
+
+	visu->setCommand("DataVisualization");
+	*visu << "Std_Data_Visualization_Auto_Max" << "Std_Open_Data_Visualization_Config"  << "Std_Data_Visualization_Plot_Display_Grid_Mod"
+		<< "gui_plot_data_export" << "gui_plot_equal_proportion";
 
 	ToolBarItem* titleBar = new ToolBarItem(root);
 	titleBar->setCommand("titleBar");
@@ -637,10 +641,6 @@ ToolBarItem* StdWorkbench::setupToolBars() const
 	ToolBarItem* help = new ToolBarItem(root);
 	help->setCommand("about");
 	*help << "Std_Example" <<"Std_Open_User_book" << "Std_Open_Command_book" << "Std_About" << "Std_Run_Super_Tube";
-
-	ToolBarItem* dispos = new ToolBarItem(root);
-	dispos->setCommand("Dispos");
-	*dispos << "Vis_Grid" << "Vis_Labels" << "Vis_Series" << "Vis_Point" << "Vis_Axes" << "Vis_Geometric_Ratio" << "Vis_Struct_grid";
 
 
 /*	ToolBarItem* projectSetting = new ToolBarItem(root);

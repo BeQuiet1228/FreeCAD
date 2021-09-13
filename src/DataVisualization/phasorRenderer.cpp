@@ -248,6 +248,10 @@ bool phasorRenderer::drawImageScence(){
 		break;
 	case phasorData::DISMODE::sizeToLen:
 	{
+		QPen pen = painter.pen();
+		pen.setColor(penColor);
+		pen.setWidth(penSize);
+		painter.setPen(pen);
 		std::vector<float> sizeScale = d->getScaleVal();//获取大小系数
 		for (auto i = 0; i < p1.size(); i++)
 		{
@@ -438,4 +442,9 @@ Data::Rang phasorRenderer::getValueRange()
 	ra.min = 0;
 	ra.max = 1;
 	return ra;
+}
+phasorData::DISMODE phasorRenderer::getMode()
+{
+	std::shared_ptr<phasorData> d = std::dynamic_pointer_cast<phasorData>(data);
+	return d->GetdisMode();
 }

@@ -24,7 +24,7 @@ Chipic::Chipic(DWORD threadID)
 	connect(timer, SIGNAL(timeout()), this, SLOT(timerOut()));
 
 	//开启定时器刷新
-	timer->start(5 * 1000);
+	this->restartTimeoutTimer();
 }
 
 Chipic::~Chipic()
@@ -121,6 +121,8 @@ void Chipic::sendMessage(const UINT& type, const WPARAM& wParam, const LPARAM& l
 	std::string json = MessageTransition::winMessageTojson(msg);
 	auto messageManager = MessageSender::GetInstance();
 	messageManager->sendJsonMessage(json);
+	//如果已经有消息发出 刷新检测消息的时间
+	restartTimeoutTimer();
 }
 
 
@@ -520,6 +522,12 @@ bool Chipic::disposChipicBusy(const Message& msg)
 	box.setText(MessageTransition::gbkStdstringToQstring("计算程序正在绘制其他图形，请勿频繁点击绘图按钮！"));
 	box.exec();
 	return  true;
+}
+
+void Chipic::restartTimeoutTimer()
+{
+	timer->stop();
+	timer->start(10 * 1000);
 }
 
 void Chipic::disposJsonMessage(const std::string& json)

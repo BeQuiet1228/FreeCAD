@@ -1,9 +1,9 @@
 #pragma  once
-#include "PlotAdapter.h"
+#include "PlotAdapterNeedStruct.h"
 #include <QObject>
 #include "ContourRender.h"
 #include <memory>
-class ContourPlotAdapter :public PlotAdapter{
+class ContourPlotAdapter :public PlotAdapterNeedStruct{
 	Q_OBJECT
 public:
 	ContourPlotAdapter()  = delete;
@@ -33,4 +33,7 @@ public:
 	Data::Rang getAxisRightRange() override;
 
 	void setAxisRightRange(const float& min, const float& max);
+
+	std::string getXTag() override;
+	std::string getYTag() override;
 };

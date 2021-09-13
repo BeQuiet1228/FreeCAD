@@ -27,8 +27,6 @@ protected:
 
 //修改框架时从plot中移动过来的函数
 public:
-	//重渲染
-	void reRender(const QSize& size);
 	//添加从渲染器
 	void addSubRenderer(const std::shared_ptr<Renderer>& rd);
 	//设置主渲染器
@@ -59,8 +57,8 @@ public:
 	QString getInformationTitile();
 	
 
-	std::string getXTag();
-	std::string getYTag();
+	virtual std::string getXTag();
+	virtual std::string getYTag();
 
 
 //虚函数接口
@@ -83,6 +81,8 @@ public:
 	virtual void setRenderXRange(const float& min, const float& max);
 	virtual void setRenderYRange(const float& min, const float& max);
 	virtual void setAxisRightRange(const float& min, const float& max);
+	//重渲染
+ 	virtual void reRender(const QSize& size);
 
 Q_SIGNALS:
 	void updatePlot();

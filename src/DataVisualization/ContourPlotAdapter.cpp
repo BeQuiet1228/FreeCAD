@@ -128,7 +128,7 @@ void ContourPlotAdapter::switchContourTrigger(bool)
 
 std::list<QAction*> ContourPlotAdapter::getActions()
 {
-	std::list<QAction*> actions;
+	std::list<QAction*> actions = PlotAdapterNeedStruct::getActions();
 	actions.push_back(switchShader);
 	actions.push_back(switchContour);
 	actions.push_back(adjuLevel);
@@ -156,6 +156,35 @@ void ContourPlotAdapter::setAxisRightRange(const float& min, const float& max)
 	auto contourRd = getContourRender();
 	contourRd->setValueRange(min, max);
 }
+
+std::string ContourPlotAdapter::getXTag()
+{
+	if (!mainRenderer)
+		return "";
+	auto data = mainRenderer->getData();
+	auto xd = std::dynamic_pointer_cast<DirData>(data);
+	if (!xd)
+		return "";
+	if (xd->isTruedir())
+		return xd->getXTag();
+	else
+		return xd->getYTag();
+}
+
+std::string ContourPlotAdapter::getYTag()
+{
+	if (!mainRenderer)
+		return "";
+	auto data = mainRenderer->getData();
+	auto xd = std::dynamic_pointer_cast<DirData>(data);
+	if (!xd)
+		return "";
+	if (xd->isTruedir())
+		return xd->getYTag();
+	else
+		return xd->getXTag();
+}
+
 /**
 * @brief ContourPlotAdapter::adjuLevelTrigger 调整等值线等级
 * @param bool

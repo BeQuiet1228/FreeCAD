@@ -48,11 +48,11 @@ public:
 	enum MakeRunDataType {
 		CONBINATION,	//组合
 		EXHAUSTIVITY	//穷举
-
 	};
 public:
 	//调用lua中的初始化函数
 	void luaInit();
+	//void luaInit(std::string name,double max,double min,int count);
 	//调用lua中的结果筛选函数
 	bool luaResultDataFilter();
 	//调用lua中的结果比对函数
