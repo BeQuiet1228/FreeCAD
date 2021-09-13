@@ -8,6 +8,7 @@
 #include <QPainter>
 #include "picgui_ribbon/moc_PICRibbon.cpp"
 #include <iostream>
+
 #define DEBUGINNG 0
 #ifndef WIGET_INTERVAL
 #define WIGET_INTERVAL (30)
@@ -33,6 +34,11 @@ Ribbon::Ribbon(QWidget *parent)
 	timer->start(TIME_OUT);
 }
 
+/**
+* @brief Ribbon::addTab 添加Tab页
+* @param const QString & tabName 
+* @return void
+*/
 void Ribbon::addTab(const QString &tabName)
 {
   // Note: superclass QTabWidget also has a function addTab()
@@ -51,6 +57,13 @@ void Ribbon::addTab(const QString &tabName)
 	this->setAttribute(Qt::WA_StyledBackground);
 #endif
 }
+
+/**
+* @brief Ribbon::addTab
+* @param const QIcon & tabIcon
+* @param const QString & tabName
+* @return void
+*/
 void Ribbon::addTab(const QIcon &tabIcon, const QString &tabName)
 {
   //Note: superclass QTabWidget also has a function addTab()
@@ -66,6 +79,11 @@ void Ribbon::addTab(const QIcon &tabIcon, const QString &tabName)
 #endif
 }
 
+/**
+* @brief Ribbon::removeTab 移除tab页
+* @param const QString & tabName
+* @return void
+*/
 void Ribbon::removeTab(const QString &tabName)
 {
   // Find ribbon tab
@@ -82,6 +100,12 @@ void Ribbon::removeTab(const QString &tabName)
   }
 }
 
+/**
+* @brief Ribbon::addGroup 添加组
+* @param const QString & tabName
+* @param const QString & groupName
+* @return void
+*/
 void Ribbon::addGroup(const QString &tabName, const QString &groupName)
 {
   // Find ribbon tab
@@ -102,6 +126,13 @@ void Ribbon::addGroup(const QString &tabName, const QString &groupName)
 	}
 }
 
+/**
+* @brief Ribbon::addButton 添加按钮
+* @param const QString & tabName
+* @param const QString & groupName
+* @param QToolButton * button
+* @return void
+*/
 void Ribbon::addButton(const QString &tabName, const QString &groupName, QToolButton *button)
 {
 	//先全部展开
@@ -147,6 +178,13 @@ void Ribbon::addButton(const QString &tabName, const QString &groupName, QToolBu
 	}
 }
 
+/**
+* @brief Ribbon::removeButton 移除按钮
+* @param const QString & tabName
+* @param const QString & groupName
+* @param QToolButton * button
+* @return void
+*/
 void Ribbon::removeButton(const QString &tabName, const QString &groupName, QToolButton *button)
 {
   // Find ribbon tab
@@ -175,6 +213,10 @@ void Ribbon::removeButton(const QString &tabName, const QString &groupName, QToo
 }
 
 
+/**
+* @brief Ribbon::get_tab_all 获取tab列表
+* @return QT_NAMESPACE::QList<PICRibbonTabContent *>
+*/
 QList<PICRibbonTabContent *> Ribbon::get_tab_all()
 {
 	QList<PICRibbonTabContent *> list;
@@ -187,6 +229,11 @@ QList<PICRibbonTabContent *> Ribbon::get_tab_all()
 	return list;
 }
 
+/**
+* @brief Ribbon::get_tab_by_name 通过title查询tab页
+* @param QString & name
+* @return PICRibbonTabContent *
+*/
 PICRibbonTabContent *Ribbon::get_tab_by_name(QString &name)
 {
 	QWidget *tab = nullptr;
@@ -201,16 +248,32 @@ PICRibbonTabContent *Ribbon::get_tab_by_name(QString &name)
 	PICRibbonTabContent *ribbonTabContent = static_cast<PICRibbonTabContent*>(tab);
 	return ribbonTabContent;
 }
+/**
+* @brief Ribbon::addAction
+* @param const QString & tabName
+* @param const QString & groupName
+* @param QAction * action
+* @return void
+*/
 void Ribbon::addAction(const QString &tabName, const QString &groupName, QAction *action)
 {
 	QToolButton *b = new QToolButton;
 	b->setDefaultAction(action);
 	this->addButton(tabName, groupName, b);
 }
+/**
+* @brief Ribbon::clearAllAction 清除所有行动
+* @return void
+*/
 void Ribbon::clearAllAction()
 {
 	this->clear();
 }
+/**
+* @brief Ribbon::clearTab
+* @param const QString & tabName
+* @return void
+*/
 void Ribbon::clearTab(const QString &tabName)
 {
 	QString name_t = tabName;
@@ -220,6 +283,11 @@ void Ribbon::clearTab(const QString &tabName)
 		t->removeGroup(list_g_name.at(i));
 	}
 }
+/**
+* @brief Ribbon::clearGoup
+* @param const QString & groupName
+* @return void
+*/
 void Ribbon::clearGoup(const QString &groupName)
 {
 	PICRibbonButtonGroup * g = nullptr;
@@ -238,6 +306,10 @@ void Ribbon::clearGoup(const QString &groupName)
 		}
 	}
 }
+/**
+* @brief Ribbon::getTabs
+* @return QT_NAMESPACE::QList<QString>
+*/
 QList<QString> Ribbon::getTabs()
 {
 	QList<QString> list;
@@ -249,6 +321,10 @@ QList<QString> Ribbon::getTabs()
 	}
 	return list;
 }
+/**
+* @brief Ribbon::getGroups
+* @return QT_NAMESPACE::QList<QString>
+*/
 QList<QString> Ribbon::getGroups()
 {
 	QList<PICRibbonTabContent *> list_t = get_tab_all();
@@ -264,6 +340,11 @@ QList<QString> Ribbon::getGroups()
 	return list;
 }
 
+/**
+* @brief Ribbon::getGroup
+* @param const QString & tabName
+* @return QT_NAMESPACE::QList<QString>
+*/
 QList<QString> Ribbon::getGroup(const QString &tabName)
 {
 	QString name_t = tabName;
@@ -277,6 +358,10 @@ QList<QString> Ribbon::getGroup(const QString &tabName)
 	return list;
 }
 
+/**
+* @brief Ribbon::getActions
+* @return QT_NAMESPACE::QList<QAction *>
+*/
 QList<QAction *> Ribbon::getActions()
 {
 	QList<PICRibbonTabContent *> list_t = get_tab_all();
@@ -291,6 +376,11 @@ QList<QAction *> Ribbon::getActions()
 	return list;
 }
 
+/**
+* @brief Ribbon::getTabActions
+* @param const QString & tabName
+* @return QT_NAMESPACE::QList<QAction *>
+*/
 QList<QAction *> Ribbon::getTabActions(const QString &tabName)
 {
 
@@ -327,6 +417,12 @@ QList<QAction *> Ribbon::getGroupActions(const QString &groupName)
 	return list;
 
 }
+/**
+* @brief Ribbon::setTabOlder
+* @param const QString & tabName
+* @param const int older
+* @return void
+*/
 void Ribbon::setTabOlder(const QString &tabName, const int older)
 {
 	QString name_t = tabName;
@@ -334,6 +430,11 @@ void Ribbon::setTabOlder(const QString &tabName, const int older)
 	QTabWidget::insertTab(older, t, name_t);
 }
 
+/**
+* @brief Ribbon::hasAction
+* @param const QAction * action
+* @return bool
+*/
 bool Ribbon::hasAction(const QAction *action)
 {
 	QList<QAction*> list = this->getActions();
@@ -530,6 +631,10 @@ void Ribbon::HidemyDar()
 	hideDar();
 	hidebtn();
 }
+/**
+* @brief Ribbon::slotTimerOut 定时触发函数,用于实现抽屉功能
+* @return void
+*/
 void Ribbon::slotTimerOut()
 {
 	if (QObject::sender() == timer)
@@ -645,6 +750,10 @@ Ribbon::~Ribbon()
 	timer->stop();
 }
 
+/**
+* @brief Ribbon::hideDar 隐藏抽屉
+* @return void
+*/
 void Ribbon::hideDar(){
 	if (mMyDarWer.empty())	return;
 	for (auto iter = mMyDarWer.begin(); iter != mMyDarWer.end(); iter++)
@@ -660,6 +769,10 @@ void Ribbon::hideDar(){
 		}
 	}
 }
+/**
+* @brief Ribbon::hidebtn 隐藏按钮
+* @return void
+*/
 void Ribbon::hidebtn(){
 	for (auto index = qToolButtons.begin(); index != qToolButtons.end(); index++)
 		for (auto subIndex = index->second.begin(); subIndex != index->second.end(); subIndex++)

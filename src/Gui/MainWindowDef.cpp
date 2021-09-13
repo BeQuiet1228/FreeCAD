@@ -26,7 +26,7 @@ void TitleBar::mouseMoveEvent(QMouseEvent *event)
 {
 	QWidget::mouseMoveEvent(event);
 	if (mouseIsPress)
-		Q_EMIT toMove(event->pos() - mouseStartPoint);
+		Q_EMIT toMove(event->pos() - mouseStartPoint,event->pos());
 }
 
 /**
@@ -74,12 +74,12 @@ void TitleBar::mouseDoubleClickEvent(QMouseEvent *event)
 * @return   
 */
 MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
-:QWidget(parent), ui(new Ui::WindowDef())
+:QWidget(parent), ui(new Ui::WindowDef()),mPre(1.0f),isCross(false)
 {
 	ui->setupUi(this);
 	setCursor(Qt::ArrowCursor);
 	this->setWindowFlags(Qt::FramelessWindowHint);
-	connect(ui->titleBar, SIGNAL(toMove(QPoint)), this, SLOT(titleBarMove(QPoint)));
+	connect(ui->titleBar, SIGNAL(toMove(QPoint,QPoint)), this, SLOT(titleBarMove(QPoint,QPoint)));
 	connect(ui->btMini, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));
 	connect(ui->btClose, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));
 	connect(ui->btMaxShow, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));
@@ -128,11 +128,6 @@ void MainWindowDef::mouseMoveEvent(QMouseEvent *event)
 	QWidget::mouseMoveEvent(event);
 	changeCursor(event->pos());
 	changeSize(event->pos());
-	if ((cursorState != RIGHT || !leftButtonIsPress))
-		return;
-	//判断当前鼠标位置移动的方向
-	//event->pos().x() > LastPos.x() ? (tabWidgetInterface->setScale(this->size(),true)) : (tabWidgetInterface->setScale(this->size(), false));
-	//LastPos = event->pos();
 }
 
 void MainWindowDef::mousePressEvent(QMouseEvent *event)
@@ -140,6 +135,7 @@ void MainWindowDef::mousePressEvent(QMouseEvent *event)
 	QWidget::mousePressEvent(event);
 	if (event->button() == Qt::LeftButton)
 	{
+		//qDebug() << "leftbutton";
 		leftButtonIsPress = true;
 		leftButtonPressPos = event->pos();
 	}
@@ -152,6 +148,7 @@ void MainWindowDef::mouseReleaseEvent(QMouseEvent *event)
 	if (event->button() == Qt::LeftButton)
 	{
 		leftButtonIsPress = false;
+		isCross = false;
 	}
 	setCursor(Qt::ArrowCursor);
 	cursorState = NONE;
@@ -162,8 +159,6 @@ void MainWindowDef::resizeEvent(QResizeEvent *event)
 	QWidget::resizeEvent(event);
 	if (isMax)
 		isMax = false;
-	//抽屉功能实现
-	//ToDrawer(this->size());
 }
 
 void MainWindowDef::moveEvent(QMoveEvent *event)
@@ -172,24 +167,45 @@ void MainWindowDef::moveEvent(QMoveEvent *event)
 	isMax = false;
 }
 
-void MainWindowDef::titleBarMove(QPoint pos)
+void MainWindowDef::titleBarMove(QPoint pos,QPoint CustomPos)
 {
 	QPoint posing = this->pos() + pos;
+	QPoint wPos = mapToGlobal(CustomPos);
 	for (auto index = 0; index < screens.size();index++)
 	{
 		if (posing.y()-screens[index].topLeft().y()<2)
 		{
 			showMax();
-			//qDebug() << "showMax";
 			return ;
 		}
 	}
 	if (isMax)
 	{
-		resize(this->width()*0.7, this->height()*0.7);
+		
+		mPre= static_cast<double>(CustomPos.x()) / static_cast<double>(this->width());
+		showOld();
+		if (CustomPos.x() > this->width())
+		{
+			isCross = true;
+		}
+		else
+		{
+			isCross = false;
+		}
 		isMax = false;
 	}
-	this->move(this->pos() + pos);
+	double mWidth = this->width();
+	if (isCross)
+	{
+		QPoint movePos;
+		movePos.setY(wPos.y());
+		movePos.setX(wPos.x() - this->width() * mPre);
+		this->move(movePos);
+	}
+	else
+	{
+		this->move(this->pos()+pos);
+	}
 }
 
 void MainWindowDef::toolButtonClicked(bool b)
@@ -297,13 +313,22 @@ void MainWindowDef::changeSize(const QPoint& pos)
 	switch (cursorState)
 	{
 	case BOTTOM:
+	{
 		this->resize(this->width(), this->height() + h);
+		//qDebug("Bottom");
+	}
 		break;
 	case RIGHT:
+	{
 		this->resize(this->width() + w, this->height());
+		//qDebug("RIGHT");
+	}
 		break;
 	case RIGHT_BOTTOM:
+	{
 		this->resize(this->width() + w, this->height() + h);
+		//qDebug("RIGHT_BOTTOM");
+	}
 		break;
 	default:
 		break;
@@ -333,6 +358,7 @@ void MainWindowDef::addTitleShortcutAction(QAction* action)
 */
 void MainWindowDef::showMax()
 {
+	//qDebug() << "Show Max";
 	oldSize = this->size();
 	oldPoint = this->pos();
 	QPoint centerPos = this->geometry().center();
@@ -350,10 +376,7 @@ void MainWindowDef::showMax()
 			
 		}
 	}
-	//resize(QApplication::desktop()->availableGeometry().size());
-	//move(0, 0);
 	show();
-	
 }
 
 /**
@@ -366,37 +389,5 @@ void MainWindowDef::showOld()
 	else resize(oldSize);
 	move(oldPoint);
 	show();
-}
-/**
-* @brief  MainWindowDef::test
-* @return void  
-*/
-void MainWindowDef::ToDrawer(QSize& size)
-{
-#if 0
-	if (LastSize.width()>size.width())
-	{
-		//LastSize = size;
-		tabWidgetInterface->setScale(size,false);
-	}
-	else if (LastSize.width()<size.width())
-	{
-		//LastSize = size;
-		tabWidgetInterface->setScale(size, true);
-	}
-#else
-	if (LastSize.width()>=this->width())
-	{
-		//qDebug() << "to_scale_smare";
-		LastSize = size;
-		tabWidgetInterface->setScale(this->size(), false);
-	}
-	else if (LastSize.width() < this->width())
-	{
-		//qDebug() << "To_Scale_Big";
-		LastSize = size;
-		tabWidgetInterface->setScale(this->size(), true);
-	}
-#endif
 }
 #include "moc_MainWindowDef.cpp"

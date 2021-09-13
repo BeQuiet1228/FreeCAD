@@ -24,7 +24,7 @@ private:
 	bool mouseIsPress = false;
 	QPoint mouseStartPoint;
 Q_SIGNALS:
-	void toMove(QPoint pos);
+	void toMove(QPoint pos,QPoint CustomPos);
 	void doubleClick();
 };
 
@@ -64,6 +64,9 @@ private:
 	std::vector<QRect> screens;
 	QSize LastSize;
 	QPoint LastPos;
+	//鼠标占窗口比例
+	double mPre;
+	bool isCross;
 public:
 	//选项卡对象
 	TabWidgetInterFace *tabWidgetInterface;
@@ -75,7 +78,7 @@ protected:
 	void resizeEvent(QResizeEvent *event) override;
 	void moveEvent(QMoveEvent *event);
 public Q_SLOTS:
-	void titleBarMove(QPoint pos);
+	void titleBarMove(QPoint pos,QPoint CustomPos);
 	void toolButtonClicked(bool b);
 	void titleBarDoubleClicked();
 
