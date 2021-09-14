@@ -1,6 +1,17 @@
 #include "realTimewidget.h"
 #include "ui_realTimewidget.h"
 #include <QLineEdit>
+#define MAX64 (0x7fffffffffffffff)
+#include<math.h>
+QString realTimewidget::valToQString(double val,int bit)
+{
+	QString temp;
+	if (-1 == bit)
+		temp = QString("%1").arg(val);
+	else
+		temp = QString("%1").arg(val, 0, 'f', bit);
+	return temp;
+}
 /**
 * @brief  realTimewidget::realTimewidget
 * @param  QWidget * parent  
@@ -77,8 +88,8 @@ void realTimewidget::init(float rmin, float rmax)
 	int rowFirst = ui->tableWidget->rowCount();
 	ui->tableWidget->insertRow(rowFirst);
 	float curval = (min + max) / 2;
-	ui->tableWidget->setItem(rowFirst,0,new QTableWidgetItem(QString("%1").arg(curval,0,'f',GetdecimalBit(curval))));
-	QTableWidgetItem* item = new QTableWidgetItem(QString("%1~%2").arg(min, 0, 'f', GetdecimalBit(min)).arg(max, 0, 'f', GetdecimalBit(max)));
+	ui->tableWidget->setItem(rowFirst, 0, new QTableWidgetItem(QString("%1").arg(valToQString(curval, GetdecimalBit(curval)))));
+	QTableWidgetItem* item = new QTableWidgetItem(QString("%1~%2").arg(valToQString(min,GetdecimalBit(min))).arg(valToQString(max,GetdecimalBit(max))));
 	item->setFlags(Qt::ItemIsEditable);
 	ui->tableWidget->setItem(rowFirst,1,item);
 	ui->tableWidget->resizeColumnsToContents();
@@ -98,14 +109,13 @@ void realTimewidget::addClicked(){
 	{
 		ui->tableWidget->insertRow(row);
 		float curval = (min + max) / 2;
-		ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(curval, 0, 'f', GetdecimalBit(curval))));
-		//ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(curval)));
+		 ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(valToQString(curval,GetdecimalBit(curval)))));
 	}
 	else
 	{
 		ui->tableWidget->insertRow(row);
 		float curval = ui->tableWidget->item(row - 1, 0)->text().toFloat();
-		ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(curval, 0, 'f', GetdecimalBit(curval))));
+		ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(valToQString(curval,GetdecimalBit(curval)))));
 		//ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(curval)));
 	}
 	//QTableWidgetItem* item = new QTableWidgetItem(QString("%1~%2").arg(min,0,'f',GetdecimalBit(min)).arg(max,0,'f',GetdecimalBit(max)));
@@ -235,19 +245,23 @@ void realTimewidget::addTableItem(double val)
 {
 	int row = ui->tableWidget->rowCount();
 	ui->tableWidget->insertRow(row);
-	ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(val,0,'f',GetdecimalBit(val))));
+	ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(valToQString(val,GetdecimalBit(val)))));
 	//ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(val)));
 }
 int realTimewidget::GetdecimalBit(double& value)
 {
-	__int64 valinter = static_cast<__int64>(value);
-	double fspace = abs(value - static_cast<double>(valinter));
+	double absvalue = abs(value);
+	double maxdouble =static_cast<double>(MAX64);
+	if (absvalue > maxdouble)return -1;
+	unsigned __int64 valinter =static_cast<unsigned __int64>(absvalue);
+	/*static_cast<unsigned __int64>(absvalue);*/
+	double fspace = abs(absvalue - static_cast<double>(valinter));
 	unsigned __int32 index = 0;
 	while (fspace > 0.0f)
 	{
 		index++;
 		fspace *= 10;
-		valinter = static_cast<__int64> (fspace);
+		valinter = static_cast<unsigned __int64> (fspace);
 		fspace = fspace - static_cast<double>(valinter);
 	}
 	return index;

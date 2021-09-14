@@ -31,6 +31,7 @@ protected:
 	int GetdecimalBit(double& value);
 	void insertformatTableItem();
 	void addTableItem(double);
+	QString valToQString(double val, int bit);
 private:
 	Ui::realTimewidget *ui;
 	double min;
