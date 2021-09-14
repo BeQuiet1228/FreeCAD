@@ -47,7 +47,8 @@ void darWer::addButton(QToolButton* button)
 			"}"
 			//按钮悬停的样式
 			"QToolButton:hover{"
-			"border:2px solid rgba(125,125,125,255);"
+			"background-color:rgba(125,125,125,255);"
+			//"border:2px solid rgba(125,125,125,255);"
 			"}"
 		)
 	);

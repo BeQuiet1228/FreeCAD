@@ -563,7 +563,7 @@ void Ribbon::showdrawerGroup(QString GroupName,QToolButton* buttom)
 				if (groupRect.center().x()+newGroup->size().width()>mainWiget->width())
 				{
 					QPoint centerPos;
-					centerPos.setY(groupRect.center().y()+buttom->size().height());
+					centerPos.setY(groupRect.center().y()+buttom->size().height()*2);
 					//int distance = mainWiget->width() - (groupRect.center().x() + newGroup->size().width()) - WIGET_INTERVAL;
 					//centerPos.setX(groupRect.center().x()+distance);
 					centerPos.setX(mainWiget->width()-newGroup->width());
@@ -575,7 +575,7 @@ void Ribbon::showdrawerGroup(QString GroupName,QToolButton* buttom)
 					QPoint centerPos;
 					centerPos.setX(groupRect.center().x());
 					//centerPos.setY(groupRect.center().y() + newGroup->size().height() / 2);
-					centerPos.setY(groupRect.center().y()+buttom->size().height());
+					centerPos.setY(groupRect.center().y()+buttom->size().height()*2);
 					newGroup->move(centerPos);
 				}
 				QSize widgetSize = mainWiget->size();
@@ -722,7 +722,7 @@ void Ribbon::slotTimerOut()
 					//newGroup->resize(groups[groupIndex]->size());
 					newGroup->setSize(groups[groupIndex]->size());
 					newGroup->setTitle(groups[groupIndex]->title());
-					newGroup->resize(DARWER_SIZE+20,30*mActions.size());
+					newGroup->resize(DARWER_SIZE+10,30*mActions.size()+5);
 					mMyDarWer[tabName][groups[groupIndex]->title()] = dynamic_cast<QWidget*>(newGroup);
 					mtabItemSize = mtabItemSize - groups[groupIndex]->size().width();
 					mtabItemSize = mtabItemSize + DARWER_SIZE;
