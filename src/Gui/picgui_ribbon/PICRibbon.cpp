@@ -8,7 +8,7 @@
 #include <QPainter>
 #include "picgui_ribbon/moc_PICRibbon.cpp"
 #include <iostream>
-
+#include"darWer.h"
 #define DEBUGINNG 0
 #ifndef WIGET_INTERVAL
 #define WIGET_INTERVAL (30)
@@ -528,11 +528,10 @@ void Ribbon::showdrawerGroup(QString GroupName,QToolButton* buttom)
 	auto iter = mMyDarWer[tabName].find(GroupName);
 	if (iter!=mMyDarWer[tabName].end())
 	{
-		PICRibbonButtonGroup* newGroup = dynamic_cast<PICRibbonButtonGroup*>(iter->second);
+		//PICRibbonButtonGroup* newGroup = dynamic_cast<PICRibbonButtonGroup*>(iter->second);
+		darWer* newGroup = dynamic_cast<darWer*>(iter->second);
 		if (newGroup->isVisible())
 		{
-			/*QIcon icon(QString::fromUtf8(":/drawer/icons/shousuo.svg"));
-			buttom->setIcon(icon);*/
 			newGroup->hide();
 		}
 		else
@@ -541,7 +540,7 @@ void Ribbon::showdrawerGroup(QString GroupName,QToolButton* buttom)
 			buttom->setIcon(icon);
 			newGroup->setWindowFlags(Qt::FramelessWindowHint);
 			QPalette pal = newGroup->palette();
-			pal.setColor(QPalette::Background, QColor(189,193,196,255));
+			pal.setColor(QPalette::Background, QColor(189,193,190,200));
 			newGroup->setAutoFillBackground(true);
 			newGroup->setPalette(pal);
 			//移动
@@ -674,22 +673,22 @@ void Ribbon::slotTimerOut()
 				if (itdarwer != mMyDarWer[tabName].end())
 				{
 					mtabItemSize = mtabItemSize - (*iterItem)->size().width();
-					mtabItemSize = mtabItemSize + itdarwer->second->size().width();
+					darWer* mDarWer = dynamic_cast<darWer*>(itdarwer->second);
+					mtabItemSize = mtabItemSize + mDarWer->getSize().width();
 					if (parentSize.width() > mtabItemSize)
 					{
 						isreturn = true;
 						hideDar();
 						qToolButtons[tabName].erase(itBtn);
 						(*iterItem)->removeButtons();
-						PICRibbonButtonGroup* curGroup = dynamic_cast<PICRibbonButtonGroup*>(itdarwer->second);
-						std::list<QAction*> mActions = curGroup->get_action_all().toStdList();
+						std::list<QAction*> mActions = mDarWer->get_action_all().toStdList();
 						for (auto itAction=mActions.begin();itAction!=mActions.end();itAction++)
 						{
 							QToolButton* b = new QToolButton();
 							b->setDefaultAction(*itAction);
 							(*iterItem)->addButton(b);
 						}
-						(*iterItem)->setMaximumWidth(curGroup->size().width());
+						(*iterItem)->setMaximumWidth(mDarWer->getSize().width());
 						mMyDarWer[tabName].erase(itdarwer);
 					}
 				}
@@ -707,14 +706,16 @@ void Ribbon::slotTimerOut()
 					HidemyDar();
 					//可以缩放
 					std::list<QAction*> mActions = groups[groupIndex]->get_action_all().toStdList();
-					PICRibbonButtonGroup* newGroup = new PICRibbonButtonGroup(parent);
+					//PICRibbonButtonGroup* newGroup = new PICRibbonButtonGroup(parent);
+					darWer* newGroup = new darWer(parent);
 					for (auto itAction = mActions.begin(); itAction != mActions.end(); itAction++)
 					{
 						QToolButton* b = new QToolButton;
 						b->setDefaultAction(*itAction);
 						newGroup->addButton(b);
 					}
-					newGroup->resize(groups[groupIndex]->size());
+					//newGroup->resize(groups[groupIndex]->size());
+					newGroup->setSize(groups[groupIndex]->size());
 					newGroup->setTitle(groups[groupIndex]->title());
 					mMyDarWer[tabName][groups[groupIndex]->title()] = dynamic_cast<QWidget*>(newGroup);
 					mtabItemSize = mtabItemSize - groups[groupIndex]->size().width();
