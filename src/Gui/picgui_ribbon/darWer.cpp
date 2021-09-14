@@ -1,7 +1,8 @@
 #include"PreCompiled.h"
 #include"darWer.h"
 #include<QBoxLayout>
-darWer::darWer(QWidget* parent):QWidget(parent)
+#include"qstring.h"
+darWer::darWer(QWidget* parent):/*QWidget(parent)*/QFrame(parent)
 {
 	initUI();
 }
@@ -14,6 +15,17 @@ void darWer::initUI()
 	mQBoxLayout = new QBoxLayout(QBoxLayout::Direction::BottomToTop,this);
 	this->setLayout(mQBoxLayout);
 	mQBoxLayout->setSpacing(5);
+	this->setObjectName(
+		QString::fromUtf8("MyDarWetWidget")
+		);
+	this->setStyleSheet(
+		QString::fromUtf8(
+			"QWidget#MyDarWetWidget{"
+			"background-color:rgb(189,193,196,255);"
+			"border:1px solid rgba(125,125,125,255);"
+			"}"
+		)
+	);
 }
 void darWer::addButton(QToolButton* button)
 {
@@ -23,6 +35,22 @@ void darWer::addButton(QToolButton* button)
 	button->setAutoRaise(true);
 	button->setIconSize(QSize(20, 20));
 	button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	button->setStyleSheet(
+		QString::fromUtf8(
+			//按钮正常样式
+			"QToolButton{"
+			//"border:2px solid rgba(125,125,125);"
+			"}"
+			//按钮按下的样式
+			"QToolButton:pressed{"
+			"border:2px solid rgba(1,1,1,255);"
+			"}"
+			//按钮悬停的样式
+			"QToolButton:hover{"
+			"border:2px solid rgba(125,125,125,255);"
+			"}"
+		)
+	);
 	mQBoxLayout->addWidget(button);
 }
 void darWer::setTitle(const QString& title)

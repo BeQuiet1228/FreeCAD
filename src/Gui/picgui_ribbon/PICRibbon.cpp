@@ -503,6 +503,7 @@ void Ribbon::setGroupSequence(const QString &tabName, const QString &groupName, 
 */
 void Ribbon::buttomclicked()
 {
+	//HidemyDar();
 	hidebtn();
 	QToolButton* qtoolbutton = static_cast<QToolButton*>(QObject::sender());
 	for(auto index=qToolButtons.begin();index!=qToolButtons.end();index++)
@@ -538,11 +539,11 @@ void Ribbon::showdrawerGroup(QString GroupName,QToolButton* buttom)
 		{
 			QIcon icon(QString::fromUtf8(":/drawer/icons/zhankai.svg"));
 			buttom->setIcon(icon);
-			newGroup->setWindowFlags(Qt::FramelessWindowHint);
-			QPalette pal = newGroup->palette();
-			pal.setColor(QPalette::Background, QColor(189,193,190,200));
+			//newGroup->setWindowFlags(Qt::FramelessWindowHint);
+			//QPalette pal = newGroup->palette();
+			//pal.setColor(QPalette::Background, QColor(189,193,190,250));
 			newGroup->setAutoFillBackground(true);
-			newGroup->setPalette(pal);
+			//newGroup->setPalette(pal);
 			//移动
 			{
 				PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(buttom->parent());
@@ -562,16 +563,19 @@ void Ribbon::showdrawerGroup(QString GroupName,QToolButton* buttom)
 				if (groupRect.center().x()+newGroup->size().width()>mainWiget->width())
 				{
 					QPoint centerPos;
-					centerPos.setY(groupRect.center().y()+newGroup->size().height()/2);
-					int distance = mainWiget->width() - (groupRect.center().x() + newGroup->size().width()) - WIGET_INTERVAL;
-					centerPos.setX(groupRect.center().x()+distance);
+					centerPos.setY(groupRect.center().y()+buttom->size().height());
+					//int distance = mainWiget->width() - (groupRect.center().x() + newGroup->size().width()) - WIGET_INTERVAL;
+					//centerPos.setX(groupRect.center().x()+distance);
+					centerPos.setX(mainWiget->width()-newGroup->width());
 					newGroup->move(centerPos);
 				}
 				else
 				{
+					QPoint groupCenterPos = groupRect.center();
 					QPoint centerPos;
 					centerPos.setX(groupRect.center().x());
-					centerPos.setY(groupRect.center().y() + newGroup->size().height() / 2);
+					//centerPos.setY(groupRect.center().y() + newGroup->size().height() / 2);
+					centerPos.setY(groupRect.center().y()+buttom->size().height());
 					newGroup->move(centerPos);
 				}
 				QSize widgetSize = mainWiget->size();
@@ -582,7 +586,8 @@ void Ribbon::showdrawerGroup(QString GroupName,QToolButton* buttom)
 	}
 	for (auto index = mMyDarWer[tabName].begin(); index != mMyDarWer[tabName].end(); index++)
 	{
-		PICRibbonButtonGroup* newGroup = dynamic_cast<PICRibbonButtonGroup*>(index->second);
+		//PICRibbonButtonGroup* newGroup = dynamic_cast<PICRibbonButtonGroup*>(index->second);
+		darWer* newGroup = dynamic_cast<darWer*>(index->second);
 		if (newGroup&&newGroup->isVisible()&&index!=iter)
 		{
 			newGroup->hide();
@@ -717,6 +722,7 @@ void Ribbon::slotTimerOut()
 					//newGroup->resize(groups[groupIndex]->size());
 					newGroup->setSize(groups[groupIndex]->size());
 					newGroup->setTitle(groups[groupIndex]->title());
+					newGroup->resize(DARWER_SIZE+20,30*mActions.size());
 					mMyDarWer[tabName][groups[groupIndex]->title()] = dynamic_cast<QWidget*>(newGroup);
 					mtabItemSize = mtabItemSize - groups[groupIndex]->size().width();
 					mtabItemSize = mtabItemSize + DARWER_SIZE;

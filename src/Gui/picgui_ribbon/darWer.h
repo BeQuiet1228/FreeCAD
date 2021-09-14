@@ -5,7 +5,7 @@
 #include <QDialog>
 //#include<QBoxLayout>
 class QBoxLayout;
-class darWer:public QWidget
+class darWer:public /*QWidget*/QFrame
 {
 	Q_OBJECT
 public:
