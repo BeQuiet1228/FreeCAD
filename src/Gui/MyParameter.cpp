@@ -1,4 +1,5 @@
 
+#include "Command.h"
 #include "MyParameter.h"
 #include "FCConfig.h"
 #include <App/Expression.h>
@@ -17,6 +18,8 @@
 #include "DlgChangeParamNameImp.h"
 #include "AboutParameter.h"
 #include "dlgchangenamedialog.h"
+#include <sstream>
+
 
 //#include "DlgExpressionInput.h"
 
@@ -24,7 +27,7 @@
 using namespace App;
 //using namespace Base;
 
-MyParameter::MyParameter(QWidget* parent) : QWidget(parent){
+MyParameter::MyParameter(QWidget* parent) : QWidget(parent) {
     this->param_m3d = new neb::CJsonObject();
     if (this->objectName().isEmpty())
         this->setObjectName(QString::fromUtf8("Dialog"));
@@ -34,16 +37,17 @@ MyParameter::MyParameter(QWidget* parent) : QWidget(parent){
     tableWidget->setGeometry(QRect(0, 0, 800, 800));
     //tableWidget->horizontalHeader().setStretchLastSection(true);
     tableWidget->setColumnCount(5);
-    QStringList headerLabels = (QStringList() << QString::fromStdString("name") 
-                                              << QString::fromStdString("expression")
-                                              << QString::fromStdString("value")
-                                              << QString::fromStdString("type")
-                                              << QString::fromStdString("description"));
+    QStringList headerLabels = (QStringList() << QString::fromStdString("name")
+        << QString::fromStdString("expression")
+        << QString::fromStdString("value")
+        << QString::fromStdString("type")
+        << QString::fromStdString("description"));
     tableWidget->setHorizontalHeaderLabels(headerLabels);
     tableWidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     this->recoveryData();
 
     QObject::connect(this->tableWidget, SIGNAL(cellChanged(int, int)), this, SLOT(cellDoubleClicked(int, int)));
+    QObject::connect(this->tableWidget, SIGNAL(cellDoubleClicked(int, int)), this, SLOT(autoPopChangeDialog()));
 
     this->addNewLine(0);
 
@@ -75,10 +79,17 @@ MyParameter::MyParameter(QWidget* parent) : QWidget(parent){
     change_name_btn->setText(QString::fromUtf8("change param name"));
     QObject::connect(this->change_name_btn, SIGNAL(clicked(bool)), this, SLOT(changeParamName()));
 
+    updateM3D_btn = new QPushButton(this);
+    updateM3D_btn->setObjectName(QString::fromUtf8("updateM3D_btn"));
+    updateM3D_btn->setText(QString::fromUtf8("update M3D"));
+    QObject::connect(this->updateM3D_btn, SIGNAL(clicked(bool)), this, SLOT(updateM3D()));
+
     gl->addWidget(batch_btn, 1, 0, 1, 1);
     gl->addWidget(insert_btn, 1, 1, 1, 1);
-    gl->addWidget(delete_btn, 2, 1, 1, 1);
     gl->addWidget(change_name_btn, 2, 0, 1, 1);
+    gl->addWidget(delete_btn, 2, 1, 1, 1);
+
+    gl->addWidget(updateM3D_btn, 3, 0, 1, 2);
 }
 
 MyParameter::~MyParameter()
@@ -88,26 +99,26 @@ MyParameter::~MyParameter()
 }
 
 void MyParameter::textChanged(const QString& text) {
-   param_type _type = this->typeAnalysis(text); //  表达式的类型
-   switch (_type) {
-   case param_type::type_float :
-       le3->setText(QString::fromStdString("Number"));
-       break;
-   case param_type::type_angle:
-       le3->setText(QString::fromStdString("Angle"));
-       break;
-   case param_type::type_length:
-       le3->setText(QString::fromStdString("Length"));
-       break;
-   case param_type::type_other:
-       le3->setText(QString::fromStdString("Other"));
-       break;
-   case param_type::type_error:
-       le3->setText(QString::fromStdString("Error"));
-       break;
-   default:
-       break;
-   }
+    param_type _type = this->typeAnalysis(text); //  表达式的类型
+    switch (_type) {
+    case param_type::type_float:
+        le3->setText(QString::fromStdString("Number"));
+        break;
+    case param_type::type_angle:
+        le3->setText(QString::fromStdString("Angle"));
+        break;
+    case param_type::type_length:
+        le3->setText(QString::fromStdString("Length"));
+        break;
+    case param_type::type_other:
+        le3->setText(QString::fromStdString("Other"));
+        break;
+    case param_type::type_error:
+        le3->setText(QString::fromStdString("Error"));
+        break;
+    default:
+        break;
+    }
 }
 
 // 表格内容发生变化时的槽函数
@@ -120,7 +131,7 @@ void MyParameter::cellDoubleClicked(int row, int column) {
         //endTime = std::clock();
         //std::cerr << "column:0  ::" << (double)(endTime - startTime) / CLOCKS_PER_SEC << ";\n";
     }
-    else if (column == 1){
+    else if (column == 1) {
         //startTime = std::clock();
         this->cellChangedWithFirstColumn(row);
         //endTime = std::clock();
@@ -137,25 +148,25 @@ void MyParameter::cellChangedWithZerothColumn(int row) {
     if (!this->isValidWithName(row)) {
         return;
     }
-	if (row == tableWidget->rowCount() - 1) {
-		this->makeLineEnabled(row);
-		this->addNewLine(row);
-		this->addEmptyProperty(tableWidget->item(row, 0)->text());
-		if (tableWidget->item(row, 0)->flags() != Qt::ItemIsSelectable | Qt::ItemIsEnabled) {
-			tableWidget->item(row, 0)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-		}
-		this->tableWidget->item(row, 1)->setText(QString::fromUtf8("0"));
+    if (row == tableWidget->rowCount() - 1) {
+        this->makeLineEnabled(row);
+        this->addNewLine(row);
+        this->addEmptyProperty(tableWidget->item(row, 0)->text());
+        if (tableWidget->item(row, 0)->flags() != Qt::ItemIsSelectable | Qt::ItemIsEnabled) {
+            tableWidget->item(row, 0)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        }
+        this->tableWidget->item(row, 1)->setText(QString::fromUtf8("0"));
         this->cellChangedWithFirstColumn(row);
-	}
-	else if (row >= 0 && row < tableWidget->rowCount() - 1) {
-		this->makeLineEnabled(row);
-		this->addEmptyProperty(tableWidget->item(row, 0)->text());
-		if (tableWidget->item(row, 0)->flags() != Qt::ItemIsSelectable | Qt::ItemIsEnabled) {
-			tableWidget->item(row, 0)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-		}
-		this->tableWidget->item(row, 1)->setText(QString::fromUtf8("0"));
+    }
+    else if (row >= 0 && row < tableWidget->rowCount() - 1) {
+        this->makeLineEnabled(row);
+        this->addEmptyProperty(tableWidget->item(row, 0)->text());
+        if (tableWidget->item(row, 0)->flags() != Qt::ItemIsSelectable | Qt::ItemIsEnabled) {
+            tableWidget->item(row, 0)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        }
+        this->tableWidget->item(row, 1)->setText(QString::fromUtf8("0"));
         this->cellChangedWithFirstColumn(row);
-	}
+    }
 }
 
 // 第一列数据发生变化时
@@ -297,12 +308,12 @@ void MyParameter::addNewLine(int row) {
 
 // 使第row行可以编辑
 void MyParameter::makeLineEnabled(int row) {
-    if(tableWidget->item(row, 1))
+    if (tableWidget->item(row, 1))
         tableWidget->item(row, 1)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable);
-    if(tableWidget->item(row, 3))
+    if (tableWidget->item(row, 3))
         tableWidget->item(row, 3)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    if(tableWidget->item(row, 4))
-    tableWidget->item(row, 4)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable);
+    if (tableWidget->item(row, 4))
+        tableWidget->item(row, 4)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable);
 }
 
 // 添加一个空的属性，主要应用与添加新变量的时候
@@ -323,7 +334,7 @@ bool MyParameter::changeProperty(param_type cur_type, const QString& name, const
         // 移除当前属性，添加对应类型的属性
         // 移除当前属性时，是否应该考虑该属性是否发被调用过
         App::Property* prop = docObj->getPropertyByName(name.toStdString().c_str());
-        if (prop){
+        if (prop) {
             docObj->removeDynamicProperty(name.toStdString().c_str());
         }
         this->addProperty(cur_type, name);
@@ -537,40 +548,83 @@ void MyParameter::importTextInterFace() {
     text_import = new Widget();
     text_import->show();
     QObject::connect(dynamic_cast<Widget*>(text_import)->returnBtn(), SIGNAL(clicked(bool)),
-                     this, SLOT(importText()));
+        this, SLOT(importText()));
+    /*QObject::connect(dynamic_cast<Widget*>(text_import)->returnToolBtn(), SIGNAL(clicked(bool)),
+        this, SLOT(findStringToReplace()));*/
 }
 
+//void MyParameter::importText() {
+//    clock_t startTime, endTime;
+//    text_import->close();
+//    startTime = clock();
+//    std::vector<std::vector<std::string>> p = this->batchProcessing(dynamic_cast<Widget*>(text_import)->returnStr().toStdString());
+//    endTime = clock();
+//    std::cerr << (double)(endTime - startTime) / CLOCKS_PER_SEC << std::endl;
+//    int cur_row = this->tableWidget->rowCount();
+//    double all = 0;
+//    for (int i = 0; i < p.size(); ++i) {
+//        int cur_row = this->tableWidget->rowCount();
+//        startTime = clock();
+//        while(!this->isValidWithName(p[i][0]))
+//        {
+//            std::string str = p[i][0];
+//            DlgChangeNameDialog* change_name = new DlgChangeNameDialog(str);
+//            change_name->exec();
+//            std::string temp = p[i][0];
+//            if (this->isValidWithName(change_name->getName().toStdString()))
+//            {
+//                p[i][0] = change_name->getName().toStdString();
+//                for (int i = 0; i < p.size(); i++)
+//                {
+//                    if (findWholeWordsOnly(p[i][1], temp))
+//                    {
+//                        p[i][1] = std::regex_replace(p[i][1], std::regex("\\b" + temp + "\\b"), change_name->getName().toStdString());
+//                    }
+//                }
+//            }
+//            delete change_name;
+//        }
+//
+//        if (this->isValidWithName(p[i][0]))
+//        {
+//            std::string temp = p[i][0];
+//            while (!isValidWithName(temp, cur_row - 1)) {
+//                temp = temp + "1";
+//            }
+//            this->tableWidget->item(cur_row - 1, 0)->setText(QString::fromStdString(temp));
+//            this->tableWidget->item(cur_row - 1, 1)->setText(QString::fromStdString(p[i][1]));
+//        }
+//        endTime = clock();
+//        all = all + (double)(endTime - startTime) / CLOCKS_PER_SEC;
+//        std::cerr << p[i][0]  << " :\t" << (double)(endTime - startTime) / CLOCKS_PER_SEC << std::endl;
+//    }
+//    std::cerr << all << std::endl;
+//}
+
+//暂时用来更改功能而单独copy的importText，源代码在上方
 void MyParameter::importText() {
     clock_t startTime, endTime;
-    text_import->close();
     startTime = clock();
     std::vector<std::vector<std::string>> p = this->batchProcessing(dynamic_cast<Widget*>(text_import)->returnStr().toStdString());
     endTime = clock();
     std::cerr << (double)(endTime - startTime) / CLOCKS_PER_SEC << std::endl;
     int cur_row = this->tableWidget->rowCount();
     double all = 0;
+
+    int now = 0;
+    while (now < p.size())
+    {
+        if (!this->isValidWithName(p[now][0])) {
+            dynamic_cast<Widget*>(text_import)->findStringToHilight(p[now][0]);
+            dynamic_cast<Widget*>(text_import)->printError(now);
+            return;
+        }
+        ++now;
+    }
+
     for (int i = 0; i < p.size(); ++i) {
         int cur_row = this->tableWidget->rowCount();
         startTime = clock();
-        while(!this->isValidWithName(p[i][0]))
-        {
-            std::string str = p[i][0];
-            DlgChangeNameDialog* change_name = new DlgChangeNameDialog(str);
-            change_name->exec();
-            std::string temp = p[i][0];
-            if (this->isValidWithName(change_name->getName().toStdString()))
-            {
-                p[i][0] = change_name->getName().toStdString();
-                for (int i = 0; i < p.size(); i++)
-                {
-                    if (findWholeWordsOnly(p[i][1], temp))
-                    {
-                        p[i][1] = std::regex_replace(p[i][1], std::regex("\\b" + temp + "\\b"), change_name->getName().toStdString());
-                    }
-                }
-            }
-            delete change_name;
-        }
 
         if (this->isValidWithName(p[i][0]))
         {
@@ -583,8 +637,9 @@ void MyParameter::importText() {
         }
         endTime = clock();
         all = all + (double)(endTime - startTime) / CLOCKS_PER_SEC;
-        std::cerr << p[i][0]  << " :\t" << (double)(endTime - startTime) / CLOCKS_PER_SEC << std::endl;
+        std::cerr << p[i][0] << " :\t" << (double)(endTime - startTime) / CLOCKS_PER_SEC << std::endl;
     }
+    text_import->close();
     std::cerr << all << std::endl;
 }
 
@@ -602,7 +657,7 @@ void MyParameter::recoveryData() {
     }
     // 更新结果
     int max_row = this->tableWidget->rowCount();
-    for (int i = 0 ; i < max_row; ++i) {
+    for (int i = 0; i < max_row; ++i) {
         QString name = tableWidget->item(i, 0)->text();
         QString expression = tableWidget->item(i, 1)->text();
         param_type _type = typeAnalysis(expression);
@@ -656,7 +711,7 @@ void MyParameter::deleteParam() {
     for (int i = 0; i < row - 1; ++i) {
         allParamName.push_back(this->tableWidget->item(i, 0)->text().toStdString());
     }
-    this->delete_param_dlg = new DeleteParamDialog();
+    this->delete_param_dlg = new DeleteParamDialog(this->getAllOrderedParam());
     this->delete_param_dlg->inputAllParamName(allParamName);
     this->delete_param_dlg->inputAllOrderedParam(this->getAllOrderedParam());
     this->delete_param_dlg->exec();
@@ -696,6 +751,7 @@ std::vector<std::pair<std::string, std::string>> MyParameter::getAllOrderedParam
 void MyParameter::changeParamName() {
     std::vector<std::pair<std::string, std::string>> apo = this->getAllOrderedParam();  // 所有有序的变量名
     ChangeParamNameDialog* dlg_cpn = new ChangeParamNameDialog(apo);
+    dlg_cpn->changeSb_row(getchangeNum);
     dlg_cpn->exec();
     std::string new_name = dlg_cpn->new_name;
     if (new_name.empty()) return;
@@ -753,7 +809,36 @@ void MyParameter::changeParamName() {
     delete dlg_cpn;
 }
 
+//更新M3D，提供用户手动按钮更新
+void MyParameter::updateM3D() {
+    if (GetApplication().getActiveDocument()->classID == 2) {
+        Base::InterpreterSingleton python;
+        python.runString("FreeCADGui.runCommand('CreateM3D_new')");
+    }
+    else if (GetApplication().getActiveDocument()->classID == 3) {
+        Base::InterpreterSingleton python;
+        python.runString("FreeCADGui.runCommand('CreateM2D')");
+    }
+}
 
+//为文本框增添替换功能
+//void MyParameter::findStringToReplace() {
+//    std::vector<std::vector<std::string>> p = this->batchProcessing(dynamic_cast<Widget*>(text_import)->returnStr().toStdString());
+//    DlgChangeNameDialog* replace_name = new DlgChangeNameDialog();
+//    replace_name->exec();
+//    std::string lastName = replace_name->getLastName().toStdString();
+//    std::string afterName = replace_name->getAfterName().toStdString();
+//
+//    if (replace_name->isChanged == 1 && lastName != "" && afterName != "") {
+//        for (int i = 0; i < p.size(); ++i) {
+//            if (std::regex_search(p[i][0], std::regex(lastName))) {
+//                dynamic_cast<Widget*>(text_import)->replaceString(p[i][0], lastName, afterName);
+//            }
+//        }
+//    }
+//        
+//    delete replace_name;
+//}
 
 Widget::Widget(QWidget* parent)
     : QWidget(parent)
@@ -772,8 +857,74 @@ QPushButton* Widget::returnBtn() {
     return this->ui->pushButton;
 }
 
+//test_zz为replaceAll增加控件
+//QToolButton* Widget::returnToolBtn() {
+//    return this->ui->replaceButton;
+//}
+
 QString Widget::returnStr() {
     return this->ui->textEdit->toPlainText();
 }
 
+void Widget::printError(int i) {
+    const char* hintText = "Invalid parameter name:\n";
+    std::string errorTextString = "\tparameter numbered: ";
+    std::stringstream ss;//将int类型转为string
+    std::string num;
+    ss << i + 1;
+    ss >> num;
+    errorTextString += num + " is invalid.";
+
+    const char* errorText = errorTextString.c_str();
+    this->ui->textAnalyse->setText(QString::fromUtf8(hintText));
+    this->ui->textAnalyse->append(QString::fromUtf8(errorText));
+    /*
+    将hintText颜色变红
+    */
+    QTextCursor cursor = ui->textAnalyse->textCursor();
+    cursor.select(QTextCursor::LineUnderCursor);
+    QTextCharFormat fmt;
+    fmt.setForeground(QColor(Qt::red));
+    cursor.mergeCharFormat(fmt);
+    //cursor.clearSelection(); //撤销选中
+    //cursor.movePosition(QTextCursor::EndOfLine);  //cursor和anchor均移至末尾
+}
+
+void Widget::findStringToHilight(std::string findText) {
+    /*
+    每次查找获取当前光标位置，再将其移动至文本最后
+    最后调用函数find
+    */
+    QTextCursor cursor = ui->textEdit->textCursor();
+    cursor.movePosition(QTextCursor::End);
+    ui->textEdit->setTextCursor(cursor);
+    if (ui->textEdit->find(QString::fromStdString(findText), QTextDocument::FindBackward)) {//查找后一个
+        QPalette palette = ui->textEdit->palette();// 查找到后高亮显示
+        palette.setColor(QPalette::Highlight, palette.color(QPalette::Active, QPalette::Highlight));
+        ui->textEdit->setPalette(palette);
+    }
+}
+
+//在TextEdit为myparameter提供replaceString的接口
+//void Widget::replaceString(std::string findText, std::string lastName, std::string afterName) {
+//    QTextCursor cursor = ui->textEdit->textCursor();
+//    cursor.movePosition(QTextCursor::End);
+//    ui->textEdit->setTextCursor(cursor);
+//    std::string ss = regex_replace(findText, std::regex(lastName), afterName);
+//    while (ui->textEdit->find(QString::fromStdString(findText), QTextDocument::FindBackward)) {//查找后一个
+//        ui->textEdit->insertPlainText(QString::fromUtf8(ss.c_str()));
+//    }
+//    cursor.movePosition(QTextCursor::End);
+//    ui->textEdit->setTextCursor(cursor);
+//}
+
+//当用户选中已存在参数的name列时，自动弹出changename进行更改name
+void MyParameter::autoPopChangeDialog() {
+    int row = this->tableWidget->currentItem()->row();
+    int col = this->tableWidget->currentItem()->column();
+    if (col == 0 && row < this->tableWidget->rowCount() - 1) {
+        this->getchangeNum = row + 1;
+        changeParamName();
+    }
+}
 

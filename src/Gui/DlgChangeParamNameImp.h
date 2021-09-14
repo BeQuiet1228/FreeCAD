@@ -14,7 +14,7 @@ class ChangeParamNameDialog : public QDialog
 
 public:
     ChangeParamNameDialog(std::vector<std::pair<std::string, std::string>> param_list,
-                          QWidget* parent = nullptr);
+        QWidget* parent = nullptr);
     ~ChangeParamNameDialog();
 
 
@@ -27,6 +27,9 @@ public:
     int change_row; //修改变量名的行数
     std::vector<std::pair<std::string, std::string>> _param_list;
     std::string new_name;
+    int sb_row_lastNum = 1;//记录sb_row的上一个值，当用户出入0 时 将slotSpinBox函数的参数改为sb_row_lastNum
+    void changeSb_row(int);
+
 private:
     Ui::ChangeParamName* ui;
 };
