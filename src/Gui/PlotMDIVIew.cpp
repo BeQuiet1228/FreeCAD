@@ -9,14 +9,15 @@ namespace Gui{
 	* @param App::Document &_doc
 	* @param QWidget* parent
 	*/
-	PlotMDIView::PlotMDIView(Gui::Document &_doc, QWidget* parent) :MDIView(&_doc, parent, 0)
+	PlotMDIView::PlotMDIView(DocumentPic *_doc, QWidget* parent) :MDIViewPIC(_doc, parent)
 	{
 		plot = new Plot(this);
 		plot->resize(this->size());
 		//bIsPassive = false;
+		setWindowTitle(QString::fromStdString("chart"));
 	}
-	PlotMDIView::~PlotMDIView(){
-	}
+	PlotMDIView::~PlotMDIView(){    
+ 	}
 	/**
 	* @brief PlotMDIView::GetViewPtr 获取plot控件的指针
 	* @return void 

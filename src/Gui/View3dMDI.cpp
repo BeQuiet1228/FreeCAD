@@ -76,3 +76,5 @@ bool View3dMDI::onHasMsgChipic(const char* pMsg)
 	return false;
 }
 
+
+

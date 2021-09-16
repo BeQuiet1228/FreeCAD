@@ -63,7 +63,8 @@
 #include <Base/Interpreter.h>
 #include <Base/Console.h>
 #include <CXX/Objects.hxx>
-#include "LuaEditView.h"
+#include "MDIEditView.h"
+#include "DocumentPic.h"
 using namespace Gui;
 
 // FCApplication Methods						// Methods structure
@@ -264,10 +265,13 @@ PyObject* Application::sDisplayText(PyObject* self, PyObject* args, PyObject* kw
 		return NULL;
 	std::string str = std::string(text);
     auto guiDoc = Instance->activeDocument();
+    auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
+    if (picDoc)
+        Py_Return;
     auto views = guiDoc->getMDIViews();
     for (auto iter = views.begin(); iter != views.end(); iter++) {
     
-        LuaEditView* textEdit = dynamic_cast<LuaEditView*>(*iter);
+        MDIEditView* textEdit = dynamic_cast<MDIEditView*>(*iter);
         if (textEdit)
         {
             textEdit->setText(QString::fromStdString(text));
@@ -275,11 +279,13 @@ PyObject* Application::sDisplayText(PyObject* self, PyObject* args, PyObject* kw
         }     
     }
 
-    LuaEditView* textEdit = new LuaEditView(guiDoc);
+    MDIEditView* textEdit = new MDIEditView(picDoc);
     textEdit->setReadOnly(true);
     auto mw = MainWindow::getInstance();
     mw->addWindow(textEdit);
     textEdit->setText(QString::fromStdString(text));
+    textEdit->setWindowTitle(QString::fromStdString(picDoc->getDocument()->getName())
+                             + QString::fromStdString(" Code"));
 	Py_Return;
 }
 

@@ -9,7 +9,7 @@ public:
 
 public:
 	//初始化mdi窗口
-	void initMDIView();
+	virtual void initMDIView();
 	//获取app doc
 	App::Document* getAppDocument();
 	//释放doc中的h5文件对象
@@ -26,4 +26,32 @@ public:
 	void paralleRunChipic();
 	//显示粒子群优化算法窗口
 	void showParticleSwarmOptimizationView();
+
+	//保存与另存为
+	virtual void save();
+	virtual void saveAs();
 };
+
+class DocumentText :public DocumentPic {
+
+public:
+	DocumentText(App::Document* pcDocument, Gui::Application* app);
+	~DocumentText() = default;
+
+	void save() override;
+	void saveAs() override;
+
+	void initMDIView();
+
+};
+
+class DocumentH5File :public DocumentPic {
+public:
+	DocumentH5File(App::Document* pcDocument, Gui::Application* app);
+	~DocumentH5File() = default;;
+
+	void  save() override {};
+	void saveAs() override {};
+};
+
+DocumentPic* CreatePICDocument(App::Document* doc,Gui::Application* app);

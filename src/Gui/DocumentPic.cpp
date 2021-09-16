@@ -1,7 +1,7 @@
 #include "PreCompiled.h"
 #include "DocumentPic.h"
 #include <iostream>
-#include "LuaEditView.h"
+#include "MDIEditView.h"
 #include "PlotMDIView.h"
 #include "MainWindow.h"
 #include "View3DInventor.h"
@@ -12,6 +12,9 @@
 #include "MDIView.h"
 #include "View3DInventor.h"
 #include "View3dMDI.h"
+#include "app/DocumentM3dText.h"
+#include <FileDialog.h>
+#include "MDIView.h"
 DocumentPic::DocumentPic(App::Document* pcDocument, Gui::Application* app)
 	:Gui::Document(pcDocument,app)
 {
@@ -31,12 +34,12 @@ void DocumentPic::initMDIView()
 	//判断是否为文本编辑器工程，如果是那么不显示3D视窗
 	if (appDoc->classID == 1 || appDoc->classID == 4)
 	{
-		LuaEditView* edit = new LuaEditView(this);
+		MDIEditView* edit = new MDIM3dOr2dEditorView(this);
 		auto mainWindow = Gui::MainWindow::getInstance();
 		mainWindow->addWindow(edit);
 	}
 	else if (appDoc->classID == 5) {
-		Gui::PlotMDIView* plot = new Gui::PlotMDIView(*this);
+		Gui::PlotMDIView* plot = new Gui::PlotMDIView(this);
 		auto mainWindow = Gui::MainWindow::getInstance();
 		mainWindow->addWindow(plot);
 	}
@@ -202,3 +205,91 @@ void DocumentPic::showParticleSwarmOptimizationView()
 	mw->addWindow(mdi);
 }
 
+void DocumentPic::save()
+{
+	Document::save();
+}
+
+void DocumentPic::saveAs()
+{
+	Document::saveAs();
+}
+
+DocumentText::DocumentText(App::Document* pcDocument, Gui::Application* app)
+	:DocumentPic(pcDocument,app)
+{
+
+}
+
+void DocumentText::save()
+{
+	auto doc = this->getAppDocument();
+	DocumentM3dText* doct = dynamic_cast<DocumentM3dText*>(doc);
+	if (!doct)
+		return;
+
+	if (doct->isSaved())
+	{
+		doct->save();
+	}
+	else {
+		saveAs();
+	}
+	Gui::Application::Instance->ToSubItemTree();
+}
+
+void DocumentText::saveAs()
+{
+	auto doc = this->getAppDocument();
+	QString path = QString::fromUtf8(doc->FileName.getValue());
+	DocumentM3dText* doct = dynamic_cast<DocumentM3dText*>(doc);
+	if (!doct)
+		return;
+
+	std::string format = doct->getFileFormat();
+
+	QString fn = Gui::FileDialog::getSaveFileName(Gui::MainWindow::getInstance(), QObject::tr("Save  Document"),
+		QString(), QString::fromLatin1("(*.%1)").arg(QString::fromStdString(format)));
+	if (fn.isEmpty())
+		return;
+	Base::FileInfo fi(fn.toStdString());
+	doc->FileName.setValue(fn.toUtf8());
+	doc->Label.setValue(fi.fileNamePure());
+	doc->Uid.touch();
+	
+	//修改所有窗口的标题
+	auto views = getMDIViews();
+	for (auto iter = views.begin(); iter != views.end(); iter++)
+	{
+		(*iter)->setWindowTitle(QString::fromStdString(fi.fileNamePure()));
+	}
+
+	doc->save();
+}
+
+void DocumentText::initMDIView()
+{
+
+	MDIEditView* edit = new MDIM3dOr2dEditorView(this);
+	auto mainWindow = Gui::MainWindow::getInstance();
+	mainWindow->addWindow(edit);
+}
+
+DocumentPic* CreatePICDocument(App::Document* doc, Gui::Application* app)
+{
+	//判断是否为文本编辑器工程，如果是那么不显示3D视窗
+	if (doc->classID == 1 || doc->classID == 4 )
+	{
+		return new DocumentText(doc,app);
+	}else if (doc->classID == 5) {
+		return new DocumentH5File(doc, app);
+	}else {
+		return new DocumentPic(doc, app);
+	}
+}
+
+DocumentH5File::DocumentH5File(App::Document* pcDocument, Gui::Application* app)
+	:DocumentPic(pcDocument,app)
+{
+
+}

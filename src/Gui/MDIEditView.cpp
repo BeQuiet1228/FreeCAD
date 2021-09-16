@@ -1,4 +1,4 @@
-#include "LuaEditView.h"
+#include "MDIEditView.h"
 #include <QFrame>
 #include <QHBoxLayout>
 #include "Editor/M3dEditor.h"
@@ -11,8 +11,8 @@
 #include <QMdiArea>
 #include "Application.h"
 #include "View3dMDI.h"
-LuaEditView::LuaEditView(Gui::Document* doc, QWidget* parent /*= 0*/)
-	: MDIView(doc, parent, 0)
+MDIEditView::MDIEditView(DocumentPic* doc, QWidget* parent /*= 0*/)
+	: MDIViewPIC(doc, parent)
 {
 	auto frame = new QFrame(this);
 	auto layout = new QHBoxLayout();
@@ -26,12 +26,12 @@ LuaEditView::LuaEditView(Gui::Document* doc, QWidget* parent /*= 0*/)
 	setCentralWidget(frame);
 }
 
-void LuaEditView::setText(const QString& text)
+void MDIEditView::setText(const QString& text)
 {
 	codeEditor->setPlainText(text);
 }
 
-bool LuaEditView::onMsg(const char* pMsg, const char** ppReturn)
+bool MDIEditView::onMsg(const char* pMsg, const char** ppReturn)
 {
 	if(View3dMDI::onMsgChipic(pMsg,ppReturn,getGuiDocument()))
 		return true;
@@ -70,7 +70,7 @@ bool LuaEditView::onMsg(const char* pMsg, const char** ppReturn)
 	return false;
 }
 
-bool LuaEditView::onHasMsg(const char* pMsg) const
+bool MDIEditView::onHasMsg(const char* pMsg) const
 {
 	if (View3dMDI::onHasMsgChipic(pMsg))
 		return true;
@@ -98,12 +98,12 @@ bool LuaEditView::onHasMsg(const char* pMsg) const
 	return false;
 }
 
-void LuaEditView::windowStateChanged(MDIView* mdiVew)
+void MDIEditView::windowStateChanged(MDIView* mdiVew)
 {
 	
 }
 
-bool LuaEditView::save()
+bool MDIEditView::save()
 {
 	auto doc = this->getAppDocument();
 	DocumentM3dText *doct = dynamic_cast<DocumentM3dText*>(doc);
@@ -123,7 +123,7 @@ bool LuaEditView::save()
 	return true;
 }
 
-bool LuaEditView::saveAs()
+bool MDIEditView::saveAs()
 {
 	auto doc = this->getAppDocument();
 	QString path = QString::fromUtf8(doc->FileName.getValue());
@@ -150,21 +150,39 @@ bool LuaEditView::saveAs()
 }
 
 /**
-* @brief LuaEditView::setReadOnly ÉèÖÃ±à¼­Æ÷Ö»¶Á
+* @brief MDIEditView::setReadOnly ÉèÖÃ±à¼­Æ÷Ö»¶Á
 * @param const bool & b
 * @return void
 */
-void LuaEditView::setReadOnly(const bool& b)
+void MDIEditView::setReadOnly(const bool& b)
 {
 	codeEditor->setReadOnly(b);
 }
 
-Cmds LuaEditView::getM3dCmds()
+Cmds MDIM3dOr2dEditorView::getM3dCmds()
 {
 	return codeEditor->getCmds();
 }
 
-void LuaEditView::gotoLine(const int& mun)
+void MDIM3dOr2dEditorView::gotoLine(const int& mun)
 {
 	codeEditor->gotoLine(mun);
 }
+
+MDIM3dOr2dEditorView::MDIM3dOr2dEditorView(DocumentPic* doc, QWidget* parent /*= 0*/)
+	: MDIEditView(doc, parent)
+{
+	connect(codeEditor, SIGNAL(textChanged()), this, SLOT(textChange()));
+}
+
+void MDIM3dOr2dEditorView::textChange()
+{
+	auto doc = this->getAppDocument();
+	QString path = QString::fromUtf8(doc->FileName.getValue());
+	DocumentM3dText* doct = dynamic_cast<DocumentM3dText*>(doc);
+	if (!doct)
+		return;
+	doct->setContent(codeEditor->toPlainText());
+}
+
+#include "moc_MDIEditView.cpp"

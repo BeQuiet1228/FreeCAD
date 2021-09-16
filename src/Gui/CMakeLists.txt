@@ -332,6 +332,7 @@ set(Gui_MOC_HDRS
     picgui_ribbon/PICRibbonButtonGroup.h
 	PlotMDIView.h
 	TreeViewctrl.h
+    MDIEditView.h
 )
 
 fc_wrap_cpp(Gui_MOC_SRCS ${Gui_MOC_HDRS})
@@ -1206,8 +1207,8 @@ SET(FreeCADGui_SRCS
 SET(MDI_SRC
 	ParticleSwarmOptimizationMDI.cpp
 	ParticleSwarmOptimizationMDI.h
-	LuaEditView.h
-	LuaEditView.cpp
+	MDIEditView.h
+	MDIEditView.cpp
 	PlotMDIView.h
 	PlotMDIView.cpp
 	View3dMDI.cpp

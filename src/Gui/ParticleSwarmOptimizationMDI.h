@@ -1,9 +1,9 @@
 #pragma once
-#include "MDIView.h"
+#include "MDIEditView.h"
 #include <QHBoxLayout>
-class ParticleSwarmOptimizationMDI :public Gui::MDIView {
+class ParticleSwarmOptimizationMDI :public MDIViewPIC {
 public:
-	ParticleSwarmOptimizationMDI(Gui::Document* pcDocument, QWidget* parent = 0, Qt::WindowFlags wflags = 0);
+	ParticleSwarmOptimizationMDI(DocumentPic* pcDocument, QWidget* parent = 0);
 	~ParticleSwarmOptimizationMDI();
 
 public:

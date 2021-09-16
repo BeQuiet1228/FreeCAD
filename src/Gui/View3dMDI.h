@@ -14,4 +14,6 @@ public:
 	//处理运行与停止消息
 	static bool onMsgChipic(const char* pMsg, const char** ppReturn,Gui::Document* doc);
 	static bool onHasMsgChipic(const char* pMsg);
+
+
 };
