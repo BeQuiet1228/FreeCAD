@@ -11,6 +11,7 @@ public:
 	static void showSmartControlUI(const std::string& path);
 	static QWidget* creatSmartControlUI(const std::string& path);
 	static void showSmartCalc(const std::string& path);
+	static QWidget* createCalcWidget(const std::string& path);
 public slots:
 	void buttonClicked(int type);
 };

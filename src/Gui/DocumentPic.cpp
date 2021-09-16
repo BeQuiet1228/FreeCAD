@@ -191,7 +191,7 @@ void DocumentPic::showParticleSwarmOptimizationView()
 	*	如果不含有则增加。
 	*/
 	auto mw = Gui::MainWindow::getInstance();
-	auto views = mw->windows();
+	auto views = this->getMDIViews();
 	for (auto iter = views.begin(); iter != views.end(); iter++)
 	{
 		auto psoView = dynamic_cast<ParticleSwarmOptimizationMDI*> (*iter);
@@ -201,6 +201,23 @@ void DocumentPic::showParticleSwarmOptimizationView()
 		return;
 	}
 	ParticleSwarmOptimizationMDI* mdi = new ParticleSwarmOptimizationMDI(this);
+	mdi->init(getTextPath());
+	mw->addWindow(mdi);
+}
+
+void DocumentPic::showProcessingBatchView()
+{
+	auto mw = Gui::MainWindow::getInstance();
+	auto views = this->getMDIViews();
+	for (auto iter = views.begin(); iter != views.end(); iter++)
+	{
+		auto psoView = dynamic_cast<ProcessingBatchView*> (*iter);
+		if (!psoView)
+			continue;
+		mw->setActiveWindow(psoView);
+		return;
+	}
+	ProcessingBatchView* mdi = new ProcessingBatchView(this);
 	mdi->init(getTextPath());
 	mw->addWindow(mdi);
 }

@@ -11,3 +11,11 @@ public:
 	void init(const std::string& path);
 
 };
+
+class ProcessingBatchView :public MDIViewPIC{
+public:
+	ProcessingBatchView(DocumentPic* pcDocument, QWidget* parent = 0);
+	~ProcessingBatchView() = default;
+public:
+	void init(const std::string& path);
+};

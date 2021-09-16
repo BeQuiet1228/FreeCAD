@@ -26,6 +26,8 @@ public:
 	void paralleRunChipic();
 	//显示粒子群优化算法窗口
 	void showParticleSwarmOptimizationView();
+	//显示批处理窗口
+	void showProcessingBatchView();
 
 	//保存与另存为
 	virtual void save();

@@ -19,3 +19,14 @@ void ParticleSwarmOptimizationMDI::init(const std::string& path)
 }
 
 
+ProcessingBatchView::ProcessingBatchView(DocumentPic* pcDocument, QWidget* parent /*= 0*/)
+	:MDIViewPIC(pcDocument,parent)
+{
+
+}
+
+void ProcessingBatchView::init(const std::string& path)
+{
+	QWidget* w = SmartContorlInterface::createCalcWidget(path);
+	setCentralWidget(w);
+}

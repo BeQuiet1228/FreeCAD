@@ -51,6 +51,10 @@ bool View3dMDI::onMsgChipic(const char* pMsg, const char** ppReturn, Gui::Docume
 		picDoc->showParticleSwarmOptimizationView();
 		return true;
 	}
+	else if (strcmp("showProcessingBatchView", pMsg) == 0) {
+		picDoc->showProcessingBatchView();
+		return true;
+	}
 
 	return false;
 }
@@ -68,6 +72,11 @@ bool View3dMDI::onHasMsgChipic(const char* pMsg)
 			return false;
 		return true;
 	}else if (strcmp("showPSOView", pMsg) == 0) {
+		auto control = ContorlInterface::GetInstance();
+		if (control->hasChipicRuning())
+			return false;
+		return true;
+	}else if (strcmp("showProcessingBatchView", pMsg) == 0) {
 		auto control = ContorlInterface::GetInstance();
 		if (control->hasChipicRuning())
 			return false;
