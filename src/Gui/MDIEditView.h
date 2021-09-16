@@ -11,10 +11,12 @@
 class MDIViewPIC :public Gui::MDIView{
 public:
 	MDIViewPIC(DocumentPic* doc, QWidget* parent = 0)
-		:MDIView(doc, parent) {};
+		:MDIView(doc, parent) {
+	};
+	~MDIViewPIC() = default;
 
 public:
-	DocumentPic* getDcumengPic() {
+	DocumentPic* getDocumengPic() const{
 		auto doc = getGuiDocument();
 		auto docPic = dynamic_cast<DocumentPic*>(doc);
 		if (!docPic)
@@ -35,11 +37,6 @@ public:
 	bool onHasMsg(const char* pMsg) const override;
 
 	void windowStateChanged(MDIView* mdiVew);
-
-	//响应保存函数
-	bool save();
-	bool saveAs();
-
 	//设置编辑器只读
 	void setReadOnly(const bool& b);
 

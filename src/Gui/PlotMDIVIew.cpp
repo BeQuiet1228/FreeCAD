@@ -46,9 +46,6 @@ namespace Gui{
 
 	bool PlotMDIView::onMsg(const char* pMsg, const char** ppReturn)
 	{
-		if (View3dMDI::onMsgChipic(pMsg, ppReturn, getGuiDocument()))
-			return true;
-
 		if (strcmp("Undo", pMsg) == 0)
 		{
 			plot->undo();
@@ -70,7 +67,8 @@ namespace Gui{
 		else if (strcmp("AutoMax", pMsg) == 0) {
 			plot->autoMaxRender();
 		}
-		return false;
+
+		return getDocumengPic()->onMsg(pMsg, ppReturn);
 	}
 
 	bool PlotMDIView::onHasMsg(const char* pMsg) const
@@ -98,7 +96,8 @@ namespace Gui{
 				return false;
 			return true;
 		}
-		return false;
+
+		return getDocumengPic()->onHasMsg(pMsg);
 	}
 
 }

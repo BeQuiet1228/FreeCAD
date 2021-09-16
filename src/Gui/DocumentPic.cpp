@@ -232,6 +232,73 @@ void DocumentPic::saveAs()
 	Document::saveAs();
 }
 
+bool DocumentPic::onMsg(const char* pMsg, const char** ppReturn)
+{
+	if (strcmp("Save", pMsg) == 0) {
+		this->save();
+		return true;
+	}
+	else if (strcmp("SaveAs", pMsg) == 0) {
+		this->saveAs();
+		return true;
+	}else if (strcmp("RunChipic", pMsg) == 0) {
+		this->runChipic();
+		return true;
+	}
+	else if (strcmp("StopChipic", pMsg) == 0) {
+		this->stopChipic();
+		return true;
+	}
+	else if (strcmp("ParalleRunChipic", pMsg) == 0) {
+		this->paralleRunChipic();
+		return true;
+	}
+	else if (strcmp("showPSOView", pMsg) == 0) {
+		this->showParticleSwarmOptimizationView();
+		return true;
+	}
+	else if (strcmp("showProcessingBatchView", pMsg) == 0) {
+		this->showProcessingBatchView();
+		return true;
+	}
+
+	return false;
+}
+
+bool DocumentPic::onHasMsg(const char* pMsg) const
+{
+	if (strcmp("Save", pMsg) == 0) {
+		return true;
+	}
+	else if (strcmp("SaveAs", pMsg) == 0) {
+		return true;
+	}else if (strcmp("RunChipic", pMsg) == 0) {
+		auto control = ContorlInterface::GetInstance();
+		if (control->hasAutoChipicRuning())
+			return false;
+		return true;
+	}
+	else if (strcmp("ParalleRunChipic", pMsg) == 0) {
+		auto control = ContorlInterface::GetInstance();
+		if (control->hasChipicRuning())
+			return false;
+		return true;
+	}
+	else if (strcmp("showPSOView", pMsg) == 0) {
+		auto control = ContorlInterface::GetInstance();
+		if (control->hasChipicRuning())
+			return false;
+		return true;
+	}
+	else if (strcmp("showProcessingBatchView", pMsg) == 0) {
+		auto control = ContorlInterface::GetInstance();
+		if (control->hasChipicRuning())
+			return false;
+		return true;
+	}
+	return false;
+}
+
 DocumentText::DocumentText(App::Document* pcDocument, Gui::Application* app)
 	:DocumentPic(pcDocument,app)
 {
@@ -248,8 +315,7 @@ void DocumentText::save()
 	if (doct->isSaved())
 	{
 		doct->save();
-	}
-	else {
+	}else {
 		saveAs();
 	}
 	Gui::Application::Instance->ToSubItemTree();
@@ -309,4 +375,9 @@ DocumentH5File::DocumentH5File(App::Document* pcDocument, Gui::Application* app)
 	:DocumentPic(pcDocument,app)
 {
 
+}
+
+bool DocumentH5File::onHasMsg(const char* pMsg) const
+{
+	return false;
 }

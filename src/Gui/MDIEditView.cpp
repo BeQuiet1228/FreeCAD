@@ -33,9 +33,6 @@ void MDIEditView::setText(const QString& text)
 
 bool MDIEditView::onMsg(const char* pMsg, const char** ppReturn)
 {
-	if(View3dMDI::onMsgChipic(pMsg,ppReturn,getGuiDocument()))
-		return true;
-
 	if (strcmp("Undo", pMsg) == 0) {
 		codeEditor->undo();
 		return true;
@@ -43,12 +40,6 @@ bool MDIEditView::onMsg(const char* pMsg, const char** ppReturn)
 	else  if (strcmp("Redo", pMsg) == 0) {
 		codeEditor->redo();
 		return true;
-	}
-	else if (strcmp("Save", pMsg) == 0) {
-		return save();
-	}
-	else if (strcmp("SaveAs", pMsg) == 0) {
-		return saveAs();
 	}else if (strcmp("SaveCopy", pMsg) == 0) {
 		
 		return true;
@@ -67,22 +58,15 @@ bool MDIEditView::onMsg(const char* pMsg, const char** ppReturn)
 		return true;
 	}
 
-	return false;
+	return getDocumengPic()->onMsg(pMsg, ppReturn);
 }
 
 bool MDIEditView::onHasMsg(const char* pMsg) const
 {
-	if (View3dMDI::onHasMsgChipic(pMsg))
-		return true;
-
 	if (strcmp("Undo", pMsg) == 0) {
 		return true;
 	}
 	else  if (strcmp("Redo", pMsg) == 0) {
-		return true;
-	}else if (strcmp("Save", pMsg) == 0) {
-		return true;
-	}else if (strcmp("SaveAs", pMsg) == 0) {
 		return true;
 	}else if (strcmp("SaveCopy", pMsg) == 0) {
 		return true;
@@ -95,58 +79,12 @@ bool MDIEditView::onHasMsg(const char* pMsg) const
 	}else if (strcmp("Findm", pMsg) == 0){
 		return true;
 	}
-	return false;
+	return getDocumengPic()->onHasMsg(pMsg);
 }
 
 void MDIEditView::windowStateChanged(MDIView* mdiVew)
 {
 	
-}
-
-bool MDIEditView::save()
-{
-	auto doc = this->getAppDocument();
-	DocumentM3dText *doct = dynamic_cast<DocumentM3dText*>(doc);
-	if (!doct)
-	{
-		Gui::Application::Instance->activeDocument()->save();
-		return true;
-	}
-	doct->setContent(this->codeEditor->toPlainText());
-	if (doct->isSaved())
-	{
-		doct->save();
-	}else{
-		saveAs();
-	}
-	Gui::Application::Instance->ToSubItemTree();
-	return true;
-}
-
-bool MDIEditView::saveAs()
-{
-	auto doc = this->getAppDocument();
-	QString path = QString::fromUtf8(doc->FileName.getValue());
-	DocumentM3dText *doct = dynamic_cast<DocumentM3dText*>(doc);
-	if (!doct)
-	{
-		Gui:: Application::Instance->activeDocument()->saveAs();
-		return false;
-	}
-		
-	std::string format = doct->getFileFormat();
-
-	QString fn = Gui::FileDialog::getSaveFileName(Gui::MainWindow::getInstance(), QObject::tr("Save  Document"),
-		QString(), QString::fromLatin1("(*.%1)").arg(QString::fromStdString(format)));
-	if (fn.isEmpty())
-		return false;
-	Base::FileInfo fi(fn.toStdString());
-	doc->FileName.setValue(fn.toUtf8());
-	doc->Label.setValue(fi.fileNamePure());
-	doc->Uid.touch();
-	setWindowTitle(QString::fromStdString(fi.fileNamePure()));
-	doc->save();
-	return true;
 }
 
 /**
@@ -184,5 +122,7 @@ void MDIM3dOr2dEditorView::textChange()
 		return;
 	doct->setContent(codeEditor->toPlainText());
 }
+
+
 
 #include "moc_MDIEditView.cpp"

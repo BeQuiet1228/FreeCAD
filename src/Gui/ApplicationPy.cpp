@@ -266,7 +266,7 @@ PyObject* Application::sDisplayText(PyObject* self, PyObject* args, PyObject* kw
 	std::string str = std::string(text);
     auto guiDoc = Instance->activeDocument();
     auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
-    if (picDoc)
+    if (!picDoc)
         Py_Return;
     auto views = guiDoc->getMDIViews();
     for (auto iter = views.begin(); iter != views.end(); iter++) {

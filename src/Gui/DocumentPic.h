@@ -32,6 +32,10 @@ public:
 	//保存与另存为
 	virtual void save();
 	virtual void saveAs();
+
+	//处理一些通用消息
+	virtual bool onMsg(const char* pMsg, const char** ppReturn);
+	virtual bool onHasMsg(const char* pMsg) const ;
 };
 
 class DocumentText :public DocumentPic {
@@ -54,6 +58,8 @@ public:
 
 	void  save() override {};
 	void saveAs() override {};
+
+	bool onHasMsg(const char* pMsg) const;
 };
 
 DocumentPic* CreatePICDocument(App::Document* doc,Gui::Application* app);
