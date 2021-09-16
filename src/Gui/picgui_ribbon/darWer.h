@@ -17,6 +17,8 @@ public:
 	void setSize(QSize& size);
 	QSize getSize() { return mSize; }
 	QList<QAction*> get_action_all();
+protected Q_SLOTS:
+	void btnClicked();
 private:
 	QBoxLayout* mQBoxLayout;
 	QString Title;

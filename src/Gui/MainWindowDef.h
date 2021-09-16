@@ -88,8 +88,6 @@ private:
 	void changeCursor(const QPoint& pos);
 	//相应拖拽的放大缩小
 	void changeSize(const QPoint& pos);
-	void ToDrawer(QSize& size);
-
 public:
 	//添加中心区域的窗口
 	void addCenterWidget(QWidget *widget);

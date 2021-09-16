@@ -405,8 +405,8 @@ SET(Gui_UIC_SRCS
     TaskView/TaskSelectLinkProperty.ui
     MainWindowDef.ui
 	picgui_ribbon/MainWindow.ui
-    picgui_ribbon/PICRibbonButtonGroup.ui
-    picgui_ribbon/PICRibbonTabContent.ui
+        picgui_ribbon/PICRibbonButtonGroup.ui
+        picgui_ribbon/PICRibbonTabContent.ui
 )
 
 SET(Gui_RES_SRCS

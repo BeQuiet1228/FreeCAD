@@ -39,7 +39,6 @@ public:
 	//判断是否已有该action
 	virtual bool hasAction(const QAction* action){ return true; };
 	//新增，2021-6-10,用于进行缩放判断
-	virtual void setScale(QSize& size,bool){}
 	virtual void setParentWidget(MainWindowDef*){}
 };
 class TabTest :public TabWidgetInterFace{

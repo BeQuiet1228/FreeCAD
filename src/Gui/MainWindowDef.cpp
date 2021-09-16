@@ -197,6 +197,7 @@ void MainWindowDef::titleBarMove(QPoint pos,QPoint CustomPos)
 	double mWidth = this->width();
 	if (isCross)
 	{
+		//当鼠标越界的情况，根据百分比移动
 		QPoint movePos;
 		movePos.setY(wPos.y());
 		movePos.setX(wPos.x() - this->width() * mPre);
@@ -313,22 +314,13 @@ void MainWindowDef::changeSize(const QPoint& pos)
 	switch (cursorState)
 	{
 	case BOTTOM:
-	{
 		this->resize(this->width(), this->height() + h);
-		//qDebug("Bottom");
-	}
 		break;
 	case RIGHT:
-	{
 		this->resize(this->width() + w, this->height());
-		//qDebug("RIGHT");
-	}
 		break;
 	case RIGHT_BOTTOM:
-	{
 		this->resize(this->width() + w, this->height() + h);
-		//qDebug("RIGHT_BOTTOM");
-	}
 		break;
 	default:
 		break;
@@ -358,7 +350,6 @@ void MainWindowDef::addTitleShortcutAction(QAction* action)
 */
 void MainWindowDef::showMax()
 {
-	//qDebug() << "Show Max";
 	oldSize = this->size();
 	oldPoint = this->pos();
 	QPoint centerPos = this->geometry().center();

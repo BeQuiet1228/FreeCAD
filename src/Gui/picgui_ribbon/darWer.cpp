@@ -53,6 +53,7 @@ void darWer::addButton(QToolButton* button)
 		)
 	);
 	mQBoxLayout->addWidget(button);
+	connect(button,SIGNAL(clicked()),this,SLOT(btnClicked()));
 }
 void darWer::setTitle(const QString& title)
 {
@@ -71,5 +72,10 @@ QList<QAction*> darWer::get_action_all()
 		list.append(list_b.at(i)->actions());
 	}
 	return list;
+}
+void darWer::btnClicked()
+{
+	QToolButton* btn = dynamic_cast<QToolButton*>(sender());
+	hide();
 }
 #include"picgui_ribbon/moc_darWer.cpp"
