@@ -17,6 +17,8 @@ public:
     ~InsertParamDialog();
     QString getName();
     int getRow();
+    void slotSpinBox(int);//避免spinbox大于或者小于1
+    int row_sb_lastNum = 1;
 
 private:
     QString name;

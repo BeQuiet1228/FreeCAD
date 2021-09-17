@@ -7,10 +7,10 @@ DlgChangeNameDialog::DlgChangeNameDialog(QWidget* parent)
     , ui(new Ui::DlgChangeNameDialog)
 {
     ui->setupUi(this);
-    //ui->pre_name->setEnabled(false);
-    /*ui->pre_name->setText(QString::fromStdString(cur_name));
-    ui->after_name->setText(QString::fromStdString(cur_name));*/
-    QObject::connect(this->ui->pb_ok, SIGNAL(clicked(bool)), this, SLOT(slotok()));
+    QObject::connect(this->ui->pb_allReplace, SIGNAL(clicked(bool)), this, SLOT(slotAllreplace()));
+    QObject::connect(this->ui->pb_replace, SIGNAL(clicked(bool)), this, SLOT(slotReplace()));
+    QObject::connect(this->ui->pb_last, SIGNAL(clicked(bool)), this, SLOT(slotLast()));
+    QObject::connect(this->ui->pb_next, SIGNAL(clicked(bool)), this, SLOT(slotNext()));
     QObject::connect(this->ui->pb_cancel, SIGNAL(clicked(bool)), this, SLOT(slotCancel()));
 }
 
@@ -19,17 +19,32 @@ DlgChangeNameDialog::~DlgChangeNameDialog()
     delete ui;
 }
 
-void DlgChangeNameDialog::slotok()
+void DlgChangeNameDialog::slotAllreplace()
 {
     this->l_name = ui->pre_name->text();
     this->n_name = ui->after_name->text();
-    this->isChanged = 1;
-    this->close();
+}
+
+void DlgChangeNameDialog::slotReplace()
+{
+    this->l_name = ui->pre_name->text();
+    this->n_name = ui->after_name->text();
+}
+
+void DlgChangeNameDialog::slotLast()
+{
+    this->l_name = ui->pre_name->text();
+    this->n_name = ui->after_name->text();
+}
+
+void DlgChangeNameDialog::slotNext()
+{
+    this->l_name = ui->pre_name->text();
+    this->n_name = ui->after_name->text();
 }
 
 void DlgChangeNameDialog::slotCancel()
 {
-    this->isChanged = 0;
     this->close();
 }
 
@@ -41,5 +56,25 @@ QString DlgChangeNameDialog::getLastName()
 QString DlgChangeNameDialog::getAfterName()
 {
     return this->n_name;
+}
+
+QPushButton* DlgChangeNameDialog::returnAllreplaceBtn() {
+    return this->ui->pb_allReplace;
+}
+
+QPushButton* DlgChangeNameDialog::returnReplaceBtn() {
+    return this->ui->pb_replace;
+}
+
+QPushButton* DlgChangeNameDialog::returnLastBtn() {
+    return this->ui->pb_last;
+}
+
+QPushButton* DlgChangeNameDialog::returnNextBtn() {
+    return this->ui->pb_next;
+}
+
+QPushButton* DlgChangeNameDialog::returnCloseBtn() {
+    return this->ui->pb_cancel;
 }
 

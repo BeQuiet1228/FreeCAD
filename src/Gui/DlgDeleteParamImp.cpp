@@ -11,7 +11,6 @@ DeleteParamDialog::DeleteParamDialog(std::vector<std::pair<std::string, std::str
     this->_param_list = param_list;
     this->ui->sb_row->setValue(1);//序列号文本框初始为1
     this->ui->le_name->setText(QString::fromStdString(this->_param_list[0].first));
-    this->ui->sb_row->setMaximum(param_list.size());
     this->isValid = false;
     this->isNeedToDelete = false;
     this->paramName = std::string("");
@@ -21,7 +20,6 @@ DeleteParamDialog::DeleteParamDialog(std::vector<std::pair<std::string, std::str
     QObject::connect(this->ui->pb_cancel, SIGNAL(clicked(bool)), this, SLOT(slotCancel()));
     QObject::connect(this->ui->le_name, SIGNAL(textChanged(const QString&)), this, SLOT(slotTextChanged()));
     QObject::connect(this->ui->sb_row, SIGNAL(valueChanged(int)), this, SLOT(slotSpinBox(int)));//为sb_row提供connect函数
-
 }
 
 DeleteParamDialog::~DeleteParamDialog() {
@@ -94,5 +92,10 @@ void DeleteParamDialog::slotSpinBox(int i) {
         i = this->sb_row_lastNum;
         this->ui->sb_row->setValue(i);
     }
+    this->ui->le_name->setText(QString::fromStdString(this->_param_list[i - 1].first));
+}
+
+void DeleteParamDialog::deleteSb_row(int i) {
+    this->ui->sb_row->setValue(i);
     this->ui->le_name->setText(QString::fromStdString(this->_param_list[i - 1].first));
 }

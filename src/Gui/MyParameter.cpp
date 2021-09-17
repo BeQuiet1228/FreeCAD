@@ -34,7 +34,7 @@ MyParameter::MyParameter(QWidget* parent) : QWidget(parent) {
     this->resize(800, 600);
     tableWidget = new QTableWidget(this);
     tableWidget->setObjectName(QString::fromUtf8("tableWidget"));
-    tableWidget->setGeometry(QRect(0, 0, 800, 800));
+    tableWidget->setGeometry(QRect(100, 500, 800, 800));
     //tableWidget->horizontalHeader().setStretchLastSection(true);
     tableWidget->setColumnCount(5);
     QStringList headerLabels = (QStringList() << QString::fromStdString("name")
@@ -46,8 +46,12 @@ MyParameter::MyParameter(QWidget* parent) : QWidget(parent) {
     tableWidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     this->recoveryData();
 
+    //右键属性菜单
+    tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(this->tableWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(slotCustomContextMenu(QPoint)));
+
     QObject::connect(this->tableWidget, SIGNAL(cellChanged(int, int)), this, SLOT(cellDoubleClicked(int, int)));
-    QObject::connect(this->tableWidget, SIGNAL(cellDoubleClicked(int, int)), this, SLOT(autoPopChangeDialog()));
+    //QObject::connect(this, SIGNAL(visibilityChanged(bool)), this, SLOT(updateM3D()));
 
     this->addNewLine(0);
 
@@ -81,7 +85,7 @@ MyParameter::MyParameter(QWidget* parent) : QWidget(parent) {
 
     updateM3D_btn = new QPushButton(this);
     updateM3D_btn->setObjectName(QString::fromUtf8("updateM3D_btn"));
-    updateM3D_btn->setText(QString::fromUtf8("update M3D"));
+    updateM3D_btn->setText(QString::fromUtf8("OK"));
     QObject::connect(this->updateM3D_btn, SIGNAL(clicked(bool)), this, SLOT(updateM3D()));
 
     gl->addWidget(batch_btn, 1, 0, 1, 1);
@@ -549,8 +553,8 @@ void MyParameter::importTextInterFace() {
     text_import->show();
     QObject::connect(dynamic_cast<Widget*>(text_import)->returnBtn(), SIGNAL(clicked(bool)),
         this, SLOT(importText()));
-    /*QObject::connect(dynamic_cast<Widget*>(text_import)->returnToolBtn(), SIGNAL(clicked(bool)),
-        this, SLOT(findStringToReplace()));*/
+    QObject::connect(dynamic_cast<Widget*>(text_import)->returnReplaceBtn(), SIGNAL(triggered()),
+        this, SLOT(findStringToReplace()));
 }
 
 //void MyParameter::importText() {
@@ -667,8 +671,10 @@ void MyParameter::recoveryData() {
     }
 }
 
+//插入变量
 void MyParameter::insertParam() {
     this->insert_param_dlg = new InsertParamDialog();
+    this->insert_param_dlg->slotSpinBox(getNum);
     this->insert_param_dlg->exec();
     QString name = this->insert_param_dlg->getName();
     int row = this->insert_param_dlg->getRow();
@@ -676,7 +682,8 @@ void MyParameter::insertParam() {
         // 变量名无效，无法插入变量，将错误信息反馈给用户
         return;
     }
-    if (row >= 0 && row < this->tableWidget->rowCount() - 1) {
+    if (row >= 0 && row <= this->tableWidget->rowCount() - 1) {
+        row = row + this->insertDirection;
         this->tableWidget->insertRow(row);
         // 创建新的item对象
         QTableWidgetItem* item_name = new QTableWidgetItem();
@@ -712,6 +719,7 @@ void MyParameter::deleteParam() {
         allParamName.push_back(this->tableWidget->item(i, 0)->text().toStdString());
     }
     this->delete_param_dlg = new DeleteParamDialog(this->getAllOrderedParam());
+    this->delete_param_dlg->deleteSb_row(getNum);
     this->delete_param_dlg->inputAllParamName(allParamName);
     this->delete_param_dlg->inputAllOrderedParam(this->getAllOrderedParam());
     this->delete_param_dlg->exec();
@@ -751,7 +759,7 @@ std::vector<std::pair<std::string, std::string>> MyParameter::getAllOrderedParam
 void MyParameter::changeParamName() {
     std::vector<std::pair<std::string, std::string>> apo = this->getAllOrderedParam();  // 所有有序的变量名
     ChangeParamNameDialog* dlg_cpn = new ChangeParamNameDialog(apo);
-    dlg_cpn->changeSb_row(getchangeNum);
+    dlg_cpn->changeSb_row(getNum);
     dlg_cpn->exec();
     std::string new_name = dlg_cpn->new_name;
     if (new_name.empty()) return;
@@ -814,31 +822,153 @@ void MyParameter::updateM3D() {
     if (GetApplication().getActiveDocument()->classID == 2) {
         Base::InterpreterSingleton python;
         python.runString("FreeCADGui.runCommand('CreateM3D_new')");
+        python.runString("FreeCADGui.runCommand('Std_My_Parameter')");
     }
     else if (GetApplication().getActiveDocument()->classID == 3) {
         Base::InterpreterSingleton python;
         python.runString("FreeCADGui.runCommand('CreateM2D')");
+        python.runString("FreeCADGui.runCommand('Std_My_Parameter')");
     }
 }
 
 //为文本框增添替换功能
-//void MyParameter::findStringToReplace() {
-//    std::vector<std::vector<std::string>> p = this->batchProcessing(dynamic_cast<Widget*>(text_import)->returnStr().toStdString());
-//    DlgChangeNameDialog* replace_name = new DlgChangeNameDialog();
-//    replace_name->exec();
-//    std::string lastName = replace_name->getLastName().toStdString();
-//    std::string afterName = replace_name->getAfterName().toStdString();
-//
-//    if (replace_name->isChanged == 1 && lastName != "" && afterName != "") {
-//        for (int i = 0; i < p.size(); ++i) {
-//            if (std::regex_search(p[i][0], std::regex(lastName))) {
-//                dynamic_cast<Widget*>(text_import)->replaceString(p[i][0], lastName, afterName);
-//            }
-//        }
-//    }
-//        
-//    delete replace_name;
-//}
+void MyParameter::findStringToReplace() {
+    replace_name = new DlgChangeNameDialog();
+    QTextCursor cursor = dynamic_cast<Widget*>(text_import)->ui->textEdit->textCursor();
+    cursor.movePosition(QTextCursor::Start);
+    dynamic_cast<Widget*>(text_import)->ui->textEdit->setTextCursor(cursor);
+    //replace_name->setModal(true);//锁定当前窗口可用，其余不能点击
+    replace_name->setWindowFlags(Qt::Widget | Qt::WindowStaysOnTopHint);
+    replace_name->show();
+    replaceBtnisEnable(0);
+    QObject::connect(replace_name->returnAllreplaceBtn(), SIGNAL(clicked(bool)),
+        this, SLOT(replaceAllString()));
+    QObject::connect(replace_name->returnReplaceBtn(), SIGNAL(clicked(bool)),
+        this, SLOT(replaceOneString()));
+    QObject::connect(replace_name->returnLastBtn(), SIGNAL(clicked(bool)),
+        this, SLOT(findLastFromLastName()));
+    QObject::connect(replace_name->returnNextBtn(), SIGNAL(clicked(bool)),
+        this, SLOT(findNextFromLastName()));
+    QObject::connect(replace_name->returnCloseBtn(), SIGNAL(clicked(bool)),
+        this, SLOT(closeReplaceDlg()));
+}
+
+//在TextEdit为myparameter提供replaceString的接口
+void MyParameter::replaceAllString() {
+    QTextCursor cursor = dynamic_cast<Widget*>(text_import)->ui->textEdit->textCursor();
+    cursor.movePosition(QTextCursor::End);
+    dynamic_cast<Widget*>(text_import)->ui->textEdit->setTextCursor(cursor);//移动光标到文本末尾
+    this->lastName = dynamic_cast<DlgChangeNameDialog*>(replace_name)->getLastName().toStdString();
+    this->afterName = dynamic_cast<DlgChangeNameDialog*>(replace_name)->getAfterName().toStdString();
+
+    while (dynamic_cast<Widget*>(text_import)->ui->textEdit->find(QString::fromStdString(lastName), 
+        QTextDocument::FindBackward | QTextDocument::FindCaseSensitively)) {//查找后一个并且区分大小写
+        dynamic_cast<Widget*>(text_import)->ui->textEdit->insertPlainText(QString::fromUtf8(afterName.c_str()));
+    }
+    cursor.movePosition(QTextCursor::End);
+    dynamic_cast<Widget*>(text_import)->ui->textEdit->setTextCursor(cursor);
+}
+
+//在TextEdit为myparameter提供replaceOneString的接口
+void MyParameter::replaceOneString() {
+    QTextCursor cursor = dynamic_cast<Widget*>(text_import)->ui->textEdit->textCursor();
+    this->afterName = dynamic_cast<DlgChangeNameDialog*>(replace_name)->getAfterName().toStdString();
+    if (this->lastName == cursor.selectedText().toStdString()) {
+        dynamic_cast<Widget*>(text_import)->ui->textEdit->insertPlainText(QString::fromUtf8(this->afterName.c_str()));
+        replaceBtnisEnable(0);
+    }
+}
+
+//找到对话框内填入的string，标记为高亮
+void MyParameter::findLastFromLastName() {
+    this->lastName = dynamic_cast<DlgChangeNameDialog*>(replace_name)->getLastName().toStdString();
+
+    if (dynamic_cast<Widget*>(text_import)->ui->textEdit->find(QString::fromStdString(this->lastName), QTextDocument::FindBackward | QTextDocument::FindCaseSensitively)) {//查找后一个
+        QPalette palette = dynamic_cast<Widget*>(text_import)->ui->textEdit->palette();// 查找到后高亮显示
+        palette.setColor(QPalette::Highlight, palette.color(QPalette::Active, QPalette::Highlight));
+        dynamic_cast<Widget*>(text_import)->ui->textEdit->setPalette(palette);
+        replaceBtnisEnable(1);
+        return;
+    }
+    replaceBtnisEnable(0);
+    QTextCursor cursor = dynamic_cast<Widget*>(text_import)->ui->textEdit->textCursor();
+    cursor.movePosition(QTextCursor::Start);
+    dynamic_cast<Widget*>(text_import)->ui->textEdit->setTextCursor(cursor);//移动光标到文本末尾
+}
+
+void MyParameter::findNextFromLastName() {
+    this->lastName = dynamic_cast<DlgChangeNameDialog*>(replace_name)->getLastName().toStdString();
+
+    if (dynamic_cast<Widget*>(text_import)->ui->textEdit->find(QString::fromStdString(this->lastName), QTextDocument::FindCaseSensitively)) {//查找后一个
+        QPalette palette = dynamic_cast<Widget*>(text_import)->ui->textEdit->palette();// 查找到后高亮显示
+        palette.setColor(QPalette::Highlight, palette.color(QPalette::Active, QPalette::Highlight));
+        dynamic_cast<Widget*>(text_import)->ui->textEdit->setPalette(palette);
+        replaceBtnisEnable(1);//找到对应string打开替换按钮
+        return;
+    }
+    replaceBtnisEnable(0);
+    QTextCursor cursor = dynamic_cast<Widget*>(text_import)->ui->textEdit->textCursor();
+    cursor.movePosition(QTextCursor::Start);
+    dynamic_cast<Widget*>(text_import)->ui->textEdit->setTextCursor(cursor);//移动光标到文本末尾
+}
+
+//替换按钮的显示和隐藏，默认为隐藏
+void MyParameter::replaceBtnisEnable(bool isfind) {
+    if (isfind) 
+        replace_name->returnReplaceBtn()->setEnabled(true);
+    else
+        replace_name->returnReplaceBtn()->setEnabled(false);
+}
+
+
+void MyParameter::closeReplaceDlg(){
+    delete replace_name;
+}
+
+//为tableWidget的右键增添菜单栏
+void MyParameter::slotCustomContextMenu(const QPoint pos) {
+    //获取到当前的row和col
+    int row = this->tableWidget->currentItem()->row();
+    int col = this->tableWidget->currentItem()->column();
+    if (col == 0 && row < this->tableWidget->rowCount() - 1) {
+        this->getNum = row + 1;
+
+        //先为菜单栏添加需要的菜单选项
+        QMenu* dock_menu = new QMenu(this->tableWidget);
+        QAction* change_act = new QAction(QString::fromUtf8("Change Para"), this->tableWidget);
+        QAction* delete_act = new QAction(QString::fromUtf8("Delete Para"), this->tableWidget);
+        QMenu* insert_act = new QMenu(QString::fromUtf8("Insert Para"), this->tableWidget);
+        QAction* insert_child1 = new QAction(QString::fromUtf8("Up into"), this->tableWidget);
+        QAction* insert_child2 = new QAction(QString::fromUtf8("Down into"), this->tableWidget);
+
+        dock_menu->addAction(change_act);
+        dock_menu->addAction(delete_act);
+        dock_menu->addMenu(insert_act);
+        insert_act->addAction(insert_child1);
+        insert_act->addAction(insert_child2);
+
+        dock_menu->move(cursor().pos());
+        dock_menu->show();
+
+        connect(change_act, SIGNAL(triggered()), SLOT(changeParamName()));
+        connect(delete_act, SIGNAL(triggered()), SLOT(deleteParam()));
+        connect(insert_child1, SIGNAL(triggered()), SLOT(insertParaDirectionToUp()));//向上行数减一
+        connect(insert_child2, SIGNAL(triggered()), SLOT(insertParaDirectionToDown()));//向下行数不变
+    }
+}
+
+//用户选中向上插入参数
+void MyParameter::insertParaDirectionToUp() {
+    this->insertDirection = -1;
+    this->insertParam();
+}
+
+//用户选中向下插入参数
+void MyParameter::insertParaDirectionToDown() {
+    this->insertDirection = 0;
+    this->insertParam();
+}
+
 
 Widget::Widget(QWidget* parent)
     : QWidget(parent)
@@ -858,9 +988,9 @@ QPushButton* Widget::returnBtn() {
 }
 
 //test_zz为replaceAll增加控件
-//QToolButton* Widget::returnToolBtn() {
-//    return this->ui->replaceButton;
-//}
+QAction* Widget::returnReplaceBtn() {
+    return this->ui->replaceAction;
+}
 
 QString Widget::returnStr() {
     return this->ui->textEdit->toPlainText();
@@ -886,8 +1016,6 @@ void Widget::printError(int i) {
     QTextCharFormat fmt;
     fmt.setForeground(QColor(Qt::red));
     cursor.mergeCharFormat(fmt);
-    //cursor.clearSelection(); //撤销选中
-    //cursor.movePosition(QTextCursor::EndOfLine);  //cursor和anchor均移至末尾
 }
 
 void Widget::findStringToHilight(std::string findText) {
@@ -898,33 +1026,10 @@ void Widget::findStringToHilight(std::string findText) {
     QTextCursor cursor = ui->textEdit->textCursor();
     cursor.movePosition(QTextCursor::End);
     ui->textEdit->setTextCursor(cursor);
-    if (ui->textEdit->find(QString::fromStdString(findText), QTextDocument::FindBackward)) {//查找后一个
+    if (ui->textEdit->find(QString::fromStdString(findText), QTextDocument::FindBackward | QTextDocument::FindCaseSensitively)) {//查找后一个
         QPalette palette = ui->textEdit->palette();// 查找到后高亮显示
         palette.setColor(QPalette::Highlight, palette.color(QPalette::Active, QPalette::Highlight));
         ui->textEdit->setPalette(palette);
-    }
-}
-
-//在TextEdit为myparameter提供replaceString的接口
-//void Widget::replaceString(std::string findText, std::string lastName, std::string afterName) {
-//    QTextCursor cursor = ui->textEdit->textCursor();
-//    cursor.movePosition(QTextCursor::End);
-//    ui->textEdit->setTextCursor(cursor);
-//    std::string ss = regex_replace(findText, std::regex(lastName), afterName);
-//    while (ui->textEdit->find(QString::fromStdString(findText), QTextDocument::FindBackward)) {//查找后一个
-//        ui->textEdit->insertPlainText(QString::fromUtf8(ss.c_str()));
-//    }
-//    cursor.movePosition(QTextCursor::End);
-//    ui->textEdit->setTextCursor(cursor);
-//}
-
-//当用户选中已存在参数的name列时，自动弹出changename进行更改name
-void MyParameter::autoPopChangeDialog() {
-    int row = this->tableWidget->currentItem()->row();
-    int col = this->tableWidget->currentItem()->column();
-    if (col == 0 && row < this->tableWidget->rowCount() - 1) {
-        this->getchangeNum = row + 1;
-        changeParamName();
     }
 }
 

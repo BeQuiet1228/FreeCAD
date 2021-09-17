@@ -17,11 +17,20 @@ public:
 
     QString getAfterName();
     QString getLastName();
-    int isChanged = 0;
+    QPushButton* returnAllreplaceBtn();
+    QPushButton* returnReplaceBtn();
+    QPushButton* returnLastBtn();
+    QPushButton* returnNextBtn();
+    QPushButton* returnCloseBtn();
 
 private Q_SLOTS:
-    void slotok();
     void slotCancel();
+    //为widget添加4种功能
+    void slotAllreplace();
+    void slotReplace();
+    void slotLast();
+    void slotNext();
+    
 
 private:
     QString l_name;
