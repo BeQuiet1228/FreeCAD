@@ -77,10 +77,10 @@
 #include "App/DocumentObject.h"
 #include "Gui\DockWindowManager.h"
 #include "DocumentPic.h"
-#include "GuiCommand.h"
+#include <App/Application.h>
 using namespace Gui;
 
-
+static QDockWidget* MyparamDockWidget;
 //===========================================================================
 // Std_Open
 //===========================================================================
@@ -88,22 +88,22 @@ using namespace Gui;
 DEF_STD_CMD_A(StdCmdOpen);
 
 StdCmdOpen::StdCmdOpen()
-  : Command("Std_Open")
+    : Command("Std_Open")
 {
     // setting the
-    sGroup        = QT_TR_NOOP("File");
-    sMenuText     = QT_TR_NOOP("&Open...");
-    sToolTipText  = QT_TR_NOOP("Open a document or import files");
-    sWhatsThis    = "Std_Open";
-    sStatusTip    = QT_TR_NOOP("Open a document or import files");
-    sPixmap       = "document-open";
-    sAccel        = keySequenceToAccel(QKeySequence::Open);
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("&Open...");
+    sToolTipText = QT_TR_NOOP("Open a document or import files");
+    sWhatsThis = "Std_Open";
+    sStatusTip = QT_TR_NOOP("Open a document or import files");
+    sPixmap = "document-open";
+    sAccel = keySequenceToAccel(QKeySequence::Open);
 }
 
 void StdCmdOpen::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
-	
+    Q_UNUSED(iMsg);
+
     // fill the list of registered endings
     QString formatList;
     const char* supported = QT_TR_NOOP("Supported formats");
@@ -120,31 +120,32 @@ void StdCmdOpen::activated(int iMsg)
         filetypes.insert(filetypes.begin(), "FCStd");
     }
 
-	
-	/*it = std::find(filetypes.begin(), filetypes.end(), "h5");
-	if (it!=filetypes.end())
-	{
-		filetypes.erase(it);
-	}*/
-	//filetypes.insert(filetypes.begin() + 1, "h5");
-    for (it=filetypes.begin();it != filetypes.end();++it) {
+
+    /*it = std::find(filetypes.begin(), filetypes.end(), "h5");
+    if (it!=filetypes.end())
+    {
+        filetypes.erase(it);
+    }*/
+    //filetypes.insert(filetypes.begin() + 1, "h5");
+    for (it = filetypes.begin(); it != filetypes.end(); ++it) {
         formatList += QLatin1String(" *.");
         formatList += QLatin1String(it->c_str());
     }
-	//新增在C++中添加文件格式的方法
-	//不与之前的功能有任何冲突
+    //qDebug() << formatList;
+    //新增在C++中添加文件格式的方法
+    //不与之前的功能有任何冲突
 
-	/*
-		在这里添加上已初始化的自定文件格式
-	*/
-	auto openFileConfig = OpenFileConfig::GetInstance();
-	auto f = openFileConfig->makeFormatString();
+    /*
+        在这里添加上已初始化的自定文件格式
+    */
+    auto openFileConfig = OpenFileConfig::GetInstance();
+    auto f = openFileConfig->makeFormatString();
     formatList += f + QLatin1String(");;");
 
     std::map<std::string, std::string> FilterList = App::GetApplication().getImportFilters();
     std::map<std::string, std::string>::iterator jt;
     // Make sure the format name for FCStd is the very first in the list
-    for (jt=FilterList.begin();jt != FilterList.end();++jt) {
+    for (jt = FilterList.begin(); jt != FilterList.end(); ++jt) {
         if (jt->first.find("*.FCStd") != std::string::npos) {
             formatList += QLatin1String(jt->first.c_str());
             formatList += QLatin1String(";;");
@@ -152,7 +153,7 @@ void StdCmdOpen::activated(int iMsg)
             break;
         }
     }
-    for (jt=FilterList.begin();jt != FilterList.end();++jt) {
+    for (jt = FilterList.begin(); jt != FilterList.end(); ++jt) {
         formatList += QLatin1String(jt->first.c_str());
         formatList += QLatin1String(";;");
     }
@@ -162,12 +163,12 @@ void StdCmdOpen::activated(int iMsg)
         QObject::tr("Open document"), QString(), formatList, &selectedFilter);
     if (fileList.isEmpty())
         return;
-	/*
-		在这里处理文件路径，并并移除已处理的文件路径
-	*/
-	openFileConfig->callOpen(fileList);
-	if (fileList.isEmpty())
-		return;
+    /*
+        在这里处理文件路径，并并移除已处理的文件路径
+    */
+    openFileConfig->callOpen(fileList);
+    if (fileList.isEmpty())
+        return;
 
     // load the files with the associated modules
     SelectModule::Dict dict = SelectModule::importHandler(fileList, selectedFilter);
@@ -181,19 +182,19 @@ void StdCmdOpen::activated(int iMsg)
             getGuiApplication()->open(it.key().toUtf8(), it.value().toLatin1());
         }
     }
-	/*doCommand(Doc, "FreeCADGui.runCommand('Customize_Open')");*/
+    /*doCommand(Doc, "FreeCADGui.runCommand('Customize_Open')");*/
 
 
 
-	//Q_UNUSED(iMsg);
-	//QString cmd;
-	//cmd = QString::fromLatin1("App.newDocument(\"%1\")")
-	//	.arg(qApp->translate("StdCmdNew", "Unnamed"));
-	//runCommand(Command::Doc, "FreeCADGui.runCommand('Customize_Open')"); 
+    //Q_UNUSED(iMsg);
+    //QString cmd;
+    //cmd = QString::fromLatin1("App.newDocument(\"%1\")")
+    //	.arg(qApp->translate("StdCmdNew", "Unnamed"));
+    //runCommand(Command::Doc, "FreeCADGui.runCommand('Customize_Open')"); 
 }
 bool StdCmdOpen::isActive(void)
 {
-	return (getActiveGuiDocument() ? false : true);
+    return (getActiveGuiDocument() ? false : true);
 }
 //===========================================================================
 // Std_Import
@@ -202,22 +203,22 @@ bool StdCmdOpen::isActive(void)
 DEF_STD_CMD_A(StdCmdImport);
 
 StdCmdImport::StdCmdImport()
-  : Command("Std_Import")
+    : Command("Std_Import")
 {
     // setting the
-    sGroup        = QT_TR_NOOP("File");
-    sMenuText     = QT_TR_NOOP("&Import...");
-    sToolTipText  = QT_TR_NOOP("Import a file in the active document");
-    sWhatsThis    = "Std_Import";
-    sStatusTip    = QT_TR_NOOP("Import a file in the active document");
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("&Import...");
+    sToolTipText = QT_TR_NOOP("Import a file in the active document");
+    sWhatsThis = "Std_Import";
+    sStatusTip = QT_TR_NOOP("Import a file in the active document");
     //sPixmap       = "Open";
-	sPixmap = "Import.svg";
-    sAccel        = "Ctrl+I";
+    sPixmap = "Import.svg";
+    sAccel = "Ctrl+I";
 }
 
 void StdCmdImport::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
 
     // fill the list of registered endings
     QString formatList;
@@ -228,7 +229,7 @@ void StdCmdImport::activated(int iMsg)
 
     std::vector<std::string> filetypes = App::GetApplication().getImportTypes();
     std::vector<std::string>::const_iterator it;
-    for (it=filetypes.begin();it != filetypes.end();++it) {
+    for (it = filetypes.begin(); it != filetypes.end(); ++it) {
         if (*it != "FCStd") {
             // ignore the project file format
             formatList += QLatin1String(" *.");
@@ -240,7 +241,7 @@ void StdCmdImport::activated(int iMsg)
 
     std::map<std::string, std::string> FilterList = App::GetApplication().getImportFilters();
     std::map<std::string, std::string>::const_iterator jt;
-    for (jt=FilterList.begin();jt != FilterList.end();++jt) {
+    for (jt = FilterList.begin(); jt != FilterList.end(); ++jt) {
         // ignore the project file format
         if (jt->first.find("(*.FCStd)") == std::string::npos) {
             formatList += QLatin1String(jt->first.c_str());
@@ -250,7 +251,7 @@ void StdCmdImport::activated(int iMsg)
     formatList += QObject::tr(allFiles);
 
     Base::Reference<ParameterGrp> hPath = App::GetApplication().GetUserParameter().GetGroup("BaseApp")
-                               ->GetGroup("Preferences")->GetGroup("General");
+        ->GetGroup("Preferences")->GetGroup("General");
     QString selectedFilter = QString::fromStdString(hPath->GetASCII("FileImportFilter"));
     QStringList fileList = FileDialog::getOpenFileNames(getMainWindow(),
         QObject::tr("Import file"), QString(), formatList, &selectedFilter);
@@ -289,23 +290,23 @@ bool StdCmdImport::isActive(void)
 DEF_STD_CMD_A(StdCmdExport);
 
 StdCmdExport::StdCmdExport()
-  : Command("Std_Export")
+    : Command("Std_Export")
 {
     // setting the
-    sGroup        = QT_TR_NOOP("File");
-    sMenuText     = QT_TR_NOOP("&Export...");
-    sToolTipText  = QT_TR_NOOP("Export an object in the active document");
-    sWhatsThis    = "Std_Export";
-    sStatusTip    = QT_TR_NOOP("Export an object in the active document");
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("&Export...");
+    sToolTipText = QT_TR_NOOP("Export an object in the active document");
+    sWhatsThis = "Std_Export";
+    sStatusTip = QT_TR_NOOP("Export an object in the active document");
     //sPixmap       = "Open";
-	sPixmap = "Export.svg";
-    sAccel        = "Ctrl+E";
-    eType         = 0;
+    sPixmap = "Export.svg";
+    sAccel = "Ctrl+E";
+    eType = 0;
 }
 
 void StdCmdExport::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
 
     /*if (Gui::Selection().countObjectsOfType(App::DocumentObject::getClassTypeId()) == 0) {
         QMessageBox::warning(Gui::getMainWindow(),
@@ -318,7 +319,7 @@ void StdCmdExport::activated(int iMsg)
     QString formatList;
     std::map<std::string, std::string> FilterList = App::GetApplication().getExportFilters();
     std::map<std::string, std::string>::const_iterator jt;
-    for (jt=FilterList.begin();jt != FilterList.end();++jt) {
+    for (jt = FilterList.begin(); jt != FilterList.end(); ++jt) {
         // ignore the project file format
         if (jt->first.find("(*.FCStd)") == std::string::npos) {
             formatList += QLatin1String(jt->first.c_str());
@@ -327,7 +328,7 @@ void StdCmdExport::activated(int iMsg)
     }
 
     Base::Reference<ParameterGrp> hPath = App::GetApplication().GetUserParameter().GetGroup("BaseApp")
-                               ->GetGroup("Preferences")->GetGroup("General");
+        ->GetGroup("Preferences")->GetGroup("General");
     QString selectedFilter = QString::fromStdString(hPath->GetASCII("FileExportFilter"));
 
     QString fileName = FileDialog::getSaveFileName(getMainWindow(),
@@ -356,19 +357,19 @@ bool StdCmdExport::isActive(void)
 DEF_STD_CMD_A(StdCmdMergeProjects);
 
 StdCmdMergeProjects::StdCmdMergeProjects()
-  : Command("Std_MergeProjects")
+    : Command("Std_MergeProjects")
 {
-    sAppModule    = "File";
-    sGroup        = QT_TR_NOOP("File");
-    sMenuText     = QT_TR_NOOP("Merge project...");
-    sToolTipText  = QT_TR_NOOP("Merge project");
-    sWhatsThis    = "Std_MergeProjects";
-    sStatusTip    = QT_TR_NOOP("Merge project");
+    sAppModule = "File";
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("Merge project...");
+    sToolTipText = QT_TR_NOOP("Merge project");
+    sWhatsThis = "Std_MergeProjects";
+    sStatusTip = QT_TR_NOOP("Merge project");
 }
 
 void StdCmdMergeProjects::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
 
     QString exe = qApp->applicationName();
     QString project = QFileDialog::getOpenFileName(Gui::getMainWindow(),
@@ -408,23 +409,23 @@ bool StdCmdMergeProjects::isActive(void)
 DEF_STD_CMD_A(StdCmdExportGraphviz);
 
 StdCmdExportGraphviz::StdCmdExportGraphviz()
-  : Command("Std_ExportGraphviz")
+    : Command("Std_ExportGraphviz")
 {
     // setting the
-    sGroup        = QT_TR_NOOP("Tools");
-    sMenuText     = QT_TR_NOOP("Dependency graph...");
-    sToolTipText  = QT_TR_NOOP("Show the dependency graph of the objects in the active document");
-    sStatusTip    = QT_TR_NOOP("Show the dependency graph of the objects in the active document");
-    sWhatsThis    = "Std_ExportGraphviz";
-    eType         = 0;
+    sGroup = QT_TR_NOOP("Tools");
+    sMenuText = QT_TR_NOOP("Dependency graph...");
+    sToolTipText = QT_TR_NOOP("Show the dependency graph of the objects in the active document");
+    sStatusTip = QT_TR_NOOP("Show the dependency graph of the objects in the active document");
+    sWhatsThis = "Std_ExportGraphviz";
+    eType = 0;
 }
 
 void StdCmdExportGraphviz::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     App::Document* doc = App::GetApplication().getActiveDocument();
     Gui::GraphvizView* view = new Gui::GraphvizView(*doc);
-    view->setWindowTitle(qApp->translate("Std_ExportGraphviz","Dependency graph"));
+    view->setWindowTitle(qApp->translate("Std_ExportGraphviz", "Dependency graph"));
     getMainWindow()->addWindow(view);
 }
 
@@ -440,24 +441,24 @@ bool StdCmdExportGraphviz::isActive(void)
 DEF_STD_CMD(StdCmdNew);
 
 StdCmdNew::StdCmdNew()
-  :Command("Std_New")
+    :Command("Std_New")
 {
-    sGroup        = QT_TR_NOOP("File");
-    sMenuText     = QT_TR_NOOP("&New");
-    sToolTipText  = QT_TR_NOOP("Create a new empty document");
-    sWhatsThis    = "Std_New";
-    sStatusTip    = QT_TR_NOOP("Create a new empty document");
-    sPixmap       = "document-new";
-    sAccel        = keySequenceToAccel(QKeySequence::New);
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("&New");
+    sToolTipText = QT_TR_NOOP("Create a new empty document");
+    sWhatsThis = "Std_New";
+    sStatusTip = QT_TR_NOOP("Create a new empty document");
+    sPixmap = "document-new";
+    sAccel = keySequenceToAccel(QKeySequence::New);
 }
 
 void StdCmdNew::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     QString cmd;
     cmd = QString::fromLatin1("App.newDocument(\"%1\")")
-        .arg(qApp->translate("StdCmdNew","Unnamed"));
-    runCommand(Command::Doc,cmd.toUtf8());
+        .arg(qApp->translate("StdCmdNew", "Unnamed"));
+    runCommand(Command::Doc, cmd.toUtf8());
 }
 
 //===========================================================================
@@ -466,40 +467,40 @@ void StdCmdNew::activated(int iMsg)
 DEF_STD_CMD_A(StdCmdSave);
 
 StdCmdSave::StdCmdSave()
-  :Command("Std_Save")
+    :Command("Std_Save")
 {
-  sGroup        = QT_TR_NOOP("File");
-  sMenuText     = QT_TR_NOOP("&Save");
-  sToolTipText  = QT_TR_NOOP("Save the active document");
-  sWhatsThis    = "Std_Save";
-  sStatusTip    = QT_TR_NOOP("Save the active document");
-  sPixmap       = "document-save";
-  sAccel        = keySequenceToAccel(QKeySequence::Save);
-  eType         = 0;
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("&Save");
+    sToolTipText = QT_TR_NOOP("Save the active document");
+    sWhatsThis = "Std_Save";
+    sStatusTip = QT_TR_NOOP("Save the active document");
+    sPixmap = "document-save";
+    sAccel = keySequenceToAccel(QKeySequence::Save);
+    eType = 0;
 }
 
 void StdCmdSave::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
 #if 0
-  Gui::Document* pActiveDoc = getActiveGuiDocument();
-  if ( pActiveDoc )
-    pActiveDoc->save();
-  else
+    Gui::Document* pActiveDoc = getActiveGuiDocument();
+    if (pActiveDoc)
+        pActiveDoc->save();
+    else
 #endif
-    doCommand(Command::Gui,"Gui.SendMsgToActiveView(\"Save\")");
-    
-   // Base::Interpreter().runString("FreeCADGui.runCommand('M3d_Save')");
+        doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
+
+    // Base::Interpreter().runString("FreeCADGui.runCommand('M3d_Save')");
 }
 
 bool StdCmdSave::isActive(void)
 {
 #if 0
-  if( getActiveGuiDocument() )
-    return true;
-  else
+    if (getActiveGuiDocument())
+        return true;
+    else
 #endif
-    return getGuiApplication()->sendHasMsgToActiveView("Save");
+        return getGuiApplication()->sendHasMsgToActiveView("Save");
 }
 
 //===========================================================================
@@ -508,30 +509,30 @@ bool StdCmdSave::isActive(void)
 DEF_STD_CMD_A(StdCmdSaveAs);
 
 StdCmdSaveAs::StdCmdSaveAs()
-  :Command("Std_SaveAs")
+    :Command("Std_SaveAs")
 {
-  sGroup        = QT_TR_NOOP("File");
-  sMenuText     = QT_TR_NOOP("Save &As...");
-  sToolTipText  = QT_TR_NOOP("Save the active document under a new file name");
-  sWhatsThis    = "Std_SaveAs";
-  sStatusTip    = QT_TR_NOOP("Save the active document under a new file name");
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("Save &As...");
+    sToolTipText = QT_TR_NOOP("Save the active document under a new file name");
+    sWhatsThis = "Std_SaveAs";
+    sStatusTip = QT_TR_NOOP("Save the active document under a new file name");
 #if QT_VERSION >= 0x040200
-  sPixmap       = "document-save-as";
+    sPixmap = "document-save-as";
 #endif
-  sAccel        = keySequenceToAccel(QKeySequence::SaveAs);
-  eType         = 0;
+    sAccel = keySequenceToAccel(QKeySequence::SaveAs);
+    eType = 0;
 }
 
 void StdCmdSaveAs::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
 #if 0
-  Gui::Document* pActiveDoc = getActiveGuiDocument();
-  if ( pActiveDoc )
-    pActiveDoc->saveAs();	
-  else
+    Gui::Document* pActiveDoc = getActiveGuiDocument();
+    if (pActiveDoc)
+        pActiveDoc->saveAs();
+    else
 #endif
-    doCommand(Command::Gui,"Gui.SendMsgToActiveView(\"SaveAs\")");
+        doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"SaveAs\")");
 
     //Base::Interpreter().runString("FreeCADGui.runCommand('M3d_SaveAs')");
 }
@@ -539,11 +540,11 @@ void StdCmdSaveAs::activated(int iMsg)
 bool StdCmdSaveAs::isActive(void)
 {
 #if 0
-  if( getActiveGuiDocument() )
-    return true;
-  else
+    if (getActiveGuiDocument())
+        return true;
+    else
 #endif
-    return getGuiApplication()->sendHasMsgToActiveView("SaveAs");
+        return getGuiApplication()->sendHasMsgToActiveView("SaveAs");
 }
 
 //===========================================================================
@@ -552,33 +553,33 @@ bool StdCmdSaveAs::isActive(void)
 DEF_STD_CMD_A(StdCmdSaveCopy);
 
 StdCmdSaveCopy::StdCmdSaveCopy()
-  :Command("Std_SaveCopy")
+    :Command("Std_SaveCopy")
 {
-  sGroup        = QT_TR_NOOP("File");
-  sMenuText     = QT_TR_NOOP("Save a &Copy...");
-  sToolTipText  = QT_TR_NOOP("Save a copy of the active document under a new file name");
-  sWhatsThis    = "Std_SaveCopy";
-  sStatusTip    = QT_TR_NOOP("Save a copy of the active document under a new file name");
-  //sPixmap       = "document-save-as";
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("Save a &Copy...");
+    sToolTipText = QT_TR_NOOP("Save a copy of the active document under a new file name");
+    sWhatsThis = "Std_SaveCopy";
+    sStatusTip = QT_TR_NOOP("Save a copy of the active document under a new file name");
+    //sPixmap       = "document-save-as";
 }
 
 void StdCmdSaveCopy::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
 #if 0
-  Gui::Document* pActiveDoc = getActiveGuiDocument();
-  if ( pActiveDoc )
-    pActiveDoc->saveCopy();
-  else
+    Gui::Document* pActiveDoc = getActiveGuiDocument();
+    if (pActiveDoc)
+        pActiveDoc->saveCopy();
+    else
 #endif
-    doCommand(Command::Gui,"Gui.SendMsgToActiveView(\"SaveCopy\")");
+        doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"SaveCopy\")");
 
     //Base::Interpreter().runString("FreeCADGui.runCommand('M3d_SaveCopy')");
 }
 
 bool StdCmdSaveCopy::isActive(void)
 {
-  return ( getActiveGuiDocument() ? true : false );
+    return (getActiveGuiDocument() ? true : false);
 }
 
 //===========================================================================
@@ -587,34 +588,34 @@ bool StdCmdSaveCopy::isActive(void)
 DEF_STD_CMD_A(StdCmdRevert);
 
 StdCmdRevert::StdCmdRevert()
-  :Command("Std_Revert")
+    :Command("Std_Revert")
 {
-    sGroup        = QT_TR_NOOP("File");
-    sMenuText     = QT_TR_NOOP("Revert");
-    sToolTipText  = QT_TR_NOOP("Reverts to the saved version of this file");
-    sWhatsThis    = "Std_Revert";
-    sStatusTip    = QT_TR_NOOP("Reverts to the saved version of this file");
-  //sPixmap       = "document-revert";
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("Revert");
+    sToolTipText = QT_TR_NOOP("Reverts to the saved version of this file");
+    sWhatsThis = "Std_Revert";
+    sStatusTip = QT_TR_NOOP("Reverts to the saved version of this file");
+    //sPixmap       = "document-revert";
 }
 
 void StdCmdRevert::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     QMessageBox msgBox(Gui::getMainWindow());
     msgBox.setIcon(QMessageBox::Question);
-    msgBox.setWindowTitle(qApp->translate("Std_Revert","Revert document"));
-    msgBox.setText(qApp->translate("Std_Revert","This will discard all the changes since last file save."));
-    msgBox.setInformativeText(qApp->translate("Std_Revert","Do you want to continue?"));
+    msgBox.setWindowTitle(qApp->translate("Std_Revert", "Revert document"));
+    msgBox.setText(qApp->translate("Std_Revert", "This will discard all the changes since last file save."));
+    msgBox.setInformativeText(qApp->translate("Std_Revert", "Do you want to continue?"));
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::No);
     int ret = msgBox.exec();
     if (ret == QMessageBox::Yes)
-        doCommand(Command::App,"App.ActiveDocument.restore()");
+        doCommand(Command::App, "App.ActiveDocument.restore()");
 }
 
 bool StdCmdRevert::isActive(void)
 {
-  return ( getActiveGuiDocument() ? true : false );
+    return (getActiveGuiDocument() ? true : false);
 }
 
 //===========================================================================
@@ -624,29 +625,29 @@ bool StdCmdRevert::isActive(void)
 DEF_STD_CMD_A(StdCmdProjectInfo);
 
 StdCmdProjectInfo::StdCmdProjectInfo()
-  :Command("Std_ProjectInfo")
+    :Command("Std_ProjectInfo")
 {
-  // setting the
-  sGroup        = QT_TR_NOOP("File");
-  sMenuText     = QT_TR_NOOP("Project i&nformation...");
-  sToolTipText  = QT_TR_NOOP("Show details of the currently active project");
-  sWhatsThis    = "Std_ProjectInfo";
-  sStatusTip    = QT_TR_NOOP("Show details of the currently active project");
+    // setting the
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("Project i&nformation...");
+    sToolTipText = QT_TR_NOOP("Show details of the currently active project");
+    sWhatsThis = "Std_ProjectInfo";
+    sStatusTip = QT_TR_NOOP("Show details of the currently active project");
 #if QT_VERSION >= 0x040200
-  sPixmap       = "document-properties";
+    sPixmap = "document-properties";
 #endif
 }
 
 void StdCmdProjectInfo::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     Gui::Dialog::DlgProjectInformationImp dlg(getActiveGuiDocument()->getDocument(), getMainWindow());
     dlg.exec();
 }
 
 bool StdCmdProjectInfo::isActive(void)
 {
-  return ( getActiveGuiDocument() ? true : false );
+    return (getActiveGuiDocument() ? true : false);
 }
 
 //===========================================================================
@@ -656,19 +657,19 @@ bool StdCmdProjectInfo::isActive(void)
 DEF_STD_CMD_A(StdCmdProjectUtil);
 
 StdCmdProjectUtil::StdCmdProjectUtil()
-  :Command("Std_ProjectUtil")
+    :Command("Std_ProjectUtil")
 {
     // setting the
-    sGroup        = QT_TR_NOOP("Tools");
-    sWhatsThis    = "Std_ProjectUtil";
-    sMenuText     = QT_TR_NOOP("Project utility...");
-    sToolTipText  = QT_TR_NOOP("Utility to extract or create project files");
-    sStatusTip    = QT_TR_NOOP("Utility to extract or create project files");
+    sGroup = QT_TR_NOOP("Tools");
+    sWhatsThis = "Std_ProjectUtil";
+    sMenuText = QT_TR_NOOP("Project utility...");
+    sToolTipText = QT_TR_NOOP("Utility to extract or create project files");
+    sStatusTip = QT_TR_NOOP("Utility to extract or create project files");
 }
 
 void StdCmdProjectUtil::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     Gui::Dialog::DlgProjectUtility dlg(getMainWindow());
     dlg.exec();
 }
@@ -681,23 +682,23 @@ bool StdCmdProjectUtil::isActive(void)
 //===========================================================================
 // Std_Print
 //===========================================================================
-DEF_STD_CMD_A(StdCmdPrint );
+DEF_STD_CMD_A(StdCmdPrint);
 
 StdCmdPrint::StdCmdPrint()
-  :Command("Std_Print")
+    :Command("Std_Print")
 {
-    sGroup        = QT_TR_NOOP("File");
-    sMenuText     = QT_TR_NOOP("&Print...");
-    sToolTipText  = QT_TR_NOOP("Print the document");
-    sWhatsThis    = "Std_Print";
-    sStatusTip    = QT_TR_NOOP("Print the document");
-    sPixmap       = "document-print";
-    sAccel        = keySequenceToAccel(QKeySequence::Print);
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("&Print...");
+    sToolTipText = QT_TR_NOOP("Print the document");
+    sWhatsThis = "Std_Print";
+    sStatusTip = QT_TR_NOOP("Print the document");
+    sPixmap = "document-print";
+    sAccel = keySequenceToAccel(QKeySequence::Print);
 }
 
 void StdCmdPrint::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     if (getMainWindow()->activeWindow()) {
         getMainWindow()->showMessage(QObject::tr("Printing..."));
         getMainWindow()->activeWindow()->print();
@@ -715,19 +716,19 @@ bool StdCmdPrint::isActive(void)
 DEF_STD_CMD_A(StdCmdPrintPreview);
 
 StdCmdPrintPreview::StdCmdPrintPreview()
-  :Command("Std_PrintPreview")
+    :Command("Std_PrintPreview")
 {
-    sGroup        = QT_TR_NOOP("File");
-    sMenuText     = QT_TR_NOOP("&Print preview...");
-    sToolTipText  = QT_TR_NOOP("Print the document");
-    sWhatsThis    = "Std_PrintPreview";
-    sStatusTip    = QT_TR_NOOP("Print preview");
-    sPixmap       = "document-print-preview";
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("&Print preview...");
+    sToolTipText = QT_TR_NOOP("Print the document");
+    sWhatsThis = "Std_PrintPreview";
+    sStatusTip = QT_TR_NOOP("Print preview");
+    sPixmap = "document-print-preview";
 }
 
 void StdCmdPrintPreview::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     if (getMainWindow()->activeWindow()) {
         getMainWindow()->activeWindow()->printPreview();
     }
@@ -744,18 +745,18 @@ bool StdCmdPrintPreview::isActive(void)
 DEF_STD_CMD_A(StdCmdPrintPdf);
 
 StdCmdPrintPdf::StdCmdPrintPdf()
-  :Command("Std_PrintPdf")
+    :Command("Std_PrintPdf")
 {
-    sGroup        = QT_TR_NOOP("File");
-    sMenuText     = QT_TR_NOOP("&Export PDF...");
-    sToolTipText  = QT_TR_NOOP("Export the document as PDF");
-    sWhatsThis    = "Std_PrintPdf";
-    sStatusTip    = QT_TR_NOOP("Export the document as PDF");
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("&Export PDF...");
+    sToolTipText = QT_TR_NOOP("Export the document as PDF");
+    sWhatsThis = "Std_PrintPdf";
+    sStatusTip = QT_TR_NOOP("Export the document as PDF");
 }
 
 void StdCmdPrintPdf::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     if (getMainWindow()->activeWindow()) {
         getMainWindow()->showMessage(QObject::tr("Exporting PDF..."));
         getMainWindow()->activeWindow()->printPdf();
@@ -771,25 +772,25 @@ bool StdCmdPrintPdf::isActive(void)
 // Std_Quit
 //===========================================================================
 
-DEF_STD_CMD(StdCmdQuit );
+DEF_STD_CMD(StdCmdQuit);
 
 StdCmdQuit::StdCmdQuit()
-  :Command("Std_Quit")
+    :Command("Std_Quit")
 {
-  sGroup        = QT_TR_NOOP("File");
-  sMenuText     = QT_TR_NOOP("E&xit");
-  sToolTipText  = QT_TR_NOOP("Quits the application");
-  sWhatsThis    = "Std_Quit";
-  sStatusTip    = QT_TR_NOOP("Quits the application");
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("E&xit");
+    sToolTipText = QT_TR_NOOP("Quits the application");
+    sWhatsThis = "Std_Quit";
+    sStatusTip = QT_TR_NOOP("Quits the application");
 #if QT_VERSION >= 0x040200
-  sPixmap       = "application-exit";
+    sPixmap = "application-exit";
 #endif
-  sAccel        = "Alt+F4";
+    sAccel = "Alt+F4";
 }
 
 void StdCmdQuit::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     // close the main window and exit the event loop
     getMainWindow()->close();
 }
@@ -797,25 +798,25 @@ void StdCmdQuit::activated(int iMsg)
 DEF_STD_CMD_A(StdCmdIPConfig);
 
 StdCmdIPConfig::StdCmdIPConfig()
-	:Command("Std_IPConfig")
+    :Command("Std_IPConfig")
 {
-	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("Configure");
-	sToolTipText = QT_TR_NOOP("Set  Configure ");
-	sWhatsThis = "Std_IPConfig";
-	sStatusTip = QT_TR_NOOP("Set  Configure ");
-	//sPixmap       = "document-revert";
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("Configure");
+    sToolTipText = QT_TR_NOOP("Set  Configure ");
+    sWhatsThis = "Std_IPConfig";
+    sStatusTip = QT_TR_NOOP("Set  Configure ");
+    //sPixmap       = "document-revert";
 }
 
 void StdCmdIPConfig::activated(int iMsg)
 {
-	doCommand(Command::Gui,"import NetWork\nNetWork.NetWorkCommand.ConfigDlgMain.openConfigDialog()");
+    doCommand(Command::Gui, "import NetWork\nNetWork.NetWorkCommand.ConfigDlgMain.openConfigDialog()");
 }
 
 bool StdCmdIPConfig::isActive(void)
 {
-	//return (getActiveGuiDocument() ? true : false);
-	return true;
+    //return (getActiveGuiDocument() ? true : false);
+    return true;
 }
 /*end*/
 //===========================================================================
@@ -825,27 +826,27 @@ bool StdCmdIPConfig::isActive(void)
 DEF_STD_CMD_A(StdCmdUndo);
 
 StdCmdUndo::StdCmdUndo()
-  :Command("Std_Undo")
+    :Command("Std_Undo")
 {
-  sGroup        = QT_TR_NOOP("Edit");
-  sMenuText     = QT_TR_NOOP("&Undo");
-  sToolTipText  = QT_TR_NOOP("Undo exactly one action");
-  sWhatsThis    = "Std_Undo";
-  sStatusTip    = QT_TR_NOOP("Undo exactly one action");
-  sPixmap       = "edit-undo";
-  sAccel        = keySequenceToAccel(QKeySequence::Undo);
-  eType         = ForEdit;
+    sGroup = QT_TR_NOOP("Edit");
+    sMenuText = QT_TR_NOOP("&Undo");
+    sToolTipText = QT_TR_NOOP("Undo exactly one action");
+    sWhatsThis = "Std_Undo";
+    sStatusTip = QT_TR_NOOP("Undo exactly one action");
+    sPixmap = "edit-undo";
+    sAccel = keySequenceToAccel(QKeySequence::Undo);
+    eType = ForEdit;
 }
 
 void StdCmdUndo::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
-//  Application::Instance->slotUndo();
+    Q_UNUSED(iMsg);
+    //  Application::Instance->slotUndo();
     getGuiApplication()->sendMsgToActiveView("Undo");
-	//App::Document* pcDoc=App::GetApplication().getActiveDocument();
-	//pcDoc->recompute();
-	//pcDoc->flagNeedUpdateBoolean.setValue(0);
-	//doCommand(Command::Gui, "DocumentTools.updateBoolean()");
+    //App::Document* pcDoc=App::GetApplication().getActiveDocument();
+    //pcDoc->recompute();
+    //pcDoc->flagNeedUpdateBoolean.setValue(0);
+    //doCommand(Command::Gui, "DocumentTools.updateBoolean()");
     if (getDocument()->classID == 2)
     {
         Base::InterpreterSingleton python;
@@ -856,7 +857,7 @@ void StdCmdUndo::activated(int iMsg)
 
 bool StdCmdUndo::isActive(void)
 {
-  return getGuiApplication()->sendHasMsgToActiveView("Undo");
+    return getGuiApplication()->sendHasMsgToActiveView("Undo");
 }
 /*
 Action * StdCmdUndo::createAction(void)
@@ -877,31 +878,31 @@ Action * StdCmdUndo::createAction(void)
 // Std_Redo
 //===========================================================================
 
-DEF_STD_CMD_A(StdCmdRedo );
+DEF_STD_CMD_A(StdCmdRedo);
 
 StdCmdRedo::StdCmdRedo()
-  :Command("Std_Redo")
+    :Command("Std_Redo")
 {
-  sGroup        = QT_TR_NOOP("Edit");
-  sMenuText     = QT_TR_NOOP("&Redo");
-  sToolTipText  = QT_TR_NOOP("Redoes a previously undone action");
-  sWhatsThis    = "Std_Redo";
-  sStatusTip    = QT_TR_NOOP("Redoes a previously undone action");
-  sPixmap       = "edit-redo";
-  sAccel        = keySequenceToAccel(QKeySequence::Redo);
- // eType         = ForEdit;
+    sGroup = QT_TR_NOOP("Edit");
+    sMenuText = QT_TR_NOOP("&Redo");
+    sToolTipText = QT_TR_NOOP("Redoes a previously undone action");
+    sWhatsThis = "Std_Redo";
+    sStatusTip = QT_TR_NOOP("Redoes a previously undone action");
+    sPixmap = "edit-redo";
+    sAccel = keySequenceToAccel(QKeySequence::Redo);
+    // eType         = ForEdit;
 }
 
 void StdCmdRedo::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
-//  Application::Instance->slotRedo();
+    Q_UNUSED(iMsg);
+    //  Application::Instance->slotRedo();
     getGuiApplication()->sendMsgToActiveView("Redo");
 
-	App::Document* pcDoc = App::GetApplication().getActiveDocument();
-	//pcDoc->recompute();
-	//pcDoc->flagNeedUpdateBoolean.setValue(0);
-	//doCommand(Command::Gui, "DocumentTools.updateBoolean()");
+    App::Document* pcDoc = App::GetApplication().getActiveDocument();
+    //pcDoc->recompute();
+    //pcDoc->flagNeedUpdateBoolean.setValue(0);
+    //doCommand(Command::Gui, "DocumentTools.updateBoolean()");
 
     if (getDocument()->classID == 2)
     {
@@ -913,9 +914,9 @@ void StdCmdRedo::activated(int iMsg)
 
 bool StdCmdRedo::isActive(void)
 {
-  return getGuiApplication()->sendHasMsgToActiveView("Redo");
-  App::Document* pcDoc = App::GetApplication().getActiveDocument();
-  std::cerr <<"redo flag " <<pcDoc->flagNeedUpdateBoolean.getValue() << std::endl;
+    return getGuiApplication()->sendHasMsgToActiveView("Redo");
+    App::Document* pcDoc = App::GetApplication().getActiveDocument();
+    std::cerr << "redo flag " << pcDoc->flagNeedUpdateBoolean.getValue() << std::endl;
 }
 /*
 Action * StdCmdRedo::createAction(void)
@@ -937,25 +938,25 @@ Action * StdCmdRedo::createAction(void)
 DEF_STD_CMD_A(StdCmdCut);
 
 StdCmdCut::StdCmdCut()
-  : Command("Std_Cut")
+    : Command("Std_Cut")
 {
-    sGroup        = QT_TR_NOOP("Edit");
-    sMenuText     = QT_TR_NOOP("&Cut");
-    sToolTipText  = QT_TR_NOOP("Cut out");
-    sWhatsThis    = "Std_Cut";
-    sStatusTip    = QT_TR_NOOP("Cut out");
-    sPixmap       = "edit-cut";
-    sAccel        = keySequenceToAccel(QKeySequence::Cut);
+    sGroup = QT_TR_NOOP("Edit");
+    sMenuText = QT_TR_NOOP("&Cut");
+    sToolTipText = QT_TR_NOOP("Cut out");
+    sWhatsThis = "Std_Cut";
+    sStatusTip = QT_TR_NOOP("Cut out");
+    sPixmap = "edit-cut";
+    sAccel = keySequenceToAccel(QKeySequence::Cut);
 }
 
 void StdCmdCut::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     bool temp = getGuiApplication()->sendMsgToActiveView("Cut");
-	if (!temp && getDocument()->classID == 2){
-		Base::InterpreterSingleton python;
-		python.runString("FreeCADGui.runCommand('CutCommand')");
-	}
+    if (!temp && getDocument()->classID == 2) {
+        Base::InterpreterSingleton python;
+        python.runString("FreeCADGui.runCommand('CutCommand')");
+    }
 }
 
 bool StdCmdCut::isActive(void)
@@ -969,30 +970,30 @@ bool StdCmdCut::isActive(void)
 DEF_STD_CMD_A(StdCmdCopy);
 
 StdCmdCopy::StdCmdCopy()
-  : Command("Std_Copy")
+    : Command("Std_Copy")
 {
-    sGroup        = QT_TR_NOOP("Edit");
-    sMenuText     = QT_TR_NOOP("C&opy");
-    sToolTipText  = QT_TR_NOOP("Copy operation");
-    sWhatsThis    = "Std_Copy";
-    sStatusTip    = QT_TR_NOOP("Copy operation");
-    sPixmap       = "edit-copy";
-    sAccel        = keySequenceToAccel(QKeySequence::Copy);
+    sGroup = QT_TR_NOOP("Edit");
+    sMenuText = QT_TR_NOOP("C&opy");
+    sToolTipText = QT_TR_NOOP("Copy operation");
+    sWhatsThis = "Std_Copy";
+    sStatusTip = QT_TR_NOOP("Copy operation");
+    sPixmap = "edit-copy";
+    sAccel = keySequenceToAccel(QKeySequence::Copy);
 }
 
 void StdCmdCopy::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     bool done = getGuiApplication()->sendMsgToActiveView("Copy");
     if (!done) {
-		//暂时兼容3d的复制
-		//if (getDocument()->classID == 2)
-		//{
-		//	Base::InterpreterSingleton python;
-		//	python.runString("FreeCADGui.runCommand('CopyCommand')");
-		//	return;
-		//}
-        QMimeData * mimeData = getMainWindow()->createMimeDataFromSelection();
+        //暂时兼容3d的复制
+        //if (getDocument()->classID == 2)
+        //{
+        //	Base::InterpreterSingleton python;
+        //	python.runString("FreeCADGui.runCommand('CopyCommand')");
+        //	return;
+        //}
+        QMimeData* mimeData = getMainWindow()->createMimeDataFromSelection();
         QClipboard* cb = QApplication::clipboard();
         cb->setMimeData(mimeData);
     }
@@ -1011,29 +1012,29 @@ bool StdCmdCopy::isActive(void)
 DEF_STD_CMD_A(StdCmdPaste);
 
 StdCmdPaste::StdCmdPaste()
-  : Command("Std_Paste")
+    : Command("Std_Paste")
 {
-    sGroup        = QT_TR_NOOP("Edit");
-    sMenuText     = QT_TR_NOOP("&Paste");
-    sToolTipText  = QT_TR_NOOP("Paste operation");
-    sWhatsThis    = "Std_Paste";
-    sStatusTip    = QT_TR_NOOP("Paste operation");
-    sPixmap       = "edit-paste";
-    sAccel        = keySequenceToAccel(QKeySequence::Paste);
+    sGroup = QT_TR_NOOP("Edit");
+    sMenuText = QT_TR_NOOP("&Paste");
+    sToolTipText = QT_TR_NOOP("Paste operation");
+    sWhatsThis = "Std_Paste";
+    sStatusTip = QT_TR_NOOP("Paste operation");
+    sPixmap = "edit-paste";
+    sAccel = keySequenceToAccel(QKeySequence::Paste);
 }
 
 void StdCmdPaste::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     bool done = getGuiApplication()->sendMsgToActiveView("Paste");
     if (!done) {
-		//暂时兼容3d的粘贴
-		//if (getDocument()->classID == 2)
-		//{
-		//	Base::InterpreterSingleton python;
-		//	python.runString("FreeCADGui.runCommand('PasteCommand')");
-		//	return;
-		//}
+        //暂时兼容3d的粘贴
+        //if (getDocument()->classID == 2)
+        //{
+        //	Base::InterpreterSingleton python;
+        //	python.runString("FreeCADGui.runCommand('PasteCommand')");
+        //	return;
+        //}
         QClipboard* cb = QApplication::clipboard();
         const QMimeData* mimeData = cb->mimeData();
         if (mimeData) {
@@ -1045,8 +1046,8 @@ void StdCmdPaste::activated(int iMsg)
 
 bool StdCmdPaste::isActive(void)
 {
-	if (getDocument() && getDocument()->classID == 2)
-		return true;
+    if (getDocument() && getDocument()->classID == 2)
+        return true;
     if (getGuiApplication()->sendHasMsgToActiveView("Paste"))
         return true;
     QClipboard* cb = QApplication::clipboard();
@@ -1058,19 +1059,19 @@ bool StdCmdPaste::isActive(void)
 DEF_STD_CMD_A(StdCmdDuplicateSelection);
 
 StdCmdDuplicateSelection::StdCmdDuplicateSelection()
-  :Command("Std_DuplicateSelection")
+    :Command("Std_DuplicateSelection")
 {
-    sAppModule    = "Edit";
-    sGroup        = QT_TR_NOOP("Edit");
-    sMenuText     = QT_TR_NOOP("Duplicate selection");
-    sToolTipText  = QT_TR_NOOP("Put duplicates of the selected objects to the active document");
-    sWhatsThis    = "Std_DuplicateSelection";
-    sStatusTip    = QT_TR_NOOP("Put duplicates of the selected objects to the active document");
+    sAppModule = "Edit";
+    sGroup = QT_TR_NOOP("Edit");
+    sMenuText = QT_TR_NOOP("Duplicate selection");
+    sToolTipText = QT_TR_NOOP("Put duplicates of the selected objects to the active document");
+    sWhatsThis = "Std_DuplicateSelection";
+    sStatusTip = QT_TR_NOOP("Put duplicates of the selected objects to the active document");
 }
 
 void StdCmdDuplicateSelection::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     std::vector<SelectionSingleton::SelObj> sel = Selection().getCompleteSelection();
     std::set<App::DocumentObject*> unique_objs;
     std::map< App::Document*, std::vector<App::DocumentObject*> > objs;
@@ -1096,10 +1097,10 @@ void StdCmdDuplicateSelection::activated(int iMsg)
 
         if (all.size() > sel.size()) {
             int ret = QMessageBox::question(getMainWindow(),
-                qApp->translate("Std_DuplicateSelection","Object dependencies"),
-                qApp->translate("Std_DuplicateSelection","The selected objects have a dependency to unselected objects.\n"
-                                                         "Do you want to duplicate them, too?"),
-                QMessageBox::Yes,QMessageBox::No);
+                qApp->translate("Std_DuplicateSelection", "Object dependencies"),
+                qApp->translate("Std_DuplicateSelection", "The selected objects have a dependency to unselected objects.\n"
+                    "Do you want to duplicate them, too?"),
+                QMessageBox::Yes, QMessageBox::No);
             if (ret == QMessageBox::Yes) {
                 sel = all;
             }
@@ -1137,22 +1138,22 @@ bool StdCmdDuplicateSelection::isActive(void)
 DEF_STD_CMD_A(StdCmdSelectAll);
 
 StdCmdSelectAll::StdCmdSelectAll()
-  : Command("Std_SelectAll")
+    : Command("Std_SelectAll")
 {
-    sGroup        = QT_TR_NOOP("Edit");
-    sMenuText     = QT_TR_NOOP("Select &All");
-    sToolTipText  = QT_TR_NOOP("Select all");
-    sWhatsThis    = "Std_SelectAll";
-    sStatusTip    = QT_TR_NOOP("Select all");
+    sGroup = QT_TR_NOOP("Edit");
+    sMenuText = QT_TR_NOOP("Select &All");
+    sToolTipText = QT_TR_NOOP("Select all");
+    sWhatsThis = "Std_SelectAll";
+    sStatusTip = QT_TR_NOOP("Select all");
 #if QT_VERSION >= 0x040200
-    sPixmap       = "edit-select-all";
+    sPixmap = "edit-select-all";
 #endif
     //sAccel        = "Ctrl+A"; // superseeds shortcuts for text edits
 }
 
 void StdCmdSelectAll::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     SelectionSingleton& rSel = Selection();
     App::Document* doc = App::GetApplication().getActiveDocument();
     std::vector<App::DocumentObject*> objs = doc->getObjectsOfType(App::DocumentObject::getClassTypeId());
@@ -1170,24 +1171,24 @@ bool StdCmdSelectAll::isActive(void)
 DEF_STD_CMD_A(StdCmdDelete);
 
 StdCmdDelete::StdCmdDelete()
-	:Command("Std_Delete")
+    :Command("Std_Delete")
 {
-	sGroup = QT_TR_NOOP("Edit");
-	sMenuText = QT_TR_NOOP("&Delete");
-	sToolTipText = QT_TR_NOOP("Deletes the selected objects");
-	sWhatsThis = "Std_Delete";
-	sStatusTip = QT_TR_NOOP("Deletes the selected objects");
+    sGroup = QT_TR_NOOP("Edit");
+    sMenuText = QT_TR_NOOP("&Delete");
+    sToolTipText = QT_TR_NOOP("Deletes the selected objects");
+    sWhatsThis = "Std_Delete";
+    sStatusTip = QT_TR_NOOP("Deletes the selected objects");
 #if QT_VERSION >= 0x040200
-	sPixmap = "edit-delete";
+    sPixmap = "edit-delete";
 #endif
-	sAccel = keySequenceToAccel(QKeySequence::Delete);
-	eType = ForEdit;
+    sAccel = keySequenceToAccel(QKeySequence::Delete);
+    eType = ForEdit;
 }
 
 void StdCmdDelete::activated(int iMsg)
 {
-	Q_UNUSED(iMsg);
-	if (getDocument()->classID == 2){
+    Q_UNUSED(iMsg);
+    if (getDocument()->classID == 2) {
         // go through all documents
         const SelectionSingleton& rSel = Selection();
         const std::vector<App::Document*> docs = App::GetApplication().getDocuments();
@@ -1439,101 +1440,102 @@ void StdCmdDelete::activated(int iMsg)
 
             }
         }*/}
-	
-		
-	}else if (getDocument()->classID == 3){
-		// go through all documents
-		const SelectionSingleton& rSel = Selection();
-		const std::vector<App::Document*> docs = App::GetApplication().getDocuments();
-		for (std::vector<App::Document*>::const_iterator it = docs.begin(); it != docs.end(); ++it) {
-			Gui::Document* pGuiDoc = Gui::Application::Instance->getDocument(*it);
-			std::vector<Gui::SelectionObject> sel = rSel.getSelectionEx((*it)->getName());
-			if (!sel.empty()) {
-				bool autoDeletion = true;
 
-				// if an object is in edit mode handle only this object even if unselected (#0001838)
-				Gui::ViewProvider* vpedit = pGuiDoc->getInEdit();
-				if (vpedit) {
-					// check if the edited view provider is selected
-					for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
-						Gui::ViewProvider* vp = pGuiDoc->getViewProvider(ft->getObject());
-						if (vp == vpedit) {
-							if (!ft->getSubNames().empty()) {
-								// handle the view provider
-								Gui::getMainWindow()->setUpdatesEnabled(false);
 
-								(*it)->openTransaction("Delete");
-								vpedit->onDelete(ft->getSubNames());
-								(*it)->commitTransaction();
+    }
+    else if (getDocument()->classID == 3) {
+        // go through all documents
+        const SelectionSingleton& rSel = Selection();
+        const std::vector<App::Document*> docs = App::GetApplication().getDocuments();
+        for (std::vector<App::Document*>::const_iterator it = docs.begin(); it != docs.end(); ++it) {
+            Gui::Document* pGuiDoc = Gui::Application::Instance->getDocument(*it);
+            std::vector<Gui::SelectionObject> sel = rSel.getSelectionEx((*it)->getName());
+            if (!sel.empty()) {
+                bool autoDeletion = true;
 
-								Gui::getMainWindow()->setUpdatesEnabled(true);
-								Gui::getMainWindow()->update();
-							}
-							break;
-						}
-					}
-				}
-				else {
-					// check if we can delete the object
-					std::set<QString> affectedLabels;
-					for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
-						App::DocumentObject* obj = ft->getObject();
-						std::vector<App::DocumentObject*> links = obj->getInList();
-						if (!links.empty()) {
-							// check if the referenced objects are groups or are selected too
-							for (std::vector<App::DocumentObject*>::iterator lt = links.begin(); lt != links.end(); ++lt) {
-								if (!rSel.isSelected(*lt)) {
-									ViewProvider* vp = pGuiDoc->getViewProvider(*lt);
-									if (!vp->canDelete(obj)) {
-										autoDeletion = false;
-										affectedLabels.insert(QString::fromUtf8((*lt)->Label.getValue()));
-									}
-								}
-							}
-						}
-					}
+                // if an object is in edit mode handle only this object even if unselected (#0001838)
+                Gui::ViewProvider* vpedit = pGuiDoc->getInEdit();
+                if (vpedit) {
+                    // check if the edited view provider is selected
+                    for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
+                        Gui::ViewProvider* vp = pGuiDoc->getViewProvider(ft->getObject());
+                        if (vp == vpedit) {
+                            if (!ft->getSubNames().empty()) {
+                                // handle the view provider
+                                Gui::getMainWindow()->setUpdatesEnabled(false);
 
-					if (!autoDeletion) {
-						QString bodyMessage;
-						QTextStream bodyMessageStream(&bodyMessage);
-						bodyMessageStream << qApp->translate("Std_Delete",
-							"The following, referencing objects might break.\n\n"
-							"Are you sure you want to continue?\n\n");
-						for (const auto &currentLabel : affectedLabels)
-							bodyMessageStream << currentLabel << '\n';
+                                (*it)->openTransaction("Delete");
+                                vpedit->onDelete(ft->getSubNames());
+                                (*it)->commitTransaction();
 
-						int ret = QMessageBox::question(Gui::getMainWindow(),
-							qApp->translate("Std_Delete", "Object dependencies"), bodyMessage,
-							QMessageBox::Yes, QMessageBox::No);
-						if (ret == QMessageBox::Yes)
-							autoDeletion = true;
-					}
-					if (autoDeletion) {
-						Gui::getMainWindow()->setUpdatesEnabled(false);
-						(*it)->openTransaction("Delete");
-						for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
-							Gui::ViewProvider* vp = pGuiDoc->getViewProvider(ft->getObject());
-							if (vp) {
-								// ask the ViewProvider if it wants to do some clean up
-								if (vp->onDelete(ft->getSubNames())) {
-									doCommand(Doc, "App.getDocument(\"%s\").removeObject(\"%s\")"
-										, (*it)->getName(), ft->getFeatName());
-								}
-							}
-						}
-						(*it)->commitTransaction();
+                                Gui::getMainWindow()->setUpdatesEnabled(true);
+                                Gui::getMainWindow()->update();
+                            }
+                            break;
+                        }
+                    }
+                }
+                else {
+                    // check if we can delete the object
+                    std::set<QString> affectedLabels;
+                    for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
+                        App::DocumentObject* obj = ft->getObject();
+                        std::vector<App::DocumentObject*> links = obj->getInList();
+                        if (!links.empty()) {
+                            // check if the referenced objects are groups or are selected too
+                            for (std::vector<App::DocumentObject*>::iterator lt = links.begin(); lt != links.end(); ++lt) {
+                                if (!rSel.isSelected(*lt)) {
+                                    ViewProvider* vp = pGuiDoc->getViewProvider(*lt);
+                                    if (!vp->canDelete(obj)) {
+                                        autoDeletion = false;
+                                        affectedLabels.insert(QString::fromUtf8((*lt)->Label.getValue()));
+                                    }
+                                }
+                            }
+                        }
+                    }
 
-						Gui::getMainWindow()->setUpdatesEnabled(true);
-						Gui::getMainWindow()->update();
-					}
-				}
-			}
-			doCommand(Doc, "App.getDocument(\"%s\").recompute()", (*it)->getName());
-		}
+                    if (!autoDeletion) {
+                        QString bodyMessage;
+                        QTextStream bodyMessageStream(&bodyMessage);
+                        bodyMessageStream << qApp->translate("Std_Delete",
+                            "The following, referencing objects might break.\n\n"
+                            "Are you sure you want to continue?\n\n");
+                        for (const auto& currentLabel : affectedLabels)
+                            bodyMessageStream << currentLabel << '\n';
 
-		Base::InterpreterSingleton python;
-		python.runString("FreeCADGui.runCommand('CreateM2D')");
-	}
+                        int ret = QMessageBox::question(Gui::getMainWindow(),
+                            qApp->translate("Std_Delete", "Object dependencies"), bodyMessage,
+                            QMessageBox::Yes, QMessageBox::No);
+                        if (ret == QMessageBox::Yes)
+                            autoDeletion = true;
+                    }
+                    if (autoDeletion) {
+                        Gui::getMainWindow()->setUpdatesEnabled(false);
+                        (*it)->openTransaction("Delete");
+                        for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
+                            Gui::ViewProvider* vp = pGuiDoc->getViewProvider(ft->getObject());
+                            if (vp) {
+                                // ask the ViewProvider if it wants to do some clean up
+                                if (vp->onDelete(ft->getSubNames())) {
+                                    doCommand(Doc, "App.getDocument(\"%s\").removeObject(\"%s\")"
+                                        , (*it)->getName(), ft->getFeatName());
+                                }
+                            }
+                        }
+                        (*it)->commitTransaction();
+
+                        Gui::getMainWindow()->setUpdatesEnabled(true);
+                        Gui::getMainWindow()->update();
+                    }
+                }
+            }
+            doCommand(Doc, "App.getDocument(\"%s\").recompute()", (*it)->getName());
+        }
+
+        Base::InterpreterSingleton python;
+        python.runString("FreeCADGui.runCommand('CreateM2D')");
+    }
 }
 
 bool StdCmdDelete::isActive(void)
@@ -1547,27 +1549,27 @@ bool StdCmdDelete::isActive(void)
 DEF_STD_CMD_A(StdCmdRefresh);
 
 StdCmdRefresh::StdCmdRefresh()
-  : Command("Std_Refresh")
+    : Command("Std_Refresh")
 {
-    sGroup        = QT_TR_NOOP("Edit");
-    sMenuText     = QT_TR_NOOP("&Refresh");
-    sToolTipText  = QT_TR_NOOP("Recomputes the current active document");
-    sWhatsThis    = "Std_Refresh";
-    sStatusTip    = QT_TR_NOOP("Recomputes the current active document");
-    sPixmap       = "view-refresh";
-    sAccel        = keySequenceToAccel(QKeySequence::Refresh);
-    eType         = AlterDoc | Alter3DView | AlterSelection | ForEdit;
+    sGroup = QT_TR_NOOP("Edit");
+    sMenuText = QT_TR_NOOP("&Refresh");
+    sToolTipText = QT_TR_NOOP("Recomputes the current active document");
+    sWhatsThis = "Std_Refresh";
+    sStatusTip = QT_TR_NOOP("Recomputes the current active document");
+    sPixmap = "view-refresh";
+    sAccel = keySequenceToAccel(QKeySequence::Refresh);
+    eType = AlterDoc | Alter3DView | AlterSelection | ForEdit;
 }
 
 void StdCmdRefresh::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     if (getActiveGuiDocument()) {
         //Note: Don't add the recompute to undo/redo because it complicates
         //testing the changes of properties.
         //openCommand("Refresh active document");
         this->getDocument()->setStatus(App::Document::SkipRecompute, false);
-        doCommand(Doc,"App.activeDocument().recompute()");
+        doCommand(Doc, "App.activeDocument().recompute()");
         //commitCommand();
     }
 }
@@ -1583,24 +1585,24 @@ bool StdCmdRefresh::isActive(void)
 DEF_STD_CMD_A(StdCmdTransform);
 
 StdCmdTransform::StdCmdTransform()
-  : Command("Std_Transform")
+    : Command("Std_Transform")
 {
-    sGroup        = QT_TR_NOOP("Edit");
-    sMenuText     = QT_TR_NOOP("Transform...");
-    sToolTipText  = QT_TR_NOOP("Transform the geometry of selected objects");
-    sStatusTip    = QT_TR_NOOP("Transform the geometry of selected objects");
-    sWhatsThis    = "Std_Transform";
+    sGroup = QT_TR_NOOP("Edit");
+    sMenuText = QT_TR_NOOP("Transform...");
+    sToolTipText = QT_TR_NOOP("Transform the geometry of selected objects");
+    sStatusTip = QT_TR_NOOP("Transform the geometry of selected objects");
+    sWhatsThis = "Std_Transform";
 }
 
 void StdCmdTransform::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     Gui::Control().showDialog(new Gui::Dialog::TaskTransform());
 }
 
 bool StdCmdTransform::isActive(void)
 {
-    return (Gui::Control().activeDialog()==0);
+    return (Gui::Control().activeDialog() == 0);
 }
 
 //===========================================================================
@@ -1609,18 +1611,18 @@ bool StdCmdTransform::isActive(void)
 DEF_STD_CMD_A(StdCmdPlacement);
 
 StdCmdPlacement::StdCmdPlacement()
-  : Command("Std_Placement")
+    : Command("Std_Placement")
 {
-    sGroup        = QT_TR_NOOP("Edit");
-    sMenuText     = QT_TR_NOOP("Placement...");
-    sToolTipText  = QT_TR_NOOP("Place the selected objects");
-    sStatusTip    = QT_TR_NOOP("Place the selected objects");
-    sWhatsThis    = "Std_Placement";
+    sGroup = QT_TR_NOOP("Edit");
+    sMenuText = QT_TR_NOOP("Placement...");
+    sToolTipText = QT_TR_NOOP("Place the selected objects");
+    sStatusTip = QT_TR_NOOP("Place the selected objects");
+    sWhatsThis = "Std_Placement";
 }
 
 void StdCmdPlacement::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     std::vector<App::DocumentObject*> sel = Gui::Selection().getObjectsOfType(App::GeoFeature::getClassTypeId());
     Gui::Dialog::TaskPlacement* plm = new Gui::Dialog::TaskPlacement();
     if (!sel.empty()) {
@@ -1633,7 +1635,7 @@ void StdCmdPlacement::activated(int iMsg)
 
 bool StdCmdPlacement::isActive(void)
 {
-    return (Gui::Control().activeDialog()==0);
+    return (Gui::Control().activeDialog() == 0);
 }
 
 //===========================================================================
@@ -1642,18 +1644,18 @@ bool StdCmdPlacement::isActive(void)
 DEF_STD_CMD_A(StdCmdTransformManip);
 
 StdCmdTransformManip::StdCmdTransformManip()
-  : Command("Std_TransformManip")
+    : Command("Std_TransformManip")
 {
-    sGroup        = QT_TR_NOOP("Edit");
-    sMenuText     = QT_TR_NOOP("Transform");
-    sToolTipText  = QT_TR_NOOP("Transform the selected object in the 3d view");
-    sStatusTip    = QT_TR_NOOP("Transform the selected object in the 3d view");
-    sWhatsThis    = "Std_TransformManip";
+    sGroup = QT_TR_NOOP("Edit");
+    sMenuText = QT_TR_NOOP("Transform");
+    sToolTipText = QT_TR_NOOP("Transform the selected object in the 3d view");
+    sStatusTip = QT_TR_NOOP("Transform the selected object in the 3d view");
+    sWhatsThis = "Std_TransformManip";
 }
 
 void StdCmdTransformManip::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     if (getActiveGuiDocument()->getInEdit())
         getActiveGuiDocument()->resetEdit();
     std::vector<App::DocumentObject*> sel = Gui::Selection().getObjectsOfType(App::GeoFeature::getClassTypeId());
@@ -1675,20 +1677,20 @@ bool StdCmdTransformManip::isActive(void)
 DEF_STD_CMD_A(StdCmdAlignment);
 
 StdCmdAlignment::StdCmdAlignment()
-  : Command("Std_Alignment")
+    : Command("Std_Alignment")
 {
-    sGroup        = QT_TR_NOOP("Edit");
-    sMenuText     = QT_TR_NOOP("Alignment...");
-    sToolTipText  = QT_TR_NOOP("Align the selected objects");
-    sStatusTip    = QT_TR_NOOP("Align the selected objects");
-    sWhatsThis    = "Std_Alignment";
+    sGroup = QT_TR_NOOP("Edit");
+    sMenuText = QT_TR_NOOP("Alignment...");
+    sToolTipText = QT_TR_NOOP("Align the selected objects");
+    sStatusTip = QT_TR_NOOP("Align the selected objects");
+    sWhatsThis = "Std_Alignment";
 }
 
 void StdCmdAlignment::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     std::vector<App::DocumentObject*> sel = Gui::Selection().getObjectsOfType
-        (App::GeoFeature::getClassTypeId());
+    (App::GeoFeature::getClassTypeId());
     ManualAlignment* align = ManualAlignment::instance();
     QObject::connect(align, SIGNAL(emitCanceled()), align, SLOT(deleteLater()));
     QObject::connect(align, SIGNAL(emitFinished()), align, SLOT(deleteLater()));
@@ -1707,7 +1709,7 @@ void StdCmdAlignment::activated(int iMsg)
     model.addGroups(groupMap);
     align->setModel(model);
     Base::Type style = Base::Type::fromName("Gui::CADNavigationStyle");
-    Base::Vector3d upDir(0,1,0), viewDir(0,0,-1);
+    Base::Vector3d upDir(0, 1, 0), viewDir(0, 0, -1);
     Gui::Document* doc = Application::Instance->activeDocument();
     if (doc) {
         View3DInventor* mdi = qobject_cast<View3DInventor*>(doc->getActiveView());
@@ -1715,11 +1717,11 @@ void StdCmdAlignment::activated(int iMsg)
             View3DInventorViewer* viewer = mdi->getViewer();
             SoCamera* camera = viewer->getSoRenderManager()->getCamera();
             if (camera) {
-                SbVec3f up(0,1,0), dir(0,0,-1);
+                SbVec3f up(0, 1, 0), dir(0, 0, -1);
                 camera->orientation.getValue().multVec(dir, dir);
-                viewDir.Set(dir[0],dir[1],dir[2]);
+                viewDir.Set(dir[0], dir[1], dir[2]);
                 camera->orientation.getValue().multVec(up, up);
-                upDir.Set(up[0],up[1],up[2]);
+                upDir.Set(up[0], up[1], up[2]);
             }
             style = viewer->navigationStyle()->getTypeId();
         }
@@ -1727,7 +1729,7 @@ void StdCmdAlignment::activated(int iMsg)
 
     align->setMinPoints(1);
     align->startAlignment(style);
-    align->setViewingDirections(viewDir,upDir, viewDir,upDir);
+    align->setViewingDirections(viewDir, upDir, viewDir, upDir);
     Gui::Selection().clearSelection();
 }
 
@@ -1744,31 +1746,32 @@ bool StdCmdAlignment::isActive(void)
 DEF_STD_CMD_A(StdCmdEdit);
 
 StdCmdEdit::StdCmdEdit()
-  : Command("Std_Edit")
+    : Command("Std_Edit")
 {
-    sGroup        = QT_TR_NOOP("Edit");
-    sMenuText     = QT_TR_NOOP("Toggle &Edit mode");
-    sToolTipText  = QT_TR_NOOP("Toggles the selected object's edit mode");
-    sWhatsThis    = "Std_Edit";
-    sStatusTip    = QT_TR_NOOP("Enters or leaves the selected object's edit mode");
+    sGroup = QT_TR_NOOP("Edit");
+    sMenuText = QT_TR_NOOP("Toggle &Edit mode");
+    sToolTipText = QT_TR_NOOP("Toggles the selected object's edit mode");
+    sWhatsThis = "Std_Edit";
+    sStatusTip = QT_TR_NOOP("Enters or leaves the selected object's edit mode");
 #if QT_VERSION >= 0x040200
-    sPixmap       = "edit-edit";
+    sPixmap = "edit-edit";
 #endif
-    eType         = ForEdit;
+    eType = ForEdit;
 }
 
 void StdCmdEdit::activated(int iMsg)
 {
-    Q_UNUSED(iMsg); 
+    Q_UNUSED(iMsg);
     Gui::MDIView* view = Gui::getMainWindow()->activeWindow();
     if (view && view->isDerivedFrom(Gui::View3DInventor::getClassTypeId())) {
         Gui::View3DInventorViewer* viewer = static_cast<Gui::View3DInventor*>(view)->getViewer();
         if (viewer->isEditingViewProvider()) {
-            doCommand(Command::Gui,"Gui.activeDocument().resetEdit()");
-        } else {
+            doCommand(Command::Gui, "Gui.activeDocument().resetEdit()");
+        }
+        else {
             if (Selection().getCompleteSelection().size() > 0) {
                 SelectionSingleton::SelObj obj = Selection().getCompleteSelection()[0];
-                doCommand(Command::Gui,"Gui.activeDocument().setEdit(\"%s\",0)",obj.FeatName);
+                doCommand(Command::Gui, "Gui.activeDocument().setEdit(\"%s\",0)", obj.FeatName);
             }
         }
     }
@@ -1786,175 +1789,172 @@ bool StdCmdEdit::isActive(void)
 DEF_STD_CMD_A(StdCmdFindm);
 
 StdCmdFindm::StdCmdFindm()
-	: Command("Std_Findm")
+    : Command("Std_Findm")
 {
-	// setting the
-	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("find");
-	sToolTipText = QT_TR_NOOP("find text");
-	sWhatsThis = "Std_Findm";
-	sStatusTip = QT_TR_NOOP("find text");
-	sPixmap = "document-find";
-	sAccel = keySequenceToAccel(QKeySequence::Find);
+    // setting the
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("find");
+    sToolTipText = QT_TR_NOOP("find text");
+    sWhatsThis = "Std_Findm";
+    sStatusTip = QT_TR_NOOP("find text");
+    sPixmap = "document-find";
+    sAccel = keySequenceToAccel(QKeySequence::Find);
 }
 
 void StdCmdFindm::activated(int iMsg)
 {
-	Q_UNUSED(iMsg);
-	getGuiApplication()->sendMsgToActiveView("Findm");
+    Q_UNUSED(iMsg);
+    getGuiApplication()->sendMsgToActiveView("Findm");
 }
 bool StdCmdFindm::isActive(void)
 {
-	return getGuiApplication()->sendHasMsgToActiveView("Findm");
+    return getGuiApplication()->sendHasMsgToActiveView("Findm");
 }
-class StdCmdRunM3d : public Gui::Command 
+class StdCmdRunM3d : public Gui::Command
 {
 public:
-	StdCmdRunM3d(const char* name = "Std_Run_M3d");
-	virtual ~StdCmdRunM3d(){}
-	virtual const char* className() const
-		{ return "StdCmdRunM3d"; }
-protected: 
-	virtual void activated(int iMsg); 
-	virtual bool isActive(void); 
-	virtual Action * createAction(void);
+    StdCmdRunM3d(const char* name = "Std_Run_M3d");
+    virtual ~StdCmdRunM3d() {}
+    virtual const char* className() const
+    {
+        return "StdCmdRunM3d";
+    }
+protected:
+    virtual void activated(int iMsg);
+    virtual bool isActive(void);
+    virtual Action* createAction(void);
 
 protected:
-	Action *action;
-	//刷新action的图标
-	void updataActionIcon();
-	//图标状态
-	bool runState = false;
+    Action* action;
+    //刷新action的图标
+    void updataActionIcon();
+    //图标状态
+    bool runState = false;
 };
 
 StdCmdRunM3d::StdCmdRunM3d(const char* name)
-	: Command(name), action(nullptr)
+    : Command(name), action(nullptr)
 {
-	// setting the
-	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("RunM3d");
-	sToolTipText = QT_TR_NOOP("run m3d text");
-	sWhatsThis = "Std_Findm";
-	sStatusTip = QT_TR_NOOP("run m3d text");
-	sPixmap = "run";
-	sAccel = keySequenceToAccel(Qt::Key_F5);
+    // setting the
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("RunM3d");
+    sToolTipText = QT_TR_NOOP("run m3d text");
+    sWhatsThis = "Std_Findm";
+    sStatusTip = QT_TR_NOOP("run m3d text");
+    sPixmap = "run";
+    sAccel = keySequenceToAccel(Qt::Key_F5);
 }
 
 void StdCmdRunM3d::activated(int iMsg)
 {
-	Q_UNUSED(iMsg);
-	//首次点击、初始化mainwindow上的界面
-	auto mw = MainWindow::getInstance();
-	mw->inintContorlUI();
+    Q_UNUSED(iMsg);
+    //首次点击、初始化mainwindow上的界面
+    auto mw = MainWindow::getInstance();
+    mw->inintContorlUI();
 
-	//调用保存
-	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
+    //调用保存
+    doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
 
-	auto contorl = ContorlInterface::GetInstance();
-	if (!contorl->hasChipicRuning())
-	{
+    auto contorl = ContorlInterface::GetInstance();
+    if (!runState)
+    {
         //设置主界面上的ui
-		auto mw = Gui::MainWindow::getInstance();
-		mw->setContorlUI();
+        auto mw = Gui::MainWindow::getInstance();
+        mw->setContorlUI();
 
         //设置运行路
         Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
         auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
         if (!picDoc)
             return;
-		std::string path = picDoc->getTextPath();
-		contorl->setM3dPath(path);
-
-		//清空h5文件对象
-		picDoc->releaseH5Object();
-    }else {
-		//设置主界面上的ui
-		auto mw = Gui::MainWindow::getInstance();
-		mw->hideContorlUI();
-		//清空h5文件对象
-		Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
-		auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
-		if (!picDoc)
-			return;
-		picDoc->releaseH5Object();
+        std::string path = picDoc->getTextPath();
+        contorl->setM3dPath(path);
     }
-	contorl->buttonClicked(0);
+    contorl->buttonClicked(0);
 }
 bool StdCmdRunM3d::isActive(void)
 {
-	auto contorl = ContorlInterface::GetInstance();
-	
-	static bool actionState = false;
-	bool tempState = contorl->hasManualChipicRuning();
-	if (tempState != actionState)
-	{
-		actionState = tempState;
-		if (actionState)
-		{
-			auto mw = Gui::MainWindow::getInstance();
-			mw->showContorlUI();
-			sMenuText = QT_TR_NOOP("StopM3d");
-			sPixmap = "runing";
-		}else{
-			auto mw = Gui::MainWindow::getInstance();
-			sMenuText = QT_TR_NOOP("RunM3d");
-			sPixmap = "run";
-		}
-		this->updataActionIcon();
-	}
+    auto contorl = ContorlInterface::GetInstance();
+
+    static bool actionState = false;
+    bool tempState = contorl->hasManualChipicRuning();
+    if (tempState != actionState)
+    {
+        actionState = tempState;
+        if (actionState)
+        {
+            auto mw = Gui::MainWindow::getInstance();
+            mw->showContorlUI();
+            sMenuText = QT_TR_NOOP("StopM3d");
+            sPixmap = "runing";
+        }
+        else {
+            auto mw = Gui::MainWindow::getInstance();
+            mw->hideContorlUI();
+            sMenuText = QT_TR_NOOP("RunM3d");
+            sPixmap = "run";
+            //清空h5文件对象
+            auto doc = Gui::Application::Instance->activeDocument();
+            auto picDoc = dynamic_cast<DocumentPic*>(doc);
+            if (picDoc)
+                picDoc->releaseH5Object();
+        }
+        this->updataActionIcon();
+    }
 
 
-	if (App::GetApplication().getActiveDocument())
-		return true;
-	return false;
+    if (App::GetApplication().getActiveDocument())
+        return true;
+    return false;
 }
 
-Gui::Action * StdCmdRunM3d::createAction(void)
+Gui::Action* StdCmdRunM3d::createAction(void)
 {
-	action = Command::createAction();
-	return action;
+    action = Command::createAction();
+    return action;
 }
 void StdCmdRunM3d::updataActionIcon()
 {
-	action->setIcon(Gui::BitmapFactory().iconFromTheme(sPixmap));
+    action->setIcon(Gui::BitmapFactory().iconFromTheme(sPixmap));
 
-	QString exe = qApp->applicationName();
-	action->setText(QCoreApplication::translate(
-		this->className(), sMenuText).arg(exe));
+    QString exe = qApp->applicationName();
+    action->setText(QCoreApplication::translate(
+        this->className(), sMenuText).arg(exe));
 }
 
 class StdCmdContourImageMod :public StdCmdRunM3d {
 public:
     StdCmdContourImageMod();
     ~StdCmdContourImageMod() = default;
-	const char* className() const override {
-		return "StdCmdContourImageMod";
-	}
+    const char* className() const override {
+        return "StdCmdContourImageMod";
+    }
 protected:
-	virtual void activated(int iMsg);
-	virtual bool isActive(void);
+    virtual void activated(int iMsg);
+    virtual bool isActive(void);
 };
 
 StdCmdContourImageMod::StdCmdContourImageMod()
     :StdCmdRunM3d("Std_Contour_Image_Mod")
 {
-	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("Image(on)");
-	sToolTipText = QT_TR_NOOP("ContourImageMod");
-	sWhatsThis = "Std_Contour_Image_Mod";
-	sStatusTip = QT_TR_NOOP("ContourImageMod");
-	sPixmap = "contour_image_on";
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("Image(on)");
+    sToolTipText = QT_TR_NOOP("ContourImageMod");
+    sWhatsThis = "Std_Contour_Image_Mod";
+    sStatusTip = QT_TR_NOOP("ContourImageMod");
+    sPixmap = "contour_image_on";
 }
 
 void StdCmdContourImageMod::activated(int iMsg)
 {
     const char* ret;
-    getGuiApplication()->sendMsgToActiveView("ContourImageMod",&ret);
+    getGuiApplication()->sendMsgToActiveView("ContourImageMod", &ret);
     if (strcmp(ret, "on") == 0)
     {
         sMenuText = QT_TR_NOOP("Image(on)");
         sPixmap = "contour_image_on";
-    }else {
+    }
+    else {
         sMenuText = QT_TR_NOOP("Image(off)");
         sPixmap = "contour_image_off";
     }
@@ -1968,41 +1968,41 @@ bool StdCmdContourImageMod::isActive(void)
 class StdCmdContourLineMod :public StdCmdRunM3d {
 public:
     StdCmdContourLineMod();
-	~StdCmdContourLineMod() = default;
-	const char* className() const override {
-		return "StdCmdContourLineMod";
-	}
+    ~StdCmdContourLineMod() = default;
+    const char* className() const override {
+        return "StdCmdContourLineMod";
+    }
 protected:
-	virtual void activated(int iMsg);
-	virtual bool isActive(void);
+    virtual void activated(int iMsg);
+    virtual bool isActive(void);
 };
 
 StdCmdContourLineMod::StdCmdContourLineMod()
     :StdCmdRunM3d("Std_Contour_Line_Mod")
 {
-	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("contour(on)");
-	sToolTipText = QT_TR_NOOP("ContourLineMod");
-	sWhatsThis = "Std_Contour_Line_Mod";
-	sStatusTip = QT_TR_NOOP("ContourLineMod");
-	sPixmap = "contour_line_on";
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("contour(on)");
+    sToolTipText = QT_TR_NOOP("ContourLineMod");
+    sWhatsThis = "Std_Contour_Line_Mod";
+    sStatusTip = QT_TR_NOOP("ContourLineMod");
+    sPixmap = "contour_line_on";
 }
 
 
 void StdCmdContourLineMod::activated(int iMsg)
 {
-	const char* ret;
-	getGuiApplication()->sendMsgToActiveView("ContourLineMod", &ret);
-	if (strcmp(ret, "on") == 0)
-	{
-		sMenuText = QT_TR_NOOP("contour(on)");
+    const char* ret;
+    getGuiApplication()->sendMsgToActiveView("ContourLineMod", &ret);
+    if (strcmp(ret, "on") == 0)
+    {
+        sMenuText = QT_TR_NOOP("contour(on)");
         sPixmap = "contour_line_on";
-	}
-	else {
-		sMenuText = QT_TR_NOOP("contour(off)");
+    }
+    else {
+        sMenuText = QT_TR_NOOP("contour(off)");
         sPixmap = "contour_line_off";
-	}
-	updataActionIcon();
+    }
+    updataActionIcon();
 }
 
 bool StdCmdContourLineMod::isActive(void)
@@ -2013,40 +2013,40 @@ bool StdCmdContourLineMod::isActive(void)
 class StdCmdDataVisualizationPlotDisplayGridMod :public StdCmdRunM3d {
 public:
     StdCmdDataVisualizationPlotDisplayGridMod();
-	~StdCmdDataVisualizationPlotDisplayGridMod() = default;
-	const char* className() const override {
-		return "StdCmdDataVisualizationPlotDisplayGridMod";
-	}
+    ~StdCmdDataVisualizationPlotDisplayGridMod() = default;
+    const char* className() const override {
+        return "StdCmdDataVisualizationPlotDisplayGridMod";
+    }
 protected:
-	virtual void activated(int iMsg);
-	virtual bool isActive(void);
+    virtual void activated(int iMsg);
+    virtual bool isActive(void);
 };
 
 StdCmdDataVisualizationPlotDisplayGridMod::StdCmdDataVisualizationPlotDisplayGridMod()
     :StdCmdRunM3d("Std_Data_Visualization_Plot_Display_Grid_Mod")
 {
-	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("Grid(off)");
-	sToolTipText = QT_TR_NOOP("plot grid display mod");
-	sWhatsThis = "Std_Data_Visualization_Plot_Display_Grid_Mod";
-	sStatusTip = QT_TR_NOOP("plot grid display mod");
-	sPixmap = "grid_line_on";
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("Grid(off)");
+    sToolTipText = QT_TR_NOOP("plot grid display mod");
+    sWhatsThis = "Std_Data_Visualization_Plot_Display_Grid_Mod";
+    sStatusTip = QT_TR_NOOP("plot grid display mod");
+    sPixmap = "grid_line_on";
 }
 
 void StdCmdDataVisualizationPlotDisplayGridMod::activated(int iMsg)
 {
-	const char* ret;
-	getGuiApplication()->sendMsgToActiveView("PlotDisplayMod", &ret);
-	if (strcmp(ret, "on") == 0)
-	{
-		sMenuText = QT_TR_NOOP("Grid(on)");
+    const char* ret;
+    getGuiApplication()->sendMsgToActiveView("PlotDisplayMod", &ret);
+    if (strcmp(ret, "on") == 0)
+    {
+        sMenuText = QT_TR_NOOP("Grid(on)");
         sPixmap = "grid_line_on";
-	}
-	else {
-		sMenuText = QT_TR_NOOP("Grid(off)");
+    }
+    else {
+        sMenuText = QT_TR_NOOP("Grid(off)");
         sPixmap = "grid_line_off";
-	}
-	updataActionIcon();
+    }
+    updataActionIcon();
 }
 
 bool StdCmdDataVisualizationPlotDisplayGridMod::isActive(void)
@@ -2054,277 +2054,244 @@ bool StdCmdDataVisualizationPlotDisplayGridMod::isActive(void)
     return getGuiApplication()->sendHasMsgToActiveView("PlotDisplayMod");
 }
 
-class StdCmdConnectWay :public StdCmdRunM3d{
+class StdCmdConnectWay :public StdCmdRunM3d {
 public:
-	StdCmdConnectWay();
-	~StdCmdConnectWay(){};
-	const char* className() const override{
-		return "StdCmdConnectWay";
-	}
+    StdCmdConnectWay();
+    ~StdCmdConnectWay() {};
+    const char* className() const override {
+        return "StdCmdConnectWay";
+    }
 
 protected:
-	virtual void activated(int iMsg);
-	virtual bool isActive(void);
+    virtual void activated(int iMsg);
+    virtual bool isActive(void);
 };
 
 StdCmdConnectWay::StdCmdConnectWay()
-	:StdCmdRunM3d("Std_Connect_Way")
+    :StdCmdRunM3d("Std_Connect_Way")
 {
-	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("local");
-	sToolTipText = QT_TR_NOOP("ConnectWay");
-	sWhatsThis = "Std_Connect_Way";
-	sStatusTip = QT_TR_NOOP("ConnectWay");
-	sPixmap = "local";
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("local");
+    sToolTipText = QT_TR_NOOP("ConnectWay");
+    sWhatsThis = "Std_Connect_Way";
+    sStatusTip = QT_TR_NOOP("ConnectWay");
+    sPixmap = "local";
 }
 
 void StdCmdConnectWay::activated(int iMsg)
 {
-	Q_UNUSED(iMsg);
-	auto contorl = ContorlInterface::GetInstance();
-	contorl->buttonClicked(6);
-	int connectWay = contorl->getConnectWay();
-	if (connectWay == 1)
-	{
-		sPixmap = "local";
-		sMenuText = QT_TR_NOOP("local");
-	}
-	else if (connectWay){
-		sPixmap = "network";
-		sMenuText = QT_TR_NOOP("network");
-	}
-	updataActionIcon();
+    Q_UNUSED(iMsg);
+    auto contorl = ContorlInterface::GetInstance();
+    contorl->buttonClicked(6);
+    int connectWay = contorl->getConnectWay();
+    if (connectWay == 1)
+    {
+        sPixmap = "local";
+        sMenuText = QT_TR_NOOP("local");
+    }
+    else if (connectWay) {
+        sPixmap = "network";
+        sMenuText = QT_TR_NOOP("network");
+    }
+    updataActionIcon();
 }
 
 bool StdCmdConnectWay::isActive(void)
 {
-	auto contorl = ContorlInterface::GetInstance();
-	if (App::GetApplication().getActiveDocument()&&(!contorl->hasChipicRuning()))
-		return true;
-	return false;
-}
-
-DEF_STD_CMD_A(StdCmdParalleRun);
-
-StdCmdParalleRun::StdCmdParalleRun()
-	: Command("Std_Paralle_Run")
-{
-	// setting the
-	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("ParalleRun");
-	sToolTipText = QT_TR_NOOP("ParalleRun");
-	sWhatsThis = "Std_Paralle_Run";
-	sStatusTip = QT_TR_NOOP("ParalleRun");
-	sPixmap = "paralleRun";
-}
-
-void StdCmdParalleRun::activated(int iMsg)
-{
-	Q_UNUSED(iMsg);
-	auto mw = MainWindow::getInstance();
-	mw->inintContorlUI();
-	mw->setContorlUI();
-	//调用保存
-	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
-	auto contorl = ContorlInterface::GetInstance();
-
-	//设置运行路
-	Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
-	auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
-	if (!picDoc)
-		return;
-	std::string path = picDoc->getTextPath();
-	contorl->setM3dPath(path);
-	contorl->buttonClicked(1);
-}
-bool StdCmdParalleRun::isActive(void)
-{
-	auto contorl = ContorlInterface::GetInstance();
-	if (App::GetApplication().getActiveDocument() && (!contorl->hasChipicRuning()))
-		return true;
-	return false;
-}
-DEF_STD_CMD_A(StdCmdSmartContorl);
-
-StdCmdSmartContorl::StdCmdSmartContorl()
-	: Command("Std_Smart_Contrl")
-{
-	// setting the
-	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("SmartContorl");
-	sToolTipText = QT_TR_NOOP("SmartContorl");
-	sWhatsThis = "Std_Paralle_Run";
-	sStatusTip = QT_TR_NOOP("SmartContorl");
-	sPixmap = "smartContorl";
-}
-
-void StdCmdSmartContorl::activated(int iMsg)
-{
-	Q_UNUSED(iMsg);
-	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
-	//设置运行路
-	Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
-	auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
-	if (!picDoc)
-		return;
-	std::string path = picDoc->getTextPath();
-    SmartContorlInterface::showSmartControlUI(path);
-}
-bool StdCmdSmartContorl::isActive(void)
-{
-	auto contorl = ContorlInterface::GetInstance();
-	if (App::GetApplication().getActiveDocument() && (!contorl->hasChipicRuning()))
-		return true;
-	return false;
-}
-/*添加组件*/
-DEF_STD_CMD_A(StdCmdSmartCalc);
-StdCmdSmartCalc::StdCmdSmartCalc()
-    :Command("Std_Smart_Calc")
-{
-    sGroup = QT_TR_NOOP("File");
-    sMenuText = QT_TR_NOOP("SmartCalc");
-    sToolTipText = QT_TR_NOOP("SmartCalc");
-    sWhatsThis = "Std_Paralle_Run";
-    sStatusTip = QT_TR_NOOP("SmartCalc");
-    sPixmap = "smartContorl";
-}
-
-void StdCmdSmartCalc::activated(int Msg)
-{
-    Q_UNUSED(Msg);
-    //打开路径
-    doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
-    //设置运行路径
-    Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
-    auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
-    if (!picDoc)
-        return;
-    std::string path = picDoc->getTextPath();
-    SmartContorlInterface::showSmartCalc(path);
-}
-bool StdCmdSmartCalc::isActive(void)
-{
-    //return true;
     auto contorl = ContorlInterface::GetInstance();
     if (App::GetApplication().getActiveDocument() && (!contorl->hasChipicRuning()))
         return true;
     return false;
 }
+
+DEF_STD_CMD_A(StdCmdParalleRun);
+
+StdCmdParalleRun::StdCmdParalleRun()
+    : Command("Std_Paralle_Run")
+{
+    // setting the
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("ParalleRun");
+    sToolTipText = QT_TR_NOOP("ParalleRun");
+    sWhatsThis = "Std_Paralle_Run";
+    sStatusTip = QT_TR_NOOP("ParalleRun");
+    sPixmap = "paralleRun";
+}
+
+void StdCmdParalleRun::activated(int iMsg)
+{
+    Q_UNUSED(iMsg);
+    auto mw = MainWindow::getInstance();
+    mw->inintContorlUI();
+    mw->setContorlUI();
+    //调用保存
+    doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
+    auto contorl = ContorlInterface::GetInstance();
+
+    //设置运行路
+    Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
+    auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
+    if (!picDoc)
+        return;
+    std::string path = picDoc->getTextPath();
+    contorl->setM3dPath(path);
+    contorl->buttonClicked(1);
+}
+bool StdCmdParalleRun::isActive(void)
+{
+    auto contorl = ContorlInterface::GetInstance();
+    if (App::GetApplication().getActiveDocument() && (!contorl->hasChipicRuning()))
+        return true;
+    return false;
+}
+DEF_STD_CMD_A(StdCmdSmartContorl);
+
+StdCmdSmartContorl::StdCmdSmartContorl()
+    : Command("Std_Smart_Contrl")
+{
+    // setting the
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("SmartContorl");
+    sToolTipText = QT_TR_NOOP("SmartContorl");
+    sWhatsThis = "Std_Paralle_Run";
+    sStatusTip = QT_TR_NOOP("SmartContorl");
+    sPixmap = "smartContorl";
+}
+
+void StdCmdSmartContorl::activated(int iMsg)
+{
+    Q_UNUSED(iMsg);
+    doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
+    //设置运行路
+    Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
+    auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
+    if (!picDoc)
+        return;
+    std::string path = picDoc->getTextPath();
+    SmartContorlInterface::showSmartControlUI(path);
+}
+bool StdCmdSmartContorl::isActive(void)
+{
+    auto contorl = ContorlInterface::GetInstance();
+    if (App::GetApplication().getActiveDocument() && (!contorl->hasChipicRuning()))
+        return true;
+    return false;
+}
+
 DEF_STD_CMD_A(StdCmdOpenLog);
 
 StdCmdOpenLog::StdCmdOpenLog()
-	: Command("Std_Open_Log")
+    : Command("Std_Open_Log")
 {
-	// setting the
-	sGroup = QT_TR_NOOP("File");
-	sMenuText = QT_TR_NOOP("Log");
-	sToolTipText = QT_TR_NOOP("OpenLog");
-	sWhatsThis = "Std_Open_Log";
-	sStatusTip = QT_TR_NOOP("OpenLog");
-	sPixmap = "openLog";
+    // setting the
+    sGroup = QT_TR_NOOP("File");
+    sMenuText = QT_TR_NOOP("Log");
+    sToolTipText = QT_TR_NOOP("OpenLog");
+    sWhatsThis = "Std_Open_Log";
+    sStatusTip = QT_TR_NOOP("OpenLog");
+    sPixmap = "openLog";
 }
 
 void StdCmdOpenLog::activated(int iMsg)
 {
-	Q_UNUSED(iMsg);
-	auto contorl = ContorlInterface::GetInstance();
-	contorl->buttonClicked(5);
+    Q_UNUSED(iMsg);
+    auto contorl = ContorlInterface::GetInstance();
+    contorl->buttonClicked(5);
 }
 bool StdCmdOpenLog::isActive(void)
 {
-	if (App::GetApplication().getActiveDocument())
-		return true;
-	return false;
+    if (App::GetApplication().getActiveDocument())
+        return true;
+    return false;
 }
 
 DEF_STD_CMD_A(StdCmdOpenUserBook);
 
 StdCmdOpenUserBook::StdCmdOpenUserBook()
-	: Command("Std_Open_User_book")
+    : Command("Std_Open_User_book")
 {
-	// setting the
-	sGroup = QT_TR_NOOP("Help");
-	sMenuText = QT_TR_NOOP("user book");
-	sToolTipText = QT_TR_NOOP("open user book");
-	sWhatsThis = "Std_Open_User_book";
-	sStatusTip = QT_TR_NOOP("Std_Open_User_book");
-	sPixmap = "help-user-book";
+    // setting the
+    sGroup = QT_TR_NOOP("Help");
+    sMenuText = QT_TR_NOOP("user book");
+    sToolTipText = QT_TR_NOOP("open user book");
+    sWhatsThis = "Std_Open_User_book";
+    sStatusTip = QT_TR_NOOP("Std_Open_User_book");
+    sPixmap = "help-user-book";
 }
 
 void StdCmdOpenUserBook::activated(int iMsg)
 {
-	Q_UNUSED(iMsg);
-	std::string helpFilePath = "file:///" + App::Application::getHelpDir() + "UserBook.chm";
-	Gui::getMainWindow()->showDocumentation(QString::fromStdString(helpFilePath));
+    Q_UNUSED(iMsg);
+    std::string helpFilePath = "file:///" + App::Application::getHelpDir() + "UserBook.chm";
+    Gui::getMainWindow()->showDocumentation(QString::fromStdString(helpFilePath));
 }
 bool StdCmdOpenUserBook::isActive(void)
 {
-	return true;
+    return true;
 }
 
 DEF_STD_CMD_A(StdCmdOpenCommandBook);
 
 StdCmdOpenCommandBook::StdCmdOpenCommandBook()
-	: Command("Std_Open_Command_book")
+    : Command("Std_Open_Command_book")
 {
-	// setting the
-	sGroup = QT_TR_NOOP("Help");
-	sMenuText = QT_TR_NOOP("command book");
-	sToolTipText = QT_TR_NOOP("open command book");
-	sWhatsThis = "Std_Open_Command_book";
-	sStatusTip = QT_TR_NOOP("Std_Open_Command_book");
-	sPixmap = "help-command-book";
+    // setting the
+    sGroup = QT_TR_NOOP("Help");
+    sMenuText = QT_TR_NOOP("command book");
+    sToolTipText = QT_TR_NOOP("open command book");
+    sWhatsThis = "Std_Open_Command_book";
+    sStatusTip = QT_TR_NOOP("Std_Open_Command_book");
+    sPixmap = "help-command-book";
 }
 
 void StdCmdOpenCommandBook::activated(int iMsg)
 {
-	Q_UNUSED(iMsg);
-	std::string helpFilePath = "file:///" + App::Application::getHelpDir() + "CommandBook.chm";
-	Gui::getMainWindow()->showDocumentation(QString::fromStdString(helpFilePath));
+    Q_UNUSED(iMsg);
+    std::string helpFilePath = "file:///" + App::Application::getHelpDir() + "CommandBook.chm";
+    Gui::getMainWindow()->showDocumentation(QString::fromStdString(helpFilePath));
 }
 bool StdCmdOpenCommandBook::isActive(void)
 {
-	return true;
+    return true;
 }
 DEF_STD_CMD_A(StdCmdRunSuperTube);
 
 StdCmdRunSuperTube::StdCmdRunSuperTube()
-	: Command("Std_Run_Super_Tube")
+    : Command("Std_Run_Super_Tube")
 {
-	// setting the
-	sGroup = QT_TR_NOOP("open");
-	sMenuText = QT_TR_NOOP("SuperTube");
-	sToolTipText = QT_TR_NOOP("open SuperTube");
-	sWhatsThis = "Std_Open_Command_book";
-	sStatusTip = QT_TR_NOOP("Std_Run_Super_Tube");
-	sPixmap = "help-supertube";
+    // setting the
+    sGroup = QT_TR_NOOP("open");
+    sMenuText = QT_TR_NOOP("SuperTube");
+    sToolTipText = QT_TR_NOOP("open SuperTube");
+    sWhatsThis = "Std_Open_Command_book";
+    sStatusTip = QT_TR_NOOP("Std_Run_Super_Tube");
+    sPixmap = "help-supertube";
 }
 
 void StdCmdRunSuperTube::activated(int iMsg)
 {
-	Q_UNUSED(iMsg);
-	std::string helpFilePath = "C:/SuperTube/SuperTube.exe";
-	Gui::getMainWindow()->showDocumentation(QString::fromStdString(helpFilePath));
+    Q_UNUSED(iMsg);
+    std::string helpFilePath = "C:/SuperTube/SuperTube.exe";
+    Gui::getMainWindow()->showDocumentation(QString::fromStdString(helpFilePath));
 }
 bool StdCmdRunSuperTube::isActive(void)
 {
-	return true;
+    return true;
 }
 DEF_STD_CMD_A(StdCmdOpenDataVisualizationConfig);
 StdCmdOpenDataVisualizationConfig::StdCmdOpenDataVisualizationConfig()
     : Command("Std_Open_Data_Visualization_Config")
 {
-	sGroup = QT_TR_NOOP("open");
-	sMenuText = QT_TR_NOOP("VisualizationConfig");
-	sToolTipText = QT_TR_NOOP("Open Data Visualization Config");
-	sWhatsThis = "Std_Open_Data_Visualization_Config";
-	sStatusTip = QT_TR_NOOP("Std_Open_Data_Visualization_Config");
-	sPixmap = "plot_setting";
+    sGroup = QT_TR_NOOP("open");
+    sMenuText = QT_TR_NOOP("VisualizationConfig");
+    sToolTipText = QT_TR_NOOP("Open Data Visualization Config");
+    sWhatsThis = "Std_Open_Data_Visualization_Config";
+    sStatusTip = QT_TR_NOOP("Std_Open_Data_Visualization_Config");
+    sPixmap = "plot_setting";
 }
 void StdCmdOpenDataVisualizationConfig::activated(int iMsg)
 {
-	getGuiApplication()->showPlotSettingDialog();
+    getGuiApplication()->showPlotSettingDialog();
 }
 
 bool StdCmdOpenDataVisualizationConfig::isActive()
@@ -2334,14 +2301,14 @@ bool StdCmdOpenDataVisualizationConfig::isActive()
 
 DEF_STD_CMD_A(StdCmdDataVisualizationAutoMax);
 StdCmdDataVisualizationAutoMax::StdCmdDataVisualizationAutoMax()
-	: Command("Std_Data_Visualization_Auto_Max")
+    : Command("Std_Data_Visualization_Auto_Max")
 {
-	sGroup = QT_TR_NOOP("open");
-	sMenuText = QT_TR_NOOP("AutoMax");
-	sToolTipText = QT_TR_NOOP("Data visualization plot auto max renderer!");
-	sWhatsThis = "Std_Data_Visualization_Auto_Max";
-	sStatusTip = QT_TR_NOOP("Std_Data_Visualization_Auto_Max");
-	sPixmap = "rest";
+    sGroup = QT_TR_NOOP("open");
+    sMenuText = QT_TR_NOOP("AutoMax");
+    sToolTipText = QT_TR_NOOP("Data visualization plot auto max renderer!");
+    sWhatsThis = "Std_Data_Visualization_Auto_Max";
+    sStatusTip = QT_TR_NOOP("Std_Data_Visualization_Auto_Max");
+    sPixmap = "rest";
 }
 void StdCmdDataVisualizationAutoMax::activated(int iMsg)
 {
@@ -2380,17 +2347,19 @@ void StdCmdMyParameter::activated(int iMsg)
     }
     if (Gui::DockWindowManager::instance()->getDockWindow("custom_param")) {
         if (!Gui::DockWindowManager::instance()->getDockWindow("custom_param")->isVisible()) {
-            Gui::DockWindowManager::instance()->getDockWindow("custom_param")->show();
+            MyparamDockWidget->show();
         }
         else {
-            Gui::DockWindowManager::instance()->getDockWindow("custom_param")->close();
+            MyparamDockWidget->close();
         }
     }
     else {
         MyParameter* p = new MyParameter();
-        Gui::DockWindowManager::instance()->addDockWindow("custom_param", p, Qt::DockWidgetArea::RightDockWidgetArea)->show();
+        MyparamDockWidget = Gui::DockWindowManager::instance()->addDockWindow("custom_param", p, Qt::DockWidgetArea::RightDockWidgetArea);
+        MyparamDockWidget->show();
     }
 }
+
 bool StdCmdMyParameter::isActive(void)
 {
     if (App::GetApplication().getActiveDocument())
@@ -2400,65 +2369,63 @@ bool StdCmdMyParameter::isActive(void)
 
 namespace Gui {
 
-void CreateDocCommands(void)
-{
-    CommandManager &rcCmdMgr = Application::Instance->commandManager();
+    void CreateDocCommands(void)
+    {
+        CommandManager& rcCmdMgr = Application::Instance->commandManager();
 
-    rcCmdMgr.addCommand(new StdCmdNew());
-    rcCmdMgr.addCommand(new StdCmdOpen());
-    rcCmdMgr.addCommand(new StdCmdImport());
-    rcCmdMgr.addCommand(new StdCmdExport());
-    rcCmdMgr.addCommand(new StdCmdMergeProjects());
-    rcCmdMgr.addCommand(new StdCmdExportGraphviz());
+        rcCmdMgr.addCommand(new StdCmdNew());
+        rcCmdMgr.addCommand(new StdCmdOpen());
+        rcCmdMgr.addCommand(new StdCmdImport());
+        rcCmdMgr.addCommand(new StdCmdExport());
+        rcCmdMgr.addCommand(new StdCmdMergeProjects());
+        rcCmdMgr.addCommand(new StdCmdExportGraphviz());
 
-	rcCmdMgr.addCommand(new StdCmdRunM3d());
-	rcCmdMgr.addCommand(new StdCmdFindm());
-	rcCmdMgr.addCommand(new StdCmdParalleRun());
-	rcCmdMgr.addCommand(new StdCmdSmartContorl());
-	rcCmdMgr.addCommand(new StdCmdOpenLog());
-	rcCmdMgr.addCommand(new StdCmdConnectWay);
-	rcCmdMgr.addCommand(new StdCmdOpenCommandBook);
-	rcCmdMgr.addCommand(new StdCmdOpenUserBook);
-	rcCmdMgr.addCommand(new StdCmdRunSuperTube);
-    //rcCmdMgr.addCommand(new StdCmdContourImageMod);
-    //rcCmdMgr.addCommand(new StdCmdContourLineMod);
-    rcCmdMgr.addCommand(new StdCmdOpenDataVisualizationConfig);
-    rcCmdMgr.addCommand(new StdCmdDataVisualizationAutoMax);
-    //rcCmdMgr.addCommand(new StdCmdDataVisualizationPlotDisplayGridMod);
+        rcCmdMgr.addCommand(new StdCmdRunM3d());
+        rcCmdMgr.addCommand(new StdCmdFindm());
+        rcCmdMgr.addCommand(new StdCmdParalleRun());
+        rcCmdMgr.addCommand(new StdCmdSmartContorl());
+        rcCmdMgr.addCommand(new StdCmdOpenLog());
+        rcCmdMgr.addCommand(new StdCmdConnectWay);
+        rcCmdMgr.addCommand(new StdCmdOpenCommandBook);
+        rcCmdMgr.addCommand(new StdCmdOpenUserBook);
+        rcCmdMgr.addCommand(new StdCmdRunSuperTube);
+        rcCmdMgr.addCommand(new StdCmdContourImageMod);
+        rcCmdMgr.addCommand(new StdCmdContourLineMod);
+        rcCmdMgr.addCommand(new StdCmdOpenDataVisualizationConfig);
+        rcCmdMgr.addCommand(new StdCmdDataVisualizationAutoMax);
+        rcCmdMgr.addCommand(new StdCmdDataVisualizationPlotDisplayGridMod);
 
-    rcCmdMgr.addCommand(new StdCmdSave());
-    rcCmdMgr.addCommand(new StdCmdSaveAs());
-    rcCmdMgr.addCommand(new StdCmdSaveCopy());
-    rcCmdMgr.addCommand(new StdCmdRevert());
-	/*fubiao*/
-	rcCmdMgr.addCommand(new StdCmdIPConfig());
-    rcCmdMgr.addCommand(new StdCmdProjectInfo());
-    rcCmdMgr.addCommand(new StdCmdProjectUtil());
-    rcCmdMgr.addCommand(new StdCmdUndo());
-    rcCmdMgr.addCommand(new StdCmdRedo());
-    rcCmdMgr.addCommand(new StdCmdPrint());
-    rcCmdMgr.addCommand(new StdCmdPrintPreview());
-    rcCmdMgr.addCommand(new StdCmdPrintPdf());
-    rcCmdMgr.addCommand(new StdCmdQuit());
-    rcCmdMgr.addCommand(new StdCmdCut());
-    rcCmdMgr.addCommand(new StdCmdCopy());
-    rcCmdMgr.addCommand(new StdCmdPaste());
-    rcCmdMgr.addCommand(new StdCmdDuplicateSelection());
-    rcCmdMgr.addCommand(new StdCmdSelectAll());
-    rcCmdMgr.addCommand(new StdCmdDelete());
-    rcCmdMgr.addCommand(new StdCmdRefresh());
-    rcCmdMgr.addCommand(new StdCmdTransform());
-    rcCmdMgr.addCommand(new StdCmdPlacement());
-    rcCmdMgr.addCommand(new StdCmdTransformManip());
-    rcCmdMgr.addCommand(new StdCmdAlignment());
-    rcCmdMgr.addCommand(new StdCmdEdit());
-    /*lzg*/
-    //自定义变量
-    rcCmdMgr.addCommand(new StdCmdMyParameter());
-	rcCmdMgr.addCommand(new StdCmdSmartCalc());
-    //添加自定义的commad
-    creatGuiCommand();
-}
+        rcCmdMgr.addCommand(new StdCmdSave());
+        rcCmdMgr.addCommand(new StdCmdSaveAs());
+        rcCmdMgr.addCommand(new StdCmdSaveCopy());
+        rcCmdMgr.addCommand(new StdCmdRevert());
+        /*fubiao*/
+        rcCmdMgr.addCommand(new StdCmdIPConfig());
+        rcCmdMgr.addCommand(new StdCmdProjectInfo());
+        rcCmdMgr.addCommand(new StdCmdProjectUtil());
+        rcCmdMgr.addCommand(new StdCmdUndo());
+        rcCmdMgr.addCommand(new StdCmdRedo());
+        rcCmdMgr.addCommand(new StdCmdPrint());
+        rcCmdMgr.addCommand(new StdCmdPrintPreview());
+        rcCmdMgr.addCommand(new StdCmdPrintPdf());
+        rcCmdMgr.addCommand(new StdCmdQuit());
+        rcCmdMgr.addCommand(new StdCmdCut());
+        rcCmdMgr.addCommand(new StdCmdCopy());
+        rcCmdMgr.addCommand(new StdCmdPaste());
+        rcCmdMgr.addCommand(new StdCmdDuplicateSelection());
+        rcCmdMgr.addCommand(new StdCmdSelectAll());
+        rcCmdMgr.addCommand(new StdCmdDelete());
+        rcCmdMgr.addCommand(new StdCmdRefresh());
+        rcCmdMgr.addCommand(new StdCmdTransform());
+        rcCmdMgr.addCommand(new StdCmdPlacement());
+        rcCmdMgr.addCommand(new StdCmdTransformManip());
+        rcCmdMgr.addCommand(new StdCmdAlignment());
+        rcCmdMgr.addCommand(new StdCmdEdit());
+        /*lzg*/
+        //自定义变量
+        rcCmdMgr.addCommand(new StdCmdMyParameter());
+
+    }
 
 } // namespace Gui
 

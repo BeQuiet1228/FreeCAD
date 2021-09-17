@@ -1,59 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DeleteDialog</class>
- <widget class="QDialog" name="DeleteDialog">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>401</width>
-    <height>174</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Dialog</string>
-  </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="2" column="1">
-      <widget class="QPushButton" name="pb_ok">
-       <property name="text">
-        <string>ok</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QPushButton" name="pb_analyze">
-       <property name="text">
-        <string>analyze</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>delete param name：</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QPushButton" name="pb_cancel">
-       <property name="text">
-        <string>cancel</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1" colspan="2">
-      <widget class="QLineEdit" name="le_name"/>
-     </item>
-     <item row="1" column="0" colspan="3">
-      <widget class="QTextEdit" name="te_message"/>
-     </item>
-    </layout>
-   </item>
-  </layout>
- </widget>
- <resources/>
- <connections/>
+	<class>DeleteDialog</class>
+	<widget class="QDialog" name="DeleteDialog">
+		<property name="geometry">
+			<rect>
+				<x>0</x>
+				<y>0</y>
+				<width>437</width>
+				<height>181</height>
+			</rect>
+		</property>
+		<property name="windowTitle">
+			<string>Dialog</string>
+		</property>
+		<widget class="QWidget" name="">
+			<property name="geometry">
+				<rect>
+					<x>10</x>
+					<y>10</y>
+					<width>421</width>
+					<height>161</height>
+				</rect>
+			</property>
+			<layout class="QVBoxLayout" name="verticalLayout">
+				<item>
+					<layout class="QHBoxLayout" name="horizontalLayout_2">
+						<item>
+							<widget class="QLabel" name="label">
+								<property name="text">
+									<string>delete param：</string>
+								</property>
+							</widget>
+						</item>
+						<item>
+							<widget class="QSpinBox" name="sb_row">
+								<property name="maximum">
+									<number>999</number>
+								</property>
+							</widget>
+						</item>
+						<item>
+							<widget class="QLineEdit" name="le_name"/>
+						</item>
+					</layout>
+				</item>
+				<item>
+					<widget class="QTextEdit" name="te_message"/>
+				</item>
+				<item>
+					<layout class="QHBoxLayout" name="horizontalLayout">
+						<item>
+							<widget class="QPushButton" name="pb_analyze">
+								<property name="text">
+									<string>analyze</string>
+								</property>
+							</widget>
+						</item>
+						<item>
+							<widget class="QPushButton" name="pb_ok">
+								<property name="text">
+									<string>ok</string>
+								</property>
+							</widget>
+						</item>
+						<item>
+							<widget class="QPushButton" name="pb_cancel">
+								<property name="text">
+									<string>cancel</string>
+								</property>
+							</widget>
+						</item>
+					</layout>
+				</item>
+			</layout>
+		</widget>
+	</widget>
+	<resources/>
+	<connections/>
 </ui>
