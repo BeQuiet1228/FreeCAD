@@ -123,7 +123,7 @@ RendererPtr RendererFactory::creatContuorRender(Hdf5Data h5d)
 	}
 	data.reset();
 	
-	std::shared_ptr<ContourDataPolar> pdata(new ContourDataPolar(h5d));
+	std::shared_ptr<ContourDataPolar> pdata(CreateContourDataPolar(h5d));
 	ContourRenderPolar *r = new ContourRenderPolar(pdata);
 	return RendererPtr(r);
 	
