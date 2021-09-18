@@ -212,7 +212,7 @@ ContourData::Grid ContourData::findGrid(const float& x, const float& y)
 		}
 	}
 	//获取高度索引
-	for (; h < height;h++)
+	for (; h < height - 1;h++)
 	{
 		grid = grids.at(h*width);
 		if (grid.y > y)
