@@ -33,4 +33,7 @@ public:
 	Data::Rang getAxisRightRange() override;
 
 	void setAxisRightRange(const float& min, const float& max);
+
+	std::string getXTag() override;
+	std::string getYTag() override;
 };

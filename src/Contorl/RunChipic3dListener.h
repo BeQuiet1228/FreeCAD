@@ -107,6 +107,8 @@ private:
 	int threadCount;
 	//chipic所属用户的用户名，主要用于服务器有多个链接时判断chipic的归属
 	std::string userName;
+	//发送消息失败次数
+	unsigned int sendMsgFailedCount;
 protected:
 	void run() override;
 

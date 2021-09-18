@@ -431,11 +431,12 @@ void SmartContorl::saveCurrentData()
 	auto tempDatas = runData.datas;
 	for (auto i = tempDatas.begin(); i != tempDatas.end(); i++)
 	{
-		stream << (*i)->variate << "\n";
-		stream << "F=" <<(*i)->resultData->getValue(0) << "\n";
+		stream << (*i)->variate;
+		stream << "F=" <<(*i)->resultData->getValue(0) << "\n\n";
 	}
 	stream << "-------------------------------------\n";
 
+	file.close();
 }
 
 void SmartContorl::stop()

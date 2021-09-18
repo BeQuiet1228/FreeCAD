@@ -30,4 +30,5 @@ private:
 
 private:
 	void initPointShape();
+	QCPScatterStyle::ScatterShape getPointShape(const unsigned int& index);
 };

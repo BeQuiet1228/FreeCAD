@@ -57,8 +57,8 @@ public:
 	QString getInformationTitile();
 	
 
-	std::string getXTag();
-	std::string getYTag();
+	virtual std::string getXTag();
+	virtual std::string getYTag();
 
 
 //Ðéº¯Êý½Ó¿Ú

@@ -10,7 +10,7 @@ class DirData:public XYData
 public:
 	DirData(Hdf5Data& hedata, const RunMod& mod = SINGLE_THREAD);
 	~DirData() = default;
-protected:
+public:
 	bool isTruedir();
 private:
 };
