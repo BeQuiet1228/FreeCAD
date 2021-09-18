@@ -29,7 +29,7 @@ private:
     //m3d运算程序类型
     const QString chipicM3dPath = q2s("core/m3d/Chipic3d.exe");
     //mpi的路径
-    const QString mpiPath = q2s("MPICH2/bin/");
+    const QString mpiPath = q2s("/MPICH2/bin/");
 	//m2d的chipic路径
 	const QString chipicM2dPath = q2s("core/m2d/Chipic3d.exe");
 

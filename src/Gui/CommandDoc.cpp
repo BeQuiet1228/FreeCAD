@@ -1840,6 +1840,7 @@ StdCmdRunM3d::StdCmdRunM3d(const char* name)
 	sAccel = keySequenceToAccel(Qt::Key_F5);
 }
 
+//m3d运行按钮
 void StdCmdRunM3d::activated(int iMsg)
 {
 	Q_UNUSED(iMsg);
@@ -1863,6 +1864,9 @@ void StdCmdRunM3d::activated(int iMsg)
         if (!picDoc)
             return;
 		std::string path = picDoc->getTextPath();
+        auto length = path.length();
+        //std::cout << "path-length:" << lengthl;
+        qDebug() << "path-length" << length;
 		contorl->setM3dPath(path);
 
 		//清空h5文件对象
@@ -2118,6 +2122,7 @@ StdCmdParalleRun::StdCmdParalleRun()
 	sPixmap = "paralleRun";
 }
 
+//并行运行
 void StdCmdParalleRun::activated(int iMsg)
 {
 	Q_UNUSED(iMsg);

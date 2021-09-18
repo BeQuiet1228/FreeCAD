@@ -200,6 +200,7 @@ void MDIView::closeEvent(QCloseEvent *e)
 
 void MDIView::windowStateChanged( MDIView* )
 {
+    std::cout << "windowStateChanged";
 }
 
 void MDIView::print(QPrinter* printer)

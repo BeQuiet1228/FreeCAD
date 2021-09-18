@@ -60,14 +60,13 @@ void RenderThread::findPoint(RenderTask& task)
 
 	Q_EMIT renderFinished(item);
 }
-
+#include"qdebug.h"
 void RenderThread::run()
 {
 #ifdef MY_DEBUG
 	//std::cerr << "Thread start successd,threadID:" << currentThreadId() << std::endl;
 #endif
 	setFinishedFlag(false);
-
 	for (auto taskIter = tasks.begin(); taskIter != tasks.end(); taskIter++){
 
 		switch (taskIter->getTyepe()){

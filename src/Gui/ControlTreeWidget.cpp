@@ -22,6 +22,7 @@
 #include "Gui/Application.h"
 #include "DataVisualization/C_encoding.h"
 #include "DocumentPic.h"
+#include"qmessagebox.h"
 ControlTreeWidget::ControlTreeWidget(QWidget* parent)
 	:QTreeWidget(parent),tempHdf5IO(nullptr)
 {
@@ -310,16 +311,15 @@ void ControlTreeWidget::outputStructFile(unsigned long threadID)
 	QString filePath = makeFilePath(threadID);
 	if (filePath == QString::fromStdString(""))
 		return;
-
-
-
 	//打开结构图文件 获取结构图对象
 	Hdf5IO tempIO;
 	tempIO.setFilePath(filePath.toStdString());
 	tempIO.initHdf5Data();
 	if (tempIO.hdf5DataList.size() < 1)
+	{
+		//QMessageBox::information(nullptr, GetEncodingstr("错误", ENCODING_GB2312), GetEncodingstr("打开文件失败或者文件路径过长",ENCODING_GB2312), QMessageBox::Yes);
 		return;
-
+	}
 	//创建一个新的h5文件 存储临时的数据
 	if (tempHdf5IO != nullptr)
 		delete tempHdf5IO;
