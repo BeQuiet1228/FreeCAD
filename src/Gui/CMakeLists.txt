@@ -53,6 +53,7 @@ if(MSVC)
          ${COIN3D_LIBRARIES}
          ${OPENGL_gl_LIBRARY}
 		 Editor
+         transition
     )
 	if(contorl_client_dll)
 	list(APPEND FreeCADGui_LIBS

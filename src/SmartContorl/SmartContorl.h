@@ -159,6 +159,8 @@ private:
 	void printLuaError(const int& error);
 	//调用一个lua函数
 	void callLuaFunction(const std::string& functionName, const int& paramCount = 0, const int& returnCount = 0);
+	//判断优化方法是否可用
+	bool controlModIsRuning();
 public Q_SLOTS:
 	void chipicWorkFinished(unsigned long threadID);
 	void chipicStartFinished(unsigned long threadID);

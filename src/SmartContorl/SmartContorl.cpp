@@ -384,6 +384,9 @@ void SmartContorl::printLog(const std::string& log)
 }
 void SmartContorl::run(const QString& lua)
 {
+	//如果已有其他chipic在运行则返回
+	if (controlModIsRuning())
+		return;
 	//设置管理器运行模式
 	chipicManager->setRunType(ChipicManager::AUTO);
 
@@ -514,6 +517,26 @@ void SmartContorl::callLuaFunction(const std::string& functionName, const int& p
 
 	int erro = lua_pcall(lua_state, paramCount, returnCount, callBack);
 	printLuaError(erro);
+}
+
+/**
+* @brief SmartContorl::controlModIsRuning 判断control模块是否已经在运行其他的东西
+* @return bool
+*/
+bool SmartContorl::controlModIsRuning()
+{
+	auto control = ContorlInterface::GetInstance();
+	bool ok = control->hasChipicRuning();
+	if (ok)
+	{
+		QMessageBox* msgBox = new QMessageBox;
+		msgBox->setAttribute(Qt::WA_DeleteOnClose);
+		msgBox->setWindowTitle(gbkStdstringToQstring("提示"));
+		msgBox->setText(gbkStdstringToQstring("有其他chipic正在运行中，请关闭后重新尝试！"));
+		msgBox->show();
+	}
+
+	return ok;
 }
 
 /**

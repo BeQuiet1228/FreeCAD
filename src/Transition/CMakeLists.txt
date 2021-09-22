@@ -10,7 +10,7 @@ include_directories(
 
 
 add_library(transition transition.h transition.cpp)
-
+add_definitions(-D_TRANSITION_)
 #增加外部库
 list(APPEND QT_LIB
     debug MSVCRTD.LIB
@@ -46,4 +46,4 @@ else()
         ${QT_QTUITOOLS_LIBRARY}
     )
 endif()
-target_link_libraries(transition QT_LIB)
+target_link_libraries(transition ${QT_LIB})
