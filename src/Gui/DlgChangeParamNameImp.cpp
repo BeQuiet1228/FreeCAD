@@ -14,10 +14,11 @@ ChangeParamNameDialog::ChangeParamNameDialog(std::vector<std::pair<std::string, 
     }
     this->_param_list = param_list;
     // 初始化对话框
-    this->ui->sb_row->setValue(1);
     this->ui->le_before_name->setEnabled(false);
+    this->ui->sb_row->setValue(1);
     this->ui->le_before_name->setText(QString::fromStdString(param_list[0].first));
     this->ui->le_later_name->setText(QString::fromStdString(param_list[0].first));
+    
     this->ui->sb_row->setMaximum(param_list.size());
     // 链接信号与槽
     QObject::connect(this->ui->pb_ok, SIGNAL(clicked(bool)), this, SLOT(slotOK()));

@@ -80,7 +80,6 @@
 #include <App/Application.h>
 using namespace Gui;
 
-static QDockWidget* MyparamDockWidget;
 //===========================================================================
 // Std_Open
 //===========================================================================
@@ -2355,7 +2354,17 @@ void StdCmdMyParameter::activated(int iMsg)
     }
     else {
         MyParameter* p = new MyParameter();
+        QWidget* coverWidget = new QWidget();
+        coverWidget->setObjectName(QString::fromUtf8("tableWidget"));
+        coverWidget->setGeometry(QRect(100, 500, 800, 800));
+        QLabel* coverLable = new QLabel();
+        QVBoxLayout* lay = new QVBoxLayout();
+        lay->addWidget(coverLable);
+        coverWidget->setLayout(lay);
         MyparamDockWidget = Gui::DockWindowManager::instance()->addDockWindow("custom_param", p, Qt::DockWidgetArea::RightDockWidgetArea);
+        MyparamDockWidget->setTitleBarWidget(coverWidget);
+        MyparamDockWidget->resize(650, 400);
+        MyparamDockWidget->setFloating(1);
         MyparamDockWidget->show();
     }
 }

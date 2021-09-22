@@ -9,8 +9,11 @@
 #include "SpinBox.h"
 #include <Base/Unit.h>
 #include <CJsonObject.hpp>
+#include <qmenubar.h>
+#include <qmenu.h>
 //#include "propertyeditor/PropertyEditor.h"
 
+static QDockWidget* MyparamDockWidget;
 
 enum param_type { type_int = 0, type_float, type_length, type_angle, type_other, type_error };
 
@@ -48,7 +51,9 @@ public:
 	//测试添加手动刷新M3D按钮
 	QPushButton* updateM3D_btn;
 
-	int getchangeNum = 1;
+	int getNum = 1;//存储当前所在行数
+	int insertDirection = 0;//0代表insert下一行，-1代表insert上一行
+	DlgChangeNameDialog* replace_name;
 
 	// 与tableWideget相关的函数
 public:
@@ -87,8 +92,24 @@ private Q_SLOTS:
 	void deleteParam();
 	void changeParamName();
 	void updateM3D();//新增更新M3D按钮函数
-	void autoPopChangeDialog();//当用户双击已经定义的参数名时，自动弹出changgeName的对话框
-	//void findStringToReplace();//找到对应string替换为相应的string
+	void findStringToReplace();//找到对应string替换为相应的string
+	void slotCustomContextMenu(QPoint);//dockWidget的右键菜单的创建
+	void insertParaDirectionToUp();//向上insertParameter
+	void insertParaDirectionToDown();//向下insertParameter
+	//以下为新增的replace的slot函数
+	void replaceAllString();
+	void replaceOneString();
+	void findLastFromLastName();
+	void findNextFromLastName();
+	void closeReplaceDlg();
+	
+
+public:
+	//属性用于替换功能
+	std::string lastName;
+	std::string afterName;
+	std::vector<QTextCursor> cursorLocation;
+	void replaceBtnisEnable(bool);
 };
 
 
@@ -101,7 +122,10 @@ public:
 	//搭建新的对文本的初步分析
 	QTextEdit* textAnalyse;
 	QPushButton* analyseButton;
-	//QToolButton* replaceButton;
+	//增添菜单栏功能
+	QMenuBar* mBar;
+	QMenu* fileMenu;
+	QAction* replaceAction;
 
 	void setupUi(QWidget* Widget)
 	{
@@ -111,13 +135,17 @@ public:
 		gridLayout = new QGridLayout(Widget);
 		gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
 
-		//添加全局替换按钮
-		/*replaceButton = new QToolButton(Widget);
-		replaceButton->setObjectName(QString::fromUtf8("ReplaceParameterName"));
-		replaceButton->setText(QString::fromUtf8("ReplaceParameterName"));
-		replaceButton->setFixedWidth(140);*/
+		//添加菜单栏
+		mBar = new QMenuBar;
+		fileMenu = new QMenu(Widget);
+		replaceAction = new QAction(Widget);
+		mBar->setAutoFillBackground(0);
+		fileMenu->setObjectName(QString::fromUtf8("File"));
+		fileMenu->addAction(replaceAction);
+		mBar->addMenu(fileMenu);
 
-		//gridLayout->addWidget(replaceButton, 0, 0, 1, 1);
+
+		gridLayout->addWidget(mBar, 0, 0, 1, 1);
 
 		textEdit = new QTextEdit(Widget);
 		textEdit->setObjectName(QString::fromUtf8("textEdit"));
@@ -150,7 +178,8 @@ public:
 	{
 		Widget->setWindowTitle(QCoreApplication::translate("Widget", "Widget", nullptr));
 		pushButton->setText(QCoreApplication::translate("Widget", "PushButton", nullptr));
-		//replaceButton->setText(QCoreApplication::translate("Widget", "ReplaceParameterName", nullptr));
+		fileMenu->setTitle(QCoreApplication::translate("Widget", "File Menu", nullptr));
+		replaceAction->setText(QCoreApplication::translate("Widget", "Replace", nullptr));
 	} // retranslateUi
 
 };
@@ -171,10 +200,9 @@ public:
 	~Widget();
 	QPushButton* returnBtn();
 	QString returnStr();
-	QToolButton* returnToolBtn();
+	QAction* returnReplaceBtn();
 	void printError(int);//添加外部可访问ui的接口
 	void findStringToHilight(std::string);//找到对应string标记为red
-	//void replaceString(std::string, std::string, std::string);
 
 	Ui::Widget* ui;
 };

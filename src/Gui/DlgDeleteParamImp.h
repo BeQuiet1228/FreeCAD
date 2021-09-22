@@ -36,6 +36,7 @@ public:
     std::vector<std::pair<std::string, std::string>> _param_list;//访问所有参数
     bool isNeedToDelete;
     int sb_row_lastNum = 1;//记录sb_row的上一个值，当用户出入0 时 将slotSpinBox函数的参数改为sb_row_lastNum
+    void deleteSb_row(int);//导入int为row，使得窗口的display是传入的int行
 
 private:
     Ui::DeleteDialog* ui;
