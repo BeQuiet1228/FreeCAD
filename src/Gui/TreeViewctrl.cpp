@@ -46,7 +46,7 @@ namespace Gui{
 		//寻找对应的hdf数据
 		auto iter = datainfor.find(currenitem);
 		//查找plot
-		auto guidoc = Gui::Application::Instance->activeDocument();
+		auto guidoc = dynamic_cast<DocumentPic*>(Gui::Application::Instance->activeDocument());
 		std::list<Gui::MDIView*> list = guidoc->getMDIViews();
 		Gui::PlotMDIView* ptr = nullptr;
 		for each (Gui::MDIView* var in list)
@@ -56,11 +56,10 @@ namespace Gui{
 		}
 		if (ptr == nullptr)
 		{
-			ptr = new Gui::PlotMDIView(*guidoc);
+			ptr = new Gui::PlotMDIView(guidoc);
 			//Gui::PlotMDIView* plot = new Gui::PlotMDIView(*guidoc);
 			Gui::MainWindow::getInstance()->addWindow(ptr);
 			docM->bindTreeContrue(nullptr, ptr->GetViewPtr());
-			
 		}
 		else
 		{

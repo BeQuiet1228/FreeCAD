@@ -332,6 +332,7 @@ set(Gui_MOC_HDRS
     picgui_ribbon/PICRibbonButtonGroup.h
 	PlotMDIView.h
 	TreeViewctrl.h
+    MDIEditView.h
 )
 
 fc_wrap_cpp(Gui_MOC_SRCS ${Gui_MOC_HDRS})
@@ -1075,12 +1076,11 @@ SET(Widget_HPP_SRCS
     WidgetFactory.h
     Widgets.h
     Window.h
-    LuaEditView.h
+    
     picgui_ribbon/PICRibbon.h
     picgui_ribbon/PICRibbonTabContent.h
     picgui_ribbon/PICRibbonButtonGroup.h)
 SET(Widget_SRCS
-	LuaEditView.cpp
 	MainWindowDef.ui
     ${Widget_CPP_SRCS}
     ${Widget_HPP_SRCS}
@@ -1202,10 +1202,20 @@ SET(FreeCADGui_SRCS
     ManualAlignment.h
     TransactionObject.h
     WinNativeGestureRecognizers.h
-	PlotMDIView.h
-	PlotMDIView.cpp
 )
 
+SET(MDI_SRC
+	ParticleSwarmOptimizationMDI.cpp
+	ParticleSwarmOptimizationMDI.h
+	MDIEditView.h
+	MDIEditView.cpp
+	PlotMDIView.h
+	PlotMDIView.cpp
+	View3dMDI.cpp
+	View3dMDI.h
+)
+
+source_group("MDIView" FILES ${MDI_SRC})
 SET(FreeCADGui_SRCS
     ${FreeCADGui_SDK_SRCS}
     ${FreeCADGui_CPP_SRCS}
@@ -1237,6 +1247,7 @@ SET(FreeCADGui_SRCS
     ${Selection_SRCS}
     ${FreeCADGui_SRCS}
 	${FILE_FORMAT_SRC}
+	${MDI_SRC}
 )
 
 if(MSVC)

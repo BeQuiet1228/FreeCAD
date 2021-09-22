@@ -9,7 +9,7 @@ public:
 
 public:
 	//初始化mdi窗口
-	void initMDIView();
+	virtual void initMDIView();
 	//获取app doc
 	App::Document* getAppDocument();
 	//释放doc中的h5文件对象
@@ -18,4 +18,48 @@ public:
 	std::string getTextPath();
 	//打开一个h5文件
 	void openH5File(const std::string & path);
+	//运行仿真程序
+	void runChipic();
+	//停止仿真程序
+	void stopChipic();
+	//并行运行
+	void paralleRunChipic();
+	//显示粒子群优化算法窗口
+	void showParticleSwarmOptimizationView();
+	//显示批处理窗口
+	void showProcessingBatchView();
+
+	//保存与另存为
+	virtual void save();
+	virtual void saveAs();
+
+	//处理一些通用消息
+	virtual bool onMsg(const char* pMsg, const char** ppReturn);
+	virtual bool onHasMsg(const char* pMsg) const ;
 };
+
+class DocumentText :public DocumentPic {
+
+public:
+	DocumentText(App::Document* pcDocument, Gui::Application* app);
+	~DocumentText() = default;
+
+	void save() override;
+	void saveAs() override;
+
+	void initMDIView();
+
+};
+
+class DocumentH5File :public DocumentPic {
+public:
+	DocumentH5File(App::Document* pcDocument, Gui::Application* app);
+	~DocumentH5File() = default;;
+
+	void  save() override {};
+	void saveAs() override {};
+
+	bool onHasMsg(const char* pMsg) const;
+};
+
+DocumentPic* CreatePICDocument(App::Document* doc,Gui::Application* app);

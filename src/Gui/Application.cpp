@@ -129,7 +129,7 @@
 #include "PlotMDIView.h"
 #include <windows.h>
 #include <dbghelp.h>
-#include <LuaEditView.h>
+#include <MDIEditView.h>
 #include "PlotMDIView.h"
 #include "MainWindow.h"
 #include "TreeViewctrl.h"
@@ -297,7 +297,9 @@ Gui::MDIView* Application::activeView(void) const
 
 void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
 {
-	auto doc = Gui::Application::Instance->activeDocument();
+	auto doc = dynamic_cast<DocumentPic*>(Gui::Application::Instance->activeDocument());
+    if (!doc)
+        return;
 	std::list<Gui::MDIView*> list = doc->getMDIViews();
 	Gui::PlotMDIView* ptr = nullptr;
 	DocumentManager* documentmanager = dynamic_cast<DocumentManager*>(doc->getDocument());
@@ -324,7 +326,7 @@ void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
 	else
 	{
 		/*Gui::PlotMDIView* plot */
-		ptr= new Gui::PlotMDIView(*doc);
+		ptr= new Gui::PlotMDIView(doc);
 		Gui::MainWindow::getInstance()->addWindow(ptr);
 		documentmanager->bindTreeContrue(m_listTreeWidget,ptr->GetViewPtr());
 	}
@@ -387,7 +389,7 @@ void Application::ToSubItemTree()
 	}
 	auto guiDoc = getDocument(docText);
 	auto view=guiDoc->getActiveView();
-	LuaEditView* edit = dynamic_cast<LuaEditView*>(view);
+    MDIM3dOr2dEditorView* edit = dynamic_cast<MDIM3dOr2dEditorView*>(view);
 	if (!edit)
 	{
 		return;
@@ -414,7 +416,7 @@ void Application::GoToLine(int line)
 	}
 	auto guiDoc = getDocument(docText);
 	auto view = guiDoc->getActiveView();
-	LuaEditView* edit = dynamic_cast<LuaEditView*>(view);
+    MDIM3dOr2dEditorView* edit = dynamic_cast<MDIM3dOr2dEditorView*>(view);
 	if (!edit)
 	{
 		return;
@@ -834,7 +836,7 @@ void Application::slotNewDocument(const App::Document& Doc)
     std::map<const App::Document*, Gui::Document*>::const_iterator it = d->documents.find(&Doc);
     assert(it==d->documents.end());
 #endif
-    DocumentPic* pDoc = new DocumentPic(const_cast<App::Document*>(&Doc),this);
+    DocumentPic* pDoc = CreatePICDocument(const_cast<App::Document*>(&Doc),this);
 	pDoc->classID = Doc.classID;//ZD
     d->documents[&Doc] = pDoc;
 
@@ -846,7 +848,7 @@ void Application::slotNewDocument(const App::Document& Doc)
     pDoc->signalActivatedObject.connect(boost::bind(&Gui::Application::slotActivatedObject, this, _1));
 
 	//ÕâÀïÌí¼Óitem
-    signalNewDocument(*pDoc);
+    signalNewDocument(*pDoc); 
 	
     pDoc->initMDIView();
 

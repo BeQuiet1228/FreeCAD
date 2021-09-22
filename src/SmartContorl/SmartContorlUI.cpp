@@ -52,7 +52,9 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 
 SmartContorlUI::~SmartContorlUI()
 {
-	
+	smartContorl->stop();
+	auto data = SmartContorlData::GetInstance();
+	data->clear();
 }
 
 /**

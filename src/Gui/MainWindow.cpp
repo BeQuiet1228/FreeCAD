@@ -118,7 +118,7 @@
 
 #include "qwidgetaction.h"
 #include "Contorl/ContorlInterface.h"
-#include "LuaEditView.h"
+#include "MDIEditView.h"
 #include "SmartContorl\SmartContorlInterface.h"
 #include "Contorl\ContorlButtonBar.h"
 #include "Contorl\ContorlDataBar.h"

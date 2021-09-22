@@ -5,7 +5,7 @@
 #include <Application.h>
 #include <QDir>
 #include "App/DocumentM3dText.h"
-#include "LuaEditView.h"
+#include "MDIEditView.h"
 #include "MainWindow.h"
 #include <FileDialog.h>
 #include "FileFormatH5.h"
@@ -116,7 +116,7 @@ void FileFormatM3DText::openOnce(const QString& filePath, App::Document* doc)
 	auto  guiDoc = Gui::Application::Instance->getDocument(doc);
 	auto view = guiDoc->getActiveView();
 
-	LuaEditView *edit = static_cast<LuaEditView*>(view);
+	MDIEditView *edit = static_cast<MDIEditView*>(view);
 	if (!edit)
 		return;
 	edit->setWindowTitle(QString::fromLocal8Bit(docText->getName()));

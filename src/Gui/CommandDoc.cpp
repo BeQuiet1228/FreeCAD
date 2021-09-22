@@ -78,6 +78,8 @@
 #include "Gui\DockWindowManager.h"
 #include "DocumentPic.h"
 #include <App/Application.h>
+#include "GuiCommand.h"
+#include "ParticleSwarmOptimizationMDI.h"
 using namespace Gui;
 
 //===========================================================================
@@ -1851,12 +1853,14 @@ void StdCmdRunM3d::activated(int iMsg)
     auto mw = MainWindow::getInstance();
     mw->inintContorlUI();
 
-    //调用保存
-    doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
-
-    auto contorl = ContorlInterface::GetInstance();
-    if (!runState)
-    {
+	//调用保存
+	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
+    getGuiApplication()->sendMsgToActiveView("RunChipic");
+	
+#if 0  //新的结构将运行代码放入了主窗口，所以这里的代码暂时不需要
+	auto contorl = ContorlInterface::GetInstance();
+	if (!contorl->hasChipicRuning())
+	{
         //设置主界面上的ui
         auto mw = Gui::MainWindow::getInstance();
         mw->setContorlUI();
@@ -1869,48 +1873,38 @@ void StdCmdRunM3d::activated(int iMsg)
         std::string path = picDoc->getTextPath();
         contorl->setM3dPath(path);
     }
-    contorl->buttonClicked(0);
+	contorl->buttonClicked(0);
+#endif // _DEBUG
 }
 bool StdCmdRunM3d::isActive(void)
 {
-    auto contorl = ContorlInterface::GetInstance();
-
-    static bool actionState = false;
-    bool tempState = contorl->hasManualChipicRuning();
-    if (tempState != actionState)
-    {
-        actionState = tempState;
-        if (actionState)
-        {
-            auto mw = Gui::MainWindow::getInstance();
-            mw->showContorlUI();
-            sMenuText = QT_TR_NOOP("StopM3d");
-            sPixmap = "runing";
-        }
-        else {
-            auto mw = Gui::MainWindow::getInstance();
-            mw->hideContorlUI();
-            sMenuText = QT_TR_NOOP("RunM3d");
-            sPixmap = "run";
-            //清空h5文件对象
-            auto doc = Gui::Application::Instance->activeDocument();
-            auto picDoc = dynamic_cast<DocumentPic*>(doc);
-            if (picDoc)
-                picDoc->releaseH5Object();
-        }
-        this->updataActionIcon();
-    }
-
-
-    if (App::GetApplication().getActiveDocument())
-        return true;
-    return false;
+	auto contorl = ContorlInterface::GetInstance();
+	
+	static bool actionState = false;
+	bool tempState = contorl->hasManualChipicRuning();
+	if (tempState != actionState)
+	{
+		actionState = tempState;
+		if (actionState)
+		{
+			auto mw = Gui::MainWindow::getInstance();
+			mw->showContorlUI();
+			sMenuText = QT_TR_NOOP("StopM3d");
+			sPixmap = "runing";
+		}else{
+			auto mw = Gui::MainWindow::getInstance();
+			sMenuText = QT_TR_NOOP("RunM3d");
+			sPixmap = "run";
+		}
+		this->updataActionIcon();
+	}
+    return getGuiApplication()->sendHasMsgToActiveView("RunChipic");
 }
 
-Gui::Action* StdCmdRunM3d::createAction(void)
+Gui::Action * StdCmdRunM3d::createAction(void)
 {
-    action = Command::createAction();
-    return action;
+	action = Command::createAction();
+	return action;
 }
 void StdCmdRunM3d::updataActionIcon()
 {
@@ -2119,34 +2113,45 @@ StdCmdParalleRun::StdCmdParalleRun()
 
 void StdCmdParalleRun::activated(int iMsg)
 {
-    Q_UNUSED(iMsg);
-    auto mw = MainWindow::getInstance();
-    mw->inintContorlUI();
-    mw->setContorlUI();
-    //调用保存
-    doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
-    auto contorl = ContorlInterface::GetInstance();
-
-    //设置运行路
-    Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
-    auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
-    if (!picDoc)
-        return;
-    std::string path = picDoc->getTextPath();
-    contorl->setM3dPath(path);
-    contorl->buttonClicked(1);
+	Q_UNUSED(iMsg);
+	auto mw = MainWindow::getInstance();
+	mw->inintContorlUI();
+	//调用保存
+	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
+    getGuiApplication()->sendMsgToActiveView("ParalleRunChipic");
 }
 bool StdCmdParalleRun::isActive(void)
 {
-    auto contorl = ContorlInterface::GetInstance();
-    if (App::GetApplication().getActiveDocument() && (!contorl->hasChipicRuning()))
-        return true;
-    return false;
+    return getGuiApplication()->sendHasMsgToActiveView("ParalleRunChipic");
 }
 DEF_STD_CMD_A(StdCmdSmartContorl);
 
 StdCmdSmartContorl::StdCmdSmartContorl()
-    : Command("Std_Smart_Contrl")
+	: Command("Std_Smart_Contrl")
+{
+	// setting the
+	sGroup = QT_TR_NOOP("File");
+	sMenuText = QT_TR_NOOP("SmartContorl");
+	sToolTipText = QT_TR_NOOP("SmartContorl");
+	sWhatsThis = "Std_Paralle_Run";
+	sStatusTip = QT_TR_NOOP("SmartContorl");
+	sPixmap = "smartContorl";
+}
+
+void StdCmdSmartContorl::activated(int iMsg)
+{
+	Q_UNUSED(iMsg);
+	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
+    getGuiApplication()->sendMsgToActiveView("showPSOView");
+}
+bool StdCmdSmartContorl::isActive(void)
+{
+    return getGuiApplication()->sendHasMsgToActiveView("showPSOView");
+}
+/*添加组件*/
+DEF_STD_CMD_A(StdCmdSmartCalc);
+StdCmdSmartCalc::StdCmdSmartCalc()
+    :Command("Std_Smart_Calc")
 {
     // setting the
     sGroup = QT_TR_NOOP("File");
@@ -2157,24 +2162,15 @@ StdCmdSmartContorl::StdCmdSmartContorl()
     sPixmap = "smartContorl";
 }
 
-void StdCmdSmartContorl::activated(int iMsg)
+void StdCmdSmartCalc::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
     doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
-    //设置运行路
-    Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
-    auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
-    if (!picDoc)
-        return;
-    std::string path = picDoc->getTextPath();
-    SmartContorlInterface::showSmartControlUI(path);
+    getGuiApplication()->sendMsgToActiveView("showProcessingBatchView");
 }
-bool StdCmdSmartContorl::isActive(void)
+bool StdCmdSmartCalc::isActive(void)
 {
-    auto contorl = ContorlInterface::GetInstance();
-    if (App::GetApplication().getActiveDocument() && (!contorl->hasChipicRuning()))
-        return true;
-    return false;
+    return getGuiApplication()->sendHasMsgToActiveView("showProcessingBatchView");
 }
 
 DEF_STD_CMD_A(StdCmdOpenLog);
@@ -2378,63 +2374,65 @@ bool StdCmdMyParameter::isActive(void)
 
 namespace Gui {
 
-    void CreateDocCommands(void)
-    {
-        CommandManager& rcCmdMgr = Application::Instance->commandManager();
+void CreateDocCommands(void)
+{
+    CommandManager &rcCmdMgr = Application::Instance->commandManager();
 
-        rcCmdMgr.addCommand(new StdCmdNew());
-        rcCmdMgr.addCommand(new StdCmdOpen());
-        rcCmdMgr.addCommand(new StdCmdImport());
-        rcCmdMgr.addCommand(new StdCmdExport());
-        rcCmdMgr.addCommand(new StdCmdMergeProjects());
-        rcCmdMgr.addCommand(new StdCmdExportGraphviz());
+    rcCmdMgr.addCommand(new StdCmdNew());
+    rcCmdMgr.addCommand(new StdCmdOpen());
+    rcCmdMgr.addCommand(new StdCmdImport());
+    rcCmdMgr.addCommand(new StdCmdExport());
+    rcCmdMgr.addCommand(new StdCmdMergeProjects());
+    rcCmdMgr.addCommand(new StdCmdExportGraphviz());
 
-        rcCmdMgr.addCommand(new StdCmdRunM3d());
-        rcCmdMgr.addCommand(new StdCmdFindm());
-        rcCmdMgr.addCommand(new StdCmdParalleRun());
-        rcCmdMgr.addCommand(new StdCmdSmartContorl());
-        rcCmdMgr.addCommand(new StdCmdOpenLog());
-        rcCmdMgr.addCommand(new StdCmdConnectWay);
-        rcCmdMgr.addCommand(new StdCmdOpenCommandBook);
-        rcCmdMgr.addCommand(new StdCmdOpenUserBook);
-        rcCmdMgr.addCommand(new StdCmdRunSuperTube);
-        rcCmdMgr.addCommand(new StdCmdContourImageMod);
-        rcCmdMgr.addCommand(new StdCmdContourLineMod);
-        rcCmdMgr.addCommand(new StdCmdOpenDataVisualizationConfig);
-        rcCmdMgr.addCommand(new StdCmdDataVisualizationAutoMax);
-        rcCmdMgr.addCommand(new StdCmdDataVisualizationPlotDisplayGridMod);
+	rcCmdMgr.addCommand(new StdCmdRunM3d());
+	rcCmdMgr.addCommand(new StdCmdFindm());
+	rcCmdMgr.addCommand(new StdCmdParalleRun());
+	rcCmdMgr.addCommand(new StdCmdSmartContorl());
+	rcCmdMgr.addCommand(new StdCmdOpenLog());
+	rcCmdMgr.addCommand(new StdCmdConnectWay);
+	rcCmdMgr.addCommand(new StdCmdOpenCommandBook);
+	rcCmdMgr.addCommand(new StdCmdOpenUserBook);
+	rcCmdMgr.addCommand(new StdCmdRunSuperTube);
+    //rcCmdMgr.addCommand(new StdCmdContourImageMod);
+    //rcCmdMgr.addCommand(new StdCmdContourLineMod);
+    rcCmdMgr.addCommand(new StdCmdOpenDataVisualizationConfig);
+    rcCmdMgr.addCommand(new StdCmdDataVisualizationAutoMax);
+    //rcCmdMgr.addCommand(new StdCmdDataVisualizationPlotDisplayGridMod);
+    rcCmdMgr.addCommand(new StdCmdSmartCalc());
 
-        rcCmdMgr.addCommand(new StdCmdSave());
-        rcCmdMgr.addCommand(new StdCmdSaveAs());
-        rcCmdMgr.addCommand(new StdCmdSaveCopy());
-        rcCmdMgr.addCommand(new StdCmdRevert());
-        /*fubiao*/
-        rcCmdMgr.addCommand(new StdCmdIPConfig());
-        rcCmdMgr.addCommand(new StdCmdProjectInfo());
-        rcCmdMgr.addCommand(new StdCmdProjectUtil());
-        rcCmdMgr.addCommand(new StdCmdUndo());
-        rcCmdMgr.addCommand(new StdCmdRedo());
-        rcCmdMgr.addCommand(new StdCmdPrint());
-        rcCmdMgr.addCommand(new StdCmdPrintPreview());
-        rcCmdMgr.addCommand(new StdCmdPrintPdf());
-        rcCmdMgr.addCommand(new StdCmdQuit());
-        rcCmdMgr.addCommand(new StdCmdCut());
-        rcCmdMgr.addCommand(new StdCmdCopy());
-        rcCmdMgr.addCommand(new StdCmdPaste());
-        rcCmdMgr.addCommand(new StdCmdDuplicateSelection());
-        rcCmdMgr.addCommand(new StdCmdSelectAll());
-        rcCmdMgr.addCommand(new StdCmdDelete());
-        rcCmdMgr.addCommand(new StdCmdRefresh());
-        rcCmdMgr.addCommand(new StdCmdTransform());
-        rcCmdMgr.addCommand(new StdCmdPlacement());
-        rcCmdMgr.addCommand(new StdCmdTransformManip());
-        rcCmdMgr.addCommand(new StdCmdAlignment());
-        rcCmdMgr.addCommand(new StdCmdEdit());
-        /*lzg*/
-        //自定义变量
-        rcCmdMgr.addCommand(new StdCmdMyParameter());
-
-    }
+    rcCmdMgr.addCommand(new StdCmdSave());
+    rcCmdMgr.addCommand(new StdCmdSaveAs());
+    rcCmdMgr.addCommand(new StdCmdSaveCopy());
+    rcCmdMgr.addCommand(new StdCmdRevert());
+	/*fubiao*/
+	rcCmdMgr.addCommand(new StdCmdIPConfig());
+    rcCmdMgr.addCommand(new StdCmdProjectInfo());
+    rcCmdMgr.addCommand(new StdCmdProjectUtil());
+    rcCmdMgr.addCommand(new StdCmdUndo());
+    rcCmdMgr.addCommand(new StdCmdRedo());
+    rcCmdMgr.addCommand(new StdCmdPrint());
+    rcCmdMgr.addCommand(new StdCmdPrintPreview());
+    rcCmdMgr.addCommand(new StdCmdPrintPdf());
+    rcCmdMgr.addCommand(new StdCmdQuit());
+    rcCmdMgr.addCommand(new StdCmdCut());
+    rcCmdMgr.addCommand(new StdCmdCopy());
+    rcCmdMgr.addCommand(new StdCmdPaste());
+    rcCmdMgr.addCommand(new StdCmdDuplicateSelection());
+    rcCmdMgr.addCommand(new StdCmdSelectAll());
+    rcCmdMgr.addCommand(new StdCmdDelete());
+    rcCmdMgr.addCommand(new StdCmdRefresh());
+    rcCmdMgr.addCommand(new StdCmdTransform());
+    rcCmdMgr.addCommand(new StdCmdPlacement());
+    rcCmdMgr.addCommand(new StdCmdTransformManip());
+    rcCmdMgr.addCommand(new StdCmdAlignment());
+    rcCmdMgr.addCommand(new StdCmdEdit());
+    /*lzg*/
+    //自定义变量
+    rcCmdMgr.addCommand(new StdCmdMyParameter());
+    //添加自定义的commad
+    creatGuiCommand();
+}
 
 } // namespace Gui
 

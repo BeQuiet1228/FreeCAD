@@ -18,6 +18,14 @@ void SmartContorlInterface::showSmartControlUI(const std::string& path)
 	contorlUi->setAttribute(Qt::WA_DeleteOnClose);
 }
 
+QWidget* SmartContorlInterface::creatSmartControlUI(const std::string& path)
+{
+	auto contorlUi = new SmartContorlUI();
+	contorlUi->setTextPath(path);
+	contorlUi->loadParameterXml();
+	return contorlUi;
+}
+
 void SmartContorlInterface::buttonClicked(int type){
 
 	if (ContorlButtonBar::ButtonType(type) == ContorlButtonBar::SMART_CONTORL)
@@ -37,4 +45,15 @@ void SmartContorlInterface::showSmartCalc(const std::string& path)
 	calc->setAttribute(Qt::WA_DeleteOnClose);
 	//calc->setTextPath();
 }
+
+QWidget* SmartContorlInterface::createCalcWidget(const std::string& path)
+{
+	auto calc = new smartCalc();
+	calc->afferm3dpath(path);
+	calc->afferscriptpath("./opt.lua");
+	calc->show();
+	calc->setAttribute(Qt::WA_DeleteOnClose);
+	return calc;
+}
+
 #include "moc_SmartContorlInterface.cpp"

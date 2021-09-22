@@ -68,7 +68,7 @@
 #include "Contorl/ContorlInterface.h"
 #include "PlotMDIView.h"
 #include "Gui\DockWindowManager.h"
-
+#include "View3dMDI.h"
 using namespace Gui;
 
 namespace Gui {
@@ -1077,7 +1077,7 @@ void Document::createView(const Base::Type& typeId)
             shareWidget = qobject_cast<QtGLWidget*>(firstView->getViewer()->getGLWidget());
         }
 
-        View3DInventor* view3D = new View3DInventor(this, getMainWindow(), shareWidget);
+        View3DInventor* view3D = new View3dMDI(this, getMainWindow(), shareWidget);
         if (!theViews.empty()) {
             View3DInventor* firstView = static_cast<View3DInventor*>(theViews.front());
             std::string overrideMode = firstView->getViewer()->getOverrideMode();
