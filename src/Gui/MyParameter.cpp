@@ -813,6 +813,12 @@ void MyParameter::changeParamName() {
 void MyParameter::updateM3D() {
     if (GetApplication().getActiveDocument()->classID == 2) {
         Base::InterpreterSingleton python;
+        clock_t startTime, endTime;
+        startTime = clock();
+        python.runString("FreeCADGui.runCommand('Refresh_3D')");
+        endTime = clock();
+        std::cerr << "refresh=" << (double)(endTime - startTime) / CLOCKS_PER_SEC << endl;
+        python.runString("FreeCADGui.runCommand('UpdateBooleanCommand_3D')");
         python.runString("FreeCADGui.runCommand('CreateM3D_new')");
     }
     else if (GetApplication().getActiveDocument()->classID == 3) {
