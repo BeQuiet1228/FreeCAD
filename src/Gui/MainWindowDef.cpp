@@ -26,7 +26,7 @@ void TitleBar::mouseMoveEvent(QMouseEvent *event)
 {
 	QWidget::mouseMoveEvent(event);
 	if (mouseIsPress)
-		Q_EMIT toMove(event->pos() - mouseStartPoint);
+		Q_EMIT toMove(event->pos() - mouseStartPoint,event->pos());
 }
 
 /**
@@ -74,18 +74,18 @@ void TitleBar::mouseDoubleClickEvent(QMouseEvent *event)
 * @return   
 */
 MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
-:QWidget(parent), ui(new Ui::WindowDef())
+:QWidget(parent), ui(new Ui::WindowDef()),mPre(1.0f),isCross(false)
 {
 	ui->setupUi(this);
 	setCursor(Qt::ArrowCursor);
 	this->setWindowFlags(Qt::FramelessWindowHint);
-	connect(ui->titleBar, SIGNAL(toMove(QPoint)), this, SLOT(titleBarMove(QPoint)));
+	connect(ui->titleBar, SIGNAL(toMove(QPoint,QPoint)), this, SLOT(titleBarMove(QPoint,QPoint)));
 	connect(ui->btMini, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));
 	connect(ui->btClose, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));
 	connect(ui->btMaxShow, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));
 	connect(ui->titleBar, SIGNAL(doubleClick()), this, SLOT(titleBarDoubleClicked()));
 
-	boundaryWidth = 4;
+	boundaryWidth = 6;
 	/*
 		设置鼠标移动事件追踪。
 		如果不设置此选项，那么仅当鼠标按下时才会触发moveEvent
@@ -101,7 +101,7 @@ MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 	tabWidgetInterface = new Ribbon();
 	tabWidgetInterface->setObjectName(QString::fromLocal8Bit("ribbonTabWidget"));
 	ui->widgetTab->layout()->addWidget(tabWidgetInterface);
-	auto desktopWidget = QApplication::desktop();
+	//auto desktopWidget = QApplication::desktop();
 	this->resize(1000, 500);
 	//获取窗口数量
 	unsigned int screenCount = QApplication::desktop()->screenCount();
@@ -113,6 +113,8 @@ MainWindowDef::MainWindowDef(QWidget *parent /*= 0*/)
 		screens.push_back(rect);
 	}
 	setMinimumSize(0,0);
+	tabWidgetInterface->setParentWidget(this);
+	LastSize = this->size();
 }
 
 
@@ -126,10 +128,6 @@ void MainWindowDef::mouseMoveEvent(QMouseEvent *event)
 	QWidget::mouseMoveEvent(event);
 	changeCursor(event->pos());
 	changeSize(event->pos());
-
-	//test();
-	/*QSize size= tabWidgetInterface->size();
-	qDebug() <<"size--"<< size;*/
 }
 
 void MainWindowDef::mousePressEvent(QMouseEvent *event)
@@ -137,6 +135,7 @@ void MainWindowDef::mousePressEvent(QMouseEvent *event)
 	QWidget::mousePressEvent(event);
 	if (event->button() == Qt::LeftButton)
 	{
+		//qDebug() << "leftbutton";
 		leftButtonIsPress = true;
 		leftButtonPressPos = event->pos();
 	}
@@ -149,6 +148,7 @@ void MainWindowDef::mouseReleaseEvent(QMouseEvent *event)
 	if (event->button() == Qt::LeftButton)
 	{
 		leftButtonIsPress = false;
+		isCross = false;
 	}
 	setCursor(Qt::ArrowCursor);
 	cursorState = NONE;
@@ -167,24 +167,46 @@ void MainWindowDef::moveEvent(QMoveEvent *event)
 	isMax = false;
 }
 
-void MainWindowDef::titleBarMove(QPoint pos)
+void MainWindowDef::titleBarMove(QPoint pos,QPoint CustomPos)
 {
 	QPoint posing = this->pos() + pos;
+	QPoint wPos = mapToGlobal(CustomPos);
 	for (auto index = 0; index < screens.size();index++)
 	{
 		if (posing.y()-screens[index].topLeft().y()<2)
 		{
 			showMax();
-			//qDebug() << "showMax";
 			return ;
 		}
 	}
 	if (isMax)
 	{
-		resize(this->width()*0.7, this->height()*0.7);
+		
+		mPre= static_cast<double>(CustomPos.x()) / static_cast<double>(this->width());
+		showOld();
+		if (CustomPos.x() > this->width())
+		{
+			isCross = true;
+		}
+		else
+		{
+			isCross = false;
+		}
 		isMax = false;
 	}
-	this->move(this->pos() + pos);
+	double mWidth = this->width();
+	if (isCross)
+	{
+		//当鼠标越界的情况，根据百分比移动
+		QPoint movePos;
+		movePos.setY(wPos.y());
+		movePos.setX(wPos.x() - this->width() * mPre);
+		this->move(movePos);
+	}
+	else
+	{
+		this->move(this->pos()+pos);
+	}
 }
 
 void MainWindowDef::toolButtonClicked(bool b)
@@ -345,10 +367,7 @@ void MainWindowDef::showMax()
 			
 		}
 	}
-	//resize(QApplication::desktop()->availableGeometry().size());
-	//move(0, 0);
 	show();
-	
 }
 
 /**
@@ -361,16 +380,5 @@ void MainWindowDef::showOld()
 	else resize(oldSize);
 	move(oldPoint);
 	show();
-}
-/**
-* @brief  MainWindowDef::test
-* @return void  
-*/
-void MainWindowDef::test()
-{
-	//获取tab页
-	auto tabs = tabWidgetInterface->getTabs();
-	auto groups=tabWidgetInterface->getGroups();
-	auto action=tabWidgetInterface->getActions();
 }
 #include "moc_MainWindowDef.cpp"

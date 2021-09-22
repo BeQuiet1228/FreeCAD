@@ -328,6 +328,7 @@ set(Gui_MOC_HDRS
     DAGView/DAGView.h
     DAGView/DAGModel.h
     picgui_ribbon/PICRibbon.h
+    picgui_ribbon/darWer.h
     picgui_ribbon/PICRibbonTabContent.h
     picgui_ribbon/PICRibbonButtonGroup.h
 	PlotMDIView.h
@@ -1058,6 +1059,7 @@ SET(Widget_CPP_SRCS
     Widgets.cpp
     Window.cpp
         picgui_ribbon/PICRibbon.cpp
+        picgui_ribbon/darWer.cpp
         picgui_ribbon/PICRibbonTabContent.cpp
         picgui_ribbon/PICRibbonButtonGroup.cpp
 )
@@ -1079,7 +1081,8 @@ SET(Widget_HPP_SRCS
     
     picgui_ribbon/PICRibbon.h
     picgui_ribbon/PICRibbonTabContent.h
-    picgui_ribbon/PICRibbonButtonGroup.h)
+    picgui_ribbon/PICRibbonButtonGroup.h
+    picgui_ribbon/darWer.h)
 SET(Widget_SRCS
 	MainWindowDef.ui
     ${Widget_CPP_SRCS}

@@ -1,7 +1,6 @@
 #pragma once
 #ifndef DATARESOURCE_H_
 #define DATARESOURCE_H_
-//#include <QWidget>
 #include "HDF5Reader/hdf5io.h"
 #include<map>
 #include "ListTreeWidget.h"
@@ -28,7 +27,6 @@ public:
 	int initStructData(Hdf5Data& data);
 	void DisPlayPlot(Hdf5Data data,int _type=0);
 	void DataClear();
-	//bool isbind();
 Q_SIGNALS:
 	void _loadhdflist(std::vector<Hdf5Data>& Hdf5Data);
 	void _reRendererEvent(std::shared_ptr<PlotAdapter>);

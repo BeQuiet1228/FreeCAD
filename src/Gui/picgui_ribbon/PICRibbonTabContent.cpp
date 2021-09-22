@@ -9,6 +9,7 @@ PICRibbonTabContent::PICRibbonTabContent(QWidget *parent)
   , ui(new Ui::PICRibbonTabContent)
 {
   ui->setupUi(this);
+  contentLayout = ui->contentLayout;
   setCursor(Qt::ArrowCursor);
 }
 
@@ -148,3 +149,78 @@ void PICRibbonTabContent::clearGroups()
 	}
 }
 
+/**
+* @brief PICRibbonTabContent::SlotOnGroup 排序组件
+* @param PICRibbonButtonGroup * group
+* @param unsigned int inde
+* @return void
+* @Time 2021/6/25
+*/
+void PICRibbonTabContent::SlotOnGroup(PICRibbonButtonGroup* group, int inde)
+{
+	for (int i = 0; i < contentLayout->count();i++)
+	{
+		PICRibbonButtonGroup* curgroup = dynamic_cast<PICRibbonButtonGroup*>(contentLayout->itemAt(i)->widget());
+		if (curgroup->title().toLower()==group->title().toLower())
+		{
+			this->removeGroup(curgroup->title());
+			break;
+		}
+	}
+	//获取组数
+	int indexCount = contentLayout->count();
+	std::vector<PICRibbonButtonGroup*> list;
+	for (int index = indexCount - 1; index >= inde;index--)
+	{
+		PICRibbonButtonGroup* _group = dynamic_cast<PICRibbonButtonGroup*>(contentLayout->itemAt(index)->widget());
+		std::list<QAction*> listaction = _group->get_action_all().toStdList();
+		PICRibbonButtonGroup* newGroup = nullptr;
+		if (listaction.empty())
+			newGroup = _group;
+		else
+			newGroup = new PICRibbonButtonGroup;
+		newGroup->setTitle(_group->title());
+		for (auto iter = listaction.begin(); iter != listaction.end(); iter++)
+		{
+			QToolButton *b = new QToolButton;
+			b->setDefaultAction(*iter);
+			newGroup->addButton(b);
+		}
+		list.push_back(newGroup);
+		contentLayout->removeWidget(_group);
+	}
+	//添加
+	contentLayout->addWidget(group);
+	for (auto iter = list.rbegin(); iter != list.rend();iter++)
+	{
+		contentLayout->addWidget(*iter);
+	}
+}
+/**
+* @brief PICRibbonTabContent::getGroupIndex 获取组件索引
+* @param QString GroupName
+* @return int
+* @Time 2021/6/25
+*/
+int  PICRibbonTabContent::getGroupIndex(QString GroupName)
+{
+	for (int index = 0; index < contentLayout->count();index++)
+	{
+		PICRibbonButtonGroup* group = dynamic_cast<PICRibbonButtonGroup*>(contentLayout->itemAt(index)->widget());
+		if (group->title().toLower()==GroupName.toLower())
+		{
+			return index;
+		}
+	}
+	return -1;
+}
+/**
+* @brief PICRibbonTabContent::getGroupIndex 获取组件索引
+* @param PICRibbonButtonGroup * group
+* @return int
+* @Time 2021/6/25
+*/
+int  PICRibbonTabContent::getGroupIndex(PICRibbonButtonGroup* group)
+{
+	return getGroupIndex(group->title());
+}

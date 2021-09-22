@@ -581,6 +581,7 @@ bool StructData::loadroomPolarRtheta()
 		{
 			if (var.point1 == index&&var.point3 < rand_val.size())
 			{
+
 				__int64 cutCirSize = (var.point2 - 1) * CutNum + (var.point3 - 1);
 				if (cutCirSize < CutCirlist.size())
 				{
@@ -757,6 +758,7 @@ bool StructData::loadroomCylindricalRtheta(){
 		{
 			if (var.point1 == index && var.point3 < rand_val.size())
 			{
+
 				__int64 cutCirSize = (var.point2 - 1) * CutNum + (var.point3 - 1);
 				if (cutCirSize < CutCirlist.size())
 				{

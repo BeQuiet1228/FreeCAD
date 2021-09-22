@@ -206,15 +206,4 @@ void DataSourceManage::DataClear()
 	RendererManger.clear();
 	hdfDatelist.clear();
 }
-///**
-//* @brief  DataSourceManage::isbind ÊÇ·ñ°ó¶¨
-//* @return bool  
-//*/
-//bool DataSourceManage::isbind()
-//{
-//	//if (p == nullptr || treePtr == nullptr)
-//	//	return false;
-//	//else
-//		return true;
-//}
 #include "moc_Dataresource.cpp"

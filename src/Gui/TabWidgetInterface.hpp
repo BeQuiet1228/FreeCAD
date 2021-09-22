@@ -5,6 +5,7 @@
 #include <QList>
 #include <iostream>
 #include <map>
+class MainWindowDef;
 class TabWidgetInterFace : virtual public QTabWidget{
 public:
 	TabWidgetInterFace() = default;
@@ -38,8 +39,7 @@ public:
 	//判断是否已有该action
 	virtual bool hasAction(const QAction* action){ return true; };
 	//新增，2021-6-10,用于进行缩放判断
-	virtual QSize getunfoldMinSize(){ return QSize(0, 0); }
-	virtual QSize getcurMinSize(){ return QSize(0, 0); }
+	virtual void setParentWidget(MainWindowDef*){}
 };
 class TabTest :public TabWidgetInterFace{
 public:

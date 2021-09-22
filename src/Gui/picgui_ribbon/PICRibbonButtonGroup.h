@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QToolButton>
 #include <QPaintEvent>
+class QGridLayout;
 namespace Ui {
 class PICRibbonButtonGroup;
 }
@@ -41,9 +42,12 @@ public:
   ///
   /// \param[in] button The button
   void removeButton(QToolButton *button);
+  void removeButtons();
   QList<QAction*> get_action_all();
 protected:
 	void paintEvent(QPaintEvent *event);
+public:
+	QGridLayout *gridLayout_btn;
 private:
   Ui::PICRibbonButtonGroup *ui;
   QString m_title; ///< Title of the button group

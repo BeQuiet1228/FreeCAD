@@ -3,8 +3,8 @@
 
 #include <QWidget>
 #include <QToolButton>
-#include "PICRibbonButtonGroup.h"
 #include <QPaintEvent>
+class PICRibbonButtonGroup;
 namespace Ui {
 class PICRibbonTabContent;
 }
@@ -54,9 +54,15 @@ public:
 
   //清除TabContent下的所有分组
   void clearGroups();
-
+  //调整Group的相关位置
+  void SlotOnGroup(PICRibbonButtonGroup* ,int);
+  //获取相关组件的索引
+  int getGroupIndex(QString GroupName);
+  int getGroupIndex(PICRibbonButtonGroup*);
 protected:
 	void paintEvent(QPaintEvent *event);
+public:
+	QHBoxLayout* contentLayout;
 private:
   Ui::PICRibbonTabContent *ui;
 };

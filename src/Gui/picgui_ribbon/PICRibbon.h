@@ -5,13 +5,14 @@
 #include <QToolButton>
 #include "TabWidgetInterface.hpp"
 #include "PICRibbonTabContent.h"
-
-class GuiExport Ribbon : public TabWidgetInterFace
+class MainWindowDef;
+class QToolButton;
+class GuiExport Ribbon : public TabWidgetInterFace,QObject
 {
   Q_OBJECT
 public:
   explicit Ribbon(QWidget *parent = 0);
-
+  ~Ribbon();
   /// Add a tab to the ribbon.
   ///
   /// \param[in] tabName Name of the tab
@@ -56,8 +57,6 @@ public:
 
   QList<PICRibbonTabContent *> get_tab_all();
   PICRibbonTabContent * get_tab_by_name(QString& name);
-  virtual QSize getunfoldMinSize() override;
-  virtual QSize getcurMinSize() override;
 
   //添加一个action
   void addAction(const QString& tabName, const QString& groupName, QAction* action);
@@ -86,11 +85,25 @@ public:
   virtual void  setTabOlder(const QString& tabName, const int older);
   //判断是否已有该action
   virtual bool hasAction(const QAction* action);
-
   //1.15 WDT_QL新增接口
   //改变一个分组位置,sequence参数为新的位置,最小为0
   void setGroupSequence(const QString &tabName, const QString &groupName, int sequence);
-
+  //抽屉功能
+  std::map<QString, QWidget*> mTabWidget;
+  std::map<QString, std::map<QString, QWidget*>> mMyDarWer;
+  std::map<QString, std::map<QString, QToolButton*>>qToolButtons;
+public Q_SLOTS:
+  void buttomclicked();
+  void setParentWidget(MainWindowDef* parent);
+  void SlotcurrentChanged(int);
+  void slotTimerOut();
+private:
+	void showdrawerGroup(QString GroupName,QToolButton*);
+	void HidemyDar();
+	void hideDar();
+	void hidebtn();
+	unsigned __int64 MaindefStie;
+	QTimer* timer;
 };
 
 #endif // RIBBONTABWIDGET_H

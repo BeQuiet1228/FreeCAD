@@ -24,7 +24,7 @@ private:
 	bool mouseIsPress = false;
 	QPoint mouseStartPoint;
 Q_SIGNALS:
-	void toMove(QPoint pos);
+	void toMove(QPoint pos,QPoint CustomPos);
 	void doubleClick();
 };
 
@@ -62,6 +62,11 @@ private:
 	//记录窗口是否已经最大化
 	bool isMax = false;
 	std::vector<QRect> screens;
+	QSize LastSize;
+	QPoint LastPos;
+	//鼠标占窗口比例
+	double mPre;
+	bool isCross;
 public:
 	//选项卡对象
 	TabWidgetInterFace *tabWidgetInterface;
@@ -73,7 +78,7 @@ protected:
 	void resizeEvent(QResizeEvent *event) override;
 	void moveEvent(QMoveEvent *event);
 public Q_SLOTS:
-	void titleBarMove(QPoint pos);
+	void titleBarMove(QPoint pos,QPoint CustomPos);
 	void toolButtonClicked(bool b);
 	void titleBarDoubleClicked();
 
@@ -83,9 +88,6 @@ private:
 	void changeCursor(const QPoint& pos);
 	//相应拖拽的放大缩小
 	void changeSize(const QPoint& pos);
-	//测试代码
-	void test();
-
 public:
 	//添加中心区域的窗口
 	void addCenterWidget(QWidget *widget);
