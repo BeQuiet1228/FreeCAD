@@ -3,7 +3,7 @@
 #include <QString>
 #include <QStringList>
 #include <QTextCodec>
-#include"qdebug.h"
+//#include"qdebug.h"
 Hdf5IO::Hdf5IO(std::string fileName)
 {
 	setFilePath(fileName);
@@ -25,7 +25,6 @@ void Hdf5IO::setFilePath(const std::string& path, FileOpenMod mod /*= OPEN_EXIST
 
 	QString temp = QString::fromUtf8(path.c_str());
 	std::string newPath = gbk->fromUnicode(temp).data();
-	qDebug() << "newPath-length:" << newPath.length();
 	try
 	{
 		if(mod == OPEN_EXIST)
@@ -851,8 +850,6 @@ void Hdf5IO::digGroup(Group group)
 	//下层有数据，则判断是组还是数据
 	//先判断若是数据的话
 	DataSet temp;
-	std::string groupStr=group.getObjnameByIdx(0);
-	qDebug() << "groupStr-length:"<< groupStr.length();
 	bool res = getDataSet(group,group.getObjnameByIdx(0),temp);
 	//如果确实为数据
 	if (res)

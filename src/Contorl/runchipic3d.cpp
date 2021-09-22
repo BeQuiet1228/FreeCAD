@@ -7,13 +7,7 @@
 #include <qtextcodec.h>
 #include<QCoreApplication>
 #include<QMessageBox>
-#ifndef SINGLE_MODE_THRES_HOLD
-#define SINGLE_MODE_THRES_HOLD (100)
-#endif
-#ifndef TOSTR(a)
-#define TOSTR(a) QTextCodec::codecForName("gb2312")->toUnicode(a)
-#endif // !TOSTR(a)
-
+//#include"QDebug"
 /**
  * @brief RunChipic3d::RunChipic3d 初始化启动器
  * @param mode 运行模式 x32模式 x64模式
@@ -68,7 +62,11 @@ void RunChipic3d::runWithNotLonelinessMode(const QString &m3dpath, const int &co
 	QString path = m3dpath;
 	path = path.remove(m3dName);
 	//初始化mpi
-	initMpi();
+	bool res=initMpi();
+	if (!res)
+	{
+		std::cerr<< "Err:bool initMPi TimerOut."<<std::endl;
+	}
 	//生成配置文件
 	makeCfgFile(path, m3dName, count);
 
@@ -116,11 +114,6 @@ void RunChipic3d::run(const std::string &m3dpath, const int &count /*= 1*/)
 
 	if (count == 1)
 	{
-		if (SINGLE_MODE_THRES_HOLD <= m3dpath.length())
-		{
-			QMessageBox::information(nullptr, TOSTR("错误"),TOSTR("文件路径过长"), QMessageBox::Yes);
-			return;
-		}
 		runWithLonelinessMode(QString::fromStdString(m3dpath),type);
 	}
 	else if (count > 1)
@@ -175,18 +168,19 @@ void RunChipic3d::makeCfgFile(const QString &path, const QString &fileName, cons
 /**
  * @brief RunChipic3d::initMpi 初始化mpi，需要程序拥有管理员权限才能初始化成功
  */
-void RunChipic3d::initMpi()
+bool RunChipic3d::initMpi()
 {
     QProcess process;
     QString cmd = mpiPath + q2s("smpd.exe -install -phrase behappy");
     process.start(cmd);
-    process.waitForFinished();
+    bool res=process.waitForFinished();
 	cmd = mpiPath + q2s("smpd.exe -stop");
 	process.start(cmd);
-	process.waitForFinished();
+	res=process.waitForFinished();
 #ifdef MY_DEBUG
     std::cerr << "init MPI output: " << QString(process.readAll()).toStdString() << std::endl;
 #endif
+	return res;
 }
 /**
  * @brief RunChipic3d::q2s std::string转换为qstring

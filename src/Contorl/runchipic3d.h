@@ -29,7 +29,8 @@ private:
     //m3d运算程序类型
     const QString chipicM3dPath = q2s("core/m3d/Chipic3d.exe");
     //mpi的路径
-    const QString mpiPath = q2s("/MPICH2/bin/");
+    const QString mpiPath = q2s("MPICH2/bin/");
+    //const QString mpiPath = q2s("D:/wdtProject/FreeCAD/build/bin/MPICH2/bin/");
 	//m2d的chipic路径
 	const QString chipicM2dPath = q2s("core/m2d/Chipic3d.exe");
 
@@ -38,7 +39,7 @@ private:
     //生成配置文件
     void makeCfgFile(const QString &path,const QString &fileName,const int &count);
     //初始化mpi
-    void initMpi();
+    bool initMpi();
     //std::string 转换为qstring
     QString q2s(const char *s);
 

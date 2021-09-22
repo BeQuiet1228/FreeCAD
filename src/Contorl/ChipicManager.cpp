@@ -17,6 +17,14 @@
 #include "ContorlButtonBar.h"
 #include "LocalEimtter.h"
 #include "Contorl.h"
+#include"qtextcodec.h"
+//#include"qdebug.h"
+#ifndef SINGLE_MODE_THRES_HOLD
+#define SINGLE_MODE_THRES_HOLD (100)
+#endif
+#ifndef TOSTR(a)
+#define TOSTR(a) QTextCodec::codecForName("gb2312")->toUnicode(a)
+#endif // !TOSTR(a)
 
 ChipicManager::ChipicManager()
 {
@@ -514,6 +522,11 @@ void ChipicManager::sendStartChipicMessage(const std::string& path, const int& t
 			client->showLocginDialog();
 			return;
 		}
+	}
+	if (SINGLE_MODE_THRES_HOLD <= path.length())
+	{
+		QMessageBox::information(nullptr, TOSTR("错误"), TOSTR("文件路径过长,请尝试修改路径"), QMessageBox::Yes);
+		return;
 	}
 	sender->sendJsonMessage(MessageTransition::creatRunChipicJsonMessage(path, threadCount));
 
