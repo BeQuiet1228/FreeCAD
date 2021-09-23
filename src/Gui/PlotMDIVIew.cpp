@@ -1,7 +1,6 @@
 #include "PreCompiled.h"
 #include "PlotMDIView.h"
 #include "DataVisualization/Plot.h"
-#include"MainWindow.h"
 TYPESYSTEM_SOURCE_ABSTRACT(Gui::PlotMDIView, Gui::MDIView);
 namespace Gui{
 	/**
@@ -32,9 +31,6 @@ namespace Gui{
 	*/
 	void PlotMDIView::resizeEvent(QResizeEvent* _event)
 	{
-		auto ptr = MainWindow::getInstance()->activeWindow();
-		/*if (this != MainWindow::getInstance()->activeWindow())
-			return;*/
 		QSize size = _event->size();
 		plot->resize(this->size());
 	}

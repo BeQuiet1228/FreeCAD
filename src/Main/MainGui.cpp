@@ -22,7 +22,7 @@
  *   Juergen Riegel 2002                                                   *
  ***************************************************************************/
 #include <FCConfig.h>
-#include<QDebug>
+
 #ifdef _PreComp_
 #   undef _PreComp_
 #endif

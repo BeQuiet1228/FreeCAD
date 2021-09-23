@@ -1864,9 +1864,6 @@ void StdCmdRunM3d::activated(int iMsg)
         if (!picDoc)
             return;
 		std::string path = picDoc->getTextPath();
-        auto length = path.length();
-        //std::cout << "path-length:" << lengthl;
-        qDebug() << "path-length" << length;
 		contorl->setM3dPath(path);
 
 		//清空h5文件对象

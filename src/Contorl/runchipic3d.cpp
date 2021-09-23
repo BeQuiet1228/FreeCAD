@@ -158,19 +158,18 @@ void RunChipic3d::makeCfgFile(const QString &path, const QString &fileName, cons
 /**
  * @brief RunChipic3d::initMpi 初始化mpi，需要程序拥有管理员权限才能初始化成功
  */
-bool RunChipic3d::initMpi()
+void RunChipic3d::initMpi()
 {
     QProcess process;
     QString cmd = mpiPath + q2s("smpd.exe -install -phrase behappy");
     process.start(cmd);
-    bool res=process.waitForFinished();
+	process.waitForFinished();
 	cmd = mpiPath + q2s("smpd.exe -stop");
 	process.start(cmd);
-	res=process.waitForFinished();
+	process.waitForFinished();
 #ifdef MY_DEBUG
     std::cerr << "init MPI output: " << QString(process.readAll()).toStdString() << std::endl;
 #endif
-	return res;
 }
 /**
  * @brief RunChipic3d::q2s std::string转换为qstring

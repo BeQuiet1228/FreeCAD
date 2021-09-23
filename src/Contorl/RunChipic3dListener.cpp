@@ -8,7 +8,6 @@ RunChipic3dListener::RunChipic3dListener()
 {
 	workThreadFlag = false;
 	mainThreadID = 0;
-//	sendMsgFailedCount = 0;
 }
 
 

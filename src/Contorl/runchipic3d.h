@@ -39,7 +39,7 @@ private:
     //生成配置文件
     void makeCfgFile(const QString &path,const QString &fileName,const int &count);
     //初始化mpi
-    bool initMpi();
+    void initMpi();
     //std::string 转换为qstring
     QString q2s(const char *s);
 
