@@ -17,15 +17,9 @@
 #include "ContorlButtonBar.h"
 #include "LocalEimtter.h"
 #include "Contorl.h"
-#include"qtextcodec.h"
-//#include"qdebug.h"
-#ifndef SINGLE_MODE_THRES_HOLD
-#define SINGLE_MODE_THRES_HOLD (100)
-#endif
-#ifndef TOSTR(a)
-#define TOSTR(a) QTextCodec::codecForName("gb2312")->toUnicode(a)
-#endif // !TOSTR(a)
 
+//m3d路径长度字节限制
+const unsigned int modeThresHold = 100;
 ChipicManager::ChipicManager()
 {
 	auto getter = JsonMessageGetter::GetInstance();
@@ -523,9 +517,13 @@ void ChipicManager::sendStartChipicMessage(const std::string& path, const int& t
 			return;
 		}
 	}
-	if (SINGLE_MODE_THRES_HOLD <= path.length())
+	//这里对路径长度进行判断,如果超过限度长度直接返回
+	if (modeThresHold <= path.length())
 	{
-		QMessageBox::information(nullptr, TOSTR("错误"), TOSTR("文件路径过长,请尝试修改路径"), QMessageBox::Yes);
+		QMessageBox::information(nullptr, 
+			MessageTransition::gbkStdstringToQstring("错误"),
+			MessageTransition::gbkStdstringToQstring("文件路径过长,请尝试修改路径"),
+			QMessageBox::Yes);
 		return;
 	}
 	sender->sendJsonMessage(MessageTransition::creatRunChipicJsonMessage(path, threadCount));

@@ -5,9 +5,6 @@
 #include <qtextstream.h>
 #include <qbytearray.h>
 #include <qtextcodec.h>
-#include<QCoreApplication>
-#include<QMessageBox>
-//#include"QDebug"
 /**
  * @brief RunChipic3d::RunChipic3d 初始化启动器
  * @param mode 运行模式 x32模式 x64模式
@@ -62,11 +59,7 @@ void RunChipic3d::runWithNotLonelinessMode(const QString &m3dpath, const int &co
 	QString path = m3dpath;
 	path = path.remove(m3dName);
 	//初始化mpi
-	bool res=initMpi();
-	if (!res)
-	{
-		std::cerr<< "Err:bool initMPi TimerOut."<<std::endl;
-	}
+	initMpi();
 	//生成配置文件
 	makeCfgFile(path, m3dName, count);
 
@@ -76,12 +69,9 @@ void RunChipic3d::runWithNotLonelinessMode(const QString &m3dpath, const int &co
 		delete  mpiProcess;
 	}
 	mpiProcess = new QProcess;
-	
-	QString proPath = QCoreApplication::applicationDirPath();
-	std::string proPathStr = proPath.toStdString();
+
 	//启动mpi
 	QString cmd = mpiPath + q2s("smpd.exe -d 0");
-	std::string cmdStr = cmd.toStdString();
 	mpiProcess->start(cmd);
 #ifdef MY_DEBUG
 	std::cerr << "notLonelinessMod init cmd:" << cmd.toStdString() << std::endl;
