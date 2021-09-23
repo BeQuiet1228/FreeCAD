@@ -31,7 +31,6 @@ namespace Gui{
 	*/
 	void PlotMDIView::resizeEvent(QResizeEvent* _event)
 	{
-		QSize size = _event->size();
 		plot->resize(this->size());
 	}
 	/**

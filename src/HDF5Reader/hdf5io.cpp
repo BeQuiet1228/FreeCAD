@@ -3,7 +3,6 @@
 #include <QString>
 #include <QStringList>
 #include <QTextCodec>
-//#include"qdebug.h"
 Hdf5IO::Hdf5IO(std::string fileName)
 {
 	setFilePath(fileName);
@@ -876,8 +875,7 @@ void Hdf5IO::digGroup(Group group)
 		for (int index = 0; index < childCount; index++)
 		{
 			Group g;
-			std::string subgroup = group.getObjnameByIdx(index);
-			getGroup(group,subgroup,g);
+			getGroup(group, group.getObjnameByIdx(index), g);
 			digGroup(g);
 		}
 	}

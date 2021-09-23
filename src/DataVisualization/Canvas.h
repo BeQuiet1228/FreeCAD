@@ -59,6 +59,7 @@ private:
 	QRect selectRect;
 	//鼠标左键功能绑定
 	MouseLeftMode mouseLeftMode;
+
 public:
 	//添加显示项
 	void addIteam(const CanvasItem& iteam);
