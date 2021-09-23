@@ -1846,6 +1846,7 @@ StdCmdRunM3d::StdCmdRunM3d(const char* name)
     sAccel = keySequenceToAccel(Qt::Key_F5);
 }
 
+//m3d运行按钮
 void StdCmdRunM3d::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
@@ -2111,6 +2112,7 @@ StdCmdParalleRun::StdCmdParalleRun()
     sPixmap = "paralleRun";
 }
 
+//并行运行
 void StdCmdParalleRun::activated(int iMsg)
 {
 	Q_UNUSED(iMsg);

@@ -18,6 +18,8 @@
 #include "LocalEimtter.h"
 #include "Contorl.h"
 
+//m3d路径长度字节限制
+const unsigned int modeThresHold = 100;
 ChipicManager::ChipicManager()
 {
 	auto getter = JsonMessageGetter::GetInstance();
@@ -514,6 +516,15 @@ void ChipicManager::sendStartChipicMessage(const std::string& path, const int& t
 			client->showLocginDialog();
 			return;
 		}
+	}
+	//这里对路径长度进行判断,如果超过限度长度直接返回
+	if (modeThresHold <= path.length())
+	{
+		QMessageBox::information(nullptr, 
+			MessageTransition::gbkStdstringToQstring("错误"),
+			MessageTransition::gbkStdstringToQstring("文件路径过长,请尝试修改路径"),
+			QMessageBox::Yes);
+		return;
 	}
 	sender->sendJsonMessage(MessageTransition::creatRunChipicJsonMessage(path, threadCount));
 

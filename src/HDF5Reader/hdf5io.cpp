@@ -805,6 +805,8 @@ int Hdf5IO::closeH5File(int H5id)
 */
 void Hdf5IO::LoadH5Resource()
 {
+	if (nullptr == this->Hdf5File)
+		return;
 	std::list<Group> groups = getGrouplist();//获取根节点下的所有组
 	//处理所有的Group
 	for (auto iter = groups.begin(); iter != groups.end();iter++)
