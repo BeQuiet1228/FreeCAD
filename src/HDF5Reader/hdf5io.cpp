@@ -875,7 +875,7 @@ void Hdf5IO::digGroup(Group group)
 		for (int index = 0; index < childCount; index++)
 		{
 			Group g;
-			getGroup(group, group.getObjnameByIdx(index), g);
+			getGroup(group,group.getObjnameByIdx(index),g);
 			digGroup(g);
 		}
 	}

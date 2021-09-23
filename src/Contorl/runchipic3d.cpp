@@ -163,7 +163,7 @@ void RunChipic3d::initMpi()
     QProcess process;
     QString cmd = mpiPath + q2s("smpd.exe -install -phrase behappy");
     process.start(cmd);
-	process.waitForFinished();
+    process.waitForFinished();
 	cmd = mpiPath + q2s("smpd.exe -stop");
 	process.start(cmd);
 	process.waitForFinished();

@@ -95,7 +95,6 @@ bool ContorlInterface::hasManualChipicRuning()
 	return hasChipicRuning() && (getChipicManager()->getRunType() == ChipicManager::MANUAL);
 }
 
-
 void ContorlInterface::buttonClicked(const int& buttonID)
 {
 	contorl->buttonClinked(buttonID);

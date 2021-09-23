@@ -22,7 +22,6 @@
 #include "Gui/Application.h"
 #include "DataVisualization/C_encoding.h"
 #include "DocumentPic.h"
-#include"qmessagebox.h"
 ControlTreeWidget::ControlTreeWidget(QWidget* parent)
 	:QTreeWidget(parent),tempHdf5IO(nullptr)
 {
