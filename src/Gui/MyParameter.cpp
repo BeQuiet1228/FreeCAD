@@ -70,8 +70,8 @@ MyParameter::MyParameter(QWidget* parent) : QWidget(parent) {
 
     insert_btn = new QPushButton(this);
     insert_btn->setObjectName(QString::fromUtf8("insert_btn"));
-    insert_btn->setText(QString::fromUtf8("insert param"));
-    QObject::connect(this->insert_btn, SIGNAL(clicked(bool)), this, SLOT(insertParam()));
+    insert_btn->setText(QString::fromUtf8("downward insert"));
+    QObject::connect(this->insert_btn, SIGNAL(clicked(bool)), this, SLOT(insertParaDirectionToDown()));
 
     delete_btn = new QPushButton(this);
     delete_btn->setObjectName(QString::fromUtf8("delete_btn"));
@@ -821,13 +821,13 @@ void MyParameter::changeParamName() {
 void MyParameter::updateM3D() {
     if (GetApplication().getActiveDocument()->classID == 2) {
         Base::InterpreterSingleton python;
+        python.runString("FreeCADGui.runCommand('Refresh_3D')");
+        python.runString("FreeCADGui.runCommand('UpdateBooleanCommand_3D')");
         python.runString("FreeCADGui.runCommand('CreateM3D_new')");
-        python.runString("FreeCADGui.runCommand('Std_My_Parameter')");
     }
     else if (GetApplication().getActiveDocument()->classID == 3) {
         Base::InterpreterSingleton python;
         python.runString("FreeCADGui.runCommand('CreateM2D')");
-        python.runString("FreeCADGui.runCommand('Std_My_Parameter')");
     }
 }
 
