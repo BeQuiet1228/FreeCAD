@@ -70,8 +70,8 @@ MyParameter::MyParameter(QWidget* parent) : QWidget(parent) {
 
     insert_btn = new QPushButton(this);
     insert_btn->setObjectName(QString::fromUtf8("insert_btn"));
-    insert_btn->setText(QString::fromUtf8("insert param"));
-    QObject::connect(this->insert_btn, SIGNAL(clicked(bool)), this, SLOT(insertParam()));
+    insert_btn->setText(QString::fromUtf8("downward insert"));
+    QObject::connect(this->insert_btn, SIGNAL(clicked(bool)), this, SLOT(insertParaDirectionToDown()));
 
     delete_btn = new QPushButton(this);
     delete_btn->setObjectName(QString::fromUtf8("delete_btn"));
