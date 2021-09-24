@@ -821,6 +821,8 @@ void MyParameter::changeParamName() {
 void MyParameter::updateM3D() {
     if (GetApplication().getActiveDocument()->classID == 2) {
         Base::InterpreterSingleton python;
+        python.runString("FreeCADGui.runCommand('Refresh_3D')");
+        python.runString("FreeCADGui.runCommand('UpdateBooleanCommand_3D')");
         python.runString("FreeCADGui.runCommand('CreateM3D_new')");
         python.runString("FreeCADGui.runCommand('Std_My_Parameter')");
     }
