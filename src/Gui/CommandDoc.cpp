@@ -1280,16 +1280,21 @@ void StdCmdDelete::activated(int iMsg)
                         QString bodyMessage;
                         QTextStream bodyMessageStream(&bodyMessage);
                         bodyMessageStream << qApp->translate("Std_Delete",
+                            "The following objects will fail. Please Cancel \n\n");
+                            
+                        /*bodyMessageStream << qApp->translate("Std_Delete",
                             "The following, referencing objects might break.\n\n"
-                            "Are you sure you want to continue?\n\n");
+                            "Are you sure you want to continue?\n\n");*/
                         for (const auto& currentLabel : affectedLabels)
                             bodyMessageStream << currentLabel << '\n';
 
                         int ret = QMessageBox::question(Gui::getMainWindow(),
+                            qApp->translate("Std_Delete", "Object dependencies"), bodyMessage,QMessageBox::Cancel);
+                        /*int ret = QMessageBox::question(Gui::getMainWindow(),
                             qApp->translate("Std_Delete", "Object dependencies"), bodyMessage,
                             QMessageBox::Yes, QMessageBox::No);
                         if (ret == QMessageBox::Yes)
-                            autoDeletion = true;
+                            autoDeletion = true;*/
                     }
                     if (autoDeletion) {
                         Gui::getMainWindow()->setUpdatesEnabled(false);
