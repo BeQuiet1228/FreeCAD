@@ -1225,6 +1225,43 @@ void StdCmdDelete::activated(int iMsg)
                     for (std::vector<Gui::SelectionObject>::iterator ft = sel.begin(); ft != sel.end(); ++ft) {
                         App::DocumentObject* obj = ft->getObject();
                         std::vector<App::DocumentObject*> links = obj->getInList();
+
+                        // @wangzhenguo 2021.9.24
+                        //遍历所有object,把旋转体和挤出体筛选出来,基础面删除时，提示会影响的模型
+                        char* sType = "App::DocumentObject";
+                        Base::Type type = Base::Type::fromName(sType);
+                        const App::Document* pcDoc;
+                        pcDoc = App::GetApplication().getActiveDocument();
+                        std::vector<App::DocumentObject*> res;
+                        res = pcDoc->getObjectsOfType(type);//获取所有obj,包括分组
+                        std::vector<App::DocumentObject*> selectModel;
+                        for (auto curObj : res) {
+                            //std::cerr << "curObj->Label=" << curObj->Label.getValue() << "\n";
+                            std::vector<App::Property*> properties;
+                            curObj->getPropertyList(properties);
+                            for (auto iter = properties.begin(); iter != properties.end(); ++iter) {
+                                //std::cerr << "properties=" << (*iter)->getName() << "\n";
+                                if (strcmp((*iter)->getName(), "Area") == 0) {
+                                    selectModel.push_back(curObj);
+                                    break;
+                                }
+                            }
+                        }
+                        // 判断删除的obj和旋转体，挤出体是不是同一个体
+                        std::string objLabel= ((App::PropertyString*)(obj->getPropertyByName("Label")))->getStrValue();
+                        for (auto selectObj : selectModel) {
+                            std::string selectObjArea = ((App::PropertyEnumeration*)(selectObj->getPropertyByName("Area")))->getValueAsString();
+                            if (objLabel == selectObjArea) {
+                                autoDeletion = false;
+                                affectedLabels.insert(QString::fromUtf8(selectObj->Label.getValue()));
+                            }
+                        }
+                        if (strcmp(obj->getNameInDocument(), "ResultShape") == 0) {
+                            //结果模型禁止删除
+                            std::cerr << "ResultShape prohibit to delete\n";
+                            return;
+                        }
+
                         if (!links.empty()) {
                             // check if the referenced objects are groups or are selected too
                             for (std::vector<App::DocumentObject*>::iterator lt = links.begin(); lt != links.end(); ++lt) {
@@ -1243,16 +1280,21 @@ void StdCmdDelete::activated(int iMsg)
                         QString bodyMessage;
                         QTextStream bodyMessageStream(&bodyMessage);
                         bodyMessageStream << qApp->translate("Std_Delete",
+                            "The following objects will fail. Please Cancel \n\n");
+                            
+                        /*bodyMessageStream << qApp->translate("Std_Delete",
                             "The following, referencing objects might break.\n\n"
-                            "Are you sure you want to continue?\n\n");
+                            "Are you sure you want to continue?\n\n");*/
                         for (const auto& currentLabel : affectedLabels)
                             bodyMessageStream << currentLabel << '\n';
 
                         int ret = QMessageBox::question(Gui::getMainWindow(),
+                            qApp->translate("Std_Delete", "Object dependencies"), bodyMessage,QMessageBox::Cancel);
+                        /*int ret = QMessageBox::question(Gui::getMainWindow(),
                             qApp->translate("Std_Delete", "Object dependencies"), bodyMessage,
                             QMessageBox::Yes, QMessageBox::No);
                         if (ret == QMessageBox::Yes)
-                            autoDeletion = true;
+                            autoDeletion = true;*/
                     }
                     if (autoDeletion) {
                         Gui::getMainWindow()->setUpdatesEnabled(false);
