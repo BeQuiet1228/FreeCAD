@@ -14,6 +14,8 @@ add_subdirectory(Editor)
 #add_subdirectory(PartChipic)
 add_subdirectory(SmartContorl)
 add_subdirectory(Transition)
+#新增子项目
+add_subdirectory(VisualizationOf3D)
 if(BUILD_GUI)
     add_subdirectory(Gui)
 endif(BUILD_GUI)
