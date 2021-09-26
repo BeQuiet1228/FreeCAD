@@ -655,6 +655,7 @@ void MyParameter::recoveryData() {
     std::vector<std::vector<std::string>> p = this->batchProcessing(text);
     for (int i = 0; i < p.size(); ++i) {
         this->addNewLine(i);
+        this->tableWidget->item(i, 0)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         this->tableWidget->item(i, 0)->setText(QString::fromStdString(p[i][0]));
         this->makeLineEnabled(i);
         this->tableWidget->item(i, 1)->setText(QString::fromStdString(p[i][1]));
@@ -824,10 +825,13 @@ void MyParameter::updateM3D() {
         python.runString("FreeCADGui.runCommand('Refresh_3D')");
         python.runString("FreeCADGui.runCommand('UpdateBooleanCommand_3D')");
         python.runString("FreeCADGui.runCommand('CreateM3D_new')");
+        python.runString("FreeCADGui.runCommand('SingleClickParaCommand')");
+        python.runString("FreeCADGui.runCommand('Std_My_Parameter')");
     }
     else if (GetApplication().getActiveDocument()->classID == 3) {
         Base::InterpreterSingleton python;
         python.runString("FreeCADGui.runCommand('CreateM2D')");
+        python.runString("FreeCADGui.runCommand('Std_My_Parameter')");
     }
 }
 
