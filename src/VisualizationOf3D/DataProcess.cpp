@@ -167,7 +167,7 @@ void PlanData::processCir(std::map<double, std::map<ValSolf, std::vector<ValSolf
 			planPoints->InsertPoint(i,iter->second.points[i].data());
 			planscalaes->InsertTuple1(i, i);
 		}
-		for ()
+		for (auto &&)
 		{
 
 		}
