@@ -7,6 +7,7 @@
 #include<memory>
 class PlanData;
 class Hdf5Data;
+class vtkPolyData;
 class PlanData
 {
 public:
@@ -76,8 +77,8 @@ public:
 	//void statisticalD();
 	void mergePolyDataC();
 protected:
-	void processCir(std::map<double,std::map<ValSolf,std::vector<ValSolf>>>&);
-	void processVer(std::map<double, std::map<ValSolf, std::vector<ValSolf>>>&,
+	vtkSmartPointer<vtkPolyData> processCir(std::map<double,std::map<ValSolf,std::vector<ValSolf>>>&);
+	vtkSmartPointer<vtkPolyData> processVer(std::map<double, std::map<ValSolf, std::vector<ValSolf>>>&,
 		std::map<double, std::vector<ValSolf>>&);
 	void processCirCut(std::map<ValSolf,std::map<double,std::vector<ValSolf>>>&);
 protected:
