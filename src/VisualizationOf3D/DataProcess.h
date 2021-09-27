@@ -1,13 +1,15 @@
 #pragma once
 #ifndef DATA_PROCESS_H_
 #define DATA_PROCESS_H_
-//#include"hdf5io.h"
+#include"vtk-7.0/vtkSmartPointer.h"
 #include<map>
 #include<vector>
 #include<memory>
 class PlanData;
 class Hdf5Data;
 class vtkPolyData;
+using PdPtr = vtkSmartPointer<vtkPolyData>;
+
 class PlanData
 {
 public:
@@ -18,6 +20,12 @@ public:
 		CYLINDER=0,
 		POLAR,
 		CASTESIAN,
+	};
+	enum CoordData
+	{
+		_X_=0,
+		_Y_=1,
+		_Z_=2
 	};
 	struct ValSolf {
 		double val1;
@@ -54,6 +62,16 @@ public:
 		double eA;
 		int proPer;
 	};
+	struct  DInfo
+	{
+		double x1;
+		double x2;
+		double y1;
+		double y2;
+		double z1;
+		double z2;
+		int proPer;
+	};
 	struct CylinderInfo {
 		std::map<double, std::map<ValSolf, std::vector<ValSolf>>> plans;
 		std::map<double, std::map<ValSolf, std::vector<ValSolf>>> verPlans;
@@ -71,19 +89,35 @@ public:
 		std::vector<Points> points;
 		std::vector<FaceIndex> faces;
 	};
+	using PlanD = std::map<double, std::map<ValSolf, std::vector<ValSolf>>>;
+	using RPlan = std::map<double, std::vector<ValSolf>>;
+	struct CastersianInfo
+	{
+		PlanD pland;
+		RPlan planr;
+	};
 public:
+	PlanData();
+	~PlanData();
 	void setDataType(DataType type);
 	void statisticalC(CirInfo&);
-	//void statisticalD();
+	void statisticalD(DInfo&);
 	void mergePolyDataC();
+	void mergePolyDataD();
 protected:
 	vtkSmartPointer<vtkPolyData> processCir(std::map<double,std::map<ValSolf,std::vector<ValSolf>>>&);
-	vtkSmartPointer<vtkPolyData> processVer(std::map<double, std::map<ValSolf, std::vector<ValSolf>>>&,
-		std::map<double, std::vector<ValSolf>>&);
-	void processCirCut(std::map<ValSolf,std::map<double,std::vector<ValSolf>>>&);
+	vtkSmartPointer<vtkPolyData> processVer(std::map<double, std::map<ValSolf, std::vector<ValSolf>>>&,std::map<double, std::vector<ValSolf>>&);
+	vtkSmartPointer<vtkPolyData> processCirCut(std::map<ValSolf,std::map<double,std::vector<ValSolf>>>&);
+	vtkSmartPointer<vtkPolyData> calcCastersianX(PlanD&);
+	vtkSmartPointer<vtkPolyData> calcCastersianY(PlanD&);
+	vtkSmartPointer<vtkPolyData> calcCastersianZ(PlanD&);
+	void processVerD(PlanD& ps, RPlan& rps);
 protected:
-	std::map<int, CylinderInfo> cylinderS;
 	DataType mDataType;
+	std::map<int, CylinderInfo> cylinderS;
+	std::map<int, std::map<CoordData, CastersianInfo>> castersianS;
+private:
+	std::map<__int64, PdPtr> Polys;
 };
 
 class DataProcess
