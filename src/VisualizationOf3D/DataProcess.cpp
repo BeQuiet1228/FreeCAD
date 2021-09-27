@@ -4,6 +4,8 @@
 #include"algorithm"
 #include"vtk-7.0/vtkSmartPointer.h"
 #include"vtk-7.0/vtkPoints.h"
+#include"vtk-7.0/vtkCellData.h"
+#include"vtk-7.0/vtkFloatArray.h"
 void processCirSingle(std::map<double, PlanData::PlanInfo>&cirPlan,
 	std::map<double, std::map<PlanData::ValSolf, std::vector<PlanData::ValSolf>>>::iterator& it1,
 	std::map<PlanData::ValSolf, std::vector<PlanData::ValSolf>>::iterator& it2,
@@ -158,6 +160,17 @@ void PlanData::processCir(std::map<double, std::map<ValSolf, std::vector<ValSolf
 	for (auto iter = cirPlan.begin(); iter != cirPlan.end(); iter++)
 	{
 		vtkSmartPointer<vtkPoints> planPoints = vtkSmartPointer<vtkPoints>::New();
+		vtkSmartPointer<vtkCellData> planCell = vtkSmartPointer<vtkCellData>::New();
+		vtkSmartPointer<vtkFloatArray> planscalaes = vtkSmartPointer<vtkFloatArray>::New();
+		for (__int64 i=0;i<iter->second.points.size();i++)
+		{
+			planPoints->InsertPoint(i,iter->second.points[i].data());
+			planscalaes->InsertTuple1(i, i);
+		}
+		for ()
+		{
+
+		}
 	}
 }
 void PlanData::processVer(std::map<double, std::map<ValSolf, std::vector<ValSolf>>>& pd, std::map<double, std::vector<ValSolf>>& pz)
