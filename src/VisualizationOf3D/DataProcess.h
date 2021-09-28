@@ -104,6 +104,10 @@ public:
 	void statisticalD(DInfo&);
 	void mergePolyDataC();
 	void mergePolyDataD();
+	std::map<__int64, PdPtr> getPro()
+	{
+		return Polys;
+	}
 protected:
 	vtkSmartPointer<vtkPolyData> processCir(std::map<double,std::map<ValSolf,std::vector<ValSolf>>>&);
 	vtkSmartPointer<vtkPolyData> processVer(std::map<double, std::map<ValSolf, std::vector<ValSolf>>>&,std::map<double, std::vector<ValSolf>>&);
@@ -119,17 +123,19 @@ protected:
 private:
 	std::map<__int64, PdPtr> Polys;
 };
-
+#include"qwidget.h"
 class DataProcess
 {
 public:
 	DataProcess();
 	~DataProcess();
 	bool initData(Hdf5Data& data);
+	QWidget* getWidget();
 protected:
 	bool calcCartesian(Hdf5Data& data);
 	bool calcPolar(Hdf5Data& data);
 	bool calcCylinder(Hdf5Data& data);
+	
 private:
 	std::shared_ptr<PlanData> planePtr;
 };

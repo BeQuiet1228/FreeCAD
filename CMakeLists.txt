@@ -658,16 +658,32 @@ endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     IF(BUILD_SMESH)
         #if we use smesh we definitely also need vtk, no matter of external or internal smesh
         set (VTK_COMPONENTS
+            #vtkCommonCore
+            #vtkCommonDataModel
+            #vtkFiltersVerdict
+            #vtkIOXML
+            #vtkFiltersCore
+            #vtkFiltersGeneral
+            #vtkIOLegacy
+            #vtkFiltersExtraction
+            #vtkFiltersSources
+            #vtkFiltersGeometry
+            #vtkRenderingCore
+            
+            vtkCommonColor
             vtkCommonCore
             vtkCommonDataModel
-            vtkFiltersVerdict
-            vtkIOXML
-            vtkFiltersCore
-            vtkFiltersGeneral
-            vtkIOLegacy
-            vtkFiltersExtraction
             vtkFiltersSources
-            vtkFiltersGeometry
+            vtkIOGeometry
+            vtkInteractionStyle
+            vtkRenderingContextOpenGL2
+            vtkRenderingCore
+            vtkRenderingFreeType
+            vtkRenderingGL2PSOpenGL2
+            vtkRenderingOpenGL2
+            vtkGUISupportQt
+            vtkIOImage
+            vtkInteractionImage
         )
 
         # check which modules are available

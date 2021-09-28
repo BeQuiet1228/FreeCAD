@@ -13,12 +13,18 @@ include_directories(
     ${PYCXX_INCLUDE_DIR}
 	${CMAKE_CURRENT_BINARY_DIR}
 )
+INCLUDE(${VTK_USE_FILE})
 SET(QRC_SRC "")
 SET(UI_SRC "")
-SET(MOC_SRC "")
+SET(MOC_SRC 
+Widget3D.h
+)
+
 SET(DATAPROCESS_SRC
 DataProcess.h
 DataProcess.cpp
+Widget3D.h
+Widget3D.cpp
 )
 
 #处理ui和qrc文件
@@ -82,4 +88,6 @@ else()
     )
 endif()
 #生成moc文件
+fc_wrap_cpp(MY_MOC_SRCS ${MOC_SRC})
 target_link_libraries(VisualizationOf3D ${QT_LIB} ${VTK_LIBRARIES})
+source_group("dataprocess" FILES ${DATAPROCESS_SRC})

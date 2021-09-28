@@ -10,6 +10,7 @@
 #include"vtk-7.0/vtkPointData.h"
 #include"vtk-7.0/vtkAppendPolyData.h"
 #include"vtk-7.0/vtkCleanPolyData.h"
+#include"Widget3D.h"
 void processCirSingle(std::map<double, PlanData::PlanInfo>&cirPlan,
 	std::map<double, std::map<PlanData::ValSolf, std::vector<PlanData::ValSolf>>>::iterator& it1,
 	std::map<PlanData::ValSolf, std::vector<PlanData::ValSolf>>::iterator& it2,
@@ -903,4 +904,16 @@ void processCirCutSingle(PlanData::PlanInfo& info,
 	info.points.push_back(p4);
 	info.faces.push_back(f1);
 	info.faces.push_back(f2);
+}
+QWidget* DataProcess::getWidget()
+{
+	Widget3D* widget3D = new Widget3D();
+	auto polydatas = planePtr->getPro();
+	for (auto iter = polydatas.begin(); iter != polydatas.end(); iter++)
+	{
+		widget3D->transfromPolyData(iter->first,iter->second);
+	}
+	//widget3D->update();
+	widget3D->drawImage();
+	return widget3D;
 }
