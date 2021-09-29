@@ -105,7 +105,7 @@ bool DataProcess::calcCartesian(Hdf5Data& data) {
 		temp.z1 = *iterdata; iterdata++;
 		temp.x2 = *iterdata; iterdata++;
 		temp.y2 = *iterdata; iterdata++;
-		temp.z2 = *iterdata;
+		temp.z2 = *iterdata; iterdata++;
 		temp.proPer = *(NAME->begin() + index);
 		planePtr->statisticalD(temp);
 	}
@@ -137,6 +137,7 @@ bool DataProcess::calcPolar(Hdf5Data& data) {
 		temp.rE = *iterval; iterval++;
 		temp.eA = *iterval; iterval++;
 		temp.zD = *iterval; iterval++;
+		temp.proPer = *(NAME->begin() + index);
 		planePtr->statisticalC(temp);
 	}
 	//´¦ÀíÃæ
@@ -285,7 +286,7 @@ void PlanData::mergePolyDataD()
 	Polys.clear();
 	for (auto iter = castersianS.begin(); iter != castersianS.end(); iter++)
 	{
-		for (auto iterCoord = iter->second.begin(); iterCoord != iter->second.end(); iter++)
+		for (auto iterCoord = iter->second.begin(); iterCoord != iter->second.end(); iterCoord++)
 		{
 			processVerD(iterCoord->second.pland,iterCoord->second.planr);
 		}
