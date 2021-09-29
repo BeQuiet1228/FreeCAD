@@ -33,6 +33,7 @@ public:
 	virtual void double_clicked_event(const QModelIndex &index);
 	void clear();
 	void toStructh5df(Hdf5Data& data, int index);
+	void toPlaneh5df(Hdf5Data& data,int index);
 protected:
 	QTreeView* m_TreeView;
 	QStandardItemModel *goodsModel;
