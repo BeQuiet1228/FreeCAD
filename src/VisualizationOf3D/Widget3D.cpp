@@ -52,8 +52,8 @@ void Widget3D::Updata()
 }
 void Widget3D::drawImage()
 {
-	render->SetBackground(1.0, 1.0, 1.0);
-	render->SetBackground2(0.529, 0.8078, 0.92157);
+	render->SetBackground(0.529, 0.8078, 0.92157);
+	render->SetBackground2(1.0, 1.0, 1.0);
 	render->SetGradientBackground(1);
 }
 
@@ -71,7 +71,7 @@ void Widget3D::initUi()
 	//subwidget->setPalette(pal);
 	subwidget->setAutoFillBackground(true);
 	subwidget->setObjectName("SubWidget");
-	subwidget->setStyleSheet("#SubWidget{background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0 skyblue,stop:1 white);}");
+	subwidget->setStyleSheet("#SubWidget{background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0 white,stop:1 skyblue);}");
 }
 void Widget3D::slotStateChanged(int state)
 {
