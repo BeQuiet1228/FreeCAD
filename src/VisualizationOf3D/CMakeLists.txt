@@ -14,6 +14,8 @@ include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}
 )
 INCLUDE(${VTK_USE_FILE})
+
+add_definitions(-D_VISUALZATION3D_)
 SET(QRC_SRC "")
 SET(UI_SRC "")
 SET(MOC_SRC 
@@ -21,6 +23,8 @@ Widget3D.h
 )
 
 SET(DATAPROCESS_SRC
+Widget3DFactory.h
+Widget3DFactory.cpp
 DataProcess.h
 DataProcess.cpp
 Widget3D.h
@@ -38,11 +42,13 @@ endif()
 SET(SRC
 ${UI_SRC}
 ${DATAPROCESS_SRC}
+exPortConfig.hpp
 main.cpp
+
 )
 if(VisualizationOf3DDLL)
-add_definitions(_DVisualizationOf3D_DLL)
-add_library(VisualizationOf3D SHARED ${SRC})
+add_definitions(-D_VISUALZATION3D_DLL)
+add_library(VisualizationOf3D ${SRC})
 else()
 add_executable(VisualizationOf3D ${SRC})
 endif()
@@ -52,7 +58,7 @@ SET(DEBUG_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 SET(RELEASE_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 SET_BIN_DIR(VisualizationOf3D VisualizationOf3D)
-list(APPEND QT_LIB
+list(APPEND NEED_LIBRARY
     debug MSVCRTD.LIB
     debug MSVCPRTD.LIB
     optimized MSVCRT.LIB
@@ -89,5 +95,5 @@ else()
 endif()
 #生成moc文件
 fc_wrap_cpp(MY_MOC_SRCS ${MOC_SRC})
-target_link_libraries(VisualizationOf3D ${QT_LIB} ${VTK_LIBRARIES})
+target_link_libraries(VisualizationOf3D ${NEED_LIBRARY} ${VTK_LIBRARIES})
 source_group("dataprocess" FILES ${DATAPROCESS_SRC})

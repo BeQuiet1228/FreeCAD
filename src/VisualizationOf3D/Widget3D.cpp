@@ -35,7 +35,7 @@ void Widget3D::transfromPolyData(__int64 porPer,vtkPolyData* polyData)
 	QCheckBox* checkBox = new QCheckBox(mVtkWidget);
 	checkBox->setText(QString("%1").arg(porPer));
 	checkBox->setCheckState(Qt::CheckState::Checked);
-	checkBox->setMinimumSize(32, 32);
+	//checkBox->setMinimumSize(32, 32);
 	checks[porPer] = checkBox;
 	layout->addWidget(checkBox);
 	connect(checkBox,SIGNAL(stateChanged(int)),this, SLOT(slotStateChanged(int)));
@@ -43,7 +43,7 @@ void Widget3D::transfromPolyData(__int64 porPer,vtkPolyData* polyData)
 void Widget3D::resizeEvent(QResizeEvent*)
 {
 	mVtkWidget->resize(this->size());
-	QSize subsize = QSize(this->size().width()/9,this->size().height());
+	QSize subsize = QSize(this->size().width()/15,this->size().height());
 	subwidget->resize(subsize);
 	subwidget->move(QPoint(0, 0));
 }
@@ -52,7 +52,9 @@ void Widget3D::Updata()
 }
 void Widget3D::drawImage()
 {
-	render->SetBackground(1,1,1);
+	render->SetBackground(1.0, 1.0, 1.0);
+	render->SetBackground2(0.529, 0.8078, 0.92157);
+	render->SetGradientBackground(1);
 }
 
 void Widget3D::initUi()
@@ -60,13 +62,16 @@ void Widget3D::initUi()
 	render = vtkSmartPointer<vtkRenderer>::New();
 	mVtkWidget = new QVTKWidget(this);
 	mVtkWidget->GetRenderWindow()->AddRenderer(render);
+	mVtkWidget->setAutomaticImageCacheEnabled(true);
 	layout = new QGridLayout();
 	subwidget = new QWidget(mVtkWidget);
 	subwidget->setLayout(layout);
 	QPalette pal = subwidget->palette();
-	pal.setColor(QPalette::Background,QColor(0xff,0xff,0xff,0xff));
-	subwidget->setPalette(pal);
+	//pal.setColor(QPalette::Background,QColor(0xff,0xff,0xff,0x00));
+	//subwidget->setPalette(pal);
 	subwidget->setAutoFillBackground(true);
+	subwidget->setObjectName("SubWidget");
+	subwidget->setStyleSheet("#SubWidget{background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0 skyblue,stop:1 white);}");
 }
 void Widget3D::slotStateChanged(int state)
 {
@@ -91,6 +96,7 @@ void Widget3D::slotStateChanged(int state)
 				break;
 				}
 				render->Render();
+				mVtkWidget->GetInteractor()->Render();
 			}
 		}
 	}

@@ -11,6 +11,7 @@ namespace Gui{
 		void upClear();
 	public:
 		virtual void double_clicked_event(const QModelIndex &index);
+		virtual void fromWidget(std::shared_ptr<QWidget>);
 	};
 };
 

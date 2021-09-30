@@ -1,6 +1,7 @@
 #include "Dataresource.h"
 #include "RendererFactory.h"
 #include "Plot.h"
+#include"VisualizationOf3D/Widget3DFactory.h"
 //结构图的方向
 enum stru_dir
 {
@@ -23,6 +24,14 @@ std::string StructDirection[] = { "Phi-Z",
 void DataSourceManage::tranfromRenderer(std::string name,int index){
 	if (index > hdfDatelist.size())
 		return;
+	//如果是三维结构图
+	if(hdfDatelist[index].name.find("PLANE")!=std::string::npos)
+	{
+		Hdf5Data hdf5Data3D(hdfDatelist[index]);
+		auto resWidget=mWidget3DFactoryPtr->creat3DWidget(hdf5Data3D);
+		emit toWidget(resWidget);
+		return;
+	}
 	QString str = QString::fromStdString(name);
 	str += QString("_%1").arg(index);
 	std::string newname = str.toStdString();
@@ -139,6 +148,7 @@ void DataSourceManage::loadhdffile(std::string filepath)
 * @brief DataSourceManage::DataSourceManage 数据管理构造
 */
 DataSourceManage::DataSourceManage():factoryptr(nullptr),treePtrsite(0),plotPtrsite(0){
+	mWidget3DFactoryPtr = std::shared_ptr<Widget3DFactory>(new Widget3DFactory());
 	RendererManger.clear();
 }
 /**
@@ -162,6 +172,7 @@ void DataSourceManage::init(ListTreeWidget* ptr,Plot* _plot){
 		connect(this, SIGNAL(_reRendererEvent(std::shared_ptr<PlotAdapter>)), _plot, SLOT(reRendererEvent(std::shared_ptr<PlotAdapter>)));
 		plotPtrsite = plotSite;
 	}
+	connect(this,SIGNAL(toWidget(std::shared_ptr<QWidget>)),ptr,SLOT(soltFromWidget(std::shared_ptr<QWidget>)));
 }
 /**
 * @brief DataSourceManage::initStructData 传入结构体数据

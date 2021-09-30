@@ -906,9 +906,9 @@ void processCirCutSingle(PlanData::PlanInfo& info,
 	info.faces.push_back(f1);
 	info.faces.push_back(f2);
 }
-QWidget* DataProcess::getWidget()
+std::shared_ptr<QWidget> DataProcess::getWidget()
 {
-	Widget3D* widget3D = new Widget3D();
+	std::shared_ptr<Widget3D> widget3D(new Widget3D());
 	auto polydatas = planePtr->getPro();
 	for (auto iter = polydatas.begin(); iter != polydatas.end(); iter++)
 	{

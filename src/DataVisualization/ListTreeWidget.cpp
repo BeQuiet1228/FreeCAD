@@ -74,7 +74,7 @@ void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 #pragma region
 		if (Hdf5Datalist[index].name.find("PLANE") != std::string::npos)
 		{
-			toPlanehdfg(Hdf5Datalist[index],index);
+			toPlaneh5df(Hdf5Datalist[index],index);
 			continue;
 		}
 #pragma endregion
@@ -511,5 +511,9 @@ void  ListTreeWidget::toPlaneh5df(Hdf5Data& data, int index)
 	QStandardItem* subItem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr("Group_Plane", ENCODING_GB2312));
 	datainfor[subItem] = mitemInfo;
 	item->setChild(subrow, subItem);
+}
+void ListTreeWidget::soltFromWidget(std::shared_ptr<QWidget> wid3D)
+{
+	fromWidget(wid3D);
 }
 #include "moc_ListTreeWidget.cpp"
