@@ -118,9 +118,11 @@ namespace Gui{
 		if (nullptr == ptr)
 		{
 			ptr = new Gui::PlanMDIView(guidoc);
+			ptr->setWidget(wid3D);
 			Gui::MainWindow::getInstance()->addWindow(ptr);
 		}
+		else
+			ptr->setWidget(wid3D);
 		MainWindow::getInstance()->setActiveWindow(ptr);
-		ptr->setWidget(wid3D);
 	}
 };
