@@ -28,7 +28,9 @@ void DataSourceManage::tranfromRenderer(std::string name,int index){
 	if(hdfDatelist[index].name.find("PLANE")!=std::string::npos)
 	{
 		Hdf5Data hdf5Data3D(hdfDatelist[index]);
-		auto resWidget=mWidget3DFactoryPtr->creat3DWidget(hdf5Data3D);
+		//auto resWidget=mWidget3DFactoryPtr->creat3DWidget(hdf5Data3D);
+		Widget3DFactory mWidget3DFactory;
+		auto resWidget = mWidget3DFactory.creat3DWidget(hdf5Data3D);
 		emit toWidget(resWidget);
 		return;
 	}
@@ -148,7 +150,7 @@ void DataSourceManage::loadhdffile(std::string filepath)
 * @brief DataSourceManage::DataSourceManage 数据管理构造
 */
 DataSourceManage::DataSourceManage():factoryptr(nullptr),treePtrsite(0),plotPtrsite(0){
-	mWidget3DFactoryPtr = std::shared_ptr<Widget3DFactory>(new Widget3DFactory());
+	//mWidget3DFactoryPtr = std::shared_ptr<Widget3DFactory>(new Widget3DFactory());
 	RendererManger.clear();
 }
 /**

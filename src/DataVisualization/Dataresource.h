@@ -47,7 +47,7 @@ private:
 	int structindex;
 	//工厂类
 	std::shared_ptr<RendererFactory> factoryptr;
-	std::shared_ptr<Widget3DFactory> mWidget3DFactoryPtr;
+	//std::shared_ptr<Widget3DFactory> mWidget3DFactoryPtr;
 	//用于保存Plot和ListTreeWidget的地址,仅用于校验使用
 	unsigned long long treePtrsite;
 	unsigned long long plotPtrsite;
