@@ -23,20 +23,23 @@ namespace Gui {
 			}
 			wid3D->setParent(this);
 			mwidget3D = wid3D;
+			setCentralWidget(mwidget3D.get());
+			/*mwidget3D = wid3D;
 			mwidget3D->resize(this->size());
 			mwidget3D->move(QPoint(0, 0));
-			mwidget3D->show();
+			mwidget3D->show();*/
 			lastptr = curPtr;
+			
 		}
 	}
-	void PlanMDIView::resizeEvent(QResizeEvent*)
+	void PlanMDIView::resizeEvent(QResizeEvent*e)
 	{
-		if (nullptr != mwidget3D)
+		QWidget::resizeEvent(e);
+		/*if (nullptr != mwidget3D)
 		{
 			mwidget3D->resize(this->size());
 			mwidget3D->move(QPoint(0, 0));
-		}
-			
+		}*/
 	}
 	//__int64 lastptr;
 };

@@ -31,7 +31,7 @@ namespace Data {
 	using ListValuesPtr = std::shared_ptr<ListValues>;
 };
 /**
-* @brief DataProcess::DataProcess
+* @brief DataProcess::DataProcess 构造函数
 * @return 
 */
 DataProcess::DataProcess()
@@ -39,7 +39,7 @@ DataProcess::DataProcess()
 	planePtr = std::shared_ptr<PlanData>(new PlanData());
 }
 /**
-* @brief DataProcess::~DataProcess
+* @brief DataProcess::~DataProcess 析构函数
 * @return 
 */
 DataProcess::~DataProcess()
@@ -47,7 +47,7 @@ DataProcess::~DataProcess()
 	
 }
 /**
-* @brief DataProcess::initData
+* @brief DataProcess::initData 初始化数据
 * @param Hdf5Data & data
 * @return bool
 */
@@ -80,7 +80,7 @@ bool DataProcess::initData(Hdf5Data& data)
 	return true;
 }
 /**
-* @brief DataProcess::calcCartesian
+* @brief DataProcess::calcCartesian 处理Cartesian坐标
 * @param Hdf5Data & data
 * @return bool
 */
@@ -113,7 +113,7 @@ bool DataProcess::calcCartesian(Hdf5Data& data) {
 	return true;
 }
 /**
-* @brief DataProcess::calcPolar
+* @brief DataProcess::calcPolar 处理Polar坐标
 * @param Hdf5Data & data
 * @return bool
 */
@@ -128,6 +128,7 @@ bool DataProcess::calcPolar(Hdf5Data& data) {
 	Data::ValuesPtr NAME = *it; it++;
 	Data::ValuesPtr datasetPla = *it;
 	__int64 index = 0;
+	//读取正投影面的数据
 	for (auto iterval = datasetPla->begin(); iterval != datasetPla->end(); index++)
 	{
 		PlanData::CirInfo temp;
@@ -138,6 +139,7 @@ bool DataProcess::calcPolar(Hdf5Data& data) {
 		temp.eA = *iterval; iterval++;
 		temp.zD = *iterval; iterval++;
 		temp.proPer = *(NAME->begin() + index);
+		//分类存储不同面的数据
 		planePtr->statisticalC(temp);
 	}
 	//处理面
@@ -145,7 +147,7 @@ bool DataProcess::calcPolar(Hdf5Data& data) {
 	return true;
 }
 /**
-* @brief DataProcess::calcCylinder
+* @brief DataProcess::calcCylinder 处理Cylinder坐标
 * @param Hdf5Data & data
 * @return bool
 */
@@ -160,6 +162,7 @@ bool DataProcess::calcCylinder(Hdf5Data& data) {
 	Data::ValuesPtr NAME = *it; it++;
 	Data::ValuesPtr datasetPla = *it;
 	__int64 index = 0;
+	//记录正投影面的参数
 	for (auto iterval=datasetPla->begin();iterval!=datasetPla->end();index++)
 	{
 		PlanData::CirInfo temp;
@@ -170,15 +173,16 @@ bool DataProcess::calcCylinder(Hdf5Data& data) {
 		temp.rE = *iterval; iterval++;
 		temp.eA = *iterval; iterval++;
 		temp.proPer = *(NAME->begin() + index);
+		//根据法线的方向进行分类处理
 		planePtr->statisticalC(temp);
 	}
-	//处理面
+	//合并多边形面
 	planePtr->mergePolyDataC();
 	return true;
 }
 /****************************************************************************/
 /**
-* @brief PlanData::PlanData
+* @brief PlanData::PlanData 构造函数
 * @return 
 */
 PlanData::PlanData() {
@@ -187,7 +191,7 @@ PlanData::PlanData() {
 	Polys.clear();
 }
 /**
-* @brief PlanData::~PlanData
+* @brief PlanData::~PlanData 析构函数
 * @return 
 */
 PlanData::~PlanData(){
@@ -196,7 +200,7 @@ PlanData::~PlanData(){
 	Polys.clear();
 }
 /**
-* @brief PlanData::setDataType
+* @brief PlanData::setDataType 设置数据类型
 * @param DataType type
 * @return void
 */
@@ -205,7 +209,7 @@ void PlanData::setDataType(DataType type)
 	mDataType = type;
 }
 /**
-* @brief PlanData::statisticalC
+* @brief PlanData::statisticalC 分类正投影面
 * @param CirInfo & info
 * @return void
 */
@@ -226,7 +230,7 @@ void PlanData::statisticalC(CirInfo& info) {
 	}
 }
 /**
-* @brief PlanData::statisticalD
+* @brief PlanData::statisticalD 分类正投影面
 * @param DInfo & info
 * @return void
 */
@@ -253,7 +257,7 @@ void PlanData::statisticalD(DInfo& info)
 	}
 }
 /**
-* @brief PlanData::mergePolyDataC
+* @brief PlanData::mergePolyDataC 合并多边形
 * @return void
 */
 void PlanData::mergePolyDataC()
@@ -261,14 +265,17 @@ void PlanData::mergePolyDataC()
 	Polys.clear();
 	for (auto iter = cylinderS.begin(); iter != cylinderS.end(); iter++)
 	{
+		//处理不同方向的面
 		auto v1=processCir(iter->second.plans);
 		auto v2=processVer(iter->second.verPlans, iter->second.releZ);
 		auto v3=processCirCut(iter->second.cirCutPlan);
+		//合并三种面的数据
 		vtkSmartPointer<vtkAppendPolyData> AppendData = vtkSmartPointer<vtkAppendPolyData>::New();
 		AppendData->AddInputData(v1);
 		AppendData->AddInputData(v2);
 		AppendData->AddInputData(v3);
 		AppendData->Update();
+		//清除重合面和点
 		vtkSmartPointer<vtkCleanPolyData> cleanPolyData = vtkSmartPointer<vtkCleanPolyData>::New();
 		cleanPolyData->SetInputConnection(AppendData->GetOutputPort());
 		cleanPolyData->Update();
@@ -278,7 +285,7 @@ void PlanData::mergePolyDataC()
 	cylinderS.clear();
 }
 /**
-* @brief PlanData::mergePolyDataD
+* @brief PlanData::mergePolyDataD 合并多边形
 * @return void
 */
 void PlanData::mergePolyDataD()
@@ -286,28 +293,33 @@ void PlanData::mergePolyDataD()
 	Polys.clear();
 	for (auto iter = castersianS.begin(); iter != castersianS.end(); iter++)
 	{
+		//合并相邻多边形
 		for (auto iterCoord = iter->second.begin(); iterCoord != iter->second.end(); iterCoord++)
 		{
 			processVerD(iterCoord->second.pland,iterCoord->second.planr);
 		}
+		//生成不同面的多边形数据
 		auto v1=calcCastersianX(iter->second[_X_].pland);
 		auto v2=calcCastersianY(iter->second[_Y_].pland);
 		auto v3=calcCastersianZ(iter->second[_Z_].pland);
+		//合并多边形
 		vtkSmartPointer<vtkAppendPolyData> AppendData = vtkSmartPointer<vtkAppendPolyData>::New();
 		AppendData->AddInputData(v1);
 		AppendData->AddInputData(v2);
 		AppendData->AddInputData(v3);
 		AppendData->Update();
+		//清楚重合点和面
 		vtkSmartPointer<vtkCleanPolyData> cleanPolyData = vtkSmartPointer<vtkCleanPolyData>::New();
 		cleanPolyData->SetInputConnection(AppendData->GetOutputPort());
 		cleanPolyData->Update();
 		Polys[iter->first] = PdPtr::New();
+		//存入对应属性表
 		Polys[iter->first]->ShallowCopy(cleanPolyData->GetOutput());
 	}
 	castersianS.clear();
 }
 /**
-* @brief PlanData::processCir
+* @brief PlanData::processCir 处理面
 * @param std::map<double
 * @param std::map<ValSolf
 * @param std::vector<ValSolf>>> & info
@@ -339,16 +351,18 @@ vtkSmartPointer<vtkPolyData> PlanData::processCir(std::map<double, std::map<ValS
 				else if(iter3->val1!=(iter3-1)->val2)
 				{
 					val_2 = (iter3 - 1)->val2;
+					//生成面数据
 					processCirSingle(cirPlan, iter1, iter2, val_1, val_2);
 					val_1 = iter3->val1;
 					val_2 = iter3->val2;
 				}
 			}
 			val_2 = (iter2->second.end() - 1)->val2;
+			//生成面数据
 			processCirSingle(cirPlan, iter1, iter2, val_1, val_2);
 		}
 	}
-	//装入
+	//合并多边形面
 	vtkSmartPointer<vtkAppendPolyData> appendData = vtkSmartPointer<vtkAppendPolyData>::New();
 	for (auto iter = cirPlan.begin(); iter != cirPlan.end(); iter++)
 	{
@@ -371,6 +385,7 @@ vtkSmartPointer<vtkPolyData> PlanData::processCir(std::map<double, std::map<ValS
 		appendData->AddInputData(planPolydata);
 	}
 	appendData->Update();
+	//清理重复点和面
 	vtkSmartPointer<vtkCleanPolyData> cleanPolyData = vtkSmartPointer<vtkCleanPolyData>::New();
 	cleanPolyData->SetInputConnection(appendData->GetOutputPort());
 	cleanPolyData->Update();
@@ -379,7 +394,7 @@ vtkSmartPointer<vtkPolyData> PlanData::processCir(std::map<double, std::map<ValS
 	return newdata;
 }
 /**
-* @brief PlanData::processVer
+* @brief PlanData::processVer 处理面
 * @param std::map<double
 * @param std::map<ValSolf
 * @param std::vector<ValSolf>>> & pd
@@ -480,10 +495,12 @@ vtkSmartPointer<vtkPolyData> PlanData::processVer(std::map<double, std::map<ValS
 	for (auto iter1 = retalmap.begin(); iter1 != retalmap.end(); iter1++){
 		for (auto iter2 = iter1->second.begin(); iter2 != iter1->second.end(); iter2++){
 			for (auto iter3 = iter2->second.begin(); iter3 != iter2->second.end(); iter3++){
+				//生成面数据
 				processVerSingle(mPlanInfo,iter1,iter2,iter3);
 			}
 		}
 	}
+	//生成多边形数据
 	vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
 	vtkSmartPointer<vtkPoints> verPlanPoints = vtkSmartPointer<vtkPoints>::New();
 	vtkSmartPointer<vtkCellArray> verCell = vtkSmartPointer<vtkCellArray>::New();
@@ -501,7 +518,7 @@ vtkSmartPointer<vtkPolyData> PlanData::processVer(std::map<double, std::map<ValS
 	return polydata;
 }
 /**
-* @brief PlanData::processCirCut
+* @brief PlanData::processCirCut 处理面
 * @param std::map<ValSolf
 * @param std::map<double
 * @param std::vector<ValSolf>>> & info
@@ -553,6 +570,7 @@ vtkSmartPointer<vtkPolyData> PlanData::processCirCut(std::map<ValSolf, std::map<
 			}
 		}
 	}
+	//生成多边形数据
 	vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
 	vtkSmartPointer<vtkPoints> cirCutPoints = vtkSmartPointer<vtkPoints>::New();
 	vtkSmartPointer<vtkCellArray> cirCutCell = vtkSmartPointer<vtkCellArray>::New();
@@ -571,7 +589,7 @@ vtkSmartPointer<vtkPolyData> PlanData::processCirCut(std::map<ValSolf, std::map<
 	return polyData;
 }
 /**
-* @brief PlanData::processVerD
+* @brief PlanData::processVerD 处理面
 * @param PlanD & ps
 * @param RPlan & rps
 * @return void
@@ -674,7 +692,7 @@ void PlanData::processVerD(PlanD& ps, RPlan& rps)
 	return;
 }
 /**
-* @brief PlanData::calcCastersianX
+* @brief PlanData::calcCastersianX 处理面
 * @param PlanD & info
 * @return vtkSmartPointer<vtkPolyData>
 */
@@ -720,7 +738,7 @@ vtkSmartPointer<vtkPolyData> PlanData::calcCastersianX(PlanD& info){
 	return polyData;
 }
 /**
-* @brief PlanData::calcCastersianY
+* @brief PlanData::calcCastersianY 处理面
 * @param PlanD & info
 * @return vtkSmartPointer<vtkPolyData>
 */
@@ -766,7 +784,7 @@ vtkSmartPointer<vtkPolyData> PlanData::calcCastersianY(PlanD& info){
 	return polyData;
 }
 /**
-* @brief PlanData::calcCastersianZ
+* @brief PlanData::calcCastersianZ 处理面
 * @param PlanD & info
 * @return vtkSmartPointer<vtkPolyData>
 */
@@ -813,7 +831,7 @@ vtkSmartPointer<vtkPolyData> PlanData::calcCastersianZ(PlanD& info){
 }
 /****************************************************************************/
 /**
-* @brief processCirSingle
+* @brief processCirSingle 处理单个面
 * @param std::map<double
 * @param PlanData::PlanInfo> & cirPlan
 * @param std::map<double
@@ -846,7 +864,7 @@ void processCirSingle(std::map<double, PlanData::PlanInfo>&cirPlan,
 	cirPlan[it1->first].faces.push_back(f2);
 }
 /**
-* @brief processVerSingle
+* @brief processVerSingle 处理单个面，生成面数据
 * @param PlanData::PlanInfo & pf
 * @param std::map<double
 * @param std::map<PlanData::ValSolf
@@ -877,7 +895,7 @@ void processVerSingle(PlanData::PlanInfo& pf,
 	pf.faces.push_back(f2);
 }
 /**
-* @brief processCirCutSingle
+* @brief processCirCutSingle 处理单个面
 * @param PlanData::PlanInfo & info
 * @param std::map<PlanData::ValSolf
 * @param std::map<double
@@ -906,6 +924,11 @@ void processCirCutSingle(PlanData::PlanInfo& info,
 	info.faces.push_back(f1);
 	info.faces.push_back(f2);
 }
+/**
+* @brief DataProcess::getWidget 获取窗口指针
+* @return std::shared_ptr<QT_NAMESPACE::QWidget>
+*/
+
 std::shared_ptr<QWidget> DataProcess::getWidget()
 {
 	std::shared_ptr<Widget3D> widget3D(new Widget3D());

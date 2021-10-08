@@ -13,7 +13,7 @@
 #include"iostream"
 namespace Gui{
 	/**
-	* @brief  Gui::TreeViewCtrl::TreeViewCtrl
+	* @brief  Gui::TreeViewCtrl::TreeViewCtrl 构造
 	* @param  QWidget * parent  
 	* @return   
 	*/
@@ -21,7 +21,7 @@ namespace Gui{
 
 	}
 	/**
-	* @brief  Gui::TreeViewCtrl::~TreeViewCtrl
+	* @brief  Gui::TreeViewCtrl::~TreeViewCtrl 析构
 	* @return   
 	*/
 	TreeViewCtrl::~TreeViewCtrl()
@@ -90,7 +90,7 @@ namespace Gui{
 			docM->dataclear();
 	}
 	/**
-	* @brief Gui::TreeViewCtrl::fromWidget
+	* @brief Gui::TreeViewCtrl::fromWidget 接收三维窗口指针
 	* @param std::shared_ptr<QWidget> wid3D
 	* @return void
 	*/
