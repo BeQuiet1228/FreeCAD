@@ -176,6 +176,8 @@ void TreeWidget::doubleClicked(){
 void TreeWidget::ClickTheObj(){
 	Gui::Command::runCommand(Gui::Command::Doc,
 		"FreeCADGui.runCommand(\"SingleClickDisplayMode\")");
+    Gui::Command::runCommand(Gui::Command::Doc,
+        "FreeCADGui.runCommand(\"SingleClickParaCommand\")");
 }
 #include <Action.h>
 
