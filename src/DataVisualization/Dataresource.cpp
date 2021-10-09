@@ -227,6 +227,7 @@ int DataSourceManage::initStructData(Hdf5Data& data)
 }
 DataSourceManage::~DataSourceManage(){
 	RendererManger.clear();
+	isWidget = false;
 }
 /**
 * @brief DataSourceManage::DisPlayPlot кмот
