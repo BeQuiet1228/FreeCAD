@@ -20,6 +20,18 @@
 
 //m3d路径长度字节限制
 const unsigned int modeThresHold = 100;
+bool isBlank(std::string input)
+{
+	const char* str = input.c_str();
+	for (auto i = 0; i < input.length(); i++)
+	{
+		if (0 != isspace(str[i]))
+		{
+			return true;
+		}
+	}
+	return false;
+}
 ChipicManager::ChipicManager()
 {
 	auto getter = JsonMessageGetter::GetInstance();
@@ -497,15 +509,33 @@ bool ChipicManager::disposAnalysisFinished(const std::string& json)
 */
 void ChipicManager::sendStartChipicMessage(const std::string& path, const int& threadCount)
 {
+	//判断路径中是否存在空白字符
+	bool ok = isBlank(path);
+	if (ok)
+	{
+		QMessageBox::information(nullptr,
+			MessageTransition::gbkStdstringToQstring("错误"),
+			MessageTransition::gbkStdstringToQstring("路径中存在空白字符,请修改路径"),
+			QMessageBox::Yes);
+		return;
+	}
 	//判断路径是否存在
 	if (!detectionFilePathUTF8(path))
 		return;
+	//这里对路径长度进行判断,如果超过限度长度直接返回
+	if (modeThresHold <= path.length())
+	{
+		QMessageBox::information(nullptr,
+			MessageTransition::gbkStdstringToQstring("错误"),
+			MessageTransition::gbkStdstringToQstring("文件路径过长,请尝试修改路径"),
+			QMessageBox::Yes);
+		return;
+	}
 	//设置当前log文件的路径
 	auto log = OpenLog::GetInstance();
 	log->setCurrentChipicM3dPath(path,threadCount);
 	//发送启动消息
 	auto sender = MessageSender::GetInstance();
-	
 	//如果消息发射器为网络发射器 则需要判断客户端是否已是登录状态
 	if (sender->getEmitterTypeID() == 2)
 	{
@@ -517,15 +547,7 @@ void ChipicManager::sendStartChipicMessage(const std::string& path, const int& t
 			return;
 		}
 	}
-	//这里对路径长度进行判断,如果超过限度长度直接返回
-	if (modeThresHold <= path.length())
-	{
-		QMessageBox::information(nullptr, 
-			MessageTransition::gbkStdstringToQstring("错误"),
-			MessageTransition::gbkStdstringToQstring("文件路径过长,请尝试修改路径"),
-			QMessageBox::Yes);
-		return;
-	}
+	
 	sender->sendJsonMessage(MessageTransition::creatRunChipicJsonMessage(path, threadCount));
 
 	showLoadDailog();
