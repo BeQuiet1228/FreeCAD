@@ -61,7 +61,7 @@
 #include<tchar.h>
 #include<exception>
 #include<Windows.h>
-
+#include <QDir>
 void PrintInitHelp(void);
 
 const char sBanner[] = "\xc2\xa9 Juergen Riegel, Werner Mayer, Yorik van Havre 2001-2018\n"\
@@ -98,7 +98,6 @@ QByteArray myEncoderFunc(const QString &fileName)
 
 int main( int argc, char ** argv )
 {
-	
 	//ZD:解决中文乱码
 	QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 	QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
@@ -121,7 +120,7 @@ int main( int argc, char ** argv )
 	}
 	//清空LOG.txt内容
 	const std::string txtFile = strPath + "LOG.txt";
-	try{
+    try{
 		std::fstream fout(txtFile, std::ios::out | std::ios::trunc);
 		fout.close();
 	}
@@ -165,6 +164,8 @@ int main( int argc, char ** argv )
     // get the command line arguments as unicode string
     {
         QCoreApplication app(argc, argv);
+        QString licationDirPath=app.applicationDirPath();
+        QDir::setCurrent(licationDirPath);
         QStringList args = app.arguments();
         for (QStringList::iterator it = args.begin(); it != args.end(); ++it) {
             data.push_back(it->toUtf8());
@@ -324,7 +325,7 @@ int main( int argc, char ** argv )
         Base::Console().Error("Application unexpectedly terminated\n");
         exit(1);
     }
-
+    
     std::cout.rdbuf(oldcout);
     std::clog.rdbuf(oldclog);
     std::cerr.rdbuf(oldcerr);
