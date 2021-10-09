@@ -12,12 +12,30 @@
 #include"qgridlayout.h"
 #include"qpalette.h"
 #include"qdebug.h"
+/**
+* @brief Widget3D::Widget3D
+* @param QWidget * parent
+* @return 
+*/
+
 Widget3D::Widget3D(QWidget* parent) :QWidget(parent) {
 	initUi();
 }
-Widget3D::~Widget3D(){
+/**
+* @brief Widget3D::~Widget3D
+* @return 
+*/
 
+Widget3D::~Widget3D(){
+	mflp(dataMPtr, false);
 }
+/**
+* @brief Widget3D::transfromPolyData
+* @param __int64 porPer
+* @param vtkPolyData * polyData
+* @return void
+*/
+
 void Widget3D::transfromPolyData(__int64 porPer,vtkPolyData* polyData)
 {
 	if (0 == polyData->GetNumberOfCells() || 0 == polyData->GetNumberOfPoints())
@@ -40,6 +58,12 @@ void Widget3D::transfromPolyData(__int64 porPer,vtkPolyData* polyData)
 	layout->addWidget(checkBox);
 	connect(checkBox,SIGNAL(stateChanged(int)),this, SLOT(slotStateChanged(int)));
 }
+/**
+* @brief Widget3D::resizeEvent
+* @param QResizeEvent *
+* @return void
+*/
+
 void Widget3D::resizeEvent(QResizeEvent*)
 {
 	mVtkWidget->resize(this->size());
@@ -100,5 +124,10 @@ void Widget3D::slotStateChanged(int state)
 			}
 		}
 	}
+}
+void Widget3D::setFunction(void* lp, fLp flp)
+{
+	mflp = flp;
+	dataMPtr = lp;
 }
 #include"moc_Widget3D.cpp"

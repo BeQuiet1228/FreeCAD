@@ -48,7 +48,7 @@ main.cpp
 )
 if(VisualizationOf3DDLL)
 add_definitions(-D_VISUALZATION3D_DLL)
-add_library(VisualizationOf3D ${SRC})
+add_library(VisualizationOf3D SHARED ${SRC})
 else()
 add_executable(VisualizationOf3D ${SRC})
 endif()

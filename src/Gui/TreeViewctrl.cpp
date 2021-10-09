@@ -97,8 +97,6 @@ namespace Gui{
 	
 	void TreeViewCtrl::fromWidget(std::shared_ptr<QWidget> wid3D)
 	{
-		if (nullptr == wid3D)
-			return;
 		App::Document* doc = App::GetApplication().getActiveDocument();
 		DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
 		if (!docM)
@@ -114,6 +112,18 @@ namespace Gui{
 		{
 			ptr = dynamic_cast<Gui::PlanMDIView*>(var);
 			if (ptr) break;
+		}
+		if (nullptr == wid3D)
+		{
+			if (nullptr == ptr)
+			{
+				return;
+			}
+			else
+			{
+				MainWindow::getInstance()->setActiveWindow(ptr);
+			}
+			return;
 		}
 		if (nullptr == ptr)
 		{

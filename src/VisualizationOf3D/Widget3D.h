@@ -5,13 +5,16 @@
 #include"map"
 //include"vtk-7.0/vtkActor.h"
 #include"vtk-7.0/vtkSmartPointer.h"
+#include "exPortConfig.hpp"
 class vtkActor;
 class vtkPolyData;
 class vtkRenderer;
 class QVTKWidget;
 class QCheckBox;
 class QGridLayout;
-class Widget3D :public QWidget
+//定义函数指针
+typedef void(*fLp)(void*, bool);
+class VISUALZATION3D_EXPORT Widget3D :public QWidget
 {
 	Q_OBJECT
 public :
@@ -20,6 +23,7 @@ public :
 	void transfromPolyData(__int64,vtkPolyData*);
 	void Updata();
 	void drawImage();
+	void setFunction(void*lp, fLp);
 protected:
 	void initUi();
 	virtual void resizeEvent(QResizeEvent*);
@@ -32,5 +36,7 @@ private:
 	QVTKWidget* mVtkWidget;
 	QWidget* subwidget;
 	QGridLayout* layout;
+	fLp mflp;
+	void* dataMPtr;
 };
 #endif

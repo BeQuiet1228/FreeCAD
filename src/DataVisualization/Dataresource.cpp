@@ -2,6 +2,7 @@
 #include "RendererFactory.h"
 #include "Plot.h"
 #include"VisualizationOf3D/Widget3DFactory.h"
+#include"VisualizationOf3D/Widget3D.h"
 //结构图的方向
 enum stru_dir
 {
@@ -16,6 +17,29 @@ std::string StructDirection[] = { "Phi-Z",
 "Z-R",
 "R*cos(Phi)-R*sin(Phi)","X_Y","Y_Z","X_Z"};
 /**
+* @brief setIsWidge3D 回调函数
+* @param void * lp
+* @param bool isWidget3D
+* @return void
+*/
+void setIsWidge3D(void* lp,bool isWidget3D)
+{
+	try
+	{
+		DataSourceManage* llp = reinterpret_cast<DataSourceManage*>(lp);
+		if (nullptr == llp)
+		{
+			throw llp;
+		}
+		llp->isWidget = isWidget3D;
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << "erro";
+	}
+	
+}
+/**
 * @brief DataSourceManage::tranfromRenderer 树表点击事件槽
 * @param std::string name
 * @param int index 索引号
@@ -27,10 +51,18 @@ void DataSourceManage::tranfromRenderer(std::string name,int index){
 	//如果是三维结构图
 	if(hdfDatelist[index].name.find("PLANE")!=std::string::npos)
 	{
+		if (isWidget)
+		{
+			emit toWidget(nullptr);
+			return;
+		}
 		Hdf5Data hdf5Data3D(hdfDatelist[index]);
 		//auto resWidget=mWidget3DFactoryPtr->creat3DWidget(hdf5Data3D);
 		Widget3DFactory mWidget3DFactory;
 		auto resWidget = mWidget3DFactory.creat3DWidget(hdf5Data3D);
+		Widget3D* mWidget = dynamic_cast<Widget3D*>(resWidget.get());
+		mWidget->setFunction(this,setIsWidge3D);
+		isWidget = true;
 		emit toWidget(resWidget);
 		return;
 	}
@@ -152,6 +184,7 @@ void DataSourceManage::loadhdffile(std::string filepath)
 DataSourceManage::DataSourceManage():factoryptr(nullptr),treePtrsite(0),plotPtrsite(0){
 	//mWidget3DFactoryPtr = std::shared_ptr<Widget3DFactory>(new Widget3DFactory());
 	RendererManger.clear();
+	isWidget = false;
 }
 /**
 * @brief DataSourceManage::init 数据管理初始化

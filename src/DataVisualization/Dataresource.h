@@ -28,6 +28,7 @@ public:
 	int initStructData(Hdf5Data& data);
 	void DisPlayPlot(Hdf5Data data,int _type=0);
 	void DataClear();
+	bool isWidget;
 Q_SIGNALS:
 	void _loadhdflist(std::vector<Hdf5Data>& Hdf5Data);
 	void _reRendererEvent(std::shared_ptr<PlotAdapter>);
