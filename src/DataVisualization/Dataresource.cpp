@@ -191,23 +191,23 @@ DataSourceManage::DataSourceManage():factoryptr(nullptr),treePtrsite(0),plotPtrs
 * @param ListTreeWidget* ptr
 * @void
 */
-void DataSourceManage::init(ListTreeWidget* ptr,Plot* _plot){
+void DataSourceManage::init(ListTreeWidget* ptr, Plot* _plot) {
 
 	unsigned long long treeSite = reinterpret_cast<unsigned long long>(ptr);
 	unsigned long long plotSite = reinterpret_cast<unsigned long long>(_plot);
-	if (treeSite != 0 && treePtrsite!=treeSite)
+	if (treeSite != 0 && treePtrsite != treeSite)
 	{
 		connect(this, SIGNAL(_loadhdflist(std::vector<Hdf5Data>&)), ptr, SLOT(loadHdflist(std::vector<Hdf5Data>&)));
 		connect(ptr, SIGNAL(_transfromRenderer(std::string, int)), this, SLOT(tranfromRenderer(std::string, int)));
-		connect(this, SIGNAL(toTreeNewData(Hdf5Data&, int)), ptr, SLOT(fromdataManageNewData(Hdf5Data& , int )));
+		connect(this, SIGNAL(toTreeNewData(Hdf5Data&, int)), ptr, SLOT(fromdataManageNewData(Hdf5Data&, int)));
+		connect(this, SIGNAL(toWidget(std::shared_ptr<QWidget>)), ptr, SLOT(soltFromWidget(std::shared_ptr<QWidget>)));
 		treePtrsite = treeSite;
 	}
-	if (plotSite!=0&& plotPtrsite!=plotSite)
+	if (plotSite != 0 && plotPtrsite != plotSite)
 	{
 		connect(this, SIGNAL(_reRendererEvent(std::shared_ptr<PlotAdapter>)), _plot, SLOT(reRendererEvent(std::shared_ptr<PlotAdapter>)));
 		plotPtrsite = plotSite;
 	}
-	connect(this,SIGNAL(toWidget(std::shared_ptr<QWidget>)),ptr,SLOT(soltFromWidget(std::shared_ptr<QWidget>)));
 }
 /**
 * @brief DataSourceManage::initStructData 传入结构体数据
