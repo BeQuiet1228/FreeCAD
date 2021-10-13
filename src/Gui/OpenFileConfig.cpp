@@ -9,6 +9,7 @@
 #include "MainWindow.h"
 #include <FileDialog.h>
 #include "FileFormatH5.h"
+#include "Transition/transition.h"
 std::shared_ptr<OpenFileConfig> OpenFileConfig::_instance;
 OpenFileConfig::~OpenFileConfig()
 {
@@ -29,6 +30,7 @@ void OpenFileConfig::init()
 	formats.push_back(new FileFormatM2DText);
 	formats.push_back(new FileFormatM2dMod);
 	formats.push_back(new FileFormatH5);
+	formats.push_back(new FileFormatM3dMod);
 }
 
 /**
@@ -45,6 +47,16 @@ void OpenFileConfig::callOpen(QStringList& fileList)
 		if (pathList.size() > 0)
 			(*formatIter)->open(pathList);
 	}
+}
+
+void OpenFileConfig::callOpen(std::list<std::string> fileList)
+{
+	QStringList sl;
+	for (auto iter = fileList.begin(); iter != fileList.end(); iter++)
+	{
+		sl.push_back(gbkStdstringToQstring(*iter));
+	}
+	callOpen(sl);
 }
 
 /**
@@ -144,5 +156,14 @@ void FileFormatM2DText::open(const QStringList& fileList)
 		App::Document* doc = App::GetApplication().newDocumentM2dText(fileName.toUtf8(), "");
 		openOnce(*i, doc);
 		Gui::FileDialog::setWorkingDirectory(QString(*i).remove(fileName));
+	}
+}
+
+void FileFormatM3dMod::open(const QStringList& fileList)
+{
+	for (auto iter = fileList.begin(); iter != fileList.end(); iter++)
+	{
+		App::GetApplication().openDocument3dMod(iter->toUtf8());
+		Base::Interpreter().runString("import Modeling\nModeling.Common.Tools.DocumentTools.initWhenOpenFCStdFile()\n");
 	}
 }
