@@ -150,3 +150,6 @@ endif(BUILD_ADDONMGR)
 if(BUILD_TUX)
     add_subdirectory(Tux)
 endif(BUILD_TUX)
+
+#新添加路径
+add_subdirectory(CustomParameter)
