@@ -4,6 +4,7 @@
 #include <vector>
 #include <QStringList>
 #include <QString>
+#include <list>
 namespace App{
 	class Document;
 }
@@ -52,6 +53,17 @@ public:
 
 	void open(const QStringList& fileList) override;
 };
+
+class FileFormatM3dMod :public FileFormat {
+public:
+	FileFormatM3dMod() {
+		this->format = QString::fromLocal8Bit("FCStd");
+	}
+	~FileFormatM3dMod() = default;
+
+	void open(const QStringList& fileList) override;
+};
+
 /*
 	改变原有的freecad增加新的文件格式框架。
 	单例负责为外部调用提供文件格式与触发函数。
@@ -81,6 +93,7 @@ private:
 public:
 	//根据文件路径，调用open函数
 	void callOpen(QStringList& fileList);
+	void callOpen(std::list<std::string> fileList);
 	//所有文件格式，生成文件浏览器需要的字符串
 	QString makeFormatString();
 };

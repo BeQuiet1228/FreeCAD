@@ -132,6 +132,7 @@
 #include "PlotMDIView.h"
 #include "App/DocumentDataManager.h"
 #include "DataVisualization/C_encoding.h"
+#include "OpenFileConfig.h"
 #if defined(Q_OS_WIN32)
 #define slots
 //#include <private/qmainwindowlayout_p.h>
@@ -1270,11 +1271,13 @@ void MainWindow::processMessages(const QList<QByteArray> & msg)
             if (it->startsWith(action))
                 files.push_back(std::string(it->mid(action.size()).constData()));
         }
-        files = App::Application::processFiles(files);
-        for (std::list<std::string>::iterator it = files.begin(); it != files.end(); ++it) {
-            QString filename = QString::fromUtf8(it->c_str(), it->size());
-            FileDialog::setWorkingDirectory(filename);
-        }
+        std::cerr << "mainWindow processMessgaes" << std::endl;
+        OpenFileConfig::GetInstance()->callOpen(files);
+//         files = App::Application::processFiles(files);
+//         for (std::list<std::string>::iterator it = files.begin(); it != files.end(); ++it) {
+//             QString filename = QString::fromUtf8(it->c_str(), it->size());
+//             FileDialog::setWorkingDirectory(filename);
+//         }
     }
     catch (const Base::SystemExitException&) {
     }
@@ -1296,7 +1299,8 @@ void MainWindow::delayedStartup()
     // processing all command line files
     try {
         std::list<std::string> files = App::Application::getCmdLineFiles();
-        files = App::Application::processFiles(files);
+        /*files = App::Application::processFiles(files);*/
+        OpenFileConfig::GetInstance()->callOpen(files);
         for (std::list<std::string>::iterator it = files.begin(); it != files.end(); ++it) {
             QString filename = QString::fromUtf8(it->c_str(), it->size());
             FileDialog::setWorkingDirectory(filename);
