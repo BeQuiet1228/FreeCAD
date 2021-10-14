@@ -1274,10 +1274,10 @@ void MainWindow::processMessages(const QList<QByteArray> & msg)
         std::cerr << "mainWindow processMessgaes" << std::endl;
         OpenFileConfig::GetInstance()->callOpen(files);
 //         files = App::Application::processFiles(files);
-//         for (std::list<std::string>::iterator it = files.begin(); it != files.end(); ++it) {
-//             QString filename = QString::fromUtf8(it->c_str(), it->size());
-//             FileDialog::setWorkingDirectory(filename);
-//         }
+        for (std::list<std::string>::iterator it = files.begin(); it != files.end(); ++it) {
+            QString filename = QString::fromUtf8(it->c_str(), it->size());
+            FileDialog::setWorkingDirectory(filename);
+        }
     }
     catch (const Base::SystemExitException&) {
     }

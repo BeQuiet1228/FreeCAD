@@ -282,7 +282,10 @@ PyObject* Application::sDisplayText(PyObject* self, PyObject* args, PyObject* kw
     MDIEditView* textEdit = new MDIEditView(picDoc);
     textEdit->setReadOnly(true);
     auto mw = MainWindow::getInstance();
+    //保留之前的窗口状态
+    auto mdiView = mw->activeWindow();
     mw->addWindow(textEdit);
+    mw->setActiveWindow(mdiView);
     textEdit->setText(QString::fromStdString(text));
     textEdit->setWindowTitle(QString::fromStdString(picDoc->getDocument()->getName())
                              + QString::fromStdString(" Code"));
