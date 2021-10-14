@@ -43,7 +43,6 @@ void OpenFileConfig::callOpen(QStringList& fileList)
 	for (auto formatIter = formats.begin(); formatIter != formats.end(); formatIter++)
 	{
 		QStringList pathList = (*formatIter)->isFormat(fileList);
-		qDebug() << pathList;
 		if (pathList.size() > 0)
 			(*formatIter)->open(pathList);
 	}
@@ -70,7 +69,6 @@ QString OpenFileConfig::makeFormatString()
 	{
 		temp += QString::fromLocal8Bit(" *.")  + (*i)->getFormat();
 	}
-	//std::cerr << temp.toStdString();
 	return temp;
 }
 
