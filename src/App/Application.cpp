@@ -334,10 +334,6 @@ Application::Application(std::map<std::string,std::string> &mConfig)
     Base::Vector2dPy::init_type();
     Base::Interpreter().addType(Base::Vector2dPy::type_object(),
         pBaseModule,"Vector2d");
-
-	//这里初始化为null
-	m_netServer = nullptr;
-	m_clientController = nullptr;
 }
 
 Application::~Application()
