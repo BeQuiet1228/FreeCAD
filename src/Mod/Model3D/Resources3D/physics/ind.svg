@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>支撑杆@4x</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#91FDC2" offset="0%"></stop>
+            <stop stop-color="#69EEA5" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="修改部分备份" transform="translate(-478.000000, -78.000000)" stroke="#1C1C1C">
+            <g id="支撑杆" transform="translate(478.000000, 78.000000)">
+                <path d="M12.3501291,8.49335847 C12.7637713,8.34778251 13,8.17940867 13,8 C13,7.44771525 10.7614237,7 8,7 C7.287413,7 6.60964247,7.0298134 5.99617082,7.08354373" id="形状" stroke-width="0.5"></path>
+                <path d="" id="三角形" fill="#D8D8D8" transform="translate(5.553284, 7.132538) rotate(-99.000000) translate(-5.553284, -7.132538) "></path>
+                <path d="" id="三角形备份-2" fill="#D8D8D8" transform="translate(4.290558, 5.473694) rotate(-101.000000) translate(-4.290558, -5.473694) "></path>
+                <path d="" id="三角形备份" fill="#D8D8D8" transform="translate(11.129578, 8.753052) scale(-1, 1) rotate(-80.000000) translate(-11.129578, -8.753052) "></path>
+                <path d="" id="三角形备份-3" fill="#D8D8D8" transform="translate(12.466052, 10.500000) scale(-1, 1) rotate(-80.000000) translate(-12.466052, -10.500000) "></path>
+                <path d="M14.2133122,9.38309579 C14.71592,8.96922899 15,8.49883245 15,8 C15,6.34314575 11.8659932,5 8,5 C6.83091131,5 5.7287611,5.12282757 4.75997501,5.34001459" id="路径" stroke-width="0.5"></path>
+                <rect id="矩形" stroke-width="0.5" fill="url(#linearGradient-1)" x="7.25" y="2.25" width="1.5" height="11.5" rx="0.75"></rect>
+                <path d="M4.38024449,7.31014608 C3.52504406,7.48958624 3,7.73253006 3,8 C3,8.55228475 5.23857625,9 8,9 C9.01025721,9 9.9505346,8.94007615 10.7368194,8.83703101" id="路径" stroke-width="0.5"></path>
+                <path d="M2.39381868,6.2032389 C1.51848384,6.70407914 1,7.32608992 1,8 C1,9.65685425 4.13400675,11 8,11 C9.4900551,11 10.8713711,10.8004712 12.0064172,10.4603554" id="形状" stroke-width="0.5"></path>
+            </g>
+        </g>
+    </g>
+</svg>

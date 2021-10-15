@@ -1,9 +1,15 @@
-import TaskControl
-import TaskControlPal
-import TaskControlPalMain
 import DefaultTimerDlg
-import DefaultTimerDlgMain
 import TimerDlg
-import TimerDlgMain
 import PortDlg
-import PortDlgMain
+import FreeDlg
+import SymDlg
+import EmbDlg
+import EmeDlg
+import EmgDlg
+import EmhDlg
+import EmtDlg
+
+import SolDlg
+import BoundPal
+import ObservePal
+

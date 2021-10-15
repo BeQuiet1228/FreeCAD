@@ -1,9 +1,13 @@
 import FreeCAD
 import FreeCADGui
-
+from PySide import QtGui
 class PostProcessingWorkbench:
     def Activated(self):
         FreeCADGui.activateWorkbench("VisualWorkbench")
+
+        mainWindow = FreeCADGui.getMainWindow()
+        propertyView = mainWindow.findChild(QtGui.QDockWidget, "Property view")
+        propertyView.setVisible(False)
 
     def GetResources(self):
         IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Visualization/visualizationResources/VisualWorkbench.svg"

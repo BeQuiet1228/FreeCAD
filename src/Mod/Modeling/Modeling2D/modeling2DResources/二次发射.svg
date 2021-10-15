@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>二次发射</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#B5FBD3" offset="0%"></stop>
+            <stop stop-color="#4EDD8B" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="图标输出" transform="translate(-494.000000, -886.000000)" stroke="#1A1A1A" stroke-width="0.5">
+            <g id="二次发射" transform="translate(494.000000, 886.000000)">
+                <circle id="Oval-Copy-8" fill="#E7E7E7" cx="14.5" cy="13.5" r="1"></circle>
+                <circle id="Oval-Copy-10" fill="#E7E7E7" cx="11.5" cy="14.5" r="1"></circle>
+                <circle id="Oval-Copy-9" fill="url(#linearGradient-1)" cx="14" cy="11" r="1"></circle>
+                <circle id="Oval-Copy-12" fill="#67E49C" cx="14.5" cy="2.5" r="1"></circle>
+                <circle id="Oval-Copy-13" fill="#E7E7E7" cx="13.5" cy="5.5" r="1"></circle>
+                <circle id="Oval-Copy-16" fill="#E7E7E7" cx="11.5" cy="1.5" r="1"></circle>
+                <circle id="Oval-Copy-17" fill="#E7E7E7" cx="12.5" cy="8.5" r="1"></circle>
+                <circle id="Oval-Copy-18" fill="#E7E7E7" cx="14.5" cy="7.5" r="1"></circle>
+                <line x1="1" y1="12" x2="7" y2="12" id="Path-21" stroke-linecap="round" stroke-linejoin="round"></line>
+                <line x1="1" y1="5" x2="7" y2="5" id="Path-21-Copy-2" stroke-linecap="round" stroke-linejoin="round"></line>
+                <g id="Group" transform="translate(5.244741, 8.503862)" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3.25912084" y1="0" x2="3.25912084" y2="1.5" id="Path-21-Copy"></line>
+                    <line x1="5.01824167" y1="0.847147946" x2="5.01824167" y2="2.34714795" id="Path-21-Copy" transform="translate(5.018242, 1.597148) rotate(51.000000) translate(-5.018242, -1.597148) "></line>
+                    <line x1="5.45270864" y1="2.7506721" x2="5.45270864" y2="4.2506721" id="Path-21-Copy" transform="translate(5.452709, 3.500672) rotate(103.000000) translate(-5.452709, -3.500672) "></line>
+                    <line x1="4.23535925" y1="4.27717995" x2="4.23535925" y2="5.77717995" id="Path-21-Copy" transform="translate(4.235359, 5.027180) rotate(154.000000) translate(-4.235359, -5.027180) "></line>
+                    <line x1="2.28288242" y1="4.27717995" x2="2.28288242" y2="5.77717995" id="Path-21-Copy" transform="translate(2.282882, 5.027180) rotate(206.000000) translate(-2.282882, -5.027180) "></line>
+                    <line x1="1.5" y1="0.847147946" x2="1.5" y2="2.34714795" id="Path-21-Copy" transform="translate(1.500000, 1.597148) rotate(309.000000) translate(-1.500000, -1.597148) "></line>
+                </g>
+                <g id="Group-Copy" transform="translate(5.244741, 1.503862)" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3.25912084" y1="0" x2="3.25912084" y2="1.5" id="Path-21-Copy"></line>
+                    <line x1="5.01824167" y1="0.847147946" x2="5.01824167" y2="2.34714795" id="Path-21-Copy" transform="translate(5.018242, 1.597148) rotate(51.000000) translate(-5.018242, -1.597148) "></line>
+                    <line x1="5.45270864" y1="2.7506721" x2="5.45270864" y2="4.2506721" id="Path-21-Copy" transform="translate(5.452709, 3.500672) rotate(103.000000) translate(-5.452709, -3.500672) "></line>
+                    <line x1="4.23535925" y1="4.27717995" x2="4.23535925" y2="5.77717995" id="Path-21-Copy" transform="translate(4.235359, 5.027180) rotate(154.000000) translate(-4.235359, -5.027180) "></line>
+                    <line x1="2.28288242" y1="4.27717995" x2="2.28288242" y2="5.77717995" id="Path-21-Copy" transform="translate(2.282882, 5.027180) rotate(206.000000) translate(-2.282882, -5.027180) "></line>
+                    <line x1="1.5" y1="0.847147946" x2="1.5" y2="2.34714795" id="Path-21-Copy" transform="translate(1.500000, 1.597148) rotate(309.000000) translate(-1.500000, -1.597148) "></line>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

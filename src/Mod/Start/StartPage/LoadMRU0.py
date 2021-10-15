@@ -21,6 +21,13 @@
 #*                                                                         *
 #***************************************************************************
 
-import FreeCAD,FreeCADGui,sys
+import FreeCAD,FreeCADGui,sys,PySide
 rf=FreeCAD.ParamGet("User parameter:BaseApp/Preferences/RecentFiles")
-FreeCAD.loadFile(rf.GetString("MRU0"))
+FreeCADGui.chipicOpen(rf.GetString("MRU0"))
+# close start page
+mw=FreeCADGui.getMainWindow()
+qm=mw.findChildren(PySide.QtGui.QMdiArea)
+if qm>0:
+    for sw in qm[0].subWindowList():
+        if sw.windowTitle()==u'Start page':
+            sw.close()

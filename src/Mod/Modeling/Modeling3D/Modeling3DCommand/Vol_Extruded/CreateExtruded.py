@@ -1,0 +1,28 @@
+#-*- coding: utf-8 -*-
+import FreeCADGui
+import Modeling3DCommand
+import FreeCAD as App
+import Units
+import ExtrudedInstance as Instance
+from Modeling.Common.Tools import ObjectsTools
+def createExtruded():
+    App.ActiveDocument.openTransaction("Extruded")
+    obj = App.ActiveDocument.addObject("Part::FeaturePython",ObjectsTools.ObjectType.Vol_Extruded)
+    Instance.Extruded(obj)
+    Instance.ViewProviderExtruded(obj.ViewObject)
+    ObjectsTools.setRandColor(obj)
+    # group=App.ActiveDocument.getObjectsByLabel("挤出体")
+    # App.Console.PrintMessage(str(group)+"\n")
+    # if len(group):
+    #     App.Console.PrintMessage("0\n")
+    #     group[0].addObject(obj)
+    # else:
+    #     App.Console.PrintMessage("1\n")
+    #     group=App.ActiveDocument.addObject("App::DocumentObjectGroup","Vol_Extruded")
+    #     group.Label="挤出体"
+    #     group.addObject(obj)
+    # ObjectsTools.setFitViewOfObject(obj)
+    App.ActiveDocument.recompute()
+    # FreeCADGui.SendMsgToActiveView("ViewFit")
+    App.ActiveDocument.commitTransaction()
+    return obj

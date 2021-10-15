@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>平行六面体@4x</title>
+    <defs>
+        <polygon id="path-1" points="3.08673096 3.21356201 7.17022705 3.237854 12.3651733 8.97186279 7.40209961 8.98748779"></polygon>
+        <filter x="-5.4%" y="-8.7%" width="110.8%" height="117.3%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.518821023 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="新增图标备份" transform="translate(-193.000000, -122.000000)">
+            <g id="平行六面体" transform="translate(193.000000, 122.000000)">
+                <path d="M7.26916372,9.23710979 L8.21336567,13.25 L13.7953165,13.25 L12.9518135,9.24348588 L7.26916372,9.23710979 Z" id="矩形" stroke="#191919" stroke-width="0.5" fill="#76B6EB"></path>
+                <polygon id="路径-70" stroke="#191919" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round" points="2.59753418 2.99145508 7.25860596 9.22625732 12.9455566 9.22943115 7.2909877 3"></polygon>
+                <polygon id="矩形" fill="#3F81B8" points="3.02133179 3.96737671 7.0380249 9.33459473 7.75701904 12.3759155 3.47149658 6.89904785"></polygon>
+                <g id="矩形">
+                    <use fill="#8CCBFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                </g>
+                <polyline id="路径-71" stroke="#191919" stroke-width="0.5" points="2.59576416 2.94165039 3.25158691 6.98168945 8.16638184 13.3146973"></polyline>
+            </g>
+        </g>
+    </g>
+</svg>

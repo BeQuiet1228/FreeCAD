@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="图层_1"
+   data-name="图层 1"
+   width="24px"
+   height="24px"
+   viewBox="0 0 24 24"
+   version="1.1"
+   sodipodi:docname="m3d-undo.svg"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)">
+  <metadata
+     id="metadata15">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>m3d-redo</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs13" />
+  <sodipodi:namedview
+     inkscape:document-rotation="0"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     id="namedview11"
+     showgrid="false"
+     inkscape:zoom="34.583333"
+     inkscape:cx="12"
+     inkscape:cy="14.313253"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="图层_1" />
+  <title
+     id="title2">m3d-redo</title>
+  <g
+     transform="matrix(-1,0,0,1,24.025672,0)"
+     id="g8">
+    <path
+       d="M 12.2,8.7 C 12.2,8.7 0.6,9.9 0,22.4 2.2,18.4 8.8,16.6 12.3,16.6 12.2,9.4 12.2,8.7 12.2,8.7 Z"
+       style="fill:#c1e0f7"
+       id="path4" />
+    <path
+       d="m 10.9,1.7 v 20.6 c 0,0.6 1,0.9 1.6,0.4 l 11,-9.7 a 1.214,1.214 0 0 0 0,-2 L 12.5,1.3 C 12,0.8 10.9,1.1 10.9,1.7 Z"
+       style="fill:#42c4ce"
+       id="path6" />
+  </g>
+</svg>

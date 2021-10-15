@@ -1,0 +1,4 @@
+import AreaFunctionCommand
+import AreaFunctionDlgMain
+import AreaFunctionInstance
+import AreaFunctionDialog

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>测距</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#52FC9B" offset="0%"></stop>
+            <stop stop-color="#34D277" offset="100%"></stop>
+        </linearGradient>
+        <rect id="path-2" x="0" y="0" width="14" height="6"></rect>
+        <filter x="-5.4%" y="-12.5%" width="110.7%" height="125.0%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="1" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.8 0" type="matrix" in="shadowInnerInner1" result="shadowMatrixInner1"></feColorMatrix>
+            <feOffset dx="-1" dy="-1" in="SourceAlpha" result="shadowOffsetInner2"></feOffset>
+            <feComposite in="shadowOffsetInner2" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner2"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.2 0" type="matrix" in="shadowInnerInner2" result="shadowMatrixInner2"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner2"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="图标输出" transform="translate(-584.000000, -947.000000)">
+            <g id="测距" transform="translate(584.000000, 947.000000)">
+                <g id="Group" transform="translate(8.108048, 8.248610) rotate(-45.000000) translate(-8.108048, -8.248610) translate(1.108048, 5.248610)">
+                    <g id="Rectangle">
+                        <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
+                        <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                        <use stroke="#1A1A1A" stroke-width="0.5" xlink:href="#path-2"></use>
+                    </g>
+                    <line x1="2.0356313" y1="2" x2="2.0356313" y2="6" id="Path-16" stroke="#1A1A1A" stroke-width="0.5"></line>
+                    <line x1="7.0356313" y1="2" x2="7.0356313" y2="6" id="Path-16-Copy-4" stroke="#1A1A1A" stroke-width="0.5"></line>
+                    <line x1="12.0356313" y1="2" x2="12.0356313" y2="6" id="Path-16-Copy-10" stroke="#1A1A1A" stroke-width="0.5"></line>
+                    <line x1="3.0356313" y1="3" x2="3.0356313" y2="6" id="Path-16-Copy" stroke="#1A1A1A" stroke-width="0.5"></line>
+                    <line x1="4.0356313" y1="3" x2="4.0356313" y2="6" id="Path-16-Copy-2" stroke="#1A1A1A" stroke-width="0.5"></line>
+                    <line x1="8.0356313" y1="3" x2="8.0356313" y2="6" id="Path-16-Copy-6" stroke="#1A1A1A" stroke-width="0.5"></line>
+                    <line x1="5.0356313" y1="3" x2="5.0356313" y2="6" id="Path-16-Copy-3" stroke="#1A1A1A" stroke-width="0.5"></line>
+                    <line x1="9.0356313" y1="3" x2="9.0356313" y2="6" id="Path-16-Copy-7" stroke="#1A1A1A" stroke-width="0.5"></line>
+                    <line x1="6.0356313" y1="3" x2="6.0356313" y2="6" id="Path-16-Copy-5" stroke="#1A1A1A" stroke-width="0.5"></line>
+                    <line x1="11.0356313" y1="3" x2="11.0356313" y2="6" id="Path-16-Copy-9" stroke="#1A1A1A" stroke-width="0.5"></line>
+                    <line x1="10.0356313" y1="3" x2="10.0356313" y2="6" id="Path-16-Copy-8" stroke="#1A1A1A" stroke-width="0.5"></line>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

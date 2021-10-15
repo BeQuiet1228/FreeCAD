@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>螺旋体</title>
+    <defs>
+        <linearGradient x1="48.0138335%" y1="50%" x2="61.8900402%" y2="72.7132042%" id="linearGradient-1">
+            <stop stop-color="#2776B7" offset="0%"></stop>
+            <stop stop-color="#8CCBFF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="20.8454014%" y1="50%" x2="91.6154405%" y2="50%" id="linearGradient-2">
+            <stop stop-color="#2776B7" offset="0%"></stop>
+            <stop stop-color="#8CCBFF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="39.1874824%" y1="37.0440668%" x2="66.7592303%" y2="65.4953602%" id="linearGradient-3">
+            <stop stop-color="#3F81B8" offset="0%"></stop>
+            <stop stop-color="#8CCBFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9" stroke-linejoin="round">
+        <g id="图标输出" transform="translate(-486.000000, -668.000000)" stroke="#1A1A1A" stroke-width="0.5">
+            <g id="螺旋体" transform="translate(486.000000, 668.000000)">
+                <path d="M11.4975291,7.42784671 C11.1412639,10.1012911 11.2213807,11.6172285 11.7378794,11.975659 C12.2543781,12.3340894 11.0084183,13.1755364 8,14.5 L11.4975291,7.42784671 Z" id="Path-37" fill="url(#linearGradient-1)"></path>
+                <path d="M2.85463909,4.55490715 C3.76998276,5.38277656 4.22765459,6.41282255 4.22765459,7.64504512 C4.22765459,8.87726769 3.82342663,9.83365769 3.0149707,10.5142151 L7.92316366,10.9103014 L10.7500104,5.47065776 L2.85463909,4.55490715 Z" id="Path-36" fill="url(#linearGradient-2)"></path>
+                <polygon id="Path-10" fill="#8CCBFF" points="2.85463909 4.55490715 9 7 12.9916882 4.55490715 7 2"></polygon>
+                <path d="M8.33886278,7.46154139 C5.47323083,9.20779771 3.7393688,10.2875628 3.13727668,10.7008365 C2.53518457,11.1141103 4.15609234,12.3577817 8,14.4318508 L12.9916882,4.55490715 L8.33886278,7.46154139 Z" id="Path-35" fill="url(#linearGradient-3)"></path>
+            </g>
+        </g>
+    </g>
+</svg>

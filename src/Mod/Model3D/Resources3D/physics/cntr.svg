@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>等位图观测@4x</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="97.6343969%" id="linearGradient-1">
+            <stop stop-color="#5CE094" offset="0%"></stop>
+            <stop stop-color="#8AE9B2" offset="100%"></stop>
+        </linearGradient>
+        <circle id="path-2" cx="8" cy="8" r="6"></circle>
+        <filter x="-4.2%" y="-4.2%" width="108.3%" height="108.3%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="1" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.5 0" type="matrix" in="shadowInnerInner1" result="shadowMatrixInner1"></feColorMatrix>
+            <feOffset dx="-1" dy="-1" in="SourceAlpha" result="shadowOffsetInner2"></feOffset>
+            <feComposite in="shadowOffsetInner2" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner2"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.3 0" type="matrix" in="shadowInnerInner2" result="shadowMatrixInner2"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner2"></feMergeNode>
+            </feMerge>
+        </filter>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-4">
+            <stop stop-color="#B2F0CC" offset="0%"></stop>
+            <stop stop-color="#73E5A3" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="修改部分备份" transform="translate(-388.000000, -122.000000)">
+            <g id="等位图观测" transform="translate(388.000000, 122.000000)">
+                <g id="椭圆形">
+                    <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
+                    <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                    <circle stroke="#1A1A1A" stroke-width="0.5" stroke-linejoin="square" cx="8" cy="8" r="5.75"></circle>
+                </g>
+                <path d="M8,4 C5.790861,4 4,5.790861 4,8 M8,12 C10.209139,12 12,10.209139 12,8" id="形状" stroke="#1A1A1A" stroke-width="0.5"></path>
+                <path d="M8.00854492,3.99230957 C5.79940592,3.99230957 4.00854492,5.78317057 4.00854492,7.99230957 M8.00854492,11.9923096 C10.2176839,11.9923096 12.0085449,10.2014486 12.0085449,7.99230957" id="形状备份" stroke="#F6F700" stroke-width="0.5" transform="translate(8.008545, 7.992310) rotate(-270.000000) translate(-8.008545, -7.992310) "></path>
+                <path d="M5,8 C5,9.65685425 6.34314575,11 8,11 M11,8 C11,6.34314575 9.65685425,5 8,5" id="形状" stroke="#1A1A1A" stroke-width="0.5"></path>
+                <path d="M4.99829102,7.9954834 C4.99829102,9.65233765 6.34143677,10.9954834 7.99829102,10.9954834 M10.998291,7.9954834 C10.998291,6.33862915 9.65514527,4.9954834 7.99829102,4.9954834" id="形状备份-2" stroke="#F6F700" stroke-width="0.5" transform="translate(7.998291, 7.995483) rotate(-90.000000) translate(-7.998291, -7.995483) "></path>
+                <circle id="椭圆形" stroke="#1A1A1A" stroke-width="0.5" fill="url(#linearGradient-4)" cx="8" cy="8" r="1"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

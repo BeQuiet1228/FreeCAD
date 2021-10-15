@@ -17,4 +17,4 @@ class FileWorkbench(Workbench):
                   "App_Exit"]
         self.appendToolbar("Files", cmdlst)
 
-# Gui.addWorkbench(FileWorkbench())
+#Gui.addWorkbench(FileWorkbench())

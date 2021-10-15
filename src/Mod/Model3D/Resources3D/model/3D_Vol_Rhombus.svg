@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>菱形体@4x</title>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="新增图标备份" transform="translate(-569.000000, -78.000000)">
+            <g id="菱形体" transform="translate(569.000000, 78.000000)">
+                <polyline id="路径-61" stroke="#191919" stroke-width="0.5" fill="#8CCBFF" points="2.8302002 6.91741943 5.06317139 4.56854248 11.9755249 4.56854248 10.1855469 6.99362183"></polyline>
+                <polygon id="路径-60" stroke="#191919" stroke-width="0.5" fill="#8CCBFF" points="2.84383044 6.99362183 10.2280762 7.00355677 11.1520996 12.9936218 1.15209961 12.9393838"></polygon>
+                <polyline id="路径-62" stroke="#191919" stroke-width="0.5" points="12.231781 4.44348145 14.410553 8.09832764 11.2349548 13.1096802"></polyline>
+                <path d="M5.09411621,4.73095703 L5.99664307,8.02429199 L1.40307617,12.7214355" id="路径-64" stroke="#191919" stroke-width="0.5" stroke-dasharray="1"></path>
+                <polygon id="矩形" fill="#3F81B8" points="10.4798584 7.0093689 12.1569824 4.74523926 14.122406 8.09753418 11.3236389 12.5032043"></polygon>
+                <line x1="6" y1="8" x2="13.916016" y2="8" id="路径-66" stroke="#191919" stroke-width="0.5" stroke-dasharray="1"></line>
+            </g>
+        </g>
+    </g>
+</svg>

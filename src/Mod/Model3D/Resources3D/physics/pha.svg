@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>粒子图观测@4x</title>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="修改部分备份" transform="translate(-240.000000, -122.000000)">
+            <g id="粒子图观测" transform="translate(240.000000, 122.000000)">
+                <path d="M3.87454482,16.0009028 L-1.36557432e-13,16 L-0.000387674276,12.126452 C0.857049332,13.7854927 2.21538363,15.1436664 3.87454482,16.0009028 Z M16.0009028,12.1254552 L16,16 L12.1254552,16.0009028 C13.7849487,15.1434948 15.1434948,13.7849487 16.0009028,12.1254552 Z M16,-9.81992265e-14 L16.0009028,3.87454482 C15.1436664,2.21538363 13.7854927,0.857049332 12.126452,-0.000387674276 L16,-9.81992265e-14 Z M-0.000387674276,3.87354796 L-1.36557432e-13,-9.81992265e-14 L3.87354796,-0.000387674276 C2.21483955,0.856877604 0.856877604,2.21483955 -0.000387674276,3.87354796 Z" id="形状结合" fill="#1C1C1C"></path>
+                <line x1="3.17919922" y1="0.66394043" x2="13.1103516" y2="7" id="路径-34" stroke="#1A1A1A" stroke-width="0.5" stroke-linecap="round" stroke-dasharray="1"></line>
+                <line x1="3.5" y1="15.5" x2="13.110352" y2="10" id="路径-35" stroke="#1A1A1A" stroke-width="0.5" stroke-linecap="round" stroke-dasharray="1"></line>
+                <line x1="1.5" y1="2.5" x2="13.5" y2="8.5" id="路径-37" stroke="#1A1A1A" stroke-width="0.5" stroke-linecap="round" stroke-dasharray="1"></line>
+                <line x1="1.5" y1="13.5" x2="13.5" y2="8.5" id="路径-38" stroke="#1A1A1A" stroke-width="0.5" stroke-linecap="round" stroke-dasharray="1"></line>
+                <line x1="0.315185547" y1="5.90307617" x2="10.5" y2="10.5961914" id="路径-39" stroke="#1A1A1A" stroke-width="0.5" stroke-linecap="round" stroke-dasharray="1"></line>
+                <line x1="0.5" y1="10.5" x2="12.5" y2="7.5" id="路径-40" stroke="#1A1A1A" stroke-width="0.5" stroke-linecap="round" stroke-dasharray="1"></line>
+                <rect id="矩形" stroke="#1A1A1A" stroke-width="0.5" fill="#5BDF94" x="12.25" y="6.25" width="3.5" height="3.5"></rect>
+            </g>
+        </g>
+    </g>
+</svg>
