@@ -1654,7 +1654,8 @@ void Application::initConfig(int argc, char ** argv)
     // Version of the application extracted from SubWCRef into src/Build/Version.h
     // We only set these keys if not yet defined. Therefore it suffices to search
     // only for 'BuildVersionMajor'.
-    if (App::Application::Config().find("BuildVersionMajor") == App::Application::Config().end()) {
+    //if (App::Application::Config().find("BuildVersionMajor") == App::Application::Config().end()) 
+    {
         std::stringstream str; str << FCVersionMajor << "." << FCVersionMinor;
         App::Application::Config()["ExeVersion"         ] = str.str();
         App::Application::Config()["BuildVersionMajor"  ] = FCVersionMajor;

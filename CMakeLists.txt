@@ -1,6 +1,6 @@
 project(FreeCAD_trunk)
 
-set(PACKAGE_NAME "FreeCAD")
+set(PACKAGE_NAME "PICGUI")
 set(PACKAGE_VERSION_NAME "Vulcan")
 set(PACKAGE_VERSION_MAJOR "2")
 set(PACKAGE_VERSION_MINOR "0.03")
