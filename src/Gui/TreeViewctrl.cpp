@@ -8,10 +8,12 @@
 #include "Gui/Document.h"
 #include "Application.h"
 #include "PlotMDIView.h"
+#include"PLaneMDIView.h"
 #include "MainWindow.h"
+#include"iostream"
 namespace Gui{
 	/**
-	* @brief  Gui::TreeViewCtrl::TreeViewCtrl
+	* @brief  Gui::TreeViewCtrl::TreeViewCtrl 构造
 	* @param  QWidget * parent  
 	* @return   
 	*/
@@ -19,7 +21,7 @@ namespace Gui{
 
 	}
 	/**
-	* @brief  Gui::TreeViewCtrl::~TreeViewCtrl
+	* @brief  Gui::TreeViewCtrl::~TreeViewCtrl 析构
 	* @return   
 	*/
 	TreeViewCtrl::~TreeViewCtrl()
@@ -86,5 +88,51 @@ namespace Gui{
 		DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
 		if (docM)
 			docM->dataclear();
+	}
+	/**
+	* @brief Gui::TreeViewCtrl::fromWidget 接收三维窗口指针
+	* @param std::shared_ptr<QWidget> wid3D
+	* @return void
+	*/
+	
+	void TreeViewCtrl::fromWidget(std::shared_ptr<QWidget> wid3D)
+	{
+		App::Document* doc = App::GetApplication().getActiveDocument();
+		DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
+		if (!docM)
+		{
+			std::cerr << "DocumentManager is null from FreeCadGui void TreeViewCtrl::double_clicked_event(const QModelIndex &index)" << std::endl;
+			return;
+		}
+		//获取
+		auto guidoc = dynamic_cast<DocumentPic*>(Gui::Application::Instance->activeDocument());
+		std::list<Gui::MDIView*> list = guidoc->getMDIViews();
+		Gui::PlanMDIView* ptr = nullptr;
+		for each (Gui::MDIView * var in list)
+		{
+			ptr = dynamic_cast<Gui::PlanMDIView*>(var);
+			if (ptr) break;
+		}
+		if (nullptr == wid3D)
+		{
+			if (nullptr == ptr)
+			{
+				return;
+			}
+			else
+			{
+				MainWindow::getInstance()->setActiveWindow(ptr);
+			}
+			return;
+		}
+		if (nullptr == ptr)
+		{
+			ptr = new Gui::PlanMDIView(guidoc);
+			ptr->setWidget(wid3D);
+			Gui::MainWindow::getInstance()->addWindow(ptr);
+		}
+		else
+			ptr->setWidget(wid3D);
+		MainWindow::getInstance()->setActiveWindow(ptr);
 	}
 };

@@ -643,7 +643,22 @@ void Hdf5IO::initHdf5Data()
 #endif
 }
 
-
+bool Hdf5Data::initPlanemation()
+{
+	if (headList.size() == 4 && headList.at(3).find("PLANE") != std::string::npos)
+	{
+		name = "PLANE";
+		if (headList.at(3).find("polar") != std::string::npos)
+			coordinateSystem = CoordinateSystem::POLAR;
+		else if (headList.at(3).find("cartesian") != std::string::npos)
+			coordinateSystem = CARTESIAN;
+		else if (headList.at(3).find("cylindrical") != std::string::npos)
+			coordinateSystem = CYLINDER;
+		return true;
+	}
+	return false;
+	
+}
 /**
 * @brief Hdf5Data::initInformation 初始化通用数据信息
 * @return bool
@@ -755,6 +770,8 @@ bool Hdf5Data::initM2dStructInformation()
 void Hdf5Data::init()
 {
 	if (initInformation())
+		return;
+	if (initPlanemation())
 		return;
 	if (initM3dStructInformation())
 		return;

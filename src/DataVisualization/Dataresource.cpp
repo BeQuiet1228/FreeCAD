@@ -1,6 +1,8 @@
 #include "Dataresource.h"
 #include "RendererFactory.h"
 #include "Plot.h"
+#include"VisualizationOf3D/Widget3DFactory.h"
+#include"VisualizationOf3D/Widget3D.h"
 //结构图的方向
 enum stru_dir
 {
@@ -15,6 +17,29 @@ std::string StructDirection[] = { "Phi-Z",
 "Z-R",
 "R*cos(Phi)-R*sin(Phi)","X_Y","Y_Z","X_Z"};
 /**
+* @brief setIsWidge3D 回调函数
+* @param void * lp
+* @param bool isWidget3D
+* @return void
+*/
+void setIsWidge3D(void* lp,bool isWidget3D)
+{
+	try
+	{
+		DataSourceManage* llp = reinterpret_cast<DataSourceManage*>(lp);
+		if (nullptr == llp)
+		{
+			throw llp;
+		}
+		llp->isWidget = isWidget3D;
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << "erro";
+	}
+	
+}
+/**
 * @brief DataSourceManage::tranfromRenderer 树表点击事件槽
 * @param std::string name
 * @param int index 索引号
@@ -23,6 +48,24 @@ std::string StructDirection[] = { "Phi-Z",
 void DataSourceManage::tranfromRenderer(std::string name,int index){
 	if (index > hdfDatelist.size())
 		return;
+	//如果是三维结构图
+	if(hdfDatelist[index].name.find("PLANE")!=std::string::npos)
+	{
+		if (isWidget)
+		{
+			emit toWidget(nullptr);
+			return;
+		}
+		Hdf5Data hdf5Data3D(hdfDatelist[index]);
+		//auto resWidget=mWidget3DFactoryPtr->creat3DWidget(hdf5Data3D);
+		Widget3DFactory mWidget3DFactory;
+		auto resWidget = mWidget3DFactory.creat3DWidget(hdf5Data3D);
+		Widget3D* mWidget = dynamic_cast<Widget3D*>(resWidget.get());
+		mWidget->setFunction(this,setIsWidge3D);
+		isWidget = true;
+		emit toWidget(resWidget);
+		return;
+	}
 	QString str = QString::fromStdString(name);
 	str += QString("_%1").arg(index);
 	std::string newname = str.toStdString();
@@ -139,25 +182,28 @@ void DataSourceManage::loadhdffile(std::string filepath)
 * @brief DataSourceManage::DataSourceManage 数据管理构造
 */
 DataSourceManage::DataSourceManage():factoryptr(nullptr),treePtrsite(0),plotPtrsite(0){
+	//mWidget3DFactoryPtr = std::shared_ptr<Widget3DFactory>(new Widget3DFactory());
 	RendererManger.clear();
+	isWidget = false;
 }
 /**
 * @brief DataSourceManage::init 数据管理初始化
 * @param ListTreeWidget* ptr
 * @void
 */
-void DataSourceManage::init(ListTreeWidget* ptr,Plot* _plot){
+void DataSourceManage::init(ListTreeWidget* ptr, Plot* _plot) {
 
 	unsigned long long treeSite = reinterpret_cast<unsigned long long>(ptr);
 	unsigned long long plotSite = reinterpret_cast<unsigned long long>(_plot);
-	if (treeSite != 0 && treePtrsite!=treeSite)
+	if (treeSite != 0 && treePtrsite != treeSite)
 	{
 		connect(this, SIGNAL(_loadhdflist(std::vector<Hdf5Data>&)), ptr, SLOT(loadHdflist(std::vector<Hdf5Data>&)));
 		connect(ptr, SIGNAL(_transfromRenderer(std::string, int)), this, SLOT(tranfromRenderer(std::string, int)));
-		connect(this, SIGNAL(toTreeNewData(Hdf5Data&, int)), ptr, SLOT(fromdataManageNewData(Hdf5Data& , int )));
+		connect(this, SIGNAL(toTreeNewData(Hdf5Data&, int)), ptr, SLOT(fromdataManageNewData(Hdf5Data&, int)));
+		connect(this, SIGNAL(toWidget(std::shared_ptr<QWidget>)), ptr, SLOT(soltFromWidget(std::shared_ptr<QWidget>)));
 		treePtrsite = treeSite;
 	}
-	if (plotSite!=0&& plotPtrsite!=plotSite)
+	if (plotSite != 0 && plotPtrsite != plotSite)
 	{
 		connect(this, SIGNAL(_reRendererEvent(std::shared_ptr<PlotAdapter>)), _plot, SLOT(reRendererEvent(std::shared_ptr<PlotAdapter>)));
 		plotPtrsite = plotSite;
@@ -181,6 +227,7 @@ int DataSourceManage::initStructData(Hdf5Data& data)
 }
 DataSourceManage::~DataSourceManage(){
 	RendererManger.clear();
+	isWidget = false;
 }
 /**
 * @brief DataSourceManage::DisPlayPlot 送显

@@ -109,7 +109,6 @@ void DocumentManager::_ToRenderer(std::string name, int index)
 	if (m_DataSourceManage)
 		m_DataSourceManage->tranfromRenderer(name,index);
 }
-
 /**
 * @brief DocumentManager::restoreH5Data ÊÍ·Åh5Êı¾İ
 * @return void

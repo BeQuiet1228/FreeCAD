@@ -29,10 +29,13 @@ public Q_SLOTS:
 	void loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist);
 	void on_doubleclick(const QModelIndex &index);
 	void fromdataManageNewData(Hdf5Data& data,int index);	
+	void soltFromWidget(std::shared_ptr<QWidget>);
 public:
 	virtual void double_clicked_event(const QModelIndex &index);
+	virtual void fromWidget(std::shared_ptr<QWidget>) {}
 	void clear();
 	void toStructh5df(Hdf5Data& data, int index);
+	void toPlaneh5df(Hdf5Data& data,int index);
 protected:
 	QTreeView* m_TreeView;
 	QStandardItemModel *goodsModel;

@@ -5,7 +5,7 @@
 #include "Dataresource.h"
 #include "C_encoding.h"
 #include <QDebug>
-#define  MAX_TYPE_NUMBER 6
+#define  MAX_TYPE_NUMBER 7
 enum emType
 {
 	CONTOUR=0,
@@ -14,10 +14,11 @@ enum emType
 	VECTOR,
 	STRUCT,
 	OBSERVE,
+	PLANE,
 };
 //图标：
 QString Treeicon[] = { ":/Tree/TreeFile1.png", ":/Tree/TreeFile2.png" };
-std::string Type[MAX_TYPE_NUMBER] = { "CONTOUR", "PHASESPACE", "RANGE", "VECTOR", "struct" ,"OBSERVE"};
+std::string Type[MAX_TYPE_NUMBER] = { "CONTOUR", "PHASESPACE", "RANGE", "VECTOR", "struct" ,"OBSERVE","PLANE"};
 std::string Structdirection[3] = { "Phi-Z",
 "Z-R",
 "R*cos(Phi)-R*sin(Phi)" };
@@ -70,7 +71,13 @@ void ListTreeWidget::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 			continue;
 		}
 #pragma endregion
-
+#pragma region
+		if (Hdf5Datalist[index].name.find("PLANE") != std::string::npos)
+		{
+			toPlaneh5df(Hdf5Datalist[index],index);
+			continue;
+		}
+#pragma endregion
 #pragma region 其他图
 		fromdataManageNewData(Hdf5Datalist[index],index);
 #pragma endregion
@@ -128,6 +135,8 @@ std::string ListTreeWidget::GetType(std::string name)
 		return "矢量图";
 	case emType::OBSERVE:
 		return "时间图";
+	case emType::PLANE:
+		return "三维结构图";
 	default:
 		return "未知图";
 	}
@@ -469,5 +478,42 @@ void ListTreeWidget::toStructh5df(Hdf5Data& data, int index)
 		item->setChild(row, subitem);
 		datainfor[subitem] = mitemInfo;
 	}
+}
+
+/**
+* @brief ListTreeWidget::toPlaneh5df 处理三维结构图
+* @param Hdf5Data & data
+* @param int index
+* @return void
+*/
+void  ListTreeWidget::toPlaneh5df(Hdf5Data& data, int index)
+{
+	itemInfo mitemInfo;
+	mitemInfo.index = index;
+	if (data.name.find("PLANE") == std::string::npos)
+		return;
+	std::string dataType = GetType(data.name);
+	auto iter = parentnode.find(dataType);
+	QStandardItem* item;
+	if (iter!=parentnode.end())
+	{
+		item = iter->second;
+	}
+	else
+	{
+		item = new QStandardItem(QIcon(Treeicon[0]),GetEncodingstr(dataType.c_str(),ENCODING_GB2312));
+		int row = goodsModel->rowCount();
+		goodsModel->setItem(row, item);
+		parentnode[dataType] = item;
+	}
+	//添加子节点
+	int subrow = item->rowCount();
+	QStandardItem* subItem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr("Group_Plane", ENCODING_GB2312));
+	datainfor[subItem] = mitemInfo;
+	item->setChild(subrow, subItem);
+}
+void ListTreeWidget::soltFromWidget(std::shared_ptr<QWidget> wid3D)
+{
+	fromWidget(wid3D);
 }
 #include "moc_ListTreeWidget.cpp"

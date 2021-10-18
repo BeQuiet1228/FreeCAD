@@ -333,6 +333,7 @@ set(Gui_MOC_HDRS
     picgui_ribbon/PICRibbonTabContent.h
     picgui_ribbon/PICRibbonButtonGroup.h
 	PlotMDIView.h
+    PlaneMDIView.h
 	TreeViewctrl.h
     MDIEditView.h
 )
@@ -1094,6 +1095,7 @@ SOURCE_GROUP("Widget" FILES ${Widget_SRCS})
 # The view sources
 SET(View_CPP_SRCS
     MDIView.cpp
+
     GraphvizView.cpp
     ActiveObjectList.cpp
 )
@@ -1217,6 +1219,8 @@ SET(MDI_SRC
 	PlotMDIView.cpp
 	View3dMDI.cpp
 	View3dMDI.h
+    PlaneMDIView.h
+    PlaneMDIView.cpp
 )
 
 source_group("MDIView" FILES ${MDI_SRC})

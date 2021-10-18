@@ -26,7 +26,7 @@ SET(smart_contorl_dll " ")
 
 #设置后处理模块以Dll的形式生成
 SET(DataVisualizationDll " ")
-
+SET(VisualizationOf3DDLL " ")
 #添加一些宏
 add_definitions(-D_PICGUI_) #这个宏用于替换freecad原生代码的时候使用
 if(COMMAND cmake_policy)
@@ -668,6 +668,17 @@ endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
             vtkFiltersExtraction
             vtkFiltersSources
             vtkFiltersGeometry
+            vtkRenderingCore
+            vtkCommonColor
+            vtkIOGeometry
+            vtkInteractionStyle
+            vtkRenderingContextOpenGL2
+            vtkRenderingFreeType
+            vtkRenderingGL2PSOpenGL2
+            vtkRenderingOpenGL2
+            vtkGUISupportQt
+            vtkIOImage
+            vtkInteractionImage
         )
 
         # check which modules are available

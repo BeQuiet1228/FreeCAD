@@ -30,7 +30,6 @@ public:
 	int ToStructHdf5(Hdf5Data data);
 	void DisplatPlot(Hdf5Data data,int _type=0);
 	void _ToRenderer(std::string name,int index);
-
 	//Çå¿ÕÊý¾Ý
 	void restoreH5Data();
 protected:

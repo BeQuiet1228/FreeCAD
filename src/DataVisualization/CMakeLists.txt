@@ -237,6 +237,12 @@ list(APPEND QT_LIB
 	HDF5Reader
 	qwt_polar
 	)
+if(VisualizationOf3DDLL)
+list(APPEND QT_LIB
+	VisualizationOf3D
+	)
+endif()
+
 if (BUILD_QT5)
     include_directories(
         ${Qt5Core_INCLUDE_DIRS}
