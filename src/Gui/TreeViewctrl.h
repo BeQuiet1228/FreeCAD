@@ -14,7 +14,6 @@ namespace Gui{
 	public:
 		void on_doubleclick(const QModelIndex& index);
 		void soltFromWidget(QWidget*);
-	public:
 	};
 };
 

@@ -31,7 +31,6 @@ protected:
 	void initUi();
 	virtual void resizeEvent(QResizeEvent*);
 public slots:
-	//void slotStateChanged(int);
 	void slotitemStateChange(QStandardItem*);
 private:
 	std::map<QStandardItem*, vtkSmartPointer<vtkActor>>actorS;

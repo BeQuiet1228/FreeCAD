@@ -505,6 +505,5 @@ void  ListTreeWidget::toPlaneh5df(Hdf5Data& data, int index)
 }
 void ListTreeWidget::soltFromWidget(QWidget* wid3D)
 {
-	/*fromWidget(wid3D);*/
 }
 #include "moc_ListTreeWidget.cpp"

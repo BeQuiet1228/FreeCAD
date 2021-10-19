@@ -17,17 +17,6 @@ namespace Gui {
 	}
 	PlanMDIView::~PlanMDIView()
 	{
-		/*if (nullptr != mwidget3D)
-		{
-			Widget3D* newWidget = dynamic_cast<Widget3D*>(mwidget3D);
-			auto items = newWidget->GetTreeItems();
-			auto iter = items.begin();
-			auto parentItem = (*iter)->parent();
-			if (nullptr != parentItem && parentItem->hasChildren() > 0)
-			{
-				parentItem->removeRows(0, parentItem->rowCount());
-			}
-		}*/
 	}
 	void PlanMDIView::setWidget(QWidget* wid3D)
 	{
@@ -48,11 +37,6 @@ namespace Gui {
 	void PlanMDIView::resizeEvent(QResizeEvent*e)
 	{
 		QWidget::resizeEvent(e);
-		/*if (nullptr != mwidget3D)
-		{
-			mwidget3D->resize(this->size());
-			mwidget3D->move(QPoint(0, 0));
-		}*/
 	}
 	//__int64 lastptr;
 };
