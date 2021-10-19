@@ -33,7 +33,7 @@ Q_SIGNALS:
 	void _loadhdflist(std::vector<Hdf5Data>& Hdf5Data);
 	void _reRendererEvent(std::shared_ptr<PlotAdapter>);
 	void toTreeNewData(Hdf5Data& data,int index);
-	void toWidget(std::shared_ptr<QWidget>);
+	void toWidget(QWidget*);
 public Q_SLOTS :
 	void tranfromRenderer(std::string name, int index);
 	void clearMap();

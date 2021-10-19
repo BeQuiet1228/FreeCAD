@@ -8,12 +8,13 @@
 #include <QStandardItemModel>
 #include <string>
 #include "exportConfig.hpp"
+//typedef void(*FuncBack)(void*,bool);
 class DATA_VISUALIZATION_EXPORT ListTreeWidget:public QWidget
 {
 	Q_OBJECT
 public:
 	explicit ListTreeWidget(QWidget* parent=nullptr);
-	~ListTreeWidget();
+	virtual ~ListTreeWidget();
 	struct  itemInfo
 	{
 		itemInfo() :index(-1), time(-1.0f) {}
@@ -26,13 +27,11 @@ protected:
 	Q_SIGNALS:
 	void _transfromRenderer(std::string name,int index);
 public Q_SLOTS:
-	void loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist);
-	void on_doubleclick(const QModelIndex &index);
-	void fromdataManageNewData(Hdf5Data& data,int index);	
-	void soltFromWidget(std::shared_ptr<QWidget>);
+	virtual void loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist);
+	virtual void on_doubleclick(const QModelIndex &index);
+	virtual void fromdataManageNewData(Hdf5Data& data,int index);	
+	virtual void soltFromWidget(QWidget*);
 public:
-	virtual void double_clicked_event(const QModelIndex &index);
-	virtual void fromWidget(std::shared_ptr<QWidget>) {}
 	void clear();
 	void toStructh5df(Hdf5Data& data, int index);
 	void toPlaneh5df(Hdf5Data& data,int index);
@@ -41,7 +40,5 @@ protected:
 	QStandardItemModel *goodsModel;
 	std::map <QStandardItem*, itemInfo> datainfor;
 	std::map<std::string, QStandardItem*> parentnode;
-	//结构图头部信息数量;
-	//int structHeadCount;
 };
 #endif

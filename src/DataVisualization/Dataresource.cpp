@@ -60,7 +60,7 @@ void DataSourceManage::tranfromRenderer(std::string name,int index){
 		//auto resWidget=mWidget3DFactoryPtr->creat3DWidget(hdf5Data3D);
 		Widget3DFactory mWidget3DFactory;
 		auto resWidget = mWidget3DFactory.creat3DWidget(hdf5Data3D);
-		Widget3D* mWidget = dynamic_cast<Widget3D*>(resWidget.get());
+		Widget3D* mWidget = dynamic_cast<Widget3D*>(resWidget);
 		mWidget->setFunction(this,setIsWidge3D);
 		isWidget = true;
 		emit toWidget(resWidget);
@@ -200,7 +200,7 @@ void DataSourceManage::init(ListTreeWidget* ptr, Plot* _plot) {
 		connect(this, SIGNAL(_loadhdflist(std::vector<Hdf5Data>&)), ptr, SLOT(loadHdflist(std::vector<Hdf5Data>&)));
 		connect(ptr, SIGNAL(_transfromRenderer(std::string, int)), this, SLOT(tranfromRenderer(std::string, int)));
 		connect(this, SIGNAL(toTreeNewData(Hdf5Data&, int)), ptr, SLOT(fromdataManageNewData(Hdf5Data&, int)));
-		connect(this, SIGNAL(toWidget(std::shared_ptr<QWidget>)), ptr, SLOT(soltFromWidget(std::shared_ptr<QWidget>)));
+		connect(this, SIGNAL(toWidget(QWidget*)), ptr, SLOT(soltFromWidget(QWidget*)));
 		treePtrsite = treeSite;
 	}
 	if (plotSite != 0 && plotPtrsite != plotSite)

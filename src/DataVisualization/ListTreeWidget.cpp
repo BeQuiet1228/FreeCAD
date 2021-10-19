@@ -103,7 +103,17 @@ void ListTreeWidget::resizeEvent(QResizeEvent * event)
 */
 void ListTreeWidget::on_doubleclick(const QModelIndex &index)
 {
-	double_clicked_event(index);
+	/*double_clicked_event(index);*/
+	QStandardItem* currenitem = goodsModel->itemFromIndex(index);
+	//寻找对应的hdf数据
+	auto iter = datainfor.find(currenitem);
+	if (iter != datainfor.end())
+	{
+		//传入hdf5数据
+		qDebug() << "-----------------------" << iter->second.index;
+		std::string name = (index.data().toString()).toStdString();
+		emit _transfromRenderer(name, iter->second.index);
+	}
 }
 /**
 * @brief ListTreeWidget::GetType 获取数据类型
@@ -139,24 +149,6 @@ std::string ListTreeWidget::GetType(std::string name)
 		return "三维结构图";
 	default:
 		return "未知图";
-	}
-}
-/**
-* @brief ListTreeWidget::double_clicked_event 树控件双击事件(可重写)
-* @param const QModelIndex &index
-* @return void
-*/
-void ListTreeWidget::double_clicked_event(const QModelIndex &index)
-{
-	QStandardItem* currenitem = goodsModel->itemFromIndex(index);
-	//寻找对应的hdf数据
-	auto iter = datainfor.find(currenitem);
-	if (iter != datainfor.end())
-	{
-		//传入hdf5数据
-		qDebug() <<"-----------------------" << iter->second.index;
-		std::string name = (index.data().toString()).toStdString();
-		emit _transfromRenderer(name, iter->second.index);
 	}
 }
 /**
@@ -401,7 +393,6 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 */
 void ListTreeWidget::clear()
 {
-	//structHeadCount = 0;
 	if (goodsModel->hasChildren() > 0)
 	{
 		goodsModel->removeRows(0, goodsModel->rowCount());
@@ -512,8 +503,8 @@ void  ListTreeWidget::toPlaneh5df(Hdf5Data& data, int index)
 	datainfor[subItem] = mitemInfo;
 	item->setChild(subrow, subItem);
 }
-void ListTreeWidget::soltFromWidget(std::shared_ptr<QWidget> wid3D)
+void ListTreeWidget::soltFromWidget(QWidget* wid3D)
 {
-	fromWidget(wid3D);
+	/*fromWidget(wid3D);*/
 }
 #include "moc_ListTreeWidget.cpp"
