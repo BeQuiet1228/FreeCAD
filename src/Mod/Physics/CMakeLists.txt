@@ -1,16 +1,5 @@
 SET(Physics_Srcs
-./.idea/encodings.xml
-./.idea/misc.xml
-./.idea/modules.xml
-./.idea/Physics.iml
-./.idea/vcs.xml
-./.idea/workspace.xml
 ./InitGui.py
-./PhysicsGui/.idea/misc.xml
-./PhysicsGui/.idea/modules.xml
-./PhysicsGui/.idea/PhysicsGui.iml
-./PhysicsGui/.idea/vcs.xml
-./PhysicsGui/.idea/workspace.xml
 ./PhysicsGui/BatchDlg.py
 ./PhysicsGui/BatchDlg.ui
 ./PhysicsGui/BoundPal.py
