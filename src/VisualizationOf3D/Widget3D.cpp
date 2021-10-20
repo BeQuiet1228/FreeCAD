@@ -42,7 +42,7 @@ Widget3D::~Widget3D(){
 	items.clear();
 }
 /**
-* @brief Widget3D::transfromPolyData
+* @brief Widget3D::transfromPolyData 传输
 * @param __int64 porPer
 * @param vtkPolyData * polyData
 * @return void
@@ -80,9 +80,11 @@ void Widget3D::resizeEvent(QResizeEvent*)
 	mVtkWidget->resize(this->size());
 	QSize subsize = QSize(this->size().width()/15,this->size().height());
 }
-void Widget3D::Updata()
-{
-}
+/**
+* @brief Widget3D::drawImage 设定相关属性
+* @return void
+*/
+
 void Widget3D::drawImage()
 {
 	render->SetBackground(0.529, 0.8078, 0.92157);
@@ -97,11 +99,24 @@ void Widget3D::initUi()
 	mVtkWidget->GetRenderWindow()->AddRenderer(render);
 	mVtkWidget->setAutomaticImageCacheEnabled(true);
 }
+/**
+* @brief Widget3D::setFunction设置回调函数
+* @param void * lp
+* @param fLp flp
+* @return void
+*/
+
 void Widget3D::setFunction(void* lp, fLp flp)
 {
 	mflp = flp;
 	dataMPtr = lp;
 }
+/**
+* @brief Widget3D::slotitemStateChange 触发事件
+* @param QStandardItem * mItem
+* @return void
+*/
+
 void Widget3D::slotitemStateChange(QStandardItem* mItem)
 {
 	BaseWidget::slotitemStateChange(mItem);
@@ -120,6 +135,12 @@ void Widget3D::slotitemStateChange(QStandardItem* mItem)
 		mVtkWidget->GetInteractor()->Render();
 	}
 }
+/**
+* @brief Widget3D::clearItem 清除控件
+* @param TreeItem * lp
+* @return void
+*/
+
 void Widget3D::clearItem(TreeItem* lp)
 {
 	if (nullptr == lp)

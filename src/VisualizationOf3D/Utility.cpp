@@ -12,31 +12,32 @@ void BaseWidget::slotitemStateChange(QStandardItem* item)
 {
 
 }
+/**
+* @brief BaseWidget::GetTreeItems »ñÈ¡¿Ø¼þ
+* @return std::vector<TreeItem*>&
+*/
+
 std::vector<TreeItem*>& BaseWidget::GetTreeItems()
 {
 	return items;
 }
 TreeItem::TreeItem():QStandardItem()
 {
-	initUI();
+	pID = 0;
 }
 TreeItem::TreeItem(const QString& text):QStandardItem(text)
 {
-	initUI();
+	pID = 0;
 }
 TreeItem::TreeItem(const QIcon& icon, const QString& text):QStandardItem(icon,text)
 {
-	initUI();
+	pID = 0;
 }
 TreeItem::TreeItem(int rows, int columns):QStandardItem(rows,columns)
 {
-	initUI();
-}
-TreeItem::~TreeItem()
-{
 	pID = 0;
 }
-void TreeItem::initUI() 
+TreeItem::~TreeItem()
 {
 	pID = 0;
 }

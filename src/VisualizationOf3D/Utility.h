@@ -15,8 +15,9 @@ public:
 	TreeItem(const QIcon& icon, const QString& text);
 	explicit TreeItem(int rows, int columns = 1);
 	virtual ~TreeItem();
-	virtual void initUI();
 public:
+	//之后继承该类的ID号，继承类之间的ID号不能相同
+	//如果写了通用的处理方法，可一通过判断ID号,执行对应的操作。
 	int pID;
 };
 class VISUALZATION3D_EXPORT BaseWidget:public QWidget

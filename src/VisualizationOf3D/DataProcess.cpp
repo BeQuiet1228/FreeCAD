@@ -181,19 +181,11 @@ bool DataProcess::calcCylinder(Hdf5Data& data) {
 	return true;
 }
 /****************************************************************************/
-/**
-* @brief PlanData::PlanData 构造函数
-* @return 
-*/
 PlanData::PlanData() {
 	cylinderS.clear();
 	castersianS.clear();
 	Polys.clear();
 }
-/**
-* @brief PlanData::~PlanData 析构函数
-* @return 
-*/
 PlanData::~PlanData(){
 	cylinderS.clear();
 	castersianS.clear();

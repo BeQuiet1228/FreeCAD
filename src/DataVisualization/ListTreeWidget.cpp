@@ -110,7 +110,6 @@ void ListTreeWidget::on_doubleclick(const QModelIndex &index)
 	if (iter != datainfor.end())
 	{
 		//传入hdf5数据
-		qDebug() << "-----------------------" << iter->second.index;
 		std::string name = (index.data().toString()).toStdString();
 		emit _transfromRenderer(name, iter->second.index);
 	}
@@ -503,7 +502,15 @@ void  ListTreeWidget::toPlaneh5df(Hdf5Data& data, int index)
 	datainfor[subItem] = mitemInfo;
 	item->setChild(subrow, subItem);
 }
+
+/**
+* @brief ListTreeWidget::soltFromWidget 获取窗口指针
+* @param QWidget * wid3D
+* @return void
+*/
+
 void ListTreeWidget::soltFromWidget(QWidget* wid3D)
 {
+	//获取窗口指针，这里没做处理，用于继承类重写
 }
 #include "moc_ListTreeWidget.cpp"

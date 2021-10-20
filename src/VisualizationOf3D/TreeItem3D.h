@@ -10,7 +10,6 @@ public:
 	TreeItem3D(const QIcon& icon, const QString& text);
 	explicit TreeItem3D(int rows, int columns = 1);
 	virtual ~TreeItem3D();
-	virtual void initUI();
 	void setParent(QWidget* parent=nullptr);
 protected:
 	QWidget* parentWidget;
