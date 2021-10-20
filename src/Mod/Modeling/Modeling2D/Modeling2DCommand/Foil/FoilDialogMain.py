@@ -2,7 +2,7 @@
 import FoilDialog
 from PySide import QtGui
 import FreeCAD
-from Modeling.Modeling2D.Tools.Tools2D import sayz
+from Physics.PhysicsCommand.DlgData import sayz
 from Physics.PhysicsTools import CompleterTools
 from Modeling.Modeling2D.Tools import Tools2D
 from Modeling.Modeling2D.Modeling2DCommand.BaseUI import BaseDialog

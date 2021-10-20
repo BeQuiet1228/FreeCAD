@@ -1,8 +1,24 @@
 # -*- coding: utf-8 -*-
 import FreeCAD as App
 import File.FileGui.FileTextEditor
-import File.FileCommand.M3DFile.CHIPICCommand
 import PySide
+
+
+# 定义涉及到的关键字
+keywordInCommand = ["FUNCTION",
+                    "START", "STOP",
+                    "SYSTEM", "POINT", "LINE", "AREA", "VOLUME",
+                    "DURATION", "TIMER", "MARK", "AUTOGRID",
+                    "SYMMETRY", "PORT", "FREESPACE",
+                    "CONDUCTANCE", "DIELECTRIC", "CONDUCTOR", "VOID", "MATERIAL", "FOIL", "INDUCTOR", "DRIVER",
+                    "EMISSION", "EMIT",
+                    "MAXWELL", "MODE", "TIME_STEP",
+                    "CONTINUITY",
+                    "PRESET",
+                    "GRAPHICS", "DUMP", "HEADER",
+                    "OBSERVE",
+                    "DISPLAY", "CONTOUR", "VECTOR", "PHASESPACE", "RANGE",
+                    "KINEMATICS"]
 
 
 class FileView(PySide.QtGui.QWidget):
@@ -68,7 +84,7 @@ class FileView(PySide.QtGui.QWidget):
             else:
                 # 如果该行的第一个单词为关键字，则显示为蓝色
                 words = lineStr.split(" ")
-                if File.FileCommand.M3DFile.CHIPICCommand.keywordInCommand.__contains__(words[0]):
+                if keywordInCommand.__contains__(words[0]):
                     textEdit.setTextColor(blue)
                     textEdit.insertPlainText(words[0])
                     textEdit.setTextColor(black)

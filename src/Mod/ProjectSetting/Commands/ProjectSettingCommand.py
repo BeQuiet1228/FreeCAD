@@ -53,7 +53,7 @@ class NewMatericalCommand:
         # dlg.show()
         # dlg.exec_()
         # IndexCount["NewMaterical"] += 1
-         
+        from Physics.PhysicsCommand import Simulation
         className = "NewMaterical" + str(Simulation.IndexCount["NewMaterical"])
         NewMatericalDlgMain.show("new",className,className)
         Simulation.IndexCount["NewMaterical"]+=1 

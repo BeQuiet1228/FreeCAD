@@ -3,7 +3,6 @@ import traceback
 
 import Tools2D
 from Modeling.Modeling2D.Tools import ExpressionTools
- 
 
 
 # 该文件主要服务UI部分
@@ -181,11 +180,11 @@ def setAngleToObj(obj, attr, angle_str="0"):
         return None
 
 
-def setResolution(ui_class):
-    """
-    适配分辨率
-    """
-    new_x, new_y = AdaptiveDPIUtil.get_new_dpi(ui_class.width(), ui_class.height())
-    ui_class.resize(new_x, new_y)
+# def setResolution(ui_class):
+#     """
+#     适配分辨率
+#     """
+#     new_x, new_y = AdaptiveDPIUtil.get_new_dpi(ui_class.width(), ui_class.height())
+#     ui_class.resize(new_x, new_y)
 
 

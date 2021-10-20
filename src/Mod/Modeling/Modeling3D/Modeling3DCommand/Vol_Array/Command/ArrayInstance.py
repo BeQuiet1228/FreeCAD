@@ -165,6 +165,7 @@ class Array:
                 theFirstShape=objItem.Shape
                 # FreeCAD.Console.PrintMessage("3\n")
             else:
+
                 # FreeCAD.Console.PrintMessage("4\n")
                 otherShapes.append(objItem.Shape)
         # FreeCAD.Console.PrintMessage(otherShapes)

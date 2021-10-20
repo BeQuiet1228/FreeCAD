@@ -275,7 +275,7 @@ class Clip(QtGui.QDockWidget):
                 # self.cs.ViewObject.DiffuseColor=self.getDiffuseColor(self.oblist,self.cs)
                 # self.cs.ViewObject.DiffuseColor=FreeCAD.ActiveDocument.ResultShape.ViewObject.DiffuseColor
                 self.cs.ViewObject.Visibility = True
-                self.cs.ViewObject.Transparency=0
+                self.cs.ViewObject.Transparency=50
             # endtime = datetime.datetime.now()
             # FreeCAD.Console.PrintMessage("time2: \n")
             # FreeCAD.Console.PrintMessage((endtime-starttime).seconds)

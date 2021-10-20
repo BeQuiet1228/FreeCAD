@@ -891,7 +891,7 @@ class EmissionUiData(QtGui.QDialog):
             self.flagUpdateItemName = False
 
             # 适配分辨率
-             
+            from Physics.PhysicsCommand import AdaptiveDPIUtil
             new_x, new_y = AdaptiveDPIUtil.get_new_dpi(self.width(), self.height())
             self.resize(500, new_y)
 

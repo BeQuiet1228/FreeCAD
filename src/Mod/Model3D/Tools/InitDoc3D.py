@@ -322,7 +322,7 @@ class DocumentObservers(object):
     # 文档关闭，关闭物理设置与任务控制面板
     def slotDeletedDocument(self, doc):
         # 移除所有的监听
-        FreeCAD.removeAllDocumentObserver()
+        # FreeCAD.removeAllDocumentObserver()
         import os
         if os.path.exists(FreeCAD.clientUserDir()):
             pass

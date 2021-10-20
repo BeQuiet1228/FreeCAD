@@ -218,7 +218,7 @@ def Port(obj):
                 temp_m2d_FT += newLine+tab+"INCOMING" + blankSpace + portName + ".F"+blankSpace+"FUNCTION"
                 temp_m2d_FT += blankSpace + "E2"+blankSpace+portName+".GE2"
     elif obj.isCheckNormal1 == False and obj.isCheckNormal2 == True:
-        if obj.isCheckGE1:
+        if obj.isCheckGE2:
             temp_m2d_pap += "FUNCTION"+blankSpace+portName + ".GE1" + functionParameters + obj.GE1 + semicolon + newLine
             if obj.isCheckFT:
                 temp_m2d_FT += newLine+tab+"INCOMING" + blankSpace + portName + ".F"+blankSpace+"FUNCTION"

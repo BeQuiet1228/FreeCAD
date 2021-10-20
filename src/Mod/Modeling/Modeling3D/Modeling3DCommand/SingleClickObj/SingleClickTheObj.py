@@ -133,5 +133,5 @@ class SingleClickCommand:
                 pass
 
 
-FreeCADGui.addCommand('SingleClickDisplayMode', SingleClickCommand())
+# FreeCADGui.addCommand('SingleClickDisplayMode', SingleClickCommand())
 

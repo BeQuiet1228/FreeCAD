@@ -37,12 +37,15 @@ class ShowDialog(QtGui.QDialog):
         self.isKeepData = False
 
     def initDialog(self):
+        # 隐藏老版3D按钮
+        self.a.ui.create3DButton.hide()
         # 2D,3D对话框
         self.ui.gridLayout.addWidget(self.a, 0, 0, 1, 1)
         self.a.ui.create3DButton.clicked.connect(self.onCreate3D)
         self.a.ui.create2DButton.clicked.connect(self.onCreate2D)
         self.a.ui.create3DTextButton.clicked.connect(self.onCreate3DTextEdit)
         self.a.ui.create2DTextButton.clicked.connect(self.onCreate2DTextEdit)
+        self.a.ui.createNew3DButton.clicked.connect(self.onCreateNew3D)
         self.b.ui.cancelButton.clicked.connect(self.refresh)
         self.b.ui.cartesianButton.clicked.connect(self.onCartesianButton)
         self.b.ui.polarButton.clicked.connect(self.onPolarButton)
@@ -71,6 +74,13 @@ class ShowDialog(QtGui.QDialog):
 
     def onCreate2DTextEdit(self):
         self.Result = "2DText"
+        self.a.hide()
+        self.b.show()
+        self.ui.gridLayout.addWidget(self.b)
+        self.b.ui.polarButton.setEnabled(True)
+
+    def onCreateNew3D(self):
+        self.Result = "new3D"
         self.a.hide()
         self.b.show()
         self.ui.gridLayout.addWidget(self.b)

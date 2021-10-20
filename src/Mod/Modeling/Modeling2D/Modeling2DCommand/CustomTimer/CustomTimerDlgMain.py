@@ -6,8 +6,7 @@ import FreeCADGui
 from PySide import QtGui
 # 跟DefTimerDialog公用一个Dialog
 from Modeling.Modeling2D.Modeling2DCommand.DefTimer import DefTimerDialog
-from Modeling.Modeling2D.Tools import Tools2D, ToolsUI
- 
+from Modeling.Modeling2D.Tools import Tools2D
 
 
 class ShowDialog(QtGui.QDialog):
@@ -23,7 +22,6 @@ class ShowDialog(QtGui.QDialog):
     def initDialog(self):
         self.loadData()
         self.slotTypeChanged()
-        ToolsUI.setResolution(self)
         # self.ui.LineEdit_Name.setEnabled(False)
         self.ui.pb_ok.clicked.connect(self.slotOK)
         self.ui.pb_cancel.clicked.connect(self.slotCancel)

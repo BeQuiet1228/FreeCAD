@@ -3,7 +3,7 @@ from PySide import QtGui
 import FreeCAD
 import FreeCADGui
 from Modeling.Modeling2D.Modeling2DCommand.MacroParticle import MacroParticleDialog
-from Modeling.Modeling2D.Tools import ToolsUI, Tools2D
+from Modeling.Modeling2D.Tools import Tools2D
 
 
 def getNewParticle():
@@ -31,7 +31,6 @@ class ShowDialog(QtGui.QDialog):
         self.ui.checkBox.stateChanged.connect(self.comboBox_clicked)
         self.ui.pb_cancel.clicked.connect(self.slotCancel)
         self.ui.pb_ok.clicked.connect(self.slotOK)
-        ToolsUI.setResolution(self)
 
     def comboBox_clicked(self):
         self.ui.comboBox.setEnabled(self.ui.checkBox.isChecked())

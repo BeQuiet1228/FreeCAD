@@ -1,6 +1,6 @@
 # encoding:utf-8
 from Modeling.Modeling2D.Tools import Tools2D
-from Modeling.Modeling2D.Tools.Tools2D import addCommonStartEndCoordinate, addCommonPropertyToObject, Attribute
+from Modeling.Modeling2D.Tools.Tools2D import Attribute
 from Modeling.Modeling2D.Tools.Tools2D import sayz
 
 

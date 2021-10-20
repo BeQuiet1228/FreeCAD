@@ -19,7 +19,7 @@ class Feld(object):
         self.obj.addProperty("App::PropertyString", "emitter").emitter = "未指定"
 
         self.obj.addProperty("App::PropertyString", "constantA").constantA = "1.5414e-006"
-        self.obj.addProperty("App::PropertyString", "constantB").constantB = "6830800000"
+        self.obj.addProperty("App::PropertyString", "constantB").constantB = "6.8308e9"
         self.obj.addProperty("App::PropertyString", "workingFunctionPHI").workingFunctionPHI = "0"
         # 发射选项
         Tools2D.addLaunchOptionsCommonProperty(obj)

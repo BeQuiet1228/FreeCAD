@@ -35,8 +35,8 @@ def Load(workbench):
     cmd2DEmit = ["CreateBeam", "CreateExps", "CreateGyro", "CreatePopu",
                  "CreateFeld", "CreateTher", "CreateSecd", "CreateIoni"]
 
-    cmd2DObserve = ["CreateCntr", "CreateVector",
-                    "CreateAreaRan",  "CreatePhasSpace","CreateObserve"]
+    cmd2DObserve = ["CreateObserve", "CreateCntr",
+                    "CreateAreaRan",  "CreatePhasSpace", "CreateVector"]
 
     cmd2DTimer = ["CreateDefTimer", "CreateCustomTimer"]
 
@@ -53,8 +53,9 @@ def Load(workbench):
     # workbench.appendToolbar('Modeling2DPhy', cmdPhysicSet)
     # workbench.appendToolbar('Modeling2DPro', cmdProjectSet)
     # workbench.appendToolbar('工具', modelBoolList)
+    # "CustomeParameterMainCommand", 
     cmdProjectSettinglst = ["CreateModelInfo", "CreateNetStepSetting", "CreateDataExportSetting",
-                        "CreateRunProcessingOptions","CustomeParameterMainCommand" ]
+                        "CreateRunProcessingOptions", "Std_My_Parameter"]
 
     workbench.appendToolbar('常用体', cmd2DCommon)
     workbench.appendToolbar('复杂体', cmd2DComplex)

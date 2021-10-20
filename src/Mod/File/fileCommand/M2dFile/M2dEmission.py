@@ -97,10 +97,10 @@ def Beam(obj):
         Tools2D.sayz("请选择正确的坐标系")
     # 临时变量varF，便于字符串命令的拼接
     varF = "FUNCTION"+blankSpace+obj.Label
-    temp_m2d_pap += varF + ".BeamJ" + functionParameters + obj.beamCurrentDensity + semicolon + newLine
-    temp_m2d_pap += varF + ".BeamV" + functionParameters + obj.beamVoltageDensity + semicolon + newLine
-    temp_m2d_pap += "EMISSION" + blankSpace + "BEAM" + blankSpace + obj.Label + ".BeamJ" + blankSpace + obj.Label + \
-                    ".BeamV" + newLine + tab + "MODEL" + blankSpace + obj.Label
+    temp_m2d_pap += varF + ".J" + functionParameters + obj.beamCurrentDensity + semicolon + newLine
+    temp_m2d_pap += varF + ".V" + functionParameters + obj.beamVoltageDensity + semicolon + newLine
+    temp_m2d_pap += "EMISSION" + blankSpace + "BEAM" + blankSpace + obj.Label + ".J" + blankSpace + obj.Label + \
+                    ".V" + newLine + tab + "MODEL" + blankSpace + obj.Label
     temp_m2d_pap += EmissionFunction().LaunchOptions(obj)
     return temp_m2d_pap
 
@@ -175,10 +175,12 @@ def Feld(obj):
         functionParameters = "(T,Z,R) = "
     else:
         Tools2D.sayz("请选择正确的坐标系")
+    temp_m2d_pap += "FUNCTION" + blankSpace + obj.Label + ".B" + functionParameters + \
+                     obj.constantB + semicolon + newLine
     temp_m2d_pap += "FUNCTION" + blankSpace + obj.Label + ".PHI" + functionParameters + \
                     obj.workingFunctionPHI + semicolon + newLine
-    temp_m2d_pap += "EMISSION" + blankSpace + "HIGH_FIELD" + blankSpace + obj.constantA + blankSpace + obj.constantB + \
-                    blankSpace + obj.Label + ".PHI" + newLine + tab + "MODEL" + blankSpace + obj.Label
+    temp_m2d_pap += "EMISSION" + blankSpace + "HIGH_FIELD" + blankSpace + obj.constantA + blankSpace + obj.Label + ".B"\
+                    + blankSpace + obj.Label + ".PHI" + newLine + tab + "MODEL" + blankSpace + obj.Label
     temp_m2d_pap += EmissionFunction().LaunchOptions(obj)
     return temp_m2d_pap
 

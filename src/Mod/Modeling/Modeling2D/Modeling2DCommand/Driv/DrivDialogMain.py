@@ -4,7 +4,7 @@ from PySide import QtGui
 import FreeCAD
 
 from Modeling.Modeling2D.Modeling2DCommand.BaseUI import BaseDialog
- 
+from Physics.PhysicsCommand import Simulation
 from Modeling.Common.Tools import DocumentTools,ObjectsTools
 from Modeling.Modeling2D.Tools import Tools2D
 

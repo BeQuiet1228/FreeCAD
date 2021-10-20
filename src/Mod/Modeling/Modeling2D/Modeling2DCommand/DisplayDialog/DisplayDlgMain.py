@@ -4,7 +4,7 @@ import FreeCADGui
 
 from Modeling.Common.Tools import ObjectsTools
 from Modeling.Modeling2D.Tools import Tools2D
-
+from Model3D.Command3D.Model3DCommand.DoubleClickShowDialog import ReShowDialogMain
 
 
 def slotDoubleClicked():
@@ -14,8 +14,9 @@ def slotDoubleClicked():
     """
     if FreeCAD.ActiveDocument.Comment == "2D":
         getSelectionObj2D()
+    # 3D新版本
     else:
-        getSelectionObj3D()
+        ReShowDialogMain.new_getSelectionObj3D()
 
 
 def getSelectionObj2D():

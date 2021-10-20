@@ -69,7 +69,9 @@ def initDocument(doc):
     #添加默认定时器
     #init TimerDef
     from Modeling.Common.CommonCommand.NewDocument import ObjectDict
+    from Physics.PhysicsCommand.DefaultTimerDlgMain import DefaultTimerMain
 
+    ObjectDict["TimerDef1"] = DefaultTimerMain("new","TimerDef1")
     ObjectDict["TimerDef1"].initToDoc()
     #end
     #初始化分组创建
@@ -115,6 +117,13 @@ def initWhenOpenFCStdFile():
         # 如果当前工程没有对应的M2D显示界面则创建一个新的
         Gui.runCommand("CreateM2D")
         Modeling.Modeling2D.Modeling2DCommand.Grid.GridCommand.showGrid()
+    elif FreeCAD.ActiveDocument.Comment == "new3D":
+        sayz("当前工程为3D相关工程，进行文件初始化，添加必要监视器")
+        from Model3D.Tools import InitDoc3D
+        FreeCAD.addDocumentObserver(InitDoc3D.DocumentObservers())
+        # 如果当前工程没有对应的M2D显示界面则创建一个新的
+        Gui.runCommand("CreateM3D_new")
+        # Modeling.Modeling2D.Modeling2DCommand.Grid.GridCommand.showGrid()
     else:
         Gui.doCommand("import Modeling")
         Gui.doCommand("FreeCAD.addDocumentObserver(Modeling.Common.Tools.DocumentTools.DocumentObservers())")
@@ -335,13 +344,15 @@ class DocumentObservers(object):
     # 文档关闭，关闭物理设置与任务控制面板
     def slotDeletedDocument(self,doc):
         #移除所有的监听
-        FreeCAD.removeAllDocumentObserver()
+        # FreeCAD.removeAllDocumentObserver()
         import os
         import shutil
         if (os.path.exists(FreeCAD.clientUserDir())):
             pass
             # shutil.rmtree(FreeCAD.clientUserDir())
-
+        import Physics
+        Physics.PhysicsCommand.BoundPalMain.BoundSettingTreeClose()
+        Physics.PhysicsCommand.ObservePalMain.ObserveSettingTreeClose()
 
         try:
 
@@ -656,24 +667,24 @@ class TransparencyObserver(object):
         # Gui.Selection.addSelection(obj)
         # Gui.SendMsgToActiveView("ViewSelection")
 # 关闭运行结果树的函数，虽然在文档监听中有相关的响应函数，但是，在M3d File Editor中关闭所有文档时，不会关闭该分支树
-# def closeAll():
-#     try:
+def closeAll():
+    try:
         
-#         import Physics
-#         # Physics.PhysicsCommand.TreeStructMain.FigTreeClose()
+        import Physics
+        # Physics.PhysicsCommand.TreeStructMain.FigTreeClose()
 
-#         import Visualization.VisualizationCommand.VisualizationTree
-#         FreeCAD.Console.PrintMessage("VisualizationTree\n")
-#         import Visualization.VisualizationCommand.VisualizationFigTree
-#         FreeCAD.Console.PrintMessage("VisualizationFigTree\n")
-#         Visualization.VisualizationCommand.VisualizationTree.cloePlotTree()
-#         FreeCAD.Console.PrintMessage("cloePlot\n")
-#         Visualization.VisualizationCommand.VisualizationFigTree.showfigTree()
-#         FreeCAD.Console.PrintMessage("show\n")
-#         closeTab()
-#         FreeCAD.Console.PrintMessage("closeTab\n")
-#     except:
-#         FreeCAD.Console.PrintMessage("Wrong in DocumentTool.closeAll\n")
+        import Visualization.VisualizationCommand.VisualizationTree
+        FreeCAD.Console.PrintMessage("VisualizationTree\n")
+        import Visualization.VisualizationCommand.VisualizationFigTree
+        FreeCAD.Console.PrintMessage("VisualizationFigTree\n")
+        Visualization.VisualizationCommand.VisualizationTree.cloePlotTree()
+        FreeCAD.Console.PrintMessage("cloePlot\n")
+        Visualization.VisualizationCommand.VisualizationFigTree.showfigTree()
+        FreeCAD.Console.PrintMessage("show\n")
+        closeTab()
+        FreeCAD.Console.PrintMessage("closeTab\n")
+    except:
+        FreeCAD.Console.PrintMessage("Wrong in DocumentTool.closeAll\n")
 
 # 关闭 tab 事件
 def closeTab():

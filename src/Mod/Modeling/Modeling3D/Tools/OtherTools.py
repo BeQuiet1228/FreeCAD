@@ -6,16 +6,22 @@ def parseExpressionStr(expressionStr):
     '''
     将表达式中带有参数的值转化为具体的值
     '''
-    paramObj=ObjectsTools.getParamObj()
+    # paramObj=ObjectsTools.getParamObj()
+    # propertyList=paramObj.PropertiesList
+    paramObj = FreeCAD.ActiveDocument.Param
     propertyList=paramObj.PropertiesList
-
     propertyList=[i for i in propertyList if i not in ['DynamicData', 'ExpressionEngine', 'Label', 'Proxy', 'Type']]
     resultExpressionStr=expressionStr
     for propertyItem in propertyList:
-        resultExpressionStr=re.sub("\\b"+propertyItem+"\\b",
-                                    UnitTools.getDataOfDefauleUnit(str(getattr(paramObj,propertyItem))),
-                                    resultExpressionStr,
-                                    flags=re.IGNORECASE)
+        sayzError((str(getattr(paramObj,propertyItem)))+"\n")
+        # resultExpressionStr=re.sub("\\b"+propertyItem+"\\b",
+        #                             UnitTools.getDataOfDefauleUnit(str(getattr(paramObj,propertyItem))),
+        #                             resultExpressionStr,
+        #                             flags=re.IGNORECASE)
+        resultExpressionStr = re.sub("\\b" + propertyItem + "\\b",
+                                     str(getattr(paramObj, propertyItem)),
+                                     resultExpressionStr,
+                                     flags=re.IGNORECASE)
     sayzError(resultExpressionStr)
     return resultExpressionStr
 

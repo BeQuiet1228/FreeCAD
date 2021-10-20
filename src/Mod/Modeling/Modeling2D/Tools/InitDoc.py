@@ -1,22 +1,20 @@
 # -*- coding: utf-8 -*-
 import FreeCAD
 import FreeCADGui
-
-from File.FileCommand.M2dFile import M2DContainer
-from Modeling.Common.Tools import ObjectsTools, CoordinateSystemTools
-# from Modeling.Common.Tools.DocumentTools import DocumentObservers, TransparencyObserver, NeedsRecomputeObserver
-
+import os
 # 该文件负责二维建模工作台打开时，整个工程的初始化工作
 from Modeling.Modeling2D.Modeling2DCommand.DataExportSetting import DataExportSettingInstance
 from Modeling.Modeling2D.Modeling2DCommand.ModelInfo import ModelInfoInstance
 from Modeling.Modeling2D.Modeling2DCommand.NetStepSetting import NetStepSettingInstance
 from Modeling.Modeling2D.Modeling2DCommand.RunProcessingOptions import RunProcessingOptionsInstance
 from Modeling.Modeling2D.Modeling2DCommand.TimeDomainSetting import TimeDomainSettingInstance
-# from Modeling.Modeling2D.Modeling2DCommand.FiledSetting import FiledSettingInstance
-# from Modeling.Modeling2D.Modeling2DCommand.DefTimer import DefTimerInstance
 from Modeling.Modeling2D.Tools import Tools2D
 from Modeling.Modeling2D.Tools.Tools2D import ObjectType
 
+__dir__ = os.path.dirname(__file__)
+iconPath = os.path.join( __dir__, 'Resources', 'icons' )
+
+keepToolbar = True
 
 def otherDocInit():
     """
@@ -24,7 +22,7 @@ def otherDocInit():
     """
     doc = FreeCAD.ActiveDocument
     initDocument(doc)
-    initParamObj(doc)
+    # initParamObj(doc)
     FreeCADGui.doCommand("from Modeling.Common.Tools import DocumentTools")
     # FreeCAD.addDocumentObserver(NeedsRecomputeObserver())
 
@@ -194,7 +192,7 @@ def initDocument(doc):
     note: 模仿伏彪的代码编写的
     """
     # 新建文档时，增加一个空的三维对象，之后的布尔求交都在这个对象上进行
-    obj = ObjectsTools.initResultIbj(doc)
+    obj = initResultIbj(doc)
     # 将ResultShape设置为Flat Lines的状态
     FreeCAD.ActiveDocument.getObject("ResultShape").ViewObject.DisplayMode = u"Flat Lines"
 
@@ -205,13 +203,6 @@ def initDocument(doc):
     # 测试
     # FreeCAD.addDocumentObserver(NeedsRecomputeObserver())
 
-    # 添加默认定时器
-    # init TimerDef
-
-
-    # ObjectDict["TimerDef1"] = DefaultTimerMain("new", "TimerDef1")
-    # ObjectDict["TimerDef1"].initToDoc()
-    # end
     # 初始化2D建模平台下的分组
     initGroup()
     addDefaultObjects()
@@ -247,14 +238,15 @@ def addDefaultObjects():
     Modeling2DCommand.Grid.GridCommand.showGrid()
 
 
+class CoordinateType:
+    Rectangular="Rectangular"
+    Polar="Polar"
+    Cylindrical="Cylindrical"
+
+
 # 初始化参量对象，这个不能直接加载initDocument中，因为解析时，也会执行上面的函数，报错
 def initParamObj(doc):
-    if doc.CoordinateSystem == CoordinateSystemTools.CoordinateType.Rectangular:
-        ObjectsTools.setDX1DX2DX3("1mm", "1mm", "1mm")
-    elif doc.CoordinateSystem == CoordinateSystemTools.CoordinateType.Polar:
-        ObjectsTools.setDX1DX2DX3("1mm", "30deg", "1mm")
-    elif doc.CoordinateSystem == CoordinateSystemTools.CoordinateType.Cylindrical:
-        ObjectsTools.setDX1DX2DX3("1mm", "1mm", "30deg")
+    paramObj = DynamicDataCreateObjectCommandClass().Activated()
 
 
 # 事件监听器
@@ -266,52 +258,86 @@ class DocumentObservers(object):
 
     def slotDeletedObject(self, obj):
         Tools2D.sayz("\n" + str(obj.Label) + "被删除")
-        # 经测试，撤销恢复和手动删除都会触发这个函数
-        # 为所有的物体重新编号
-        # if Tools2D.hasThePropertyByObj(obj, "Order"):
-        #     for index in range(obj.Order + 1, ObjectsTools.getNumOfObjects(FreeCAD.ActiveDocument.Name)):
-        #         objs = ObjectsTools.getListOfOrderedObjects(FreeCAD.ActiveDocument.Name)
-        #         objs[index].Order = objs[index].Order - 1
 
     def slotChangedObject(self, obj, prop):
-        # Tools2D.sayz(str(obj.Label) + "的属性发生改变")
-        # Tools2D.sayz(str(prop) + "\tvalue:\t" + str(getattr(obj, prop)) + "\t发生改变")
-        # Type发生改变，只能是新增，不会一直变
         if prop == "Type":
             if obj.getParentGroup() is None:
                 addObjectToGroup(obj)
                 pass
-        # 更新m2d信息
-        # M2DContainer.setM2DToInterface()
 
         import json
         FreeCAD.ActiveDocument.License = json.dumps('True')
-        # 暂时不对order进行处理
-        # 为了解决复制对象时，Order跟随复制
-        # if ObjectsTools.hasThePropertyByObj(obj, "Order") and prop == "Type":
-        #     if ObjectsTools.hasThePropertyByObj(obj, "Order"):
-        #         numOfObjects = len(ObjectsTools.getAllObjectszofThisDoc(FreeCAD.ActiveDocument.Name))
-        #         if obj.Order < numOfObjects:
-        #             # 更新Order
-        #             obj.Order = numOfObjects
-        #             pass
 
     # 文档关闭，关闭物理设置与任务控制面板
     def slotDeletedDocument(self, doc):
         # 移除所有的监听
-        FreeCAD.removeAllDocumentObserver()
+        # FreeCAD.removeAllDocumentObserver()
         import os
         if os.path.exists(FreeCAD.clientUserDir()):
             pass
-        try:
-            import Visualization.VisualizationCommand.VisualizationTree
-            import Visualization.VisualizationCommand.VisualizationFigTree
-            # 清除保存的plot对象
-            Visualization.VisualizationCommand.VisualizationTree.cloePlotTree()
-            Visualization.VisualizationCommand.VisualizationFigTree.showfigTree()
-        except:
-            FreeCAD.Console.PrintError("Wrong in DocumentTool.slotDeletedDocument\n")
+        # try:
+        #     import Visualization.VisualizationCommand.VisualizationTree
+        #     import Visualization.VisualizationCommand.VisualizationFigTree
+        #     # 清除保存的plot对象
+        #     Visualization.VisualizationCommand.VisualizationTree.cloePlotTree()
+        #     Visualization.VisualizationCommand.VisualizationFigTree.showfigTree()
+        # except:
+        #     FreeCAD.Console.PrintError("Wrong in DocumentTool.slotDeletedDocument\n")
 
-    # # 新建Object
-    # def slotCreatedObject(self, obj):
-    #     pass
+
+#初始化结果对象
+def initResultIbj(doc):
+    '''
+    doc:    新建模型所在文档
+    return：obj
+    '''
+    obj = doc.getObject("ResultShape")
+    if not obj:
+        obj = doc.addObject("Part::FeaturePython", "ResultShape")
+    obj.addProperty("Part::PropertyShapeHistory", "History", "", "")
+    obj.ViewObject.Proxy=0
+    # obj.Shape=Part.makeSphere(0.00001)
+    FreeCADGui.getDocument(doc.Name).getObject(obj.Name).DisplayMode=u"Shaded"
+    # Gui.getDocument(doc.Name).getObject(obj.Name).Transparency=100
+    # Gui.getDocument(doc.Name).getObject(obj.Name).Selectable = False
+    # Gui.ActiveDocument.getObject(obj.Name).Visibility = False
+    doc.recompute()
+    obj.setEditorMode('Placement', 2)
+    doc.recompute()
+    return obj
+
+
+class DynamicDataCreateObjectCommandClass(object):
+    """Create Object command"""
+
+    def GetResources(self):
+        return {'Pixmap': os.path.join(iconPath, 'CreateObject.svg'),
+                'MenuText': "&Create Object",
+                'ToolTip': "Create the DynamicData object to contain the custom properties"}
+
+    def Activated(self):
+        doc = FreeCAD.ActiveDocument
+        # doc.openTransaction("CreateObject")
+        a = doc.addObject("App::FeaturePython", "Param")
+        doc.recompute()
+        # Add group
+        group = FreeCAD.ActiveDocument.getObjectsByLabel("全局变量")
+        if len(group):
+            group[0].addObject(a)
+        else:
+            group = FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroup", "GlobalProperty")
+            group.Label = "全局变量"
+            group.addObject(a)
+        # a.addProperty("App::PropertyStringList","DynamicData").DynamicData=self.getHelp()
+        a.addProperty("App::PropertyStringList", "DynamicData").DynamicData
+        a.addProperty("App::PropertyString", "Type", "", "Type of Ojecy").Type = "Variable"
+        a.setEditorMode('Type', 2)
+        a.setEditorMode("DynamicData", 1)
+        doc.recompute()
+        return a
+
+    def IsActive(self):
+        if not FreeCAD.ActiveDocument:
+            return False
+        return True
+

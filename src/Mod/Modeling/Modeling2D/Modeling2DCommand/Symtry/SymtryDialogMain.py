@@ -3,8 +3,8 @@ import SymtryDialog
 from PySide import QtGui
 import FreeCAD
 import FreeCADGui
- 
-from Modeling.Modeling2D.Tools.Tools2D import sayz
+from Physics.PhysicsCommand import Simulation
+from Physics.PhysicsCommand.DlgData import sayz
 from Modeling.Common.Tools import DocumentTools,ObjectsTools
 from Physics.PhysicsTools import CompleterTools
 from Modeling.Modeling2D.Tools import Tools2D
@@ -81,7 +81,7 @@ class ShowDialog(QtGui.QDialog):
             self.flagUpdateItemName=False
             self.ComboBox_Shadow_clicked()
             # # 适配分辨率
-            #  
+            # from Physics.PhysicsCommand import AdaptiveDPIUtil
             # new_x, new_y = AdaptiveDPIUtil.get_new_dpi(self.width(), self.height())
             # self.resize(new_x, new_y)
 

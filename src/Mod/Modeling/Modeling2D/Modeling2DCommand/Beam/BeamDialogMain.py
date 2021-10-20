@@ -2,12 +2,11 @@
 import BeamDialog
 from PySide import QtGui
 import FreeCAD
- 
-from Modeling.Modeling2D.Tools.Tools2D import sayz
+from Physics.PhysicsCommand import Simulation
+from Physics.PhysicsCommand.DlgData import sayz
 from Modeling.Common.Tools import DocumentTools,ObjectsTools
 from Physics.PhysicsTools import CompleterTools
 from Modeling.Modeling2D.Tools import Tools2D
-from Modeling.Modeling2D.Tools.Tools2D import sayz
 import FreeCADGui
 
 

@@ -13,7 +13,8 @@ comma = ","
 def setM2DToInterface():
     m2d = M2D()
     m2d_text = m2d.getM2DText()
-    FileView.FileView().updateText(m2d_text)
+    # FileView.FileView().updateText(m2d_text)
+    FreeCADGui.displayText(m2d_text)
     return m2d_text
 
 
@@ -30,12 +31,13 @@ class CreateM2DCommand:
 
     def Activated(self):
         # 如果当前窗口没有m2d对应的窗口，则创建一个新的窗口
-        fileView = FileView.FileView()
-        if fileView.getThisSubWindow() is None:
-            fileView.showThisSubWindow()
+        # fileView = FileView.FileView()
+        # if fileView.getThisSubWindow() is None:
+        #     fileView.showThisSubWindow()
         m2d = M2D()
         m2d_text = m2d.getM2DText()
-        FileView.FileView().updateText(m2d_text)
+        # FileView.FileView().updateText(m2d_text)
+        FreeCADGui.displayText(m2d_text)
         pass
 
     def GetResources(self):

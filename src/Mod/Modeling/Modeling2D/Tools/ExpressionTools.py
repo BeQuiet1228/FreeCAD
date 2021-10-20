@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import FreeCAD
-import FreeCADGui
 import re
 
 

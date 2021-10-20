@@ -803,16 +803,23 @@ def Observe(obj):
 
     # 是否进行傅里叶变换
     if obj.isFFT:
+        temp_frequencyRange1 = obj.frequencyRange1
+        temp_frequencyRange2 = obj.frequencyRange2
+        if obj.frequencyRange1.isdigit():
+            temp_frequencyRange1 += "GHZ"
+        if obj.frequencyRange2.isdigit():
+            temp_frequencyRange2 += "GHZ"
+
         if obj.isRealAnalysis:
             FFT_temp = blankSpace + "FFT" + blankSpace + "MAGNITUDE"
             if obj.isFrequencyRange:
                 FFT_temp = blankSpace + "FFT" + blankSpace + "MAGNITUDE" + blankSpace + "WINDOW FREQUENCY" + blankSpace + \
-                           obj.frequencyRange1 + "GHZ" + blankSpace + obj.frequencyRange2 + "GHZ"
+                           temp_frequencyRange1 + blankSpace + temp_frequencyRange2
         if obj.isComplexAnalysis:
             FFT_temp = blankSpace + "FFT" + blankSpace + "COMPLEX"
             if obj.isFrequencyRange:
                 FFT_temp = blankSpace + "FFT" + blankSpace + "COMPLEX" + blankSpace + "WINDOW FREQUENCY" + blankSpace + \
-                           obj.frequencyRange1 + "GHZ" + blankSpace + obj.frequencyRange2 + "GHZ"
+                           temp_frequencyRange1 + blankSpace + temp_frequencyRange2
         temp_m2d_ap += '%s%s%s%s%s%s%s%s%s%s' % (Field_temp, FieldIntegral_temp, FieldPower_temp, FieldEnergy_temp,
                                                  ParticleStatistics_temp, CollectedParticles_temp, EmittedParticle_temp,
                                                  AnnihilatingParticle_temp, Alias_temp, FFT_temp) + semicolon + newLine
