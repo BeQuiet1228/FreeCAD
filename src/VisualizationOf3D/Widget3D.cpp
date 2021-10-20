@@ -81,11 +81,11 @@ void Widget3D::resizeEvent(QResizeEvent*)
 	QSize subsize = QSize(this->size().width()/15,this->size().height());
 }
 /**
-* @brief Widget3D::drawImage 设定相关属性
+* @brief Widget3D::setRenderProper 设置渲染器的相关属性
 * @return void
 */
 
-void Widget3D::drawImage()
+void Widget3D::setRenderProper()
 {
 	render->SetBackground(0.529, 0.8078, 0.92157);
 	render->SetBackground2(1.0, 1.0, 1.0);
@@ -100,9 +100,9 @@ void Widget3D::initUi()
 	mVtkWidget->setAutomaticImageCacheEnabled(true);
 }
 /**
-* @brief Widget3D::setFunction设置回调函数
-* @param void * lp
-* @param fLp flp
+* @brief Widget3D::setFunction 设置回调函数,在Widget3D析构时被调用，
+* @param void * lp 参数
+* @param fLp flp  函数指针
 * @return void
 */
 

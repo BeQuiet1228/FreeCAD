@@ -930,6 +930,6 @@ QWidget* DataProcess::getWidget()
 		widget3D->transfromPolyData(iter->first,iter->second);
 	}
 	//widget3D->update();
-	widget3D->drawImage();
+	widget3D->setRenderProper();
 	return widget3D;
 }

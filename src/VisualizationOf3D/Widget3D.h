@@ -23,7 +23,7 @@ public :
 	explicit Widget3D(QWidget* parent=nullptr);
 	~Widget3D();
 	void transfromPolyData(__int64,vtkPolyData*);
-	void drawImage();
+	void setRenderProper();
 	void setFunction(void*lp, fLp);
 	void clearItem(TreeItem* lp);
 protected:
