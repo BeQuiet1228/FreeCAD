@@ -130,7 +130,7 @@ public:
 	DataProcess();
 	~DataProcess();
 	bool initData(Hdf5Data& data);
-	std::shared_ptr<QWidget> getWidget();
+	QWidget* getWidget();
 protected:
 	bool calcCartesian(Hdf5Data& data);
 	bool calcPolar(Hdf5Data& data);

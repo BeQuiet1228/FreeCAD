@@ -1,0 +1,5 @@
+<RCC>
+	<qresource prefix="/TreeIcon">
+	<file>model.svg</file>
+	</qresource>
+</RCC>

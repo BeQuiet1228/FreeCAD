@@ -14,23 +14,35 @@ include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}
 )
 INCLUDE(${VTK_USE_FILE})
-
 add_definitions(-D_VISUALZATION3D_)
-SET(QRC_SRC "")
+SET(QRC_SRC 
+resources/rcs.qrc
+)
 SET(UI_SRC "")
 SET(MOC_SRC 
 Widget3D.h
+Utility.h
 )
-
-SET(DATAPROCESS_SRC
+SET(Widget3DFactory_Srcs
 Widget3DFactory.h
 Widget3DFactory.cpp
+)
+SET(DataProcess_Srcs
 DataProcess.h
 DataProcess.cpp
+)
+SET(Widget3D_Srcs
 Widget3D.h
 Widget3D.cpp
 )
-
+SET(Tree3D_Srcs
+TreeItem3D.h
+TreeItem3D.cpp
+)
+SET(UTILITY_Srcs
+Utility.h
+Utility.cpp
+)
 #处理ui和qrc文件
 if(BUILD_QT5)
 	QT5_ADD_RESOURCES(Gui_QRC_SRCs ${QRC_SRC})
@@ -41,7 +53,12 @@ else()
 endif()
 SET(SRC
 ${UI_SRC}
-${DATAPROCESS_SRC}
+${Widget3DFactory_Srcs}
+${DataProcess_Srcs}
+${Widget3D_Srcs}
+${UTILITY_Srcs}
+${Gui_QRC_SRCs}
+${Tree3D_Srcs}
 exPortConfig.hpp
 main.cpp
 
@@ -97,3 +114,5 @@ endif()
 fc_wrap_cpp(MY_MOC_SRCS ${MOC_SRC})
 target_link_libraries(VisualizationOf3D ${NEED_LIBRARY} ${VTK_LIBRARIES})
 source_group("dataprocess" FILES ${DATAPROCESS_SRC})
+source_group("qrcFile" FILES ${QRC_SRC})
+source_group("treeitem3d" FILES ${Tree3D_Srcs})

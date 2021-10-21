@@ -15,12 +15,9 @@ namespace Gui {
 	public:
 		PlanMDIView(DocumentPic *_doc,QWidget* parent=0);
 		~PlanMDIView();
-		void setWidget(std::shared_ptr<QWidget>&);
-	protected:
-		void resizeEvent(QResizeEvent*);
+		void setWidget(QWidget*);
 	private:
 		__int64 lastptr;
-		std::shared_ptr<QWidget> mwidget3D;
 	};
 }
 #endif

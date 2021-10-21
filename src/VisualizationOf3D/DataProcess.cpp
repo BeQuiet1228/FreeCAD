@@ -181,19 +181,11 @@ bool DataProcess::calcCylinder(Hdf5Data& data) {
 	return true;
 }
 /****************************************************************************/
-/**
-* @brief PlanData::PlanData 构造函数
-* @return 
-*/
 PlanData::PlanData() {
 	cylinderS.clear();
 	castersianS.clear();
 	Polys.clear();
 }
-/**
-* @brief PlanData::~PlanData 析构函数
-* @return 
-*/
 PlanData::~PlanData(){
 	cylinderS.clear();
 	castersianS.clear();
@@ -929,15 +921,15 @@ void processCirCutSingle(PlanData::PlanInfo& info,
 * @return std::shared_ptr<QT_NAMESPACE::QWidget>
 */
 
-std::shared_ptr<QWidget> DataProcess::getWidget()
+QWidget* DataProcess::getWidget()
 {
-	std::shared_ptr<Widget3D> widget3D(new Widget3D());
+	Widget3D* widget3D = new Widget3D();
 	auto polydatas = planePtr->getPro();
 	for (auto iter = polydatas.begin(); iter != polydatas.end(); iter++)
 	{
 		widget3D->transfromPolyData(iter->first,iter->second);
 	}
 	//widget3D->update();
-	widget3D->drawImage();
+	widget3D->setRenderProper();
 	return widget3D;
 }

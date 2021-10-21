@@ -11,14 +11,17 @@
 #include"qcheckbox.h"
 #include"qgridlayout.h"
 #include"qpalette.h"
+#include "QStandardItem"
 #include"qdebug.h"
+#include "TreeItem3D.h"
+QString Treeicon[] = {":/TreeIcon/model.svg"};
 /**
 * @brief Widget3D::Widget3D
 * @param QWidget * parent
 * @return 
 */
 
-Widget3D::Widget3D(QWidget* parent) :QWidget(parent) {
+Widget3D::Widget3D(QWidget* parent) :BaseWidget(parent) {
 	initUi();
 }
 /**
@@ -28,9 +31,18 @@ Widget3D::Widget3D(QWidget* parent) :QWidget(parent) {
 
 Widget3D::~Widget3D(){
 	mflp(dataMPtr, false);
+	if (items.size() <= 0)
+		return;
+	auto iter=items.begin();
+	auto parentItem=(*iter)->parent();
+	if (nullptr != parentItem && parentItem->hasChildren()>0)
+	{
+		parentItem->removeRows(0, parentItem->rowCount());
+	}
+	items.clear();
 }
 /**
-* @brief Widget3D::transfromPolyData
+* @brief Widget3D::transfromPolyData 传输
 * @param __int64 porPer
 * @param vtkPolyData * polyData
 * @return void
@@ -48,15 +60,14 @@ void Widget3D::transfromPolyData(__int64 porPer,vtkPolyData* polyData)
 	vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
 	actor->SetMapper(mapper);
 	actor->GetProperty()->SetColor(0.5,0.5,0.5);
-	actorS[porPer] = actor;
 	render->AddActor(actor);
-	QCheckBox* checkBox = new QCheckBox(mVtkWidget);
-	checkBox->setText(QString("%1").arg(porPer));
-	checkBox->setCheckState(Qt::CheckState::Checked);
-	//checkBox->setMinimumSize(32, 32);
-	checks[porPer] = checkBox;
-	layout->addWidget(checkBox);
-	connect(checkBox,SIGNAL(stateChanged(int)),this, SLOT(slotStateChanged(int)));
+	//创建
+	TreeItem3D* treeItem = new TreeItem3D(QIcon(Treeicon[0]),QString("%1").arg(porPer));
+	treeItem->setParent(this);
+	treeItem->setCheckable(true);
+	treeItem->setCheckState(Qt::Checked);
+	items.push_back(treeItem);
+	actorS[treeItem] = actor;
 }
 /**
 * @brief Widget3D::resizeEvent
@@ -68,13 +79,13 @@ void Widget3D::resizeEvent(QResizeEvent*)
 {
 	mVtkWidget->resize(this->size());
 	QSize subsize = QSize(this->size().width()/15,this->size().height());
-	subwidget->resize(subsize);
-	subwidget->move(QPoint(0, 0));
 }
-void Widget3D::Updata()
-{
-}
-void Widget3D::drawImage()
+/**
+* @brief Widget3D::setRenderProper 设置渲染器的相关属性
+* @return void
+*/
+
+void Widget3D::setRenderProper()
 {
 	render->SetBackground(0.529, 0.8078, 0.92157);
 	render->SetBackground2(1.0, 1.0, 1.0);
@@ -87,47 +98,60 @@ void Widget3D::initUi()
 	mVtkWidget = new QVTKWidget(this);
 	mVtkWidget->GetRenderWindow()->AddRenderer(render);
 	mVtkWidget->setAutomaticImageCacheEnabled(true);
-	layout = new QGridLayout();
-	subwidget = new QWidget(mVtkWidget);
-	subwidget->setLayout(layout);
-	QPalette pal = subwidget->palette();
-	//pal.setColor(QPalette::Background,QColor(0xff,0xff,0xff,0x00));
-	//subwidget->setPalette(pal);
-	subwidget->setAutoFillBackground(true);
-	subwidget->setObjectName("SubWidget");
-	subwidget->setStyleSheet("#SubWidget{background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0 white,stop:1 skyblue);}");
 }
-void Widget3D::slotStateChanged(int state)
-{
-	for (auto iter = checks.begin(); iter != checks.end(); iter++)
-	{
-		if (sender() == iter->second)
-		{
-			auto itactor=actorS.find(iter->first);
-			if (itactor != actorS.end())
-			{
-				switch (state)
-				{
-				case 0:
-				{
-					itactor->second->GetProperty()->SetOpacity(0.0);
-				}
-				break;
-				case 2:
-				{
-					itactor->second->GetProperty()->SetOpacity(1.0);
-				}
-				break;
-				}
-				render->Render();
-				mVtkWidget->GetInteractor()->Render();
-			}
-		}
-	}
-}
+/**
+* @brief Widget3D::setFunction 设置回调函数,在Widget3D析构时被调用，
+* @param void * lp 参数
+* @param fLp flp  函数指针
+* @return void
+*/
+
 void Widget3D::setFunction(void* lp, fLp flp)
 {
 	mflp = flp;
 	dataMPtr = lp;
+}
+/**
+* @brief Widget3D::slotitemStateChange 触发事件
+* @param QStandardItem * mItem
+* @return void
+*/
+
+void Widget3D::slotitemStateChange(QStandardItem* mItem)
+{
+	BaseWidget::slotitemStateChange(mItem);
+	auto iter = actorS.find(mItem);
+	if (iter != actorS.end())
+	{
+		if (iter->first->checkState() == Qt::Checked)
+		{
+			iter->second->GetProperty()->SetOpacity(1.0);
+		}
+		else
+		{
+			iter->second->GetProperty()->SetOpacity(0.0);
+		}
+		render->Render();
+		mVtkWidget->GetInteractor()->Render();
+	}
+}
+/**
+* @brief Widget3D::clearItem 清除控件
+* @param TreeItem * lp
+* @return void
+*/
+
+void Widget3D::clearItem(TreeItem* lp)
+{
+	if (nullptr == lp)
+		return;
+	for (auto iter = items.begin(); iter != items.end(); iter++)
+	{
+		if (lp == *iter)
+		{
+			items.erase(iter);
+			break;
+		}
+	}
 }
 #include"moc_Widget3D.cpp"

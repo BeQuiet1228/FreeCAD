@@ -12,7 +12,7 @@ Widget3DFactory::~Widget3DFactory() {
 * @param Hdf5Data & data h5Êý¾Ý
 * @return std::shared_ptr<QT_NAMESPACE::QWidget>
 */
-std::shared_ptr<QWidget> Widget3DFactory::creat3DWidget(Hdf5Data& data)
+QWidget* Widget3DFactory::creat3DWidget(Hdf5Data& data)
 {
 	if (nullptr != structWidget)
 		return structWidget;

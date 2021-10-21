@@ -10,9 +10,9 @@ public:
 	Widget3DFactory();
 	~Widget3DFactory();
 public:
-	std::shared_ptr<QWidget> creat3DWidget(Hdf5Data& data);
+	QWidget* creat3DWidget(Hdf5Data& data);
 protected:
 private:
-	std::shared_ptr<QWidget> structWidget;
+	QWidget* structWidget;
 };
 #endif

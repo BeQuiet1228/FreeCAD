@@ -6,36 +6,35 @@
 //include"vtk-7.0/vtkActor.h"
 #include"vtk-7.0/vtkSmartPointer.h"
 #include "exPortConfig.hpp"
+#include "Utility.h"
 class vtkActor;
 class vtkPolyData;
 class vtkRenderer;
 class QVTKWidget;
 class QCheckBox;
 class QGridLayout;
+class QStandardItem;
 //定义函数指针
 typedef void(*fLp)(void*, bool);
-class VISUALZATION3D_EXPORT Widget3D :public QWidget
+class VISUALZATION3D_EXPORT Widget3D :public BaseWidget
 {
 	Q_OBJECT
 public :
 	explicit Widget3D(QWidget* parent=nullptr);
 	~Widget3D();
 	void transfromPolyData(__int64,vtkPolyData*);
-	void Updata();
-	void drawImage();
+	void setRenderProper();
 	void setFunction(void*lp, fLp);
+	void clearItem(TreeItem* lp);
 protected:
 	void initUi();
 	virtual void resizeEvent(QResizeEvent*);
-protected slots:
-	void slotStateChanged(int);
+public slots:
+	void slotitemStateChange(QStandardItem*);
 private:
-	std::map<__int64, vtkSmartPointer<vtkActor>>actorS;
+	std::map<QStandardItem*, vtkSmartPointer<vtkActor>>actorS;
 	vtkSmartPointer<vtkRenderer> render;
-	std::map<__int64, QCheckBox*> checks;
 	QVTKWidget* mVtkWidget;
-	QWidget* subwidget;
-	QGridLayout* layout;
 	fLp mflp;
 	void* dataMPtr;
 };
