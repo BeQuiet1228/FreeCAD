@@ -216,19 +216,6 @@ SET(Document_HPP_SRCS
     MaterialObject.h
     MergeDocuments.h
     TextDocument.h
-	ChipicAgent.hpp
-	Config.hpp
-	Controller.hpp
-	ControllerManager.hpp
-	Distributer.hpp
-	IRuntimeModule.hpp
-	ISessionCreateListener.hpp
-	NetMsg.hpp
-	NetServer.hpp
-	Session.hpp
-	Singleton.hpp
-	SimpleClientController.hpp
-	UserJson.hpp
 	DocumentDataManager.h
 	
 )
@@ -289,7 +276,6 @@ SET(FreeCADApp_CPP_SRCS
     Enumeration.cpp
     Material.cpp
     MaterialPyImp.cpp
-	hdf5io.cpp
 )
 
 SET(FreeCADApp_HPP_SRCS
@@ -301,7 +287,6 @@ SET(FreeCADApp_HPP_SRCS
     ComplexGeoData.h
     Enumeration.h
     Material.h
-	hdf5io.h
 )
 
 SET(FreeCADApp_SRCS

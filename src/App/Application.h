@@ -34,9 +34,6 @@
 #include <Base/Parameter.h>
 #include <Base/Observer.h>
 
-#include "NetServer.hpp"
-#include "SimpleClientController.hpp"
-
 namespace Base 
 {
     class ConsoleObserverStd; 
@@ -243,15 +240,6 @@ public:
     std::map<std::string, std::string> getExportFilters(void) const;
     //@}
 	
-	PicNet::NetServer* m_netServer;
-	PicNet::SimpleClientController * m_clientController;
-
-	std::string m_serverIP;
-
-	std::string m_workpath;
-
-	int m_userId=-1;
-	std::string m_password="";
     /** @name Init, Destruct an Access methods */
     //@{
     static void init(int argc, char ** argv);
@@ -363,84 +351,11 @@ private:
     static PyObject* sAddDocObserver    (PyObject *self,PyObject *args,PyObject *kwd);
     static PyObject* sRemoveDocObserver (PyObject *self,PyObject *args,PyObject *kwd);
     static PyObject* sTranslateUnit     (PyObject *self,PyObject *args,PyObject *kwd);
-	//fubiao
-	static PyObject* sRemoveAllDocObserver(PyObject *self, PyObject *args, PyObject *kwd);
 
     static PyObject *sSetLogLevel       (PyObject *self,PyObject *args,PyObject *kwd);
     static PyObject *sGetLogLevel       (PyObject *self,PyObject *args,PyObject *kwd);
 
-	//客户端连接
-	static PyObject* sClientConnect(PyObject *self, PyObject *args, PyObject *kwd);
 
-	//返回链接是否可用
-	static PyObject* sClientIsEnable(PyObject *self, PyObject *args, PyObject *kwd);
-
-	//返回当前的工作目录
-	static PyObject* sClientWorkpath(PyObject *self, PyObject *args, PyObject *kwd);
-
-	//返回当前的用户目录
-	static PyObject* sClientUserDir(PyObject *self, PyObject *args, PyObject *kwd);
-
-	//返回链接状态
-	static PyObject* sClientGetConnectState(PyObject *self, PyObject *args, PyObject *kwd);
-
-	//得到客户端状态
-	static PyObject* sClientGetState(PyObject *self, PyObject *args, PyObject *kwd);
-
-	//发送并且运行程序
-	static PyObject* sClientSendFile(PyObject *self, PyObject *args, PyObject *kwd);
-
-	//得到远程文件
-	static PyObject* sClientShowRemoteFile(PyObject *self, PyObject *args, PyObject *kwd);
-
-	//请求接收某个文件
-	static PyObject* sClientRequestReceiveFile(PyObject *self, PyObject *args, PyObject *kwd);
-
-	//发送一个Id消息
-	static PyObject* sClientSendIdMsg(PyObject *self, PyObject *args, PyObject *kwd);
-
-	//发送一个登陆消息 @fubiao
-	static PyObject* sClientLoginMsg(PyObject *self, PyObject *args, PyObject *kwd);
-
-	//发送一个注册消息
-	static PyObject* sClientRegisterMsg(PyObject *self, PyObject *args, PyObject *kwd);
-	//发送一个Win消息
-	static PyObject* sClientSendWinMsg(PyObject *self, PyObject *args, PyObject *kwd);
-
-	//取出一个消息
-	static PyObject* sClientGetMsg(PyObject *self, PyObject *args, PyObject *kwd);
-	
-	//运行并行计算的文件
-	static PyObject* sClientRunFileUseCount(PyObject *self, PyObject *args, PyObject *kwd);
-
-	//获取当前上传/下载百分比
-	static PyObject* sClientGetTransmissionRate(PyObject *self, PyObject *args, PyObject *kwd);
-
-	
-	//关闭客户端链接
-	static PyObject* sClientClose(PyObject *self, PyObject *args, PyObject *kwd);
-
-	//获取服务器Ip
-	static PyObject* sClientGetServerIP(PyObject *self, PyObject *args, PyObject *kwd);
-	//获取服务器Ip
-	static PyObject* sClientSetServerIP(PyObject *self, PyObject *args, PyObject *kwd);
-	//获取工作路径
-	static PyObject* sClientGetWorkpath(PyObject *self, PyObject *args, PyObject *kwd);
-	//设置工作路径
-	static PyObject* sClientSetWorkpath(PyObject *self, PyObject *args, PyObject *kwd);
-	//设置M3d路径
-	static PyObject* sSetM3dpath(PyObject *self, PyObject *args, PyObject *kwd);
-
-
-	//
-	static PyObject* sClientSetUserId(PyObject *self, PyObject *args, PyObject *kwd);
-	static PyObject* sClientGetUserId(PyObject *self, PyObject *args, PyObject *kwd);
-	static PyObject* sClientSetPassword(PyObject *self, PyObject *args, PyObject *kwd);
-	static PyObject* sClientGetPassword(PyObject *self, PyObject *args, PyObject *kwd);
-	//获取绘图名称
-	static PyObject* sGetFigNameInfoListFromH5File(PyObject *self, PyObject *args, PyObject *kwd);
-	//获取绘图数据
-	static PyObject* sGetFigDataFromH5File(PyObject *self, PyObject *args, PyObject *kwd);
     static PyMethodDef Methods[]; 
 
     friend class ApplicationObserver;
