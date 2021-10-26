@@ -48,6 +48,13 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	this->ui->pushButton_7->hide();
 	this->ui->textEdit->hide();
 
+
+	//设置F输入规则
+	{
+		QRegExp rx("-?[0-9e]{0,19}$");
+		QRegExpValidator* validator = new QRegExpValidator(rx, this);
+		ui->lineEditMaxF->setValidator(validator);
+	}
 }
 
 SmartContorlUI::~SmartContorlUI()
@@ -420,8 +427,8 @@ void SmartContorlUI::saveParameterXml()
 	configNode.append_attribute("RunCount") = ui->spinBoxCount->value();
 	configNode.append_attribute("RunMaxCount") = ui->spinBoxRunCount->value();
 	configNode.append_attribute("ObserveName") = ui->lineEditName->text().toStdString().c_str();
-	configNode.append_attribute("MaxTime") = ui->lineEditMaxTime->text().toInt();
-	configNode.append_attribute("MiniTime") = ui->lineEditMiniTime->text().toInt();
+	configNode.append_attribute("MaxTime") = ui->lineEditMaxTime->text().toDouble();
+	configNode.append_attribute("MiniTime") = ui->lineEditMiniTime->text().toDouble();
 	configNode.append_attribute("FModIndex") = ui->comboBoxF->currentIndex();
 	configNode.append_attribute("F") = ui->lineEditMaxF->text().toLongLong();
 	configNode.append_attribute("ExcpectMod") = ui->comboBoxExcpcet->currentIndex();
@@ -468,8 +475,8 @@ void SmartContorlUI::loadParameterXml()
 	ui->spinBoxRunCount->setValue(configNode.attribute("RunMaxCount").as_int());
 	ui->spinBoxCount->setValue(configNode.attribute("RunCount").as_int());
 	ui->lineEditName->setText(QString::fromStdString(configNode.attribute("ObserveName").as_string()));
-	ui->lineEditMaxTime->setText(QString::number(configNode.attribute("MaxTime").as_int()));
-	ui->lineEditMiniTime->setText(QString::number(configNode.attribute("MiniTime").as_int()));
+	ui->lineEditMaxTime->setText(QString::number(configNode.attribute("MaxTime").as_double()));
+	ui->lineEditMiniTime->setText(QString::number(configNode.attribute("MiniTime").as_double()));
 	ui->comboBoxF->setCurrentIndex(configNode.attribute("FModIndex").as_int());
 	ui->lineEditMaxF->setText(QString::number(configNode.attribute("F").as_llong()));
 	ui->comboBoxExcpcet->setCurrentIndex(configNode.attribute("ExcpectMod").as_int());

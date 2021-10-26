@@ -76,7 +76,7 @@ int RunChipic3dListener::GetMainThreadIdFromName(LPCSTR szName, std::vector<DWOR
 */
 void RunChipic3dListener::getMainThreadId(DWORD &_threadId) {
 	std::vector<DWORD>threads;
-	//std::cout << "Wait For Fortran Program Chipic3d.exe ..." << std::endl;
+	//std::cerr << "Wait For Fortran Program Chipic3d.exe ..." << std::endl;
 	_threadId = 0;
 	while (_threadId == 0)
 	{
@@ -385,7 +385,13 @@ void RunChipic3dListener::sendMessage(const Message& msg)
 */
 void RunChipic3dListener::init(){
 	DWORD id;
+#ifdef MY_LOG
+	std::cerr << "parallel run start find main thread ID!" << std::endl;
+#endif // MY_LOG
 	getMainThreadId(id);
+#ifdef MY_LOG
+	std::cerr << "find main thread ID finished,ID: " << id << std::endl;
+#endif
 	setThreadId(id);
 }
 /**
@@ -413,7 +419,7 @@ bool RunChipic3dListener::receiveMessage(Message &msg,const int &ms){
 	else
 	{
 //#ifdef MY_DEBUG
-//		std::cout << "接收消息失败" << std::endl;
+//		std::cerr << "接收消息失败" << std::endl;
 //#endif
 		return false;
     }

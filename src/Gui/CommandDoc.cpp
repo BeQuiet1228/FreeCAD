@@ -2199,7 +2199,7 @@ StdCmdSmartCalc::StdCmdSmartCalc()
 {
     // setting the
     sGroup = QT_TR_NOOP("File");
-    sMenuText = QT_TR_NOOP("SmartContorl");
+    sMenuText = QT_TR_NOOP("SmartCalc");
     sToolTipText = QT_TR_NOOP("SmartContorl");
     sWhatsThis = "Std_Paralle_Run";
     sStatusTip = QT_TR_NOOP("SmartContorl");
