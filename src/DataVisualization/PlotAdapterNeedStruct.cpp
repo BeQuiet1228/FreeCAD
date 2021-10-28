@@ -70,5 +70,4 @@ void PlotAdapterNeedStruct::reRender(const QSize& size)
 
 	renderManager->start();
 }
-
 #include "moc_PlotAdapterNeedStruct.cpp"

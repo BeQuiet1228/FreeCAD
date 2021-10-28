@@ -34,7 +34,7 @@ public:
 	//添加渲染器
 	void addRenderer(const std::list<std::shared_ptr<Renderer>>& listRender);
 	//以默认大小渲染
-	void autoMaxRender();
+	virtual void autoMaxRender();
 	//刷新网格线
 	void updateGridLine();
 	//取点渲染

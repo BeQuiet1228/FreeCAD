@@ -181,73 +181,72 @@ bool StructRender::setDefaultRang(){
 	auto d = std::dynamic_pointer_cast<StructData>(data);
 	if (!d)
 		return false;
-	if (d->getIsface())
-	{
-		_3DPointf startPoint = d->getStartPoint();
-		_3DPointf endPoint = d->getEndPoint();
-		DirectionType _type = d->GetDirectionType();
-		Data::Rang xr, yr;
-		switch (_type)
-		{
-		case X_Y:
-		{
-			xr.min = startPoint._1st;
-			xr.max = endPoint._1st;
-			yr.min = startPoint._2rd;
-			yr.max = endPoint._2rd;
-		}
-			break;
-		case X_Z:
-		{
-			//Data::Rang xr, yr;
-			xr.min = startPoint._1st;
-			xr.max = endPoint._1st;
-			yr.min = startPoint._3th;
-			yr.max = endPoint._3th;
-		}
-			break;
-		case Y_Z:
-		{
-			xr.min = startPoint._2rd;
-			xr.max = endPoint._2rd;
-			yr.min = startPoint._3th;
-			yr.max = endPoint._3th;
-		}
-			break;
-		case R_Z:
-		{
-			switch (d->GetC_TYPE())
-			{
-			case C_TYPE::POLAR:
-			{
-				xr.min = startPoint._3th;
-				xr.max = endPoint._3th;
-				yr.min = startPoint._1st;
-				yr.max = endPoint._1st;
-			}
-				break;
-			case C_TYPE::CYLINDRICAL:
-			{
-				xr.min = startPoint._1st;
-				xr.max = endPoint._1st;
-				yr.min = startPoint._2rd;
-				yr.max = endPoint._2rd;
-			}
-				break;
-			}
-		}
-			break;
-		case R_THETA:
-		{
-			xr = d->getXRang();
-			yr = d->getYRang();
-		}
-			break;
-		}
-
-		d->setXRang(xr);
-		d->setYRang(yr);
-	}
+	//if (d->getIsface())
+	//{
+	//	_3DPointf startPoint = d->getStartPoint();
+	//	_3DPointf endPoint = d->getEndPoint();
+	//	DirectionType _type = d->GetDirectionType();
+	//	Data::Rang xr, yr;
+	//	switch (_type)
+	//	{
+	//	case X_Y:
+	//	{
+	//		xr.min = startPoint._1st;
+	//		xr.max = endPoint._1st;
+	//		yr.min = startPoint._2rd;
+	//		yr.max = endPoint._2rd;
+	//	}
+	//		break;
+	//	case X_Z:
+	//	{
+	//		//Data::Rang xr, yr;
+	//		xr.min = startPoint._1st;
+	//		xr.max = endPoint._1st;
+	//		yr.min = startPoint._3th;
+	//		yr.max = endPoint._3th;
+	//	}
+	//		break;
+	//	case Y_Z:
+	//	{
+	//		xr.min = startPoint._2rd;
+	//		xr.max = endPoint._2rd;
+	//		yr.min = startPoint._3th;
+	//		yr.max = endPoint._3th;
+	//	}
+	//		break;
+	//	case R_Z:
+	//	{
+	//		switch (d->GetC_TYPE())
+	//		{
+	//		case C_TYPE::POLAR:
+	//		{
+	//			xr.min = startPoint._3th;
+	//			xr.max = endPoint._3th;
+	//			yr.min = startPoint._1st;
+	//			yr.max = endPoint._1st;
+	//		}
+	//			break;
+	//		case C_TYPE::CYLINDRICAL:
+	//		{
+	//			xr.min = startPoint._1st;
+	//			xr.max = endPoint._1st;
+	//			yr.min = startPoint._2rd;
+	//			yr.max = endPoint._2rd;
+	//		}
+	//			break;
+	//		}
+	//	}
+	//		break;
+	//	case R_THETA:
+	//	{
+	//		xr = d->getXRang();
+	//		yr = d->getYRang();
+	//	}
+	//		break;
+	//	}
+	//	d->setXRang(xr);
+	//	d->setYRang(yr);
+	//}
 	setXRang(d->getXRang());
 	setYRang(d->getYRang());
 	return true;

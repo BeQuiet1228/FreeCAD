@@ -212,4 +212,16 @@ void ContourPlotAdapter::Getlevels(std::list<double>& levels)
 	contourRd->setContourLevels(listlevel);
 	emit updatePlot();
 }
+void ContourPlotAdapter::autoMaxRender()
+{
+	if (!mainRenderer)
+	{
+		return;
+	}
+	//先设置主渲染器的默认大小
+	mainRenderer->setDefaultRang();
+	auto xr = mainRenderer->getXRang();
+	auto yr = mainRenderer->getYRang();
+	setRenderRange(xr.min, xr.max, yr.min, yr.max);
+}
 #include "moc_ContourPlotAdapter.cpp"

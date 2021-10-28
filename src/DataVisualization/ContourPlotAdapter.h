@@ -36,4 +36,5 @@ public:
 
 	std::string getXTag() override;
 	std::string getYTag() override;
+	virtual void autoMaxRender();
 };
