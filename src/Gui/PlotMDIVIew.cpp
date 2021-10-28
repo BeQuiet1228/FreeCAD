@@ -34,40 +34,8 @@ namespace Gui{
 	* @return void
 	*/
 	void PlotMDIView::resizeEvent(QResizeEvent* _event)
-	{
+	{	
 		plot->resize(this->size());
-	}
-	/**
-	* @brief PlotMDIView::canClose
-	* @return bool
-	*/
-	bool PlotMDIView::canClose()
-	{
-		if (!bIsPassive && getGuiDocument() && getGuiDocument()->isLastView()) {
-			this->setFocus(); // raises the view to front
-			//需要关闭工程
-			auto result = QMessageBox::information(
-				nullptr,
-				GetEncodingstr("chart",ENCODING_GB2312),
-				GetEncodingstr("关闭当前页面会关闭该工程,是否关闭?",ENCODING_GB2312),
-				QMessageBox::Yes|QMessageBox::No);
-			switch (result)
-			{
-			case QMessageBox::Yes:
-			{
-				return (getGuiDocument()->canClose());
-			}
-			case QMessageBox::No:
-			{
-				return false;
-			}
-				break;
-			default:
-				break;
-			}
-			
-		}
-		return true;
 	}
 
 	bool PlotMDIView::onMsg(const char* pMsg, const char** ppReturn)

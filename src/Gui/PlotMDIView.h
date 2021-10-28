@@ -18,8 +18,6 @@ namespace Gui{
 		PlotMDIView(DocumentPic *_doc, QWidget* parent = 0);
 		~PlotMDIView();
 		Plot* GetViewPtr();
-		bool canClose() override;
-
 		virtual bool onMsg(const char* pMsg, const char** ppReturn) override;
 		virtual bool onHasMsg(const char* pMsg) const override;
 
