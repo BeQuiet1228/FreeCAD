@@ -2,6 +2,8 @@
 #include "PlotMDIView.h"
 #include "DataVisualization/Plot.h"
 #include "View3dMDI.h"
+#include "DataVisualization/C_encoding.h"
+#include "QMessageBox"
 TYPESYSTEM_SOURCE_ABSTRACT(Gui::PlotMDIView, Gui::MDIView);
 namespace Gui{
 	/**
@@ -41,6 +43,30 @@ namespace Gui{
 	*/
 	bool PlotMDIView::canClose()
 	{
+		if (!bIsPassive && getGuiDocument() && getGuiDocument()->isLastView()) {
+			this->setFocus(); // raises the view to front
+			//需要关闭工程
+			auto result = QMessageBox::information(
+				nullptr,
+				GetEncodingstr("chart",ENCODING_GB2312),
+				GetEncodingstr("关闭当前页面会关闭该工程,是否关闭?",ENCODING_GB2312),
+				QMessageBox::Yes|QMessageBox::No);
+			switch (result)
+			{
+			case QMessageBox::Yes:
+			{
+				return (getGuiDocument()->canClose());
+			}
+			case QMessageBox::No:
+			{
+				return false;
+			}
+				break;
+			default:
+				break;
+			}
+			
+		}
 		return true;
 	}
 
