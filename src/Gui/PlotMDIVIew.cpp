@@ -2,6 +2,8 @@
 #include "PlotMDIView.h"
 #include "DataVisualization/Plot.h"
 #include "View3dMDI.h"
+#include "DataVisualization/C_encoding.h"
+#include "QMessageBox"
 TYPESYSTEM_SOURCE_ABSTRACT(Gui::PlotMDIView, Gui::MDIView);
 namespace Gui{
 	/**
@@ -32,16 +34,8 @@ namespace Gui{
 	* @return void
 	*/
 	void PlotMDIView::resizeEvent(QResizeEvent* _event)
-	{
+	{	
 		plot->resize(this->size());
-	}
-	/**
-	* @brief PlotMDIView::canClose
-	* @return bool
-	*/
-	bool PlotMDIView::canClose()
-	{
-		return true;
 	}
 
 	bool PlotMDIView::onMsg(const char* pMsg, const char** ppReturn)
