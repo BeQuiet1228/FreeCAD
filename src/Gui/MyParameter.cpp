@@ -648,11 +648,19 @@ void MyParameter::importText() {
 }
 
 void MyParameter::recoveryData() {
+    DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("Param");
     std::string text = App::GetApplication().getActiveDocument()->Company.getStrValue();
     if (text.empty()) {
         return;
     }
-    std::vector<std::vector<std::string>> p = this->batchProcessing(text);
+    std::vector<std::vector<std::string>> ptmp = this->batchProcessing(text);
+    std::vector<std::vector<std::string>> p;
+    for (auto i : ptmp) {
+        App::ObjectIdentifier tmp(ObjectIdentifier::parse(docObj, i[0]));
+        if (tmp.getProperty() != nullptr) {
+            p.emplace_back(i);
+        }
+    }
     for (int i = 0; i < p.size(); ++i) {
         this->addNewLine(i);
         this->tableWidget->item(i, 0)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
@@ -737,10 +745,11 @@ void MyParameter::deleteParam() {
         this->tableWidget->blockSignals(true);
         this->tableWidget->removeRow(p_row);
         this->tableWidget->blockSignals(false);
-        DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("Param");
-        docObj->removeDynamicProperty(delete_param.c_str());
+        DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("Param");//获取param的列表用于下面的操作
+        docObj->removeDynamicProperty(delete_param.c_str());//从param列表中删除指定的param
         this->updateFromRowToEnd(p_row - 1, delete_param);
     }
+    createParamM3D();
     delete this->delete_param_dlg;
 }
 
@@ -865,7 +874,7 @@ void MyParameter::replaceAllString() {
     this->lastName = dynamic_cast<DlgChangeNameDialog*>(replace_name)->getLastName().toStdString();
     this->afterName = dynamic_cast<DlgChangeNameDialog*>(replace_name)->getAfterName().toStdString();
 
-    while (dynamic_cast<Widget*>(text_import)->ui->textEdit->find(QString::fromStdString(lastName), 
+    while (dynamic_cast<Widget*>(text_import)->ui->textEdit->find(QString::fromStdString(lastName),
         QTextDocument::FindBackward | QTextDocument::FindCaseSensitively)) {//查找后一个并且区分大小写
         dynamic_cast<Widget*>(text_import)->ui->textEdit->insertPlainText(QString::fromUtf8(afterName.c_str()));
     }
@@ -918,14 +927,14 @@ void MyParameter::findNextFromLastName() {
 
 //替换按钮的显示和隐藏，默认为隐藏
 void MyParameter::replaceBtnisEnable(bool isfind) {
-    if (isfind) 
+    if (isfind)
         replace_name->returnReplaceBtn()->setEnabled(true);
     else
         replace_name->returnReplaceBtn()->setEnabled(false);
 }
 
 
-void MyParameter::closeReplaceDlg(){
+void MyParameter::closeReplaceDlg() {
     delete replace_name;
 }
 
@@ -939,9 +948,9 @@ void MyParameter::slotCustomContextMenu(const QPoint pos) {
 
         //先为菜单栏添加需要的菜单选项
         QMenu* dock_menu = new QMenu(this->tableWidget);
-        QAction* change_act = new QAction(QString::fromUtf8("Change Para"), this->tableWidget);
-        QAction* delete_act = new QAction(QString::fromUtf8("Delete Para"), this->tableWidget);
-        QMenu* insert_act = new QMenu(QString::fromUtf8("Insert Para"), this->tableWidget);
+        QAction* change_act = new QAction(QString::fromUtf8("Change Paramter"), this->tableWidget);
+        QAction* delete_act = new QAction(QString::fromUtf8("Delete Paramter"), this->tableWidget);
+        QMenu* insert_act = new QMenu(QString::fromUtf8("Insert Parameter"), this->tableWidget);
         QAction* insert_child1 = new QAction(QString::fromUtf8("Up into"), this->tableWidget);
         QAction* insert_child2 = new QAction(QString::fromUtf8("Down into"), this->tableWidget);
 
