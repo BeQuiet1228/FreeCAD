@@ -228,7 +228,11 @@ void SmartContorl::runChipic()
 #if 1
 	//如果等待区为空则退出
 	if (chipicDataWait.size() <= 0)
+	{
+		runing = false;
 		return;
+	}
+		
 	auto iter = this->chipicDataWait.begin();
 	//已有足够多的chipic在运行则不操作
 	if (chipicDataRuning.size() >= chipicCount)

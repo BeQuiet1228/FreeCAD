@@ -393,4 +393,8 @@ void smartCalc::afferm3dpath(std::string path)
 	this->setModal(true);
 	setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint);
 }
+bool smartCalc::getRunning()
+{
+	return smartContorl->runing;
+}
 #include"moc_smartCalc.cpp"

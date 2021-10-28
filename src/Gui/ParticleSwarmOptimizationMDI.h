@@ -1,7 +1,8 @@
 #pragma once
-#include "MDIEditView.h"
+//#include "MDIEditView.h"
+#include "AlgorMDIInter.h"
 #include <QHBoxLayout>
-class ParticleSwarmOptimizationMDI :public MDIViewPIC {
+class ParticleSwarmOptimizationMDI :public AlgorMDIInter {
 public:
 	ParticleSwarmOptimizationMDI(DocumentPic* pcDocument, QWidget* parent = 0);
 	~ParticleSwarmOptimizationMDI();
@@ -9,13 +10,16 @@ public:
 public:
 	//初始化优化模块
 	void init(const std::string& path);
-
+	virtual bool isClose() override;
+	QWidget* smartControlWidget;
 };
 
-class ProcessingBatchView :public MDIViewPIC{
+class ProcessingBatchView :public AlgorMDIInter {
 public:
 	ProcessingBatchView(DocumentPic* pcDocument, QWidget* parent = 0);
 	~ProcessingBatchView() = default;
 public:
 	void init(const std::string& path);
+	virtual bool isClose() override;
+	QWidget* calcWidget;
 };

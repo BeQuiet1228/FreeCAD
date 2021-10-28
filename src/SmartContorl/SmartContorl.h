@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QListWidgetItem>
 #include <QWidget>
+#include "SmartContorlConfig.hpp"
 struct lua_State;
 //提供给lua接口获取运算结果
 class ChipicResultGetter{
@@ -148,10 +149,12 @@ private:
 	HistoryData runData;
 	//运行数据的成成模式
 	MakeRunDataType makeRunDataType;
-	//优化算法整个模块的运行状态
-	bool runing = false;
+	
 	//暂时写一个参数来确定是否要响应已经完成的chipic启动新的chipic。这里为了保证优化时每次都一个一个的启动
 	bool finishedIsVasible = false;
+public:
+	//优化算法整个模块的运行状态
+	bool runing = false;
 private:
 	//获取错误处理函数再栈中的位置
 	int getLuaErrorCallBackFunction();
