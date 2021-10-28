@@ -36,13 +36,13 @@ bool Struct2dData::initXYRang(){
 	Rang xr, yr;
 	//x
 	auto itx = IM1X->begin();
-	xr.min =0;
+	xr.min =*itx;
 	itx = IM1X->end() - 1;
 	xr.max = *itx;
 	setXRang(xr);
 	//y
 	auto ity = IM2X->begin();
-	yr.min = 0;
+	yr.min = *ity;
 	ity = IM2X->end() - 1;
 	yr.max = *ity;
 	setYRang(yr);

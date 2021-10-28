@@ -164,12 +164,14 @@ RendererPtr RendererFactory::creatStructRender(Hdf5Data h5d, STRUCTTYPE md, cons
 	{
 	case RendererFactory::MOD_2D:
 	{
-		QPointF start2d, end2d;
+		/*QPointF start2d, end2d;
 		start2d.setX(start._1st);
 		start2d.setY(start._2rd);
 		end2d.setX(end._1st);
 		end2d.setY(end._2rd);
-		std::shared_ptr<Struct2dData> _structdata(new Struct2dData(h5d,start2d,end2d));
+		std::shared_ptr<Struct2dData> _structdata(new Struct2dData(h5d,start2d,end2d));*/
+		//²»ÉèÖÃ·¶Î§
+		std::shared_ptr<Struct2dData> _structdata(new Struct2dData(h5d));
 		Struct2DRenderer* struct2drenderer = new Struct2DRenderer(_structdata);
 		return RendererPtr(struct2drenderer);
 	}
