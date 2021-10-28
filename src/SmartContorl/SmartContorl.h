@@ -151,7 +151,7 @@ private:
 	//优化算法整个模块的运行状态
 	bool runing = false;
 	//暂时写一个参数来确定是否要响应已经完成的chipic启动新的chipic。这里为了保证优化时每次都一个一个的启动
-	bool finishedIsVasible = false;
+	bool finishedIsVasible = true;
 private:
 	//获取错误处理函数再栈中的位置
 	int getLuaErrorCallBackFunction();
