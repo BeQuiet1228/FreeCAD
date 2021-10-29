@@ -1319,6 +1319,19 @@ set(lzg_src DlgInsertParamImp.h
    dlgchangenamedialog.ui
    ${MyParameter_MOC}
 )
+SET(AlgorMDIInter_Srcs
+	AlgorMDIInter.h
+	AlgorMDIInter.cpp
+)
+source_group("algorMDI" FILES ${AlgorMDIInter_Srcs})
+SET(Main_Srcs
+${FreeCADGui_SRCS} 
+${MyParameter_MOC} 
+${lzg_src} 
+${Control_SRC} 
+${ControlTreeWidgetMoc}
+${AlgorMDIInter_Srcs}
+)
 if (BUILD_QT5)
     QT5_WRAP_UI(lzg_ui DlgInsertParam.ui DlgDeleteParam.ui DlgChangeParamName.ui dlgchangenamedialog.ui)
 else()
@@ -1327,8 +1340,7 @@ endif()
 
 source_group("lzg" FILES ${lzg_src})	
 
-add_library(FreeCADGui SHARED ${FreeCADGui_SRCS} 
-    ${MyParameter_MOC} ${lzg_src} ${Control_SRC} ${ControlTreeWidgetMoc})
+add_library(FreeCADGui SHARED ${Main_Srcs})
 
 
 if (FREECAD_USE_QT_FILEDIALOG)

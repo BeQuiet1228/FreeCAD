@@ -513,5 +513,8 @@ void SmartContorlUI::closeEvent(QCloseEvent *event)
 	data->clear();
 	QDialog::closeEvent(event);
 }
-
+bool SmartContorlUI::getRunning()
+{
+	return smartContorl->runing;
+}
 #include "moc_SmartContorlUI.cpp"

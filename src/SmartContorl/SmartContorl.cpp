@@ -228,7 +228,11 @@ void SmartContorl::runChipic()
 #if 1
 	//如果等待区为空则退出
 	if (chipicDataWait.size() <= 0)
+	{
+		//runing = false;
 		return;
+	}
+		
 	auto iter = this->chipicDataWait.begin();
 	//已有足够多的chipic在运行则不操作
 	if (chipicDataRuning.size() >= chipicCount)
@@ -286,7 +290,11 @@ void SmartContorl::dataOptimize()
 	//this->clearFinishData();
 	//判断数据是否符合预期，符合则结束运行
 	if (this->luaResultExpcet())
+	{
+		runing = false;
 		return;
+	}
+		
 	//调用优化算法对参数进行优化
 	this->luaOptimize();
 	//运行优化之后的参数

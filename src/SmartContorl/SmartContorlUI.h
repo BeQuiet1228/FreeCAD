@@ -11,6 +11,7 @@
 #include <memory>
 #include <qdialog.h>
 #include <QCloseEvent>
+#include "SmartContorlConfig.hpp"
 class VariateChart;
 class VariateItemWidget;
 //变量数据结构
@@ -35,7 +36,7 @@ struct VariateData
 namespace Ui{
 	class SmartContorlUI;
 }
-class SmartContorlUI:public QDialog{
+class SMARTCONTORL_EXPORT SmartContorlUI:public QDialog{
 	Q_OBJECT
 public:
 	SmartContorlUI(QWidget * parent = 0);
@@ -45,7 +46,7 @@ public:
 	void setTextPath(const std::string& path);
 	//载入优化配置
 	void loadParameterXml();
-
+	bool getRunning();
 private:
 	Ui::SmartContorlUI *ui;
 	//组合之后的文件信息
