@@ -47,6 +47,12 @@ public:
 	unsigned int rank = 0;
 	//错误退出次数
 	unsigned int  errorExitCount = 0;
+	/*
+		这里记录运行时内核是否解析完成。
+		由于有未解析完成但触发异常退出的情况，这个时候将异常退出的数据重新放入等待区。
+		但是在这个流程中只有解析完成槽函数会重新调用RunChipic函数，会因为将错误退出的对象拿出导致卡在这个步骤。
+	*/
+	bool IsAnalysis = false;
 public:
 	void setCreatDataBar(std::shared_ptr<Chipic> chipic);
 	void deleteItemAndBarPtr();
