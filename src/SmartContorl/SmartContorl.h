@@ -123,6 +123,8 @@ public:
 	void  setRunDataMakeType(const MakeRunDataType& type) {
 		this->makeRunDataType = type;
 	}
+	//保存H5文件
+	bool saveResultFormIndex(int,std::string);
 public:
 	//同时运行chipic的个数
 	unsigned int chipicCount = 6;

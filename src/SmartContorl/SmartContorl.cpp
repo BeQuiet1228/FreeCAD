@@ -13,6 +13,7 @@ extern "C"{
 #include "SmartContorlData.h"
 #include <QMessageBox>
 #include <QTextCodec>
+#include <QFileInfo>
 
 QString gbkStdstringToQstring(const std::string& str)
 {
@@ -697,5 +698,59 @@ bool ChipicResultGetter::next(ChipicRunDataPtr& runData)
 	iter++;
 	return true;
 }
+/**
+* @brief SmartContorl::saveResultFormIndex 保存H5文件
+* @param int index
+* @param std::string str
+* @return bool
+*/
 
+bool SmartContorl::saveResultFormIndex(int index, std::string str)
+{
+	if (index >= chipicDataFinish.size())
+		return false;
+	auto saveResult = chipicDataFinish[index];
+	//读取m3d文件
+	QString saveM3dPath = saveResult->m3dPath;
+	if (saveM3dPath.toLower().endsWith(".m3d") || saveM3dPath.toLower().endsWith(".m2d"))
+	{
+		int lastindex = saveM3dPath.lastIndexOf(".");
+		int beginindex = saveM3dPath.lastIndexOf("/");
+		if (beginindex == -1)
+		{
+			beginindex = 0;
+		}
+		QString dstFileName="."+saveM3dPath.mid(beginindex, lastindex - beginindex)+"_"+QString::fromStdString(str) + saveM3dPath.right(4);
+		//如果文件存在，先删除
+		QFileInfo file(dstFileName);
+		if (file.exists() == true)
+		{
+			QFile dstfile(dstFileName);
+			dstfile.remove();
+		}
+		//保存文件
+		bool ok=QFile::copy(saveM3dPath, dstFileName);
+	}
+	QString saveH5Path = saveResult->h5FilePath;
+	std::string saveH5Pathstr = saveH5Path.toStdString();
+	if (saveH5Path.toLower().endsWith(".h5"))
+	{
+		int lastindex = saveH5Path.lastIndexOf(".");
+		int beginindex = saveH5Path.lastIndexOf("/");
+		if (beginindex == -1)
+		{
+			beginindex = 0;
+		}
+		QString dstFileName = "." + saveH5Path.mid(beginindex, lastindex-beginindex)+"_"+QString::fromStdString(str) + saveH5Path.right(3);
+		//如果文件存在，先删除
+		QFileInfo file(dstFileName);
+		if (file.exists() == true)
+		{
+			QFile dstfile(dstFileName);
+			dstfile.remove();
+		}
+		//保存文件
+		bool ok=QFile::copy(saveH5Path, dstFileName);
+	}
+}
 #include "moc_SmartContorl.cpp"
