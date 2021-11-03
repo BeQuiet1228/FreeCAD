@@ -355,6 +355,15 @@ int creatVarableFileObject(lua_State* luaState)
 	return 1;
 }
 
+int saveResultToWorkPath(lua_State* luaState)
+{
+	int index = lua_tointeger(luaState, 1);
+	std::string end = lua_tostring(luaState, 2);
+	auto data = SmartContorlData::GetInstance();
+	data->smartContorl->saveResultFormIndex(index, end);
+	return 1;
+}
+
 /**
 * @brief registerLuaFunction 向虚拟机中注册lua函数
 * @param lua_State * L
@@ -387,6 +396,7 @@ void registerLuaFunction(lua_State *L)
 	lua_register(L, "saveVariableFile", saveVariableFile);
 	lua_register(L, "clearVarableFileVar", clearVarableFileVar);
 	lua_register(L, "creatVarableFileObject", creatVarableFileObject);
+	lua_register(L, "saveResultToWorkPath", saveResultToWorkPath);
 }
 
 

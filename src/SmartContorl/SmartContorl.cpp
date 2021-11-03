@@ -707,9 +707,13 @@ bool ChipicResultGetter::next(ChipicRunDataPtr& runData)
 
 bool SmartContorl::saveResultFormIndex(int index, std::string str)
 {
-	if (index >= chipicDataFinish.size())
+	if (historyDatas.empty())
 		return false;
-	auto saveResult = chipicDataFinish[index];
+	auto datas = historyDatas.rbegin()->datas;
+
+	if (index >= datas.size())
+		return false;
+	auto saveResult = datas[index];
 	//读取m3d文件
 	QString saveM3dPath = saveResult->m3dPath;
 	if (saveM3dPath.toLower().endsWith(".m3d") || saveM3dPath.toLower().endsWith(".m2d"))
@@ -728,7 +732,7 @@ bool SmartContorl::saveResultFormIndex(int index, std::string str)
 			QFile dstfile(dstFileName);
 			dstfile.remove();
 		}
-		//保存文件
+		//保存文件'
 		bool ok=QFile::copy(saveM3dPath, dstFileName);
 	}
 	QString saveH5Path = saveResult->h5FilePath;

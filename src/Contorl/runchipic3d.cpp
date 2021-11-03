@@ -38,7 +38,7 @@ void RunChipic3d::runWithLonelinessMode(const QString &m3dPath, const CoreType &
 	QString tempPath = (coreType == M3D)?chipicM3dPath:chipicM2dPath;
 	chipicProcess = new QProcess;
 	QString cmd = tempPath + q2s(" \"") + m3dPath + q2s("\"");
-#ifdef MY_LOG
+#ifdef MY_DEBUG
 	std::cerr << "lonelinessMod start cmd:" << cmd.toStdString() << std::endl;
 #endif
 	chipicProcess->start(cmd);

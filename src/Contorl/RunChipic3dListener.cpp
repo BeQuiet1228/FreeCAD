@@ -385,11 +385,11 @@ void RunChipic3dListener::sendMessage(const Message& msg)
 */
 void RunChipic3dListener::init(){
 	DWORD id;
-#ifdef MY_LOG
+#ifdef MY_DEBUG
 	std::cerr << "parallel run start find main thread ID!" << std::endl;
 #endif // MY_LOG
 	getMainThreadId(id);
-#ifdef MY_LOG
+#ifdef MY_DEBUG
 	std::cerr << "find main thread ID finished,ID: " << id << std::endl;
 #endif
 	setThreadId(id);

@@ -559,6 +559,8 @@
 variates = {};
 variateCount = 0;
 pgtF = 0;
+--pgtf 是否初始化
+pgtFInit = true;
 pitF = 0;
 valueCount = 0;
 --获取F得定义
@@ -836,8 +838,18 @@ function resultDataFilter()
 			countIndex = countIndex + 1;
 		end
     end
+	--在这里使用F初始化pgtF
+	if(pgtFInit)
+	then
+		pgtF = F;
+		pgtFInit = false;
+	end
+	
 	if(compareF(F,pgtF))
 	then
+		--保存最好的结果
+		saveResultToWorkPath(index,&quot;best&quot;);
+		
 		pgtF = F;
         local tempIndex = 1;
         while(tempIndex &lt; variateCount + 1)

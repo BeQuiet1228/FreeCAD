@@ -59,6 +59,8 @@ int saveVariableFile(lua_State* luaState);
 int clearVarableFileVar(lua_State* luaSate);
 //创建一个变量文件对象
 int creatVarableFileObject(lua_State* luaState);
+//保存一个运行结果到工程目录
+int saveResultToWorkPath(lua_State* luaState);
 
 //注册lua函数
 void registerLuaFunction(lua_State *L);
