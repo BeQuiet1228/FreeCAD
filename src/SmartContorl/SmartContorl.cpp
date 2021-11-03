@@ -362,6 +362,7 @@ float SmartContorl::getHistoryGroupParam(const int& goupIdex, const int& index, 
 */
 void SmartContorl::clearFinishData()
 {
+	//saveResultFormIndex(0, "123");
 	/*
 		这里需要将结果数据按变量生成的顺序排序，否则无法与脚本中的参数一一对应。
 	*/
@@ -715,16 +716,23 @@ bool SmartContorl::saveResultFormIndex(int index, std::string str)
 		return false;
 	auto saveResult = datas[index];
 	//读取m3d文件
+	QString dstPath = this->m3dPath;
+	int dstlastindex = dstPath.lastIndexOf("/");
+	//获取工程路径
+	dstPath = dstPath.mid(0,dstlastindex);
+	std::string dstPathstr = dstPath.toStdString();
+	//获取工程名
+	QString proName = this->m3dPath;
+	int profroIndex = dstlastindex;
+	int prolastindex = proName.lastIndexOf(".");
+	proName = proName.mid(profroIndex,prolastindex-profroIndex);
+	std::string proNamestr = proName.toStdString();
 	QString saveM3dPath = saveResult->m3dPath;
 	if (saveM3dPath.toLower().endsWith(".m3d") || saveM3dPath.toLower().endsWith(".m2d"))
 	{
-		int lastindex = saveM3dPath.lastIndexOf(".");
-		int beginindex = saveM3dPath.lastIndexOf("/");
-		if (beginindex == -1)
-		{
-			beginindex = 0;
-		}
-		QString dstFileName="."+saveM3dPath.mid(beginindex, lastindex - beginindex)+"_"+QString::fromStdString(str) + saveM3dPath.right(4);
+
+		QString dstFileName = dstPath + proName + "_" + QString::fromStdString(str) + saveM3dPath.right(4);
+		std::string dstFileNamestr = dstFileName.toStdString();
 		//如果文件存在，先删除
 		QFileInfo file(dstFileName);
 		if (file.exists() == true)
@@ -739,13 +747,8 @@ bool SmartContorl::saveResultFormIndex(int index, std::string str)
 	std::string saveH5Pathstr = saveH5Path.toStdString();
 	if (saveH5Path.toLower().endsWith(".h5"))
 	{
-		int lastindex = saveH5Path.lastIndexOf(".");
-		int beginindex = saveH5Path.lastIndexOf("/");
-		if (beginindex == -1)
-		{
-			beginindex = 0;
-		}
-		QString dstFileName = "." + saveH5Path.mid(beginindex, lastindex-beginindex)+"_"+QString::fromStdString(str) + saveH5Path.right(3);
+		QString dstFileName = dstPath + proName + "_" + QString::fromStdString(str) + saveH5Path.right(3);
+		std::string dstfileNamestr = dstFileName.toStdString();
 		//如果文件存在，先删除
 		QFileInfo file(dstFileName);
 		if (file.exists() == true)
