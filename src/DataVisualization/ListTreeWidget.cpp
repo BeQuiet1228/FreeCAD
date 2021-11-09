@@ -330,8 +330,9 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 	}
 
 	observingstr =replaceStr(ss.str());
-
-	auto iter = parentnode.find(observingstr);
+	std::stringstream nodeStrStream;
+	nodeStrStream << data.name << observingstr;
+	auto iter = parentnode.find(nodeStrStream.str());
 	QStandardItem* observeItem;
 	//没有记录该观测面
 	if (iter==parentnode.end())
@@ -356,7 +357,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 		observeItem = new QStandardItem(QIcon(Treeicon[0]),GetEncodingstr(observingstr.c_str(),ENCODING_GB2312));
 		int row = parentItem->rowCount();
 		parentItem->setChild(row,observeItem);
-		parentnode[observingstr] = observeItem;
+		parentnode[nodeStrStream.str()] = observeItem;
 	}
 	else
 	{
