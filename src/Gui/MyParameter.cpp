@@ -777,19 +777,19 @@ void MyParameter::changeParamName() {
     std::string old_name = this->tableWidget->item(change_row, 0)->text().toStdString();
     std::string expression = this->tableWidget->item(change_row, 1)->text().toStdString();
 
-    /*int max_row = this->tableWidget->rowCount();
+    int max_row = this->tableWidget->rowCount();
     std::vector<std::string> temp;
     for (int i = 0; i < max_row - 1; i++)
     {
         QString af_expression = tableWidget->item(i, 1)->text();
-        if(findWholeWordsOnly(af_expression.toStdString(), old_name));
+        if (findWholeWordsOnly(af_expression.toStdString(), old_name));
         {
-            std::string str=std::regex_replace(af_expression.toStdString(), std::regex("\\b" + old_name + "\\b"), new_name);
+            std::string str = std::regex_replace(af_expression.toStdString(), std::regex("\\b" + old_name + "\\b"), new_name);
             QTableWidgetItem* item_expression = new QTableWidgetItem();
             tableWidget->setItem(i, 1, item_expression);
             tableWidget->item(i, 1)->setText(QString::fromStdString(str));
         }
-    }*/
+    }
 
     if (new_name.empty() || (!this->isValidWithName(new_name, change_row))) {
         return;
@@ -950,10 +950,12 @@ void MyParameter::slotCustomContextMenu(const QPoint pos) {
         QMenu* dock_menu = new QMenu(this->tableWidget);
         QAction* change_act = new QAction(QString::fromUtf8("Change Paramter"), this->tableWidget);
         QAction* delete_act = new QAction(QString::fromUtf8("Delete Paramter"), this->tableWidget);
+        QAction* copyParam = new QAction(QString::fromUtf8("Copy paramter"), this->tableWidget);
         QMenu* insert_act = new QMenu(QString::fromUtf8("Insert Parameter"), this->tableWidget);
         QAction* insert_child1 = new QAction(QString::fromUtf8("Up into"), this->tableWidget);
         QAction* insert_child2 = new QAction(QString::fromUtf8("Down into"), this->tableWidget);
 
+        dock_menu->addAction(copyParam);
         dock_menu->addAction(change_act);
         dock_menu->addAction(delete_act);
         dock_menu->addMenu(insert_act);
@@ -965,9 +967,17 @@ void MyParameter::slotCustomContextMenu(const QPoint pos) {
 
         connect(change_act, SIGNAL(triggered()), SLOT(changeParamName()));
         connect(delete_act, SIGNAL(triggered()), SLOT(deleteParam()));
+        connect(copyParam, SIGNAL(triggered()), SLOT(copyParam()));
         connect(insert_child1, SIGNAL(triggered()), SLOT(insertParaDirectionToUp()));//向上行数减一
         connect(insert_child2, SIGNAL(triggered()), SLOT(insertParaDirectionToDown()));//向下行数不变
     }
+}
+
+//复制变量名按钮函数
+void MyParameter::copyParam() {
+    QClipboard* clipboard = QApplication::clipboard();
+    QString clipNewText = this->tableWidget->currentItem()->text();
+    clipboard->setText(clipNewText);
 }
 
 //用户选中向上插入参数

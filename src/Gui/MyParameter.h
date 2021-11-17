@@ -102,6 +102,7 @@ private Q_SLOTS:
 	void findLastFromLastName();
 	void findNextFromLastName();
 	void closeReplaceDlg();
+	void copyParam();
 	
 
 public:
