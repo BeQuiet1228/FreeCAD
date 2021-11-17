@@ -34,4 +34,4 @@ public:
 };
 
 //根据h5文件信息创建数据对象
-ContourDataPolar* CreateContourDataPolar(Hdf5Data& h5);
+DATA_VISUALIZATION_EXPORT ContourDataPolar* CreateContourDataPolar(Hdf5Data& h5);
