@@ -6,6 +6,7 @@
 #include <QMap>
 #include <QRectF>
 #include <QlineF>
+#include "exportConfig.hpp"
 #ifndef M_PI
 #define M_PI       3.14159265358979323846
 #endif 
@@ -15,39 +16,17 @@ enum C_TYPE
 	CYLINDRICAL,
 	CARTESIAN,
 };
-struct _3DPointf
+struct DATA_VISUALIZATION_EXPORT _3DPointf
 {
 	float _1st;
 	float _2rd;
 	float _3th;
-	_3DPointf() :_1st(0.0f), _2rd(0.0f), _3th(0.0f){}
-	int operator ==(const _3DPointf& that) const
-	{
-		if (this->_1st == that._1st&&this->_2rd != that._2rd&&this->_3th != that._3th)
-			return 1;
-		else if (this->_2rd == that._2rd&&this->_1st != that._1st&&this->_3th != that._3th)
-			return 2;
-		else if (this->_3th == that._3th&&this->_1st != that._1st&&this->_2rd != that._2rd)
-			return 3;
-		return 0;
-	}
-	float operator [](int index)
-	{
-		switch (index)
-		{
-		case 1:
-			return _1st;
-		case 2:
-			return _2rd;
-		case 3:
-			return _3th;
-		default:
-			return 0.0f;
-		}
-	}
+	_3DPointf();
+	int operator ==(const _3DPointf& that) const;
+	float operator [](int index);
 };
 
-class StructData:public XYData
+class DATA_VISUALIZATION_EXPORT StructData:public XYData
 {
 public:
 	enum PROPERTYPE{
@@ -110,59 +89,20 @@ public:
 	StructData(Hdf5Data& heData,_3DPointf startpoint,_3DPointf endpoint,const RunMod& mod=SINGLE_THREAD);
 public:
 	virtual bool loadPoint();
-	DirectionType GetDirectionType()
-	{
-		return mType;
-	}
-	C_TYPE GetC_TYPE()
-	{
-		return mCtype;
-	}
+	DirectionType GetDirectionType();
+	C_TYPE GetC_TYPE();
 	bool loadroom();
-	void setXRang(const Rang& rg)
-	{
-		std::lock_guard<std::mutex> am(xRangMutex);
-		xRang = rg;
-	}
-	void setYRang(const Rang& rg)
-	{
-		std::lock_guard<std::mutex> am(yRangMutex);
-		yRang = rg;
-	}
-	Rang getXRang()
-	{
-		std::lock_guard<std::mutex> am(xRangMutex);
-		return xRang;
-	}
-	Rang getYRang()
-	{
-		std::lock_guard<std::mutex> am(yRangMutex);
-		return yRang;
-	}
-	std::map<int, std::vector<QRectF>>GetAllcutInfo()
-	{
-		return allcutroom;
-	}
-	std::map<int, std::vector<CutCir>> GetAllcurInfo_cir()
-	{
-		return allcutroomcir;
-	}
-	std::map<unsigned __int64, std::vector<QLineF>> GetProperLines()
-	{
-		return allLines;
-	}
+	void setXRang(const Rang& rg);
+	void setYRang(const Rang& rg);
+	Rang getXRang();
+	Rang getYRang();
+	std::map<int, std::vector<QRectF>>GetAllcutInfo();
+	std::map<int, std::vector<CutCir>> GetAllcurInfo_cir();
+	std::map<unsigned __int64, std::vector<QLineF>> GetProperLines();
 	void segloadRoom(unsigned  __int64 site1,unsigned __int64 site2);
-	bool getIsface(){
-		return istrue;
-	}
-	_3DPointf getStartPoint()
-	{
-		return mstartpoint;
-	}
-	_3DPointf getEndPoint()
-	{
-		return mendpoint;
-	}
+	bool getIsface();
+	_3DPointf getStartPoint();
+	_3DPointf getEndPoint();
 protected:
 	virtual bool initXYRang(){ return 0; }
 	virtual void restorDeriveData() override{}

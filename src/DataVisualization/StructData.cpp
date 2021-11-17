@@ -1209,3 +1209,82 @@ void StructData::setXYTag(DirectionType type)
 		break;
 	}
 }
+
+DirectionType StructData::GetDirectionType()
+{
+	return mType;
+}
+C_TYPE StructData::GetC_TYPE()
+{
+	return mCtype;
+}
+void StructData::setXRang(const Rang& rg)
+{
+	std::lock_guard<std::mutex> am(xRangMutex);
+	xRang = rg;
+}
+void StructData::setYRang(const Rang& rg)
+{
+	std::lock_guard<std::mutex> am(yRangMutex);
+	yRang = rg;
+}
+Data::Rang StructData::getXRang()
+{
+	std::lock_guard<std::mutex> am(xRangMutex);
+	return xRang;
+}
+Data::Rang StructData::getYRang()
+{
+	std::lock_guard<std::mutex> am(yRangMutex);
+	return yRang;
+}
+std::map<int, std::vector<QRectF>> StructData::GetAllcutInfo()
+{
+	return allcutroom;
+}
+std::map<int, std::vector<StructData::CutCir>> StructData::GetAllcurInfo_cir()
+{
+	return allcutroomcir;
+}
+std::map<unsigned __int64, std::vector<QLineF>> StructData::GetProperLines()
+{
+	return allLines;
+}
+bool StructData::getIsface() {
+	return istrue;
+}
+_3DPointf StructData::getStartPoint()
+{
+	return mstartpoint;
+}
+_3DPointf StructData::getEndPoint()
+{
+	return mendpoint;
+}
+/***************************************/
+//struct _3DPointf
+int _3DPointf::operator ==(const _3DPointf& that) const
+{
+	if (this->_1st == that._1st && this->_2rd != that._2rd && this->_3th != that._3th)
+		return 1;
+	else if (this->_2rd == that._2rd && this->_1st != that._1st && this->_3th != that._3th)
+		return 2;
+	else if (this->_3th == that._3th && this->_1st != that._1st && this->_2rd != that._2rd)
+		return 3;
+	return 0;
+}
+float _3DPointf::operator [](int index)
+{
+	switch (index)
+	{
+	case 1:
+		return _1st;
+	case 2:
+		return _2rd;
+	case 3:
+		return _3th;
+	default:
+		return 0.0f;
+	}
+}
+_3DPointf::_3DPointf() :_1st(0.0f), _2rd(0.0f), _3th(0.0f) {}

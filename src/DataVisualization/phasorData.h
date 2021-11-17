@@ -4,7 +4,8 @@
 #include "DirData.h"
 #include <QRectF>
 #include <QVector>
-typedef struct phasorinfo 
+#include"exportConfig.hpp"
+typedef struct DATA_VISUALIZATION_EXPORT phasorinfo
 {
 public:
 	QRectF phasor_room;
@@ -12,13 +13,11 @@ public:
 	//向量
 	QPointF p1;
 	QPointF p2;
-	phasorinfo() :p1(0.0, 0.0), p2(0.0, 0.0), phasor_room(0.0, 0.0, 0.0, 0.0), room_property(0){}
-	void SetRectF(QRectF _rectf){
-		phasor_room = _rectf;
-	}
+	phasorinfo();
+	void SetRectF(QRectF _rectf);
 }PIF;
 
-class phasorData :public DirData
+class DATA_VISUALIZATION_EXPORT phasorData :public DirData
 {
 public:
 	phasorData(Hdf5Data& heData,const RunMod& mod=SINGLE_THREAD);
@@ -49,58 +48,22 @@ public:
 	std::string getInformationTitle();
 
 	//获取取值范围
-	Rang getXRang()
-	{
-		std::lock_guard<std::mutex> am(xRangMutex);
-		return xRang;
-	}
-	Rang getYRang()
-	{
-		std::lock_guard<std::mutex> am(yRangMutex);
-		return yRang;
-	}
+	Rang getXRang();
+	Rang getYRang();
 	//设置取值范围
-	void setXRang(const Rang& xr)
-	{
-		std::lock_guard<std::mutex> am(xRangMutex);
-		xRang = xr;
-	}
-	void setYRang(const Rang& yr){
-		std::lock_guard<std::mutex> am(yRangMutex);
-		yRang = yr;
-	}
-	
+	void setXRang(const Rang& xr);
+	void setYRang(const Rang& yr);
 	QVector<QRectF> getAllCutRoom();
 	QVector<QPointF> Getp1Point();
 	QVector<QPointF> Getp2Point();
-	float GetVecXScale();
-	float GetVecYScale();
-	DISMODE GetdisMode(){
-		return disMode;
-	}
-	std::vector<float> getScaleVal(){
-		return sizeScale;
-	}
-	void setdisMode(DISMODE a){
-		disMode = a;
-	}
+	DISMODE GetdisMode();
+	std::vector<float> getScaleVal();
+	void setdisMode(DISMODE a);
 	//2021年5月19日---新增加
-	Data::Rang getdefXrang()
-	{
-		return defXrang;
-	}
-	Data::Rang getdefYrang()
-	{
-		return defYrang;
-	}
-	int getXsize()
-	{
-		return posxSize;
-	}
-	int getYsize()
-	{
-		return posySize;
-	}
+	Data::Rang getdefXrang();
+	Data::Rang getdefYrang();
+	int getXsize();
+	int getYsize();
 private:
 	//xy的范围
 	Rang xRang, yRang;

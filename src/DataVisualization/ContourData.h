@@ -4,11 +4,12 @@
 #include <mutex>
 #include "qwt/qwt_matrix_raster_data.h"
 #include "DirData.h"
-class ContourData :public DirData{
+#include"exportConfig.hpp"
+class DATA_VISUALIZATION_EXPORT ContourData :public DirData{
 public:
 	struct Grid
 	{
-		Grid() :x(0.0), y(0.0), value(0.0){};
+		Grid();
 		float x, y, value;
 	};
 public:
@@ -29,14 +30,8 @@ public:
 	//获取图表信息
 	std::string getInformationTitle() override;
 public:
-	void setValueRang(const Rang& r){
-		std::lock_guard<std::mutex> am(ValueRangMutex);
-		valueRang = r;
-	}
-	Rang getVlaueRange() {
-		std::lock_guard<std::mutex> am(ValueRangMutex);
-		return valueRang;
-	}
+	void setValueRang(const Rang& r);
+	Rang getVlaueRange();
 private:
 	void setXYRange();
 	//根据坐标轴的名称 获取范围
@@ -52,7 +47,7 @@ protected:
 	std::vector<float> xScale, yScale;
 };
 
-class DefineMatrixRasterData :public QwtMatrixRasterData {
+class DATA_VISUALIZATION_EXPORT DefineMatrixRasterData :public QwtMatrixRasterData {
 public:
 	DefineMatrixRasterData();
 	~DefineMatrixRasterData();
@@ -60,12 +55,8 @@ public:
 public:
 	virtual double value(double x, double y) const override;
 
-	void setXScale(const std::vector<float>& xScale) {
-		this->xScale = xScale;
-	}
-	void setYScale(const std::vector<float>& yscale) {
-		this->yScale = yscale;
-	}
+	void setXScale(const std::vector<float>& xScale);
+	void setYScale(const std::vector<float>& yscale);
 
 private:
 	std::vector<float> xScale, yScale;

@@ -364,3 +364,55 @@ std::string phasorData::getInformationTitle()
 
 	return title;
 }
+//获取取值范围
+Data::Rang phasorData::getXRang()
+{
+	std::lock_guard<std::mutex> am(xRangMutex);
+	return xRang;
+}
+Data::Rang phasorData::getYRang()
+{
+	std::lock_guard<std::mutex> am(yRangMutex);
+	return yRang;
+}
+//设置取值范围
+void phasorData::setXRang(const Rang& xr)
+{
+	std::lock_guard<std::mutex> am(xRangMutex);
+	xRang = xr;
+}
+void phasorData::setYRang(const Rang& yr) {
+	std::lock_guard<std::mutex> am(yRangMutex);
+	yRang = yr;
+}
+phasorData::DISMODE phasorData::GetdisMode() {
+	return disMode;
+}
+std::vector<float> phasorData::getScaleVal() {
+	return sizeScale;
+}
+void phasorData::setdisMode(DISMODE a) {
+	disMode = a;
+}
+//2021年5月19日---新增加
+Data::Rang phasorData::getdefXrang()
+{
+	return defXrang;
+}
+Data::Rang phasorData::getdefYrang()
+{
+	return defYrang;
+}
+int phasorData::getXsize()
+{
+	return posxSize;
+}
+int phasorData::getYsize()
+{
+	return posySize;
+}
+/********************************************/
+phasorinfo::phasorinfo() :p1(0.0, 0.0), p2(0.0, 0.0), phasor_room(0.0, 0.0, 0.0, 0.0), room_property(0) {}
+void phasorinfo::SetRectF(QRectF _rectf) {
+	phasor_room = _rectf;
+}

@@ -7,7 +7,7 @@
 #include <QPoint>
 #include <QString>
 #include <QStringList>
-
+#include"exportConfig.hpp"
 /*区分数据的方向*/
 enum DirectionType{
 	NONE = 0xff,
@@ -29,7 +29,7 @@ enum SaveMod{
 	//补充
 	PUSHBACK=1,
 };
-class Data{
+class DATA_VISUALIZATION_EXPORT Data{
 public:
 	using Values = std::vector<float>;
 	using ValuesPtr = std::shared_ptr<Values>;
@@ -39,23 +39,15 @@ public:
 	//自动锁
 	class AutoMutx{
 	public:
-		AutoMutx(const MutexPtr& mutex){
-			this->mutex = mutex;
-			mutex->lock();
-		}
-		~AutoMutx(){
-			this->mutex->unlock();
-		}
+		AutoMutx(const MutexPtr& mutex);
+		~AutoMutx();
 	private:
 		MutexPtr mutex;
 	};
 	struct Rang{
-		Rang() :max(0), min(0){};
-		Rang(const float& _min, const float& _max)
-			:max(_max), min(_min) {};
-		float length(){
-			return max - min;
-		}
+		Rang();
+		Rang(const float& _min, const float& _max);
+		float length();
 		float max;
 		float min;
 	};
@@ -104,9 +96,7 @@ public:
 	virtual std::string getInformationTitle();
 
 	//数据是否已载入
-	bool isLoad(){
-		return sourceDataIsLoad;
-	}
+	bool isLoad();
 
 	//数据获取接口，这里强制通过接口获取是为了之后多线程处理时数据同步。
 protected:
@@ -126,12 +116,8 @@ public:
 	static	DirectionType stringToDirection(const std::string& str);
 
 	//操作类型
-	DirectionType getDirectionType(){
-		return directionTyp;
-	}
-	NeedStructType getNeedStructType(){
-		return mapType;
-	}
+	DirectionType getDirectionType();
+	NeedStructType getNeedStructType();
 protected:
 	//平面方向
 	DirectionType directionTyp;
@@ -140,7 +126,7 @@ protected:
 	Hdf5IO* temphdf;
 };
 
-class XYData :public Data{
+class DATA_VISUALIZATION_EXPORT XYData :public Data{
 public:
 	XYData(Hdf5Data& h5Data, const RunMod& mod = SINGLE_THREAD);
 	~XYData() = default;
@@ -149,44 +135,17 @@ public:
 	unsigned int findIndexFromXValueR(const float& x);
 	virtual bool loadPoint() = 0;
 	//操作size
-	unsigned int getPointSize(){
-		std::lock_guard<std::mutex> am(pointSizeMutex);
-		return pointSize;
-	};
+	unsigned int getPointSize();
 	//获取范围
-	Rang getXRang(){
-		std::lock_guard<std::mutex> am(xRangMutex);
-		return xRang;
-	};
-	void setXRang(const Rang& rg){
-		std::lock_guard<std::mutex> am(xRangMutex);
-		xRang = rg;
-	}
-	Rang getYRang(){
-		std::lock_guard<std::mutex> am(yRangMutex);
-		return yRang;
-	};
-	void setYRang(const Rang& rg){
-		std::lock_guard<std::mutex> am(yRangMutex);
-		yRang = rg;
-	}
+	Rang getXRang();
+	void setXRang(const Rang& rg);
+	Rang getYRang();
+	void setYRang(const Rang& rg);
 	//操作tag
-	void setXTag(const std::string& tag){
-		std::lock_guard<std::mutex> am(xTagMute);
-		xTag = tag;
-	}
-	std::string getXTag(){
-		std::lock_guard<std::mutex> am(xTagMute);
-		return xTag;
-	}
-	void setYTag(const std::string tag){
-		std::lock_guard<std::mutex> am(yTagMutex);
-		yTag = tag;
-	}
-	std::string getYTag(){
-		std::lock_guard<std::mutex> am(yTagMutex);
-		return yTag;
-	}
+	void setXTag(const std::string& tag);
+	std::string getXTag();
+	void setYTag(const std::string tag);
+	std::string getYTag();
 protected:
 	virtual bool initXYRang() = 0;
 	//设置size

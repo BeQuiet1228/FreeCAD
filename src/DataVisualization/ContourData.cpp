@@ -525,3 +525,19 @@ bool DefineMatrixRasterData::isInScal(const std::vector<float>& scale, const dou
 	
 	return pos >= *scale.begin() && pos <= *scale.rbegin();
 }
+void ContourData::setValueRang(const Rang& r) {
+	std::lock_guard<std::mutex> am(ValueRangMutex);
+	valueRang = r;
+}
+Data::Rang ContourData::getVlaueRange() {
+	std::lock_guard<std::mutex> am(ValueRangMutex);
+	return valueRang;
+}
+void DefineMatrixRasterData::setXScale(const std::vector<float>& xScale) {
+	this->xScale = xScale;
+}
+void DefineMatrixRasterData::setYScale(const std::vector<float>& yscale) {
+	this->yScale = yscale;
+}
+/*********************************/
+ContourData::Grid::Grid() :x(0.0), y(0.0), value(0.0) {}

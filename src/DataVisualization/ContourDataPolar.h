@@ -1,7 +1,8 @@
 #pragma once
 #include "ContourData.h"
 #include "qwt/qwt_raster_data.h"
-class ContourDataPolar :public ContourData{
+#include"exportConfig.hpp"
+class DATA_VISUALIZATION_EXPORT ContourDataPolar :public ContourData{
 public:
 	ContourDataPolar(Hdf5Data& h5Data, const RunMod& mod = SINGLE_THREAD);
 	~ContourDataPolar();
@@ -12,7 +13,7 @@ public:
 	bool loadPoint() override;
 };
 
-class ContourDataPloarHalfGridFullCircle :public ContourDataPolar {
+class DATA_VISUALIZATION_EXPORT ContourDataPloarHalfGridFullCircle :public ContourDataPolar {
 public:
 	ContourDataPloarHalfGridFullCircle(Hdf5Data& h5Data, const RunMod& mod = SINGLE_THREAD);
 	~ContourDataPloarHalfGridFullCircle() = default;
@@ -20,7 +21,7 @@ public:
 	virtual QwtMatrixRasterData* getQwtMatrixRasterData() override;
 };
 
-class PolarMatrixRasterData :public DefineMatrixRasterData{
+class DATA_VISUALIZATION_EXPORT PolarMatrixRasterData :public DefineMatrixRasterData{
 public:
 	PolarMatrixRasterData() = default;
 	~PolarMatrixRasterData() = default;
