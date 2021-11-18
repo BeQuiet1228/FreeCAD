@@ -33,5 +33,7 @@ public:
 	static double FastAtan( double x);
 };
 
+#ifdef _DATA_VISUALIZATION_
 //根据h5文件信息创建数据对象
-EXTERN_C DATA_VISUALIZATION_EXPORT ContourDataPolar* CreateContourDataPolar(Hdf5Data& h5);
+ContourDataPolar* CreateContourDataPolar(Hdf5Data& h5);
+#endif
