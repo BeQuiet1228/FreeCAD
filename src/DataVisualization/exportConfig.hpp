@@ -8,3 +8,9 @@
 #ifndef DATA_VISUALIZATIONG_DLL
 #define DATA_VISUALIZATION_EXPORT  
 #endif
+
+#ifdef  __cplusplus
+#define EXTERN_C extern "C"
+#else
+#define EXTERN_C
+#endif
