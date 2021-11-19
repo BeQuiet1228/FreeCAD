@@ -1,5 +1,4 @@
 SET(Idf_Srcs
-idf.dox
 Idf.py
 Init.py
 ISOL.emn

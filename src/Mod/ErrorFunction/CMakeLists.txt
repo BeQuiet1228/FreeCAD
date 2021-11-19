@@ -2,6 +2,7 @@ SET(ErrorFunction_Srcs
 __init__.py
 ErrorDialog.py
 warning.py
+warning.ui
 )
 
 add_custom_target(ErrorFunction ALL

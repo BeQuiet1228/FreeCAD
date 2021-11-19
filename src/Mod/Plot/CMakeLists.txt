@@ -114,5 +114,9 @@ SET(PlotGuiIcon_SVG
 )
 
 fc_copy_sources(Plot "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_DATADIR}/Mod/Plot" ${PlotGuiIcon_SVG})
+SET(Sources_Srcs
+resources
+)
+File(COPY ${Sources_Srcs} DESTINATION ${CMAKE_BINARY_DIR}/Mod/Plot)
 
 INSTALL(FILES ${PlotGuiIcon_SVG} DESTINATION "${CMAKE_INSTALL_DATADIR}/Mod/Plot/resources/icons")

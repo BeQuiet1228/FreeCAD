@@ -14,7 +14,14 @@ INSTALL(
     DESTINATION
         Mod/Drawing
 )
-
+SET(Srcs
+DrawingExample.py
+DrawingPatterns.py
+DrawingTests.py
+Templates
+#App
+#Gui
+)
 INSTALL(
     DIRECTORY
         Templates
@@ -24,3 +31,5 @@ INSTALL(
         PATTERN "*.svg*"
         PATTERN "*.dxf*"
 )
+#File(COPY "Templates" DESTINATION ${CMAKE_BINARY_DIR}/Mod/Drawing)
+File(COPY ${Srcs} DESTINATION ${CMAKE_BINARY_DIR}/Mod/Drawing)

@@ -12,8 +12,11 @@ SET(CustomParameterCommand_Srcs
 SET(CustomParameterGui_Srcs
 	./CustomParameterGui/__init__.py
 	./CustomParameterGui/DlgCustomeParameter.py
+	./CustomParameterGui/DlgCustomeParameter.ui
 	./CustomParameterGui/searchTool.py
+	./CustomParameterGui/searchTool.ui
 	./CustomParameterGui/TableView.py
+	./CustomParameterGui/TableView.ui
 )
 SET(CustomParameterResources_Srcs
 	./CustomParameterResources/Parameter.svg

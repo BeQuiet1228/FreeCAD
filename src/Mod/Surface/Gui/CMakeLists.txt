@@ -85,3 +85,9 @@ SET_BIN_DIR(SurfaceGui SurfaceGui /Mod/Surface)
 SET_PYTHON_PREFIX_SUFFIX(SurfaceGui)
     
 install(TARGETS SurfaceGui DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+SET(Sources_Srcs
+Resources
+)
+
+File(COPY ${Sources_Srcs} DESTINATION ${CMAKE_BINARY_DIR}/Mod/Surface)

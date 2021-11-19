@@ -30,3 +30,7 @@ INSTALL(
     DESTINATION
         Mod/Import
 )   
+SET(Sources_Srcs
+Resources
+)
+File(COPY ${Sources_Srcs} DESTINATION ${CMAKE_BINARY_DIR}/Mod/Import)
