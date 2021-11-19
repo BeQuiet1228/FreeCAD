@@ -27,14 +27,14 @@ class PhysicsWorkbench(Workbench):
         #     import os
         #     return os.path.join(os.path.dirname("__file__"),"PhysicsResources/translations")
 
-        # ÒÆÖÁ3D½¨Ä£¹¤×÷Ì¨
+        # ç§»è‡³3Då»ºæ¨¡å·¥ä½œå°
         # cmdlst_control = ["TimerDef", "Timer"]
         cmdlst_m3d = ["Separator", "M3DView", "M3DFind"]
         cmdlst_pal = [ "UndoPal", "RedoPal"]
         # cmdlst_controlPanel = ["Run", "MutiThreadSetting", "Continue", "TimerSwitch", "ReceiveResult", "RefreshState", "CheckResult","LogFile"]
         cmdlst_controlPanel = ["Run", "MutiThreadSetting", "Continue", "TimerSwitch", "RefreshState","LogFile", "Batch"]
         # benches = ["Separator", "Modeling 2D","Modeling 3D","Post Processing"]
-        #¹¤³ÌÉèÖÃ
+        #å·¥ç¨‹è®¾ç½®
         cmdProjectSettinglst=["ModelingInfo",
                               "WorkSpaceSettings",
                               "NewMaterical",
@@ -59,7 +59,7 @@ class PhysicsWorkbench(Workbench):
 
         self.appendToolbar("Task Monitor", cmdlst_taskMonitor)
 
-        # É¾³ıÄ£ĞÍ·­×ª¹¤×÷Ì¨
+        # åˆ é™¤æ¨¡å‹ç¿»è½¬å·¥ä½œå°
         self.removeToolbar("View")
         # self.appendMenu(QT_TRANSLATE_NOOP("Simulation", "&Simulation"), cmdlst_control)
 

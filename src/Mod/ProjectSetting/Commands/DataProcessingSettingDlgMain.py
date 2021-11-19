@@ -11,7 +11,7 @@ from ProjectSettingsDlgData import ProjectSettingsDlgData  as DlgData
 import ProjectSettingsDlgData
 from Modeling.Common.Tools import CoordinateSystemTools
 
-
+from Tools import CompleterTools
 
 import File.FileCommand.M3DFile.M3DFileUtil
 import File.FileCommand.TextUI.FileTextView
@@ -23,7 +23,6 @@ class DataProcessingSetting(QtGui.QDialog):
         QtGui.QDialog.__init__(self)
         self.ui = DataProcessingSettingDlg.Ui_Dialog_DataProcessingSettingDlg()
         self.ui.setupUi(self)
-        from ProjectSetting.Tools import CompleterTools
         #代码补全
         CompleterTools.setLineEditsCompleter(CompleterTools.getAllLineEdits(self.ui))
         self.ui.checkBox_set_prefix.clicked.connect(self.onCheckBox_set_prefix)

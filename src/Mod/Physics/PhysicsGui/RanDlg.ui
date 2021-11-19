@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>572</width>
-    <height>520</height>
+    <width>393</width>
+    <height>492</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -104,541 +104,6 @@
       </widget>
      </item>
     </layout>
-   </item>
-   <item row="4" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout_10">
-     <item>
-      <widget class="QPushButton" name="pushButton_ok">
-       <property name="text">
-        <string>确定</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton">
-       <property name="text">
-        <string>取消</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="3" column="0" colspan="2">
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="title">
-      <string>参数</string>
-     </property>
-     <widget class="QLabel" name="label_5">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>54</width>
-        <height>12</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>无</string>
-      </property>
-     </widget>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="2">
-    <widget class="QGroupBox" name="groupBox_Port_2">
-     <property name="title">
-      <string>观测项</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_3">
-      <item row="8" column="0">
-       <spacer name="verticalSpacer_14">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="6" column="0">
-       <spacer name="verticalSpacer_13">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="5" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <item>
-         <widget class="QGroupBox" name="groupBox_4">
-          <property name="title">
-           <string/>
-          </property>
-          <property name="flat">
-           <bool>true</bool>
-          </property>
-          <layout class="QGridLayout" name="gridLayout">
-           <item row="1" column="0">
-            <widget class="QCheckBox" name="checkBox_Fourier">
-             <property name="text">
-              <string>进行快速傅里叶变换：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QRadioButton" name="radioButton_real">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>实分析</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2">
-            <widget class="QRadioButton" name="radioButton_complex">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>复分析</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="7" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_end_4">
-        <item>
-         <widget class="QLabel" name="label_end_3">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>定时器：</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="StyledComboBox" name="ComboBox_timer">
-          <item>
-           <property name="text">
-            <string>默认定时器</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>仅开始时刻</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>仅结束时刻</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="4" column="0">
-       <spacer name="verticalSpacer_12">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="1" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_start_2">
-        <item>
-         <widget class="QLabel" name="label_start_2">
-          <property name="text">
-           <string>分类项：</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="radioButton_field">
-          <property name="text">
-           <string>场</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="radioButton_integral">
-          <property name="text">
-           <string>场积分</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="radioButton_power">
-          <property name="text">
-           <string>场功率</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="radioButton_energy">
-          <property name="text">
-           <string>场能量</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="radioButton_particles">
-          <property name="text">
-           <string>粒子</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="0" column="0">
-       <spacer name="verticalSpacer_8">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="2" column="0">
-       <spacer name="verticalSpacer_9">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="3" column="0">
-       <widget class="QGroupBox" name="groupBox">
-        <property name="title">
-         <string>分类子项</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_4">
-         <item row="1" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
-           <item>
-            <widget class="StyledComboBox" name="ComboBox_E1">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <item>
-              <property name="text">
-               <string>E1</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>E2</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>E3</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>B1</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>B2</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>B3</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>J1</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>J2</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>J3</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Q0</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>E1AV</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>E2AV</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>E3AV</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>B1AV</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>B2AV</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>B3AV</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>E1ST</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>E2ST</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>E3ST</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>B1ST</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>B2ST</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>B3ST</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>PHST</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>B</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>E</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item>
-            <widget class="StyledComboBox" name="ComboBox_EDL">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <item>
-              <property name="text">
-               <string>E.DL</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>H.DL</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>J.DA</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item>
-            <widget class="StyledComboBox" name="ComboBox_SDA">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <item>
-              <property name="text">
-               <string>S.DA</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item>
-            <widget class="StyledComboBox" name="ComboBox_EM">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <item>
-              <property name="text">
-               <string>EM</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>ELECTRIC</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>MAGNETIC</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="3" column="0">
-          <spacer name="verticalSpacer_11">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="0">
-          <spacer name="verticalSpacer_10">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="2" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout_6">
-           <item>
-            <widget class="QComboBox" name="comboBox_particle">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <item>
-              <property name="text">
-               <string>CURRENT</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>POWER</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>ENERGY</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="comboBox_particleType">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <item>
-              <property name="text">
-               <string>ELECTRON</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>PROTON</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="comboBox_axis">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <item>
-              <property name="text">
-               <string>X1</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>X2</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>X3</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
-      </item>
-     </layout>
-    </widget>
    </item>
    <item row="1" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox_Port">
@@ -952,6 +417,469 @@
       </item>
      </layout>
     </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QGroupBox" name="groupBox_Port_2">
+     <property name="title">
+      <string>观测项</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="8" column="0">
+       <spacer name="verticalSpacer_14">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="6" column="0">
+       <spacer name="verticalSpacer_13">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="5" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QGroupBox" name="groupBox_4">
+          <property name="title">
+           <string/>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="checkBox_Fourier">
+             <property name="text">
+              <string>进行快速傅里叶变换：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QRadioButton" name="radioButton_real">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>实分析</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QRadioButton" name="radioButton_complex">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>复分析</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="7" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_end_4">
+        <item>
+         <widget class="QLabel" name="label_end_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>定时器：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="StyledComboBox" name="ComboBox_timer">
+          <item>
+           <property name="text">
+            <string>默认定时器</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>仅开始时刻</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>仅结束时刻</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="4" column="0">
+       <spacer name="verticalSpacer_12">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_start_2">
+        <item>
+         <widget class="QLabel" name="label_start_2">
+          <property name="text">
+           <string>分类项：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButton_field">
+          <property name="text">
+           <string>场</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButton_integral">
+          <property name="text">
+           <string>场积分</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButton_power">
+          <property name="text">
+           <string>场功率</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButton_energy">
+          <property name="text">
+           <string>场能量</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="0">
+       <spacer name="verticalSpacer_8">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="2" column="0">
+       <spacer name="verticalSpacer_9">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="0">
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>分类子项</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="1" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="StyledComboBox" name="ComboBox_E1">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <item>
+              <property name="text">
+               <string>E1</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>E2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>E3</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>B1</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>B2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>B3</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>J1</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>J2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>J3</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Q0</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>E1AV</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>E2AV</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>E3AV</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>B1AV</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>B2AV</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>B3AV</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>E1ST</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>E2ST</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>E3ST</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>B1ST</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>B2ST</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>B3ST</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>PHST</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>B</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>E</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="StyledComboBox" name="ComboBox_EDL">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <item>
+              <property name="text">
+               <string>E.DL</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>H.DL</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>J.DA</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="StyledComboBox" name="ComboBox_SDA">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <item>
+              <property name="text">
+               <string>S.DA</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="StyledComboBox" name="ComboBox_EM">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <item>
+              <property name="text">
+               <string>EM</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>ELECTRIC</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>MAGNETIC</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="0">
+          <spacer name="verticalSpacer_10">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="2" column="0">
+          <spacer name="verticalSpacer_11">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>参数</string>
+     </property>
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>54</width>
+        <height>12</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>无</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_10">
+     <item>
+      <widget class="QPushButton" name="pushButton_ok">
+       <property name="text">
+        <string>确定</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>取消</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

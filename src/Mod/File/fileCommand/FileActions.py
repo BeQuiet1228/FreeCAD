@@ -6,12 +6,8 @@ import File.FileCommand.TextUI.FileTextView
 from PySide import QtGui
 from PySide import QtGui, QtCore
 
-# from Modeling.Modeling2D.Tools.Tools2D import sayz
-
-
 def QT_TRANSLATE_NOOP(ctx,txt): return txt # dummy function for the QT translator
-
-
+from DraftTools import translate
 class SaveAs:
     def Activated(self):
         from PySide import QtGui, QtCore
@@ -84,17 +80,7 @@ class saveM3D:
         # fileUtil.saveCommandsManager()
         # save file
         # try:
-        if FreeCAD.ActiveDocument.Comment == "new3D":
-            FreeCAD.Console.PrintError("保存M3D\n")
-        elif FreeCAD.ActiveDocument.Comment == "2D":
-            FreeCAD.Console.PrintError("保存M2D")
-        else:
-            fileUtil.writeToFile()
-        # 此处先注释
-        # if FreeCAD.ActiveDocument.Comment != "2D":
-        #     fileUtil.writeToFile()
-        # else:
-        #     FreeCAD.Console.PrintError("保存M2D")
+        fileUtil.writeToFile()
         # except:
         #     QtGui.QMessageBox.warning(None, u"M3D保存失败", u"保存M3D文件时出错，请重试！")
         # 更新工作目录
@@ -199,6 +185,6 @@ FreeCADGui.addCommand('File_Recent', RecentFile())
 FreeCADGui.addCommand('M3DView', M3DView())
 FreeCADGui.addCommand('M3DFind', M3DFind())
 
-# FreeCADGui.addCommand('M3d_Save', saveM3D())
+FreeCADGui.addCommand('M3d_Save', saveM3D())
 FreeCADGui.addCommand('M3d_SaveAs', saveAsM3D())
 

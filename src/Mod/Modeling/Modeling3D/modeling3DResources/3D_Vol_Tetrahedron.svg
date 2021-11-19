@@ -1,14 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>四面体@4x</title>
-    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
-        <g id="新增图标备份" transform="translate(-611.000000, -78.000000)" stroke="#191919" stroke-width="0.5">
-            <g id="四面体" transform="translate(611.000000, 78.000000)">
-                <path d="M8.5,2.55901699 L3.4045085,12.75 L13.5954915,12.75 L8.5,2.55901699 Z" id="三角形" fill="#8CCBFF"></path>
-                <line x1="8.5" y1="2.95330811" x2="8.5" y2="9.99359131" id="路径-67" stroke-dasharray="1"></line>
-                <line x1="3.61590576" y1="12.6287231" x2="8.5" y2="9.99359131" id="路径-68" stroke-dasharray="1"></line>
-                <line x1="13.4211121" y1="12.6706238" x2="8.5" y2="9.94049072" id="路径-69" stroke-dasharray="1"></line>
-            </g>
-        </g>
-    </g>
+<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24">
+  <defs>
+    <linearGradient id="未命名的渐变_19" data-name="未命名的渐变 19" x1="0.711" y1="12.165" x2="23.328" y2="12.165" gradientUnits="userSpaceOnUse">
+      <stop offset="0.116" stop-color="#fdee5f"/>
+      <stop offset="0.468" stop-color="#f4e364"/>
+      <stop offset="0.875" stop-color="#dec200"/>
+    </linearGradient>
+    <linearGradient id="未命名的渐变_19-2" x1="13.131" y1="12.474" x2="23.328" y2="12.474" xlink:href="#未命名的渐变_19"/>
+  </defs>
+  <title>3D_Vol_Tetrahedron</title>
+  <g>
+    <polygon points="23.328 18.322 12.761 23.161 0.711 18.037 12.761 1.169 23.328 18.322" style="fill: url(#未命名的渐变_19)"/>
+    <path d="M12.769,23.666,0,18.237,12.791.334,24,18.523ZM1.422,17.837l11.333,4.819,9.906-4.537L12.733,2Z" style="fill: #262324"/>
+    <polygon points="23.328 18.322 13.14 22.911 13.131 2.037 23.328 18.322" style="fill: url(#未命名的渐变_19-2)"/>
+    <path d="M12.679,23.625,12.668.428,24,18.525Zm.914-19.979L13.6,22.2l9.054-4.079Z" style="fill: #262324"/>
+  </g>
 </svg>

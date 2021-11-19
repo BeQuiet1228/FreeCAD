@@ -8,7 +8,6 @@ import FreeCAD
 import ProjectSetting
 import re
 
-
 class showConformalDialog(showObjDialog):
     def __init__(self, obj, parent=None):
         #手动调用父类构造函数。
@@ -33,7 +32,6 @@ class showConformalDialog(showObjDialog):
         screen = QtGui.QDesktopWidget().screenGeometry()
         self.move(screen.right()-self.size().width()-150, screen.bottom()*0.5-200)
         self.DisplayMode()
-        FreeCAD.Console.PrintError("这是正投影体\n")
 
         self.setUI()
     def setDefaultValue(self):
@@ -296,83 +294,8 @@ class showConformalDialog(showObjDialog):
             except:
                 self.error=self.error+'Point2.Z'+'  '+str(point_2_z_before)+'\n'
 
-    def closeDialog(self):
-        """
-        为了判断体是否被成功创建，在这里重写父类的方法
-        :return:
-        """
-        # 获取正投影体的坐标，判断坐标是否能有效绘制当前模型
-        p1_x = self.obj.Point1.x
-        p1_y = self.obj.Point1.y
-        p1_z = self.obj.Point1.z
 
-        p2_x = self.obj.Point2.x
-        p2_y = self.obj.Point2.y
-        p2_z = self.obj.Point2.z
-
-        difference_value = min(abs(p1_x - p2_x), abs(p1_y - p2_y), abs(p1_z - p2_z))    # 差值
-        
-        # 以0.01微米为衡量标准
-        if difference_value < 0.00000001:
-            reply = QtGui.QMessageBox.information(None, "", "无法有效绘制正投影体，请检查坐标。")
-            return
-
-        # 此种判断方法并不会有效
-        # if self.obj.Shape.isNull():
-        #     reply = QtGui.QMessageBox.information(None, "", "无法有效绘制正投影体，请检查坐标。")
-        #     return
-        #
-        # if not self.obj.Shape.isValid():
-        #     reply = QtGui.QMessageBox.information(None, "", "无法有效绘制正投影体，请检查坐标。")
-        #     return
-
-        t1 = time.time()
-        try:
-            self.fin_Order = int(self.ui.Base_lineEdit_2.value())
-        except:
             pass
-        if len(self.error) == 0:
-            self.hide()
-            t2 = time.time()
-            self.recompute_flag = self.WhethertoRecompute()
-            # is_show 用来判断是否是建立体，而不是从树结构打开对话框，新建立体都需要重新计算
-            if hasattr(self,'function_expression_before'):
-                try:
-                    if self.function_expression_before != self.ui.lineEdit_7.toPlainText():
-                        self.recompute_flag = True
-                        FreeCAD.Console.PrintError('\n函数表达式进行了修改，所以进行计算')
-                except:
-                    pass
-            is_show = 1
-
-            if "reshow" not in self.__class__.__name__:
-                is_show = 0
-            if self.recompute_flag or is_show == 0:
-                FreeCAD.ActiveDocument.recompute()
-                FreeCAD.Console.PrintError('\n此时重新计算了一次模型')
-            else:
-                FreeCAD.Console.PrintError('\n没有重新计算模型')
-
-            t3 = time.time()
-
-            if hasattr(self.obj, 'Attribute'):
-                self.controlboolupdate(is_show)
-            else:
-                FreeCAD.Console.PrintError('\n由于没有attribute的原因跳过布尔运算')
-
-            self.obj_resultshape.ViewObject.Transparency = 0
-            self.obj.ViewObject.Visibility = False
-            self.obj_resultshape.ViewObject.LineColor = (0.33, 0.33, 0.33)
-            Common.Tools.ObjectsTools.setFitViewOfObject(self.obj)
-            self.obj_resultshape.ViewObject.Transparency = 85
-            self.obj.ViewObject.Visibility = True
-            t4 = time.time()
-            self.close()
-            t5 = time.time()
-            # @fubiao
-            import ObjectsTools as objTools
-            objTools.checkVolShape(self.obj)
-            self.obj.recompute()
 
 class reshowConformalDialog(showConformalDialog):
     def deleteobj(self):

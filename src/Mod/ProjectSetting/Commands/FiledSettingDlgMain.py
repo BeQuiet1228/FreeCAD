@@ -10,7 +10,7 @@ import ProjectSettingCommand
 from ProjectSettingsDlgData import ProjectSettingsDlgData as DlgData
 import ProjectSettingsDlgData
 from Modeling.Common.Tools import CoordinateSystemTools
-
+from Tools import CompleterTools
 import File.FileCommand.M3DFile.M3DFileUtil
 import File.FileCommand.TextUI.FileTextView
 #json格式数据需要保持原有顺序输出
@@ -21,7 +21,6 @@ class FieldSetting(QtGui.QDialog):
         QtGui.QDialog.__init__(self)
         self.ui = FiledSettingDlg.Ui_Dialog_FieldSettingDlg()
         self.ui.setupUi(self)
-        from ProjectSetting.Tools import CompleterTools
         #代码补全
         CompleterTools.setLineEditsCompleter(CompleterTools.getAllLineEdits(self.ui))
         if FreeCAD.ActiveDocument.CoordinateSystem==CoordinateSystemTools.CoordinateType.Rectangular:

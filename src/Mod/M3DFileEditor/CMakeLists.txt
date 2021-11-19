@@ -1,47 +1,10 @@
-SET(M3DFileEditor_Srcs
-./InitGui.py
-./M3DFileEditorCommand/EditorActions.py
-./M3DFileEditorCommand/FileTextEditor.py
-./M3DFileEditorCommand/FindDialogMain.py
-./M3DFileEditorCommand/ReplaceDialogMain.py
-./M3DFileEditorCommand/__init__.py
-./M3DFileEditorGui/FindDialog.py
-./M3DFileEditorGui/FindDialog.ui
-./M3DFileEditorGui/InitBar.py
-./M3DFileEditorGui/ReplaceDialog.py
-./M3DFileEditorGui/ReplaceDialog.ui
-./M3DFileEditorGui/__init__.py
-./M3DFileEditorResources/m3d-copy.png
-./M3DFileEditorResources/m3d-copy.svg
-./M3DFileEditorResources/m3d-cut.png
-./M3DFileEditorResources/m3d-cut.svg
-./M3DFileEditorResources/m3d-display.png
-./M3DFileEditorResources/m3d-display.svg
-./M3DFileEditorResources/m3d-find.png
-./M3DFileEditorResources/m3d-find.svg
-./M3DFileEditorResources/m3d-open.png
-./M3DFileEditorResources/m3d-open.svg
-./M3DFileEditorResources/m3d-paste.png
-./M3DFileEditorResources/m3d-paste.svg
-./M3DFileEditorResources/m3d-redo.png
-./M3DFileEditorResources/m3d-redo.svg
-./M3DFileEditorResources/m3d-replace.png
-./M3DFileEditorResources/m3d-replace.svg
-./M3DFileEditorResources/m3d-save.png
-./M3DFileEditorResources/m3d-save.svg
-./M3DFileEditorResources/m3d-saveAs.svg
-./M3DFileEditorResources/m3d-undo.png
-./M3DFileEditorResources/m3d-undo.svg
-./M3DFileEditorResources/M3DFileEditorWorkbench.png
-./M3DFileEditorResources/M3DFileEditorWorkbench.svg
-./M3DFileEditorResources/__init__.py
-./__init__.py
+add_custom_target(M3DFileEditor)
+
+SET(Sources_Srcs
+	M3DFileEditorCommand
+	M3DFileEditorGui
+	M3DFileEditorResources
+	__init__.py
+	InitGui.py
 )
-add_custom_target(M3DFileEditor ALL SOURCES ${M3DFileEditor_Srcs})
-fc_copy_sources(M3DFileEditor "${CMAKE_BINARY_DIR}/Mod/M3DFileEditor" ${M3DFileEditor_Srcs})
-install(
-	FILES
-	${M3DFileEditor_Srcs}
-	DESTINATION
-	Mod/M3DFileEditor
-)
+file(COPY ${Sources_Srcs} DESTINATION ${CMAKE_BINARY_DIR}/Mod/M3DFileEditor)

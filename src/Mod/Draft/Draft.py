@@ -47,7 +47,7 @@ __url__ = "http://www.freecadweb.org"
 
 '''The Draft module offers a range of tools to create and manipulate basic 2D objects'''
 
-import FreeCAD, math, sys, os, DraftVecUtils, Draft_rc, WorkingPlane
+import FreeCAD, math, sys, os, DraftVecUtils, Draft_rc, WorkingPlane,DraftTools
 from FreeCAD import Vector
 
 if FreeCAD.GuiUp:

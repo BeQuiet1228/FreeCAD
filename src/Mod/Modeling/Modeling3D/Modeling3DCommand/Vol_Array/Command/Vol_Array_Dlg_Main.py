@@ -588,7 +588,7 @@ class VolArray(QtGui.QDialog):
                 objInstance=Instance.Array(obj)
             else:
                 obj.Shapes=objsList 
-                obj.Proxy.redraw(obj)
+                obj.Proxy.redraw(obj)              
             obj.BaseObjType=self.baseObjType
             obj.BaseObjData=self.baseObjData
             obj.Attribute=self.attribute

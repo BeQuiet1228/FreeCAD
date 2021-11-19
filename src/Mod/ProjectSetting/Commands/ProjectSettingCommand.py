@@ -23,14 +23,14 @@ class WorkSpaceSettingsCommand:
         # dlg=WorkSpaceSettingDlgMain.show(className)        
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/ProjectSetting/ProjectSettingResources/WorkSpaceSettings.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/ProjectSetting/ProjectSettingResources/refreshs.svg"
         MenuText = QtCore.QT_TRANSLATE_NOOP(
             'WorkSpaceSettings',
             'WorkSpaceSettings')
         ToolTip = QtCore.QT_TRANSLATE_NOOP(
             'WorkSpaceSettings',
             'WorkSpaceSettings')
-        return {'Pixmap': IconPath,
+        return {'Pixmap': "",
                 'MenuText': MenuText,
                 'ToolTip': ToolTip}
 
@@ -61,7 +61,7 @@ class NewMatericalCommand:
         # dlg=WorkSpaceSettingDlgMain.show(className)        
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/ProjectSetting/ProjectSettingResources/NewMaterical.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/ProjectSetting/ProjectSettingResources/NewMaterial.png"
         MenuText = QtCore.QT_TRANSLATE_NOOP(
             'NewMaterical',
             'New Material')
@@ -89,14 +89,14 @@ class FiledSettingCommand:
         # dlg=WorkSpaceSettingDlgMain.show(className)        
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/ProjectSetting/ProjectSettingResources/FiledSetting.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/ProjectSetting/ProjectSettingResources/refreshs.svg"
         MenuText = QtCore.QT_TRANSLATE_NOOP(
             'FiledSetting',
             'FiledSetting')
         ToolTip = QtCore.QT_TRANSLATE_NOOP(
             'FiledSetting',
             'FiledSetting')
-        return {'Pixmap': IconPath,
+        return {'Pixmap': "",
                 'MenuText': MenuText,
                 'ToolTip': ToolTip}
 
@@ -118,7 +118,8 @@ class TimeDomainComputingCommandMenu:
         # dlg=WorkSpaceSettingDlgMain.show(className)        
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/ProjectSetting/ProjectSettingResources/TimeDomainComputingMenu.svg"
+        # IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/ProjectSetting/ProjectSettingResources/ParticleMerge.png"
+        IconPath=""
         MenuText = QtCore.QT_TRANSLATE_NOOP(
             'TimeDomainComputingMenu',
             'TimeDomainComputing')
@@ -147,7 +148,7 @@ class TimeDomainComputingCommand:
         # dlg=WorkSpaceSettingDlgMain.show(className)        
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/ProjectSetting/ProjectSettingResources/TimeDomainComputingMenu.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/ProjectSetting/ProjectSettingResources/ParticleMerge.png"
         MenuText = QtCore.QT_TRANSLATE_NOOP(
             'TimeDomainComputing',
             'Particle Merge')
@@ -177,14 +178,14 @@ class DataProcessingSettingCommand:
         # dlg=WorkSpaceSettingDlgMain.show(className)        
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/ProjectSetting/ProjectSettingResources/DataProcessingSetting.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/ProjectSetting/ProjectSettingResources/refreshs.svg"
         MenuText = QtCore.QT_TRANSLATE_NOOP(
             'DataProcessingSetting',
             'DataProcessingSetting')
         ToolTip = QtCore.QT_TRANSLATE_NOOP(
             'DataProcessingSetting',
             'DataProcessingSetting')
-        return {'Pixmap': IconPath,
+        return {'Pixmap': '',
                 'MenuText': MenuText,
                 'ToolTip': ToolTip}
 
@@ -206,14 +207,14 @@ class ModelingInfoCommand:
         # dlg=WorkSpaceSettingDlgMain.show(className)        
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/ProjectSetting/ProjectSettingResources/ModelingInfo.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/ProjectSetting/ProjectSettingResources/refreshs.svg"
         MenuText = QtCore.QT_TRANSLATE_NOOP(
             'ModelingInfo',
             'ModelingInfo')
         ToolTip = QtCore.QT_TRANSLATE_NOOP(
             'ModelingInfo',
             'ModelingInfo')
-        return {'Pixmap': IconPath,
+        return {'Pixmap': '',
                 'MenuText': MenuText,
                 'ToolTip': ToolTip}
 
@@ -235,14 +236,14 @@ class RunOptiosCommand:
         # dlg=WorkSpaceSettingDlgMain.show(className)        
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/ProjectSetting/ProjectSettingResources/RunOptions.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/ProjectSetting/ProjectSettingResources/refreshs.svg"
         MenuText = QtCore.QT_TRANSLATE_NOOP(
             'RunOptions',
             'RunOptions')
         ToolTip = QtCore.QT_TRANSLATE_NOOP(
             'RunOptions',
             'RunOptions')
-        return {'Pixmap': IconPath,
+        return {'Pixmap': '',
                 'MenuText': MenuText,
                 'ToolTip': ToolTip}
 

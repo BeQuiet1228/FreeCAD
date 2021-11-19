@@ -579,8 +579,8 @@ def newDoc(CoordinateSystem):
     # 初始化当前文档
     DocumentTools.initDocument(doc)
 
-    # import File
-    # File.FileCommand.TextUI.FileTextView.FileView().showThisSubWindow()
+    import File
+    File.FileCommand.TextUI.FileTextView.FileView().showThisSubWindow()
 
 
 def setGlobalVariable(globalVariableList):

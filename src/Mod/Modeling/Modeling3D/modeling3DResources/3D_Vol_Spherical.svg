@@ -1,19 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>球体</title>
-    <defs>
-        <linearGradient x1="12.444657%" y1="11.6630598%" x2="86.5813869%" y2="89.8683321%" id="linearGradient-1">
-            <stop stop-color="#8CCBFF" offset="0%"></stop>
-            <stop stop-color="#045EA8" offset="100%"></stop>
-        </linearGradient>
-    </defs>
-    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
-        <g id="图标输出" transform="translate(-391.000000, -618.000000)" stroke="#1A1A1A" stroke-width="0.5">
-            <g id="球体" transform="translate(391.000000, 618.000000)">
-                <circle id="Oval" fill="url(#linearGradient-1)" cx="8" cy="8" r="6"></circle>
-                <path d="M6.95093983,2 C6.20195279,4.11535706 5.82745927,6.11535706 5.82745927,8 C5.82745927,9.88464294 6.20195279,11.8846429 6.95093983,14" id="Path-41"></path>
-                <path d="M2,8.95775547 C3.96297035,9.25691586 5.96297035,9.40649606 8,9.40649606 C10.0370296,9.40649606 12.0370296,9.25691586 14,8.95775547" id="Path-42"></path>
-            </g>
-        </g>
-    </g>
+<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24">
+  <defs>
+    <radialGradient id="未命名的渐变_17" data-name="未命名的渐变 17" cx="12" cy="12" r="11.259" gradientUnits="userSpaceOnUse">
+      <stop offset="0.116" stop-color="#fdee5f"/>
+      <stop offset="0.468" stop-color="#f7e881"/>
+      <stop offset="0.875" stop-color="#dec200"/>
+    </radialGradient>
+  </defs>
+  <title>3D_Vol_Spherical</title>
+  <g>
+    <circle cx="12" cy="12" r="11.259" style="fill: url(#未命名的渐变_17)"/>
+    <path d="M12,24A12,12,0,1,1,24,12,12.013,12.013,0,0,1,12,24ZM12,.944A11.056,11.056,0,1,0,23.056,12,11.069,11.069,0,0,0,12,.944Z" style="fill: #262324"/>
+  </g>
 </svg>

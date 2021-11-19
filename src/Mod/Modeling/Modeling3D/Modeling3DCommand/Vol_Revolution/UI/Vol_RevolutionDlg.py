@@ -187,7 +187,7 @@ class Ui_Dialog_VolRevolution(object):
         self.checkBox_UniformX.setText(QtGui.QApplication.translate("Dialog_VolRevolution", "X", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBox_UniformZ.setText(QtGui.QApplication.translate("Dialog_VolRevolution", "Z", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBox_UniformY.setText(QtGui.QApplication.translate("Dialog_VolRevolution", "Y", None, QtGui.QApplication.UnicodeUTF8))
-        self.lineEdit_UniformZ.setText(QtGui.QApplication.translate("Dialog_VolRevolution", "dx3", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit_UniformZ.setText(QtGui.QApplication.translate("Dialog_VolRevolution", "dx2", None, QtGui.QApplication.UnicodeUTF8))
         self.lineEdit_UniformX.setText(QtGui.QApplication.translate("Dialog_VolRevolution", "dx1", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_2.setTitle(QtGui.QApplication.translate("Dialog_VolRevolution", "Object of a Revolution", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Dialog_VolRevolution", "BaseArea:", None, QtGui.QApplication.UnicodeUTF8))

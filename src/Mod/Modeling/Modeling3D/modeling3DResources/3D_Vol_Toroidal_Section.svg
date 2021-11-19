@@ -1,43 +1,24 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>圆环@4x</title>
-    <defs>
-        <linearGradient x1="50%" y1="0%" x2="50%" y2="70.0321625%" id="linearGradient-1">
-            <stop stop-color="#3F81B8" offset="0%"></stop>
-            <stop stop-color="#8CCBFF" offset="31.1180321%"></stop>
-            <stop stop-color="#3F81B8" offset="100%"></stop>
-        </linearGradient>
-        <radialGradient cx="50%" cy="117.307537%" fx="50%" fy="117.307537%" r="121.863581%" gradientTransform="translate(0.500000,1.173075),scale(0.438673,1.000000),rotate(-89.801142),translate(-0.500000,-1.173075)" id="radialGradient-2">
-            <stop stop-color="#FFFFFF" stop-opacity="0.5" offset="0%"></stop>
-            <stop stop-color="#0D65AE" offset="60.0943804%"></stop>
-            <stop stop-color="#7CBEF5" offset="80.108432%"></stop>
-            <stop stop-color="#156BB3" offset="100%"></stop>
-        </radialGradient>
-        <path d="M7.7,5 C10.8480231,5 13.4,7.1490332 13.4,9.8 C13.4,9.86728857 13.3983558,9.93425376 13.3950994,10.0008686 L10.9459195,10.0006669 C10.9533524,9.93450306 10.9571429,9.8675777 10.9571429,9.8 C10.9571429,8.4745166 9.49887033,7.4 7.7,7.4 C5.90112967,7.4 4.44285714,8.4745166 4.44285714,9.8 C4.44285714,9.8675777 4.44664765,9.93450306 4.45408054,10.0006669 L2.00490057,10.0008686 C2.00164419,9.93425376 2,9.86728857 2,9.8 C2,7.1490332 4.55197693,5 7.7,5 Z" id="path-3"></path>
-        <filter x="-19.7%" y="-45.0%" width="139.5%" height="190.0%" filterUnits="objectBoundingBox" id="filter-4">
-            <feGaussianBlur stdDeviation="1.5" in="SourceAlpha" result="shadowBlurInner1"></feGaussianBlur>
-            <feOffset dx="0" dy="1" in="shadowBlurInner1" result="shadowOffsetInner1"></feOffset>
-            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
-            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
-        </filter>
-        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-5">
-            <stop stop-color="#8CCBFF" offset="0%"></stop>
-            <stop stop-color="#3F81B8" offset="100%"></stop>
-        </linearGradient>
-    </defs>
-    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
-        <g id="修改部分备份" transform="translate(-569.000000, -78.000000)">
-            <g id="圆环" transform="translate(569.000000, 78.000000)">
-                <g id="形状结合">
-                    <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-3"></use>
-                    <use fill="#045EA8" fill-rule="evenodd" xlink:href="#path-3"></use>
-                    <use fill="url(#radialGradient-2)" fill-rule="evenodd" xlink:href="#path-3"></use>
-                    <use fill="black" fill-opacity="1" filter="url(#filter-4)" xlink:href="#path-3"></use>
-                    <use stroke="#1A1A1A" stroke-width="0.5" xlink:href="#path-3"></use>
-                </g>
-                <circle id="椭圆形" stroke="#1A1A1A" stroke-width="0.5" fill="url(#linearGradient-5)" cx="3.25" cy="10" r="1.25"></circle>
-                <circle id="椭圆形备份" stroke="#1A1A1A" stroke-width="0.5" fill="url(#linearGradient-5)" cx="12.15" cy="10" r="1.25"></circle>
-            </g>
-        </g>
+<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24">
+  <defs>
+    <radialGradient id="未命名的渐变_55" data-name="未命名的渐变 55" cx="12.076" cy="15.749" r="13.776" gradientTransform="matrix(0.306, -0.952, 0.737, 0.237, -3.223, 23.516)" gradientUnits="userSpaceOnUse">
+      <stop offset="0.748" stop-color="#e3c80e"/>
+      <stop offset="0.862" stop-color="#ffff76"/>
+      <stop offset="0.971" stop-color="#e3c80e"/>
+    </radialGradient>
+  </defs>
+  <title>3D_Vol_Toroidal_Section</title>
+  <g>
+    <g>
+      <path d="M5.519,17.87a12.629,12.629,0,0,1,.42-2.748c1.279-4.774,5-7.924,8.316-7.036s4.963,5.476,3.685,10.25a12.581,12.581,0,0,1-1.01,2.59l4.988,1.336a18.547,18.547,0,0,0,.918-2.615c2.071-7.732-1.129-15.307-7.147-16.918S3.114,6.079,1.043,13.811a18.569,18.569,0,0,0-.511,2.723Z" style="fill: url(#未命名的渐变_55)"/>
+      <path d="M22.184,22.815l-5.935-1.59.269-.515a12.055,12.055,0,0,0,.973-2.494c1.21-4.519-.3-8.862-3.357-9.681a4.985,4.985,0,0,0-4.5,1.3,10.69,10.69,0,0,0-3.246,5.407,12.124,12.124,0,0,0-.405,2.646l-.022.581L.025,16.88l.045-.4a19.116,19.116,0,0,1,.524-2.791,17.178,17.178,0,0,1,6.012-9.3,10.577,10.577,0,0,1,9.2-2.115,10.577,10.577,0,0,1,6.914,6.432,17.168,17.168,0,0,1,.562,11.056,19.088,19.088,0,0,1-.942,2.68ZM17.6,20.624l4.05,1.085a17.971,17.971,0,0,0,.739-2.182,16.235,16.235,0,0,0-.519-10.454,9.672,9.672,0,0,0-6.3-5.9,9.673,9.673,0,0,0-8.4,1.959,16.235,16.235,0,0,0-5.674,8.8,18.149,18.149,0,0,0-.45,2.258l4.049,1.085A13.107,13.107,0,0,1,5.491,15,11.643,11.643,0,0,1,9.034,9.126a5.869,5.869,0,0,1,5.341-1.489c3.555.953,5.355,5.806,4.013,10.82A12.958,12.958,0,0,1,17.6,20.624Z" style="fill: #262324"/>
     </g>
+    <g>
+      <path d="M3.805,19.234a4.007,4.007,0,0,1-1.349-.247c-1.362-.495-2.264-1.6-1.97-2.417.187-.517.839-.838,1.7-.838a4.02,4.02,0,0,1,1.351.248c1.361.5,2.263,1.6,1.969,2.416C5.322,18.913,4.669,19.234,3.805,19.234Z" style="fill: #edd029"/>
+      <path d="M2.19,16.23a3.494,3.494,0,0,1,1.179.218C4.618,16.9,5.193,17.8,5.04,18.227c-.108.3-.616.509-1.235.509a3.494,3.494,0,0,1-1.179-.218C1.377,18.065.8,17.162.955,16.739c.108-.3.616-.509,1.235-.509m0-1A2.156,2.156,0,0,0,.018,16.4c-.393,1.089.622,2.456,2.268,3.053a4.467,4.467,0,0,0,1.519.278,2.155,2.155,0,0,0,2.172-1.167c.393-1.088-.622-2.456-2.268-3.053a4.467,4.467,0,0,0-1.519-.278Z" style="fill: #1e1d1d"/>
+    </g>
+    <g>
+      <path d="M19.983,23.8a4.006,4.006,0,0,1-1.348-.247c-1.363-.5-2.264-1.6-1.969-2.417.186-.516.839-.838,1.7-.838a4.023,4.023,0,0,1,1.35.248c1.362.5,2.263,1.6,1.968,2.416C21.5,23.477,20.849,23.8,19.983,23.8Z" style="fill: #edd029"/>
+      <path d="M18.369,20.794a3.494,3.494,0,0,1,1.179.218c1.249.453,1.824,1.356,1.671,1.778-.108.3-.616.51-1.235.51a3.5,3.5,0,0,1-1.179-.219c-1.249-.453-1.824-1.356-1.671-1.778.108-.3.616-.509,1.235-.509m0-1A2.156,2.156,0,0,0,16.2,20.964c-.393,1.089.622,2.456,2.268,3.054a4.492,4.492,0,0,0,1.519.278,2.156,2.156,0,0,0,2.172-1.167c.393-1.089-.622-2.456-2.268-3.054a4.492,4.492,0,0,0-1.519-.278Z" style="fill: #262324"/>
+    </g>
+  </g>
 </svg>

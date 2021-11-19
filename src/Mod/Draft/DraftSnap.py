@@ -1398,3 +1398,7 @@ if not hasattr(FreeCAD,"DraftWorkingPlane"):
     FreeCAD.DraftWorkingPlane = WorkingPlane.plane()
     #print(FreeCAD.DraftWorkingPlane)
     FreeCADGui.addIconPath(":/icons")
+
+def sayz(msg):
+    FreeCAD.Console.PrintError(msg)
+    FreeCAD.Console.PrintError("\n")

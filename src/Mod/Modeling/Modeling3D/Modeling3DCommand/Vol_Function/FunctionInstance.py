@@ -36,14 +36,6 @@ class Function:
             self.vectorList=[obj.Point_1,obj.Point_2]
 
         obj.addProperty("App::PropertyInteger", "Precision", "Object of a Function", "Precision of the function").Precision = 20
-
-        obj.addProperty("App::PropertyFloat", "precision_x", "Object of a Function",
-                        "Precision of the function").precision_x = 10
-        obj.addProperty("App::PropertyFloat", "precision_y", "Object of a Function",
-                        "Precision of the function").precision_y = 10
-        obj.addProperty("App::PropertyFloat", "precision_z", "Object of a Function",
-                        "Precision of the function").precision_z = 10
-
         ObjectsTools.addPropertyForVol(obj,ObjectsTools.ObjectType.Vol_Function,self.curCoordinateSystem)
         obj.addProperty("App::PropertyInteger","Order","","Order of the Extruded").Order=100
 
@@ -109,8 +101,7 @@ class Function:
                 self.flagLabel=True
 
         ''' Print the name of the property that has changed '''
-        if prop == "Point_1" or prop == "Point_2" or prop=="Expression" or prop=="Precision"\
-                or prop == "precision_x" or prop == "precision_y" or prop == "precision_z":
+        if prop == "Point_1" or prop == "Point_2" or prop=="Expression" or prop=="Precision":
             if self.flagShape:
                 self.flagShape=False
                 self.flagPlacement=False
@@ -161,14 +152,14 @@ class Function:
         return _wrapper
     @time_me
     def redraw(self,obj):
+        
+        if obj.Precision>=30:
+            obj.Precision=30
+        if obj.Precision<=10:
+            obj.Precision=10
+
+       
         try:
-            if not hasattr(obj, "precision_z"):
-                obj.addProperty("App::PropertyFloat", "precision_x", "Object of a Function",
-                                "Precision of the function").precision_x = 10
-                obj.addProperty("App::PropertyFloat", "precision_y", "Object of a Function",
-                                "Precision of the function").precision_y = 10
-                obj.addProperty("App::PropertyFloat", "precision_z", "Object of a Function",
-                                "Precision of the function").precision_z = 10
             # @fubiao这里涉及一个解析过程
             expressionStr=OtherTools.parseExpressionStr(obj.Expression.replace(" ",""))
             p1x=float(OtherTools.parseExpressionStr(str(obj.Point_1[0]).replace(" ","")))
@@ -178,37 +169,10 @@ class Function:
             p1z=float(OtherTools.parseExpressionStr(str(obj.Point_1[2]).replace(" ","")))
             p2z=float(OtherTools.parseExpressionStr(str(obj.Point_2[2]).replace(" ","")))
             FreeCAD.Console.PrintError("expressionStr: "+str(expressionStr)+" p1x:"+str(p1x)+" p2x:"+str(p2x)+" p1y:"+str(p1y)+" p2y:"+str(p2y)+" p1z:"+str(p1z)+" p2z: "+str(p2z)+"\n")
-
-            px = 0.1
-            py = 0.1
-            pz = 0.1
-
-            if FreeCAD.ActiveDocument.CoordinateSystem == "Rectangular":
-                px = obj.precision_x * 0.001
-                py = obj.precision_y * 0.001
-                pz = obj.precision_z * 0.001
-            elif FreeCAD.ActiveDocument.CoordinateSystem == "Polar":
-                px = obj.precision_x * 0.001
-                py = obj.precision_y
-                pz = obj.precision_z * 0.001
-            else:
-                px = obj.precision_x * 0.001
-                py = obj.precision_y * 0.001
-                pz = obj.precision_z
-
-            obj.Shape=PartChipic.makeFuncMesh(1,
-                                              expressionStr,
-                                              p1x, p2x, p1y, p2y, p1z, p2z,
-                                              self.curCoordinateSystem,
-                                              str(obj.Precision),
-                                              obj.Attribute,
-                                              px,
-                                              py,
-                                              pz)
-            FreeCAD.Console.PrintError("重回函数体\n")
-
-            # obj.Shape=PartChipic.makeFuncMesh(1,obj.Expression,obj.Point_1[0],obj.Point_2[0],obj.Point_1[1],obj.Point_2[1],
-            # obj.Point_1[2],obj.Point_2[2],self.curCoordinateSystem,str(obj.Precision),obj.Attribute)
+            
+            obj.Shape=PartChipic.makeFuncMesh(1,expressionStr,p1x,p2x,p1y,p2y,p1z,p2z,self.curCoordinateSystem,str(obj.Precision),obj.Attribute)
+            # obj.Shape=PartChipic.makeFuncMesh(1,obj.Expression,obj.Point_1[0],obj.Point_2[0],obj.Point_1[1],obj.Point_2[1],obj.Point_1[2],obj.Point_2[2],self.curCoordinateSystem,str(obj.Precision),obj.Attribute)
+            # FreeCAD.Console.PrintError("expressionStr: "+str(obj.Expression)+" p1x:"+str(obj.Point_1[0])+" p2x:"+str(obj.Point_2[0])+" p1y:"+str(obj.Point_1[1])+" p2y:"+str(obj.Point_2[1])+" p1z:"+str(obj.Point_1[2])+" p2z: "+str(obj.Point_2[2])+"\n")
         except:
             from Modeling.Common.Tools import DocumentTools
             DocumentTools.printErrorMessage("Redraw Function Failed!")
@@ -275,10 +239,6 @@ class Function:
         #设置自定义属性可编辑
         fp.setEditorMode("Point_1",0)
         fp.setEditorMode("Point_2",0)
-
-        FreeCAD.Console.PrintError("函数体1111111\n")
-
-        # self.redraw(fp)
         if self.flagExcute:
             self.redraw(fp)
             self.flagExcute=False

@@ -8,7 +8,7 @@ from Modeling.Modeling3D.Modeling3DCommand.ShowAllFunction import ShowAllFunctio
 from Modeling.Common.Tools import DocumentTools
 from Modeling import Common
 from Physics.PhysicsCommand import DlgData
-#json¸ñÊ½Êı¾İĞèÒª±£³ÖÔ­ÓĞË³ĞòÊä³ö
+#jsonæ ¼å¼æ•°æ®éœ€è¦ä¿æŒåŸæœ‰é¡ºåºè¾“å‡º
 from collections import OrderedDict
 class ShowAllFunctionDlgMain(QtGui.QDialog):
     def __init__(self, obj=None):
@@ -16,7 +16,7 @@ class ShowAllFunctionDlgMain(QtGui.QDialog):
         self.ui = ShowAllFunctionDialog.Ui_Dialog()
         self.ui.setupUi(self)
         self.function_list = DocumentTools.getAllFunctions()
-        self.NumberOfPages = 0 #ÓÃÀ´¹ÜÀíÒ³ÊıµÄ±äÁ¿ 0±íÊ¾µÚÒ»Ò³
+        self.NumberOfPages = 0 #ç”¨æ¥ç®¡ç†é¡µæ•°çš„å˜é‡ 0è¡¨ç¤ºç¬¬ä¸€é¡µ
         self.setLabel()
         self.setComboBox()
         self.ui.checkBox_all.setChecked(self.setcheckBox_all_State())
@@ -31,7 +31,7 @@ class ShowAllFunctionDlgMain(QtGui.QDialog):
         len_function = len(self.function_list) - self.NumberOfPages*5
         if len_function >= 5:
             len_function = 5
-        FreeCAD.Console.PrintError('\nº¯ÊıÌåÁĞ±íµÄ³¤¶È:'+str(len_function))
+        FreeCAD.Console.PrintError('\nå‡½æ•°ä½“åˆ—è¡¨çš„é•¿åº¦:'+str(len_function))
         if len_function == 0:
             self.ui.label_1.setText("NULL")
             self.ui.label_2.setText("NULL")
@@ -70,7 +70,7 @@ class ShowAllFunctionDlgMain(QtGui.QDialog):
             self.ui.label_5.setText(self.function_list[self.NumberOfPages*5+4].Label)
     def PreviousPages(self):
         '''
-        ÉÏÒ»Ò³°´Å¥ËùÁ´½ÓµÄº¯Êı
+        ä¸Šä¸€é¡µæŒ‰é’®æ‰€é“¾æ¥çš„å‡½æ•°
         '''
         if self.NumberOfPages == 0:
             return
@@ -79,8 +79,8 @@ class ShowAllFunctionDlgMain(QtGui.QDialog):
         self.setComboBox()
     def NextPages(self):
         '''
-        ÏÂÒ»Ò³°´Å¥ËùÁ´½ÓµÄº¯Êı\n
-        ³ıµÚÒ»Ò³Íâ£¬²»ÔÊĞíÔÙ³öÏÖÈ«²¿ÎªNULLµÄÇé¿ö
+        ä¸‹ä¸€é¡µæŒ‰é’®æ‰€é“¾æ¥çš„å‡½æ•°\n
+        é™¤ç¬¬ä¸€é¡µå¤–ï¼Œä¸å…è®¸å†å‡ºç°å…¨éƒ¨ä¸ºNULLçš„æƒ…å†µ
         '''
         MaxPages = int(len(self.function_list)/5)
         if self.NumberOfPages >= MaxPages:
@@ -90,7 +90,7 @@ class ShowAllFunctionDlgMain(QtGui.QDialog):
         self.setComboBox()
     def setComboBox(self):
         '''
-        ÓÃÀ´ÉèÖÃÏÂÀ­¿òÑ¡ÏîµÄº¯Êı
+        ç”¨æ¥è®¾ç½®ä¸‹æ‹‰æ¡†é€‰é¡¹çš„å‡½æ•°
         '''
         self.setAllComboBoxNULL()
         len_function = len(self.function_list) - self.NumberOfPages*5
@@ -134,7 +134,7 @@ class ShowAllFunctionDlgMain(QtGui.QDialog):
 
     def setAllComboBoxNULL(self):
         '''
-        °ÑËùÓĞComboBoxÉèÖÃÎªÎ´¶¨Òå
+        æŠŠæ‰€æœ‰ComboBoxè®¾ç½®ä¸ºæœªå®šä¹‰
         '''
         self.ui.comboBox_1.setCurrentIndex(0)
         self.ui.comboBox_2.setCurrentIndex(0)
@@ -143,27 +143,27 @@ class ShowAllFunctionDlgMain(QtGui.QDialog):
         self.ui.comboBox_5.setCurrentIndex(0)
     def setAllFunctionNotDefine(self):
         '''
-        Èç¹û¹´Ñ¡¿ò±»Ñ¡ÖĞ\n
-        ÄÇÃ´°ÑËùÓĞµÄº¯ÊıÌå¶¼°ÑÊôĞÔ¸ÄÎªÎ´¶¨Òå
+        å¦‚æœå‹¾é€‰æ¡†è¢«é€‰ä¸­\n
+        é‚£ä¹ˆæŠŠæ‰€æœ‰çš„å‡½æ•°ä½“éƒ½æŠŠå±æ€§æ”¹ä¸ºæœªå®šä¹‰
         '''
         notdefine_flag = self.ui.checkBox_all.isChecked()
-        FreeCAD.Console.PrintError('\nÊÇ·ñÑ¡ÔñÁËÈ«²¿²»²ÎÓë²¼¶ûÔËËã:'+str(notdefine_flag))
+        FreeCAD.Console.PrintError('\næ˜¯å¦é€‰æ‹©äº†å…¨éƒ¨ä¸å‚ä¸å¸ƒå°”è¿ç®—:'+str(notdefine_flag))
         newdata = DlgData.DlgData({},"setAllFunction")
         if notdefine_flag:
             for objItem in self.function_list:
-                FreeCAD.Console.PrintError('\nº¯ÊıÌåÃû³Æ:'+str(objItem.Label))
+                FreeCAD.Console.PrintError('\nå‡½æ•°ä½“åç§°:'+str(objItem.Label))
                 objItem.Attribute = "NotDefine"
-                FreeCAD.Console.PrintError('      ¸Ãº¯ÊıÌåµÄÊôĞÔ:'+str(objItem.Attribute))
+                FreeCAD.Console.PrintError('      è¯¥å‡½æ•°ä½“çš„å±æ€§:'+str(objItem.Attribute))
             Common.Tools.DocumentTools.updateBoolean()
     def closeDialog(self):
         '''
-        È·¶¨°´Å¥ËùÁ´½ÓµÄº¯Êı
+        ç¡®å®šæŒ‰é’®æ‰€é“¾æ¥çš„å‡½æ•°
         '''
         self.setAllFunctionNotDefine()
         self.close()
     def setcheckBox_all_State(self):
         '''
-        Èç¹ûËùÓĞµÄº¯ÊıÌå¶¼ÊÇÎ´¶¨Òå£¬·µ»ØTrue£¬checkBoxÉèÎª¹´Ñ¡
+        å¦‚æœæ‰€æœ‰çš„å‡½æ•°ä½“éƒ½æ˜¯æœªå®šä¹‰ï¼Œè¿”å›Trueï¼ŒcheckBoxè®¾ä¸ºå‹¾é€‰
         '''
         # flag_checkBox_all = False
         for objItem in self.function_list:
@@ -172,9 +172,9 @@ class ShowAllFunctionDlgMain(QtGui.QDialog):
         return True
     def keepData(self,dlgdata):
         '''
-        ÓÃÀ´±£´æº¯ÊıÌåµÄÊôĞÔ£¬ÔÚÉèÖÃÎ´¶¨ÒåºóËùÓĞº¯ÊıÌåÊôĞÔ¶¼±äÎªÎ´¶¨Òå\n
-        µ«ÊÇĞèÒªÔÚÈ¡ÏûËùÓĞº¯ÊıÌå¶¼±äÎªÎ´¶¨ÒåÖ®ºó»Ö¸´ËùÓĞº¯ÊıÌåµÄÊôĞÔ\n
-        ½«Êı¾İ±£´æÔÚjsonÀïÃæ
+        ç”¨æ¥ä¿å­˜å‡½æ•°ä½“çš„å±æ€§ï¼Œåœ¨è®¾ç½®æœªå®šä¹‰åæ‰€æœ‰å‡½æ•°ä½“å±æ€§éƒ½å˜ä¸ºæœªå®šä¹‰\n
+        ä½†æ˜¯éœ€è¦åœ¨å–æ¶ˆæ‰€æœ‰å‡½æ•°ä½“éƒ½å˜ä¸ºæœªå®šä¹‰ä¹‹åæ¢å¤æ‰€æœ‰å‡½æ•°ä½“çš„å±æ€§\n
+        å°†æ•°æ®ä¿å­˜åœ¨jsoné‡Œé¢
         '''
         for objItem in self.function_list:
             dlgdata.addData(objItem.Name,objItem.Attribute)

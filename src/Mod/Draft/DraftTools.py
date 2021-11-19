@@ -44,6 +44,10 @@ from DraftGui import todo, QtCore, QtGui, translate, utf8_decode
 from DraftSnap import *
 from DraftTrackers import *
 from pivy import coin
+from Modeling.Common.Tools import CoordinateSystemTools
+def sayz(msg):
+    FreeCAD.Console.PrintError(msg)
+    FreeCAD.Console.PrintError("\n")
 
 #---------------------------------------------------------------------------
 # Preflight stuff
@@ -144,7 +148,8 @@ def getPoint(target,args,mobile=False,sym=False,workingplane=True,noTracker=Fals
             ui.displayPoint(point, target.node[0], plane=plane, mask=mask)
         else:
             ui.displayPoint(point, target.node[-1], plane=plane, mask=mask)
-    else: ui.displayPoint(point, plane=plane, mask=mask)
+    else: 
+        ui.displayPoint(point, plane=plane, mask=mask)
     return point,ctrlPoint,info
 
 def getSupport(args=None):
@@ -248,7 +253,8 @@ class DraftTool:
         self.featureName = name
         self.planetrack = None
         if Draft.getParam("showPlaneTracker",False):
-            self.planetrack = PlaneTracker()
+            pass
+            # self.planetrack = PlaneTracker()
 
     def finish(self,close=False):
         self.node = []
@@ -270,7 +276,8 @@ class DraftTool:
                 pass
             self.call = None
         if self.commitList:
-            todo.delayCommit(self.commitList)
+            pass
+            # todo.delayCommit(self.commitList)
         self.commitList = []
 
     def commit(self,name,func):
@@ -521,9 +528,11 @@ class Creator(DraftTool):
 class Line(Creator):
     "The Line FreeCAD command definition"
 
-    def __init__(self, wiremode=False):
+    def __init__(self, wiremode=False,dlg=None):
         Creator.__init__(self)
         self.isWire = wiremode
+        self.dlg=dlg
+        self.flagInTime=0
 
     def GetResources(self):
         return {'Pixmap'  : 'Draft_Line',
@@ -589,6 +598,7 @@ class Line(Creator):
                             ['points='+pts,
                              'line = Draft.makeWire(points,closed='+str(closed)+',face='+fil+',support='+sup+')',
                              'Draft.autogroup(line)'])
+                self.commit=[]
         Creator.finish(self)
         if self.ui:
             if self.ui.continueMode:
@@ -604,6 +614,39 @@ class Line(Creator):
             # mouse movement detection
             self.point,ctrlPoint,info = getPoint(self,arg)
             redraw3DView()
+            if self.dlg:
+                if FreeCAD.ActiveDocument.CoordinateSystem=="Rectangular":
+                    if self.flagInTime==0:
+                        self.dlg.ui.lineEdit_PointBaseX.setText(str(self.point.x*1000)+"mm")
+                        self.dlg.ui.lineEdit_PointBaseY.setText(str(self.point.y*1000)+"mm")
+                        self.dlg.ui.lineEdit_PointBaseZ.setText(str(self.point.z*1000)+"mm")
+                    else:
+                        self.dlg.ui.lineEdit_PointTopX.setText(str(self.point.x*1000)+"mm")
+                        self.dlg.ui.lineEdit_PointTopY.setText(str(self.point.y*1000)+"mm")
+                        self.dlg.ui.lineEdit_PointTopZ.setText(str(self.point.z*1000)+"mm")
+                elif FreeCAD.ActiveDocument.CoordinateSystem=="Polar":
+                    points=CoordinateSystemTools.recToOther("Polar",[self.point])
+                    point=points[0]
+                    if self.flagInTime==0:
+                        self.dlg.ui.lineEdit_PointBaseX.setText(str(point.x*1000)+"mm")
+                        self.dlg.ui.lineEdit_PointBaseY.setText(str(point.y)+"deg")
+                        self.dlg.ui.lineEdit_PointBaseZ.setText(str(point.z*1000)+"mm")
+                    else:
+                        self.dlg.ui.lineEdit_PointTopX.setText(str(point.x*1000)+"mm")
+                        self.dlg.ui.lineEdit_PointTopY.setText(str(point.y)+"deg")
+                        self.dlg.ui.lineEdit_PointTopZ.setText(str(point.z*1000)+"mm")
+                else:
+                    points=CoordinateSystemTools.recToOther("Cylindrical",[self.point])
+                    point=points[0]
+                    if self.flagInTime==0:
+                        self.dlg.ui.lineEdit_PointBaseX.setText(str(point.z*1000)+"mm")
+                        self.dlg.ui.lineEdit_PointBaseY.setText(str(point.x*1000)+"mm")
+                        self.dlg.ui.lineEdit_PointBaseZ.setText(str(point.y)+"deg")
+                    else:
+                        self.dlg.ui.lineEdit_PointTopX.setText(str(point.z*1000)+"mm")
+                        self.dlg.ui.lineEdit_PointTopY.setText(str(point.x*1000)+"mm")
+                        self.dlg.ui.lineEdit_PointTopZ.setText(str(point.y*1000)+"deg")
+
         elif arg["Type"] == "SoMouseButtonEvent":
             # mouse button detection
             if (arg["State"] == "DOWN") and (arg["Button"] == "BUTTON1"):
@@ -618,8 +661,11 @@ class Line(Creator):
                         self.pos = arg["Position"]
                         self.node.append(self.point)
                         self.drawSegment(self.point)
+                        self.flagInTime=1
                         if (not self.isWire and len(self.node) == 2):
                             self.finish(False,cont=True)
+                            self.flagInTime=0
+                            self.dlg.refreshShape()
                         if (len(self.node) > 2):
                             if ((self.point-self.node[0]).Length < Draft.tolerance()):
                                 self.undolast()

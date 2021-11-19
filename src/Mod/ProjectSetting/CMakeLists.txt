@@ -1,61 +1,10 @@
-SET(ProjectSetting_Srcs
-./Commands/BuildPanelsByM3dFile.py
-./Commands/DataProcessingSettingDlgMain.py
-./Commands/FiledSettingDlgMain.py
-./Commands/ModelingInfoDlgMain.py
-./Commands/NewMatericalDlgMain.py
-./Commands/ProjectSettingCommand.py
-./Commands/ProjectSettingsDlgData.py
-./Commands/RunOptionsDlgMain.py
-./Commands/TimeDomainComputingSettingDlgMain.py
-./Commands/WorkSpaceSettingDlgMain.py
-./Commands/__init__.py
-./InitGui.py
-./ProjectSettingGui/DataProcessingSetting/DataProcessingSetting.ui
-./ProjectSettingGui/DataProcessingSetting/DataProcessingSettingDlg.py
-./ProjectSettingGui/DataProcessingSetting/DataProcessingSettingDlg.ui
-./ProjectSettingGui/DataProcessingSetting/__init__.py
-./ProjectSettingGui/FieldSetting/FiledSettingDlg.py
-./ProjectSettingGui/FieldSetting/FiledSettingDlg.ui
-./ProjectSettingGui/FieldSetting/__init__.py
-./ProjectSettingGui/ModelingInfo/ModelingInfoDlg.py
-./ProjectSettingGui/ModelingInfo/ModelingInfoDlg.ui
-./ProjectSettingGui/ModelingInfo/__init__.py
-./ProjectSettingGui/NewMaterial/NewMaterialDlg.py
-./ProjectSettingGui/NewMaterial/NewMaterialDlg.ui
-./ProjectSettingGui/NewMaterial/__init__.py
-./ProjectSettingGui/RunOptions/RunOptionsDlg.py
-./ProjectSettingGui/RunOptions/RunOptionsDlg.ui
-./ProjectSettingGui/RunOptions/__init__.py
-./ProjectSettingGui/TimeDomainComputingSettings/TimeDomainComputingSettingDlg.py
-./ProjectSettingGui/TimeDomainComputingSettings/TimeDomainComputingSettingDlg.ui
-./ProjectSettingGui/TimeDomainComputingSettings/__init__.py
-./ProjectSettingGui/WorkSpaceSettings/WorkSpaceSettingsDlg.py
-./ProjectSettingGui/WorkSpaceSettings/WorkSpaceSettingsDlg.ui
-./ProjectSettingGui/WorkSpaceSettings/__init__.py
-./ProjectSettingGui/__init__.py
-./ProjectSettingResources/DataProcessingSetting.svg
-./ProjectSettingResources/FiledSetting.svg
-./ProjectSettingResources/ModelingInfo.svg
-./ProjectSettingResources/NewMaterial.png
-./ProjectSettingResources/NewMaterical.svg
-./ProjectSettingResources/NewSpecies.png
-./ProjectSettingResources/NewSpecies.svg
-./ProjectSettingResources/ParticleMerge.png
-./ProjectSettingResources/refresh.svg
-./ProjectSettingResources/RunOptions.svg
-./ProjectSettingResources/TimeDomainComputingMenu.svg
-./ProjectSettingResources/WorkSpaceSettings.svg
-./Tools/CompleterTools.py
-./Tools/ProjectSettingsTools.py
-./Tools/__init__.py
-./__init__.py
+add_custom_target(ProjectSetting)
+SET(Sources_Srcs
+	Commands
+	ProjectSettingGui
+	ProjectSettingResources
+	Tools
+	InitGui.py
+	__init__.py
 )
-add_custom_target(ProjectSetting ALL SOURCES ${ProjectSetting_Srcs})
-fc_copy_sources(ProjectSetting "${CMAKE_BINARY_DIR}/Mod/ProjectSetting" ${ProjectSetting_Srcs})
-install(
-	FILES
-	${ProjectSetting_Srcs}
-	DESTINATION
-	Mod/ProjectSetting
-)
+file(COPY ${Sources_Srcs} DESTINATION ${CMAKE_BINARY_DIR}/Mod/ProjectSetting)

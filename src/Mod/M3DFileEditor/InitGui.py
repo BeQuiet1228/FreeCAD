@@ -11,7 +11,7 @@ class M3DFileEditorWorkbench(Workbench):
         # load the module
         import M3DFileEditorCommand
         import M3DFileEditorGui
-         
+        from Physics.PhysicsCommand import Simulation
         from Control.controlCommand import TaskControlMain
         M3DFileEditorGui.LoadAll(self)
 

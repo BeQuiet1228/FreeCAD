@@ -1,12 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>2d点</title>
-    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
-        <g id="图标输出" transform="translate(-248.000000, -562.000000)" stroke="#1A1A1A" stroke-width="0.5">
-            <g id="2d点" transform="translate(248.000000, 562.000000)">
-                <rect id="Rectangle" x="4" y="4" width="8" height="8"></rect>
-                <circle id="Oval" fill="#297CC0" cx="12" cy="4" r="1"></circle>
-            </g>
-        </g>
-    </g>
-</svg>
+<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1552565498582" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3335" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><defs><style type="text/css"></style></defs><path d="M512 512m-442.368 0a442.368 442.368 0 1 0 884.736 0 442.368 442.368 0 1 0-884.736 0Z" fill="#f4ea2a" p-id="3336"></path><path d="M512 0C229.376 0 0 229.376 0 512s229.376 512 512 512 512-229.376 512-512S794.624 0 512 0z m0 954.368c-244.224 0-442.368-198.144-442.368-442.368S267.776 69.632 512 69.632s442.368 198.144 442.368 442.368-198.144 442.368-442.368 442.368z" fill="#f4ea2a" p-id="3337"></path></svg>

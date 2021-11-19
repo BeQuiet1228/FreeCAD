@@ -2,13 +2,13 @@
 
 # Form implementation generated from reading ui file 'FoilDlg.ui'
 #
-# Created: Fri Nov 13 16:41:19 2020
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Tue Nov 26 16:24:19 2019
+#      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PySide import QtCore, QtGui
-
+import Modeling
 class Ui_Dialog_FoilDlg(object):
     def setupUi(self, Dialog_FoilDlg):
         Dialog_FoilDlg.setObjectName("Dialog_FoilDlg")
@@ -47,14 +47,14 @@ class Ui_Dialog_FoilDlg(object):
         self.label_end = QtGui.QLabel(self.groupBox_Port)
         self.label_end.setObjectName("label_end")
         self.horizontalLayout_end.addWidget(self.label_end)
-        self.LineEdit_end_x = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_end_x = Modeling.Common.Tools.Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_end_x.setEnabled(True)
         self.LineEdit_end_x.setObjectName("LineEdit_end_x")
         self.horizontalLayout_end.addWidget(self.LineEdit_end_x)
-        self.LineEdit_end_y = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_end_y = Modeling.Common.Tools.Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_end_y.setObjectName("LineEdit_end_y")
         self.horizontalLayout_end.addWidget(self.LineEdit_end_y)
-        self.LineEdit_end_z = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_end_z = Modeling.Common.Tools.Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_end_z.setObjectName("LineEdit_end_z")
         self.horizontalLayout_end.addWidget(self.LineEdit_end_z)
         self.ComboBox_end = StyledComboBox(self.groupBox_Port)
@@ -72,7 +72,7 @@ class Ui_Dialog_FoilDlg(object):
         self.label_end_2 = QtGui.QLabel(self.groupBox_Port)
         self.label_end_2.setObjectName("label_end_2")
         self.horizontalLayout_end_2.addWidget(self.label_end_2)
-        self.LineEdit_thick = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_thick = Modeling.Common.Tools.Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_thick.setEnabled(True)
         self.LineEdit_thick.setObjectName("LineEdit_thick")
         self.horizontalLayout_end_2.addWidget(self.LineEdit_thick)
@@ -86,13 +86,13 @@ class Ui_Dialog_FoilDlg(object):
         self.label_start = QtGui.QLabel(self.groupBox_Port)
         self.label_start.setObjectName("label_start")
         self.horizontalLayout_start.addWidget(self.label_start)
-        self.LineEdit_start_x = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_start_x = Modeling.Common.Tools.Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_start_x.setObjectName("LineEdit_start_x")
         self.horizontalLayout_start.addWidget(self.LineEdit_start_x)
-        self.LineEdit_start_y = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_start_y = Modeling.Common.Tools.Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_start_y.setObjectName("LineEdit_start_y")
         self.horizontalLayout_start.addWidget(self.LineEdit_start_y)
-        self.LineEdit_start_z = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_start_z = Modeling.Common.Tools.Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_start_z.setObjectName("LineEdit_start_z")
         self.horizontalLayout_start.addWidget(self.LineEdit_start_z)
         self.ComboBox_start = StyledComboBox(self.groupBox_Port)
@@ -116,7 +116,7 @@ class Ui_Dialog_FoilDlg(object):
         self.Label_Name = QtGui.QLabel(Dialog_FoilDlg)
         self.Label_Name.setObjectName("Label_Name")
         self.formLayout_2.setWidget(0, QtGui.QFormLayout.LabelRole, self.Label_Name)
-        self.LineEdit_Name = QtGui.QLineEdit(Dialog_FoilDlg)
+        self.LineEdit_Name = Modeling.Common.Tools.Completer.AutoCompleteEdit(Dialog_FoilDlg)
         self.LineEdit_Name.setObjectName("LineEdit_Name")
         self.formLayout_2.setWidget(0, QtGui.QFormLayout.FieldRole, self.LineEdit_Name)
         self.horizontalLayout.addLayout(self.formLayout_2)
@@ -177,7 +177,7 @@ class Ui_Dialog_FoilDlg(object):
         self.DefaultMaterial = QtGui.QRadioButton(self.groupBox)
         self.DefaultMaterial.setObjectName("DefaultMaterial")
         self.horizontalLayout_7.addWidget(self.DefaultMaterial)
-        self.Gold = QtGui.QLineEdit(self.groupBox)
+        self.Gold = Modeling.Common.Tools.Completer.AutoCompleteEdit(self.groupBox)
         self.Gold.setEnabled(False)
         self.Gold.setObjectName("Gold")
         self.horizontalLayout_7.addWidget(self.Gold)

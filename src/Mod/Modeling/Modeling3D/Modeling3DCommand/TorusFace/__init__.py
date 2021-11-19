@@ -1,2 +1,0 @@
-import CreateTorusFace
-import TorusFaceCommand

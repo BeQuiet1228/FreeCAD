@@ -20,17 +20,17 @@ class DraftModeling_Revolution:
         obj.Area=ObjectsTools.getAreasByDoc(doc)
         ''' Add some custom properties to our box feature '''
         if self.curCoordinateSystem==CoordinateSystemTools.CoordinateType.Rectangular:
-            obj.addProperty("App::PropertyVectorDistance", "Point_Base", "Object of a Function", "Length of the box").Point_Base = FreeCAD.Vector(0,0,-1)
-            obj.addProperty("App::PropertyVectorDistance", "Point_Top", "Object of a Function", "Length of the box").Point_Top = FreeCAD.Vector(0,0,1)
+            obj.addProperty("App::PropertyVectorDistance", "Point_Base", "Object of a Function", "Length of the box").Point_Base = FreeCAD.Vector(-2,-2,-2)
+            obj.addProperty("App::PropertyVectorDistance", "Point_Top", "Object of a Function", "Length of the box").Point_Top = FreeCAD.Vector(2,2,2)
             self.vectorList=[obj.Point_Base,obj.Point_Top]
         # '''极坐标系下的属性面板'''
         elif self.curCoordinateSystem==CoordinateSystemTools.CoordinateType.Polar:
-            obj.addProperty("App::PropertyPolVecDistance", "Point_Base", "Object of a Function", "Length of the box").Point_Base = FreeCAD.Vector(0,0,-1)
-            obj.addProperty("App::PropertyPolVecDistance", "Point_Top", "Object of a Function", "Length of the box").Point_Top = FreeCAD.Vector(0,0,1)
+            obj.addProperty("App::PropertyPolVecDistance", "Point_Base", "Object of a Function", "Length of the box").Point_Base = FreeCAD.Vector(-1,0,-1)
+            obj.addProperty("App::PropertyPolVecDistance", "Point_Top", "Object of a Function", "Length of the box").Point_Top = FreeCAD.Vector(1,360,1)
             self.vectorList=[obj.Point_Base,obj.Point_Top]
         elif self.curCoordinateSystem==CoordinateSystemTools.CoordinateType.Cylindrical:
-            obj.addProperty("App::PropertyCylinderVecDistance", "Point_Base", "Object of a Function", "Length of the box").Point_Base = FreeCAD.Vector(0,0,-1)
-            obj.addProperty("App::PropertyCylinderVecDistance", "Point_Top", "Object of a Function", "Length of the box").Point_Top = FreeCAD.Vector(0,0,1)
+            obj.addProperty("App::PropertyCylinderVecDistance", "Point_Base", "Object of a Function", "Length of the box").Point_Base = FreeCAD.Vector(-1,0,-1)
+            obj.addProperty("App::PropertyCylinderVecDistance", "Point_Top", "Object of a Function", "Length of the box").Point_Top = FreeCAD.Vector(1,360,1)
             self.vectorList=[obj.Point_Base,obj.Point_Top]
         ObjectsTools.addPropertyForVol(obj,ObjectsTools.ObjectType.Vol_Draft_Revolution,self.curCoordinateSystem)
         # obj.addProperty("App::PropertyString", "Type", "", "Type of Ojecy").Type = ObjectsTools.ObjectType.Vol_Revolution

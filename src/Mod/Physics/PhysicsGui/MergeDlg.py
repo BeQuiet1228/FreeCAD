@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'MergeDlg.ui'
 #
-# Created: Mon Jan 18 22:04:48 2021
+# Created: Sat Apr 18 16:57:19 2020
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -11,7 +11,7 @@ from PySide import QtCore, QtGui
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
+        Dialog.setObjectName("宏粒子合并")
         Dialog.resize(418, 123)
         self.verticalLayout = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -36,7 +36,6 @@ class Ui_Dialog(object):
         self.comboBox.setObjectName("comboBox")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
-        self.comboBox.addItem("")
         self.gridLayout.addWidget(self.comboBox, 0, 1, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout)
         self.horizontalLayout = QtGui.QHBoxLayout()
@@ -53,15 +52,14 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "宏粒子合并", None, QtGui.QApplication.UnicodeUTF8))
         self.lineEdit_max.setText(QtGui.QApplication.translate("Dialog", "100000", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Dialog", "最大宏粒子数：", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Dialog", "每个网格区粒子数：", None, QtGui.QApplication.UnicodeUTF8))
         self.lineEdit_every.setText(QtGui.QApplication.translate("Dialog", "1", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("Dialog", "粒子种类：", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.setItemText(0, QtGui.QApplication.translate("Dialog", "全部", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBox.setItemText(0, QtGui.QApplication.translate("Dialog", "离子", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBox.setItemText(1, QtGui.QApplication.translate("Dialog", "电子", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.setItemText(2, QtGui.QApplication.translate("Dialog", "质子", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_ok.setText(QtGui.QApplication.translate("Dialog", "确定", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_cancel.setText(QtGui.QApplication.translate("Dialog", "取消", None, QtGui.QApplication.UnicodeUTF8))
 

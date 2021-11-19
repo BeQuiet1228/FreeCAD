@@ -1,6 +1,4 @@
 # -*- coding: UTF-8 -*-
-import traceback
-
 from PySide import QtGui, QtCore
 from PySide.QtGui import QApplication, QMainWindow, QDockWidget, QTreeWidgetItem
 import FreeCAD,FreeCADGui
@@ -28,8 +26,6 @@ class DraftModeling_Revolution(QtGui.QDialog):
         self.initCombox()
         #判断是否需要刷新图形
         self.flagRefresh=True
-        # 用于判断ui是否是第一次打开
-        self.isKeepData=False
 
         # 改变坐标系标签
         if FreeCAD.ActiveDocument.CoordinateSystem == "Polar":
@@ -131,7 +127,7 @@ class DraftModeling_Revolution(QtGui.QDialog):
     def getAddStride(self):
         addStrideStr= str(self.ui.lineEdit_addStride.text())
         return UnitTools.getValueByStr(addStrideStr)
-    def closeEvent(self,event):
+    def closeEvent(self,e):
         self.draftLine.finish()
         # 关闭网格
         if hasattr(FreeCADGui,"Snapper"):
@@ -139,7 +135,6 @@ class DraftModeling_Revolution(QtGui.QDialog):
         closeGrid()
         FreeCAD.ActiveDocument.recompute()
         sayzError("close")
-
     def refreshShape(self):
         # if not self.flagRefresh:
         #     return
@@ -166,35 +161,13 @@ class DraftModeling_Revolution(QtGui.QDialog):
         # FreeCADGui.SendMsgToActiveView("ViewSelection")
 
     def pushBtnOk(self):
-        # 更新Label
-        self.obj.Label = self.ui.LineEdit_Name.text()
         self.refreshShape()
-        try:
-            # DocumentTools.updateBoolean()
-            import PartChipic
-            PartChipic.updateBoolean(self.obj.Order, 1)
-        except:
-            FreeCAD.Console.PrintError(traceback.format_exc())
-        # try:
-        RebuildForUITools.fillUniformGridToObj(self.ui, self.obj)
-        # except:
-        #     FreeCAD.Console.PrintMessage('\n 设置mark 失败 \n')
+        DocumentTools.updateBoolean()
         # ModelingByUITools.setAttributeValue(self.obj,self.ui.ComboBox_Shadow_Attribute.currentIndex())
-        self.isKeepData=True
-
         self.close()
-
+        pass
     def pushBtnCancel(self):
         self.close()
-        # 当体是首次打开时，即通过按钮打开时，点击取消会删除当前的体，当在树结构打开，点击取消不会删除当前体
-        if not self.isKeepData:
-            doc = FreeCAD.ActiveDocument
-            doc.removeObject(self.obj.Name)
-        # 当体是首次打开时，即通过按钮打开时，点击取消会删除当前的体 @ lzg
-        # if not self.baseArea == None:
-        #     doc = FreeCAD.ActiveDocument
-        #     doc.removeObject(self.obj.Name)
-        #     sayz("这里调用了吗")
         pass
 # 关闭选点的网格
 def closeGrid():

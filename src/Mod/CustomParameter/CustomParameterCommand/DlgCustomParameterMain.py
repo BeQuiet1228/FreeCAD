@@ -1,7 +1,5 @@
 #-*- coding: utf-8 -*-
 import CustomParameterGui.DlgCustomeParameter
-import CustomParameterGui.searchTool
-import PySide
 from PySide import QtGui
 import string
 import json
@@ -13,221 +11,173 @@ from Modeling.Common.Tools import UnitTools
 import INHighLighter
 import time
 
-# 请认真阅读 https://wiki.freecadweb.org/Expressions（FreeCAD的Expressions的文档）！！！
-# 主要流程为：doInit -> PreDoParam ->  doHandleListParams -> deleteNotDefinedParam
-
-# 该文件负责参数定义，思路为获取变量定义的文本，预处理去除注释空格，然后对字符串进行分隔，\
-# 得到单独的变量字符串，然后对变量字符串进行识别分类，利用addProperty添加到FreeCAD中，\
-# 分类的原因是因为不同的类型对应不同的属性，比如mm，cm与KV，A等对应不同类型的属性，\
-# 属性的具体介绍见 https://wiki.freecadweb.org/Property_editor/zh-cn 
-
-# 注意:
-# 1. self.paramObj.DynamicData.append()， 该stringList的函数调用是无效的，\
-#    只能通过"="来赋值，所以定义self.listOfParamDefined来记录已经定义的变量
-# 2. 由于属性的种类比较多，但是属性提供的方法不一致，对变量进行操作时，可以使用 self.paramObj.ExpressionEngine
-
-# @LZG 于 2020-10-12 对此处代码进行重构，对主要流程的代码进行封装和梳理，对变量定义做了规范化处理,\
-# 但大多辅助用的函数沿用原有代码
-from Modeling.Modeling2D.Tools import Tools2D
-
-
+# 参数类
 class ParamItem:
-    '''
-    参数类
-    '''
-    def __init__(self, n, t, v):
-        self._name = n
-        self._type = t
-        self._value = v
-
+    def __init__(self,n,t,v):
+        self._name=n
+        self._type=t
+        self._value=v
     def getType(self):
         return self._type
-
     def getName(self):
         return self._name
-
     def getValue(self):
         return self._value
 
-
-class SearchTool(QtGui.QDialog):
-    '''
-    查找功能
-    '''
-    def __init__(self, main_ui, parent=None):
-        QtGui.QDialog.__init__(self, parent)
-        self.ui = CustomParameterGui.searchTool.Ui_Dialog()
-        self.ui.setupUi(self)
-        self.ui.pushButton.clicked.connect(self.find)
-        self.main_ui = main_ui
-
-    def find(self):
-        findText = self.ui.lineEdit.text()
-        temp = self.main_ui.textEdit_defintParam.find(findText,
-                                                      PySide.QtGui.QTextDocument.FindBackward |
-                                                      PySide.QtGui.QTextDocument.FindWholeWords)
-
-        if self.main_ui.textEdit_defintParam.find(findText):
-            palette = self.main_ui.textEdit_defintParam.palette()
-            # palette.setColor(QtGui.QPalette.Highlight, palette.color(QtGui.QPalette.Active, QtGui.QPalette.Highlight))
-            self.main_ui.textEdit_defintParam.setPalette(palette)
-        else:
-            pass
-
-
 class CustomeParameterMain(QtGui.QDialog):
-    def __init__(self, flagIsFromM3d=False, parent=None):
+    def __init__(self,flagIsFromM3d=False,parent=None):
         QtGui.QDialog.__init__(self, parent)
         self.ui = CustomParameterGui.DlgCustomeParameter.Ui_Dialog_CustomParameterDlg()
         self.ui.setupUi(self)
-        self.setModal(False)
 
-        self.paramObj = ObjectsTools.getParamObj()
-        self.flagColorChange = True
-        self.curColor = QtGui.QColor(0, 0, 0)
-        # 记录初始参数值并设置到UI界面上
-        self.lastInfo = FreeCAD.ActiveDocument.Company
-        self.ui.textEdit_defintParam.setPlainText(FreeCAD.ActiveDocument.Company)
-        if self.ui.textEdit_defintParam.toPlainText() == "":
-            self.ui.textEdit_defintParam.setPlainText(self.getParametersFromParamObj())
-        # 连接信号与槽
+        self.paramObj=ObjectsTools.getParamObj()
+        self.flagColorChange=True
+        self.curColor=QtGui.QColor(0,0,0)
+        #先记录一下初始参数值
+        self.lastInfo=FreeCAD.ActiveDocument.Company
+
+        self.ui.textEdit_defintParam.setText(FreeCAD.ActiveDocument.Company)
+        # FreeCAD.Console.PrintMessage(str(self.ui.textEdit_defintParam.toPlainText()))
+        if self.ui.textEdit_defintParam.toPlainText()=="":
+            self.ui.textEdit_defintParam.setText(self.getParametersFromParamObj())
+        
+        # self.ui.textEdit_ValidInfo.setPlainText(self.getParametersFromParamObj())
         self.ui.pushButton_ok.clicked.connect(self.onOkBtn)
+        # self.ui.pushButton_valid.clicked.connect(self.onValidBtn)
         self.ui.pushButton_cancel.clicked.connect(self.onCancelBtn)
         self.ui.pushButton_help.clicked.connect(self.onHelpBtn)
-        self.ui.pushButton_redo.clicked.connect(self.__slotOfRedo)
-        self.ui.pushButton_undo.clicked.connect(self.__slotOfUndo)
-        self.ui.pushButton_find.clicked.connect(self.__find)
-   
-        # 已经定义的变量列表，这个是原有代码定义的，并不清楚有什么用
-        self.listOfParamNameAndValueDefined = ['DynamicData', 'ExpressionEngine', 'Label', 'Proxy', 'Type',"DX1","DX2","DX3"]
-        # 记录之前被定义的变量，不要去修改这个list，该list仅用于记录使用
-        self.lastListParamDefined = self.paramObj.DynamicData
-        # 成功定义的变量
-        self.listOfParamDefined = self.paramObj.DynamicData
-        # 记录之前变量的名字以及对应的值，结果存放于self.dict_last
-        self.recordLastParams()
 
+
+        self.listOfParamNameAndValueDefined=['DynamicData', 'ExpressionEngine', 'Label', 'Proxy', 'Type',"DX1","DX2","DX3"]
+        
+        
         if flagIsFromM3d:
-            self.lastInfo = ""
+            self.lastInfo=""
         # 给textEdit设置Highlighter
         highlighter = INHighLighter.Highlighter(self.ui.textEdit_defintParam.document())
 
-        # 记录一次验证时，错误的变量列表
-        self.errorParams = []
+        #记录一次验证时，错误的变量列表
+        self.errorParams=[]
 
     def onCancelBtn(self):
         self.close()
 
     def onOkBtn(self):
         # 判断变量输入是否有更新？
-        Paraminfo = self.ui.textEdit_defintParam.toPlainText()
+        Paraminfo=self.ui.textEdit_defintParam.toPlainText()
+        # infoLast=FreeCAD.ActiveDocument.Company
         # 如果变量没有变化
-        if Paraminfo == self.lastInfo:
+        if Paraminfo==self.lastInfo:
             self.close()
             return
         else:
-            # 初始化
+            # doInit一些初始化动作
             self.doInit()
-            # 对变量字符串进行预处理，然后生成字符列表
-            paramsStr = self.PreDoParam(Paraminfo)
-            self.curListParams = self.getParamAndValues(paramsStr)
-            lastParamStr = self.PreDoParam(self.lastInfo)
-            self.lastListParams = self.getParamAndValues(lastParamStr)
-            sayzError("参数-成功获取参数列表")
+            #预处理
+            paramsStr=self.PreDoParam(Paraminfo)
+            #按照“；”拆分变量
+            # self.listParams=re.split(r";|；",paramsStr)
+            self.listParams=self.getParamAndValues(paramsStr)
+            FreeCAD.Console.PrintMessage("self.listParams: "+str(self.listParams)+"\n")
+            #获得最近一次的变量str
+            lastParamStr=self.PreDoParam(self.lastInfo)
+            #最近一次变量列表
+            # listLastParams=re.split(r";|；",lastParamStr)
+            listLastParams=self.getParamAndValues(lastParamStr)
+            FreeCAD.Console.PrintMessage("listLastParams: "+str(listLastParams)+"\n")
 
-            errors = self.checkForSyntaxErrors(self.curListParams)
-            if len(errors) != 0:
-                self.ui.textEdit_ValidInfo.setPlainText(errors)
-                return
+            # 得到未曾变化的值
+            self.listParamsSame=[x for x in self.listParams if x in listLastParams]
 
+            sayz("self.listParamsSame: "+str(self.listParamsSame)+"\n")
+
+            # 两个list不同元素的集合
+            self.listParamsDiff=[y for y in (self.listParams+listLastParams) if y not in self.listParamsSame]
+
+            sayz("self.listParamsDiff: "+str(self.listParamsDiff)+"\n")
+
+            # 新增加的元素集合
+            self.listParamAdd=[z for z in self.listParamsDiff if z in self.listParams]
+
+            sayz("self.listParamAdd: "+str(self.listParamAdd)+"\n")
+
+            FreeCAD.Console.PrintMessage("add params: "+str(self.listParamAdd)+"\n")
+
+            # #这里处理一下两个list不同的元素，如果有变量名相同，需要去掉上一个，例如之前已有x1=5,现有定义了x1=6,需要去掉前面的x1=5;
+            # self.doHandleListDiff()
+            # #这里处理一下新加的元素集合，如新加的变量名相同，只取最后一个，
+            # self.doHandleListAdd()
+            #处理所有的listParams
             self.doHandleListParams()
-            sayzError("参数-处理参数列表成功")
+
             # 删除未定义，但是已存在于obj的属性
-            self.deleteNotDefinedParam()
-            sayzError("参数-删除参数成功")
+            self.deleteNotDefinedParam(self.paramObj)
 
-            self.getNamesOfAllChangedParams()
-            sayzError("发生改变的属性列表"+str(FreeCAD.ActiveDocument.PropertiesChanged))
+            FreeCAD.Console.PrintError("FreeCAD.ActiveDocument.PropertiesChanged: "+str(FreeCAD.ActiveDocument.PropertiesChanged)+"\n")
 
-            if self.ui.textEdit_ValidInfo.toPlainText() == "":
-                FreeCAD.ActiveDocument.Company = self.ui.textEdit_defintParam.toPlainText()
-                self.paramObj.DynamicData = self.listOfParamDefined
+            FreeCAD.ActiveDocument.recompute()
+            
+            # #刷新布尔
+            DocumentTools.updateBoolean()
+            FreeCAD.Console.PrintMessage(str(self.ui.textEdit_ValidInfo.toPlainText()))
+
+            if self.ui.textEdit_ValidInfo.toPlainText()=="":
+                # 设置属性名列表
+                self.paramObj.DynamicData=[ i for i in self.listOfParamNameAndValueDefined if i not in  ['DynamicData', 'ExpressionEngine', 'Label', 'Proxy', 'Type',"DX1","DX2","DX3"]]
+                FreeCAD.ActiveDocument.Company=self.ui.textEdit_defintParam.toPlainText()
                 self.close()
             # 定义出错
             else:
-                FreeCAD.ActiveDocument.Company = self.removeErrorParam()
+                # FreeCAD.Console.PrintMessage("定义出错！\n")
+                # FreeCAD.Console.PrintMessage(self.paramNamesAlreadyAdd)
+                # 设置属性名列表
+                self.paramObj.DynamicData=[ i for i in self.listOfParamNameAndValueDefined if i not in  ['DynamicData', 'ExpressionEngine', 'Label', 'Proxy', 'Type',"DX1","DX2","DX3"]]
+                # FreeCAD.ActiveDocument.Company=FreeCAD.ActiveDocument.Company+self.paramNamesAlreadyAdd
+                FreeCAD.Console.PrintMessage(" start removeErrorParam\n")
+                FreeCAD.ActiveDocument.Company=self.removeErrorParam()
+                FreeCAD.Console.PrintMessage(" end removeErrorParam\n")
 
-            # 更新体并进行布尔运算
-            FreeCAD.ActiveDocument.recompute()
-            DocumentTools.updateBoolean()
+            # 去重
             # 一个变量名重复定义时，只取最后一个
-            FreeCAD.ActiveDocument.Company = self.deleteRepeat()
+            FreeCAD.ActiveDocument.Company=self.deleteRepeat()
+
             FreeCAD.ActiveDocument.recompute()
-            if FreeCAD.ActiveDocument.Comment == "2D":
-                model_list = Tools2D.getAllModelObjects()
-                for i in model_list:
-                    if i.Type == Tools2D.ObjectType.AreaPolygonal:
-                        Tools2D.recomputeAreaPolygon(i)
-                    i.recompute()
-                FreeCADGui.runCommand("CreateM2D")
 
-
-    def getSomething(self):
-        '''
-        这里保留原有代码获取未改变、改变、新增、删除变量列表的方式
-        '''
-        # 两个list相同的元素集合，也就是未曾变化的值
-        self.listParamsSame = [x for x in self.curListParams if x in self.lastListParams]
-        sayz("self.listParamsSame: "+str(self.listParamsSame)+"\n")
-
-        # 两个list不同元素的集合
-        self.listParamsDiff = [y for y in (self.curListParams + self.lastListParams) if y not in self.listParamsSame]
-        sayz("self.listParamsDiff: "+str(self.listParamsDiff)+"\n")
-
-        # 新增加的元素集合
-        self.listParamAdd = [z for z in self.curListParamsDiff if z in self.curListParams]
-        sayz("self.listParamAdd: " + str(self.listParamAdd)+"\n")
-
+    
     def doInit(self):
-        '''
-        初始化，将错误信息归零，向变量列表中添加DX1，DX2，DX3，变量列表定义为 self.listOfParamObj
-        '''
-        # 验证的错误信息
-        self.errorText = ""
-        self.errorParams = []
-        # 重置验证消息
+        #验证的错误信息
+        self.errorText=""
+        self.errorParams=[]
+        #重置验证消息
         self.ui.textEdit_ValidInfo.setPlainText("")
         # 存放已经定义变量的名称、类型、值
-        self.listOfParamObj = []
-        if hasattr(self.paramObj, "DX1"):      
+        self.listOfParamObj=[]
+        if hasattr(self.paramObj,"DX1"):     
             self.listOfParamObj.append(ParamItem("DX1",UnitTools.SupportUnitType.Length,str(getattr(self.paramObj,"DX1").Value)))
-        if hasattr(self.paramObj, "DX2"):
+        if hasattr(self.paramObj,"DX2"):
             if self.paramObj.Document.CoordinateSystem==CoordinateSystemTools.CoordinateType.Rectangular or self.paramObj.Document.CoordinateSystem==CoordinateSystemTools.CoordinateType.Cylindrical:
                 self.listOfParamObj.append(ParamItem("DX2",UnitTools.SupportUnitType.Length,str(getattr(self.paramObj,"DX2").Value)))
             else:
                 self.listOfParamObj.append(ParamItem("DX2",UnitTools.SupportUnitType.Angle,str(getattr(self.paramObj,"DX2"))))
-        if hasattr(self.paramObj, "DX3"):
+        if hasattr(self.paramObj,"DX3"):
             if self.paramObj.Document.CoordinateSystem==CoordinateSystemTools.CoordinateType.Rectangular or self.paramObj.Document.CoordinateSystem==CoordinateSystemTools.CoordinateType.Polar:
                 self.listOfParamObj.append(ParamItem("DX3",UnitTools.SupportUnitType.Length,str(getattr(self.paramObj,"DX3").Value)))
             else:
                 self.listOfParamObj.append(ParamItem("DX3",UnitTools.SupportUnitType.Angle,str(getattr(self.paramObj,"DX3"))))
-
-    def PreDoParam(self, Paraminfo):
-        '''
-        对变量文本进行预处理，首先去掉所有的注释与空格，然后将单位替换为标准单位
-        '''
+    def PreDoParam(self,Paraminfo):
         # 预处理
-        # 1.去掉注释
-        Paraminfo = re.sub(r"[!|！][^\n]*","",Paraminfo)
-        # 2.去掉换行符以及多余空格
-        infoWithOutSpaceOrEnter = Paraminfo.replace(" ","").replace("\n","").replace("\r","").replace("\t","")
+        # 1.先去掉注释
+        Paraminfo=re.sub(r"[!|！][^\n]*","",Paraminfo)
+        # 2.掉空格与换行符
+        infoWithOutSpaceOrEnter=Paraminfo.replace(" ","").replace("\n","").replace("\r","").replace("\t","")
         
-        # 处理**这样的操作符
+        #处理**这样的操作符
 
-        # 处理小数点2.->2.0
+
+        #处理小数点2.->2.0
         infoWithOutSpaceOrEnter=re.sub(r"(?<=\d)\.(?!\d)",".0",infoWithOutSpaceOrEnter)
         # 3.将一些单位转化为标准单位,例如：kilo volt->kv
-        # 长度
+        #   长度
         infoWithOutSpaceOrEnter=re.sub(r"(?<=[\d])pico\b","*1.0e-12m",infoWithOutSpaceOrEnter,flags=re.IGNORECASE)
         infoWithOutSpaceOrEnter=re.sub(r"(?<=[\d])nano\b","*1.0e-9m",infoWithOutSpaceOrEnter,flags=re.IGNORECASE)
         infoWithOutSpaceOrEnter=re.sub(r"(?<=[\d])micro\b","*1.0e-6m",infoWithOutSpaceOrEnter,flags=re.IGNORECASE)
@@ -254,65 +204,140 @@ class CustomeParameterMain(QtGui.QDialog):
         infoWithOutSpaceOrEnter=re.sub(r"(?<=[\d])volt\b","v",infoWithOutSpaceOrEnter,flags=re.IGNORECASE)
         infoWithOutSpaceOrEnter=re.sub(r"(?<=[\d])kilovolts\b","*1.0e+3v",infoWithOutSpaceOrEnter,flags=re.IGNORECASE)
         infoWithOutSpaceOrEnter=re.sub(r"(?<=[\d])kilovolt\b","*1.0e+3v",infoWithOutSpaceOrEnter,flags=re.IGNORECASE)
+
         # 角度
         infoWithOutSpaceOrEnter=re.sub(r"(?<=[\d])radian\b","rad",infoWithOutSpaceOrEnter,flags=re.IGNORECASE)
         infoWithOutSpaceOrEnter=re.sub(r"(?<=[\d])degree\b","deg",infoWithOutSpaceOrEnter,flags=re.IGNORECASE)
         infoWithOutSpaceOrEnter=re.sub(r"(?<=[\d])degrees\b","deg",infoWithOutSpaceOrEnter,flags=re.IGNORECASE)
+
+
         #频率
         infoWithOutSpaceOrEnter=re.sub(r"(?<=[\d])kilohertz\b","*1.0e+3hz",infoWithOutSpaceOrEnter,flags=re.IGNORECASE)
 
         return infoWithOutSpaceOrEnter
 
     def doHandleListParams(self):
-        '''
-        将变量文本转化为变量，并存放在变量列表中
-        '''
-        # 初始化改变的变量，这是一个C++的对象
-        FreeCAD.ActiveDocument.PropertiesChanged = ""
+        #处理listParams
+        # 初始化变的变量Str
+
+        FreeCAD.ActiveDocument.PropertiesChanged=""
         # 进度条
+    
         progress_bar=FreeCAD.Base.ProgressIndicator()
-        progress_bar.start("Start Validing Param...", len(self.curListParams))
 
-        # 已添加的Str内容
+        progress_bar.start("Start Validing Param...",len(self.listParams))
+        # 本次函数已添加的Str内容
         self.thisHandleAddSuccess="\n"
-
-        for paramItem in self.curListParams:
-            # sayzError("参数-当前处理的变量：" + str(paramItem))
+        #循环每一次
+        for paramItem in self.listParams:
             try:
                 if paramItem=="":
                     continue
-                # 利用setExpression的机制来进行赋值以及报错处理
-                paramItemNameAndValue = paramItem.split("=")
-                paramName = paramItemNameAndValue[0]
-                paramValue = paramItemNameAndValue[1]
-                # 整形，以i-n开头的变量的意义为整形变量，如果时其他类型，计算程序会强转为整形
-                if paramItem.lower()[0] in ["i","j","k","l","m","n"]:
-                    [normalValue,typeOfThisParam]=self.getNormalParamValueAndTypeOfIt(paramName,paramValue,self.listOfParamObj)
-                    self.addParam(paramName,normalValue,typeOfThisParam)
-                    # 这行代码的作用是什么？或者说这个list的作用是什么
-                    self.listOfParamObj.append(ParamItem(paramName,typeOfThisParam,self.getValueOfQuantity(self.paramObj,paramName)))
-                else:
-                    [normalValue,typeOfThisParam]=self.getNormalParamValueAndTypeOfIt(paramName,paramValue,self.listOfParamObj)
-                    if typeOfThisParam == UnitTools.SupportUnitType.STRING:
-                        # 去掉单位和已经定义的变量，然后重新进行一次判断
-                        # 这里为什么要这样操作？？？
-                        valueWithoutUnit = self.removeAllUnits(paramValue)
-                        valueWithoutUnit = self.removeAllParamsList(valueWithoutUnit)
-                        [normalValueWithoutUnit,typeWithoutUnit] = self.getNormalParamValueAndTypeOfIt(paramName,valueWithoutUnit,self.listOfParamObj)
-                        if typeWithoutUnit == UnitTools.SupportUnitType.STRING:
-                            self.errorHandle(self.curListParams.index(paramItem)+1,paramName)
-                            continue
-                    self.addParam(paramName,normalValue,typeOfThisParam)
-                    self.listOfParamObj.append(ParamItem(paramName,typeOfThisParam,self.getValueOfQuantity(self.paramObj,paramName)))
-                self.thisHandleAddSuccess=self.thisHandleAddSuccess+paramItem+";\n"
+                #属于相同的内容
+                elif paramItem in self.listParamsSame:
+                    #定义的是函数
+                    if paramItem.lower().startswith("function"):
+                        [paramName,paramValue]=self.getParamNameAndValueByFunctionStr(paramItem)
+                        # self.listOfParamNameAndValueDefined.append(paramName)
+                    #非函数
+                    else:
+                        paramItemNameAndValue=paramItem.split("=")
+                        paramName=paramItemNameAndValue[0]
+                        paramValue=paramItemNameAndValue[1]
+                        # IN 整数
+                        if paramName[0].lower in ["i","j","k","l","m","n"]:
+                            self.listOfParamObj.append(ParamItem(UnitTools.SupportUnitType.Integert,self.getValueOfQuantity(self.paramObj,paramName)))
+                        else:
+                            [normalValue,typeOfThisParam]=self.getNormalParamValueAndTypeOfIt(paramName,paramValue,self.listOfParamObj)
+
+                            self.listOfParamObj.append(ParamItem(paramName,typeOfThisParam,self.getValueOfQuantity(self.paramObj,paramName)))
+                            # 所有已经添加的变量名称
+                            # self.listOfParamNameAndValueDefined.append(paramName)
+                # 新增加的变量
+                elif paramItem in self.listParamAdd:
+                    #函数
+                    if paramItem.lower().startswith("function"):
+                        [paramName,paramValue]=self.getParamNameAndValueByFunctionStr(paramItem)
+                        #添加这个属性
+                        self.addParam(paramName,paramValue,UnitTools.SupportUnitType.STRING)
+                        
+                        # self.listOfParamNameAndValueDefined.append(paramName)
+                    else:
+                        paramItemNameAndValue=paramItem.split("=")
+                        paramName=paramItemNameAndValue[0]
+                        paramValue=paramItemNameAndValue[1]
+
+                        # 整形
+                        if paramItem.lower()[0] in ["i","j","k","l","m","n"]:
+                            [normalValue,typeOfThisParam]=self.getNormalParamValueAndTypeOfIt(paramName,paramValue,self.listOfParamObj)
+                            self.addParam(paramName,normalValue,typeOfThisParam)
+                            self.listOfParamObj.append(ParamItem(paramName,typeOfThisParam,self.getValueOfQuantity(self.paramObj,paramName)))
+                        #非整形
+                        else:
+                            [normalValue,typeOfThisParam]=self.getNormalParamValueAndTypeOfIt(paramName,paramValue,self.listOfParamObj)
+                            # FreeCAD.Console.PrintError("normalValue: "+str(normalValue)+" typeOfThisParam"+str(typeOfThisParam)+"\n")
+                            # 当type是string时，将所有的单位(暂不解析的)去掉，判断是否还是string
+                            if typeOfThisParam==UnitTools.SupportUnitType.STRING:
+                                #去掉单位
+                                valueWithoutUnit=self.removeAllUnits(paramValue)
+                                #去掉已定义变量名
+                                valueWithoutUnit=self.removeAllParamsList(valueWithoutUnit)
+                                [normalValueWithoutUnit,typeWithoutUnit]=self.getNormalParamValueAndTypeOfIt(paramName,valueWithoutUnit,self.listOfParamObj)
+                                if typeWithoutUnit==UnitTools.SupportUnitType.STRING:
+                                    #定义有错
+                                    self.errorHandle(self.listParams.index(paramItem)+1,paramName)
+                                    continue
+                            #继续执行
+                            self.addParam(paramName,normalValue,typeOfThisParam)
+
+                            self.listOfParamObj.append(ParamItem(paramName,typeOfThisParam,self.getValueOfQuantity(self.paramObj,paramName)))
+
+                    self.thisHandleAddSuccess=self.thisHandleAddSuccess+paramItem+";\n"
+                
                 # 添加已经定义的属性名(需要判断是否以及存在)
                 if paramName not in self.listOfParamNameAndValueDefined:
                     self.listOfParamNameAndValueDefined.append(paramName)
                 progress_bar.next()   
             except:
-                # sayzError("参数-进入到异常处理部分")
-                self.errorHandle(self.curListParams.index(paramItem)+1,paramName)
+                self.errorHandle(self.listParams.index(paramItem)+1,paramName)
         progress_bar.stop()
+
+    def errorHandle(self,index,paramName):
+        '''
+        定义失败的处理
+        '''
+        tip=u"第"+str(index)+u"个，变量"+str(paramName)+u"定义出错！\n"
+        self.errorParams.append(paramName)
+        self.errorText=self.errorText+tip
+        self.ui.textEdit_ValidInfo.setPlainText(self.errorText)
+
+        FreeCAD.Console.PrintError(u"第"+str(index)+u"个定义有误!\n")
+
+    def getParamNameAndValueByFunctionStr(self,functionStr):
+        functionStr=functionStr.replace(" ","")
+        indexOfLeftParenthesis=paramItemLowerWithoutSpace.index("(")
+        if indexOfLeftParenthesis>8:
+            # 获得变量名
+            paramName=paramItem[8:indexOfLeftParenthesis]
+            # 为了在FUNCTION前加一个空格
+            paramItemWithLeftSpace=paramItem.lstrip()
+            paramValue=paramItemWithLeftSpace[:8].upper()+" "+paramItemWithLeftSpace[8:]
+
+            return [paramName,paramValue]
+        else:
+            sayzError("getParamNameAndValueByFunctionStr "+str(functionStr)+"error")
+            return ["",""]
+
+
+    def getValueOfQuantity(self,obj,param):
+        '''
+        @ brief 获得对象的属性值对应的值 String
+        '''
+        value=getattr(obj,param)
+        if hasattr(value,"Value"):
+            return str(getattr(value,"Value"))
+        else:
+            return str(value)
 
     def getNormalParamValueAndTypeOfIt(self,paramName,paramValue,isInt=False):
         '''
@@ -326,28 +351,25 @@ class CustomeParameterMain(QtGui.QDialog):
                     "exp","log","log10","pow","sqrt",\
                     "abs","ceil","floor","mod","round","trunc",\
                     "average","count","max","min","stddev","sum"]
-        # 在此处添加逗号，但是不确定这样的添加会不会导致其他问题
-        operators=["+","-","*","/","^","(",")",":", ","]
-        # 科学计数法的e
+        operators=["+","-","*","/","^","(",")",":"]
+        #科学计数法的e
         otherOperators=["e"]
         resultValue=""
         listOfResultType=[]
 
         word=""
         for i in range(len(paramValue)):
-            
             #运算符
             if paramValue[i] in operators:
                 # 处理上一个word
                 if word!="":
-                    # sayzError("观察:  " + str(word) + "\n")
                     if word.lower() in mathSymbol:
-                        resultValue = resultValue + word.lower()
+                        resultValue=resultValue+word.lower()
                         listOfResultType.append(UnitTools.SupportUnitType.Float)
                     else:
-                        [resultValue,listOfResultType] = self.handleLastWord(paramName,resultValue,listOfResultType,word)
+                        [resultValue,listOfResultType]=self.handleLastWord(paramName,resultValue,listOfResultType,word)
                     word=""
-                resultValue = resultValue + paramValue[i]
+                resultValue=resultValue+paramValue[i]
             # 9E-9类似这种E前后没有运算符,且e前面是数字
             elif  paramValue[i].lower() in otherOperators and i!=0 and paramValue[i-1].isdigit():
                 # 处理上一个word
@@ -361,8 +383,7 @@ class CustomeParameterMain(QtGui.QDialog):
                 resultValue=resultValue+paramValue[i]
                 listOfResultType.append(UnitTools.SupportUnitType.Float)
             else:
-                word = word + paramValue[i]
-
+                word=word+paramValue[i]
         if word!="":
             if word.lower() in mathSymbol:
                 resultValue=resultValue+word.lower()
@@ -370,8 +391,7 @@ class CustomeParameterMain(QtGui.QDialog):
             else:
                 [resultValue,listOfResultType]=self.handleLastWord(paramName,resultValue,listOfResultType,word)
             word=""
-
-        # sayzError("list: " + str(listOfResultType))
+    
         resultType=""
         # 获得最终的Type:
         # Length 和 Angle 不能同时出现，否则出错
@@ -396,232 +416,15 @@ class CustomeParameterMain(QtGui.QDialog):
         elif UnitTools.SupportUnitType.Integert in listOfResultType:
             resultType=UnitTools.SupportUnitType.Integert
 
-        # sayzError("resultValue:  " + str(resultValue) + "  resultType:  " + resultType + "  list: " + str(listOfResultType))
+
         return [resultValue,resultType]
 
-    def addParam(self,paramName,paramValue,typeOfParam):
-        '''
-        将变量添加到FreeCAD中，并且记录变量是否发生变化\n
-        注意此函数会抛出异常，即借用FreeCAD的setExpression的机制来检查变量表达式是否符合要求
-        '''
-        #在这里处理**运算符
-        paramValue = self.changeToPow(paramValue)
-        # sayzError("参数-处理**结束")
-
-        if paramName in self.listOfParamDefined:
-            # 变量的类型发生变化
-            if  (hasattr(getattr(self.paramObj,paramName),"Unit") and str(getattr(self.paramObj,paramName).Unit.Type) != typeOfParam) \
-               or (isinstance(getattr(self.paramObj,paramName),int) and typeOfParam!=UnitTools.SupportUnitType.Integert) \
-               or (isinstance(getattr(self.paramObj,paramName),float) and typeOfParam!=UnitTools.SupportUnitType.Float) \
-               or (isinstance(getattr(self.paramObj,paramName),basestring) and typeOfParam!=UnitTools.SupportUnitType.STRING):
-                self.deleteParamFromFreeCAD(paramName)
-                self.addParamToFreeCAD(paramName, paramValue, typeOfParam)
-            # 变量的类型未发生变化
-            else:
-                self.modifyParamToFreeCAD(paramName, paramValue, typeOfParam)
-        else:
-            self.addParamToFreeCAD(paramName, paramValue, typeOfParam)
-
-    def addParamToFreeCAD(self,paramName,paramValue,typeOfParam):
-        if paramName not in self.listOfParamDefined \
-           or paramName not in self.listOfParamNameAndValueDefined:
-            # sayzError("参数-尝试添加一个变量:  " + str(paramName))
-            self.paramObj.addProperty('App::Property' + typeOfParam, paramName, "Custom", "")
-            # 此处的转换是因为FreeCAD表达式的参数分隔习惯，具体信息看本文件开头的连接
-            paramValue = re.sub(r",", ", ", paramValue)
-            if typeOfParam == UnitTools.SupportUnitType.STRING:
-                setattr(self.paramObj, paramName, paramValue)
-            else:
-                self.paramObj.setExpression(paramName, paramValue)
-            self.listOfParamNameAndValueDefined.append(paramName)
-            self.paramObj.setEditorMode(paramName, 0)
-            #将新增的属性加入列表
-            self.listOfParamDefined.append(paramName)
-            # FreeCAD.ActiveDocument.PropertiesChanged = FreeCAD.ActiveDocument.PropertiesChanged + ";" + paramName
-            # sayzError("参数-变量列表： " + str(self.listOfParamDefined))
-            # sayzError("参数-成功添加一个变量:  " + str(paramName))
-
-    def modifyParamToFreeCAD(self,paramName,paramValue,typeOfParam):
-        # sayzError("参数-修改变量")
-        if paramName in self.listOfParamDefined \
-            or paramName in self.listOfParamNameAndValueDefined:
-            if typeOfParam == UnitTools.SupportUnitType.STRING:
-                # 也可能是String类型的不在表达式解析器中，为什么？？？
-                setattr(self.paramObj,paramName,paramValue)
-            else:
-                for expressionParam in self.paramObj.ExpressionEngine:
-                    if paramName == expressionParam[0] and paramValue != expressionParam[1]:
-                        paramValue = re.sub(r",", ", ", paramValue)
-                        self.paramObj.setExpression(paramName, paramValue)
-                        # FreeCAD.ActiveDocument.PropertiesChanged = FreeCAD.ActiveDocument.PropertiesChanged+";"+paramName
-            self.paramObj.setEditorMode(paramName, 0)
-
-    def deleteParamFromFreeCAD(self, paramName):
-        # 注意保证DynamicData的一致性，即保证成功定义的变量都在DynamicData里面，\
-        # 未成功定义的或者被删除的都不在DynamicData
-        self.paramObj.removeProperty(paramName)
-        if paramName in self.listOfParamDefined:
-            self.listOfParamDefined.remove(paramName)
-
-    def deleteNotDefinedParam(self):
-        '''
-        删除被删除的变量
-        '''
-        # 查找被删除的变量
-        paramDeleted = self.getNamesOfAllDeletedParams()
-        # 删除
-        for paramName in paramDeleted:
-            try:
-                setattr(self.paramObj, paramName, 0)
-            except:
-                sayzError("setattr "+str(paramName)+" error!\n")
-            self.deleteParamFromFreeCAD(paramName)
-            
-    def getParamName(self, paramItem):
-        paramItemNameAndValue = paramItem.split("=")
-        paramName = paramItemNameAndValue[0]
-        return paramName
-
-    def onHelpBtn(self):
-        DocumentTools.errorMessage(u"支持类型：Angle、Length、Float、Int、String!\n \
-                                    Angle类型值后面加上deg标识,例如：angle1=30deg；\n \
-                                    Length类型值后面加上mm、cm、m(不区分大小写),例如：length1=11mm；\n \
-                                    Float类型值一定带上小数点,例如 f1=1.0；\n \
-                                    Int类型值是个具体的数值，例如 i1=1；\n \
-                                    其他剩下的则为string类型,例如 str1=\"My string\"。\n \
-                                    每一项以英文分号结束！")
-        
-    def removeErrorParam(self):
-        '''
-        去除错误的变量定义字符串
-        '''
-        resultParams=self.ui.textEdit_defintParam.toPlainText()
-        for paramItem in self.errorParams:
-            while(len([i.start() for i in re.finditer("\\b"+str(paramItem)+"\\b", resultParams)])!=0):
-                indexList=[i.start() for i in re.finditer("\\b"+str(paramItem)+"\\b", resultParams)]
-                # for idx in indexList:
-                idx=indexList[0]
-                curI=idx-1
-                #前面有多余等号
-                preFlag=False
-                #前面开始截取的位置索引
-                preIdx=0
-                #后面有多余等号
-                behFlag=False
-                #后面终止截取的位置,预选时有两个可能的位置等号那里或;那里
-                behIdx1=len(resultParams)
-                behIdx2=len(resultParams)
-                #判断前面有没有等号
-                while curI>=0:
-                    if resultParams[curI]==";":
-                        preFlag=False
-                        preIdx=curI+1
-                        break
-                    elif resultParams[curI]=="=":
-                        preFlag=True
-                        preIdx=curI+1
-                        break
-                    preIdx=curI
-                    curI=curI-1
-                sayz("preIdx: "+str(preIdx))
-                curI=idx+1
-                #计数为2的时候，才算多余的等号
-                countEqual=0
-                while curI<len(resultParams):
-                    if resultParams[curI]=="=":
-                        countEqual=countEqual+1
-                        if countEqual==2:
-                            behFlag=True
-                            break
-                        elif countEqual==1:
-                            behIdx1=curI+1
-                    elif resultParams[curI]==";":
-                        behFlag=False
-                        behIdx2=curI+1
-                        break
-                    curI=curI+1
-                    behIdx2=curI
-                sayz("behIdx: "+str(behIdx1)+" "+str(behIdx2))
-                sayz("flag: "+str(preFlag)+" "+str(behFlag))
-                #只有当preFlag和behFlag都是False的时候，截取preIdx和behIdx2之间的，其它时候，就截取preIdx和behIdx1之间的
-                if not preFlag and not behFlag:
-                    resultParams=resultParams[:preIdx]+resultParams[behIdx2:]
-                else:
-                    resultParams=resultParams[:preIdx]+resultParams[behIdx1:]
-        return resultParams
-
-    def deleteRepeat(self):
-        '''
-        去除重复定义的变量
-        '''
-        resultParamStr=FreeCAD.ActiveDocument.Company
-        paramsStr=FreeCAD.ActiveDocument.Company
-
-        # 1.先去掉注释
-        params=re.sub(r"[!|！][^\n]*","",paramsStr)
-        # 2.掉空格与换行符
-        params=params.replace(" ","").replace("\n","").replace("\r","").replace("\t","")
-
-        # 按照分号拆分
-        listOfAllParams=re.split(r";|；",params)
-        # 用字典来存放值
-        dParamNameAndValue={}
-
-        for paramItem in listOfAllParams:
-            paramNameAndValue=paramItem.split("=")
-            if len(paramNameAndValue)==2:
-                paramName=paramNameAndValue[0]
-                paramValue=paramNameAndValue[1]
-                # 查看这个paramName是否已经定义过
-                if dParamNameAndValue.has_key(paramName):
-                    resultParamStr=re.sub("\\b"+paramName+"[^;]*"+dParamNameAndValue[paramName]+"[^;]*","",resultParamStr)
-                    dParamNameAndValue[paramName]=paramValue
-                else:
-                    dParamNameAndValue[paramName]=paramValue
-        
-        return resultParamStr
-    
-    def __slotOfUndo(self):
-        self.ui.textEdit_defintParam.undo()
-
-    def __slotOfRedo(self):
-        self.ui.textEdit_defintParam.redo()
-
-    def __find(self):
-        sayzError("开始查找功能\n")
-        dialogOfFind = SearchTool(self.ui, self)
-        dialogOfFind.show()
-        dialogOfFind.exec_()
-        sayzError("查找功能结束\n")
-
-    def errorHandle(self,index,paramName):
-        '''
-        定义失败的处理
-        '''
-        tip=u"第"+str(index)+u"个，变量"+str(paramName)+u"定义出错！\n"
-        self.errorParams.append(paramName)
-        self.errorText=self.errorText+tip
-        self.ui.textEdit_ValidInfo.setPlainText(self.errorText)
-        sayzError(u"第"+str(index)+u"个定义有误!\n")
-
-    def getValueOfQuantity(self,obj,param):
-        '''
-        @ brief 获得对象的属性值对应的值 String
-        '''
-        value=getattr(obj,param)
-        if hasattr(value,"Value"):
-            return str(getattr(value,"Value"))
-        else:
-            return str(value)
-
     def handleLastWord(self,paramName,paramValue,listOfResultType,word):
-        # sayzError("name:  " + paramName + "  value:  " + paramValue + "  type:  " + str(listOfResultType) +\
-        #      "  word:  " + word)
         # 此处的word可能是数字、字母或字母加数字
-        resultValue = paramValue
-        resultType = listOfResultType
+        resultValue=paramValue
+        resultType=listOfResultType
         # 先处理一下小数点
-        indexOfPoint = word.find(".")
+        indexOfPoint=word.find(".")
         if indexOfPoint !=-1:
             if word.find(".")==0:
                 word=word.replace(".","0.")
@@ -670,25 +473,196 @@ class CustomeParameterMain(QtGui.QDialog):
         result=[resultValue,resultType]
         return result
 
+    def addParam(self,paramName,paramValue,typeOfParam):
+        # sayz("addparam name:"+str(paramName)+" value:"+str(paramValue)+" type:"+str(typeOfParam)+"\n")
+        #在这里处理**运算符
+        paramValue=self.changeToPow(paramValue)
+        #将新增的属性加入列表
+        self.paramObj.DynamicData.append(paramName)
+
+        # 该属性已经在属性对象中呈现
+        if paramName in self.listOfParamNameAndValueDefined or paramName in self.paramObj.PropertiesList:
+            # 可能以后的属性类型与现在即将定义的属性类型不一致，remove后新建
+            if hasattr(getattr(self.paramObj,paramName),"Unit"):
+                if str(getattr(self.paramObj,paramName).Unit.Type)!=typeOfParam:
+                    self.paramObj.removeProperty(paramName)
+                    self.paramObj.addProperty('App::Property'+typeOfParam,paramName,"Custom","")
+            else:
+                if (isinstance(getattr(self.paramObj,paramName),int) and typeOfParam!=UnitTools.SupportUnitType.Integert) \
+                    or (isinstance(getattr(self.paramObj,paramName),float) and typeOfParam!=UnitTools.SupportUnitType.Float) \
+                        or (isinstance(getattr(self.paramObj,paramName),basestring) and typeOfParam!=UnitTools.SupportUnitType.STRING):
+                    self.paramObj.removeProperty(paramName)
+                    self.paramObj.addProperty('App::Property'+typeOfParam,paramName,"Custom","")  
+
+            if typeOfParam== UnitTools.SupportUnitType.STRING:
+                # 也可能是String类型的不在表达式解析器中
+                setattr(self.paramObj,paramName,paramValue)
+            else:
+                # 可能是在表达式解析器中
+                for expressionParam in self.paramObj.ExpressionEngine:
+                    if paramName==expressionParam[0]:
+                        #值没有发生变化
+                        if paramValue==expressionParam[1]:
+                            FreeCAD.Console.PrintMessage("not changed ParamName "+"paramValue: "+str(paramValue)+" "+"expressionParam[1]: "+str(expressionParam[1])+"\n")
+                            #设置属性不可改
+                            self.paramObj.setEditorMode(paramName,1)
+                            #直接返回
+                            return
+                            break
+                        # 值改变了
+                        else:
+                            FreeCAD.Console.PrintMessage("changed ParamName "+"paramValue: "+str(paramValue)+" "+"expressionParam[1]: "+str(expressionParam[1])+"\n")
+                            self.paramObj.setExpression(paramName, paramValue)
+                            FreeCAD.ActiveDocument.PropertiesChanged=FreeCAD.ActiveDocument.PropertiesChanged+";"+paramName
+                            self.paramObj.setEditorMode(paramName,1)
+                            return
+
+        # 该属性不在属性对象中，新增属性
+        # 设置属性
+        self.paramObj.addProperty('App::Property'+typeOfParam,paramName,"Custom","")
+
+        # String类型直接赋值
+        if typeOfParam==UnitTools.SupportUnitType.STRING:
+            setattr(self.paramObj,paramName,paramValue)
+        # 其他类型，设置表达式
+        # elif not isFinished:
+        else:
+            # 去掉“deg”
+            # paramValue=paramValue.replace("deg","")
+            self.paramObj.setExpression(paramName, paramValue)
+        self.listOfParamNameAndValueDefined.append(paramName)
+        self.paramObj.setEditorMode(paramName,1)
+        #加入已更改属性列表
+        FreeCAD.ActiveDocument.PropertiesChanged=FreeCAD.ActiveDocument.PropertiesChanged+";"+paramName
+
+            # self.paramObj.setEditorMode(paramName,1)
+        # except:
+            # FreeCAD.Console.PrintError("Error in addParam\n")
+    #通过输入的的定义字符串得到最后的param=value类型
     def getParamAndValues(self,paramStr):
-        '''
-        通过对输入的字符串进行处理，得到的param=value类型的list并返回
-        '''
         paramsAndVaules=re.split(r";|；",paramStr)
         resultList=[]
-
+        #处理连等于号
         for item in paramsAndVaules:
             paramsAndVaule=item.split("=")
-            # FreeCAD.Console.PrintError(str(paramsAndVaule))
             if len(paramsAndVaule)<=2:
                 resultList.append(item)
-            # else:
-            #     # 有连等于号
-            #     for index in range(len(paramsAndVaule)-1):
-            #         tempStr=paramsAndVaule[index]+"="+paramsAndVaule[len(paramsAndVaule)-1]
-            #         resultList.append(tempStr)
+            else:
+                # 有连等于号
+                for index in range(len(paramsAndVaule)-1):
+                    tempStr=paramsAndVaule[index]+"="+paramsAndVaule[len(paramsAndVaule)-1]
+                    resultList.append(tempStr)
+        # FreeCAD.Console.PrintError(paramStr+str(paramsAndVaules==resultList))
         return resultList
 
+    def deleteNotDefinedParam(self,paramObj):
+        listOfParamsInObj=paramObj.PropertiesList
+        paramNotDefined=[ i for i in listOfParamsInObj if i not in self.listOfParamNameAndValueDefined ]
+        for paramItem in paramNotDefined:
+            try:
+                setattr(paramObj,paramItem,0)
+            except:
+                FreeCAD.Console.PrintError("setattr "+str(paramItem)+" error!\n")
+            paramObj.removeProperty(str(paramItem))
+            # 去掉FreeCAD.Activatedocument.company 对应内容
+            FreeCAD.ActiveDocument.Company=re.sub(r"\b"+paramItem+"[^;]*[;]","",str(FreeCAD.ActiveDocument.Company))
+            sayz("remove: "+str(paramItem))
+
+    def deleteRepeat(self):
+        resultParamStr=FreeCAD.ActiveDocument.Company
+        paramsStr=FreeCAD.ActiveDocument.Company
+
+        # 1.先去掉注释
+        params=re.sub(r"[!|！][^\n]*","",paramsStr)
+        # 2.掉空格与换行符
+        params=params.replace(" ","").replace("\n","").replace("\r","").replace("\t","")
+
+        # 按照分号拆分
+        listOfAllParams=re.split(r";|；",params)
+        # 用字典来存放值
+        dParamNameAndValue={}
+
+        for paramItem in listOfAllParams:
+            paramNameAndValue=paramItem.split("=")
+            if len(paramNameAndValue)==2:
+                paramName=paramNameAndValue[0]
+                paramValue=paramNameAndValue[1]
+                # 查看这个paramName是否已经定义过
+                if dParamNameAndValue.has_key(paramName):
+                    resultParamStr=re.sub("\\b"+paramName+"[^;]*"+dParamNameAndValue[paramName]+"[^;]*","",resultParamStr)
+                    dParamNameAndValue[paramName]=paramValue
+                else:
+                    dParamNameAndValue[paramName]=paramValue
+        
+        return resultParamStr
+    #删除company中一些验证错误的变量字符串
+    def removeErrorParam(self):
+        FreeCAD.Console.PrintError("START REMOVE\n")
+        resultParams=self.ui.textEdit_defintParam.toPlainText()
+        for paramItem in self.errorParams:
+            # sayz("paramItem:"+str(paramItem))
+            # sayz([i.start() for i in re.finditer('\\b'+paramItem+'\\b', resultParams)])
+            #将paramItem转为转义字符
+            # item=""
+            # for letter in paramItem:
+            #     item=item+"\\"+letter
+            # s='\\b'+paramItem+'\\b'
+            # sayz(s)
+            while(len([i.start() for i in re.finditer("\\b"+str(paramItem)+"\\b", resultParams)])!=0):
+                indexList=[i.start() for i in re.finditer("\\b"+str(paramItem)+"\\b", resultParams)]
+                # for idx in indexList:
+                idx=indexList[0]
+                curI=idx-1
+                #前面有多余等号
+                preFlag=False
+                #前面开始截取的位置索引
+                preIdx=0
+                #后面有多余等号
+                behFlag=False
+                #后面终止截取的位置,预选时有两个可能的位置等号那里或;那里
+                behIdx1=len(resultParams)
+                behIdx2=len(resultParams)
+                #判断前面有没有等号
+                while curI>=0:
+                    if resultParams[curI]==";":
+                        preFlag=False
+                        preIdx=curI+1
+                        break
+                    elif resultParams[curI]=="=":
+                        preFlag=True
+                        preIdx=curI+1
+                        break
+                    preIdx=curI
+                    curI=curI-1
+                sayz("preIdx: "+str(preIdx))
+                curI=idx+1
+                #计数为2的时候，才算多余的等号
+                countEqual=0
+                while curI<len(resultParams):
+                    if resultParams[curI]=="=":
+                        countEqual=countEqual+1
+                        if countEqual==2:
+                            behFlag=True
+                            break
+                        elif countEqual==1:
+                            behIdx1=curI+1
+                    elif resultParams[curI]==";":
+                        behFlag=False
+                        behIdx2=curI+1
+                        break
+                    curI=curI+1
+                    behIdx2=curI
+                sayz("behIdx: "+str(behIdx1)+" "+str(behIdx2))
+                sayz("flag: "+str(preFlag)+" "+str(behFlag))
+                #只有当preFlag和behFlag都是False的时候，截取preIdx和behIdx2之间的，其它时候，就截取preIdx和behIdx1之间的
+                if not preFlag and not behFlag:
+                    # FreeCAD.Console.PrintError("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT:"+str(preIdx)+" "+str(behIdx2)+"\n")
+                    resultParams=resultParams[:preIdx]+resultParams[behIdx2:]
+                else:
+                    # FreeCAD.Console.PrintError("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:"+str(preIdx)+" "+str(behIdx1)+"\n")
+                    resultParams=resultParams[:preIdx]+resultParams[behIdx1:]
+        return resultParams
+    # 去掉字符串中的**运算符改为pow(a;b)
     def changeToPow(self,s):
         '''
         将s,如s=(a+b)**5 转换为pow((a+b);5)
@@ -765,6 +739,15 @@ class CustomeParameterMain(QtGui.QDialog):
         # 去掉所有的单位
         for unitStr in listOfAllUnit:
             resultValue=re.sub("(?<=[\\d])"+unitStr+"\\b","",resultValue,flags=re.IGNORECASE)
+        return resultValue
+
+    def removeAllParamsList(self,paramValue):
+        '''
+        去掉已定义的参数名
+        '''
+        resultValue=paramValue.replace(" ","")
+        for paramName in self.listOfParamNameAndValueDefined:
+            resultValue=re.sub("\\b"+paramName+"\\b","",resultValue,flags=re.IGNORECASE)
         return resultValue
 
     def getParametersFromParamObj(self):
@@ -847,120 +830,15 @@ class CustomeParameterMain(QtGui.QDialog):
         FreeCAD.Console.PrintMessage("text: "+str(text)+"\n")
         return text
 
-    def removeAllParamsList(self,paramValue):
-        '''
-        去掉已定义的参数名
-        '''
-        resultValue = paramValue.replace(" ","")
-        for paramName in self.listOfParamNameAndValueDefined:
-            resultValue=re.sub("\\b"+paramName+"\\b","",resultValue,flags=re.IGNORECASE)
-        return resultValue
-
-    def getNamesOfAllDeletedParams(self):
-        '''
-        获取被删除的变量名，返回被删除的变量名的list\n
-        这里仅做简单化处理，并不考虑效率问题\n
-        '''
-        temp_curList = []
-        temp_lastList = []
-        deleted_list = []
-        # 获取变量名
-        for i in self.curListParams:
-            temp_str = re.sub(r"=.*", "", i)
-            if len(temp_str) != 0:
-                temp_curList.append(temp_str)
-        for i in self.lastListParams:
-            temp_str = re.sub(r"=.*", "", i)
-            if len(temp_str) != 0:
-                temp_lastList.append(temp_str)
-        # 获取被删除的变量名
-        for i in temp_lastList:
-            if i not in temp_curList:
-                deleted_list.append(i)
-        sayzError("参数-被删除的变量： " + str(deleted_list))
-        return deleted_list
-    
-    def getNamesOfAllChangedParams(self):
-        '''
-        获取值改变的变量列表
-        '''
-        changed_list = []
-        self.dict_cur = {}
-        for i in self.listOfParamDefined:
-            self.dict_cur[i] = getattr(self.paramObj, i)
-
-        for i in self.dict_cur:
-            if i in self.dict_last:
-                if self.dict_cur[i] != self.dict_last[i]:
-                    changed_list.append(i)
-            else:
-                changed_list.append(i)
-        # 将改变的变量名存放到C++对象中，这个对象会在布尔运算的时候被使用
-        for i in changed_list:
-            FreeCAD.ActiveDocument.PropertiesChanged = FreeCAD.ActiveDocument.PropertiesChanged+";"+i
-        sayzError("参数-改变的变量名： " + str(changed_list))
-
-    def recordLastParams(self):
-        '''
-        获取当前所有变量以及对应的值，用于后面对比哪些变量发生变化
-        '''
-        self.dict_last = {}
-        for i in self.lastListParamDefined:
-            if hasattr(self.paramObj, i):
-                self.dict_last[i] = getattr(self.paramObj, i)
-            else:
-                # 这里强行占用一个字符串
-                self.dict_last[i] = "__deleted!@#"
-
-    def checkForSyntaxErrors(self, param_list):
-        """
-        检查语法错误，过滤处符合语法条件的变量定义
-        比如表达式'xx==yy'   1.xx不能重复   2.xx和yy不可为空 3.‘=’ 在一个表达式只能出现一次
-        :param param_list:变量列表
-        :return: 出现错误的变量
-        """
-        sayzError("检查语法错误")
-        errors = []
-        param_existed = []      # 已经存在的变量，用于检测变量是否重复定义
-        for i in range(len(param_list)):
-            if len(param_list[i]) == 0:
-                continue
-
-            # ‘=’的数量必须为一
-            if param_list[i].count('=') != 1:
-                errors.append(self.generateErrorMessage(i, param_list[i], "表达式有且仅能有一个‘=’"))
-                continue
-            [pName, pValue] = param_list[i].split('=')      # pName:变量名  pValue: 变量值
-
-            # 变量名和变量值都不允许为空
-            if len(pName) == 0 or len(pValue) == 0:
-                errors.append(self.generateErrorMessage(i, param_list[i], "变量名或变量值为空"))
-                continue
-
-            # 检查变量是否重复定义
-            if pName in param_existed:
-                errors.append(self.generateErrorMessage(i, param_list[i], "变量重复定义"))
-                continue
-            param_existed.append(pName)
-
-        res = ""
-        for i in errors:
-            res += i + '\n'
-        sayzError(str(param_existed))
-        return res
-
-    @staticmethod
-    def generateErrorMessage(num, message, reason):
-        """
-        根据参数生成错误信息
-        :param reason: 错误原因
-        :param num: 参数的序号（第几个）
-        :param message: 参数的定义
-        :return: str
-        """
-        res = "第" + str(num) + "个参数定义出错：'" + str(message) + "'  错误原因： " + str(reason)
-        return res
-
+    def onHelpBtn(self):
+        DocumentTools.errorMessage(u"支持类型：Angle、Length、Float、Int、String!\n \
+Angle类型值后面加上deg标识,例如：angle1=30deg；\n \
+Length类型值后面加上mm、cm、m(不区分大小写),例如：length1=11mm；\n \
+Float类型值一定带上小数点,例如 f1=1.0；\n \
+Int类型值是个具体的数值，例如 i1=1；\n \
+其他剩下的则为string类型,例如 str1=\"My string\"。\n \
+每一项以英文分号结束！")
+        pass
 
 class CustomeParameterMainCommand:
     def IsActive(self):
@@ -968,29 +846,29 @@ class CustomeParameterMainCommand:
             return True
         else:
             return False
-
     def Activated(self):
-        dlg = CustomeParameterMain()
-        # ? 是否重复设置了变量数组到控件
-        dlg.ui.textEdit_defintParam.setPlainText(FreeCAD.ActiveDocument.Company)
+        dlg=CustomeParameterMain()
+        dlg.ui.textEdit_defintParam.setText(FreeCAD.ActiveDocument.Company)
         dlg.exec_()
-
+        # dlg.show()
+        
+               
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Modeling/Modeling2D/modeling2DResources/参数设置.svg"
-        MenuText = "自定义参数"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/CustomParameter/CustomParameterResources/Parameter.svg"
+        MenuText = "CustomParameters"
         ToolTip = "CustomParameters"
         return {'Pixmap': IconPath,
                 'MenuText': MenuText,
                 'ToolTip': ToolTip}
 
-
 FreeCADGui.addCommand('CustomeParameterMainCommand', CustomeParameterMainCommand())
-
 
 def sayzError(msg):
     FreeCAD.Console.PrintError(msg)
     FreeCAD.Console.PrintError("\n")
-
-
 def sayz(msg):
     FreeCAD.Console.PrintMessage(str(msg)+"\n")
+        
+
+
+

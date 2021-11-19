@@ -170,20 +170,19 @@ class Conformal:
     def redraw(self,obj):
         # FreeCAD.Console.PrintMessage("Conformal ReDraw\n")
         # 重绘
-        if self.curCoordinateSystem == 'Rectangular':
+        if self.curCoordinateSystem=='Rectangular':
             length = abs(obj.Point1.x - obj.Point2.x)
             width = abs(obj.Point1.y - obj.Point2.y)
             height = abs(obj.Point1.z - obj.Point2.z)
-            dir = FreeCAD.Vector(0, 0, 1)
-            # 获取点的较小的值，之前的绘制方法是错误的
-            start_point = FreeCAD.Vector(min(obj.Point1.x, obj.Point2.y),
-                                         min(obj.Point1.y, obj.Point2.y),
-                                         min(obj.Point1.z, obj.Point2.z))
+            dir=FreeCAD.Vector(0,0,1)
             try:
-                obj.Shape = Part.makeBox(length, width, height, start_point, dir)
+                obj.Shape  = Part.makeBox(length, width, height, obj.Point1, dir)
             except:
                 DocumentTools.printErrorMessage("Redraw Conformal Failed!")
                 return
+                pass
+            # obj.Shape  = Part.makeBox(length, width, height, obj.Point1, dir)
+            pass
         elif self.curCoordinateSystem=='Polar' or self.curCoordinateSystem=='Cylindrical':
             tempP1=CoordinateSystemTools.otherToRecOne(self.curCoordinateSystem,obj.Point1)
             tempP2=CoordinateSystemTools.otherToRecOne(self.curCoordinateSystem,FreeCAD.Vector(obj.Point2.x,obj.Point1.y,obj.Point1.z))

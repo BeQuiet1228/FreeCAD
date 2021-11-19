@@ -15,7 +15,7 @@ SET(Sources_Srcs
     colorcodeshapes.py
     expandplacements.py
     replaceobj.py
-	prototype.py
+	#prototype.py
 	ply
 	Resources
 	${OpenSCAD_QRC_SRCS}

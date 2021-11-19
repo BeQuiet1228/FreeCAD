@@ -61,13 +61,10 @@ class Function:
 
     def __encoded(self):
         if self.type == self.Type.expression:
-            if "PANDIRA" in self.functionExpression:
-                return self.functionExpression
-            else:
-                return self.command + blankSpace + \
-                       self.functionName + blankSpace + \
-                       equalSign + blankSpace + \
-                       self.functionExpression + semicolon
+            return self.command + blankSpace + \
+                   self.functionName + blankSpace + \
+                   equalSign + blankSpace + \
+                   self.functionExpression + semicolon
         if self.type == self.Type.data:
             datasStr = ""
             for index in range(0,len(self.datas),self.pairs):
@@ -172,51 +169,6 @@ class Point:
 
         coordinateStr = ""
         for index in range(len(self.coordinates)):
-            if index == 0:
-                coordinateStr = coordinateStr + self.coordinates[index]
-            else:
-                coordinateStr = coordinateStr + comma + blankSpace + self.coordinates[index]
-
-        return self.command + blankSpace + \
-                self.pName + blankSpace + \
-               coordinateStr + semicolon
-
-    def __decoded(self, ponitStr):
-
-        self.command = "POINT"
-        "去掉末尾分号"
-        ponitStr = ponitStr.split(semicolon)[0]
-        seg = ponitStr.split(comma + blankSpace)
-
-        if len(seg) == 3:
-            coordinates = [seg[0],seg[1],seg[2]]
-        else:
-            coordinates = seg
-        self.pName = seg[0].split(blankSpace)[1]
-        coordinates[0] = seg[0].split(blankSpace,2)[2]
-        self.coordinates = coordinates
-
-        return self
-
-    def getPonitStr(self):
-        return self.__encoded()
-
-    def getPoint(self, pointStr):
-        return self.__decoded(pointStr)
-# 由于绘制半圆环体存在bug，这里单独对设计一个点调用
-class PointForTS:
-    "指定空间二维点"
-    def __init__(self, pName="", coordinates=""):
-        self.command = "POINT"
-        self.pName = pName
-        self.coordinates = coordinates
-
-    def __encoded(self):
-
-        coordinateStr = ""
-        for index in range(len(self.coordinates)):
-            if self.coordinates[index] == "359.9deg":
-                self.coordinates[index] = "360.0deg"
             if index == 0:
                 coordinateStr = coordinateStr + self.coordinates[index]
             else:
@@ -2265,8 +2217,7 @@ class EmissionOption:
                  isNumber=False, creationRate="0",
                  isTiming=False, timingType="RANDOM_TIMING", stepMultiple="0",
                  isSurfaceSpacing=False, surfaceSpacing="RANDOM",
-                 isOutwardSpacing=False, outwardSpacing="RANDOM",
-                 isCheckedVelocity=False, velocity_spread=""):
+                 isOutwardSpacing=False, outwardSpacing="RANDOM"):
         self.emitName = emitName
         self.isSpecies = isSpecies
         self.species = species
@@ -2279,8 +2230,6 @@ class EmissionOption:
         self.surfaceSpacing = surfaceSpacing
         self.isOutwardSpacing = isOutwardSpacing
         self.outwardSpacing = outwardSpacing
-        self.isCheckedVelocity = isCheckedVelocity
-        self.velocity_spread = velocity_spread
 
     def __encoded(self):
 
@@ -2300,8 +2249,6 @@ class EmissionOption:
 
         if self.isOutwardSpacing:
             returnStr = returnStr + newline + tab + "OUTWARD_SPACING" + blankSpace + self.outwardSpacing + blankSpace + self.emitName + symbolPoint + "Dn"
-        if self.isCheckedVelocity:
-            returnStr = returnStr + newline + tab + "VELOCITY_SPREAD" + blankSpace + self.velocity_spread
 
         returnStr = returnStr + semicolon
 
@@ -3055,7 +3002,7 @@ class ObserveParticle:
         electron = "ELECTRON"
         ions="IONS"
         all="ALL"
-    def __init__(self, classify="",fieldType="",option="phase1",object="", name2 = ''):
+    def __init__(self, classify="",fieldType="",option="phase1", object="",name2 = ''):
         self.command = "OBSERVE "+classify
         self.fieldType = fieldType
         self.object = object
@@ -3064,11 +3011,14 @@ class ObserveParticle:
 
     def __encoded(self):
         if self.name2 == '':
-            return self.command + blankSpace + self.object+blankSpace+self.option + blankSpace + self.fieldType + semicolon
+            return self.command + blankSpace + \
+               self.fieldType + blankSpace + \
+               self.option +blankSpace + self.object + semicolon
         else:
-            return self.command + blankSpace + self.object+blankSpace+\
-                   self.option + blankSpace + self.fieldType +blankSpace +\
-                   'suffix' + blankSpace + str(self.name2) + semicolon
+            return self.command + blankSpace + \
+                    self.fieldType + blankSpace + \
+                    self.option +blankSpace + self.object + blankSpace + 'suffix' + blankSpace + \
+                    str(self.name2) + semicolon
 
     def __decoded(self, str):
         strs = re.split(" |;|,", str)

@@ -11,8 +11,8 @@ from ProjectSettingsDlgData import ProjectSettingsDlgData as DlgData
 import ProjectSettingsDlgData
 import File.FileCommand.M3DFile.M3DFileUtil
 import File.FileCommand.TextUI.FileTextView
-
-#json¸ñÊ½Êı¾İĞèÒª±£³ÖÔ­ÓĞË³ĞòÊä³ö
+from Tools import CompleterTools
+#jsonæ ¼å¼æ•°æ®éœ€è¦ä¿æŒåŸæœ‰é¡ºåºè¾“å‡º
 from collections import OrderedDict
 class TimeDomainComputingSetting(QtGui.QDialog):
     def __init__(self,className,type):
@@ -20,8 +20,7 @@ class TimeDomainComputingSetting(QtGui.QDialog):
         self.ui = TimeDomainComputingSettingDlg.Ui_Dialog_TimeDomainComputingSettingDlg()
         self.ui.setupUi(self)
         # global flag
-        from ProjectSetting.Tools import CompleterTools
-        #´úÂë²¹È«
+        #ä»£ç è¡¥å…¨
         CompleterTools.setLineEditsCompleter(CompleterTools.getAllLineEdits(self.ui))
         # self.ui.pushButton.clicked.connect(self.pushBtn_Cancel)
         # self.ui.comboBox_filed_arithmetic.clicked.connect(self.onFiledAri)
@@ -59,26 +58,26 @@ class TimeDomainComputingSetting(QtGui.QDialog):
         #     self.ui.lineEdit_dielectric_constant.setReadOnly(True)
         if type=="toolBar":
             self.hideUpPart()
-            # ÊÊÅä·Ö±æÂÊ
+            # é€‚é…åˆ†è¾¨ç‡
             import Physics.PhysicsCommand.AdaptiveDPIUtil as AdaptiveDPIUtil
             new_x, new_y = AdaptiveDPIUtil.get_new_dpi(self.width(), self.height())
             self.resize(500, 200)
         else:
             self.hideBelowPart()
-            # ÊÊÅä·Ö±æÂÊ
+            # é€‚é…åˆ†è¾¨ç‡
             import Physics.PhysicsCommand.AdaptiveDPIUtil as AdaptiveDPIUtil
             new_x, new_y = AdaptiveDPIUtil.get_new_dpi(self.width(), self.height())
             self.resize(500, 400)
         
     def hideUpPart(self):
-        self.setWindowTitle(u"ºêÁ£×ÓºÏ²¢")
-        #Òş²ØÉÏ°ë²¿·Ö
+        self.setWindowTitle(u"å®ç²’å­åˆå¹¶")
+        #éšè—ä¸ŠåŠéƒ¨åˆ†
         self.ui.label.hide()
         self.ui.lineEdit_compute_time.hide()
         self.ui.label_3.hide()
         self.ui.groupBox_WorkSpace_X.hide()
         self.ui.groupBox_WorkSpace_Y.hide()
-        #ÏÔÊ¾ÏÂ°ë²¿·Ö
+        #æ˜¾ç¤ºä¸‹åŠéƒ¨åˆ†
         self.ui.checkBox_part.show()
         self.ui.lineEdit_max.show()
         self.ui.label_5.show()
@@ -88,14 +87,14 @@ class TimeDomainComputingSetting(QtGui.QDialog):
         self.ui.label_6.show()
         self.ui.pushButton_ok.show()
     def hideBelowPart(self):
-        self.setWindowTitle(u"Ê±Óò¼ÆËãÉèÖÃ")
-        #ÏÔÊ¾ÉÏ°ë²¿·Ö
+        self.setWindowTitle(u"æ—¶åŸŸè®¡ç®—è®¾ç½®")
+        #æ˜¾ç¤ºä¸ŠåŠéƒ¨åˆ†
         self.ui.label.show()
         self.ui.lineEdit_compute_time.show()
         self.ui.label_3.show()
         self.ui.groupBox_WorkSpace_X.show()
         self.ui.groupBox_WorkSpace_Y.show()
-        #Òş²ØÏÂ°ë²¿·Ö
+        #éšè—ä¸‹åŠéƒ¨åˆ†
         self.ui.checkBox_part.hide()
         self.ui.lineEdit_max.hide()
         self.ui.label_5.hide()
@@ -113,12 +112,12 @@ class TimeDomainComputingSetting(QtGui.QDialog):
         self.close()
 
 
-        # ¸üĞÂm3dÎÄµµ by mx
-        # »ñµÃm3dµÄutil
+        # æ›´æ–°m3dæ–‡æ¡£ by mx
+        # è·å¾—m3dçš„util
         fileUtil = File.FileCommand.M3DFile.M3DFileUtil.M3DFileUtil()
-        # »ñµÃ×î½üµÄm3d×Ö·û´®
+        # è·å¾—æœ€è¿‘çš„m3då­—ç¬¦ä¸²
         FileStr = fileUtil.getLatestM3DFileStr()
-        # ½øĞĞÎÄ±¾µÄ¸üĞÂ
+        # è¿›è¡Œæ–‡æœ¬çš„æ›´æ–°
         File.FileCommand.TextUI.FileTextView.FileView().updateText(FileStr)
 
         pass
@@ -143,14 +142,14 @@ class TimeDomainComputingSetting(QtGui.QDialog):
                 self.ui.lineEdit_every.setText(DlgData["EveryNum"])
                 self.ui.lineEdit_max.setText(DlgData["MaxNum"])
             except:
-                FreeCAD.Console.PrintMessage("ÉèÖÃºêÁ£×Ó³ö´í£¡")
+                FreeCAD.Console.PrintMessage("è®¾ç½®å®ç²’å­å‡ºé”™ï¼")
             try:
                 self.ui.checkBox_setting_step.setChecked(DlgData["checkBoxStep"])
                 self.ui.lineEdit_setting_step.setText(DlgData["computeTimeInterval"])
                 self.ui.radioButton_re.setChecked(DlgData["is_re"])
                 self.ui.radioButton_nonre.setChecked(DlgData["is_nonre"])
             except:
-                FreeCAD.Console.PrintMessage("\nÉèÖÃÊ±¼ä²½³¤¼ä¸ô³ö´í!")
+                FreeCAD.Console.PrintMessage("\nè®¾ç½®æ—¶é—´æ­¥é•¿é—´éš”å‡ºé”™!")
         except KeyError as reson:
             FreeCAD.Console.PrintMessage(str(reson))
     def keepData(self,DlgData,className): 
@@ -163,12 +162,12 @@ class TimeDomainComputingSetting(QtGui.QDialog):
         DlgData.addData("checkBoxStride",self.ui.checkBox_setting_stride.isChecked())
         DlgData.addData("lineEditStride",self.ui.lineEdit_setting_stride.text())
         DlgData.addData("checkBoxCharCont",self.ui.checkBox_setting_chargeContinuity.isChecked())
-        # ĞÂÌí¼ÓµÄºêÁ£×ÓºÏ²¢ @lzg
+        # æ–°æ·»åŠ çš„å®ç²’å­åˆå¹¶ @lzg
         DlgData.addData("Types",self.ui.comboBox.currentText())
         DlgData.addData("EveryNum",self.ui.lineEdit_every.text())
         DlgData.addData("MaxNum",self.ui.lineEdit_max.text())
         DlgData.addData("isChecked_part",self.ui.checkBox_part.isChecked())
-        # ĞÂÌí¼ÓµÄÁ£×Ó¼ÆËãÊ±¼ä²½³¤ÉèÖÃ @lzg
+        # æ–°æ·»åŠ çš„ç²’å­è®¡ç®—æ—¶é—´æ­¥é•¿è®¾ç½® @lzg
         DlgData.addData("checkBoxStep",self.ui.checkBox_setting_step.isChecked())
         DlgData.addData("computeTimeInterval",self.ui.lineEdit_setting_step.text())
         DlgData.addData("is_re",self.ui.radioButton_re.isChecked())
@@ -215,9 +214,9 @@ class TimeDomainComputingSetting(QtGui.QDialog):
             #     result = num == num
             # except :
             #     result=False
-            #     FreeCAD.Console.PrintError("\n½øÈëÄÚ²ãÒì³£Óï¾ä")
+            #     FreeCAD.Console.PrintError("\nè¿›å…¥å†…å±‚å¼‚å¸¸è¯­å¥")
         except:
-            FreeCAD.Console.PrintError("\n½øÈëÍâ²ãÒì³£Óï¾ä")
+            FreeCAD.Console.PrintError("\nè¿›å…¥å¤–å±‚å¼‚å¸¸è¯­å¥")
         return result
     def test_try2(self):
         string_test = "runtime"
@@ -226,4 +225,4 @@ class TimeDomainComputingSetting(QtGui.QDialog):
             result = num == num
         except :
             result=False
-            FreeCAD.Console.PrintError("\n½øÈëÄÚ²ãÒì³£Óï¾ä")
+            FreeCAD.Console.PrintError("\nè¿›å…¥å†…å±‚å¼‚å¸¸è¯­å¥")

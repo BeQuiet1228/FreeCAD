@@ -2,7 +2,7 @@
 import FreeCAD
 import FreeCADGui
 from PySide import QtGui
-from PySide.QtCore import QSettings
+
 
 def set_FilePath(value2):
     FreeCAD.ConfigSet("EditorFilePath",value2)
@@ -21,7 +21,6 @@ def get_FilePath(defFilePath=""):
 # curFilePath=FilePath()
 
 class EditorOpen:
-    _lastOpenDir = ""
     def Activated(self):
         sayz("open")
         # import Tkinter, tkFileDialog
@@ -31,21 +30,13 @@ class EditorOpen:
         #                                                              filetypes = (("m3d files","*.m3d"),("all files","*.*")))
 
         # @maxin, 更换为用pyside打开文件
-        #FreeCAD.Console.PrintMessage("\nlastDir: "+EditorOpen._lastOpenDir+"\n")
-        setting = QSettings("picgui","pythonConfig")
-        m3ddir = setting.value("m3dPath","C:/")
-
-        fileName, selectedFilter = QtGui.QFileDialog.getOpenFileName(None, u"打开M3D文件", m3ddir, u"M3D Files (*.m3d *.m2d)")
+        fileName, selectedFilter = QtGui.QFileDialog.getOpenFileName(None, u"打开M3D文件", "", u"M3D Files (*.m3d)")
         if fileName != '':
             # curFilePath.filePath=fileName
             set_FilePath(fileName)
             FreeCAD.Console.PrintMessage("\nOpen: "+get_FilePath()+"\n")
             import os
             dirName = os.path.dirname(get_FilePath())
-
-            setting = QSettings("picgui","pythonConfig")
-            setting.setValue("m3dPath",dirName)
-
             FreeCAD.clientSetWorkpath(dirName)
             sayz(fileName)
             import M3DFileEditor

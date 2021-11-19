@@ -1,3 +1,0 @@
-import RegularPolygonDialog
-import RegularPolygonDlgMain
-import RegularPolygonInstance

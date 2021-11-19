@@ -1,3 +1,0 @@
-import LineConformalDialog
-import LineConformalDlgMain
-import LineConformalInstance

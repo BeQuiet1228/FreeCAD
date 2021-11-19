@@ -9,17 +9,17 @@ from Modeling.Common.CommonCommand.NewDocument import ObjectDict
 import ProjectSettingCommand
 from ProjectSettingsDlgData import ProjectSettingsDlgData as DlgData
 import ProjectSettingsDlgData
-
+from Tools import CompleterTools
 import File.FileCommand.M3DFile.M3DFileUtil
 import File.FileCommand.TextUI.FileTextView
 from Physics.PhysicsCommand import BoundPalMain
 from Physics.PhysicsCommand import DoManager
-#json¸ñÊ½Êı¾İĞèÒª±£³ÖÔ­ÓĞË³ĞòÊä³ö
+#jsonæ ¼å¼æ•°æ®éœ€è¦ä¿æŒåŸæœ‰é¡ºåºè¾“å‡º
 from collections import OrderedDict
 flag = 0
 
 def show(type,className,itemUserName):
-    # ±»Ê÷½á¹¹µÄË«»÷ÊÂ¼şµ÷ÓÃ
+    # è¢«æ ‘ç»“æ„çš„åŒå‡»äº‹ä»¶è°ƒç”¨
     FreeCAD.Console.PrintMessage("ClassNameshow:  "+str(className)+"\n") 
     FreeCAD.Console.PrintMessage("ClassNameshow:  "+str(itemUserName)+"\n") 
 
@@ -30,21 +30,19 @@ def show(type,className,itemUserName):
         ObjectDict[className].exec_()
     elif type == "old":
         if className in ObjectDict.keys():
-            # Ôö¼ÓÁË³·Ïú²Ù×÷ºó£¬Êı¾İ¿ÉÄÜ·¢Éú±ä»¯£¬ËùÒÔÃ¿´ÎĞèÒªÖØĞÂ¼ÓÔØÊı¾İ£¬
+            # å¢åŠ äº†æ’¤é”€æ“ä½œåï¼Œæ•°æ®å¯èƒ½å‘ç”Ÿå˜åŒ–ï¼Œæ‰€ä»¥æ¯æ¬¡éœ€è¦é‡æ–°åŠ è½½æ•°æ®ï¼Œ
             JSON_CADComment = json.loads(FreeCAD.ActiveDocument.Comment,object_pairs_hook=OrderedDict)
             oldData = DlgData(JSON_CADComment[itemUserName], itemUserName)
             # oldData=JSON_CADComment[itemUserName]
             ObjectDict[className].loadData(oldData)
 
             ObjectDict[className].flagUpdateItemName=True
-            ObjectDict[className].setNameUnable()
             ObjectDict[className].setModal(False)
             ObjectDict[className].show()
             ObjectDict[className].exec_()             
         else:
             ObjectDict[className] = NewMaterial(itemUserName,className)
             ObjectDict[className].flagUpdateItemName = True
-            ObjectDict[className].setNameUnable()
             ObjectDict[className].setModal(False)
             ObjectDict[className].show()
             ObjectDict[className].exec_()
@@ -57,8 +55,7 @@ class NewMaterial(QtGui.QDialog):
         self.ui.setupUi(self)
         global flag
         flag = 0
-        from ProjectSetting.Tools import CompleterTools
-        #´úÂë²¹È«
+        #ä»£ç è¡¥å…¨
         CompleterTools.setLineEditsCompleter(CompleterTools.getAllLineEdits(self.ui))
         self.ui.pushButton.clicked.connect(self.pushBtn_Cancel)
         self.ui.checkBox_conductivity.clicked.connect(self.onCheckBox_conductivityClicked)
@@ -90,10 +87,10 @@ class NewMaterial(QtGui.QDialog):
         self.close()
         # ProjectSettingsDlgData.getDlgData()
         oldJson = json.loads(FreeCAD.ActiveDocument.Comment,object_pairs_hook=OrderedDict)
-        # ´æ´¢Ö»ĞŞ¸ÄÊı¾İ¶øÃ»ÓĞĞŞ¸ÄitemÃûµÄÇé¿ö
+        # å­˜å‚¨åªä¿®æ”¹æ•°æ®è€Œæ²¡æœ‰ä¿®æ”¹itemåçš„æƒ…å†µ
         oldData = ["modify", self.userNameBefore, className]
         itemData = ["modify", self.userNameBefore, className]
-        # ½«ĞÂ²ÄÁÏÌí¼Óµ½±ß½çÉèÖÃµÄÊ÷ÀïÃæÈ¥£¬ÒòÎªĞÂ²ÄÁÏĞèÒªÉèÖÃºÜ¶à¸ö @lizhenguang
+        # å°†æ–°ææ–™æ·»åŠ åˆ°è¾¹ç•Œè®¾ç½®çš„æ ‘é‡Œé¢å»ï¼Œå› ä¸ºæ–°ææ–™éœ€è¦è®¾ç½®å¾ˆå¤šä¸ª @lizhenguang
         count = 1
         global flag
         name = self.ui.lineEdit_Name.text()
@@ -108,28 +105,28 @@ class NewMaterial(QtGui.QDialog):
             #         name = self.ui.lineEdit_Name.text() + str(count)
             #         count+=1
             # self.ui.lineEdit_Name.setText(name)
-            # itemData, oldData=BoundPalMain.addItem(u"ĞÂ²ÄÁÏ", name, className)
+            # itemData, oldData=BoundPalMain.addItem(u"æ–°ææ–™", name, className)
             # flag = 1
             while name in FreeCAD_Comment_Dict.keys(): 
                name = self.ui.lineEdit_Name.text() + str(count) 
                count+=1       
             self.ui.lineEdit_Name.setText(name)
-            itemData, oldData = BoundPalMain.addItem(u"ĞÂ²ÄÁÏ", name, className)
+            itemData, oldData = BoundPalMain.addItem(u"æ–°ææ–™", name, className)
             flag = 1
         # BoundPalMain.updateItemName(name)
-        #·ÀÖ¹ĞŞ¸ÄÃû³ÆÊ¹µÃjsonÖØ¸´
+        #é˜²æ­¢ä¿®æ”¹åç§°ä½¿å¾—jsoné‡å¤
         if self.flagUpdateItemName:
-            FreeCAD.Console.PrintError('ĞŞ¸ÄÃû³Æ')
+            FreeCAD.Console.PrintError('ä¿®æ”¹åç§°')
             if not name == self.userNameBefore:
                 JSON_CADComment = json.loads(FreeCAD.ActiveDocument.Comment,object_pairs_hook=OrderedDict)
                 if self.userNameBefore in JSON_CADComment:
                     JSON_CADComment.pop(self.userNameBefore)
                     FreeCAD.ActiveDocument.Comment = json.dumps(JSON_CADComment)
-                    # ÅĞ¶Ï¸üĞÂµÄÃû³ÆÊÇ·ñÓĞÖØÃû
+                    # åˆ¤æ–­æ›´æ–°çš„åç§°æ˜¯å¦æœ‰é‡å
                     while name in FreeCAD_Comment_Dict.keys():
                         name = self.ui.LineEdit_Name.text() + str(count)
                         count += 1
-                    #¸üĞÂÃû³Æ
+                    #æ›´æ–°åç§°
                     # if self.flagUpdateItemName:
                     itemData, oldData = BoundPalMain.updateItemName(name)
                     self.flagUpdateItemName=False
@@ -139,15 +136,15 @@ class NewMaterial(QtGui.QDialog):
         if isModify and itemData is not None:
             jsonData = json.loads(FreeCAD.ActiveDocument.Comment,object_pairs_hook=OrderedDict)
 
-            # ¸üĞÂÁ½¸öÕ»
+            # æ›´æ–°ä¸¤ä¸ªæ ˆ
             record = [jsonData, itemData, oldJson, oldData]
             DoManager.newOperation(record)
-        # ¸üĞÂm3dÎÄµµ by mx
-        # »ñµÃm3dµÄutil
+        # æ›´æ–°m3dæ–‡æ¡£ by mx
+        # è·å¾—m3dçš„util
         fileUtil = File.FileCommand.M3DFile.M3DFileUtil.M3DFileUtil()
-        # »ñµÃ×î½üµÄm3d×Ö·û´®
+        # è·å¾—æœ€è¿‘çš„m3då­—ç¬¦ä¸²
         FileStr = fileUtil.getLatestM3DFileStr()
-        # ½øĞĞÎÄ±¾µÄ¸üĞÂ
+        # è¿›è¡Œæ–‡æœ¬çš„æ›´æ–°
         File.FileCommand.TextUI.FileTextView.FileView().updateText(FileStr)
         pass
     def pushBtn_Cancel(self):
@@ -194,13 +191,10 @@ class NewMaterial(QtGui.QDialog):
         Comment[className] = DlgData.data
         # Comment["NewMaterical"] = DlgData.data
         FreeCAD.ActiveDocument.Comment = json.dumps(Comment)
-        # ·µ»ØÃæ°åÖĞµÄÄÚÈİÊÇ·ñ¸Ä±ä
+        # è¿”å›é¢æ¿ä¸­çš„å†…å®¹æ˜¯å¦æ”¹å˜
         return cmp(old, Comment) != 0
     
     def onCheckBox_conductivityClicked(self):
         self.ui.lineEdit_conductivity.setEnabled(self.ui.checkBox_conductivity.isChecked()) 
     def onCheckBox_dielectric_constantClicked(self):
         self.ui.lineEdit_dielectric_constant.setEnabled(self.ui.checkBox_dielectric_constant.isChecked()) 
-
-    def setNameUnable(self):
-        self.ui.lineEdit_Name.setEnabled(False)

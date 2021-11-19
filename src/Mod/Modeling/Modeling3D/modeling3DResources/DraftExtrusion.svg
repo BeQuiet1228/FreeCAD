@@ -1,24 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>草图拉伸体</title>
-    <defs>
-        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
-            <stop stop-color="#A7BDFF" offset="0%"></stop>
-            <stop stop-color="#4A77FF" offset="100%"></stop>
-        </linearGradient>
-    </defs>
-    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
-        <g id="图标输出" transform="translate(-443.000000, -726.000000)" stroke-width="0.5">
-            <g id="草图拉伸体" transform="translate(443.000000, 726.000000)">
-                <line x1="3.52426228" y1="7" x2="12.4920368" y2="7" id="Path-27" stroke="#3F81B8"></line>
-                <line x1="3" y1="8" x2="13" y2="8" id="Path-27-Copy" stroke="#3F81B8"></line>
-                <line x1="6.04249511" y1="6" x2="5.00061904" y2="10" id="Path-28" stroke="#3F81B8"></line>
-                <line x1="11.0424951" y1="6" x2="10.000619" y2="10" id="Path-28-Copy" stroke="#3F81B8" transform="translate(10.521557, 8.000000) scale(-1, 1) translate(-10.521557, -8.000000) "></line>
-                <line x1="8.00814957" y1="6" x2="8.00814957" y2="10" id="Path-29" stroke="#3F81B8"></line>
-                <polygon id="Rectangle" stroke="#1A1A1A" points="4 6 12 6 14 10 2 10"></polygon>
-                <path d="M6.5,3.71428571 L8,2 L9.5,3.71428571 L8.5,3.71428571 L8.5,4.71428571 L7.5,4.71428571 L7.5,3.71428571 L6.5,3.71428571 Z" id="Combined-Shape" stroke="#1A1A1A" fill="url(#linearGradient-1)"></path>
-                <path d="M6.5,12.7142857 L8,11 L9.5,12.7142857 L8.5,12.7142857 L8.5,13.7142857 L7.5,13.7142857 L7.5,12.7142857 L6.5,12.7142857 Z" id="Combined-Shape-Copy" stroke="#1A1A1A" fill="url(#linearGradient-1)" transform="translate(8.000000, 12.357143) scale(1, -1) translate(-8.000000, -12.357143) "></path>
-            </g>
-        </g>
+<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24">
+  <defs>
+    <linearGradient id="未命名的渐变_19" data-name="未命名的渐变 19" x1="12.377" y1="9.147" x2="23.681" y2="9.147" gradientUnits="userSpaceOnUse">
+      <stop offset="0.116" stop-color="#fdee5f"/>
+      <stop offset="0.468" stop-color="#f4e364"/>
+      <stop offset="0.875" stop-color="#dec200"/>
+    </linearGradient>
+  </defs>
+  <title>DraftExtrusion</title>
+  <g>
+    <g>
+      <ellipse cx="6.302" cy="20.754" rx="5.998" ry="1.493" style="fill: #f0dc39"/>
+      <path d="M6.3,22.5c-3.1,0-6.248-.6-6.248-1.742S3.2,19.011,6.3,19.011s6.248.6,6.248,1.744S9.407,22.5,6.3,22.5Zm0-2.986c-3.508,0-5.748.737-5.748,1.244S2.794,22,6.3,22s5.748-.736,5.748-1.242S9.811,19.511,6.3,19.511Z" style="fill: #1e1e1e"/>
     </g>
+    <g>
+      <path d="M5.829,9.705,4.421,11.53a.589.589,0,0,0-.072.733.4.4,0,0,0,.627-.023L6.22,10.593,7.557,12.3a.4.4,0,0,0,.627-.022.59.59,0,0,0,.072-.733L6.788,9.67A.614.614,0,0,0,5.829,9.705Z" style="fill: #191919"/>
+      <path d="M6.3,16.433a.5.5,0,0,1-.5-.5V10.467a.5.5,0,1,1,1,0v5.466A.5.5,0,0,1,6.3,16.433Z" style="fill: #191818"/>
+    </g>
+    <g>
+      <polygon points="23.681 14.318 16.804 14.805 12.377 14.318 12.377 3.49 23.681 3.49 23.681 14.318" style="fill: url(#未命名的渐变_19)"/>
+      <path d="M18,15.17c-1,0-6-.066-6-1.369l.059-10.432,11.932,0L24,13.8C24,15.1,19,15.17,18,15.17ZM12.713,4.052V13.8c.166.193,1.961.687,5.287.687s5.121-.494,5.3-.746l-.015-.033V4.057Z" style="fill: #262324"/>
+      <ellipse cx="18.029" cy="3.596" rx="5.652" ry="0.817" style="fill: #dec200"/>
+      <path d="M18.017,4.835c-.61,0-5.961-.038-5.961-1.332S17.407,2.17,18.017,2.17s5.992.038,5.992,1.333S18.628,4.835,18.017,4.835ZM12.717,3.5c.3.266,2.072.723,5.3.723s5-.457,5.3-.723c-.3-.267-2.072-.724-5.3-.724S13.018,3.236,12.717,3.5Z" style="fill: #262324"/>
+    </g>
+  </g>
 </svg>

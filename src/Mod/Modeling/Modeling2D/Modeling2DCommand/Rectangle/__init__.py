@@ -1,4 +1,0 @@
-import RectangleInstance
-import RectangleDialog
-import RectangleDlgMain
-

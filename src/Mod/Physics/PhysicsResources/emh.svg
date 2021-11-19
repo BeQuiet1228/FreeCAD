@@ -1,31 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>强场发射</title>
-    <defs>
-        <linearGradient x1="50%" y1="27.6187344%" x2="50%" y2="79.9796895%" id="linearGradient-1">
-            <stop stop-color="#BFFEDA" offset="0%"></stop>
-            <stop stop-color="#4BDC8A" offset="100%"></stop>
-        </linearGradient>
-    </defs>
-    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
-        <g id="图标输出" transform="translate(-391.000000, -886.000000)" stroke="#1A1A1A">
-            <g id="强场发射" transform="translate(391.000000, 886.000000)">
-                <polygon id="Rectangle" stroke-width="0.5" fill="url(#linearGradient-1)" stroke-linejoin="round" points="2 6.45454545 5 2 5 8.54545455 2 13"></polygon>
-                <line x1="2" y1="9.82987361" x2="5" y2="5.35120057" id="Path-17" stroke-width="0.25"></line>
-                <line x1="3.60987615" y1="4.00371822" x2="3.72810167" y2="10.5503892" id="Path-18" stroke-width="0.25"></line>
-                <circle id="Oval-Copy-8" stroke-width="0.5" fill="#E7E7E7" cx="10" cy="10" r="1"></circle>
-                <circle id="Oval-Copy-9" stroke-width="0.5" fill="#E7E7E7" cx="14" cy="9" r="1"></circle>
-                <circle id="Oval-Copy-10" stroke-width="0.5" fill="#E7E7E7" cx="11.5" cy="12.5" r="1"></circle>
-                <circle id="Oval-Copy-13" stroke-width="0.5" fill="#E7E7E7" cx="9.5" cy="2.5" r="1"></circle>
-                <circle id="Oval-Copy-12" stroke-width="0.5" fill="#E7E7E7" cx="13.5" cy="3.5" r="1"></circle>
-                <circle id="Oval-Copy-11" stroke-width="0.5" fill="#E7E7E7" cx="11" cy="6" r="1"></circle>
-                <line x1="5.95842633" y1="3.33343054" x2="8" y2="3.33343054" id="Path-19" stroke-width="0.25"></line>
-                <line x1="5.95842633" y1="5.33343054" x2="8" y2="5.33343054" id="Path-19-Copy" stroke-width="0.25"></line>
-                <line x1="5.95842633" y1="7.33343054" x2="8" y2="7.33343054" id="Path-19-Copy-2" stroke-width="0.25"></line>
-                <line x1="5.95842633" y1="9.33343054" x2="8" y2="9.33343054" id="Path-19-Copy-3" stroke-width="0.25"></line>
-                <line x1="4.95842633" y1="11.3334305" x2="7.95842633" y2="11.3334305" id="Path-19-Copy-4" stroke-width="0.25"></line>
-                <line x1="3.95842633" y1="13.3334305" x2="7.95842633" y2="13.3334305" id="Path-19-Copy-5" stroke-width="0.25"></line>
-            </g>
-        </g>
+<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
+  <title>emh</title>
+  <g>
+    <g>
+      <path d="M1.45,7.629V6.88A84.684,84.684,0,0,1,13.561.93v.926A109.883,109.883,0,0,0,1.45,7.629Z" style="fill: #ec2232"/>
+      <path d="M1.45,10.851V9.869a73.1,73.1,0,0,1,12.111-.6v1A76.31,76.31,0,0,0,1.45,10.851Z" style="fill: #ec2232"/>
+      <path d="M13.561,15.193A78.669,78.669,0,0,1,1.45,13.869v-.957a64.117,64.117,0,0,0,12.111,1.269v1C13.288,15.189,13.829,15.193,13.561,15.193Z" style="fill: #ec2232"/>
+      <path d="M13.561,22.643C9.79,21.173,1.71,17.168,1.45,17V16.16c.063.041,8.437,4.119,12.111,5.552Z" style="fill: #ec2232"/>
     </g>
+    <g>
+      <g>
+        <line y1="1.043" y2="22.958" style="fill: #191919"/>
+        <path d="M0,0A1.042,1.042,0,0,1,1.043,1.043V22.957A1.042,1.042,0,0,1,0,24" style="fill: #070707"/>
+      </g>
+      <polygon points="2.172 16.437 0.331 18.815 0.331 4.015 2.172 5.696 2.172 16.437" style="fill: #191919"/>
+    </g>
+    <g>
+      <path d="M15.74,1.747V1.465h4.594l.516,1.594-.235.094a3.5,3.5,0,0,0-.8-1.055,1.428,1.428,0,0,0-.937-.351H17.568a.473.473,0,0,0-.3.093.342.342,0,0,0-.118.282V5.028h1.36a.876.876,0,0,0,.68-.234,1.028,1.028,0,0,0,.21-.7V3.809h.282V6.575H19.4V6.387a1.314,1.314,0,0,0-.21-.8.8.8,0,0,0-.68-.281h-1.36V8.825a.338.338,0,0,0,.118.281.468.468,0,0,0,.3.094h1.219a1.836,1.836,0,0,0,1.2-.4,2.606,2.606,0,0,0,.774-1.242l.234.094-.515,1.828H15.693V9.2h.282a.456.456,0,0,0,.328-.094.382.382,0,0,0,.093-.281v-6.7A.387.387,0,0,0,16.3,1.84a.461.461,0,0,0-.328-.093Z" style="fill: #0f4dd8"/>
+      <path d="M20.475,21.825a.338.338,0,0,0,.117.281.468.468,0,0,0,.3.094h.235v.281H19.068V22.2H19.3a.456.456,0,0,0,.328-.094.383.383,0,0,0,.094-.281V18.4H16.959v3.422a.338.338,0,0,0,.117.281.471.471,0,0,0,.3.094h.234v.281H15.553V22.2h.234a.454.454,0,0,0,.328-.094.379.379,0,0,0,.094-.281v-6.7a.383.383,0,0,0-.094-.282.459.459,0,0,0-.328-.093H15.6v-.282h1.968v.282h-.187a.476.476,0,0,0-.3.093.341.341,0,0,0-.117.282v3h2.766v-3a.387.387,0,0,0-.094-.282.461.461,0,0,0-.328-.093h-.188v-.282h1.969v.282H20.9a.473.473,0,0,0-.3.093.341.341,0,0,0-.117.282Z" style="fill: #0f4dd8"/>
+    </g>
+  </g>
 </svg>

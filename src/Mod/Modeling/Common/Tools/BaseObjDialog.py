@@ -972,15 +972,15 @@ class showObjDialog(AllDialogFather):
         '''
         if self.fin_Order != self.order_before:
             #PartGui.updateBoolean(self.fin_Order)
-            PartChipic.updateBoolean(self.fin_Order, is_show)
+            PartGui.updateBoolean(self.fin_Order, is_show)
             return
         if self.obj.Attribute != self.attribute_before :
             #PartGui.updateBoolean(self.fin_Order)
-            PartChipic.updateBoolean(self.fin_Order, is_show)
+            PartGui.updateBoolean(self.fin_Order, is_show)
             return
         if self.recompute_flag and self.obj.Attribute != 'NotDefine':
             #PartGui.updateBoolean(self.fin_Order)
-            PartChipic.updateBoolean(self.fin_Order, is_show)
+            PartGui.updateBoolean(self.fin_Order, is_show)
             return
         FreeCAD.Console.PrintError('\n没有进行布尔运算')
 
@@ -1041,12 +1041,11 @@ class showObjDialog(AllDialogFather):
             import ObjectsTools as objTools
             objTools.checkVolShape(self.obj)
             FreeCAD.Console.PrintError('\n执行完close语句\n')
-            self.obj.recompute()
             
     def showWarningDialog(self):
         if len(self.error)!=0:
             import ErrorFunction
-            err_dia=ErrorFunction.ErrorDialog.WarningDialog(self)
+            err_dia=ErrorFunction.ErrorDialog.WarningDialog()
             err_dia.errormassageinput(self.error)
             err_dia.show()
             err_dia.exec_()
@@ -1181,15 +1180,6 @@ def ValueUnitslength(num1,units):
     # FreeCAD.Console.PrintMessage(str(num1)+'\n')
     return num1
 def ValueUnitsangle(num1,units):
-    if units == 'deg':
-        num1=num1
-    elif units == 'rad':
-        num1=num1*180/pi
-    return num1 
-# 单独为环形体设计的函数
-def ValueUnitsangleForTS(num1,units):
-    if num1 == 359.9:
-        num1 = 360.0
     if units == 'deg':
         num1=num1
     elif units == 'rad':

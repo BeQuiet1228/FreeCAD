@@ -211,7 +211,7 @@ class FileEditor(PySide.QtGui.QWidget):
         return str
 
     def writeToFile(self,filename,str):
-        with open(filename.decode('utf8').encode('gbk'), 'w') as f:  # 设置文件对象
+        with open(filename, 'w') as f:  # 设置文件对象
             f.write(str)  # 将字符串写入文件中
 
 

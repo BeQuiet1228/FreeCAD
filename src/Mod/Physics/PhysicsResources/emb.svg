@@ -1,25 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>束发射</title>
-    <defs>
-        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
-            <stop stop-color="#36D67B" offset="0%"></stop>
-            <stop stop-color="#C1FFDC" offset="100%"></stop>
-        </linearGradient>
-    </defs>
-    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
-        <g id="图标输出" transform="translate(-248.000000, -886.000000)" stroke-width="0.5">
-            <g id="束发射" transform="translate(248.000000, 886.000000)">
-                <polyline id="Path" stroke="#171717" fill="url(#linearGradient-1)" transform="translate(8.000000, 10.000000) rotate(-180.000000) translate(-8.000000, -10.000000) " points="2 12 8 8 14 12"></polyline>
-                <line x1="8" y1="12" x2="8" y2="15" id="Path-4" stroke="#171717"></line>
-                <circle id="Oval-Copy" stroke="#1A1A1A" fill="#E7E7E7" cx="4" cy="6" r="1"></circle>
-                <circle id="Oval-Copy-5" stroke="#1A1A1A" fill="#E7E7E7" cx="12" cy="4" r="1"></circle>
-                <circle id="Oval-Copy-3" stroke="#1A1A1A" fill="#E7E7E7" cx="9.5" cy="6.5" r="1"></circle>
-                <circle id="Oval-Copy-7" stroke="#1A1A1A" fill="#E7E7E7" cx="12.5" cy="6.5" r="1"></circle>
-                <circle id="Oval-Copy-4" stroke="#1A1A1A" fill="#E7E7E7" cx="6.5" cy="5.5" r="1"></circle>
-                <circle id="Oval-Copy-6" stroke="#1A1A1A" fill="#E7E7E7" cx="3.5" cy="2.5" r="1"></circle>
-                <circle id="Oval-Copy-2" stroke="#1A1A1A" fill="#E7E7E7" cx="7.5" cy="2.5" r="1.5"></circle>
-            </g>
-        </g>
+<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
+  <title>emb</title>
+  <g>
+    <rect x="2.071" y="15.212" width="13.167" height="1" style="fill: #ec2232"/>
+    <rect x="2.071" y="10.621" width="13.167" height="1" style="fill: #ec2232"/>
+    <rect x="2.071" y="6.03" width="13.167" height="1" style="fill: #ec2232"/>
+    <g>
+      <path d="M16.752,1.747V1.466h4.594l.516,1.593-.235.094a3.514,3.514,0,0,0-.8-1.055,1.433,1.433,0,0,0-.938-.351H18.581a.471.471,0,0,0-.3.094.338.338,0,0,0-.117.281V5.028h1.359a.875.875,0,0,0,.68-.234,1.027,1.027,0,0,0,.211-.7V3.809h.281V6.575h-.281V6.387a1.309,1.309,0,0,0-.211-.8.794.794,0,0,0-.68-.282H18.159V8.825a.338.338,0,0,0,.117.281.471.471,0,0,0,.3.094H19.8A1.84,1.84,0,0,0,21,8.8a2.605,2.605,0,0,0,.773-1.242L22,7.653l-.515,1.828H16.706V9.2h.281a.456.456,0,0,0,.328-.094.383.383,0,0,0,.094-.281v-6.7a.383.383,0,0,0-.094-.281.456.456,0,0,0-.328-.094Z" style="fill: #0f4dd8"/>
+      <path d="M16.565,22.481V22.2h.375a.454.454,0,0,0,.328-.094.379.379,0,0,0,.094-.281v-6.7a.379.379,0,0,0-.094-.281.454.454,0,0,0-.328-.094h-.281v-.281h2.718a2.581,2.581,0,0,1,1.664.445,1.69,1.69,0,0,1,.54,1.383,1.9,1.9,0,0,1-.282,1.078,2.364,2.364,0,0,1-1.172.75,2.466,2.466,0,0,1,1.454.937,2.546,2.546,0,0,1,.375,1.36,1.875,1.875,0,0,1-.657,1.5,2.645,2.645,0,0,1-1.781.562Zm4.219-6.187a1.4,1.4,0,0,0-.469-1.2,1.983,1.983,0,0,0-1.219-.351h-.562a.471.471,0,0,0-.3.094.338.338,0,0,0-.117.281v2.906h1.219a1.461,1.461,0,0,0,.984-.422A1.682,1.682,0,0,0,20.784,16.294ZM19.377,22.2a1.591,1.591,0,0,0,1.243-.492,1.992,1.992,0,0,0,.445-1.383A2.143,2.143,0,0,0,20.6,18.8a1.854,1.854,0,0,0-1.406-.492H18.112v3.516a.338.338,0,0,0,.117.281.471.471,0,0,0,.3.094Z" style="fill: #0f4dd8"/>
     </g>
+    <g>
+      <g>
+        <line y1="1.043" y2="22.958" style="fill: #191919"/>
+        <path d="M0,0A1.042,1.042,0,0,1,1.043,1.043V22.957A1.042,1.042,0,0,1,0,24" style="fill: #070707"/>
+      </g>
+      <polygon points="2.172 16.437 0.331 18.815 0.331 4.015 2.172 5.696 2.172 16.437" style="fill: #191919"/>
+    </g>
+  </g>
 </svg>

@@ -1,2 +1,0 @@
-import DisplayDlgCommand
-import DisplayDlgMain
