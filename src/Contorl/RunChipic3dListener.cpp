@@ -153,6 +153,7 @@ void RunChipic3dListener::workThreadOn()
 
 void RunChipic3dListener::workThreadOff()
 {
+	sendMessage(0, 0, 0);
 	setWorkThreadFlag(false);
 	Sleep(10);
 	this->wait();
