@@ -1087,6 +1087,10 @@ std::list<unsigned __int64> StructData::isAnAttritbute(unsigned __int64 p, PROPE
 		CPM(rectPro, PERMEABILITY);
 		CPM(rectPro, FREESPACE);
 		CPM(rectPro, FOIL);
+		if (0 == rectPro)
+		{
+			list.push_back(0);
+		}
 		return list;
 	}
 	case StructData::LINEPROPER:

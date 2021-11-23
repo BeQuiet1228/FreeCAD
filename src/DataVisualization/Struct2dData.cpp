@@ -97,12 +97,12 @@ bool Struct2dData::initdata(){
 		if (!rectPro.empty())
 		{
 			for each (auto var in rectPro)
-				allinfo[var][x4].push_back(QPointF(*(IM1X->begin() + (x1 - 1)),*(IM2X->begin()+(x2-1))));
+				allinfo[x4][var].push_back(QPointF(*(IM1X->begin() + (x1 - 1)),*(IM2X->begin()+(x2-1))));
 		}
 		if (!linePro.empty())
 		{
 			for each (auto var in linePro)
-				lineinfo[var][x4].push_back(QPointF(*(IM1X->begin()+(x1-1)),*(IM2X->begin()+(x2-1))));
+				lineinfo[x4][var].push_back(QPointF(*(IM1X->begin()+(x1-1)),*(IM2X->begin()+(x2-1))));
 		}
 	}
 
@@ -147,7 +147,11 @@ std::list<unsigned __int64> Struct2dData::isAnAttribute(unsigned __int64 p, Stru
 		CPM(pro,StructData::PERMEABILITY);
 		CPM(pro,StructData::FREESPACE);
 		CPM(pro,StructData::FOIL);
-
+		//ÅÐ¶ÏÕæ¿Õ
+		if (0 == pro)
+		{
+			list.push_back(0);
+		}
 		return list;
 	}
 	case StructData::LINEPROPER:

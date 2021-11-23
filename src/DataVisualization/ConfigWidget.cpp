@@ -57,6 +57,9 @@ void ConfigWidget::initUI()
 		SETPERPORE(ui->FreespacelineColor, Freespacelineclicked());
 		SETPERPORE(ui->FOILColor, FOILclicked());
 		SETPERPORE(ui->FOILlineColor, FOILlineclicked());
+		//新增加属性真空2021-11-23
+		SETPERPORE(ui->VacuoColor, Vacuoclicked());
+		SETPERPORE(ui->VacuolineColor, Vacuolineclicked());
 		//线段
 		SETPERPORE(ui->Port,PortClicked());
 		SETPERPORE(ui->Inductor,InductorClicked());
@@ -143,6 +146,7 @@ void ConfigWidget::structInfoClicked(int _property, QPushButton* button)
 	case XX(Mas::PORT)
 	case XX(Mas::DRIVER)
 	case XX(Mas::INDUCTOR)
+	case XX(Mas::VACUO)
 	}
 #undef  XX(a)
 }
@@ -340,6 +344,9 @@ void ConfigWidget::FOILlineclicked(){ structinfolineClicked(Mas::FOIL, ui->FOILl
 void ConfigWidget::PortClicked(){ structInfoClicked(Mas::PORT, ui->Port); }
 void ConfigWidget::InductorClicked(){ structInfoClicked(Mas::INDUCTOR, ui->Inductor); }
 void ConfigWidget::DriverClicked(){ structInfoClicked(Mas::DRIVER, ui->Driver); }
+//新增属性
+void ConfigWidget::Vacuoclicked() { structInfoClicked(Mas::VACUO, ui->VacuoColor); }
+void ConfigWidget::Vacuolineclicked() { structinfolineClicked(Mas::VACUO, ui->VacuolineColor); }
 /**
 * @brief  ConfigWidget::structinfolineClicked
 * @param  int _property  
@@ -373,7 +380,8 @@ void ConfigWidget::structinfolineClicked(int _property, QPushButton* button){
 		structlineColor["FREESPACELINE"] = QColorToQstring(color); break;
 	case Mas::FOIL:
 		structlineColor["FOILLINE"] = QColorToQstring(color); break;
-
+	case Mas::VACUO:
+		structlineColor["VACUOLINE"] = QColorToQstring(color); break;
 	}
 }
 /**
@@ -420,6 +428,7 @@ void ConfigWidget::loadxmlConfig(){
 		//新增属性-20210521
 		LOADCONFIGCOLOR(FREESPACE, StructGroup, ui->Freespace, true);
 		LOADCONFIGCOLOR(FOIL, StructGroup, ui->FOIL, true);
+		LOADCONFIGCOLOR(VACUO, StructGroup, ui->Vacuo, true);
 #undef LOADCONFIGCOLOR(a,b,c)
 #define ADDLINECOLOR(a,b)\
 	{auto color=StructGroup.getGroup(#a).getValue("value");\
