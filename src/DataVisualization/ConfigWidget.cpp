@@ -37,6 +37,7 @@ ConfigWidget::~ConfigWidget(){
 */
 void ConfigWidget::initUI()
 {
+
 #define SETPERPORE(a,b)\
 	connect((a),SIGNAL(clicked()),this,SLOT(b));\
 	this->SetAllreRender(a);
@@ -364,25 +365,21 @@ void ConfigWidget::structinfolineClicked(int _property, QPushButton* button){
 	qpalette.setColor(QPalette::Button, color);
 	button->setPalette(qpalette);
 	button->setText(QString("#%1").arg(QColorToQstring(color)));
+#define XX(a) \
+	case (a):\
+	structlineColor[#a "LINE"+5] = QColorToQstring(color); break;
 	switch (_property)
 	{
-	case Mas::CONDUCTORNEW:
-		structlineColor["CONDUCTORNEWLINE"] = QColorToQstring(color); break;
-	case Mas::DIOLECTRIC:
-		structlineColor["DIOLECTRICLINE"] = QColorToQstring(color); break;
-	case Mas::PERFECTCONDUCTOR:
-		structlineColor["PERFECTCONDUCTORLINE"] = QColorToQstring(color); break;
-	case Mas::PERMEABILITY:
-		structlineColor["PERMEABILITYLINE"] = QColorToQstring(color); break;
-	case Mas::DIELECTIRANDCONDUCTANCE:
-		structlineColor["DIELECTIRANDCONDUCTANCELINE"] = QColorToQstring(color); break;
-	case Mas::FREESPACE:
-		structlineColor["FREESPACELINE"] = QColorToQstring(color); break;
-	case Mas::FOIL:
-		structlineColor["FOILLINE"] = QColorToQstring(color); break;
-	case Mas::VACUO:
-		structlineColor["VACUOLINE"] = QColorToQstring(color); break;
+	XX(Mas::CONDUCTORNEW)
+	XX(Mas::DIOLECTRIC)
+	XX(Mas::PERFECTCONDUCTOR)
+	XX(Mas::PERMEABILITY)
+	XX(Mas::DIELECTIRANDCONDUCTANCE)
+	XX(Mas::FREESPACE)
+	XX(Mas::FOIL)
+	XX(Mas::VACUO)
 	}
+#undef XX(a)
 }
 /**
 * @brief  ConfigWidget::partcleColorclicked
