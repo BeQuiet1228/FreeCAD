@@ -1,5 +1,6 @@
 #添加子文件目录
 add_subdirectory(qwt)
+add_subdirectory(3D)
 #设置项目名称
 project(DataVisualization)
 #引入头文件
