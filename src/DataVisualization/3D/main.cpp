@@ -15,8 +15,13 @@
 #include <QFileDialog>
 #include <HDF5Reader/hdf5io.h>
 #include "CartesianStructDataSetConstructor.h"
+#include"PolarStructDataSetConstructor.h"
+#include"vtkDataSetMapper.h"
 #include <vtkCellData.h>
-
+#include"vtkUnstructuredGridGeometryFilter.h"
+#include"vtkDataSet.h"
+#include"vtkProperty.h"
+#include"vtkCamera.h"
 #ifndef INIT_VTK_OPENGL_AND_FRNT	//防止多次初始化模块
 #define INIT_VTK_OPENGL_AND_FRNT
 #include <vtkAutoInit.h>
@@ -45,11 +50,55 @@ int main(int argc, char* argv[])
 	if (datalist.size() == 0)
 		return 0;
 	//打开只有k矩阵的h5文件
-	auto data = datalist.begin();
+	//auto data = datalist.begin();
+	__int32 index = -1;
+	for (auto i = 0; i < datalist.size(); i++)
+	{
+		if (datalist[i].name.find("struct") != std::string::npos)
+		{
+			index = i;
+			break;
+		}
+	}
+	if (-1 == index)
+		return 0;
+	auto data = datalist.begin() + index;
+	//CartesianStructDataSetConstructor constructor;
+	//constructor.setHdf5Data(*data);
 
-	CartesianStructDataSetConstructor constructor;
+	PolarStructDaraSetConstruct constructor;
 	constructor.setHdf5Data(*data);
-
+	
+#if 0
+	vtkSmartPointer<vtkUnstructuredGridGeometryFilter> filter = vtkSmartPointer<vtkUnstructuredGridGeometryFilter>::New();
+	filter->SetInputData(dataset);
+	filter->MergingOn();
+	filter->Update();
+	vtkSmartPointer<vtkDataSetMapper> ugridMapper = vtkSmartPointer<vtkDataSetMapper>::New();
+//	ugridMapper->SetInputConnection(filter->GetOutputPort());
+	ugridMapper->SetInputData(filter->GetOutput());
+	ugridMapper->ScalarVisibilityOff();
+	ugridMapper->Update();
+	vtkSmartPointer<vtkActor> ugridActor = vtkSmartPointer<vtkActor>::New();
+	ugridActor->SetMapper(ugridMapper);
+	ugridActor->GetProperty()->EdgeVisibilityOn();
+	vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
+	renderer->AddActor(ugridActor.Get());
+	renderer->ResetCamera();
+	renderer->GetActiveCamera()->Elevation(60.0);
+	renderer->GetActiveCamera()->Azimuth(30.0);
+	renderer->GetActiveCamera()->Dolly(1.2);
+	vtkSmartPointer<vtkRenderWindow>renWin = vtkSmartPointer<vtkRenderWindow>::New();
+	vtkSmartPointer<vtkRenderWindowInteractor>iren = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+	renWin->AddRenderer(renderer);
+	renWin->SetSize(640, 480);
+	renWin->SetWindowName("UGrid)");
+	iren->SetRenderWindow(renWin);
+	// interact with data
+	renWin->Render();
+	iren->Start();
+	return a.exec();
+#endif
 	std::shared_ptr<CartesianStructActorPipeline> pipeLine(new CartesianStructActorPipeline);
 	pipeLine->setDataSet(constructor.creatDataset());
 	pipeLine->connect();

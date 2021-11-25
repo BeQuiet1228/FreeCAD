@@ -42,6 +42,8 @@ SET(SRC
 SET( STRUCT_SRC
 	CartesianStructDataSetConstructor.cpp
 	CartesianStructDataSetConstructor.h
+	PolarStructDataSetConstructor.cpp
+	PolarStructDataSetConstructor.h
 	CartesianStructActorPipeline.h
 	CartesianStructActorPipeline.cpp
 )

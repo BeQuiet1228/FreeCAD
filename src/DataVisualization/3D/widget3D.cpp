@@ -11,6 +11,7 @@ DV3D::Widget3D::Widget3D()
 	viewer3d->setFixedSize(800, 800);
 	viewer3d->SetRenderWindow(renderWindow);
 
+	renderer->SetBackground(1.0,1.0,1.0);
 	renderer->ResetCamera();
 	renderer->GetActiveCamera()->Elevation(60.0);
 	renderer->GetActiveCamera()->Azimuth(30.0);
