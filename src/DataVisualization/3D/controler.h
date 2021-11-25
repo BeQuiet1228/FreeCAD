@@ -27,11 +27,15 @@ namespace DV3D {
 		void unbing();
 		//绑定状态
 		bool isBinding();
-
 		//设置渲染管线
-		void setActorPipeline(std::shared_ptr<ActorPipemline> line) {
-			this->actorPipeline = line;
-		};
+		void setActorPipeline(std::shared_ptr<ActorPipemline> line);
+		std::shared_ptr<ActorPipemline> getActorPipeline();
+		//设置actor是否可见
+		void setVisible(const bool& b);
+		bool getVisible();
+		//设置透明度
+		void setTransparent(const double& t);
+		double getTranparent();
 	private:
 		//单向绑定
 		void oneWayBinding(Widget3D* widget3D);
@@ -39,8 +43,11 @@ namespace DV3D {
 		void oneWayUnbing();
 		
 		vtkSmartPointer<vtkActor> getActor();
-
 	protected:
+		//获取3d窗口
+		Widget3D* getWidget3D();
+
+	private:
 		//渲染管线
 		std::shared_ptr<ActorPipemline> actorPipeline;
 		//显示窗口

@@ -2,9 +2,9 @@
 #include "widget3d.h"
 #include "actorPipeline.h"
 #include <cassert>
-
+#include <vtkProperty.h>
 DV3D::Controler::Controler()
-	:widget3D(nullptr),bindingState(false)
+	:widget3D(nullptr),bindingState(false),actorPipeline(nullptr)
 {
 	
 }
@@ -72,5 +72,49 @@ vtkSmartPointer<vtkActor> DV3D::Controler::getActor()
 bool DV3D::Controler::isBinding()
 {
 	return bindingState;
+}
+
+void DV3D::Controler::setActorPipeline(std::shared_ptr<ActorPipemline> line)
+{
+	this->actorPipeline = line;
+}
+
+std::shared_ptr<DV3D::ActorPipemline> DV3D::Controler::getActorPipeline()
+{
+	assert(actorPipeline && "actorPipeline is nullptr!");
+	return actorPipeline;
+}
+
+DV3D::Widget3D* DV3D::Controler::getWidget3D()
+{
+	assert(isBinding() && "controler is not binding!");
+	return widget3D;
+}
+
+void DV3D::Controler::setVisible(const bool& b)
+{
+	auto actor = getActorPipeline()->getActor();
+	if (b)
+		actor->VisibilityOn();
+	else
+		actor->VisibilityOff();
+}
+
+bool DV3D::Controler::getVisible()
+{
+	auto actor = getActorPipeline()->getActor();
+	return actor->GetVisibility();
+}
+
+void DV3D::Controler::setTransparent(const double& t)
+{
+	auto actor = getActorPipeline()->getActor();
+	actor->GetProperty()->SetOpacity(t);
+}
+
+double DV3D::Controler::getTranparent()
+{
+	auto actor = getActorPipeline()->getActor();
+	return actor->GetProperty()->GetOpacity();
 }
 

@@ -16,24 +16,15 @@ namespace DV3D {
 
 
 	public:
-		vtkSmartPointer<vtkActor>  getActor() {
-			return actor;
-		}
-		void setActor(vtkSmartPointer<vtkActor> ac) {
-			this->actor = ac;
-		}
-		vtkSmartPointer<vtkMapper> getMapper() {
-			return mapper;
-		}
-		void setMapper(vtkSmartPointer<vtkMapper> mp) {
-			this->mapper = mp;
-		}
-		vtkSmartPointer<vtkDataSet> getDataSet() {
-			return dataSet;
-		}
-		void setDataSet(vtkSmartPointer<vtkDataSet> dataset) {
-			this->dataSet = dataset;
-		}
+		//get set
+		vtkSmartPointer<vtkActor>  getActor();
+		void setActor(vtkSmartPointer<vtkActor> ac);
+
+		vtkSmartPointer<vtkMapper> getMapper();
+		void setMapper(vtkSmartPointer<vtkMapper> mp);
+
+		vtkSmartPointer<vtkDataSet> getDataSet();
+		void setDataSet(vtkSmartPointer<vtkDataSet> dataset);
 
 		//更新渲染管线
 		virtual void update() = 0;

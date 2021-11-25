@@ -57,6 +57,7 @@ int main(int argc, char* argv[])
 	Widget3D* w3d = new Widget3D();
 	Controler* controler = new Controler();
 	controler->setActorPipeline(pipeLine);
+	controler->setVisible(true);
 	w3d->binding(controler);
 	w3d->show();
 
