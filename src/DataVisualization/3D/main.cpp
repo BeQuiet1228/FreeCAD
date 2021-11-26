@@ -66,12 +66,38 @@ int main(int argc, char* argv[])
 	if (-1 == index)
 		return 0;
 	auto data = datalist.begin() + index;
-	//CartesianStructDataSetConstructor constructor;
-	//constructor.setHdf5Data(*data);
 
-	CylinderPlanConstruct constructor;
-	constructor.setHdf5Data(*data);
-	
+	//CylinderStructDataSetConstructor constructor;
+	//constructor.setHdf5Data(*data);
+	DataSetConstructorH5* constructor;
+	//²âÊÔ
+	switch (data->coordinateSystem)
+	{
+	case Hdf5Data::CoordinateSystem::POLAR:
+	{
+		if (data->headList[1].find("X2=2") != std::string::npos ||
+			data->headList[1].find("X2=3") != std::string::npos)
+			constructor = new  PolarPlanConstruct();
+		else
+			constructor = new PolarStructDaraSetConstruct();
+	}
+	break;
+	case Hdf5Data::CoordinateSystem::CARTESIAN:
+	{
+		constructor = new CartesianStructDataSetConstructor();
+	}
+	break;
+	case Hdf5Data::CoordinateSystem::CYLINDER:
+	{
+		if (data->headList[2].find("X3=2") != std::string::npos ||
+			data->headList[2].find("X3=3") != std::string::npos)
+			constructor = new  CylinderPlanConstruct();
+		else
+			constructor = new CylinderStructDataSetConstructor();
+	}
+	break;
+	}
+	constructor->setHdf5Data(*data);
 #if 0
 	vtkSmartPointer<vtkUnstructuredGridGeometryFilter> filter = vtkSmartPointer<vtkUnstructuredGridGeometryFilter>::New();
 	filter->SetInputData(dataset);
@@ -103,7 +129,7 @@ int main(int argc, char* argv[])
 	return a.exec();
 #endif
 	std::shared_ptr<CartesianStructActorPipeline> pipeLine(new CartesianStructActorPipeline);
-	pipeLine->setDataSet(constructor.creatDataset());
+	pipeLine->setDataSet(constructor->creatDataset());
 	pipeLine->connect();
 
 	Widget3D* w3d = new Widget3D();

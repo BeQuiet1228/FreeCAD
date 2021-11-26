@@ -35,10 +35,10 @@ namespace DV3D
 		const int itemSize = 4;
 		for (auto iter = value.begin(); iter != value.end();)
 		{
-			std::vector<__int64> properDatas;
+			std::vector<long long> properDatas;
 			for (auto i = 0; i < itemSize; i++, iter++)
 				properDatas.push_back(*iter);
-			std::vector<__int64> valueItem;
+			std::vector<long long> valueItem;
 			valueItem.reserve(4);
 			//r-theta-z
 			valueIndex.push_back(properDatas);

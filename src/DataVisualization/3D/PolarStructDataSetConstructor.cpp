@@ -22,10 +22,10 @@ namespace DV3D {
 		//添加六面体
 		for (auto& iter : value)
 		{
-			__int64 zIndex = iter[0];
-			__int64 rIndex = iter[1];
-			__int64 thetaIndex = iter[2];
-			__int64 type = iter[3];
+			long long zIndex = iter[0];
+			long long rIndex = iter[1];
+			long long thetaIndex = iter[2];
+			long long type = iter[3];
 			if (((iter)[3] & 0x03) != 0x03)
 				continue;
 			if (zIndex == zSize || rIndex == rSize || thetaIndex == thetaSize)
@@ -47,15 +47,15 @@ namespace DV3D {
 	}
 	void PolarStructDaraSetConstruct::initPoints(){
 		auto grid = getPolarDatas();
-		__int64 zs = grid[0].size();
-		__int64 rs = grid[1].size();
-		__int64 thetas = grid[2].size();
+		long long zs = grid[0].size();
+		long long rs = grid[1].size();
+		long long thetas = grid[2].size();
 		initGridsize(rs,thetas,zs);
 		//构建points
 		points = vtkSmartPointer<vtkPoints>::New();
 		points->Allocate(rs*thetas*zs);
 		//获取所有顶点
-		__int64 pointId = 0;
+		long long pointId = 0;
 		for (auto &z:grid[0])
 		{
 			for (auto& r : grid[1])
@@ -99,10 +99,10 @@ namespace DV3D {
 		const int itemSize = 4;
 		for (auto iter=value.begin();iter!=value.end();)
 		{
-			std::vector<__int64> properDatas;
+			std::vector<long long> properDatas;
 			for (auto i = 0; i < itemSize; i++,iter++) 
 				properDatas.push_back(*iter);
-			std::vector<__int64> valueItem;
+			std::vector<long long> valueItem;
 			valueItem.reserve(4);
 			//r-theta-z
 			valueItem.push_back(properDatas[2]);
@@ -113,13 +113,13 @@ namespace DV3D {
 		}
 		return valueIndex;
 	}
-	void PolarStructDaraSetConstruct::initGridsize(unsigned __int64 rs, unsigned __int64 thetas, unsigned __int64 zs)
+	void PolarStructDaraSetConstruct::initGridsize(unsigned long long rs, unsigned long long thetas, unsigned long long zs)
 	{
 		rSize = rs;
 		thetaSize = thetas;
 		zSize = zs;
 	}
-	__int64 PolarStructDaraSetConstruct::getPointId(const __int64& thetai, const __int64& ri, const __int64& zi)
+	long long PolarStructDaraSetConstruct::getPointId(const long long& thetai, const long long& ri, const long long& zi)
 	{
 		return zi * thetaSize * rSize + ri * thetaSize + thetai;
 	}

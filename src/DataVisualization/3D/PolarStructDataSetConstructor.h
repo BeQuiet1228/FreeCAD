@@ -15,18 +15,18 @@ namespace DV3D {
 	public:
 		vtkSmartPointer<vtkDataSet> creatDataset();
 	public:
-		__int64 getPointId(const __int64& thetai, const __int64& ri, const __int64& zi);
+		__int64 getPointId(const long long& thetai, const long long& ri, const long long& zi);
 		//初始化网格的所有点
 		void initPoints();
 		//初始化网格大小
 	protected:
 		virtual PolarDatas getPolarDatas();
 		virtual PolarIndes getPolarIndex();
-		void initGridsize(unsigned __int64 rSize,unsigned __int64 thetaSize,unsigned __int64 zSize);
+		void initGridsize(unsigned long long rSize,unsigned long long thetaSize,unsigned long long zSize);
 	protected:
 		vtkSmartPointer<vtkPoints> points;
 		//网格大小
-		unsigned __int64 rSize, thetaSize,zSize;
+		unsigned long long rSize, thetaSize,zSize;
 	};
 
 };

@@ -22,15 +22,15 @@ namespace DV3D
 		vtkIdType pointNum = 4;
 		for (auto &i:value)
 		{
-			__int64 zIndex = i[0];
-			__int64 rIndex = i[1];
-			__int64 thetaIndex = i[2];
-			__int64 type = i[3];
+			long long zIndex = i[0];
+			long long rIndex = i[1];
+			long long thetaIndex = i[2];
+			long long type = i[3];
 			if ((type & 0x03) != 0x03)
 				continue;
 			if (zIndex == zSize || rIndex == rSize || thetaIndex == thetaSize)
 				continue;
-			std::array<__int64,4> cell= {
+			std::array<long long,4> cell= {
 				getPointId(thetaIndex - 1,	rIndex - 1,		zIndex - 1),
 				getPointId(thetaIndex - 1,	rIndex,			zIndex - 1),
 				getPointId(thetaIndex - 1,	rIndex,			zIndex),

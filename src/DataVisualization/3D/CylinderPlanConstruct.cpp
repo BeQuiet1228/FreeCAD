@@ -48,7 +48,7 @@ namespace DV3D
 		////½øÐÐÐý×ª
 		vtkSmartPointer<vtkRotationalExtrusionFilter> filter = vtkSmartPointer<vtkRotationalExtrusionFilter>::New();
 		filter->SetInputData(triangle->GetOutput());
-		filter->SetResolution(32);
+		filter->SetResolution(72);
 		if (2 == thetaSize)
 		{
 			filter->SetAngle(360);
