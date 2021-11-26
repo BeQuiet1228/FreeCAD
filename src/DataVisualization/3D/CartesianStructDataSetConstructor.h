@@ -3,6 +3,7 @@
 #include <vtkDataSet.h>
 #include <vtkSmartPointer.h>
 #include <vtkPoints.h>
+#include <vtkType.h>
 namespace DV3D {
 	class CartesianStructDataSetConstructor :public DataSetConstructorH5{
 	public:
@@ -15,7 +16,7 @@ namespace DV3D {
 
 	private:
 		//更加三维大小获取点的索引
-		int getPointID(const int& xi, const int& yi, const int& zi);
+		vtkIdType getPointID(const vtkIdType& xi, const vtkIdType& yi, const vtkIdType& zi);
 		//初始化网格的所有点
 		void initPoints();
 		//初始化网格大小

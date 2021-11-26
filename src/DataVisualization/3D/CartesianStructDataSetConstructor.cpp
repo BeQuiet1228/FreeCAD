@@ -61,12 +61,12 @@ vtkSmartPointer<vtkDataSet> DV3D::CartesianStructDataSetConstructor::creatDatase
 
 /**
 * @brief DV3D::CartesianStructDataSetConstructor::getPointID 根据数据的列方式，获取到点数据在数据中的索引
-* @param const int & xi x方向上的网格索引
-* @param const int & yi y方向上的网格索引
-* @param const int & zi z方向上的网格索引
-* @return int 索引对应的点在数据中存在的位置
+* @param const vtkIdType & xi x方向上的网格索引
+* @param const vtkIdType & yi y方向上的网格索引
+* @param const vtkIdType & zi z方向上的网格索引
+* @return vtkIdType 索引对应的点在数据中存在的位置
 */
-int DV3D::CartesianStructDataSetConstructor::getPointID(const int& xi, const int& yi, const int& zi)
+vtkIdType DV3D::CartesianStructDataSetConstructor::getPointID(const vtkIdType& xi, const vtkIdType& yi, const vtkIdType& zi)
 {
 	return	zi * xSize * ySize + yi * xSize + xi;
 }
@@ -96,14 +96,13 @@ void DV3D::CartesianStructDataSetConstructor::initPoints()
 	points = vtkPoints::New();
 	points->Allocate(xs * ys * zs);
 	int pointId = 0;
-	//double temp[3] = {0,0,0};
+	double temp[3] = {0,0,0};
 	for (auto z = grid[2].begin(); z != grid[2].end(); z++)
 	{
 		for (auto y = grid[1].begin(); y != grid[1].end(); y++)
 		{
 			for (auto x = grid[0].begin(); x != grid[0].end(); x++)
 			{
-				double* temp = new double[3];
 				temp[0] = *x;
 				temp[1] = *y;
 				temp[2] = *z;
