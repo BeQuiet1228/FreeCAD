@@ -37,6 +37,7 @@ ConfigWidget::~ConfigWidget(){
 */
 void ConfigWidget::initUI()
 {
+
 #define SETPERPORE(a,b)\
 	connect((a),SIGNAL(clicked()),this,SLOT(b));\
 	this->SetAllreRender(a);
@@ -57,6 +58,9 @@ void ConfigWidget::initUI()
 		SETPERPORE(ui->FreespacelineColor, Freespacelineclicked());
 		SETPERPORE(ui->FOILColor, FOILclicked());
 		SETPERPORE(ui->FOILlineColor, FOILlineclicked());
+		//新增加属性真空2021-11-23
+		SETPERPORE(ui->VacuoColor, Vacuoclicked());
+		SETPERPORE(ui->VacuolineColor, Vacuolineclicked());
 		//线段
 		SETPERPORE(ui->Port,PortClicked());
 		SETPERPORE(ui->Inductor,InductorClicked());
@@ -143,6 +147,7 @@ void ConfigWidget::structInfoClicked(int _property, QPushButton* button)
 	case XX(Mas::PORT)
 	case XX(Mas::DRIVER)
 	case XX(Mas::INDUCTOR)
+	case XX(Mas::VACUO)
 	}
 #undef  XX(a)
 }
@@ -340,6 +345,9 @@ void ConfigWidget::FOILlineclicked(){ structinfolineClicked(Mas::FOIL, ui->FOILl
 void ConfigWidget::PortClicked(){ structInfoClicked(Mas::PORT, ui->Port); }
 void ConfigWidget::InductorClicked(){ structInfoClicked(Mas::INDUCTOR, ui->Inductor); }
 void ConfigWidget::DriverClicked(){ structInfoClicked(Mas::DRIVER, ui->Driver); }
+//新增属性
+void ConfigWidget::Vacuoclicked() { structInfoClicked(Mas::VACUO, ui->VacuoColor); }
+void ConfigWidget::Vacuolineclicked() { structinfolineClicked(Mas::VACUO, ui->VacuolineColor); }
 /**
 * @brief  ConfigWidget::structinfolineClicked
 * @param  int _property  
@@ -357,24 +365,21 @@ void ConfigWidget::structinfolineClicked(int _property, QPushButton* button){
 	qpalette.setColor(QPalette::Button, color);
 	button->setPalette(qpalette);
 	button->setText(QString("#%1").arg(QColorToQstring(color)));
+#define XX(a) \
+	case (a):\
+	structlineColor[#a "LINE"+5] = QColorToQstring(color); break;
 	switch (_property)
 	{
-	case Mas::CONDUCTORNEW:
-		structlineColor["CONDUCTORNEWLINE"] = QColorToQstring(color); break;
-	case Mas::DIOLECTRIC:
-		structlineColor["DIOLECTRICLINE"] = QColorToQstring(color); break;
-	case Mas::PERFECTCONDUCTOR:
-		structlineColor["PERFECTCONDUCTORLINE"] = QColorToQstring(color); break;
-	case Mas::PERMEABILITY:
-		structlineColor["PERMEABILITYLINE"] = QColorToQstring(color); break;
-	case Mas::DIELECTIRANDCONDUCTANCE:
-		structlineColor["DIELECTIRANDCONDUCTANCELINE"] = QColorToQstring(color); break;
-	case Mas::FREESPACE:
-		structlineColor["FREESPACELINE"] = QColorToQstring(color); break;
-	case Mas::FOIL:
-		structlineColor["FOILLINE"] = QColorToQstring(color); break;
-
+	XX(Mas::CONDUCTORNEW)
+	XX(Mas::DIOLECTRIC)
+	XX(Mas::PERFECTCONDUCTOR)
+	XX(Mas::PERMEABILITY)
+	XX(Mas::DIELECTIRANDCONDUCTANCE)
+	XX(Mas::FREESPACE)
+	XX(Mas::FOIL)
+	XX(Mas::VACUO)
 	}
+#undef XX(a)
 }
 /**
 * @brief  ConfigWidget::partcleColorclicked
@@ -420,6 +425,7 @@ void ConfigWidget::loadxmlConfig(){
 		//新增属性-20210521
 		LOADCONFIGCOLOR(FREESPACE, StructGroup, ui->Freespace, true);
 		LOADCONFIGCOLOR(FOIL, StructGroup, ui->FOIL, true);
+		LOADCONFIGCOLOR(VACUO, StructGroup, ui->Vacuo, true);
 #undef LOADCONFIGCOLOR(a,b,c)
 #define ADDLINECOLOR(a,b)\
 	{auto color=StructGroup.getGroup(#a).getValue("value");\

@@ -87,6 +87,8 @@ public:
 	};
 	enum structType
 	{
+		//真空
+		VACUO=0,
 		//理想导体
 		PERFECTCONDUCTOR = 3,
 		//电导新材料

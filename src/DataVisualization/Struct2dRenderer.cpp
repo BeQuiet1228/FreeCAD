@@ -263,46 +263,47 @@ bool Struct2DRenderer::getPloy_grid(){
 	QVector<linepen> linepenlist;
 	for (auto iter = map.begin(); iter != map.end(); iter++)
 	{
-		auto itercolor = color_tab.find(iter->first);
-		if (itercolor != color_tab.end())
+		//修改根据多边形网格的编号绘制。
+		for (auto iterpro = iter->second.begin(); iterpro != iter->second.end(); iterpro++)
 		{
-			QBrush brush(itercolor.value());
-			painter1.setBrush(brush);
-			painter2.setBrush(brush);//设置画刷
-			for (auto iterlines = iter->second.begin(); iterlines != iter->second.end(); iterlines++)
+			auto itercolor = color_tab.find(iterpro->first);
+			if (itercolor != color_tab.end())
 			{
-				if (iterlines->second.size() == 2)
-				{
-					linepen _linepen;
-					auto linestyle = color_pen.find(iter->first);
-					if (linestyle != color_pen.end())
+					QBrush brush(itercolor.value());
+					painter1.setBrush(brush);
+					painter2.setBrush(brush);
+					if (iterpro->second.size() == 2)
 					{
-						_linepen.pen= linestyle.value();
-						_linepen.pen.setStyle(Qt::DashLine);
-						_linepen.pen.setWidth(5);
-						auto iterpoint = (*iterlines).second.begin();
-						transitionPoint(*iterpoint, xScale, xr, yScale, yr);
-						transitionPoint(*(iterpoint + 1), xScale, xr, yScale, yr);
-						_linepen.line = QLineF((*iterpoint), *(iterpoint + 1));
-						linepenlist.push_back(_linepen);
+						linepen _linepen;
+						auto linestyle = color_pen.find(iter->first);
+						if (linestyle != color_pen.end())
+						{
+							_linepen.pen= linestyle.value();
+							_linepen.pen.setStyle(Qt::DashLine);
+							_linepen.pen.setWidth(5);
+							auto iterpoint = (*iterpro).second.begin();
+							transitionPoint(*iterpoint, xScale, xr, yScale, yr);
+							transitionPoint(*(iterpoint + 1), xScale, xr, yScale, yr);
+							_linepen.line = QLineF((*iterpoint), *(iterpoint + 1));
+							linepenlist.push_back(_linepen);
+						}
 					}
-				}
-				if (iterlines->second.size()>2)
-				{
-					QPainterPath _path;
-					auto iterpoint = (*iterlines).second.begin();
-					transitionPoint(*iterpoint, xScale, xr, yScale, yr);
-					_path.moveTo(*iterpoint); iterpoint++;
-					for (; iterpoint != (*iterlines).second.end(); iterpoint++)
+					if (iterpro->second.size() > 2)
 					{
+						QPainterPath _path;
+						auto iterpoint = (*iterpro).second.begin();
 						transitionPoint(*iterpoint, xScale, xr, yScale, yr);
-						_path.lineTo(*iterpoint);
+						_path.moveTo(*iterpoint); iterpoint++;
+						for (; iterpoint != (*iterpro).second.end(); iterpoint++)
+						{
+							transitionPoint(*iterpoint, xScale, xr, yScale, yr);
+							_path.lineTo(*iterpoint);
+						}
+						QVector<QLineF> lines = Getlines((*iterpro).second);
+						painter2.fillPath(_path, QBrush(QColor(0,0,0,0)));
+						painter1.drawPath(_path);
+						lines_list.push_back(lines);
 					}
-					QVector<QLineF> lines = Getlines((*iterlines).second);
-					painter2.fillPath(_path, QBrush(QColor(0,0,0,0)));
-					painter1.drawPath(_path);
-					lines_list.push_back(lines);
-				}
 			}
 		}
 	}
@@ -606,6 +607,7 @@ void Struct2DRenderer::loadconfig(){
 	LoadColor(StructData::DIELECTIRANDCONDUCTANCE);
 	LoadColor(StructData::FREESPACE);
 	LoadColor(StructData::FOIL);
+	LoadColor(StructData::VACUO);
 	//线段
 	//PORT 2**8/256，2**9/512，2**10/1024
 	//DRIVER--2^11/2048,2^12/4096,2^13/8192

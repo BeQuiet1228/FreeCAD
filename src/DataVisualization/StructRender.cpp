@@ -778,6 +778,7 @@ void StructRender::loadconfig()
 	LoadColor(StructData::DIELECTIRANDCONDUCTANCE);
 	LoadColor(StructData::FREESPACE);
 	LoadColor(StructData::FOIL);
+	LoadColor(StructData::VACUO);
 	//Ïß¶Î
 	//PORT 2**8/256£¬2**9/512£¬2**10/1024
 	//DRIVER--2^11/2048,2^12/4096,2^13/8192

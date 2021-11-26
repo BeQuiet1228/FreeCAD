@@ -16,6 +16,8 @@ class Plot;
 namespace Mas{
 	enum DATA_VISUALIZATION_EXPORT structTexture
 	{
+		//真空
+		VACUO=0,
 		//理想导体
 		PERFECTCONDUCTOR = 3,
 		//电导新材料
@@ -93,6 +95,8 @@ public Q_SLOTS:
 	void radioButton2(bool);
 	void setfirstColor();
 	void setendColor();
+	void Vacuoclicked();
+	void  Vacuolineclicked();
 private:
 	void loadxmlConfig();
 	void SetAllreRender(QPushButton*);
