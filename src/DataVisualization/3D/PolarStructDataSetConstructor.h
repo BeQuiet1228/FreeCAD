@@ -12,12 +12,6 @@ namespace DV3D {
 	public:
 		PolarStructDaraSetConstruct();
 		~PolarStructDaraSetConstruct();
-		enum DataType
-		{
-			Plane=0,
-			PlaneHalf=1,
-			nomal
-		};
 	public:
 		vtkSmartPointer<vtkDataSet> creatDataset();
 	public:
@@ -29,14 +23,9 @@ namespace DV3D {
 		virtual PolarDatas getPolarDatas();
 		virtual PolarIndes getPolarIndex();
 		void initGridsize(unsigned __int64 rSize,unsigned __int64 thetaSize,unsigned __int64 zSize);
-		DataType getThetaDatas();
-		vtkSmartPointer<vtkDataSet> creatDatasetnormal();
-		vtkSmartPointer<vtkDataSet> creatDatasetPlaneHalf();
-		//vtkSmartPointer<vtkDataSet> creatDatasetPlane();
 	protected:
 		vtkSmartPointer<vtkPoints> points;
 		//Íø¸ñ´óÐ¡
-		//unsigned __int64 xSize, ySize, zSize;
 		unsigned __int64 rSize, thetaSize,zSize;
 	};
 
