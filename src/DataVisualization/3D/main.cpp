@@ -19,6 +19,9 @@
 #include"vtkDataSetMapper.h"
 #include <vtkCellData.h>
 #include"vtkUnstructuredGridGeometryFilter.h"
+#include"CylinderStructDataSetConstructor.h"
+#include"CylinderPlanConstruct.h"
+#include"PolarPlanConstruct.h"
 #include"vtkDataSet.h"
 #include"vtkProperty.h"
 #include"vtkCamera.h"
@@ -66,7 +69,7 @@ int main(int argc, char* argv[])
 	//CartesianStructDataSetConstructor constructor;
 	//constructor.setHdf5Data(*data);
 
-	PolarStructDaraSetConstruct constructor;
+	CylinderPlanConstruct constructor;
 	constructor.setHdf5Data(*data);
 	
 #if 0

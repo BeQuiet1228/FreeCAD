@@ -19,21 +19,21 @@ namespace DV3D {
 			nomal
 		};
 	public:
-		vtkSmartPointer<vtkDataSet> creatDataset() override;
+		vtkSmartPointer<vtkDataSet> creatDataset();
 	public:
 		__int64 getPointId(const __int64& thetai, const __int64& ri, const __int64& zi);
 		//初始化网格的所有点
 		void initPoints();
 		//初始化网格大小
 	protected:
-		PolarDatas getPolarDatas();
-		PolarIndes getPolarIndex();
+		virtual PolarDatas getPolarDatas();
+		virtual PolarIndes getPolarIndex();
 		void initGridsize(unsigned __int64 rSize,unsigned __int64 thetaSize,unsigned __int64 zSize);
 		DataType getThetaDatas();
 		vtkSmartPointer<vtkDataSet> creatDatasetnormal();
 		vtkSmartPointer<vtkDataSet> creatDatasetPlaneHalf();
-		vtkSmartPointer<vtkDataSet> creatDatasetPlane();
-	private:
+		//vtkSmartPointer<vtkDataSet> creatDatasetPlane();
+	protected:
 		vtkSmartPointer<vtkPoints> points;
 		//网格大小
 		//unsigned __int64 xSize, ySize, zSize;
