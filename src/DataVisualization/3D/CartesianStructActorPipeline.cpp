@@ -1,6 +1,7 @@
 #include "CartesianStructActorPipeline.h"
 #include <vtkDataSetMapper.h>
 #include <vtkProperty.h>
+#include"vtk-7.0/vtkMapper.h"
 DV3D::CartesianStructActorPipeline::CartesianStructActorPipeline()
 {
 	auto ac = vtkSmartPointer<vtkActor>::New();
