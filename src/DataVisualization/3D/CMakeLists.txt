@@ -52,6 +52,8 @@ SET( STRUCT_SRC
 	PolarPlanConstruct.cpp
 	CylinderPlanConstruct.h
 	CylinderPlanConstruct.cpp
+	PolarStructActorPipeline.h
+	PolarStructActorPipeline.cpp
 )
 
 SET(DataVisualization3D_src

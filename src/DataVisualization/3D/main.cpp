@@ -20,6 +20,7 @@
 #include <vtkCellData.h>
 #include"vtkUnstructuredGridGeometryFilter.h"
 #include"CylinderStructDataSetConstructor.h"
+#include"PolarStructActorPipeline.h"
 #include"CylinderPlanConstruct.h"
 #include"PolarPlanConstruct.h"
 #include"vtkDataSet.h"
@@ -98,37 +99,7 @@ int main(int argc, char* argv[])
 	break;
 	}
 	constructor->setHdf5Data(*data);
-#if 0
-	vtkSmartPointer<vtkUnstructuredGridGeometryFilter> filter = vtkSmartPointer<vtkUnstructuredGridGeometryFilter>::New();
-	filter->SetInputData(dataset);
-	filter->MergingOn();
-	filter->Update();
-	vtkSmartPointer<vtkDataSetMapper> ugridMapper = vtkSmartPointer<vtkDataSetMapper>::New();
-//	ugridMapper->SetInputConnection(filter->GetOutputPort());
-	ugridMapper->SetInputData(filter->GetOutput());
-	ugridMapper->ScalarVisibilityOff();
-	ugridMapper->Update();
-	vtkSmartPointer<vtkActor> ugridActor = vtkSmartPointer<vtkActor>::New();
-	ugridActor->SetMapper(ugridMapper);
-	ugridActor->GetProperty()->EdgeVisibilityOn();
-	vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
-	renderer->AddActor(ugridActor.Get());
-	renderer->ResetCamera();
-	renderer->GetActiveCamera()->Elevation(60.0);
-	renderer->GetActiveCamera()->Azimuth(30.0);
-	renderer->GetActiveCamera()->Dolly(1.2);
-	vtkSmartPointer<vtkRenderWindow>renWin = vtkSmartPointer<vtkRenderWindow>::New();
-	vtkSmartPointer<vtkRenderWindowInteractor>iren = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-	renWin->AddRenderer(renderer);
-	renWin->SetSize(640, 480);
-	renWin->SetWindowName("UGrid)");
-	iren->SetRenderWindow(renWin);
-	// interact with data
-	renWin->Render();
-	iren->Start();
-	return a.exec();
-#endif
-	std::shared_ptr<CartesianStructActorPipeline> pipeLine(new CartesianStructActorPipeline);
+	std::shared_ptr<PolarStructActorPipeline> pipeLine(new PolarStructActorPipeline);
 	pipeLine->setDataSet(constructor->creatDataset());
 	pipeLine->connect();
 

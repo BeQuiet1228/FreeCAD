@@ -4,6 +4,7 @@
 #include"vtkRotationalExtrusionFilter.h"
 #include"vtkUnstructuredGrid.h"
 #include"array"
+#include"vtkPolyDataNormals.h"
 DV3D::CylinderPlanConstruct::CylinderPlanConstruct() :CylinderStructDataSetConstructor() {
 
 }
@@ -22,10 +23,10 @@ vtkSmartPointer<vtkDataSet> DV3D::CylinderPlanConstruct::creatDataset()
 	vtkIdType pointNum = 4;
 	for (auto& i : value)
 	{
-		__int64 zIndex = i[0];
-		__int64 rIndex = i[1];
-		__int64 thetaIndex = i[2];
-		__int64 type = i[3];
+		long long zIndex = i[0];
+		long long rIndex = i[1];
+		long long thetaIndex = i[2];
+		long long type = i[3];
 		if ((type & 0x03) != 0x03)
 			continue;
 		if (zIndex == zSize || rIndex == rSize || thetaIndex == thetaSize)
@@ -49,7 +50,15 @@ vtkSmartPointer<vtkDataSet> DV3D::CylinderPlanConstruct::creatDataset()
 	filter->SetResolution(72);
 	filter->SetAngle(360 / (thetaSize - 1));
 	filter->Update();
+
+	vtkSmartPointer<vtkPolyDataNormals> normalfile = vtkSmartPointer<vtkPolyDataNormals>::New();
+	normalfile->SetInputConnection(filter->GetOutputPort());
+	normalfile->SetComputePointNormals(1);
+	normalfile->SetComputeCellNormals(0);
+	normalfile->SetAutoOrientNormals(1);
+	normalfile->SetSplitting(0);
+	normalfile->Update();
 	auto ugrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
-	ugrid->DeepCopy(filter->GetOutput());
+	ugrid->DeepCopy(normalfile->GetOutput());
 	return ugrid;
 }
