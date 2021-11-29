@@ -4,7 +4,7 @@
 #include"PolarStructDataSetConstructor.h"
 namespace DV3D
 {
-	class PolarPlanConstruct:public PolarStructDaraSetConstruct
+	class PolarPlanConstruct :public PolarStructDaraSetConstruct
 	{
 	public:
 		PolarPlanConstruct();

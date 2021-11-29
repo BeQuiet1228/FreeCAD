@@ -9,7 +9,7 @@
 #include <vtkCellType.h>
 
 DV3D::CartesianStructDataSetConstructor::CartesianStructDataSetConstructor()
-	:xSize(0),ySize(0),zSize(0)
+	:xSize(0), ySize(0), zSize(0)
 {
 
 }
@@ -27,7 +27,7 @@ vtkSmartPointer<vtkDataSet> DV3D::CartesianStructDataSetConstructor::creatDatase
 	auto h5d = getHdf5Data();
 	VectorF value;
 	Hdf5IO::getValue(h5d.listDataSet.at(3), value);
-	
+
 	auto ugrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
 	ugrid->SetPoints(points);
 	ugrid->Allocate(value.size());
@@ -81,7 +81,7 @@ void DV3D::CartesianStructDataSetConstructor::initPoints()
 	for (int i = 0; i < 3; i++)
 	{
 		std::vector<float> d;
-		Hdf5IO::getValue(h5d.listDataSet.at(i),d);
+		Hdf5IO::getValue(h5d.listDataSet.at(i), d);
 		grid.push_back(d);
 	}
 

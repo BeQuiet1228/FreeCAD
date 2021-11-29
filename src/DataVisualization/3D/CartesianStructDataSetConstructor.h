@@ -4,7 +4,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkPoints.h>
 namespace DV3D {
-	class CartesianStructDataSetConstructor :public DataSetConstructorH5{
+	class CartesianStructDataSetConstructor :public DataSetConstructorH5 {
 	public:
 		CartesianStructDataSetConstructor();
 		~CartesianStructDataSetConstructor();
@@ -19,7 +19,7 @@ namespace DV3D {
 		//初始化网格的所有点
 		void initPoints();
 		//初始化网格大小
-		void initGridsize(unsigned int xSize,unsigned ySize,unsigned int zSize);
+		void initGridsize(unsigned int xSize, unsigned ySize, unsigned int zSize);
 	private:
 		//数据的所有点
 		vtkSmartPointer<vtkPoints> points;
