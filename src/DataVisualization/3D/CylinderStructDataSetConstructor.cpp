@@ -1,16 +1,14 @@
 #include"CylinderStructDataSetConstructor.h"
 #include"cassert"
-namespace DV3D
-{
-	CylinderStructDataSetConstructor::CylinderStructDataSetConstructor():PolarStructDaraSetConstruct()
+DV3D::CylinderStructDataSetConstructor::CylinderStructDataSetConstructor():PolarStructDaraSetConstruct()
 	{
 
 	}
-	CylinderStructDataSetConstructor::~CylinderStructDataSetConstructor()
+DV3D::CylinderStructDataSetConstructor::~CylinderStructDataSetConstructor()
 	{
 
 	}
-	PolarDatas CylinderStructDataSetConstructor::getPolarDatas()
+DV3D::PolarDatas DV3D::CylinderStructDataSetConstructor::getPolarDatas()
 	{
 		auto h5d = getHdf5Data();
 		assert((h5d.listDataSet.size() == 4) && "list DataSet size is not 4!");
@@ -25,7 +23,7 @@ namespace DV3D
 		}
 		return grid;
 	}
-	PolarIndes CylinderStructDataSetConstructor::getPolarIndex()
+DV3D::PolarIndes DV3D::CylinderStructDataSetConstructor::getPolarIndex()
 	{
 		auto h5d = getHdf5Data();
 		std::vector<float> value;
@@ -45,4 +43,3 @@ namespace DV3D
 		}
 		return valueIndex;
 	}
-};

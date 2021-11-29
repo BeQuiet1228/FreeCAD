@@ -7,11 +7,9 @@
 #include"vtkRotationalExtrusionFilter.h"
 #include"array"
 #include"vtk-7.0/vtkTriangleFilter.h"
-namespace DV3D
-{
-	PolarPlanConstruct::PolarPlanConstruct():PolarStructDaraSetConstruct() {}
-	PolarPlanConstruct::~PolarPlanConstruct() {}
-	vtkSmartPointer<vtkDataSet> PolarPlanConstruct::creatDataset()
+DV3D::PolarPlanConstruct::PolarPlanConstruct():PolarStructDaraSetConstruct() {}
+DV3D::PolarPlanConstruct::~PolarPlanConstruct() {}
+	vtkSmartPointer<vtkDataSet> DV3D::PolarPlanConstruct::creatDataset()
 	{
 		initPoints();
 		auto value = getPolarIndex();
@@ -46,18 +44,10 @@ namespace DV3D
 		////½øÐÐÐý×ª
 		vtkSmartPointer<vtkRotationalExtrusionFilter> filter = vtkSmartPointer<vtkRotationalExtrusionFilter>::New();
 		filter->SetInputData(triangle->GetOutput());
-		filter->SetResolution(32);
-		if (2 == thetaSize)
-		{
-			filter->SetAngle(360);
-		}
-		else if (3 == thetaSize)
-		{
-			filter->SetAngle(180);
-		}
+		filter->SetResolution(72);
+		filter->SetAngle(360/(thetaSize-1));
 		filter->Update();
 		auto ugrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
 		ugrid->DeepCopy(filter->GetOutput());
 		return ugrid;
 	}
-};

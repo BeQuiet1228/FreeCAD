@@ -7,14 +7,13 @@
 #include"vtkCellArray.h"
 #include"vtkRotationalExtrusionFilter.h"
 #include"vtkFloatArray.h"
-namespace DV3D {
-	PolarStructDaraSetConstruct::PolarStructDaraSetConstruct() :rSize(0),thetaSize(0),zSize(0){
+	DV3D::PolarStructDaraSetConstruct::PolarStructDaraSetConstruct() :rSize(0),thetaSize(0),zSize(0){
 	
 	}
-	PolarStructDaraSetConstruct::~PolarStructDaraSetConstruct() {
+	DV3D::PolarStructDaraSetConstruct::~PolarStructDaraSetConstruct() {
 	
 	}
-	vtkSmartPointer<vtkDataSet> PolarStructDaraSetConstruct::creatDataset() {
+	vtkSmartPointer<vtkDataSet> DV3D::PolarStructDaraSetConstruct::creatDataset() {
 		initPoints();
 		auto value = getPolarIndex();
 		auto ugrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
@@ -45,7 +44,7 @@ namespace DV3D {
 		ugrid->SetPoints(points);
 		return ugrid;
 	}
-	void PolarStructDaraSetConstruct::initPoints(){
+	void DV3D::PolarStructDaraSetConstruct::initPoints(){
 		auto grid = getPolarDatas();
 		long long zs = grid[0].size();
 		long long rs = grid[1].size();
@@ -62,17 +61,14 @@ namespace DV3D {
 			{
 				for (auto& theta : grid[2])
 				{
-					double* p = new double[3];
-					p[0] = r * cos(theta);
-					p[1] = r * sin(theta);
-					p[2] = z;
+					double p[3] = { r * cos(theta) ,r * sin(theta) ,z};
 					points->InsertPoint(pointId,p);
 					pointId++;
 				}
 			}
 		}
 	}
-	PolarDatas PolarStructDaraSetConstruct::getPolarDatas()
+	DV3D::PolarDatas DV3D::PolarStructDaraSetConstruct::getPolarDatas()
 	{
 		auto h5d = getHdf5Data();
 		assert((h5d.listDataSet.size() == 4) && "list DataSet size is not 4!");
@@ -89,7 +85,7 @@ namespace DV3D {
 		grid[1].swap(grid[2]);
 		return grid;
 	}
-	PolarIndes PolarStructDaraSetConstruct::getPolarIndex()
+	DV3D::PolarIndes DV3D::PolarStructDaraSetConstruct::getPolarIndex()
 	{
 		auto h5d = getHdf5Data();
 		std::vector<float> value;
@@ -113,14 +109,13 @@ namespace DV3D {
 		}
 		return valueIndex;
 	}
-	void PolarStructDaraSetConstruct::initGridsize(unsigned long long rs, unsigned long long thetas, unsigned long long zs)
+	void DV3D::PolarStructDaraSetConstruct::initGridsize(unsigned long long rs, unsigned long long thetas, unsigned long long zs)
 	{
 		rSize = rs;
 		thetaSize = thetas;
 		zSize = zs;
 	}
-	long long PolarStructDaraSetConstruct::getPointId(const long long& thetai, const long long& ri, const long long& zi)
+	long long DV3D::PolarStructDaraSetConstruct::getPointId(const long long& thetai, const long long& ri, const long long& zi)
 	{
 		return zi * thetaSize * rSize + ri * thetaSize + thetai;
 	}
-}

@@ -4,16 +4,14 @@
 #include"vtkRotationalExtrusionFilter.h"
 #include"vtkUnstructuredGrid.h"
 #include"array"
-namespace DV3D
-{
-	CylinderPlanConstruct::CylinderPlanConstruct() :CylinderStructDataSetConstructor(){
+DV3D::CylinderPlanConstruct::CylinderPlanConstruct() :CylinderStructDataSetConstructor(){
 
 	}
-	CylinderPlanConstruct::~CylinderPlanConstruct()
+DV3D::CylinderPlanConstruct::~CylinderPlanConstruct()
 	{
 
 	}
-	vtkSmartPointer<vtkDataSet> CylinderPlanConstruct::creatDataset()
+vtkSmartPointer<vtkDataSet> DV3D::CylinderPlanConstruct::creatDataset()
 	{
 		initPoints();
 		auto value = getPolarIndex();
@@ -49,17 +47,9 @@ namespace DV3D
 		vtkSmartPointer<vtkRotationalExtrusionFilter> filter = vtkSmartPointer<vtkRotationalExtrusionFilter>::New();
 		filter->SetInputData(triangle->GetOutput());
 		filter->SetResolution(72);
-		if (2 == thetaSize)
-		{
-			filter->SetAngle(360);
-		}
-		else if (3 == thetaSize)
-		{
-			filter->SetAngle(180);
-		}
+		filter->SetAngle(360/(thetaSize-1));
 		filter->Update();
 		auto ugrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
 		ugrid->DeepCopy(filter->GetOutput());
 		return ugrid;
 	}
-};
