@@ -46,7 +46,7 @@ struct _3DPointf
 		}
 	}
 };
-
+#ifdef _DATA_VISUALIZATION_
 class StructData:public XYData
 {
 public:
@@ -205,4 +205,5 @@ private:
 	//因为重复处理会消耗时间，所以设定开关，防止重复读取
 	bool isloadRoom;
 };
+#endif
 #endif

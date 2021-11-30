@@ -103,8 +103,9 @@ SET(CONFIG_SRC CustomConfig.cpp
 
 SET(LISTTREE_SRC ListTreeWidget.h
 	ListTreeWidget.cpp
-	Dataresource.h
-	Dataresource.cpp)
+	#Dataresource.h
+	#Dataresource.cpp
+	)
 SET(AXIS_SRC
 	Axis.cpp
 	Axis.h

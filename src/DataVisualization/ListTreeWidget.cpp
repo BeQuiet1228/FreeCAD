@@ -2,7 +2,7 @@
 #include <map>
 #include <vector>
 #include <sstream>
-#include "Dataresource.h"
+//#include "Dataresource.h"
 #include "C_encoding.h"
 #include <QDebug>
 #define  MAX_TYPE_NUMBER 7
@@ -156,7 +156,7 @@ std::string ListTreeWidget::GetType(std::string name)
 * @param  int index  
 * @return void  
 */
-void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
+QStandardItem* ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 	std::string observingstr;
 	itemInfo mitemInfo;
 	mitemInfo.index = index;
@@ -341,7 +341,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 		std::string dataType = GetType(data.name);
 		//若是未知的图不做处理
 		if (dataType.find("未知图") != std::string::npos)
-			return;
+			return nullptr;
 		iter = parentnode.find(dataType);
 		QStandardItem* parentItem;
 		if (iter != parentnode.end())
@@ -369,6 +369,7 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 		QStandardItem* childItem = new QStandardItem(QIcon(Treeicon[1]), GetEncodingstr(replaceStr(subss.str()).c_str(), ENCODING_GB2312));
 		datainfor[childItem] = mitemInfo;
 		observeItem->setChild(row, childItem);
+		return childItem;
 	}
 	else
 	{
@@ -384,8 +385,8 @@ void ListTreeWidget::fromdataManageNewData(Hdf5Data& data, int index){
 			if (res)	currow = rowindex+1;
 		}
 		observeItem->insertRow(currow,childItem);
+		return childItem;
 	}
-	return;
 }
 /**
 * @brief  ListTreeWidget::clear 清除树控件
@@ -407,12 +408,13 @@ void ListTreeWidget::clear()
 * @param  int index  
 * @return void  
 */
-void ListTreeWidget::toStructh5df(Hdf5Data& data, int index)
+std::vector<QStandardItem*> ListTreeWidget::toStructh5df(Hdf5Data& data, int index)
 {
+	std::vector<QStandardItem*> qstandarditems;
 	itemInfo mitemInfo;
 	mitemInfo.index = index;
 	if (data.name.find("struct") == std::string::npos)
-		return;
+		return qstandarditems;
 	std::string dataType = GetType(data.name);
 	auto iter = parentnode.find(dataType);
 	QStandardItem* item;
@@ -438,6 +440,7 @@ void ListTreeWidget::toStructh5df(Hdf5Data& data, int index)
 				QStandardItem* subitem = new QStandardItem(QIcon(Treeicon[1]), QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
 				datainfor[subitem] = mitemInfo;
 				item->setChild(subrow, subitem);
+				qstandarditems.push_back(subitem);
 			}
 		}
 			break;
@@ -450,6 +453,7 @@ void ListTreeWidget::toStructh5df(Hdf5Data& data, int index)
 				QStandardItem* subItem = new QStandardItem(QIcon(Treeicon[1]), QString("%1").arg(GetEncodingstr(var.c_str(), ENCODING_GB2312)));
 				datainfor[subItem] = mitemInfo;
 				item->setChild(subrow, subItem);
+				qstandarditems.push_back(subItem);
 			}
 		}
 			break;
@@ -468,7 +472,9 @@ void ListTreeWidget::toStructh5df(Hdf5Data& data, int index)
 		int row = item->rowCount();
 		item->setChild(row, subitem);
 		datainfor[subitem] = mitemInfo;
+		qstandarditems.push_back(subitem);
 	}
+	return qstandarditems;
 }
 
 /**
@@ -504,14 +510,4 @@ void  ListTreeWidget::toPlaneh5df(Hdf5Data& data, int index)
 	item->setChild(subrow, subItem);
 }
 
-/**
-* @brief ListTreeWidget::soltFromWidget 获取窗口指针
-* @param QWidget * wid3D
-* @return void
-*/
-
-void ListTreeWidget::soltFromWidget(QWidget* wid3D)
-{
-	//获取窗口指针，这里没做处理，用于继承类重写
-}
 #include "moc_ListTreeWidget.cpp"

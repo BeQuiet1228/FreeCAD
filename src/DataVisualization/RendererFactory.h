@@ -5,15 +5,18 @@
 #include <list>
 #include "Data.h"
 #include "StructData.h"
-#include "PlotAdapter.h"
+//#include "PlotAdapter.h"
+#include"exportConfig.hpp"
 class Data;
+class StructData;
 class Renderer;
 class ContourRender;
+class PlotAdapter;
 using RendererPtr = std::shared_ptr<Renderer>;
 using Renderers = std::list<RendererPtr>;
 using DataPtr = std::shared_ptr<Data>;
 using PlotAdapterPtr = std::shared_ptr<PlotAdapter>;
-class RendererFactory{
+class DATA_VISUALIZATION_EXPORT RendererFactory{
 public:
 	RendererFactory(Hdf5Data h5d);
 	//新增默认构造

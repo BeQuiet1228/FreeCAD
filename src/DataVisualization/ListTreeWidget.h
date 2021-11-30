@@ -27,13 +27,12 @@ protected:
 	Q_SIGNALS:
 	void _transfromRenderer(std::string name,int index);
 public Q_SLOTS:
-	virtual void loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist);
 	virtual void on_doubleclick(const QModelIndex &index);
-	virtual void fromdataManageNewData(Hdf5Data& data,int index);	
-	virtual void soltFromWidget(QWidget*);
 public:
 	void clear();
-	void toStructh5df(Hdf5Data& data, int index);
+	virtual void loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist);
+	virtual std::vector<QStandardItem*> toStructh5df(Hdf5Data& data, int index);
+	virtual QStandardItem* fromdataManageNewData(Hdf5Data& data, int index);
 	void toPlaneh5df(Hdf5Data& data,int index);
 protected:
 	QTreeView* m_TreeView;
