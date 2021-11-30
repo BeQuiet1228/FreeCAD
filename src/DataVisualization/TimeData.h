@@ -2,7 +2,8 @@
 #include "Data.h"
 #include <vector>
 #include <mutex>
-class TimeData :public XYData{
+#include "exportConfig.hpp"
+class DATA_VISUALIZATION_EXPORT TimeData :public XYData{
 public:
 	TimeData(Hdf5Data& h5Data, const RunMod& mod = SINGLE_THREAD);
 	~TimeData();

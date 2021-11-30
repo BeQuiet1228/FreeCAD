@@ -4,8 +4,9 @@
 #include "Data.h"
 #include<map>
 #include <vector>
+#include "exportConfig.hpp"
 #include "StructData.h"
-class Struct2dData:public XYData
+class DATA_VISUALIZATION_EXPORT Struct2dData:public XYData
 {
 public:
 	Struct2dData(Hdf5Data& heData, const RunMod& mode = SINGLE_THREAD);
@@ -20,45 +21,15 @@ public:
 	virtual unsigned int findIndexFromXValueL(const float&x) override;
 	std::list<unsigned __int64> isAnAttribute(unsigned __int64 p, StructData::PROPERTYPE);
 public:
-	Rang getXRang()
-	{
-		std::lock_guard<std::mutex> am(xRangMutex);
-		return xRang;
-	}
-	Rang getYRang()
-	{
-		std::lock_guard<std::mutex> am(yRangMutex);
-		return yRang;
-	}
-	void setXRang(const Rang& xr)
-	{
-		std::lock_guard<std::mutex> am(xRangMutex);
-		xRang = xr;
-	}
-	void setYRang(const Rang& yr)
-	{
-		std::lock_guard<std::mutex> am(yRangMutex);
-		yRang = yr;
-	}
-	int getposxSize()
-	{
-		return posxSize;
-	}
-	int getposySize()
-	{
-		return posySize;
-	}
-	std::map<int, std::map<int, std::vector<QPointF>>> GetAllinfo() {
-		return allinfo;
-	}
-	std::map<int, std::map<int, std::vector<QPointF>>> getLineF()
-	{
-		return lineinfo;
-	}
-	std::vector<QPointF> ALLPOINTF()
-	{
-		return ALLPointf;
-	}
+	Rang getXRang();
+	Rang getYRang();
+	void setXRang(const Rang& xr);
+	void setYRang(const Rang& yr);
+	int getposxSize();
+	int getposySize();
+	std::map<int, std::map<int, std::vector<QPointF>>> GetAllinfo();
+	std::map<int, std::map<int, std::vector<QPointF>>> getLineF();
+	std::vector<QPointF> ALLPOINTF();
 private:
 	//xyµÄ·¶Î§
 	Rang xRang, yRang;

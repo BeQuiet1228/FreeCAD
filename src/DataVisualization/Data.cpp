@@ -256,3 +256,66 @@ void Data::saveAs(std::string path, SaveMod mod)
 	delete temp;
 	delete newData;
 }
+/**********************************************/
+Data::AutoMutx::AutoMutx(const MutexPtr& mutex) {
+	this->mutex = mutex;
+	mutex->lock();
+}
+Data::AutoMutx::~AutoMutx() {
+	this->mutex->unlock();
+}
+Data::Rang::Rang() :max(0), min(0) {};
+Data::Rang::Rang(const float& _min, const float& _max)
+	:max(_max), min(_min) {};
+float Data::Rang::length() {
+	return max - min;
+}
+bool Data::isLoad() {
+	return sourceDataIsLoad;
+}
+//操作类型
+DirectionType Data::getDirectionType() {
+	return directionTyp;
+}
+Data::NeedStructType Data::getNeedStructType() {
+	return mapType;
+}
+
+unsigned int XYData::getPointSize() {
+	std::lock_guard<std::mutex> am(pointSizeMutex);
+	return pointSize;
+};
+//获取范围
+Data::Rang XYData::getXRang() {
+	std::lock_guard<std::mutex> am(xRangMutex);
+	return xRang;
+};
+void XYData::setXRang(const Rang& rg) {
+	std::lock_guard<std::mutex> am(xRangMutex);
+	xRang = rg;
+}
+Data::Rang XYData::getYRang() {
+	std::lock_guard<std::mutex> am(yRangMutex);
+	return yRang;
+};
+void XYData::setYRang(const Rang& rg) {
+	std::lock_guard<std::mutex> am(yRangMutex);
+	yRang = rg;
+}
+//操作tag
+void XYData::setXTag(const std::string& tag) {
+	std::lock_guard<std::mutex> am(xTagMute);
+	xTag = tag;
+}
+std::string XYData::getXTag() {
+	std::lock_guard<std::mutex> am(xTagMute);
+	return xTag;
+}
+void XYData::setYTag(const std::string tag) {
+	std::lock_guard<std::mutex> am(yTagMutex);
+	yTag = tag;
+}
+std::string XYData::getYTag() {
+	std::lock_guard<std::mutex> am(yTagMutex);
+	return yTag;
+}

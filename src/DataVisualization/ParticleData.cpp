@@ -205,3 +205,15 @@ void ParticleData::particleSort()
 	//if (directionTyp == R_THETA)
 		std::sort(particles.begin(),particles.end());
 }
+
+/*****************************************************/
+ParticleData::Particle::Particle() :x(0.0), y(0.0), type(0), d1(0.0), d2(0.0) {};
+bool ParticleData::Particle::operator >(const Particle& part) {
+	return this->x > part.x;
+}
+bool ParticleData::Particle::operator <(const Particle& part) {
+	return this->x < part.x;
+}
+bool ParticleData::Particle::operator ==(const Particle& part) {
+	return this->x == part.x;
+}

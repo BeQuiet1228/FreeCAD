@@ -4,24 +4,19 @@
 #include <memory>
 #include <vector>
 #include "DirData.h"
-class ParticleData :public DirData{
+#include"exportConfig.hpp"
+class DATA_VISUALIZATION_EXPORT ParticleData :public DirData{
 public:
 	struct Particle{
-		Particle():x(0.0), y(0.0), type(0),d1(0.0),d2(0.0){};
+		Particle();
 		float x, y;		//直角坐标系下的数据
 		unsigned int type;
 
 		float d1, d2;	//原始数据
 
-		bool operator >(const Particle& part){
-			return this->x > part.x;
-		}
-		bool operator <(const Particle& part){
-			return this->x < part.x;
-		}
-		bool operator ==(const Particle& part){
-			return this->x == part.x;
-		}
+		bool operator >(const Particle& part);
+		bool operator <(const Particle& part);
+		bool operator ==(const Particle& part);
 	};
 
 	//图表的类型

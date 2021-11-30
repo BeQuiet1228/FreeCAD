@@ -180,3 +180,44 @@ Struct2dData::Struct2dData(Hdf5Data& heData, QPointF start, QPointF end, const R
 	mstart = start;
 	mend = end;
 }
+
+/**************************************/
+Data::Rang Struct2dData::getXRang()
+{
+	std::lock_guard<std::mutex> am(xRangMutex);
+	return xRang;
+}
+Data::Rang Struct2dData::getYRang()
+{
+	std::lock_guard<std::mutex> am(yRangMutex);
+	return yRang;
+}
+void Struct2dData::setXRang(const Rang& xr)
+{
+	std::lock_guard<std::mutex> am(xRangMutex);
+	xRang = xr;
+}
+void Struct2dData::setYRang(const Rang& yr)
+{
+	std::lock_guard<std::mutex> am(yRangMutex);
+	yRang = yr;
+}
+int Struct2dData::getposxSize()
+{
+	return posxSize;
+}
+int Struct2dData::getposySize()
+{
+	return posySize;
+}
+std::map<int, std::map<int, std::vector<QPointF>>> Struct2dData::GetAllinfo() {
+	return allinfo;
+}
+std::map<int, std::map<int, std::vector<QPointF>>> Struct2dData::getLineF()
+{
+	return lineinfo;
+}
+std::vector<QPointF> Struct2dData::ALLPOINTF()
+{
+	return ALLPointf;
+}
