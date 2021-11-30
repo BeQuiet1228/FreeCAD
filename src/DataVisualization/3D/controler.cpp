@@ -11,7 +11,7 @@ DV3D::Controler::Controler()
 
 DV3D::Controler::~Controler()
 {
-
+	unbing();
 }
 
 /**
@@ -74,6 +74,14 @@ bool DV3D::Controler::isBinding()
 	return bindingState;
 }
 
+void DV3D::Controler::updateWidget3D()
+{
+	if (!isBinding())
+		return;
+	auto w3d = getWidget3D();
+	w3d->reRender();
+}
+
 void DV3D::Controler::setActorPipeline(std::shared_ptr<ActorPipemline> line)
 {
 	this->actorPipeline = line;
@@ -98,6 +106,7 @@ void DV3D::Controler::setVisible(const bool& b)
 		actor->VisibilityOn();
 	else
 		actor->VisibilityOff();
+	updateWidget3D();
 }
 
 bool DV3D::Controler::getVisible()
@@ -110,11 +119,47 @@ void DV3D::Controler::setTransparent(const double& t)
 {
 	auto actor = getActorPipeline()->getActor();
 	actor->GetProperty()->SetOpacity(t);
+	updateWidget3D();
 }
 
 double DV3D::Controler::getTranparent()
 {
 	auto actor = getActorPipeline()->getActor();
 	return actor->GetProperty()->GetOpacity();
+}
+
+void DV3D::Controler::setEdgeVisible(const bool& b)
+{
+	auto ac = getActor();
+	ac->GetProperty()->SetEdgeVisibility(b);
+	updateWidget3D();
+}
+
+bool DV3D::Controler::getEdgeVisible()
+{
+	auto ac = getActor();
+	return ac->GetProperty()->GetEdgeVisibility();
+}
+
+void DV3D::Controler::setClipEnable(const bool& b)
+{
+	//如果剪切状态跟之前不一致，那么刷新管线
+	if (getClipEnable() == b)
+		return;
+
+	getActorPipeline()->setClipperEnable(b);
+	getActorPipeline()->update();
+
+	updateWidget3D();
+}
+
+bool DV3D::Controler::getClipEnable()
+{
+	return	getActorPipeline()->getClipperEnable();
+}
+
+void DV3D::Controler::setClipPlane(vtkSmartPointer<vtkPlane> palne)
+{
+	getActorPipeline()->setClipPlane(palne);
 }
 

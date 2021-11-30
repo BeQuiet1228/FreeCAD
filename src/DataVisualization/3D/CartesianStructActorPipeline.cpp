@@ -6,7 +6,6 @@ DV3D::CartesianStructActorPipeline::CartesianStructActorPipeline()
 {
 	auto ac = vtkSmartPointer<vtkActor>::New();
 	auto mp = vtkSmartPointer<vtkDataSetMapper>::New();
-	filter = vtkSmartPointer<vtkUnstructuredGridGeometryFilter>::New();
 
 	this->setActor(ac);
 	this->setMapper(mp);
@@ -19,18 +18,13 @@ DV3D::CartesianStructActorPipeline::~CartesianStructActorPipeline()
 
 void DV3D::CartesianStructActorPipeline::update()
 {
-
+	connect();
 }
 
 void DV3D::CartesianStructActorPipeline::connect()
 {
-	auto data = getDataSet();
-	filter->SetInputData(data);
-	filter->MergingOn();
-	filter->Update();
-
+	connectClipperToMapper(getDataSet());
 	auto mp = getMapper();
-	mp->SetInputConnection(filter->GetOutputPort());
 	mp->ScalarVisibilityOff();
 	mp->Update();
 

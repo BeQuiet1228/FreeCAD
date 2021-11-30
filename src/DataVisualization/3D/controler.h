@@ -3,6 +3,7 @@
 #include <memory>
 #include <vtkSmartPointer.h>
 #include <vtkActor.h>
+#include <vtkPlane.h>
 namespace DV3D {
 	class ActorPipemline;
 	class Widget3D;
@@ -27,6 +28,9 @@ namespace DV3D {
 		void unbing();
 		//绑定状态
 		bool isBinding();
+		//刷新3d窗口
+		void updateWidget3D();
+
 		//设置渲染管线
 		void setActorPipeline(std::shared_ptr<ActorPipemline> line);
 		std::shared_ptr<ActorPipemline> getActorPipeline();
@@ -36,6 +40,13 @@ namespace DV3D {
 		//设置透明度
 		void setTransparent(const double& t);
 		double getTranparent();
+		//设置线是否可见
+		void setEdgeVisible(const bool& b);
+		bool getEdgeVisible();
+		//设置剪切
+		void setClipEnable(const bool& b);
+		bool getClipEnable();
+		void setClipPlane(vtkSmartPointer<vtkPlane> palne);
 	private:
 		//单向绑定
 		void oneWayBinding(Widget3D* widget3D);

@@ -38,6 +38,14 @@ SET(SRC
 	object.cpp
 	dataSetConstructorFactory.cpp
 	dataSetConstructorFactory.h
+	clipper.h
+	clipper.cpp
+	ControlerItem.cpp
+	ControlerItem.h
+	action.cpp
+	action.h
+	ControlerAction.cpp
+	ControlerAction.h
 )
 SET( STRUCT_SRC
 	CartesianStructDataSetConstructor.cpp
@@ -54,13 +62,35 @@ SET( STRUCT_SRC
 	CylinderPlanConstruct.cpp
 )
 
+SET(UI_SRC
+	ControlerItem.ui
+	)
+SET(MY_MOC_HDR
+	ControlerItem.h
+)
+#生成moc文件
+fc_wrap_cpp(MY_MOC_SRCS ${MY_MOC_HDR})
+
 SET(DataVisualization3D_src
 	${SRC}
 	${STRUCT_SRC}
+	${UI_SRC}
+	${MY_MOC_SRCS}
 	)
+
+#处理ui和qrc文件
+if(BUILD_QT5)
+	QT5_ADD_RESOURCES(Gui_QRC_SRCs ${QRC_SRC})
+	QT5_WRAP_UI(Gui_UIC_HDRs ${UI_SRC})
+else()
+	QT4_ADD_RESOURCES(Gui_QRC_SRCs ${QRC_SRC})
+	QT4_WRAP_UI(Gui_UIC_HDRs ${UI_SRC})
+endif()
 	
 source_group("src" FILES ${SRC})
 source_group("struct" FILES ${STRUCT_SRC})
+source_group("ui" FILES ${UI_SRC})
+source_group("moc" FILES ${MY_MOC_SRCS})
 	
 add_executable(DataVisualization3D ${DataVisualization3D_src})
 
@@ -70,7 +100,6 @@ set(RELEASE_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 SET_BIN_DIR(DataVisualization3D DataVisualization3D)
 
-#添加目录分类
 
 #增加包含目录
 include_directories(
@@ -115,6 +144,5 @@ else()
         ${QT_QTUITOOLS_LIBRARY}
     )
 endif()
-#生成moc文件
-fc_wrap_cpp(MY_MOC_SRCS ${MY_MOC_HDR})
+
 target_link_libraries(DataVisualization3D ${QT_LIB})

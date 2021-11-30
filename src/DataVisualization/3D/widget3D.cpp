@@ -45,6 +45,17 @@ void DV3D::Widget3D::unbing(Controler* controler)
 	controler->oneWayUnbing();
 }
 
+void DV3D::Widget3D::unbingAllControler()
+{
+	for (auto iter = controlerActor.begin(); iter != controlerActor.end(); iter++)
+		unbing(iter->first);
+}
+
+void DV3D::Widget3D::reRender()
+{
+	viewer3d->GetInteractor()->Render();
+}
+
 /**
 * @brief DV3D::Widget3D::oneWayUnbing 取消控制器绑定，并移除对应的actor
 * @param Controler * controler

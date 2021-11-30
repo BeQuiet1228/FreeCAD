@@ -10,9 +10,5 @@ namespace DV3D {
 	public:
 		void update() override;
 		void connect() override;
-
-	private:
-		//非结构性网格几何结构化过滤器
-		vtkSmartPointer<vtkUnstructuredGridGeometryFilter> filter;
 	};
 }

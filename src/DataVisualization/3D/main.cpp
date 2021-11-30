@@ -25,6 +25,8 @@
 #include"vtkDataSet.h"
 #include"vtkProperty.h"
 #include"vtkCamera.h"
+#include "ControlerItem.h"
+#include "ControlerAction.h"
 #ifndef INIT_VTK_OPENGL_AND_FRNT	//防止多次初始化模块
 #define INIT_VTK_OPENGL_AND_FRNT
 #include <vtkAutoInit.h>
@@ -133,10 +135,25 @@ int main(int argc, char* argv[])
 	pipeLine->connect();
 
 	Widget3D* w3d = new Widget3D();
-	Controler* controler = new Controler();
+	std::shared_ptr<Controler> controler(new Controler());
 	controler->setActorPipeline(pipeLine);
 	controler->setVisible(true);
-	w3d->binding(controler);
+	controler->setClipEnable(true);
+	controler->setEdgeVisible(false);
+
+	ControlerItem item;
+	item.setControler(controler);
+
+	std::shared_ptr<ControlerVisible> visible(new ControlerVisible);
+	std::shared_ptr<ControlerClipEnable> clip(new ControlerClipEnable);
+	std::shared_ptr<ControlerEdgeVisible> edge(new ControlerEdgeVisible);
+
+	item.addAction(visible);
+	item.addAction(clip);
+	item.addAction(edge);
+	item.show();
+
+	w3d->binding(controler.get());
 	w3d->show();
 
 	return a.exec();

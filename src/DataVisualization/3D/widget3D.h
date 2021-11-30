@@ -27,6 +27,8 @@ namespace DV3D {
 		void unbing(Controler* controler);
 		//解除所有控制器的绑定
 		void unbingAllControler();
+		//重新渲染
+		void reRender();
 
 	private:
 		//单向解除绑定
