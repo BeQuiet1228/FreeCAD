@@ -2,320 +2,323 @@
 #include<fstream>
 #include<stdio.h>
 #include <QDir>
-Data::Data(Hdf5Data& h5Data,const RunMod& mod)
-	:h5Data(h5Data), sourceData(new ListValues)
-	, sourceDataMutex(new std::mutex), runMod(mod), sourceDataIsLoad(false), headList(h5Data.headList)
-	, directionTyp(NONE), mapType(NEEDLESS_STRUCT), temphdf(nullptr)
+namespace DV
 {
-	
-}
+	Data::Data(Hdf5Data& h5Data, const RunMod& mod)
+		:h5Data(h5Data), sourceData(new ListValues)
+		, sourceDataMutex(new std::mutex), runMod(mod), sourceDataIsLoad(false), headList(h5Data.headList)
+		, directionTyp(NONE), mapType(NEEDLESS_STRUCT), temphdf(nullptr)
+	{
 
-Data::~Data()
-{
+	}
 
-}
+	Data::~Data()
+	{
 
-/**
-* @brief Data::loadSourceData 获取h5文件中的数据
-* @return bool 获取是否成功
-*/
-bool Data::loadSourceData()
-{
-	//防止二次载入 消耗资源
-	if (isLoad())
+	}
+
+	/**
+	* @brief Data::loadSourceData 获取h5文件中的数据
+	* @return bool 获取是否成功
+	*/
+	bool Data::loadSourceData()
+	{
+		//防止二次载入 消耗资源
+		if (isLoad())
+			return true;
+		return loadSourceDataHard();
+	}
+
+	/**
+	* @brief Data::loadSourceDataHard 获取h5文件中的数据 无论是否已经载入 都重新载入
+	* @return bool
+	*/
+	bool Data::loadSourceDataHard()
+	{
+		AutoMutx am(sourceDataMutex);
+		sourceDataIsLoad = Hdf5IO::getValue(h5Data.listDataSet, *(sourceData.get()));
+		return sourceDataIsLoad;
+	}
+
+	/**
+	* @brief Data::clearSourceData 清楚原始数据，目的是节约内存
+	* @return void
+	*/
+	void Data::clearSourceData()
+	{
+		sourceData->clear();
+		sourceDataIsLoad = false;
+	}
+
+	/**
+	* @brief Data::setRunMod 设置渲染模式
+	* @param const RunMod & mod
+	* @return void
+	*/
+	void Data::setRunMod(const RunMod& mod)
+	{
+		if (this->runMod == mod)
+			return;
+		if (mod == MULTITHREAD)
+			this->restorDeriveData();
+		this->runMod = mod;
+	}
+
+	/**
+	* @brief Data::getSourceDataCopy 获取原始数据，这里获取的是复制对象，这里是为了保证多线程时的线程安全
+	* @param ListValuesPtr & listValuePtr 数据
+	* @return bool 是否获取成功
+	*/
+	bool Data::getSourceDataCopy(ListValuesPtr& listValuePtr)
+	{
+		//如果数据还未载入则先载入数据
+		if (!isLoad())
+		{
+			if (!loadSourceData())
+				return false;
+		}
+
+		listValuePtr.reset(new ListValues());
+
+		AutoMutx mutex(sourceDataMutex);
+		for (auto iter = sourceData->begin(); iter != sourceData->end(); iter++)
+		{
+			Values* values = new Values;
+			*values = *((*iter).get());
+			ValuesPtr ptr(values);
+			listValuePtr->push_back(ptr);
+		}
+
 		return true;
-	return loadSourceDataHard();
-}
+	}
 
-/**
-* @brief Data::loadSourceDataHard 获取h5文件中的数据 无论是否已经载入 都重新载入
-* @return bool
-*/
-bool Data::loadSourceDataHard()
-{
-	AutoMutx am(sourceDataMutex);
-	sourceDataIsLoad = Hdf5IO::getValue(h5Data.listDataSet, *(sourceData.get()));
-	return sourceDataIsLoad;
-}
-
-/**
-* @brief Data::clearSourceData 清楚原始数据，目的是节约内存
-* @return void
-*/
-void Data::clearSourceData()
-{
-	sourceData->clear();
-	sourceDataIsLoad = false;
-}
-
-/**
-* @brief Data::setRunMod 设置渲染模式
-* @param const RunMod & mod
-* @return void
-*/
-void Data::setRunMod(const RunMod& mod)
-{
-	if (this->runMod == mod)
-		return;
-	if (mod == MULTITHREAD)
-		this->restorDeriveData();
-	this->runMod = mod;
-}
-
-/**
-* @brief Data::getSourceDataCopy 获取原始数据，这里获取的是复制对象，这里是为了保证多线程时的线程安全
-* @param ListValuesPtr & listValuePtr 数据
-* @return bool 是否获取成功
-*/
-bool Data::getSourceDataCopy(ListValuesPtr& listValuePtr)
-{
-	//如果数据还未载入则先载入数据
-	if (!isLoad())
+	/**
+	* @brief Data::getSourceData 直接获取原始数据的reference
+	* @param ListValuesPtr & listValuePtr
+	* @return bool 成功返回true
+	*/
+	bool Data::getSourceData(ListValuesPtr& listValuePtr)
 	{
-		if (!loadSourceData())
+		//如果数据还未载入则先载入数据
+		if (!isLoad())
+		{
+			if (!loadSourceData())
+				return false;
+		}
+
+		//如果是多线程模式，不允许获取原始数据的引用
+		if (runMod == MULTITHREAD)
 			return false;
+		listValuePtr = sourceData;
+
+		return true;
 	}
 
-	listValuePtr.reset(new ListValues());
-	
-	AutoMutx mutex(sourceDataMutex);
-	for (auto iter = sourceData->begin(); iter != sourceData->end(); iter++)
+	/**
+	* @brief Data::autoModGetSourceData 根据线程模式自动选择获取原数据的方式
+	* @param ListValuesPtr & listValues
+	* @return bool
+	*/
+	bool Data::autoModGetSourceData(ListValuesPtr& listValues)
 	{
-		Values *values = new Values;
-		*values = *((*iter).get());
-		ValuesPtr ptr(values);
-		listValuePtr->push_back(ptr);
+		bool ok(false);
+		if (this->runMod == SINGLE_THREAD)
+			ok = getSourceData(listValues);
+		else if (this->runMod == MULTITHREAD)
+			ok = getSourceDataCopy(listValues);
+		return ok;
 	}
 
-	return true;
-}
-
-/**
-* @brief Data::getSourceData 直接获取原始数据的reference
-* @param ListValuesPtr & listValuePtr
-* @return bool 成功返回true
-*/
-bool Data::getSourceData(ListValuesPtr& listValuePtr)
-{
-	//如果数据还未载入则先载入数据
-	if (!isLoad())
+	void Data::initInformation()
 	{
-		if (!loadSourceData())
-			return false;
+		std::cerr << "Can't call Data::initInformation()" << std::endl;
 	}
 
-	//如果是多线程模式，不允许获取原始数据的引用
-	if (runMod == MULTITHREAD)
-		return false;
-	listValuePtr = sourceData;
-
-	return true;
-}
-
-/**
-* @brief Data::autoModGetSourceData 根据线程模式自动选择获取原数据的方式
-* @param ListValuesPtr & listValues
-* @return bool
-*/
-bool Data::autoModGetSourceData(ListValuesPtr& listValues)
-{
-	bool ok(false);
-	if (this->runMod == SINGLE_THREAD)
-		ok = getSourceData(listValues);
-	else if (this->runMod == MULTITHREAD)
-		ok = getSourceDataCopy(listValues);
-	return ok;
-}
-
-void Data::initInformation()
-{
-	std::cerr << "Can't call Data::initInformation()" << std::endl;
-}
-
-std::string Data::getInformationTitle()
-{
-	std::cerr << "Data::getInformationTitle() can not call!" << std::endl;
-	return " ";
-}
-
-/**
-* @brief Data::stringToDirection 将坐标tile转换为方向
-* @param const std::string & str
-* @return DirectionType
-*/
-DirectionType Data::stringToDirection(const std::string& str)
-{
-
-	DirectionType direction;
-
-	if (str == "X")
-		direction = X;
-	else if (str == "Y")
-		direction = Y;
-	else if (str == "Z")
-		direction = Z;
-	else if (str == "R")
-		direction = R;
-	else if (str == "X1")
-		direction = X;
-	else if (str == "X2")
-		direction = Y;
-	else if (str == "X3")
-		direction = Z;
-	else if (str == "R*cos")
-		direction = R;
-	else if (str == "R*sin")
-		direction = THETA;
-	else
-		direction = NONE;
-
-	return direction;
-}
-
-XYData::XYData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
-	:Data(h5Data, mod), pointSize(0)
-{
-	initInformation();
-	initDiretion();
-}
-
-unsigned int XYData::findIndexFromXValueL(const float& x)
-{
-	std::cerr << "Can't call XYData::findIndexFromXValueL" << std::endl;
-	return 0;
-}
-
-/**
-* @brief XYData::findIndexFromXValueR 通过x轴的值查找最近的索引，靠近右边
-* @param const float & x
-* @return unsigned int
-*/
-unsigned int XYData::findIndexFromXValueR(const float& x)
-{
-	unsigned int index = findIndexFromXValueL(x) + 1;
-	if (index > getPointSize())
-		return getPointSize() - 1;
-	return index;
-}
-
-void XYData::initInformation()
-{
-	if (headList.size() == 0)
-		return;
-	QString str = QString::fromStdString(headList.at(0));
-	QStringList sl = str.split("$");
-	
-	if (sl.size() < 6)
-		return;
-	setXTag(sl.at(3).toStdString());
-	setYTag(sl.at(4).toStdString());
-}
-
-/**
-* @brief XYData::initDiretion 初始化数据方向信息
-* @return void
-*/
-void XYData::initDiretion()
-{
-	initInformation();
-	QString xt = QString::fromStdString(getXTag());
-	QString yt = QString::fromStdString(getYTag());
-
-	if (xt.indexOf('(') < 0 || yt.indexOf('(') < 0)
-		return;
-	QString xd = xt.split('(').at(0).simplified();
-	QString yd = yt.split('(').at(0).simplified();
-	xAxisName = xd.toStdString();
-	yAxisName = yd.toStdString();
-	directionTyp = DirectionType(stringToDirection(xAxisName) | stringToDirection(yAxisName));
-	if (directionTyp == NONE)
-		mapType = NEEDLESS_STRUCT;
-	else
-		mapType = NEED_STRUCT;
-}
-std::vector<std::string> Data::autoHeaderInfo()
-{
-	return h5Data.headList;
-}
-
-void Data::saveAs(std::string path, SaveMod mod)
-{
-	QDir dir(QString::fromStdString(path));
-
-	bool isGood = dir.exists();
-	int res = -1;
-	if (!isGood || mod==NEWFLODER)
+	std::string Data::getInformationTitle()
 	{
-		res = Hdf5IO::creatNewH5File(path);
+		std::cerr << "Data::getInformationTitle() can not call!" << std::endl;
+		return " ";
 	}
-	Hdf5IO* temp = new Hdf5IO(path);
-	Hdf5Data *newData = new Hdf5Data(h5Data);
-	Hdf5IO::copyToHdf5IO(*temp,*newData);
-	if (-1!=res)
-	res=Hdf5IO::closeH5File(res);
-	delete temp;
-	delete newData;
-}
-/**********************************************/
-Data::AutoMutx::AutoMutx(const MutexPtr& mutex) {
-	this->mutex = mutex;
-	mutex->lock();
-}
-Data::AutoMutx::~AutoMutx() {
-	this->mutex->unlock();
-}
-Data::Rang::Rang() :max(0), min(0) {};
-Data::Rang::Rang(const float& _min, const float& _max)
-	:max(_max), min(_min) {};
-float Data::Rang::length() {
-	return max - min;
-}
-bool Data::isLoad() {
-	return sourceDataIsLoad;
-}
-//操作类型
-DirectionType Data::getDirectionType() {
-	return directionTyp;
-}
-Data::NeedStructType Data::getNeedStructType() {
-	return mapType;
-}
 
-unsigned int XYData::getPointSize() {
-	std::lock_guard<std::mutex> am(pointSizeMutex);
-	return pointSize;
-};
-//获取范围
-Data::Rang XYData::getXRang() {
-	std::lock_guard<std::mutex> am(xRangMutex);
-	return xRang;
-};
-void XYData::setXRang(const Rang& rg) {
-	std::lock_guard<std::mutex> am(xRangMutex);
-	xRang = rg;
-}
-Data::Rang XYData::getYRang() {
-	std::lock_guard<std::mutex> am(yRangMutex);
-	return yRang;
-};
-void XYData::setYRang(const Rang& rg) {
-	std::lock_guard<std::mutex> am(yRangMutex);
-	yRang = rg;
-}
-//操作tag
-void XYData::setXTag(const std::string& tag) {
-	std::lock_guard<std::mutex> am(xTagMute);
-	xTag = tag;
-}
-std::string XYData::getXTag() {
-	std::lock_guard<std::mutex> am(xTagMute);
-	return xTag;
-}
-void XYData::setYTag(const std::string tag) {
-	std::lock_guard<std::mutex> am(yTagMutex);
-	yTag = tag;
-}
-std::string XYData::getYTag() {
-	std::lock_guard<std::mutex> am(yTagMutex);
-	return yTag;
+	/**
+	* @brief Data::stringToDirection 将坐标tile转换为方向
+	* @param const std::string & str
+	* @return DirectionType
+	*/
+	DirectionType Data::stringToDirection(const std::string& str)
+	{
+
+		DirectionType direction;
+
+		if (str == "X")
+			direction = X;
+		else if (str == "Y")
+			direction = Y;
+		else if (str == "Z")
+			direction = Z;
+		else if (str == "R")
+			direction = R;
+		else if (str == "X1")
+			direction = X;
+		else if (str == "X2")
+			direction = Y;
+		else if (str == "X3")
+			direction = Z;
+		else if (str == "R*cos")
+			direction = R;
+		else if (str == "R*sin")
+			direction = THETA;
+		else
+			direction = NONE;
+
+		return direction;
+	}
+
+	XYData::XYData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
+		:Data(h5Data, mod), pointSize(0)
+	{
+		initInformation();
+		initDiretion();
+	}
+
+	unsigned int XYData::findIndexFromXValueL(const float& x)
+	{
+		std::cerr << "Can't call XYData::findIndexFromXValueL" << std::endl;
+		return 0;
+	}
+
+	/**
+	* @brief XYData::findIndexFromXValueR 通过x轴的值查找最近的索引，靠近右边
+	* @param const float & x
+	* @return unsigned int
+	*/
+	unsigned int XYData::findIndexFromXValueR(const float& x)
+	{
+		unsigned int index = findIndexFromXValueL(x) + 1;
+		if (index > getPointSize())
+			return getPointSize() - 1;
+		return index;
+	}
+
+	void XYData::initInformation()
+	{
+		if (headList.size() == 0)
+			return;
+		QString str = QString::fromStdString(headList.at(0));
+		QStringList sl = str.split("$");
+
+		if (sl.size() < 6)
+			return;
+		setXTag(sl.at(3).toStdString());
+		setYTag(sl.at(4).toStdString());
+	}
+
+	/**
+	* @brief XYData::initDiretion 初始化数据方向信息
+	* @return void
+	*/
+	void XYData::initDiretion()
+	{
+		initInformation();
+		QString xt = QString::fromStdString(getXTag());
+		QString yt = QString::fromStdString(getYTag());
+
+		if (xt.indexOf('(') < 0 || yt.indexOf('(') < 0)
+			return;
+		QString xd = xt.split('(').at(0).simplified();
+		QString yd = yt.split('(').at(0).simplified();
+		xAxisName = xd.toStdString();
+		yAxisName = yd.toStdString();
+		directionTyp = DirectionType(stringToDirection(xAxisName) | stringToDirection(yAxisName));
+		if (directionTyp == NONE)
+			mapType = NEEDLESS_STRUCT;
+		else
+			mapType = NEED_STRUCT;
+	}
+	std::vector<std::string> Data::autoHeaderInfo()
+	{
+		return h5Data.headList;
+	}
+
+	void Data::saveAs(std::string path, SaveMod mod)
+	{
+		QDir dir(QString::fromStdString(path));
+
+		bool isGood = dir.exists();
+		int res = -1;
+		if (!isGood || mod == NEWFLODER)
+		{
+			res = Hdf5IO::creatNewH5File(path);
+		}
+		Hdf5IO* temp = new Hdf5IO(path);
+		Hdf5Data* newData = new Hdf5Data(h5Data);
+		Hdf5IO::copyToHdf5IO(*temp, *newData);
+		if (-1 != res)
+			res = Hdf5IO::closeH5File(res);
+		delete temp;
+		delete newData;
+	}
+	/**********************************************/
+	Data::AutoMutx::AutoMutx(const MutexPtr& mutex) {
+		this->mutex = mutex;
+		mutex->lock();
+	}
+	Data::AutoMutx::~AutoMutx() {
+		this->mutex->unlock();
+	}
+	Data::Rang::Rang() :max(0), min(0) {};
+	Data::Rang::Rang(const float& _min, const float& _max)
+		:max(_max), min(_min) {};
+	float Data::Rang::length() {
+		return max - min;
+	}
+	bool Data::isLoad() {
+		return sourceDataIsLoad;
+	}
+	//操作类型
+	DirectionType Data::getDirectionType() {
+		return directionTyp;
+	}
+	Data::NeedStructType Data::getNeedStructType() {
+		return mapType;
+	}
+
+	unsigned int XYData::getPointSize() {
+		std::lock_guard<std::mutex> am(pointSizeMutex);
+		return pointSize;
+	};
+	//获取范围
+	Data::Rang XYData::getXRang() {
+		std::lock_guard<std::mutex> am(xRangMutex);
+		return xRang;
+	};
+	void XYData::setXRang(const Rang& rg) {
+		std::lock_guard<std::mutex> am(xRangMutex);
+		xRang = rg;
+	}
+	Data::Rang XYData::getYRang() {
+		std::lock_guard<std::mutex> am(yRangMutex);
+		return yRang;
+	};
+	void XYData::setYRang(const Rang& rg) {
+		std::lock_guard<std::mutex> am(yRangMutex);
+		yRang = rg;
+	}
+	//操作tag
+	void XYData::setXTag(const std::string& tag) {
+		std::lock_guard<std::mutex> am(xTagMute);
+		xTag = tag;
+	}
+	std::string XYData::getXTag() {
+		std::lock_guard<std::mutex> am(xTagMute);
+		return xTag;
+	}
+	void XYData::setYTag(const std::string tag) {
+		std::lock_guard<std::mutex> am(yTagMutex);
+		yTag = tag;
+	}
+	std::string XYData::getYTag() {
+		std::lock_guard<std::mutex> am(yTagMutex);
+		return yTag;
+	}
 }

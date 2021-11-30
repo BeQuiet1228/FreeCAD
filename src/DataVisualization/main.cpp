@@ -11,7 +11,7 @@
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
-	CanvasItem::registerMetaTye();
+	//CanvasItem::registerMetaTye();
 #if 0
 	std::string path = "D:/wdt/FreeCAD-build/Example/3d/MILO-C/MILO_C.h5";
 	

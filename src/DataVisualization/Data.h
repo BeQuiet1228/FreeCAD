@@ -8,164 +8,167 @@
 #include <QString>
 #include <QStringList>
 #include"exportConfig.hpp"
-/*区分数据的方向*/
-enum DirectionType{
-	NONE = 0xff,
-	X = 0x1,
-	Y = 0x2,
-	Z = 0x4,
-	R = 0x8,
-	THETA = 0x10,
 
-	X_Y = X | Y,
-	X_Z = X | Z,
-	Y_Z = Y | Z,
-	R_Z = R | Z,
-	R_THETA = R | THETA
-};
-enum SaveMod{
-	//新建
-	NEWFLODER = 0,
-	//补充
-	PUSHBACK=1,
-};
-class DATA_VISUALIZATION_EXPORT Data{
-public:
-	using Values = std::vector<float>;
-	using ValuesPtr = std::shared_ptr<Values>;
-	using ListValues = std::list< ValuesPtr >;
-	using ListValuesPtr = std::shared_ptr<ListValues>;
-	using MutexPtr = std::shared_ptr<std::mutex>;
-	//自动锁
-	class AutoMutx{
+namespace DV {
+	/*区分数据的方向*/
+	enum DirectionType {
+		NONE = 0xff,
+		X = 0x1,
+		Y = 0x2,
+		Z = 0x4,
+		R = 0x8,
+		THETA = 0x10,
+
+		X_Y = X | Y,
+		X_Z = X | Z,
+		Y_Z = Y | Z,
+		R_Z = R | Z,
+		R_THETA = R | THETA
+	};
+	enum SaveMod {
+		//新建
+		NEWFLODER = 0,
+		//补充
+		PUSHBACK = 1,
+	};
+	class DATA_VISUALIZATION_EXPORT Data {
 	public:
-		AutoMutx(const MutexPtr& mutex);
-		~AutoMutx();
+		using Values = std::vector<float>;
+		using ValuesPtr = std::shared_ptr<Values>;
+		using ListValues = std::list< ValuesPtr >;
+		using ListValuesPtr = std::shared_ptr<ListValues>;
+		using MutexPtr = std::shared_ptr<std::mutex>;
+		//自动锁
+		class AutoMutx {
+		public:
+			AutoMutx(const MutexPtr& mutex);
+			~AutoMutx();
+		private:
+			MutexPtr mutex;
+		};
+		struct Rang {
+			Rang();
+			Rang(const float& _min, const float& _max);
+			float length();
+			float max;
+			float min;
+		};
+
+	public:
+		enum RunMod {
+			SINGLE_THREAD = 0, //单线程
+			MULTITHREAD		//多线程
+		};
+		//图表的类型
+		enum NeedStructType {
+			NEED_STRUCT = 0,
+			NEEDLESS_STRUCT
+		};
+	public:
+		Data(Hdf5Data& h5Data, const RunMod& mod = SINGLE_THREAD);
+		virtual ~Data();
+		void saveAs(std::string path, SaveMod mod = PUSHBACK);
+	protected:
+		//h5文件数据
+		Hdf5Data h5Data;
 	private:
-		MutexPtr mutex;
+		//原始数据
+		ListValuesPtr sourceData;
+		//原始数据锁
+		MutexPtr sourceDataMutex;
+		//运行模式
+		RunMod runMod;
+		//原数据是否已载入
+		bool sourceDataIsLoad;
+	protected:
+		//h5数据头部信息
+		std::vector<std::string> headList;
+	public:
+		//载入h5文件中的数据
+		bool  loadSourceData();
+		//强制载入h5文件 不管是否已经载入都重新载入
+		bool loadSourceDataHard();
+		//清除原始数据
+		void clearSourceData();
+		//设置渲染模式
+		void setRunMod(const RunMod& mod);
+		//初始化基本信息
+		virtual void initInformation();
+		//返回图表信息文字介绍
+		virtual std::string getInformationTitle();
+
+		//数据是否已载入
+		bool isLoad();
+
+		//数据获取接口，这里强制通过接口获取是为了之后多线程处理时数据同步。
+	protected:
+		//获取原始数据，获取的时copy对象
+		bool getSourceDataCopy(ListValuesPtr& listValuePtr);
+		//获取原始数据，获取的是reference
+		bool getSourceData(ListValuesPtr& listValuePtr);
+		//重新获取数据
+		//主要用于线程模式发生变化时，如单线程渲染切换到多线程渲染的时候，如果之前是获取的原数据的引用，那么不重新获取会有问题。
+		virtual void restorDeriveData() = 0;
+		//根据运行模式自动调整获取数据的方式
+		bool autoModGetSourceData(ListValuesPtr& listValues);
+		//
+		std::vector<std::string> autoHeaderInfo();
+	public:
+		//将字符串转换为directions
+		static	DirectionType stringToDirection(const std::string& str);
+
+		//操作类型
+		DirectionType getDirectionType();
+		NeedStructType getNeedStructType();
+	protected:
+		//平面方向
+		DirectionType directionTyp;
+		//图类型
+		NeedStructType mapType;
+		Hdf5IO* temphdf;
 	};
-	struct Rang{
-		Rang();
-		Rang(const float& _min, const float& _max);
-		float length();
-		float max;
-		float min;
+
+	class DATA_VISUALIZATION_EXPORT XYData :public Data {
+	public:
+		XYData(Hdf5Data& h5Data, const RunMod& mod = SINGLE_THREAD);
+		~XYData() = default;
+	public:
+		virtual unsigned int findIndexFromXValueL(const float& x);
+		unsigned int findIndexFromXValueR(const float& x);
+		virtual bool loadPoint() = 0;
+		//操作size
+		unsigned int getPointSize();
+		//获取范围
+		Rang getXRang();
+		void setXRang(const Rang& rg);
+		Rang getYRang();
+		void setYRang(const Rang& rg);
+		//操作tag
+		void setXTag(const std::string& tag);
+		std::string getXTag();
+		void setYTag(const std::string tag);
+		std::string getYTag();
+	protected:
+		virtual bool initXYRang() = 0;
+		//设置size
+		void setPointSize(const unsigned int& size) {
+			std::lock_guard<std::mutex> am(pointSizeMutex);
+			pointSize = size;
+		}
+	private:
+		//点的个数
+		unsigned int pointSize;
+		std::mutex pointSizeMutex;
+		//xy的范围
+		Rang xRang, yRang;
+		std::mutex xRangMutex, yRangMutex;
+		//xy数据的单位
+		std::string xTag, yTag;
+		std::mutex xTagMute, yTagMutex;
+	protected:
+		std::string xAxisName, yAxisName;
+	public:
+		virtual void initDiretion();
+		void initInformation() override;
 	};
-
-public:
-	enum RunMod{
-		SINGLE_THREAD = 0, //单线程
-		MULTITHREAD		//多线程
-	};
-	//图表的类型
-	enum NeedStructType{
-		NEED_STRUCT = 0,
-		NEEDLESS_STRUCT
-	};
-public:
-	Data(Hdf5Data& h5Data ,const RunMod& mod = SINGLE_THREAD);
-	virtual ~Data();
-	void saveAs(std::string path, SaveMod mod = PUSHBACK);
-protected:
-	//h5文件数据
-	Hdf5Data h5Data;
-private:
-	//原始数据
-	ListValuesPtr sourceData;
-	//原始数据锁
-	MutexPtr sourceDataMutex;
-	//运行模式
-	RunMod runMod;
-	//原数据是否已载入
-	bool sourceDataIsLoad;
-protected:
-	//h5数据头部信息
-	std::vector<std::string> headList;
-public:
-	//载入h5文件中的数据
-	bool  loadSourceData();
-	//强制载入h5文件 不管是否已经载入都重新载入
-	bool loadSourceDataHard();
-	//清除原始数据
-	void clearSourceData();
-	//设置渲染模式
-	void setRunMod(const RunMod& mod);
-	//初始化基本信息
-	virtual void initInformation();
-	//返回图表信息文字介绍
-	virtual std::string getInformationTitle();
-
-	//数据是否已载入
-	bool isLoad();
-
-	//数据获取接口，这里强制通过接口获取是为了之后多线程处理时数据同步。
-protected:
-	//获取原始数据，获取的时copy对象
-	bool getSourceDataCopy(ListValuesPtr& listValuePtr);
-	//获取原始数据，获取的是reference
-	bool getSourceData(ListValuesPtr& listValuePtr);
-	//重新获取数据
-	//主要用于线程模式发生变化时，如单线程渲染切换到多线程渲染的时候，如果之前是获取的原数据的引用，那么不重新获取会有问题。
-	virtual void restorDeriveData() = 0;
-	//根据运行模式自动调整获取数据的方式
-	bool autoModGetSourceData(ListValuesPtr& listValues);
-	//
-	std::vector<std::string> autoHeaderInfo();
-public:
-	//将字符串转换为directions
-	static	DirectionType stringToDirection(const std::string& str);
-
-	//操作类型
-	DirectionType getDirectionType();
-	NeedStructType getNeedStructType();
-protected:
-	//平面方向
-	DirectionType directionTyp;
-	//图类型
-	NeedStructType mapType;
-	Hdf5IO* temphdf;
-};
-
-class DATA_VISUALIZATION_EXPORT XYData :public Data{
-public:
-	XYData(Hdf5Data& h5Data, const RunMod& mod = SINGLE_THREAD);
-	~XYData() = default;
-public:
-	virtual unsigned int findIndexFromXValueL(const float& x);
-	unsigned int findIndexFromXValueR(const float& x);
-	virtual bool loadPoint() = 0;
-	//操作size
-	unsigned int getPointSize();
-	//获取范围
-	Rang getXRang();
-	void setXRang(const Rang& rg);
-	Rang getYRang();
-	void setYRang(const Rang& rg);
-	//操作tag
-	void setXTag(const std::string& tag);
-	std::string getXTag();
-	void setYTag(const std::string tag);
-	std::string getYTag();
-protected:
-	virtual bool initXYRang() = 0;
-	//设置size
-	void setPointSize(const unsigned int& size){
-		std::lock_guard<std::mutex> am(pointSizeMutex);
-		pointSize = size;
-	}
-private:
-	//点的个数
-	unsigned int pointSize;
-	std::mutex pointSizeMutex;
-	//xy的范围
-	Rang xRang, yRang;
-	std::mutex xRangMutex, yRangMutex;
-	//xy数据的单位
-	std::string xTag, yTag;
-	std::mutex xTagMute, yTagMutex;
-protected:
-	std::string xAxisName, yAxisName;
-public:
-	virtual void initDiretion();
-	void initInformation() override;
 };
