@@ -307,7 +307,7 @@ void Application::ToStruct(Hdf5Data data)
 */
 void Application::showPlotSettingDialog()
 {
-	ConfigWidget* configWidget = new ConfigWidget();
+	DV::ConfigWidget* configWidget = new DV::ConfigWidget();
 	configWidget->setAttribute(Qt::WA_DeleteOnClose);
 	auto doc = Gui::Application::Instance->activeDocument();
 	if (doc)

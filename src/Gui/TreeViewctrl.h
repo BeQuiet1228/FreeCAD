@@ -6,7 +6,7 @@
 //#include"App/PlotAdapterBase.h"
 class QStandardItem;
 namespace Gui{
-	class GuiExport TreeViewCtrl :public ListTreeWidget
+	class GuiExport TreeViewCtrl :public DV::ListTreeWidget
 	{
 	public:
 		 explicit TreeViewCtrl(QWidget* parent = nullptr);

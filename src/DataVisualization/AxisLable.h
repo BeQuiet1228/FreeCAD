@@ -5,34 +5,37 @@
 class QLineEdit;
 class QGridLayout;
 class QBoxLayout;
-class AxisLable :public QDialog
-{
-	Q_OBJECT
-public:
-	AxisLable(QWidget* parent = nullptr);
-	~AxisLable();
-	//
-	void setMinval(QString);
-	void setMaxval(QString);
-	void setAxisUnitval(QString);
-	//
-	double getMinval();
-	double getMaxval();
-	QString getAxisUnitval();
-	void closeEvent(QCloseEvent * e);
-Q_SIGNALS:
-	void signalCloseEvent();
-public Q_SLOTS:
-	void BtnClicked();
-private:
-	void initUI();
-private:
-	QLineEdit* minLineedit;
-	QLineEdit* maxLineedit;
-	QLineEdit* AxisUnitedit;
-	QGridLayout* mQGridLayout;
-	QPushButton* mAppBtn;
-	QPushButton* UnAppBtn;
-	//QBoxLayout* boxLayout;
+namespace DV {
+	class AxisLable :public QDialog
+	{
+		Q_OBJECT
+	public:
+		AxisLable(QWidget* parent = nullptr);
+		~AxisLable();
+		//
+		void setMinval(QString);
+		void setMaxval(QString);
+		void setAxisUnitval(QString);
+		//
+		double getMinval();
+		double getMaxval();
+		QString getAxisUnitval();
+		void closeEvent(QCloseEvent* e);
+	Q_SIGNALS:
+		void signalCloseEvent();
+	public Q_SLOTS:
+		void BtnClicked();
+	private:
+		void initUI();
+	private:
+		QLineEdit* minLineedit;
+		QLineEdit* maxLineedit;
+		QLineEdit* AxisUnitedit;
+		QGridLayout* mQGridLayout;
+		QPushButton* mAppBtn;
+		QPushButton* UnAppBtn;
+		//QBoxLayout* boxLayout;
+	};
 };
+
 #endif // !AXISLABLE_H_

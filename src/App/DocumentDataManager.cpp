@@ -35,7 +35,7 @@ bool DocumentManager::loadFile(const std::string& FilePath)
 */
 DocumentManager::DocumentManager(){
 	//构造数据管理
-	CanvasItem::registerMetaTye();
+	DV::CanvasItem::registerMetaTye();
 	classID = 5;
 }
 /**
