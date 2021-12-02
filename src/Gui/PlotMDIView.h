@@ -9,6 +9,7 @@
 namespace DV
 {
 	class Plot;
+	class PlotAdapter;
 };
 namespace Gui{
 	
@@ -23,7 +24,7 @@ namespace Gui{
 		DV::Plot* GetViewPtr();
 		virtual bool onMsg(const char* pMsg, const char** ppReturn) override;
 		virtual bool onHasMsg(const char* pMsg) const override;
-
+		void setAdapter(const std::shared_ptr < DV::PlotAdapter>& adapter);
 		//ªÒ»°plot÷∏’Î
 		DV::Plot* getPlot() {
 			return plot;

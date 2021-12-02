@@ -93,6 +93,9 @@ namespace Gui{
 
 		return getDocumengPic()->onHasMsg(pMsg);
 	}
-
+	void PlotMDIView::setAdapter(const std::shared_ptr < DV::PlotAdapter>& adapter)
+	{
+		plot->setAdapter(adapter);
+	}
 }
 #include "moc_PlotMDIView.cpp"

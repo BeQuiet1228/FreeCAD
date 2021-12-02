@@ -1,9 +1,9 @@
 #pragma once
 #include"DataVisualization/RendererFactory.h"
 #include"FCConfig.h"
-namespace PI
+namespace App
 {
-	class GuiExport PlotAdapterBase
+	class AppExport PlotAdapterBase
 	{
 	public:
 		enum DataType
@@ -12,22 +12,28 @@ namespace PI
 			PLOT_3D = 0x02,
 			PLOT_NULL
 		};
-		PlotAdapterBase(DataType datatype) :mdatatype(datatype) {};
-		~PlotAdapterBase() = default;
+		PlotAdapterBase(DataType datatype);
+		~PlotAdapterBase()=default;
 	public:
-		//virtual PlotAdapterPtr creatPlotAdapter(Hdf5Data h5d, DirectionType type = X_Y) = 0;
+		virtual DV::PlotAdapterPtr creatPlotAdapter(Hdf5Data h5d,std::string name) = 0;
+		virtual void setStructData(Hdf5Data& data) = 0;
+		bool getIsStructData();
 	protected:
 		DataType mdatatype;
+		bool haveStructData;
 	};
 
-	class GuiExport PlotAdapter2D :public PlotAdapterBase
+	class AppExport PlotAdapter2D :public PlotAdapterBase
 	{
 	public:
 		PlotAdapter2D(const Hdf5Data& structData);
+		PlotAdapter2D();
 		~PlotAdapter2D();
 	public:
-		//PlotAdapterPtr creatPlotAdapter(Hdf5Data h5d, DirectionType type = X_Y);
+		virtual DV::PlotAdapterPtr creatPlotAdapter(Hdf5Data h5d, std::string name) override;
+		void setStructData(Hdf5Data& data);
 	private:
-		std::shared_ptr<RendererFactory> factoryPtr;
+		std::shared_ptr<DV::RendererFactory> factoryPtr;
+		
 	};
 };

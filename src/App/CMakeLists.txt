@@ -222,8 +222,8 @@ SET(Document_HPP_SRCS
 SET(Document_Manager_SRC
 	DocumentDataManager.h
 	DocumentDataManager.cpp
-	#PlotAdapterBase.h
-	#PlotAdapterBase.cpp
+	PlotAdapterBase.h
+	PlotAdapterBase.cpp
 	)
 SET(Document_SRCS
     ${Document_CPP_SRCS}

@@ -69,7 +69,13 @@ void DocumentManager::dataclear()
 {
 	hdf5dataList.clear();
 }
+
 std::vector<Hdf5Data>& DocumentManager::gethdf5dataList()
 {
 	return hdf5dataList;
+}
+int DocumentManager::saveHdf5Data(Hdf5Data data)
+{
+	hdf5dataList.push_back(data);
+	return hdf5dataList.size() - 1;
 }
