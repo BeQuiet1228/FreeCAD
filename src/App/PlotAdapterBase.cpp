@@ -1,7 +1,6 @@
 #include"PlotAdapterBase.h"
 namespace App
 {
-	 
 	struct structDirectType {
 		std::string str;
 		DV::DirectionType mDirectionType;
@@ -54,6 +53,14 @@ namespace App
 		factoryPtr->setStructData(data);
 		haveStructData = true;
 	}
+	
+	/**
+	* @time	2021/12/02
+	* @brief App::PlotAdapter2D::creatPlotAdapter ¥¥Ω®  ≈‰∆˜
+	* @param Hdf5Data h5d
+	* @param std::string name
+	* @return DV::PlotAdapterPtr
+	*/
 	DV::PlotAdapterPtr PlotAdapter2D::creatPlotAdapter(Hdf5Data h5d, std::string name)
 	{
 		if (h5d.name.find("struct") != std::string::npos)

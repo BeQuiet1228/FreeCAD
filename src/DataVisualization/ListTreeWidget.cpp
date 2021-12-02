@@ -20,15 +20,45 @@ namespace DV {
 	};
 	//图标：
 	QString Treeicon[] = { ":/Tree/TreeFile1.png", ":/Tree/TreeFile2.png" };
-	std::string Type[MAX_TYPE_NUMBER] = { "CONTOUR", "PHASESPACE", "RANGE", "VECTOR", "struct" ,"OBSERVE","PLANE" };
+	struct TypeStr
+	{
+		std::string nameStr;
+		std::string typeStr;
+	};
+	const TypeStr TypeStrList[MAX_TYPE_NUMBER] = {
+		{
+			"CONTOUR",
+			"等位图"
+		},
+		{
+			"PHASESPACE",
+			"相空间图"
+		},
+		{
+			"RANGE",
+			"空间变化图"
+		},
+		{
+			"VECTOR",
+			"矢量图"
+		},
+		{ 
+			"struct" ,
+			"结构图"
+		},
+		{
+			"OBSERVE",
+			"时间图"
+		},
+		{
+			"PLANE", 
+			"三维结构图"
+		}
+	};
 	std::string Structdirection[3] = { "Phi-Z",
 	"Z-R",
 	"R*cos(Phi)-R*sin(Phi)" };
 	std::string Structdirection_cartesian[3] = { "X_Y", "Y_Z", "X_Z" };
-	/**
-	* @brief ListTreeWidget::ListTreeWidget 构造函数
-	* @param QWidget* parent
-	*/
 	ListTreeWidget::ListTreeWidget(QWidget* parent) :QWidget(parent)/*, structHeadCount(0)*/
 	{
 		//初始化TreeView的风格
@@ -43,10 +73,6 @@ namespace DV {
 		m_TreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 		connect(m_TreeView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(on_doubleclick(const QModelIndex&)));
 	}
-	/**
-	* @brief  ListTreeWidget::~ListTreeWidget 析构
-	* @return
-	*/
 	ListTreeWidget::~ListTreeWidget() {
 		//datainfor.clear();
 #if MY_DEBUG
@@ -123,34 +149,14 @@ namespace DV {
 	*/
 	std::string ListTreeWidget::GetType(std::string name)
 	{
-		int index = -1;
 		for (auto i = 0; i < MAX_TYPE_NUMBER; i++)
 		{
-			if (name.find(Type[i]) != std::string::npos)
+			if (name.find(TypeStrList[i].nameStr) != std::string::npos)
 			{
-				index = i;
-				break;
+				return TypeStrList[i].typeStr;
 			}
 		}
-		switch (index)
-		{
-		case emType::CONTOUR:
-			return "等位图";
-		case emType::PHASEPACE:
-			return "相空间图";
-		case emType::RANGE:
-			return "空间变化图";
-		case emType::STRUCT:
-			return "结构图";
-		case emType::VECTOR:
-			return "矢量图";
-		case emType::OBSERVE:
-			return "时间图";
-		case emType::PLANE:
-			return "三维结构图";
-		default:
-			return "未知图";
-		}
+		return "未知图";
 	}
 	/**
 	* @brief  ListTreeWidget::fromdataManageNewData 接收来自manager的信息
@@ -166,7 +172,7 @@ namespace DV {
 		int _type = -1;
 		for (auto i = 0; i < MAX_TYPE_NUMBER; i++)
 		{
-			if (data.name.find(Type[i]) != std::string::npos)
+			if (data.name.find(TypeStrList[i].nameStr) != std::string::npos)
 			{
 				_type = i;
 				break;

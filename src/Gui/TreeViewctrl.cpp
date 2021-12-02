@@ -16,25 +16,12 @@
 #include"DataVisualization/RendererFactory.h"
 
 namespace Gui{
-	/**
-	* @brief  Gui::TreeViewCtrl::TreeViewCtrl 构造
-	* @param  QWidget * parent  
-	* @return   
-	*/
 	TreeViewCtrl::TreeViewCtrl(QWidget* parent):ListTreeWidget(parent){
 		structIndex = -1;
 	}
-	/**
-	* @brief  Gui::TreeViewCtrl::~TreeViewCtrl 析构
-	* @return   
-	*/
 	TreeViewCtrl::~TreeViewCtrl()
 	{
 	}
-	/**
-	* @brief  Gui::TreeViewCtrl::upClear 数据清除
-	* @return void  
-	*/
 	void TreeViewCtrl::upClear()
 	{
 		structIndex = -1;
@@ -96,6 +83,12 @@ namespace Gui{
 			ptr->setAdapter(adapter);
 		}
 	}
+	/**
+	* @brief Gui::TreeViewCtrl::loadHdflist 读取hdf5数据组，批量生成Item
+	* @param std::vector<Hdf5Data> & Hdf5Datalist
+	* @return void
+	*/
+	
 	void TreeViewCtrl::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 	{
 		//增加清理流程
@@ -105,6 +98,13 @@ namespace Gui{
 			createIteminfo(Hdf5Datalist[index],index);
 		}
 	}
+	/**
+	* @brief Gui::TreeViewCtrl::createIteminfo 根据传入的数据和id生成item，并保存到内部字典
+	* @param Hdf5Data & data
+	* @param int index
+	* @return void
+	*/
+	
 	void TreeViewCtrl::createIteminfo(Hdf5Data& data, int index)
 	{
 		if (data.name.find("struct") != std::string::npos)
@@ -131,12 +131,26 @@ namespace Gui{
 		structIndex = index;
 		return itemList;
 	}
+	
+	/**
+	* @brief Gui::TreeViewCtrl::fromdataManageNewData 将非结构图的2维数据生成对应的item，并保存字典
+	* @param Hdf5Data & data
+	* @param int index
+	* @return QT_NAMESPACE::QStandardItem*
+	*/
 	QStandardItem* TreeViewCtrl::fromdataManageNewData(Hdf5Data& data, int index) {
 		auto item=ListTreeWidget::fromdataManageNewData(data,index);
 		std::shared_ptr<App::PlotAdapterBase> funcPtr = std::shared_ptr<App::PlotAdapterBase>(new App::PlotAdapter2D());
 		adapterFunc[item] = funcPtr;
 		return item;
 	}
+	/**
+	* @brief Gui::TreeViewCtrl::showPlotfromData 用于直接传入hdf5data数据和类型时显示
+	* @param Hdf5Data data
+	* @param int _type
+	* @return void
+	* @time	2021/12/02
+	*/
 	void TreeViewCtrl::showPlotfromData(Hdf5Data data, int _type)
 	{
 		std::shared_ptr<DV::RendererFactory> factory = std::shared_ptr<DV::RendererFactory>(new DV::RendererFactory());
