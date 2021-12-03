@@ -6,9 +6,7 @@ DV3D::Widget3D::Widget3D()
 	renderer = vtkSmartPointer<vtkRenderer>::New();
 	renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
 	renderWindow->AddRenderer(renderer);
-	renderWindow->SetSize(800,800);
 	viewer3d = new QVTKWidget(this);
-	viewer3d->setFixedSize(800, 800);
 	viewer3d->SetRenderWindow(renderWindow);
 
 	renderer->SetBackground(0.0,0.0,0.0);
@@ -16,6 +14,8 @@ DV3D::Widget3D::Widget3D()
 	renderer->GetActiveCamera()->Elevation(60.0);
 	renderer->GetActiveCamera()->Azimuth(30.0);
 	renderer->GetActiveCamera()->Dolly(1.2);
+
+	initGUI();
 }
 
 DV3D::Widget3D::~Widget3D()
@@ -54,6 +54,16 @@ void DV3D::Widget3D::unbingAllControler()
 void DV3D::Widget3D::reRender()
 {
 	viewer3d->GetInteractor()->Render();
+}
+
+void DV3D::Widget3D::initGUI()
+{
+	centerLayout = new QVBoxLayout(this);
+	this->setLayout(centerLayout);
+	centerLayout->addWidget(viewer3d);
+
+	//test
+	this->resize(500,500);
 }
 
 /**

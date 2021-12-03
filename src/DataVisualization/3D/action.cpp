@@ -4,7 +4,10 @@
 DV3D::ActionSwitch::ActionSwitch()
 	:state(OFF)
 {
-	
+	QIcon on(":/action/on.svg");
+	QIcon off(":/action/off.svg");
+	setOnIcon(on);
+	setOffIcon(off);
 }
 
 DV3D::ActionSwitch::ActionSwitch(const QIcon& onIcon, const QString& onText, const QIcon& offIcon, const QString& offText)

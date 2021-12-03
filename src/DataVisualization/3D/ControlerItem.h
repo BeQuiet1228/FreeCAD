@@ -32,7 +32,8 @@ namespace DV3D {
 		std::shared_ptr<Controler> controler;
 		//按钮
 		ToolButtonMap toolButtonMap;
-
+		//控制模型是否可见
+		std::shared_ptr<ControlerAction> visibleAction;
 	public slots:
 		void toolButtonClicked(bool);
 		void transParentSliderValueChange(int value);

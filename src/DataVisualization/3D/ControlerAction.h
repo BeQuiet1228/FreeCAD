@@ -10,7 +10,6 @@ namespace DV3D {
 	};
 
 	class ControlerVisible :public ControlerAction {
-
 	public:
 		void active() {};
 		void active(std::shared_ptr<Controler> controler) override;

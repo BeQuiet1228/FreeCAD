@@ -5,6 +5,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkRenderWindow.h>
 #include <vtkActor.h>
+#include <QVBoxLayout>
 #include <map>
 namespace DV3D {
 	class Controler;
@@ -29,7 +30,8 @@ namespace DV3D {
 		void unbingAllControler();
 		//重新渲染
 		void reRender();
-
+		//初始化布局
+		void initGUI();
 	private:
 		//单向解除绑定
 		void oneWayUnbing(Controler* controler);
@@ -37,7 +39,7 @@ namespace DV3D {
 		void oneWayBinding(Controler* controler);
 		//同步控制器的actor
 		void synchronousControlerActor();
-	public:
+	private:
 		//渲染器
 		vtkSmartPointer<vtkRenderer> renderer;
 		//渲染窗口
@@ -45,6 +47,10 @@ namespace DV3D {
 		vtkSmartPointer<vtkRenderWindow> renderWindow;
 		//控制器
 		std::map<Controler*, vtkSmartPointer<vtkActor>> controlerActor;
+
+	private:
+		//中心布局
+		QVBoxLayout* centerLayout;
 	};
 
 }

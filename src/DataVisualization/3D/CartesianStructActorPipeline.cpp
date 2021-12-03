@@ -30,6 +30,5 @@ void DV3D::CartesianStructActorPipeline::connect()
 
 	auto ac = getActor();
 	ac->SetMapper(mp);
-	ac->GetProperty()->EdgeVisibilityOn();
 }
 

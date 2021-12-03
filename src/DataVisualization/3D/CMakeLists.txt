@@ -65,18 +65,17 @@ SET( STRUCT_SRC
 SET(UI_SRC
 	ControlerItem.ui
 	)
+
 SET(MY_MOC_HDR
 	ControlerItem.h
 )
+SET(QRC_SRC
+	resource/rce.qrc
+)
+
 #生成moc文件
 fc_wrap_cpp(MY_MOC_SRCS ${MY_MOC_HDR})
 
-SET(DataVisualization3D_src
-	${SRC}
-	${STRUCT_SRC}
-	${UI_SRC}
-	${MY_MOC_SRCS}
-	)
 
 #处理ui和qrc文件
 if(BUILD_QT5)
@@ -86,11 +85,22 @@ else()
 	QT4_ADD_RESOURCES(Gui_QRC_SRCs ${QRC_SRC})
 	QT4_WRAP_UI(Gui_UIC_HDRs ${UI_SRC})
 endif()
+
+SET(DataVisualization3D_src
+	${SRC}
+	${STRUCT_SRC}
+	${UI_SRC}
+	${MY_MOC_SRCS}
+	${QRC_SRC}
+	${Gui_QRC_SRCs}
+	)
+
 	
 source_group("src" FILES ${SRC})
 source_group("struct" FILES ${STRUCT_SRC})
 source_group("ui" FILES ${UI_SRC})
 source_group("moc" FILES ${MY_MOC_SRCS})
+source_group("resource" FILES ${Gui_QRC_SRCs} ${QRC_SRC})
 	
 add_executable(DataVisualization3D ${DataVisualization3D_src})
 

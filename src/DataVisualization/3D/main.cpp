@@ -27,6 +27,7 @@
 #include"vtkCamera.h"
 #include "ControlerItem.h"
 #include "ControlerAction.h"
+#include "dataSetConstructorFactory.h"
 #ifndef INIT_VTK_OPENGL_AND_FRNT	//防止多次初始化模块
 #define INIT_VTK_OPENGL_AND_FRNT
 #include <vtkAutoInit.h>
@@ -54,52 +55,17 @@ int main(int argc, char* argv[])
 	auto datalist = io.hdf5DataList;
 	if (datalist.size() == 0)
 		return 0;
-	//打开只有k矩阵的h5文件
-	//auto data = datalist.begin();
-	__int32 index = -1;
-	for (auto i = 0; i < datalist.size(); i++)
+	auto iter = datalist.begin();
+	for (; iter != datalist.end(); iter++)
 	{
-		if (datalist[i].name.find("struct") != std::string::npos)
-		{
-			index = i;
+		if(iter->name =="struct")
 			break;
-		}
 	}
-	if (-1 == index)
+	if (iter == datalist.end())
 		return 0;
-	auto data = datalist.begin() + index;
 
-	//CylinderStructDataSetConstructor constructor;
-	//constructor.setHdf5Data(*data);
-	DataSetConstructorH5* constructor;
-	//测试
-	switch (data->coordinateSystem)
-	{
-	case Hdf5Data::CoordinateSystem::POLAR:
-	{
-		if (data->headList[1].find("X2=2") != std::string::npos ||
-			data->headList[1].find("X2=3") != std::string::npos)
-			constructor = new  PolarPlanConstruct();
-		else
-			constructor = new PolarStructDaraSetConstruct();
-	}
-	break;
-	case Hdf5Data::CoordinateSystem::CARTESIAN:
-	{
-		constructor = new CartesianStructDataSetConstructor();
-	}
-	break;
-	case Hdf5Data::CoordinateSystem::CYLINDER:
-	{
-		if (data->headList[2].find("X3=2") != std::string::npos ||
-			data->headList[2].find("X3=3") != std::string::npos)
-			constructor = new  CylinderPlanConstruct();
-		else
-			constructor = new CylinderStructDataSetConstructor();
-	}
-	break;
-	}
-	constructor->setHdf5Data(*data);
+	auto constructor = DataSetConstructorFactory::CreatConstructor(*iter);
+	
 #if 0
 	vtkSmartPointer<vtkUnstructuredGridGeometryFilter> filter = vtkSmartPointer<vtkUnstructuredGridGeometryFilter>::New();
 	filter->SetInputData(dataset);
@@ -144,11 +110,9 @@ int main(int argc, char* argv[])
 	ControlerItem item;
 	item.setControler(controler);
 
-	std::shared_ptr<ControlerVisible> visible(new ControlerVisible);
 	std::shared_ptr<ControlerClipEnable> clip(new ControlerClipEnable);
 	std::shared_ptr<ControlerEdgeVisible> edge(new ControlerEdgeVisible);
 
-	item.addAction(visible);
 	item.addAction(clip);
 	item.addAction(edge);
 	item.show();

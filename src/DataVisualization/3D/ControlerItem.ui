@@ -76,6 +76,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resource/rce.qrc"/>
+ </resources>
  <connections/>
 </ui>
