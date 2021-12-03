@@ -47,6 +47,7 @@ vtkSmartPointer<vtkDataSet> DV3D::PolarPlanConstruct::creatDataset()
 	filter->SetInputData(triangle->GetOutput());
 	filter->SetResolution(72);
 	filter->SetAngle(360 / (thetaSize - 1));
+	filter->SetCapping(0);
 	filter->Update();
 	//自动计算法向
 	vtkSmartPointer<vtkPolyDataNormals> normalfilter = vtkSmartPointer<vtkPolyDataNormals>::New();

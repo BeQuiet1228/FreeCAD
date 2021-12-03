@@ -76,8 +76,11 @@ int main(int argc, char* argv[])
 	{
 	case Hdf5Data::CoordinateSystem::POLAR:
 	{
-		if (data->headList[1].find("X2=2") != std::string::npos ||
-			data->headList[1].find("X2=3") != std::string::npos)
+		std::string datastr = data->headList[1];
+		datastr.erase(std::remove_if(datastr.begin(), datastr.end(), isspace), datastr.end());
+		datastr = datastr.substr(datastr.find("=") + 1, datastr.length() - datastr.find("="));
+		auto thetaSize = atoi(datastr.c_str());
+		if (thetaSize < 12)
 			constructor = new  PolarPlanConstruct();
 		else
 			constructor = new PolarStructDaraSetConstruct();
@@ -90,8 +93,11 @@ int main(int argc, char* argv[])
 	break;
 	case Hdf5Data::CoordinateSystem::CYLINDER:
 	{
-		if (data->headList[2].find("X3=2") != std::string::npos ||
-			data->headList[2].find("X3=3") != std::string::npos)
+		std::string datastr = data->headList[2];
+		datastr.erase(std::remove_if(datastr.begin(), datastr.end(), isspace), datastr.end());
+		datastr=datastr.substr(datastr.find("=") + 1, datastr.length() - datastr.find("="));
+		auto thetaSize = atoi(datastr.c_str());
+		if (thetaSize <12)
 			constructor = new  CylinderPlanConstruct();
 		else
 			constructor = new CylinderStructDataSetConstructor();

@@ -44,11 +44,12 @@ vtkSmartPointer<vtkDataSet> DV3D::CylinderPlanConstruct::creatDataset()
 	vtkSmartPointer<vtkTriangleFilter> triangle = vtkSmartPointer<vtkTriangleFilter>::New();
 	triangle->SetInputData(polyData);
 	triangle->Update();
-	////进行旋转
+	//进行旋转
 	vtkSmartPointer<vtkRotationalExtrusionFilter> filter = vtkSmartPointer<vtkRotationalExtrusionFilter>::New();
 	filter->SetInputData(triangle->GetOutput());
 	filter->SetResolution(72);
 	filter->SetAngle(360 / (thetaSize - 1));
+	filter->SetCapping(0);
 	filter->Update();
 
 	vtkSmartPointer<vtkPolyDataNormals> normalfile = vtkSmartPointer<vtkPolyDataNormals>::New();
