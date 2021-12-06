@@ -28,6 +28,7 @@
 #include "ControlerItem.h"
 #include "ControlerAction.h"
 #include "dataSetConstructorFactory.h"
+#include "ControlerFactory.h"
 #ifndef INIT_VTK_OPENGL_AND_FRNT	//防止多次初始化模块
 #define INIT_VTK_OPENGL_AND_FRNT
 #include <vtkAutoInit.h>
@@ -64,7 +65,6 @@ int main(int argc, char* argv[])
 	if (iter == datalist.end())
 		return 0;
 
-	auto constructor = DataSetConstructorFactory::CreatConstructor(*iter);
 	
 #if 0
 	vtkSmartPointer<vtkUnstructuredGridGeometryFilter> filter = vtkSmartPointer<vtkUnstructuredGridGeometryFilter>::New();
@@ -96,16 +96,10 @@ int main(int argc, char* argv[])
 	iren->Start();
 	return a.exec();
 #endif
-	std::shared_ptr<CartesianStructActorPipeline> pipeLine(new CartesianStructActorPipeline);
-	pipeLine->setDataSet(constructor->creatDataset());
-	pipeLine->connect();
 
 	Widget3D* w3d = new Widget3D();
-	std::shared_ptr<Controler> controler(new Controler());
-	controler->setActorPipeline(pipeLine);
-	controler->setVisible(true);
-	controler->setClipEnable(true);
-	controler->setEdgeVisible(false);
+
+	auto controler = ControlerFactory::CreatControler(*iter);
 
 	ControlerItem item;
 	item.setControler(controler);

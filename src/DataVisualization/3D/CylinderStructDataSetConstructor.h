@@ -4,12 +4,12 @@
 #include"PolarStructDataSetConstructor.h"
 namespace DV3D
 {
-	class CylinderStructDataSetConstructor: public PolarStructDaraSetConstruct
+	class CylinderStructDataSetConstructor : public PolarStructDaraSetConstruct
 	{
-	public :
+	public:
 		CylinderStructDataSetConstructor();
 		~CylinderStructDataSetConstructor();
-	public :
+	public:
 		virtual PolarDatas getPolarDatas();
 		virtual PolarIndes getPolarIndex();
 	};

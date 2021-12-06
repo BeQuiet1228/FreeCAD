@@ -46,6 +46,8 @@ SET(SRC
 	action.h
 	ControlerAction.cpp
 	ControlerAction.h
+	ControlerFactory.cpp
+	ControlerFactory.h
 )
 SET( STRUCT_SRC
 	CartesianStructDataSetConstructor.cpp
@@ -60,6 +62,8 @@ SET( STRUCT_SRC
 	PolarPlanConstruct.cpp
 	CylinderPlanConstruct.h
 	CylinderPlanConstruct.cpp
+	PolarStructActorPipeline.h
+	PolarStructActorPipeline.cpp
 )
 
 SET(UI_SRC

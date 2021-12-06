@@ -22,11 +22,11 @@ namespace DV3D {
 	protected:
 		virtual PolarDatas getPolarDatas();
 		virtual PolarIndes getPolarIndex();
-		void initGridsize(unsigned long long rSize,unsigned long long thetaSize,unsigned long long zSize);
+		void initGridsize(unsigned long long rSize, unsigned long long thetaSize, unsigned long long zSize);
 	protected:
 		vtkSmartPointer<vtkPoints> points;
 		//Íø¸ñ´óÐ¡
-		unsigned long long rSize, thetaSize,zSize;
+		unsigned long long rSize, thetaSize, zSize;
 	};
 
 };
