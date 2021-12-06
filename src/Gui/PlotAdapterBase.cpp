@@ -89,13 +89,6 @@ namespace Gui
 	}
 	void PlotAdapter2D::doubleEvent(Hdf5Data h5d, std::string name)
 	{
-		App::Document* doc = App::GetApplication().getActiveDocument();
-		DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
-		if (!docM)
-		{
-			std::cerr << "DocumentManager is null from FreeCadGui void TreeViewCtrl::double_clicked_event(const QModelIndex &index)" << std::endl;
-			return;
-		}
 		//»ñÈ¡Plot
 		//²éÕÒPlot
 		auto guidoc = dynamic_cast<DocumentPic*>(Gui::Application::Instance->activeDocument());

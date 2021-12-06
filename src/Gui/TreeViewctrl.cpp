@@ -37,7 +37,6 @@ namespace Gui{
 	* @param const QModelIndex & index
 	* @return void
 	*/
-	
 	void TreeViewCtrl::on_doubleclick(const QModelIndex& index)
 	{
 		//寻找对应的hdf数据
@@ -46,6 +45,7 @@ namespace Gui{
 		auto dataItem=datainfor.find(currentItem);
 		if (dataItem == datainfor.end())
 			return;
+
 		App::Document* doc = App::GetApplication().getActiveDocument();
 		DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
 		if (!docM)
@@ -58,7 +58,19 @@ namespace Gui{
 		auto itemfunc = adapterFunc.find(currentItem);
 		if (itemfunc != adapterFunc.end())
 		{
-			itemfunc->second->doubleEvent(h5d,name);
+			itemfunc->second->doubleEvent(h5d, name);
+		}
+	}
+	void TreeViewCtrl::displayItem(QStandardItem* item,Hdf5Data& data)
+	{
+		auto dataItem = datainfor.find(item);
+		if (dataItem == datainfor.end())
+			return;
+		std::string name = item->text().toStdString();
+		auto itemfunc = adapterFunc.find(item);
+		if (itemfunc != adapterFunc.end())
+		{
+			itemfunc->second->doubleEvent(data, name);
 		}
 	}
 	/**
@@ -147,37 +159,10 @@ namespace Gui{
 	* @return void
 	* @time	2021/12/02
 	*/
-	void TreeViewCtrl::showPlotfromData(Hdf5Data data, int _type)
+	void TreeViewCtrl::showPlotfromData(Hdf5Data data, int index)
 	{
-		std::shared_ptr<DV::RendererFactory> factory = std::shared_ptr<DV::RendererFactory>(new DV::RendererFactory());
-		App::Document* doc = App::GetApplication().getActiveDocument();
-		DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
-		if (!docM)
-		{
-			std::cerr << "DocumentManager is null from FreeCadGui void TreeViewCtrl::double_clicked_event(const QModelIndex &index)" << std::endl;
-			return;
-		}
-		auto guidoc = dynamic_cast<DocumentPic*>(Gui::Application::Instance->activeDocument());
-		std::list<Gui::MDIView*> list = guidoc->getMDIViews();
-		Gui::PlotMDIView* ptr = nullptr;
-		for each (Gui::MDIView * var in list)
-		{
-			ptr = dynamic_cast<Gui::PlotMDIView*>(var);
-			if (ptr) break;
-		}
-		if (ptr == nullptr)
-		{
-			ptr = new Gui::PlotMDIView(guidoc);
-			Gui::MainWindow::getInstance()->addWindow(ptr);
-		}
-		if (structIndex > -1)
-		{
-			auto structData = docM->gethdf5dataList()[structIndex];
-			factory->setStructData(structData);
-		}
-		auto adapter = factory->creatPlotAdapter(data,(DV::DirectionType)_type);
-		ptr->setAdapter(adapter);
-		Gui::MainWindow::getInstance()->setActiveWindow(ptr);
+		auto item=fromdataManageNewData(data,index);
+		displayItem(item, data);
 	}
 };
 

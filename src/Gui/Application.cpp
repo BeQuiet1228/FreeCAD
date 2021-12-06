@@ -315,9 +315,7 @@ void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
         return;
     }
     int index=documentmanager->saveHdf5Data(data);
-    m_listTreeWidget->createIteminfo(data,index);
-    //ÏÔÊ¾ 
-    m_listTreeWidget->showPlotfromData(data,_type);
+    m_listTreeWidget->showPlotfromData(data,index);
 }
 void Application::ToStruct(Hdf5Data data)
 {		

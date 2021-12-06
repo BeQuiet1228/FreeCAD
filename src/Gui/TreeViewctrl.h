@@ -16,10 +16,9 @@ namespace Gui{
 		void on_doubleclick(const QModelIndex& index);
 		void loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist);
 		void createIteminfo(Hdf5Data& data, int index);
-		//∂¿¡¢œ‘ æ
-		//void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
-		void showPlotfromData(Hdf5Data data, int _type=0);
+		void showPlotfromData(Hdf5Data data, int index);
 	private:
+		void displayItem(QStandardItem* ,Hdf5Data&);
 		std::vector<QStandardItem*> toStructh5df(Hdf5Data& data, int index);
 		QStandardItem* fromdataManageNewData(Hdf5Data& data, int index);
 	private:
