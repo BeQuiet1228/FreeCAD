@@ -53,34 +53,12 @@ namespace Gui{
 			std::cerr << "DocumentManager is null from FreeCadGui void TreeViewCtrl::double_clicked_event(const QModelIndex &index)" << std::endl;
 			return;
 		}
-		//获取Plot
-		//查找Plot
-		auto guidoc = dynamic_cast<DocumentPic*>(Gui::Application::Instance->activeDocument());
-		std::list<Gui::MDIView*> list = guidoc->getMDIViews();
-		Gui::PlotMDIView* ptr = nullptr;
-		for each (Gui::MDIView * var in list)
+		std::string name = (index.data().toString()).toStdString();
+		auto h5d = docM->gethdf5dataList()[dataItem->second.index];
+		auto itemfunc = adapterFunc.find(currentItem);
+		if (itemfunc != adapterFunc.end())
 		{
-			ptr = dynamic_cast<Gui::PlotMDIView*>(var);
-			if (ptr) break;
-		}
-		if (ptr == nullptr)
-		{
-			ptr = new Gui::PlotMDIView(guidoc);
-			Gui::MainWindow::getInstance()->addWindow(ptr);
-		}
-		Gui::MainWindow::getInstance()->setActiveWindow(ptr);
-		if (dataItem != datainfor.end())
-		{
-			std::string name = (index.data().toString()).toStdString();
-			auto h5d=docM->gethdf5dataList()[dataItem->second.index];
-			auto itemfunc=adapterFunc.find(currentItem);
-			if (false == itemfunc->second->getIsStructData()&& structIndex>-1)
-			{
-				auto structH5d = docM->gethdf5dataList()[structIndex];
-				itemfunc->second->setStructData(structH5d);
-			}
-			auto adapter=itemfunc->second->creatPlotAdapter(h5d,name);
-			ptr->setAdapter(adapter);
+			itemfunc->second->doubleEvent(h5d,name);
 		}
 	}
 	/**
@@ -91,6 +69,11 @@ namespace Gui{
 	
 	void TreeViewCtrl::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 	{
+		auto index=DV::RendererFactory::findStructDataIndex(Hdf5Datalist);
+		if (-1 != index)
+		{
+			structIndex = index;
+		}
 		//增加清理流程
 		clear();
 		for (auto index=0;index<Hdf5Datalist.size();index++)
@@ -125,7 +108,7 @@ namespace Gui{
 		for (auto item:itemList)
 		{
 			//创建
-			std::shared_ptr<App::PlotAdapterBase> plotadapter = std::shared_ptr<App::PlotAdapterBase>(new App::PlotAdapter2D(data));
+			std::shared_ptr<PlotAdapterBase> plotadapter = std::shared_ptr<PlotAdapterBase>(new PlotAdapter2D(data));
 			adapterFunc[item]=plotadapter;
 		}
 		structIndex = index;
@@ -140,7 +123,20 @@ namespace Gui{
 	*/
 	QStandardItem* TreeViewCtrl::fromdataManageNewData(Hdf5Data& data, int index) {
 		auto item=ListTreeWidget::fromdataManageNewData(data,index);
-		std::shared_ptr<App::PlotAdapterBase> funcPtr = std::shared_ptr<App::PlotAdapterBase>(new App::PlotAdapter2D());
+		std::shared_ptr<PlotAdapterBase> funcPtr;
+		if (-1 != structIndex)
+		{
+			App::Document* doc = App::GetApplication().getActiveDocument();
+			DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
+			if (nullptr != docM)
+			{
+				auto h5dStruct = docM->gethdf5dataList()[structIndex];
+				funcPtr = std::shared_ptr<PlotAdapterBase>(new PlotAdapter2D(h5dStruct));
+				adapterFunc[item] = funcPtr;
+				return item;
+			}
+		}
+		funcPtr = std::shared_ptr<PlotAdapterBase>(new PlotAdapter2D());
 		adapterFunc[item] = funcPtr;
 		return item;
 	}

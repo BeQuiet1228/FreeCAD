@@ -3,7 +3,7 @@
 #define TREEVIEWCTRL_H_
 #include "DataVisualization/ListTreeWidget.h"
 #include "vector"
-#include"App/PlotAdapterBase.h"
+#include "PlotAdapterBase.h"
 class QStandardItem;
 namespace Gui{
 	class GuiExport TreeViewCtrl :public DV::ListTreeWidget
@@ -23,7 +23,7 @@ namespace Gui{
 		std::vector<QStandardItem*> toStructh5df(Hdf5Data& data, int index);
 		QStandardItem* fromdataManageNewData(Hdf5Data& data, int index);
 	private:
-		std::map<QStandardItem*, std::shared_ptr<App::PlotAdapterBase>> adapterFunc;
+		std::map<QStandardItem*, std::shared_ptr<PlotAdapterBase>> adapterFunc;
 		int structIndex;
 	};
 };

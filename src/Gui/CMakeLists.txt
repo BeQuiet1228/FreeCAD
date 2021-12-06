@@ -452,6 +452,8 @@ SET(FILE_FORMAT_SRC
 	FileFormatH5.cpp
 	TreeViewctrl.h
 	TreeViewctrl.cpp
+	PlotAdapterBase.h
+	PlotAdapterBase.cpp
 )
 SET(Command_SRCS
     ${Command_CPP_SRCS}
