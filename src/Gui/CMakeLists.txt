@@ -455,6 +455,16 @@ SET(FILE_FORMAT_SRC
 	PlotAdapterBase.h
 	PlotAdapterBase.cpp
 )
+SET(TREENODE_SRC
+	TreeNode.h
+	TreeNode.cpp
+	TreeNode2D.h
+	TreeNode2D.cpp
+	TreeNode3D.h
+	TreeNode3D.cpp
+	TreeNodeFactor.h
+	TreeNodeFactor.cpp
+)
 SET(Command_SRCS
     ${Command_CPP_SRCS}
     Action.h
@@ -464,6 +474,7 @@ SET(Command_SRCS
 
 SOURCE_GROUP("Command" FILES ${Command_SRCS})
 SOURCE_GROUP("FileFormatH5" FILES ${FILE_FORMAT_SRC})
+SOURCE_GROUP("treenode" FILES ${TREENODE_SRC})
 # The dialog sources
 SET(Dialog_CPP_SRCS
     Clipping.cpp
@@ -1257,6 +1268,7 @@ SET(FreeCADGui_SRCS
     ${Selection_SRCS}
     ${FreeCADGui_SRCS}
 	${FILE_FORMAT_SRC}
+	${TREENODE_SRC}
 	${MDI_SRC}
 )
 
@@ -1372,4 +1384,5 @@ else(WIN32)
         DESTINATION ${CMAKE_INSTALL_DATADIR}
     )
 endif(WIN32)
+
 

@@ -131,7 +131,7 @@ void DocumentPic::openH5File(const std::string& path)
 	DocumentManager* docm = dynamic_cast<DocumentManager*>(appDoc);
 	if (!docm)
 		return;
-	DV::ListTreeWidget* mlisttreewidget = dynamic_cast<DV::ListTreeWidget*>(Gui::MainWindow::getInstance()->mTreeWidget);
+	Gui::TreeViewCtrl* mlisttreewidget =(Gui::MainWindow::getInstance()->mTreeWidget);
 	if (!mlisttreewidget)
 	{
 		std::cerr << "ListTreeWidget is nullptr from Gui void DocumentPic::openH5File(const std::string& path)" << std::endl;
