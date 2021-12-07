@@ -185,19 +185,25 @@ namespace Gui{
 					addItem(subitem, node->Childs()[i], type);
 				}
 				int row = item->rowCount();
-				//if (row == 0 || node->Childs()[i]->nodeInfo.time < 0.0)
-				//{
-				//	item->setChild(row, subitem);
-				//}
-				//else
-				//{
-				//	//≈≈–Ú
-				//	int currow = 0;
-				//	for (int rowindex=0;rowindex)
-				//	{
-				//	}
-				//}
-				item->setChild(row, subitem);
+				if (row == 0 || node->Childs()[i]->nodeInfo.time < 0.0)
+				{
+					item->setChild(row, subitem);
+				}
+				else
+				{
+					//≈≈–Ú
+					int currow = 0;
+					for (int rowindex=0;rowindex<row;rowindex++)
+					{
+						auto currentItem = item->child(rowindex);
+						std::string currentItemstr = currentItem->text().toStdString();
+						int res = strcmp(currentItemstr.c_str(), node->Childs()[i]->nodeStr.c_str());
+						if (res<0)
+							currow = rowindex + 1;
+					}
+					item->insertRow(currow, subitem);
+				}
+				//item->setChild(row, subitem);
 				
 			}
 		}
