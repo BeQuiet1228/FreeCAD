@@ -241,7 +241,7 @@ list(APPEND QT_LIB
 	)
 if(VisualizationOf3DDLL)
 list(APPEND QT_LIB
-	VisualizationOf3D
+	#VisualizationOf3D
 	)
 endif()
 

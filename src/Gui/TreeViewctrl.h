@@ -4,6 +4,7 @@
 #include "DataVisualization/ListTreeWidget.h"
 #include "vector"
 #include "PlotAdapterBase.h"
+#include "TreeNode.h"
 class QStandardItem;
 namespace Gui{
 	class GuiExport TreeViewCtrl :public DV::ListTreeWidget
@@ -17,11 +18,14 @@ namespace Gui{
 		void loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist);
 		void createIteminfo(Hdf5Data& data, int index);
 		void showPlotfromData(Hdf5Data data, int index);
+		
 	private:
 		void displayItem(QStandardItem* ,Hdf5Data&);
-		std::vector<QStandardItem*> toStructh5df(Hdf5Data& data, int index);
-		QStandardItem* fromdataManageNewData(Hdf5Data& data, int index);
+		void  creatItem(TreeNode*,int type=2);
+		void addItem(QStandardItem*,TreeNode*,int type);
 	private:
+		std::map<std::string, QStandardItem*> parentNodes;
+		std::map<QStandardItem*, int >hdf5Indexs;
 		std::map<QStandardItem*, std::shared_ptr<PlotAdapterBase>> adapterFunc;
 		int structIndex;
 	};

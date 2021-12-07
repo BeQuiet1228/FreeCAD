@@ -14,7 +14,9 @@
 #include"VisualizationOf3D/Widget3D.h"
 #include "QDebug"
 #include"DataVisualization/RendererFactory.h"
-
+#include "TreeNodeFactor.h"
+#include "TreeNode.h"
+#include "DataVisualization/C_encoding.h"
 namespace Gui{
 	TreeViewCtrl::TreeViewCtrl(QWidget* parent):ListTreeWidget(parent){
 		structIndex = -1;
@@ -26,6 +28,9 @@ namespace Gui{
 	{
 		structIndex = -1;
 		clear();
+		parentNodes.clear();
+		hdf5Indexs.clear();
+		adapterFunc.clear();
 		//获取当前活跃的Document;
 		App::Document *doc = App::GetApplication().getActiveDocument();
 		DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
@@ -42,10 +47,9 @@ namespace Gui{
 		//寻找对应的hdf数据
 		//获取到QStandardItem*
 		QStandardItem* currentItem = goodsModel->itemFromIndex(index);
-		auto dataItem=datainfor.find(currentItem);
-		if (dataItem == datainfor.end())
+		auto dataItem= hdf5Indexs.find(currentItem);
+		if (dataItem == hdf5Indexs.end())
 			return;
-
 		App::Document* doc = App::GetApplication().getActiveDocument();
 		DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
 		if (!docM)
@@ -54,7 +58,7 @@ namespace Gui{
 			return;
 		}
 		std::string name = (index.data().toString()).toStdString();
-		auto h5d = docM->gethdf5dataList()[dataItem->second.index];
+		auto h5d = docM->gethdf5dataList()[dataItem->second];
 		auto itemfunc = adapterFunc.find(currentItem);
 		if (itemfunc != adapterFunc.end())
 		{
@@ -63,8 +67,8 @@ namespace Gui{
 	}
 	void TreeViewCtrl::displayItem(QStandardItem* item,Hdf5Data& data)
 	{
-		auto dataItem = datainfor.find(item);
-		if (dataItem == datainfor.end())
+		auto dataItem = hdf5Indexs.find(item);
+		if (dataItem == hdf5Indexs.end())
 			return;
 		std::string name = item->text().toStdString();
 		auto itemfunc = adapterFunc.find(item);
@@ -104,53 +108,105 @@ namespace Gui{
 	{
 		if (data.name.find("struct") != std::string::npos)
 		{
-			toStructh5df(data, index);
+			structIndex = index;
 		}
-		else if (data.name.find("PLANE") != std::string::npos)
-		{
-			//正投影面暂时不用
-		}
-		else//其他图
-		{
-			fromdataManageNewData(data, index);
-		}
+		auto node2D = TreeNodeFactor::GetInstance()->createTreeNode2D(data, index);
+		creatItem(node2D,2);//2维
+		delete node2D;
+
+		auto node3D = TreeNodeFactor::GetInstance()->createTreeNode3D(data, index);
+		creatItem(node3D, 3);//3维
+		delete node3D;
 	}
-	std::vector<QStandardItem*> TreeViewCtrl::toStructh5df(Hdf5Data& data, int index) {
-		auto itemList=ListTreeWidget::toStructh5df(data,index);
-		for (auto item:itemList)
+	void TreeViewCtrl::creatItem(TreeNode* node,int type)
+	{
+		if (nullptr == node)
+			return;
+		if (parentNodes.find(node->nodeStr) == parentNodes.end())
 		{
-			//创建
-			std::shared_ptr<PlotAdapterBase> plotadapter = std::shared_ptr<PlotAdapterBase>(new PlotAdapter2D(data));
-			adapterFunc[item]=plotadapter;
+			QStandardItem* parentItem = new QStandardItem(DV::GetEncodingstr(node->nodeStr.c_str(), ENCODING_GB2312));
+			int row = goodsModel->rowCount();
+			goodsModel->setItem(row,parentItem);
+			parentNodes[node->nodeStr] = parentItem;
+			addItem(parentItem, node, type);
 		}
-		structIndex = index;
-		return itemList;
-	}
-	
-	/**
-	* @brief Gui::TreeViewCtrl::fromdataManageNewData 将非结构图的2维数据生成对应的item，并保存字典
-	* @param Hdf5Data & data
-	* @param int index
-	* @return QT_NAMESPACE::QStandardItem*
-	*/
-	QStandardItem* TreeViewCtrl::fromdataManageNewData(Hdf5Data& data, int index) {
-		auto item=ListTreeWidget::fromdataManageNewData(data,index);
-		std::shared_ptr<PlotAdapterBase> funcPtr;
-		if (-1 != structIndex)
+		else
 		{
-			App::Document* doc = App::GetApplication().getActiveDocument();
-			DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
-			if (nullptr != docM)
+			auto parentItem = parentNodes.find(node->nodeStr);
+			addItem(parentItem->second,node,type);
+		}
+		return;
+	}
+	void TreeViewCtrl::addItem(QStandardItem* item, TreeNode*node,int type)
+	{
+		if (0 == node->getChilds())
+			return;
+		for (auto i = 0; i < node->getChilds(); ++i)
+		{
+			bool isBreak=false;
+			int row = item->rowCount();
+			for (auto j=0;j<row;++j)
 			{
-				auto h5dStruct = docM->gethdf5dataList()[structIndex];
-				funcPtr = std::shared_ptr<PlotAdapterBase>(new PlotAdapter2D(h5dStruct));
-				adapterFunc[item] = funcPtr;
-				return item;
+				auto subitem = item->child(j);
+				auto res = subitem->text().toStdString()==(node->Childs()[i]->nodeStr);
+				if (1==res)
+				{
+					addItem(subitem,node->Childs()[i],type);
+					isBreak = true;
+					break;
+				}
+			}
+			if (!isBreak)
+			{
+				
+				QStandardItem* subitem = new QStandardItem(DV::GetEncodingstr(node->Childs()[i]->nodeStr.c_str(), ENCODING_GB2312));
+				if (node->Childs()[i]->mTreeNodeType == TreeNodeType::TREENODE_FILE)
+				{
+					if (type == 2)
+					{
+						std::shared_ptr<PlotAdapterBase> funcPtr = std::shared_ptr<PlotAdapterBase>(new PlotAdapter2D());
+						if (-1 != structIndex)
+						{
+							App::Document* doc = App::GetApplication().getActiveDocument();
+							DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
+							if (nullptr != docM)
+							{
+								auto h5dStruct = docM->gethdf5dataList()[structIndex];
+								funcPtr->setStructData(h5dStruct);
+							}
+						}
+						adapterFunc[subitem] = funcPtr;
+						hdf5Indexs[subitem] = node->Childs()[i]->index;
+					}
+					
+				}
+				else
+				{
+					addItem(subitem, node->Childs()[i], type);
+				}
+				int row = item->rowCount();
+				if (row == 0 || node->Childs()[i]->nodeInfo.time < 0.0)
+				{
+					item->setChild(row, subitem);
+				}
+				else
+				{
+					//排序
+					int currow = 0;
+					for (int rowindex=0;rowindex<row;rowindex++)
+					{
+						auto currentItem = item->child(rowindex);
+						std::string currentItemstr = currentItem->text().toStdString();
+						int res = strcmp(currentItemstr.c_str(), node->Childs()[i]->nodeStr.c_str());
+						if (res<0)
+							currow = rowindex + 1;
+					}
+					item->insertRow(currow, subitem);
+				}
+				//item->setChild(row, subitem);
+				
 			}
 		}
-		funcPtr = std::shared_ptr<PlotAdapterBase>(new PlotAdapter2D());
-		adapterFunc[item] = funcPtr;
-		return item;
 	}
 	/**
 	* @brief Gui::TreeViewCtrl::showPlotfromData 用于直接传入hdf5data数据和类型时显示
@@ -161,8 +217,21 @@ namespace Gui{
 	*/
 	void TreeViewCtrl::showPlotfromData(Hdf5Data data, int index)
 	{
-		auto item=fromdataManageNewData(data,index);
-		displayItem(item, data);
+		createIteminfo(data,index);
+		//单独显示
+		std::vector<QStandardItem*> items;
+		for (auto iter = hdf5Indexs.begin(); iter != hdf5Indexs.end(); iter++)
+		{
+			if (iter->second == index)
+			{
+				items.push_back(iter->first);
+			}
+		}
+		if (1 == items.size())
+		{
+			auto index = items[0]->index();
+			on_doubleclick(index);
+		}
 	}
 };
 
