@@ -361,7 +361,7 @@ void MainWindow::showControlTree()
 	int index = tab->indexOf(controlTreeWidget);
 	if (index >= 0)
 		return;
-    tab->addTab(controlTreeWidget, GetEncodingstr("观测列表",ENCODING_UTF8));
+    tab->addTab(controlTreeWidget, DV::GetEncodingstr("观测列表",ENCODING_UTF8));
     tab->setCurrentWidget(controlTreeWidget);
 }
 
@@ -389,7 +389,7 @@ void MainWindow::showVisualizationTree()
 	int index = tab->indexOf(mTreeWidget);
 	if (index >= 0)
 		return;
-	tab->addTab(mTreeWidget, GetEncodingstr("文件数据", ENCODING_UTF8));
+	tab->addTab(mTreeWidget, DV::GetEncodingstr("文件数据", ENCODING_UTF8));
     tab->setCurrentWidget(mTreeWidget);
 }
 
@@ -2010,9 +2010,9 @@ void MainWindow::inittreeContor()
 	//mTreeWidget = new ListTreeWidget();
 	Gui::DockWnd::CombiView* pcCombiView = qobject_cast<Gui::DockWnd::CombiView*>(Gui::DockWindowManager::instance()->getDockWindow("Combo View"));
 	QTabWidget* _tabwidget = pcCombiView->getTabPanel();
-	ListTreeWidget* m_lisTreeWidget = new ListTreeWidget();
+	DV::ListTreeWidget* m_lisTreeWidget = new DV::ListTreeWidget();
 	int curindex = _tabwidget->count();
-	_tabwidget->insertTab(curindex, m_lisTreeWidget,GetEncodingstr("获取结果",ENCODING_GB2312));
+	_tabwidget->insertTab(curindex, m_lisTreeWidget,DV::GetEncodingstr("获取结果",ENCODING_GB2312));
 }
 //void MainWindow::DisplatPlot(Hdf5Data data, DocumentManager* ptr, int _type){
 //	std::list<Gui::MDIView*> list = Gui::Application().activeDocument()->getMDIViews();

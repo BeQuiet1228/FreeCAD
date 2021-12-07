@@ -13,28 +13,18 @@
 #include"iostream"
 #include"VisualizationOf3D/Widget3D.h"
 #include "QDebug"
-namespace Gui{
-	/**
-	* @brief  Gui::TreeViewCtrl::TreeViewCtrl 构造
-	* @param  QWidget * parent  
-	* @return   
-	*/
-	TreeViewCtrl::TreeViewCtrl(QWidget* parent):ListTreeWidget(parent){
+#include"DataVisualization/RendererFactory.h"
 
+namespace Gui{
+	TreeViewCtrl::TreeViewCtrl(QWidget* parent):ListTreeWidget(parent){
+		structIndex = -1;
 	}
-	/**
-	* @brief  Gui::TreeViewCtrl::~TreeViewCtrl 析构
-	* @return   
-	*/
 	TreeViewCtrl::~TreeViewCtrl()
 	{
 	}
-	/**
-	* @brief  Gui::TreeViewCtrl::upClear 数据清除
-	* @return void  
-	*/
 	void TreeViewCtrl::upClear()
 	{
+		structIndex = -1;
 		clear();
 		//获取当前活跃的Document;
 		App::Document *doc = App::GetApplication().getActiveDocument();
@@ -47,14 +37,15 @@ namespace Gui{
 	* @param const QModelIndex & index
 	* @return void
 	*/
-	
 	void TreeViewCtrl::on_doubleclick(const QModelIndex& index)
 	{
 		//寻找对应的hdf数据
-		QStandardItem* currenitem = goodsModel->itemFromIndex(index);
-		auto iter = datainfor.find(currenitem);
-		if (iter == datainfor.end())
+		//获取到QStandardItem*
+		QStandardItem* currentItem = goodsModel->itemFromIndex(index);
+		auto dataItem=datainfor.find(currentItem);
+		if (dataItem == datainfor.end())
 			return;
+
 		App::Document* doc = App::GetApplication().getActiveDocument();
 		DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
 		if (!docM)
@@ -62,95 +53,117 @@ namespace Gui{
 			std::cerr << "DocumentManager is null from FreeCadGui void TreeViewCtrl::double_clicked_event(const QModelIndex &index)" << std::endl;
 			return;
 		}
-		//获取plot
-		//查找plot
-		auto guidoc = dynamic_cast<DocumentPic*>(Gui::Application::Instance->activeDocument());
-		std::list<Gui::MDIView*> list = guidoc->getMDIViews();
-		Gui::PlotMDIView* ptr = nullptr;
-		for each (Gui::MDIView * var in list)
+		std::string name = (index.data().toString()).toStdString();
+		auto h5d = docM->gethdf5dataList()[dataItem->second.index];
+		auto itemfunc = adapterFunc.find(currentItem);
+		if (itemfunc != adapterFunc.end())
 		{
-			ptr = dynamic_cast<Gui::PlotMDIView*>(var);
-			if (ptr) break;
+			itemfunc->second->doubleEvent(h5d, name);
 		}
-		if (ptr == nullptr)
+	}
+	void TreeViewCtrl::displayItem(QStandardItem* item,Hdf5Data& data)
+	{
+		auto dataItem = datainfor.find(item);
+		if (dataItem == datainfor.end())
+			return;
+		std::string name = item->text().toStdString();
+		auto itemfunc = adapterFunc.find(item);
+		if (itemfunc != adapterFunc.end())
 		{
-			ptr = new Gui::PlotMDIView(guidoc);
-			//Gui::PlotMDIView* plot = new Gui::PlotMDIView(*guidoc);
-			Gui::MainWindow::getInstance()->addWindow(ptr);
-			docM->bindTreeContrue(nullptr, ptr->GetViewPtr());
-		}
-		else
-		{
-			docM->bindTreeContrue(nullptr, ptr->GetViewPtr());
-		}
-		//确保当前页面为活动页
-		MainWindow::getInstance()->setActiveWindow(ptr);
-		if (iter != datainfor.end())
-		{
-			//传入hdf5数据
-			std::string name = (index.data().toString()).toStdString();
-			docM->_ToRenderer(name, iter->second.index);
+			itemfunc->second->doubleEvent(data, name);
 		}
 	}
 	/**
-	* @brief Gui::TreeViewCtrl::soltFromWidget 获取窗口指针
-	* @param QWidget * wid3D
+	* @brief Gui::TreeViewCtrl::loadHdflist 读取hdf5数据组，批量生成Item
+	* @param std::vector<Hdf5Data> & Hdf5Datalist
 	* @return void
 	*/
 	
-	void TreeViewCtrl::soltFromWidget(QWidget* wid3D)
+	void TreeViewCtrl::loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist)
 	{
-		App::Document* doc = App::GetApplication().getActiveDocument();
-		DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
-		if (!docM)
+		auto index=DV::RendererFactory::findStructDataIndex(Hdf5Datalist);
+		if (-1 != index)
 		{
-			std::cerr << "DocumentManager is null from FreeCadGui void TreeViewCtrl::double_clicked_event(const QModelIndex &index)" << std::endl;
-			return;
+			structIndex = index;
 		}
-		
-		//获取
-		auto guidoc = dynamic_cast<DocumentPic*>(Gui::Application::Instance->activeDocument());
-		std::list<Gui::MDIView*> list = guidoc->getMDIViews();
-		Gui::PlanMDIView* ptr = nullptr;
-		for each (Gui::MDIView * var in list)
+		//增加清理流程
+		clear();
+		for (auto index=0;index<Hdf5Datalist.size();index++)
 		{
-			ptr = dynamic_cast<Gui::PlanMDIView*>(var);
-			if (ptr) break;
+			createIteminfo(Hdf5Datalist[index],index);
 		}
-		if (nullptr == wid3D)
+	}
+	/**
+	* @brief Gui::TreeViewCtrl::createIteminfo 根据传入的数据和id生成item，并保存到内部字典
+	* @param Hdf5Data & data
+	* @param int index
+	* @return void
+	*/
+	
+	void TreeViewCtrl::createIteminfo(Hdf5Data& data, int index)
+	{
+		if (data.name.find("struct") != std::string::npos)
 		{
-			if (nullptr == ptr)
+			toStructh5df(data, index);
+		}
+		else if (data.name.find("PLANE") != std::string::npos)
+		{
+			//正投影面暂时不用
+		}
+		else//其他图
+		{
+			fromdataManageNewData(data, index);
+		}
+	}
+	std::vector<QStandardItem*> TreeViewCtrl::toStructh5df(Hdf5Data& data, int index) {
+		auto itemList=ListTreeWidget::toStructh5df(data,index);
+		for (auto item:itemList)
+		{
+			//创建
+			std::shared_ptr<PlotAdapterBase> plotadapter = std::shared_ptr<PlotAdapterBase>(new PlotAdapter2D(data));
+			adapterFunc[item]=plotadapter;
+		}
+		structIndex = index;
+		return itemList;
+	}
+	
+	/**
+	* @brief Gui::TreeViewCtrl::fromdataManageNewData 将非结构图的2维数据生成对应的item，并保存字典
+	* @param Hdf5Data & data
+	* @param int index
+	* @return QT_NAMESPACE::QStandardItem*
+	*/
+	QStandardItem* TreeViewCtrl::fromdataManageNewData(Hdf5Data& data, int index) {
+		auto item=ListTreeWidget::fromdataManageNewData(data,index);
+		std::shared_ptr<PlotAdapterBase> funcPtr;
+		if (-1 != structIndex)
+		{
+			App::Document* doc = App::GetApplication().getActiveDocument();
+			DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
+			if (nullptr != docM)
 			{
-				return;
+				auto h5dStruct = docM->gethdf5dataList()[structIndex];
+				funcPtr = std::shared_ptr<PlotAdapterBase>(new PlotAdapter2D(h5dStruct));
+				adapterFunc[item] = funcPtr;
+				return item;
 			}
-			else
-			{
-				MainWindow::getInstance()->setActiveWindow(ptr);
-			}
-			return;
 		}
-		if (nullptr == ptr)
-		{
-			ptr = new Gui::PlanMDIView(guidoc);
-			ptr->setWidget(wid3D);
-			Gui::MainWindow::getInstance()->addWindow(ptr);
-		}
-		else
-			ptr->setWidget(wid3D);
-		BaseWidget* baseWidget = dynamic_cast<BaseWidget*>(wid3D);
-		auto items = baseWidget->GetTreeItems();
-		QStandardItem* currenitem = goodsModel->itemFromIndex(m_TreeView->currentIndex());
-		if (currenitem->hasChildren() > 0)
-		{
-			currenitem->removeRows(0, currenitem->rowCount());
-		}
-		for (auto iter = items.begin(); iter != items.end(); iter++)
-		{
-			int subrow = currenitem->rowCount();
-			currenitem->setChild(subrow, *iter);
-		}
-		connect(goodsModel, SIGNAL(itemChanged(QStandardItem*)), baseWidget, SLOT(slotitemStateChange(QStandardItem*)));
-		MainWindow::getInstance()->setActiveWindow(ptr);
+		funcPtr = std::shared_ptr<PlotAdapterBase>(new PlotAdapter2D());
+		adapterFunc[item] = funcPtr;
+		return item;
+	}
+	/**
+	* @brief Gui::TreeViewCtrl::showPlotfromData 用于直接传入hdf5data数据和类型时显示
+	* @param Hdf5Data data
+	* @param int _type
+	* @return void
+	* @time	2021/12/02
+	*/
+	void TreeViewCtrl::showPlotfromData(Hdf5Data data, int index)
+	{
+		auto item=fromdataManageNewData(data,index);
+		displayItem(item, data);
 	}
 };
+
 #include"moc_TreeViewctrl.cpp"

@@ -395,7 +395,7 @@ background-color: rgb(255, 255, 255);
       <enum>QTabWidget::Triangular</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -987,7 +987,7 @@ background-color: rgb(255, 255, 255);
            </widget>
           </item>
           <item row="1" column="0" colspan="2">
-           <layout class="QVBoxLayout" name="verticalLayout_3">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_4">
               <item>
@@ -1633,6 +1633,99 @@ background-color: rgb(255, 255, 255);
               </item>
              </layout>
             </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_17">
+              <item>
+               <widget class="QLabel" name="label_26">
+                <property name="minimumSize">
+                 <size>
+                  <width>100</width>
+                  <height>15</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>100</width>
+                  <height>15</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>真空：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="VacuoColor">
+                <property name="minimumSize">
+                 <size>
+                  <width>87</width>
+                  <height>21</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>87</width>
+                  <height>21</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_27">
+                <property name="minimumSize">
+                 <size>
+                  <width>36</width>
+                  <height>23</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>26</width>
+                  <height>23</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>pen:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="VacuolineColor">
+                <property name="minimumSize">
+                 <size>
+                  <width>87</width>
+                  <height>21</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>87</width>
+                  <height>21</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_12">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
            </layout>
           </item>
           <item row="2" column="0">
@@ -1709,7 +1802,7 @@ background-color: rgb(255, 255, 255);
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>377</height>
+              <height>346</height>
              </size>
             </property>
            </spacer>

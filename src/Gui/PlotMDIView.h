@@ -6,7 +6,11 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/signals.hpp>
 #include <boost/signals2.hpp>
-class Plot;
+namespace DV
+{
+	class Plot;
+	class PlotAdapter;
+};
 namespace Gui{
 	
 	class MDIView;
@@ -17,18 +21,18 @@ namespace Gui{
 	public:
 		PlotMDIView(DocumentPic *_doc, QWidget* parent = 0);
 		~PlotMDIView();
-		Plot* GetViewPtr();
+		DV::Plot* GetViewPtr();
 		virtual bool onMsg(const char* pMsg, const char** ppReturn) override;
 		virtual bool onHasMsg(const char* pMsg) const override;
-
+		void setAdapter(const std::shared_ptr < DV::PlotAdapter>& adapter);
 		//ªÒ»°plot÷∏’Î
-		Plot* getPlot() {
+		DV::Plot* getPlot() {
 			return plot;
 		}
 	protected:
 		void resizeEvent(QResizeEvent*);
 	private:
-		Plot* plot;
+		DV::Plot* plot;
 	};
 }
 #endif

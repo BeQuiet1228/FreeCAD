@@ -23,8 +23,8 @@ void AlgorMDIInter::closeEvent(QCloseEvent* e)
 		//弹出提示框
 		QMessageBox::StandardButton result = QMessageBox::information(
 			nullptr,
-			GetEncodingstr("提示",ENCODING_GB2312),
-			GetEncodingstr("程序正在运行,是否关闭?",ENCODING_GB2312), QMessageBox::Yes|QMessageBox::No);
+			DV::GetEncodingstr("提示",ENCODING_GB2312),
+			DV::GetEncodingstr("程序正在运行,是否关闭?",ENCODING_GB2312), QMessageBox::Yes|QMessageBox::No);
 		switch (result)
 		{
 		case QMessageBox::Yes:
