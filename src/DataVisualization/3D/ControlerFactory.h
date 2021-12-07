@@ -1,10 +1,11 @@
 #pragma once
 #include <memory>
 #include <string>
+#include "DataVisualization3DExport.hpp"
 class Hdf5Data;
 namespace DV3D {
 	class Controler;
-	class ControlerFactory {
+	class DATA_VISUALIZATION_3D_EXPORT ControlerFactory {
 
 	public:
 		ControlerFactory() = default;

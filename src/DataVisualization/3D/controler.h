@@ -1,9 +1,10 @@
 #pragma once
-#include <object.h>
+#include "object.h"
 #include <memory>
 #include <vtkSmartPointer.h>
 #include <vtkActor.h>
 #include <vtkPlane.h>
+#include "DataVisualization3DExport.hpp"
 namespace DV3D {
 	class ActorPipemline;
 	class Widget3D;
@@ -15,7 +16,7 @@ namespace DV3D {
 	并且为ActorPipeline提供对外操作的接口，可控制其中的管道顺序及中间过程的增加和减少
 	*/
 
-	class Controler :public Object {
+	class DATA_VISUALIZATION_3D_EXPORT Controler :public Object {
 		friend class Widget3D;
 	public:
 		Controler();

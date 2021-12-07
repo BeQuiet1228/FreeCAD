@@ -44,6 +44,7 @@ include_directories(
     ${XercesC_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIR}
     ${3DCONNEXION_INCLUDE_DIR}
+	${VTK_INCLUDE_DIRS}
 )
 
 if(MSVC)
@@ -54,6 +55,7 @@ if(MSVC)
          ${OPENGL_gl_LIBRARY}
 		 Editor
          transition
+		 DataVisualization3D
     )
 	if(contorl_client_dll)
 	list(APPEND FreeCADGui_LIBS
@@ -336,6 +338,7 @@ set(Gui_MOC_HDRS
     PlaneMDIView.h
 	TreeViewctrl.h
     MDIEditView.h
+	DataVisualization3dView.h
 )
 
 fc_wrap_cpp(Gui_MOC_SRCS ${Gui_MOC_HDRS})
@@ -1223,6 +1226,8 @@ SET(MDI_SRC
 	View3dMDI.h
     PlaneMDIView.h
     PlaneMDIView.cpp
+	DataVisualization3dView.cpp
+	DataVisualization3dView.h
 )
 
 source_group("MDIView" FILES ${MDI_SRC})

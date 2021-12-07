@@ -7,6 +7,7 @@
 #include <vtkActor.h>
 #include <QVBoxLayout>
 #include <map>
+#include "DataVisualization3DExport.hpp"
 namespace DV3D {
 	class Controler;
 }
@@ -15,10 +16,10 @@ namespace DV3D {
 		3D窗口类
 		提供窗口布局，及交互方式
 	*/
-	class Widget3D :public QWidget {
+	class DATA_VISUALIZATION_3D_EXPORT Widget3D :public QWidget {
 		friend class Controler;
 	public:
-		Widget3D();
+		Widget3D(QWidget* parent = 0);
 		~Widget3D();
 
 	public:

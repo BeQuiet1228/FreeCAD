@@ -1,7 +1,9 @@
 #include "widget3D.h"
 #include "controler.h"
 #include <vtkCamera.h>
-DV3D::Widget3D::Widget3D()
+
+DV3D::Widget3D::Widget3D(QWidget* parent /*= 0*/)
+	:QWidget(parent)
 {
 	renderer = vtkSmartPointer<vtkRenderer>::New();
 	renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
@@ -9,7 +11,7 @@ DV3D::Widget3D::Widget3D()
 	viewer3d = new QVTKWidget(this);
 	viewer3d->SetRenderWindow(renderWindow);
 
-	renderer->SetBackground(0.0,0.0,0.0);
+	renderer->SetBackground(0.0, 0.0, 0.0);
 	renderer->ResetCamera();
 	renderer->GetActiveCamera()->Elevation(60.0);
 	renderer->GetActiveCamera()->Azimuth(30.0);
@@ -20,7 +22,7 @@ DV3D::Widget3D::Widget3D()
 
 DV3D::Widget3D::~Widget3D()
 {
-	
+	unbingAllControler();
 }
 
 /**
@@ -47,8 +49,12 @@ void DV3D::Widget3D::unbing(Controler* controler)
 
 void DV3D::Widget3D::unbingAllControler()
 {
-	for (auto iter = controlerActor.begin(); iter != controlerActor.end(); iter++)
+	while (controlerActor.size()!=0)
+	{
+		auto iter = controlerActor.begin();
 		unbing(iter->first);
+	}
+		
 }
 
 void DV3D::Widget3D::reRender()

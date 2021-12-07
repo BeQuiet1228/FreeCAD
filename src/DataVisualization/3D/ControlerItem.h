@@ -3,6 +3,7 @@
 #include <memory>
 #include <QToolButton>
 #include <map>
+#include "DataVisualization3DExport.hpp"
 namespace Ui {
 	class ControlerItem ;
 }
@@ -12,7 +13,7 @@ namespace DV3D {
 
 	using ToolButtonMap = std::map<QToolButton*, std::shared_ptr<ControlerAction>>;
 
-	class ControlerItem :public QWidget{
+	class DATA_VISUALIZATION_3D_EXPORT ControlerItem :public QWidget{
 		Q_OBJECT
 	public:
 		ControlerItem(QWidget* parent =0);

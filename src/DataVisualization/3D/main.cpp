@@ -99,17 +99,10 @@ int main(int argc, char* argv[])
 
 	Widget3D* w3d = new Widget3D();
 
-	auto controler = ControlerFactory::CreatControler(*iter);
+	ControlerFactory controlerFactor;
+	auto controler = controlerFactor.CreatControler(*iter);
 
-	ControlerItem item;
-	item.setControler(controler);
 
-	std::shared_ptr<ControlerClipEnable> clip(new ControlerClipEnable);
-	std::shared_ptr<ControlerEdgeVisible> edge(new ControlerEdgeVisible);
-
-	item.addAction(clip);
-	item.addAction(edge);
-	item.show();
 
 	w3d->binding(controler.get());
 	w3d->show();
