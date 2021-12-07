@@ -21,8 +21,12 @@ namespace Gui{
 		
 	private:
 		void displayItem(QStandardItem* ,Hdf5Data&);
-		void  creatItem(TreeNode*,int type=2);
-		void addItem(QStandardItem*,TreeNode*,int type);
+		void  creatItem(TreeNode&,int type=2);
+		void addItem(QStandardItem*,TreeNode& ,int type);
+		int judgeNewNode(QStandardItem* item, TreeNode& node, int type);
+		QStandardItem* creatNewNode(TreeNode& node);
+		void addMap(QStandardItem* item, TreeNode& node, int type);
+		void sortNode(QStandardItem* item, QStandardItem* subitem);
 	private:
 		std::map<std::string, QStandardItem*> parentNodes;
 		std::map<QStandardItem*, int >hdf5Indexs;

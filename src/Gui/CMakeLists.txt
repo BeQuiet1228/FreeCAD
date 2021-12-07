@@ -458,12 +458,12 @@ SET(FILE_FORMAT_SRC
 SET(TREENODE_SRC
 	TreeNode.h
 	TreeNode.cpp
-	TreeNode2D.h
-	TreeNode2D.cpp
-	TreeNode3D.h
-	TreeNode3D.cpp
-	TreeNodeFactor.h
-	TreeNodeFactor.cpp
+	TreeNodeManager.h
+	TreeNodeManager.cpp
+	#TreeNode3D.h
+	#TreeNode3D.cpp
+	#TreeNodeFactor.h
+	#TreeNodeFactor.cpp
 )
 SET(Command_SRCS
     ${Command_CPP_SRCS}
