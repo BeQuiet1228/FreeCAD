@@ -18,6 +18,11 @@
 #include "TreeNode.h"
 #include "DataVisualization/C_encoding.h"
 namespace Gui{
+	//ͼ�꣺
+	QString Treeicon[] = { 
+		QString::fromStdString(":/Tree/TreeFile1.png"),
+		QString::fromStdString(":/Tree/TreeFile2.png") 
+	};
 	TreeViewCtrl::TreeViewCtrl(QWidget* parent):ListTreeWidget(parent){
 		structIndex = -1;
 	}
@@ -124,7 +129,7 @@ namespace Gui{
 			return;
 		if (parentNodes.find(node->nodeStr) == parentNodes.end())
 		{
-			QStandardItem* parentItem = new QStandardItem(DV::GetEncodingstr(node->nodeStr.c_str(), ENCODING_GB2312));
+			QStandardItem* parentItem = new QStandardItem(QIcon(Treeicon[0]),DV::GetEncodingstr(node->nodeStr.c_str(), ENCODING_GB2312));
 			int row = goodsModel->rowCount();
 			goodsModel->setItem(row,parentItem);
 			parentNodes[node->nodeStr] = parentItem;
@@ -158,8 +163,21 @@ namespace Gui{
 			}
 			if (!isBreak)
 			{
+				QStandardItem* subitem;
+				switch (node->Childs()[i]->mTreeNodeType)
+				{
+				case TreeNodeType::TREENODE_FILE:
+				{
+					subitem=new QStandardItem(QIcon(Treeicon[1]),DV::GetEncodingstr(node->Childs()[i]->nodeStr.c_str(), ENCODING_GB2312));
+				}
+				break;
+				case TreeNodeType::TREENODE_FOLDER:
+				{
+					subitem = new QStandardItem(QIcon(Treeicon[0]),DV::GetEncodingstr(node->Childs()[i]->nodeStr.c_str(), ENCODING_GB2312));
+				}
+				break;
+				}
 				
-				QStandardItem* subitem = new QStandardItem(DV::GetEncodingstr(node->Childs()[i]->nodeStr.c_str(), ENCODING_GB2312));
 				if (node->Childs()[i]->mTreeNodeType == TreeNodeType::TREENODE_FILE)
 				{
 					if (type == 2)
