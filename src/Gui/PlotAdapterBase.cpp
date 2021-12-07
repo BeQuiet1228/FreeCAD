@@ -4,9 +4,6 @@
 #include "App/DocumentDataManager.h"
 #include "PlotMDIView.h"
 #include "MainWindow.h"
-#include "DataVisualization3dView.h"
-#include "DataVisualization/3D/ControlerFactory.h"
-#include "DataVisualization/3D/controler.h"
 namespace Gui
 {
 	struct structDirectType {
@@ -82,17 +79,6 @@ namespace Gui
 					break;
 				}
 			}
-
-			DV3D::ControlerFactory controlerFactor;
-
-			static auto controler = DV3D::ControlerFactory::CreatControler(h5d);
-			auto doc = Gui::Application::Instance->activeDocument();
-			auto dd = dynamic_cast<DocumentPic*>(doc);
-
-			auto viewer3D = new Gui::DataVisualizationView(dd);
-			Gui::getMainWindow()->addWindow(viewer3D);
-			viewer3D->getWidget3D()->binding(controler.get());
-
 			return factoryPtr->creatPlotAdapter(h5d, type);
 		}
 		return factoryPtr->creatPlotAdapter(h5d);

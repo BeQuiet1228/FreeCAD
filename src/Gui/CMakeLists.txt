@@ -411,8 +411,10 @@ SET(Gui_UIC_SRCS
     TaskView/TaskSelectLinkProperty.ui
     MainWindowDef.ui
 	picgui_ribbon/MainWindow.ui
-        picgui_ribbon/PICRibbonButtonGroup.ui
-        picgui_ribbon/PICRibbonTabContent.ui
+    picgui_ribbon/PICRibbonButtonGroup.ui
+    picgui_ribbon/PICRibbonTabContent.ui
+	ControlerItemListWidget.ui
+	
 )
 
 SET(Gui_RES_SRCS
@@ -457,6 +459,10 @@ SET(FILE_FORMAT_SRC
 	TreeViewctrl.cpp
 	PlotAdapterBase.h
 	PlotAdapterBase.cpp
+	Item3DDoubleClickEvent.cpp
+	Item3DDoubleClickEvent.h
+	ControlerItemListWidget.cpp
+	ControlerItemListWidget.h
 )
 SET(Command_SRCS
     ${Command_CPP_SRCS}
