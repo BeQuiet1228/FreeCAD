@@ -1,5 +1,5 @@
 #include "PreCompiled.h"
-#include "TreeNode2D.h"
+#include "TreeNodeManager.h"
 #include "sstream"
 #include "qstring.h"
 namespace Gui
@@ -56,27 +56,26 @@ namespace Gui
 "Z-R",
 "R*cos(Phi)-R*sin(Phi)" };
 	std::string Structdirection_cartesian[3] = { "X_Y", "Y_Z", "X_Z" };
-	TreeNode2D::TreeNode2D() {
+	TreeNodeManager::TreeNodeManager() {
 	}
-	TreeNode2D::~TreeNode2D() {
+	TreeNodeManager::~TreeNodeManager() {
 
 	}
-	TreeNode* TreeNode2D::createNodeInfo(Hdf5Data& data, int index) {
+	TreeNode TreeNodeManager::createNodeInfo2D(Hdf5Data& data, int index) {
 		if (data.name.find("struct") != std::string::npos) {
 			return toStructNode(data, index);
 		}
 		else if (data.name.find("PLANE") != std::string::npos) {
-			return nullptr;
+			//不做处理
+			TreeNode node;
+			return node;
 		}
 		else {
 			//其他图
 			return toOtherNode(data, index);
 		}
 	}
-	TreeNode* TreeNode2D::createNodeInfo(std::vector<Hdf5Data>& hdf5dataList) {
-		return nullptr;
-	}
-	std::string TreeNode2D::getType(std::string name)
+	std::string TreeNodeManager::getType(std::string name)
 	{
 		for (auto i = 0; i < MAX_TYPE_NUMBER; i++)
 		{
@@ -87,16 +86,15 @@ namespace Gui
 		}
 		return "未知图";
 	}
-	TreeNode* TreeNode2D::toStructNode(Hdf5Data& data, int index, TreeNode* node)
+	TreeNode TreeNodeManager::toStructNode(Hdf5Data& data, int index)
 	{
-		if (node == nullptr)
-			node = new TreeNode;
+		TreeNode node;
 		NodeInfo mNodeInfo;
 		mNodeInfo.index = index;
 		if (data.name.find("struct") == std::string::npos)
-			return nullptr;
+			return node;
 		std::string dataType = getType(data.name);
-		node->initNode(dataType, TreeNodeType::TREENODE_FOLDER);
+		node.initNode(dataType, TreeNodeType::TREENODE_FOLDER);
 		//判断是2维的还是3维的
 		if (data.listDataSet.size() > 3)
 		{
@@ -106,9 +104,8 @@ namespace Gui
 			{
 				for each (std::string var in Structdirection_cartesian)
 				{
-					TreeNode* subNode = new TreeNode;
-					subNode->initNode(var, TreeNodeType::TREENODE_FILE, index);
-					node->addChild(subNode);
+					TreeNode subNode(var, TreeNodeType::TREENODE_FILE, index);
+					node.addChild(subNode);
 				}
 			}
 			break;
@@ -117,9 +114,8 @@ namespace Gui
 			{
 				for each (std::string var in Structdirection)
 				{
-					TreeNode* subNode = new TreeNode;
-					subNode->initNode(var, TreeNodeType::TREENODE_FILE, index);
-					node->addChild(subNode);
+					TreeNode subNode(var, TreeNodeType::TREENODE_FILE, index);
+					node.addChild(subNode);
 				}
 			}
 			break;
@@ -134,21 +130,19 @@ namespace Gui
 			int pos1 = structstr.find("$");
 			int pos2 = structstr.find("$", pos1 + 1);
 			structstr = structstr.substr(pos1 + 1, pos2 - pos1 - 1);
-			TreeNode* subNode = new TreeNode;
-			subNode->initNode(structstr, TreeNodeType::TREENODE_FILE, index);
-			node->addChild(subNode);
+			TreeNode subNode(structstr, TreeNodeType::TREENODE_FILE, index);
+			node.addChild(subNode);
 		}
 		return node;
 	}
-	TreeNode* TreeNode2D::toOtherNode(Hdf5Data& data, int index, TreeNode* node)
+	TreeNode TreeNodeManager::toOtherNode(Hdf5Data& data, int index)
 	{
-		if (node == nullptr)
-			node = new TreeNode;
+		TreeNode node;
 		std::string datatype = getType(data.name);
 		//若是未知的图不做处理
 		if (datatype.find("未知图") != std::string::npos)
-			return nullptr;
-		node->initNode(datatype, TreeNodeType::TREENODE_FOLDER);
+			return node;
+		node.initNode(datatype, TreeNodeType::TREENODE_FOLDER);
 
 		NodeInfo mNodeInfo;
 		mNodeInfo.index = index;
@@ -304,11 +298,22 @@ namespace Gui
 		break;
 		}
 		//子节点下分类字符串
-		TreeNode* node1 = new TreeNode(replaceStr(ss.str()), TreeNodeType::TREENODE_FOLDER);
-		TreeNode* node2 = new TreeNode(replaceStr(subss.str()),TreeNodeType::TREENODE_FILE,index);
-		node->addChild(node1);
-		node1->addChild(node2);
-		node2->nodeInfo=mNodeInfo;
+		TreeNode node1(replaceStr(ss.str()), TreeNodeType::TREENODE_FOLDER);
+		TreeNode node2(replaceStr(subss.str()),TreeNodeType::TREENODE_FILE,index);
+		node2.nodeInfo = mNodeInfo;
+		node1.addChild(node2);
+		node.addChild(node1);
+		return node;
+	}
+	TreeNodeManager* TreeNodeManager::GetInstance()
+	{
+		static TreeNodeManager instance;
+		return &instance;
+	}
+
+	TreeNode TreeNodeManager::createNodeInfo3D(Hdf5Data& data, int index)
+	{
+		TreeNode node;
 		return node;
 	}
 };

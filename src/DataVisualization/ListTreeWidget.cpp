@@ -18,7 +18,7 @@ namespace DV {
 		m_TreeView->setModel(goodsModel);
 		m_TreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 		connect(m_TreeView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(on_doubleclick(const QModelIndex&)));
-	}
+	};
 	ListTreeWidget::~ListTreeWidget() {
 	}
 	/**
