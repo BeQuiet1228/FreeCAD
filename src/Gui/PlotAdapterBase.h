@@ -16,7 +16,7 @@ namespace Gui
 		~PlotAdapterBase() = default;
 	public:
 		virtual void doubleEvent(Hdf5Data h5d, std::string name) = 0;
-		virtual void setStructData(Hdf5Data& data) = 0;
+		virtual void setStructData(Hdf5Data& data) {};
 		bool getIsStructData();
 	protected:
 		DataType mdatatype;

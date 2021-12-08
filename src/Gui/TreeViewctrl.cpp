@@ -16,6 +16,7 @@
 #include"DataVisualization/RendererFactory.h"
 #include"TreeNodeManager.h"
 #include "DataVisualization/C_encoding.h"
+#include "Item3DDoubleClickEvent.h"
 namespace Gui {
 	//ͼ�꣺
 	QString Treeicon[] = {
@@ -210,7 +211,7 @@ namespace Gui {
 		else if (3 == type)
 		{
 			//3ά
-			return;
+			funcPtr.reset(new Item3DDoubleClickEvent());
 		}
 		adapterFunc[item] = funcPtr;
 		hdf5Indexs[item] = node.index;

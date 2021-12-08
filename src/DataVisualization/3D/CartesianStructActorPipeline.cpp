@@ -2,6 +2,7 @@
 #include <vtkDataSetMapper.h>
 #include <vtkProperty.h>
 #include"vtk-7.0/vtkMapper.h"
+#include <vtkPolyDataNormals.h>
 DV3D::CartesianStructActorPipeline::CartesianStructActorPipeline()
 {
 	auto ac = vtkSmartPointer<vtkActor>::New();
@@ -24,6 +25,7 @@ void DV3D::CartesianStructActorPipeline::update()
 void DV3D::CartesianStructActorPipeline::connect()
 {
 	connectClipperToMapper(getDataSet());
+
 	auto mp = getMapper();
 	mp->ScalarVisibilityOff();
 	mp->Update();

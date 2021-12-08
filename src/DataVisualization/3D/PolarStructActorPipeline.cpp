@@ -16,7 +16,7 @@ DV3D::PolarStructActorPipeline::~PolarStructActorPipeline()
 
 }
 void DV3D::PolarStructActorPipeline::update() {
-
+	connect();
 }
 void DV3D::PolarStructActorPipeline::connect() {
 
@@ -27,8 +27,8 @@ void DV3D::PolarStructActorPipeline::connect() {
 	filter->MergingOn();
 	filter->Update();
 
+	connectClipperToMapper(filter->GetOutputPort());
 	auto mp = getMapper();
-	mp->SetInputConnection(filter->GetOutputPort());
 	mp->ScalarVisibilityOff();
 	mp->Update();
 

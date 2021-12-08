@@ -25,46 +25,44 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucControler(Hdf
 {
 
 	std::shared_ptr<Controler> controler;
+	std::shared_ptr<DataSetConstructorH5> constructor;
+	std::shared_ptr<ActorPipemline> pipeline;
 
 	if (Hdf5Data::CoordinateSystem::CARTESIAN == h5data.coordinateSystem)
 	{
-		CartesianStructDataSetConstructor constructor;
-		constructor.setHdf5Data(h5data);
-		std::shared_ptr<ActorPipemline> pipeline(new CartesianStructActorPipeline);
-		pipeline->setDataSet(constructor.creatDataset());
-		pipeline->connect();
-		controler.reset(new Controler());
-		controler->setActorPipeline(pipeline);
+		constructor.reset(new CartesianStructDataSetConstructor());
+		pipeline.reset(new CartesianStructActorPipeline);
 	}
 	else if (Hdf5Data::CoordinateSystem::POLAR == h5data.coordinateSystem)
 	{
-		std::shared_ptr<DataSetConstructorH5> constructor;
+		
 		if (findStringAttribute(h5data.headList.at(1)) > 20)
+		{
 			constructor.reset(new PolarStructDaraSetConstruct());
-		else
+			pipeline.reset(new CartesianStructActorPipeline());
+		}else {
 			constructor.reset(new PolarPlanConstruct());
-		constructor->setHdf5Data(h5data);
-		std::shared_ptr<ActorPipemline> pipeline(new PolarStructActorPipeline());
-		pipeline->setDataSet(constructor->creatDataset());
-		pipeline->connect();
-		controler.reset(new Controler());
-		controler->setActorPipeline(pipeline);
+			pipeline.reset(new PolarStructActorPipeline);
+		}
 	}
 	else if (Hdf5Data::CoordinateSystem::CYLINDER == h5data.coordinateSystem)
 	{
-		std::shared_ptr<DataSetConstructorH5> constructor;
 		if (findStringAttribute(h5data.headList.at(2)) > 20)
+		{
 			constructor.reset(new CylinderStructDataSetConstructor());
-		else
-			constructor.reset( new CylinderPlanConstruct());
-		constructor->setHdf5Data(h5data);
-		std::shared_ptr<ActorPipemline> pipeline(new PolarStructActorPipeline());
-		pipeline->setDataSet(constructor->creatDataset());
-		pipeline->connect();
-		controler.reset(new Controler());
-		controler->setActorPipeline(pipeline);
+			pipeline.reset(new CartesianStructActorPipeline());
+		}else{
+			constructor.reset(new CylinderPlanConstruct());
+			pipeline.reset(new PolarStructActorPipeline());
+		}
+	}else {
+		assert(true && "unknown coordinate system!");
 	}
-	
+	constructor->setHdf5Data(h5data);
+	pipeline->setDataSet(constructor->creatDataset());
+	pipeline->connect();
+	controler.reset(new Controler());
+	controler->setActorPipeline(pipeline);
 	
 	return controler;
 }

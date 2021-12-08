@@ -10,6 +10,7 @@ Gui::ControlerItemListWidget::ControlerItemListWidget(QWidget* parent /*= 0*/)
 void Gui::ControlerItemListWidget::addWidget(QWidget* widget)
 {
 	auto item = new QListWidgetItem();
+	item->setSizeHint(widget->size());
 	ui->listWidget->addItem(item);
 	ui->listWidget->setItemWidget(item, widget);
 }

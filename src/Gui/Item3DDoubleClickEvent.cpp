@@ -12,13 +12,23 @@
 #include "MainWindow.h"
 #include <mutex>
 #include <cassert>
+#include <QDockWidget>
+#include <QWidget>
+
+Gui::Item3DDoubleClickEvent::Item3DDoubleClickEvent()
+	:PlotAdapterBase(PlotAdapter2D::PLOT_3D)
+{
+
+}
+
 void Gui::Item3DDoubleClickEvent::doubleEvent(Hdf5Data h5d, std::string name)
 {
-	static std::once_flag flag;
-	std::call_once(flag,[&] {
-		auto listItem = new ControlerItemListWidget;
-		DockWindowManager::instance()->addDockWindow("3dControler", listItem);
-		});
+// 	static std::once_flag flag;
+// 	std::call_once(flag,[&] {
+// 		auto listItem = new ControlerItemListWidget;
+// 		listItem->setObjectName(QString::fromLocal8Bit("ControlerItemListWidget"));
+// 		DockWindowManager::instance()->addDockWindow("3dControler", listItem, Qt::DockWidgetArea::RightDockWidgetArea)->show();
+// 		});
 
 	
 	auto controler = DV3D::ControlerFactory::CreatStrucControler(h5d);
@@ -49,6 +59,8 @@ void Gui::Item3DDoubleClickEvent::doubleEvent(Hdf5Data h5d, std::string name)
 
 	view3d->getWidget3D()->binding(controler.get());
 
-	auto dockWindow = Gui::DockWindowManager::instance()->getDockWindow("3dControler");
-	dockWindow->show();
+	auto listItem = new ControlerItemListWidget;
+	listItem->addWidget(controlerItem);
+ 	listItem->setObjectName(QString::fromLocal8Bit("ControlerItemListWidget"));
+ 	DockWindowManager::instance()->addDockWindow("3dControler", listItem, Qt::DockWidgetArea::RightDockWidgetArea)->show();
 }

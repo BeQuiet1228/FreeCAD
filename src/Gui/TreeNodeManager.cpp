@@ -314,6 +314,14 @@ namespace Gui
 	TreeNode TreeNodeManager::createNodeInfo3D(Hdf5Data& data, int index)
 	{
 		TreeNode node;
+		if (data.name == "struct")
+		{
+			node.initNode("3D结构图", Gui::TreeNodeType::TREENODE_FILE, index);
+			TreeNode n;
+			n.initNode("3d结构图", Gui::TreeNodeType::TREENODE_FILE, index);
+			node.addChild(n);
+		}
+
 		return node;
 	}
 };
