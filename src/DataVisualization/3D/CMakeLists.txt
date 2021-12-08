@@ -68,7 +68,10 @@ SET( STRUCT_SRC
 	PolarStructActorPipeline.h
 	PolarStructActorPipeline.cpp
 )
-
+SET(CONTOUR_SRCS
+	ContourDataSetConstructor.h
+	ContourDataSetConstructor.cpp
+)
 SET(UI_SRC
 	ControlerItem.ui
 	)
@@ -100,6 +103,7 @@ SET(DataVisualization3D_src
 	${MY_MOC_SRCS}
 	${QRC_SRC}
 	${Gui_QRC_SRCs}
+	${CONTOUR_SRCS}
 	)
 
 	
