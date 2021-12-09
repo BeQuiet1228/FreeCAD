@@ -339,27 +339,17 @@ namespace DV {
 		std::map<int, std::map<int, std::vector<QPointF>>> mlines = d->getLineF();
 		for (auto iter = mlines.begin(); iter != mlines.end(); iter++)
 		{
-			//查找当前属性是否有对应颜色
-			auto iterColor = pixmap.find(iter->first);
-			if (iterColor != pixmap.end())
+			for (auto iter2 = iter->second.begin(); iter2 != iter->second.end(); iter2++)
 			{
-				std::vector<QLineF> s;
-				for (auto iterline = iter->second.begin(); iterline != iter->second.end(); iterline++)
-				{
-					std::vector<QPointF> lines = iterline->second;
-					if (2 == lines.size())
-					{
-						QLineF line(lines[0], lines[1]);
-						transitionLineF(line, xScale, yScale, xr, yr);
-						QLine iline = QLine(QPoint(line.p1().x(), line.p1().y()), QPoint(line.p2().x(), line.p2().y()));
-						QLineF linef = iline;
-						s.push_back(linef);
-					}
-				}
-				QVector<QLineF> lines = QVector<QLineF>::fromStdVector(s);
-				DrawLine(painter1, lines, iter->first);
-			}
+				auto iterColor = pixmap.find(iter2->first);
+				if (iterColor == pixmap.end() && 2 != iter2->second.size())
+					continue;
+				QLineF line(iter2->second[0],iter2->second[1]);
+				transitionLineF(line, xScale, yScale, xr, yr);
+				QLine iline = QLine(QPoint(line.p1().x(), line.p1().y()), QPoint(line.p2().x(), line.p2().y()));
+				DrawLine(painter1,line,iter2->first);
 
+			}
 		}
 		/**********************************************/
 		auto nImg = img1.mirrored(false, true);
@@ -379,68 +369,65 @@ namespace DV {
 		setImage(nImg);
 		return true;
 	}
-	void Struct2DRenderer::DrawLine(QPainter& painter, QVector<QLineF>& lines, int mPorper)
+	void Struct2DRenderer::DrawLine(QPainter& painter, QLineF& line, int mPorper)
 	{
 		QSize pngSize = pixmap[mPorper].size();
-		for (auto iter = lines.begin(); iter != lines.end(); iter++)
+		QPointF p1 = line.p1();
+		QPointF p2 = line.p2();
+		//纵向
+		if (p1.x() == p2.x())
 		{
-			QPointF p1 = iter->p1();
-			QPointF p2 = iter->p2();
-			//纵向
-			if (p1.x() == p2.x())
+			auto intervalnumber = abs(p1.y() - p2.y()) / pixmap[mPorper].size().height();
+			auto startpos = (p1.y() > p2.y()) ? (p2.y()) : (p1.y());
+			auto endpos = (p1.y() > p2.y()) ? (p1.y()) : (p2.y());
+			for (auto index = 0; index < intervalnumber; index++)
 			{
-				auto intervalnumber = abs(p1.y() - p2.y()) / pixmap[mPorper].size().height();
-				auto startpos = (p1.y() > p2.y()) ? (p2.y()) : (p1.y());
-				auto endpos = (p1.y() > p2.y()) ? (p1.y()) : (p2.y());
-				for (auto index = 0; index < intervalnumber; index++)
+				QRect rect;
+				rect.setLeft(p1.x() - pngSize.width() / 2);
+				rect.setRight(rect.left() + pngSize.width());
+				rect.setTop(startpos + index * pngSize.height());
+				if (rect.top() + pngSize.height() >= endpos)
 				{
-					QRect rect;
-					rect.setLeft(p1.x() - pngSize.width() / 2);
-					rect.setRight(rect.left() + pngSize.width());
-					rect.setTop(startpos + index * pngSize.height());
-					if (rect.top() + pngSize.height() >= endpos)
-					{
-						rect.setBottom(endpos);
-						QPixmap map = pixmap[mPorper].copy(0, 0, pngSize.width(), endpos - rect.top());
-						painter.drawPixmap(rect, map);
-					}
-					else
-					{
-						rect.setBottom(rect.top() + pngSize.height());
-						painter.drawPixmap(rect, pixmap[mPorper]);
-					}
-
+					rect.setBottom(endpos);
+					QPixmap map = pixmap[mPorper].copy(0, 0, pngSize.width(), endpos - rect.top());
+					painter.drawPixmap(rect, map);
 				}
-			}
-			//横向
-			else if (p1.y() == p2.y())
-			{
-				auto intervalnumber = abs(p1.x() - p2.x()) / pixmap[mPorper].size().width();
-				auto startpos = (p1.x() > p2.x()) ? (p2.x()) : (p1.x());
-				auto endpos = (p1.x() > p2.x()) ? (p1.x()) : (p2.x());
-				//图像翻转
-				QMatrix rm;
-				rm.rotate(90);
-				QPixmap mapy = pixmap[mPorper].transformed(QPixmap::trueMatrix(rm, pngSize.width(), pngSize.height()));
-				for (auto index = 0; index < intervalnumber; index++)
+				else
 				{
-					QRect rect;
-					rect.setTop(p1.y() - pngSize.height() / 2);
 					rect.setBottom(rect.top() + pngSize.height());
-					rect.setLeft(startpos + index * pngSize.width());
-					if (rect.left() + pngSize.width() >= endpos)
-					{
-						rect.setRight(endpos);
-						QPixmap map = mapy.copy(0, 0, endpos - rect.left(), rect.height());
-						painter.drawPixmap(rect, map);
-					}
-					else
-					{
-						rect.setRight(rect.left() + pngSize.width());
-						painter.drawPixmap(rect, mapy);
-					}
-
+					painter.drawPixmap(rect, pixmap[mPorper]);
 				}
+
+			}
+		}
+		//横向
+		else if (p1.y() == p2.y())
+		{
+			auto intervalnumber = abs(p1.x() - p2.x()) / pixmap[mPorper].size().width();
+			auto startpos = (p1.x() > p2.x()) ? (p2.x()) : (p1.x());
+			auto endpos = (p1.x() > p2.x()) ? (p1.x()) : (p2.x());
+			//图像翻转
+			QMatrix rm;
+			rm.rotate(90);
+			QPixmap mapy = pixmap[mPorper].transformed(QPixmap::trueMatrix(rm, pngSize.width(), pngSize.height()));
+			for (auto index = 0; index < intervalnumber; index++)
+			{
+				QRect rect;
+				rect.setTop(p1.y() - pngSize.height() / 2);
+				rect.setBottom(rect.top() + pngSize.height());
+				rect.setLeft(startpos + index * pngSize.width());
+				if (rect.left() + pngSize.width() >= endpos)
+				{
+					rect.setRight(endpos);
+					QPixmap map = mapy.copy(0, 0, endpos - rect.left(), rect.height());
+					painter.drawPixmap(rect, map);
+				}
+				else
+				{
+					rect.setRight(rect.left() + pngSize.width());
+					painter.drawPixmap(rect, mapy);
+				}
+
 			}
 		}
 	}
