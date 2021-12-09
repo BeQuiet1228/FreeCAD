@@ -548,4 +548,9 @@ namespace DV {
 	}
 	/*********************************/
 	ContourData::Grid::Grid() :x(0.0), y(0.0), value(0.0) {}
+
+	std::vector<ContourData::Grid>& ContourData::getGrids()
+	{
+		return grids;
+	}
 };

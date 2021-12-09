@@ -72,6 +72,7 @@ SET(CONTOUR_SRCS
 	ContourDataSetConstructor.h
 	ContourDataSetConstructor.cpp
 )
+source_group("contour" FILES ${CONTOUR_SRCS})
 SET(UI_SRC
 	ControlerItem.ui
 	)
@@ -113,9 +114,9 @@ source_group("ui" FILES ${UI_SRC})
 source_group("moc" FILES ${MY_MOC_SRCS})
 source_group("resource" FILES ${Gui_QRC_SRCs} ${QRC_SRC})
 	
-#add_executable(DataVisualization3D ${DataVisualization3D_src})
+add_executable(DataVisualization3D ${DataVisualization3D_src})
 add_definitions(-D_DATA_VISUALIZATION_3D)
-add_library(DataVisualization3D SHARED ${DataVisualization3D_src})
+#add_library(DataVisualization3D SHARED ${DataVisualization3D_src})
 #设置执行文件的输出目录
 set(DEBUG_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(RELEASE_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
