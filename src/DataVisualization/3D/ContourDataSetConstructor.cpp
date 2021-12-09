@@ -1,5 +1,6 @@
 #include "ContourDataSetConstructor.h"
 #include "DataVisualization/ContourData.h"
+#include "DataVisualization/ContourDataPolar.h"
 #include "vtkStructuredGrid.h"
 #include "vtkPointData.h"
 namespace DV3D
@@ -45,6 +46,9 @@ namespace DV3D
 				isreversal = true;
 		}
 		break;
+		case DV::DirectionType::R_Z:
+			if (data->getXTag() != "R")
+				isreversal = true;
 		}
 		return isreversal;
 	}
@@ -111,7 +115,7 @@ namespace DV3D
 		{
 			for (auto i = 0; i < datas.size(); ++i)
 			{
-				points->InsertNextPoint(datas[i].x, 0, datas[i].y);
+				points->InsertNextPoint(datas[i].x, face[1], datas[i].y);
 				scaler->InsertNextTuple1(datas[i].value);
 				xGridMap[datas[i].x] = 1;
 				zGridMap[datas[i].y] = 1;
@@ -121,7 +125,7 @@ namespace DV3D
 		{
 			for (auto i = 0; i < datas.size(); ++i)
 			{
-				points->InsertNextPoint(datas[i].y, 0, datas[i].x);
+				points->InsertNextPoint(datas[i].y, face[1], datas[i].x);
 				scaler->InsertNextTuple1(datas[i].value);
 				xGridMap[datas[i].y] = 1;
 				zGridMap[datas[i].x] = 1;
@@ -143,6 +147,7 @@ namespace DV3D
 		scaler = vtkSmartPointer<vtkFloatArray>::New();
 		std::map<float, float> yGridMap;
 		std::map<float, float> zGridMap;
+		
 		if (ok)
 		{
 			for (auto i = 0; i < datas.size(); ++i)
@@ -167,6 +172,52 @@ namespace DV3D
 		yGridSize = yGridMap.size();
 		zGridSize = zGridMap.size();
 	}
+	void ContourDatasetConstructor::createPointsRz()
+	{
+		auto h5d = getHdf5Data();
+		std::shared_ptr<DV::ContourData> data = std::shared_ptr<DV::ContourData>(new DV::ContourDataPolar(h5d));
+		data->loadPoint();
+		auto datas = data->getGrids();
+		auto face = data->getStructFace();
+		bool ok = isReisreversal(data);
+		//r-0,z-1,theta-2
+		std::map<float, float> xGridMap;
+		std::map<float, float> yGirdMap;
+		std::map<float, float> zGridMap;
+		points = vtkSmartPointer<vtkPoints>::New();
+		scaler = vtkSmartPointer<vtkFloatArray>::New();
+		if (ok)
+		{
+			for (auto i = 0; i < datas.size(); ++i)
+			{
+				float x = datas[i].x * cos(face[2]);
+				float y = datas[i].x * sin(face[2]);
+				float z = datas[i].y;
+				points->InsertNextPoint(x, y, z);
+				scaler->InsertNextTuple1(datas[i].value);
+				xGridMap[x] = 1;
+				yGirdMap[y] = 1;
+				zGridMap[z] = 1;
+			}
+		}
+		else
+		{
+			for (auto i = 0; i < datas.size(); ++i)
+			{
+				float x = datas[i].y * cos(face[2]);
+				float y = datas[i].y * sin(face[2]);
+				float z = datas[i].x;
+				points->InsertNextPoint(x, y, z);
+				scaler->InsertNextTuple1(datas[i].value);
+				xGridMap[x] = 1;
+				yGirdMap[y] = 1;
+				zGridMap[z] = 1;
+			}
+		}
+			xGridSize = xGridMap.size();
+			yGridSize = yGirdMap.size();
+			zGridSize = zGridMap.size();
+	}
 	void ContourDatasetConstructor::initData()
 	{
 		auto h5d = getHdf5Data();
@@ -183,7 +234,7 @@ namespace DV3D
 			createPointsYz();
 		break;
 		case DV::DirectionType::R_Z:
-			createPointsXz();
+			createPointsRz();
 			break;
 		}
 		return;

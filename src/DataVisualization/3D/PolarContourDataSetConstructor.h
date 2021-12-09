@@ -16,10 +16,10 @@ namespace DV3D
 	protected:
 		void initData();
 		void createPointsRtheta();
-		void createPointsRz();
 	protected:
 		vtkSmartPointer<vtkPoints> points;
 		vtkSmartPointer<vtkFloatArray> scalar;
+		int rGridSize, thetaGridSize, zGridSize;
 	};
 }
 #endif

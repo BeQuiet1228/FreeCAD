@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 	//结构图 
 	for (; iter != datalist.end(); iter++)
 	{
-		if(iter->name =="struct")
+		if (iter->name == "struct")
 			break;
 	}
 	if (iter == datalist.end())
@@ -72,13 +72,11 @@ int main(int argc, char* argv[])
 #if 1
 	//等位图
 	std::vector<Hdf5Data> contourlist;
-	for (auto i:datalist)
+	for (auto i : datalist)
 	{
 		if (i.name.find("CONTOUR") != std::string::npos)
 		{
-			DV::ContourData data(i);
-			if (data.getDirectionType() != DV::R_THETA)
-				contourlist.push_back(i);
+			contourlist.push_back(i);
 		}
 	}
 	auto iter = contourlist.begin();

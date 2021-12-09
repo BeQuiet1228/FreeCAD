@@ -22,6 +22,7 @@ namespace DV3D
 		void createPointsXy();
 		void createPointsXz();
 		void createPointsYz();
+		void createPointsRz();
 	protected:
 		vtkSmartPointer<vtkPoints> points;
 		vtkSmartPointer < vtkFloatArray >scaler;
