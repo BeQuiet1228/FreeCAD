@@ -111,7 +111,7 @@ namespace DV3D
 		{
 			for (auto i = 0; i < datas.size(); ++i)
 			{
-				points->InsertNextPoint(datas[i].x, face[1], datas[i].y);
+				points->InsertNextPoint(datas[i].x, 0, datas[i].y);
 				scaler->InsertNextTuple1(datas[i].value);
 				xGridMap[datas[i].x] = 1;
 				zGridMap[datas[i].y] = 1;
@@ -121,7 +121,7 @@ namespace DV3D
 		{
 			for (auto i = 0; i < datas.size(); ++i)
 			{
-				points->InsertNextPoint(datas[i].y, face[1], datas[i].x);
+				points->InsertNextPoint(datas[i].y, 0, datas[i].x);
 				scaler->InsertNextTuple1(datas[i].value);
 				xGridMap[datas[i].y] = 1;
 				zGridMap[datas[i].x] = 1;
@@ -182,6 +182,9 @@ namespace DV3D
 		case DV::DirectionType::Y_Z:
 			createPointsYz();
 		break;
+		case DV::DirectionType::R_Z:
+			createPointsXz();
+			break;
 		}
 		return;
 	}
