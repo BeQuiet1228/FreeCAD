@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
 				contourlist.push_back(i);
 		}
 	}
-	auto iter = contourlist.begin();
+	auto iter = contourlist.begin()+5;
 #endif
 	Widget3D* w3d = new Widget3D();
 

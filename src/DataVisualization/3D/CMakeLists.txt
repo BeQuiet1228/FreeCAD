@@ -71,6 +71,10 @@ SET( STRUCT_SRC
 SET(CONTOUR_SRCS
 	ContourDataSetConstructor.h
 	ContourDataSetConstructor.cpp
+	ContourActorPipeline.h
+	ContourActorPipeline.cpp
+	PolarContourDataSetConstructor.h
+	PolarContourDataSetConstructor.cpp
 )
 source_group("contour" FILES ${CONTOUR_SRCS})
 SET(UI_SRC

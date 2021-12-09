@@ -15,6 +15,8 @@ namespace DV3D {
 		static std::shared_ptr<Controler> CreatControler(Hdf5Data& h5data);
 		//创建结构图控制器
 		static std::shared_ptr<Controler> CreatStrucControler(Hdf5Data& h5data);
+		//创建等位图控制器
+		static std::shared_ptr<Controler> CreatContourControler(Hdf5Data& h5data);
 		//寻找字符串中的长度信息
 		static int findStringAttribute(const std::string& str);
 	};
