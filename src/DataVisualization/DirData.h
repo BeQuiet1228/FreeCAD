@@ -17,6 +17,4 @@ namespace DV {
 	private:
 	};
 };
-
-
 #endif
