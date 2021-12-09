@@ -68,9 +68,9 @@ namespace Gui
 	*/
 	DV::PlotAdapterPtr PlotAdapter2D::creatPlotAdapter(Hdf5Data h5d, std::string name)
 	{
+		DV::DirectionType type=DV::X_Y;
 		if (h5d.name.find("struct") != std::string::npos)
 		{
-			DV::DirectionType type;
 			for (auto& it : structDirectTypelist)
 			{
 				if (name.find(it.str) != std::string::npos)
@@ -79,9 +79,8 @@ namespace Gui
 					break;
 				}
 			}
-			return factoryPtr->creatPlotAdapter(h5d, type);
 		}
-		return factoryPtr->creatPlotAdapter(h5d);
+		return factoryPtr->creatPlotAdapter(h5d,type);
 	}
 	bool PlotAdapterBase::getIsStructData()
 	{

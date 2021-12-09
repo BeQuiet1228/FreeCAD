@@ -37,13 +37,13 @@ namespace DV {
 		Rang xr, yr;
 		//x
 		auto itx = IM1X->begin();
-		xr.min = *itx;
+		xr.min = 0.0;//*itx;
 		itx = IM1X->end() - 1;
 		xr.max = *itx;
 		setXRang(xr);
 		//y
 		auto ity = IM2X->begin();
-		yr.min = *ity;
+		yr.min = 0.0;//*ity;
 		ity = IM2X->end() - 1;
 		yr.max = *ity;
 		setYRang(yr);
