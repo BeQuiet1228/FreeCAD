@@ -24,7 +24,7 @@ namespace DV3D
 	void PolarContourDatasetConstructor::createPointsRtheta()
 	{
 		auto h5d = getHdf5Data();
-		std::shared_ptr<DV::ContourData> data = std::shared_ptr<DV::ContourData>(new DV::ContourData(h5d));
+		std::shared_ptr<DV::ContourDataPolar> data = std::shared_ptr<DV::ContourDataPolar>(DV::CreateContourDataPolar(h5d));
 		data->loadPoint();
 		auto datas = data->getGrids();
 		auto face = data->getStructFace();

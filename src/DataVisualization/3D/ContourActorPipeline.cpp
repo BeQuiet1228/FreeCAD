@@ -3,6 +3,7 @@
 #include "vtkActor.h"
 #include "vtkPointData.h"
 #include "vtkDataArray.h"
+#include "vtkLookupTable.h"
 namespace DV3D
 {
 	ContourActorPipeline::ContourActorPipeline()
@@ -22,7 +23,7 @@ namespace DV3D
 	void ContourActorPipeline::connect() {
 		auto dataset = getDataSet();
 		auto mp = getMapper();
-		//mp->SetInputConnection(dataset);
+		/*********************************************/
 		mp->SetInputDataObject(dataset);
 		mp->SetScalarRange(dataset->GetPointData()->GetScalars()->GetRange());
 		mp->Update();
