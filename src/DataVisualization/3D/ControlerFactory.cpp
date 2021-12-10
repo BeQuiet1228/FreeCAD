@@ -9,6 +9,8 @@
 #include "CartesianStructActorPipeline.h"
 #include "PolarStructActorPipeline.h"
 #include "actorPipeline.h"
+#include "particle3dActorPipeline.h"
+#include "particle3dDataSetConstructor.h"
 #include <cassert>
 
 std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatControler(Hdf5Data& h5data)
@@ -16,7 +18,6 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatControler(Hdf5Data
 	std::shared_ptr<Controler> controler;
 	if (h5data.name == "struct")
 		controler = CreatStrucControler(h5data);
-
 	assert(controler && "controler is nullptr!");
 	return controler;
 }
@@ -64,6 +65,25 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucControler(Hdf
 	controler.reset(new Controler());
 	controler->setActorPipeline(pipeline);
 	
+	return controler;
+}
+
+std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatParticle3dControler(Hdf5Data& h5data)
+{
+	std::shared_ptr<Controler> controler;
+
+	//≤‚ ‘3d¡£◊”Õº
+	std::shared_ptr<DataSetConstructorH5> constructor(new Particle3dDataSetConstructor);
+	std::shared_ptr<ActorPipemline> pipeline(new Particle3dActorPipeline);
+
+	constructor->setHdf5Data(h5data);
+	pipeline->setDataSet(constructor->creatDataset());
+	pipeline->connect();
+	controler.reset(new Controler());
+	controler->setActorPipeline(pipeline);
+
+
+	assert(controler && "controler is nullptr!");
 	return controler;
 }
 

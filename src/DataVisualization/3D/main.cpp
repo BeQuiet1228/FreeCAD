@@ -29,6 +29,7 @@
 #include "ControlerAction.h"
 #include "dataSetConstructorFactory.h"
 #include "ControlerFactory.h"
+#include "controlerItemFactor.h"
 #ifndef INIT_VTK_OPENGL_AND_FRNT	//防止多次初始化模块
 #define INIT_VTK_OPENGL_AND_FRNT
 #include <vtkAutoInit.h>
@@ -57,9 +58,13 @@ int main(int argc, char* argv[])
 	if (datalist.size() == 0)
 		return 0;
 	auto iter = datalist.begin();
+	Hdf5Data structData;
 	for (; iter != datalist.end(); iter++)
 	{
-		if(iter->name =="struct")
+		if (iter->name == "struct")
+			structData = *iter;
+
+		if(iter->name =="")
 			break;
 	}
 	if (iter == datalist.end())
@@ -100,12 +105,15 @@ int main(int argc, char* argv[])
 	Widget3D* w3d = new Widget3D();
 
 	ControlerFactory controlerFactor;
-	auto controler = controlerFactor.CreatControler(*iter);
-
-
-
+	auto controler = controlerFactor.CreatParticle3dControler(*iter);
+	auto structControler = controlerFactor.CreatStrucControler(structData);
 	w3d->binding(controler.get());
+	w3d->binding(structControler.get());
 	w3d->show();
+
+	auto item = ControlerItemFactor::CreatControlerItem();
+	item->setControler(structControler);
+	item->show();
 
 	return a.exec();
 }
