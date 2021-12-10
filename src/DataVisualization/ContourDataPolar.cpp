@@ -143,7 +143,6 @@ namespace DV {
 		}
 		newYscale.push_back(2 * M_PI);
 
-
 		std::vector<Grid> newGrid;
 		newGrid.reserve(grids.size() + 2 * width);
 
@@ -151,7 +150,7 @@ namespace DV {
 		//用于插值出新的网格
 		int w = 0; int h = (yScale.size() - 1) * xScale.size();
 		//插入头部网格
-		float theta = *yScale.begin();
+		float theta = *newYscale.begin();
 		for (; w < grids.size() && h < grids.size(); w++, h++)
 		{
 			Grid gd;
@@ -169,7 +168,7 @@ namespace DV {
 		w = 0; 
 		h = (yScale.size() - 1) * xScale.size();
 		//插入尾部网格
-		theta = *yScale.rbegin();
+		theta = *newYscale.rbegin();
 		for (; w < grids.size() && h < grids.size(); w++, h++)
 		{
 			Grid gd;
@@ -181,6 +180,7 @@ namespace DV {
 		//重新调整网格宽度
 		height += 2;
 		grids = newGrid;
+		yScale = newYscale;
 
 		return ok;
 	}
