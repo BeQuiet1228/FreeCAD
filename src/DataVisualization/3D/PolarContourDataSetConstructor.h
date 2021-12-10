@@ -15,7 +15,6 @@ namespace DV3D
 		vtkSmartPointer<vtkDataSet> creatDataset();
 	protected:
 		void initData();
-		void createPointsRtheta();
 	protected:
 		vtkSmartPointer<vtkPoints> points;
 		vtkSmartPointer<vtkFloatArray> scalar;

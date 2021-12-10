@@ -5,7 +5,7 @@
 #include "vtkPointData.h"
 namespace DV3D
 {
-	ContourDatasetConstructor::ContourDatasetConstructor():xGridSize(0), yGridSize(0), zGridSize(0)
+	ContourDatasetConstructor::ContourDatasetConstructor() :xGridSize(1), yGridSize(1), zGridSize(1)
 	{
 
 	}
@@ -16,225 +16,88 @@ namespace DV3D
 	vtkSmartPointer<vtkDataSet> ContourDatasetConstructor::creatDataset()
 	{
 		initData();
-		vtkSmartPointer<vtkStructuredGrid> structuredGrid= vtkSmartPointer<vtkStructuredGrid>::New();
-		structuredGrid->SetDimensions(xGridSize,yGridSize,zGridSize);
+		vtkSmartPointer<vtkStructuredGrid> structuredGrid = vtkSmartPointer<vtkStructuredGrid>::New();
+		structuredGrid->SetDimensions(xGridSize, yGridSize, zGridSize);
 		structuredGrid->SetPoints(points);
 		structuredGrid->GetPointData()->SetScalars(scaler);
 
 		return structuredGrid;
 	}
-	bool isReisreversal(std::shared_ptr<DV::ContourData>& data)
+	void ContourDatasetConstructor::createPointsXy(std::vector<DV::ContourData::Grid>& datas, float z) {
+		for (auto i = 0; i < datas.size(); ++i)
+		{
+			points->InsertNextPoint(datas[i].x, datas[i].y, z);
+			scaler->InsertNextTuple1(datas[i].value);
+		}
+	}
+	void ContourDatasetConstructor::createPointsXz(std::vector<DV::ContourData::Grid>& datas,float y) {
+		for (auto i = 0; i < datas.size(); ++i)
+		{
+			points->InsertNextPoint(datas[i].x, y, datas[i].y);
+			scaler->InsertNextTuple1(datas[i].value);
+		}
+	}
+	void ContourDatasetConstructor::createPointsYz(std::vector<DV::ContourData::Grid>& datas,float x) {
+		for (auto i = 0; i < datas.size(); ++i)
+		{
+			points->InsertNextPoint(x, datas[i].x, datas[i].y);
+			scaler->InsertNextTuple1(datas[i].value);
+		}
+	}
+	void ContourDatasetConstructor::createPointsRz(std::vector<DV::ContourData::Grid>& datas,float theta)
 	{
-		bool isreversal = false;
-		switch (data->getDirectionType())
+		for (auto i = 0; i < datas.size(); ++i)
 		{
-		case DV::DirectionType::X_Z:
-		{
-			if (data->getXTag() != "X")
-				isreversal = true;
+			float x = datas[i].x * cos(theta);
+			float y = datas[i].x * sin(theta);
+			float z = datas[i].y;
+			points->InsertNextPoint(x, y, z);
+			scaler->InsertNextTuple1(datas[i].value);
 		}
-		break;
-		case DV::DirectionType::X_Y:
-		{
-			if (data->getXTag() != "X")
-				isreversal = true;
-		}
-		break;
-		case DV::DirectionType::Y_Z:
-		{
-			if (data->getXTag() != "Y")
-				isreversal = true;
-		}
-		break;
-		case DV::DirectionType::R_Z:
-			if (data->getXTag() != "R")
-				isreversal = true;
-		}
-		return isreversal;
-	}
-	int judgeface(std::vector<float>& data)
-	{
-		for (auto i = 0; i < data.size() / 2; ++i)
-		{
-			if (data[i] == data[i + 3])
-				return i;
-		}
-		return -1;
-	}
-	void ContourDatasetConstructor::createPointsXy() {
-		auto h5d = getHdf5Data();
-		std::shared_ptr<DV::ContourData> data = std::shared_ptr<DV::ContourData>(new DV::ContourData(h5d));
-		data->loadPoint();
-		auto datas = data->getGrids();
-		auto face = data->getStructFace();
-		//添加坐标点
-		bool ok = isReisreversal(data);
-		points = vtkSmartPointer<vtkPoints>::New();
-		scaler = vtkSmartPointer<vtkFloatArray>::New();
-		std::map<float, float> xGridMap;
-		std::map<float, float> yGridMap;
-		if (ok)
-		{
-			for (auto i = 0; i < datas.size(); ++i)
-			{
-				points->InsertNextPoint(datas[i].x,datas[i].y, face[2]);
-				scaler->InsertNextTuple1(datas[i].value);
-				xGridMap[datas[i].x] = 1;
-				yGridMap[datas[i].y] = 1;
-			}
-		}
-		else
-		{
-			for (auto i = 0; i < datas.size(); ++i)
-			{
-				points->InsertNextPoint(datas[i].y,datas[i].x,face[2]);
-				scaler->InsertNextTuple1(datas[i].value);
-				xGridMap[datas[i].y] = 1;
-				yGridMap[datas[i].x] = 1;
-			}
-		}
-		xGridSize = xGridMap.size();
-		yGridSize = yGridMap.size();
-		zGridSize = 1;
-	}
-	void ContourDatasetConstructor::createPointsXz() {
-		auto h5d = getHdf5Data();
-		std::shared_ptr<DV::ContourData> data = std::shared_ptr<DV::ContourData>(new DV::ContourData(h5d));
-		data->loadPoint();
-		auto datas = data->getGrids();
-		auto face = data->getStructFace();
-		//添加坐标点
-		bool ok = isReisreversal(data);
-		int x = 0, z = 0;
-		ok ? (x = 1, z = 0) : (x = 0, z = 1);
-		points = vtkSmartPointer<vtkPoints>::New();
-		scaler = vtkSmartPointer<vtkFloatArray>::New();
-		std::map<float, float> xGridMap;
-		std::map<float, float> zGridMap;
-		if (ok)
-		{
-			for (auto i = 0; i < datas.size(); ++i)
-			{
-				points->InsertNextPoint(datas[i].x, face[1], datas[i].y);
-				scaler->InsertNextTuple1(datas[i].value);
-				xGridMap[datas[i].x] = 1;
-				zGridMap[datas[i].y] = 1;
-			}
-		}
-		else
-		{
-			for (auto i = 0; i < datas.size(); ++i)
-			{
-				points->InsertNextPoint(datas[i].y, face[1], datas[i].x);
-				scaler->InsertNextTuple1(datas[i].value);
-				xGridMap[datas[i].y] = 1;
-				zGridMap[datas[i].x] = 1;
-			}
-		}
-		xGridSize = xGridMap.size();
-		yGridSize = 1;
-		zGridSize = zGridMap.size();
-	}
-	void ContourDatasetConstructor::createPointsYz() {
-		auto h5d = getHdf5Data();
-		std::shared_ptr<DV::ContourData> data = std::shared_ptr<DV::ContourData>(new DV::ContourData(h5d));
-		data->loadPoint();
-		auto datas = data->getGrids();
-		auto face = data->getStructFace();
-		//添加坐标点
-		bool ok = isReisreversal(data);
-		points = vtkSmartPointer<vtkPoints>::New();
-		scaler = vtkSmartPointer<vtkFloatArray>::New();
-		std::map<float, float> yGridMap;
-		std::map<float, float> zGridMap;
-		
-		if (ok)
-		{
-			for (auto i = 0; i < datas.size(); ++i)
-			{
-				points->InsertNextPoint(face[0],datas[i].x, datas[i].y);
-				scaler->InsertNextTuple1(datas[i].value);
-				yGridMap[datas[i].x] = 1;
-				zGridMap[datas[i].y] = 1;
-			}
-		}
-		else
-		{
-			for (auto i = 0; i < datas.size(); ++i)
-			{
-				points->InsertNextPoint(face[0],datas[i].y, datas[i].x);
-				scaler->InsertNextTuple1(datas[i].value);
-				yGridMap[datas[i].y] = 1;
-				zGridMap[datas[i].x] = 1;
-			}
-		}
-		xGridSize = 0;
-		yGridSize = yGridMap.size();
-		zGridSize = zGridMap.size();
-	}
-	void ContourDatasetConstructor::createPointsRz()
-	{
-		auto h5d = getHdf5Data();
-		std::shared_ptr<DV::ContourData> data = std::shared_ptr<DV::ContourData>(new DV::ContourDataPolar(h5d));
-		data->loadPoint();
-		auto datas = data->getGrids();
-		auto face = data->getStructFace();
-		bool ok = isReisreversal(data);
-		//r-0,z-1,theta-2
-		std::map<float, float> xGridMap;
-		std::map<float, float> yGirdMap;
-		std::map<float, float> zGridMap;
-		points = vtkSmartPointer<vtkPoints>::New();
-		scaler = vtkSmartPointer<vtkFloatArray>::New();
-		if (ok)
-		{
-			for (auto i = 0; i < datas.size(); ++i)
-			{
-				float x = datas[i].x * cos(face[2]);
-				float y = datas[i].x * sin(face[2]);
-				float z = datas[i].y;
-				points->InsertNextPoint(x, y, z);
-				scaler->InsertNextTuple1(datas[i].value);
-				xGridMap[x] = 1;
-				yGirdMap[y] = 1;
-				zGridMap[z] = 1;
-			}
-		}
-		else
-		{
-			for (auto i = 0; i < datas.size(); ++i)
-			{
-				float x = datas[i].y * cos(face[2]);
-				float y = datas[i].y * sin(face[2]);
-				float z = datas[i].x;
-				points->InsertNextPoint(x, y, z);
-				scaler->InsertNextTuple1(datas[i].value);
-				xGridMap[x] = 1;
-				yGirdMap[y] = 1;
-				zGridMap[z] = 1;
-			}
-		}
-			xGridSize = xGridMap.size();
-			yGridSize = yGirdMap.size();
-			zGridSize = zGridMap.size();
 	}
 	void ContourDatasetConstructor::initData()
 	{
 		auto h5d = getHdf5Data();
 		std::shared_ptr<DV::ContourData> data = std::shared_ptr<DV::ContourData>(new DV::ContourData(h5d));
+		data->loadPoint();
+		auto datas = data->getGrids();
+		auto face = data->getStructFace();
+		//添加坐标点
+		points = vtkSmartPointer<vtkPoints>::New();
+		scaler = vtkSmartPointer<vtkFloatArray>::New();
+		int x = 0, y = 1, z = 2;
+		//角向时根据坐标系判断theta
+		int theta = ((h5d.coordinateSystem == Hdf5Data::CoordinateSystem::CYLINDER) ?
+			2 : 1);
 		switch (data->getDirectionType())
 		{
 		case DV::DirectionType::X_Z:
-			createPointsXz();
-		break;
+		{
+			createPointsXz(datas, face[y]);
+			xGridSize = data->getWidth();
+			zGridSize = data->getWidth();
+		}
+			break;
 		case DV::DirectionType::X_Y:
-			createPointsXy();
-		break;
+		{
+			createPointsXy(datas, face[z]);
+			xGridSize = data->getWidth();
+			yGridSize = data->getHeight();
+		}
+			break;
 		case DV::DirectionType::Y_Z:
-			createPointsYz();
-		break;
+		{
+			createPointsYz(datas, face[x]);
+			yGridSize = data->getWidth();
+			zGridSize = data->getHeight();
+		}
+			break;
 		case DV::DirectionType::R_Z:
-			createPointsRz();
+		{
+			createPointsRz(datas, face[theta]);
+			xGridSize = data->getWidth();
+			zGridSize = data->getHeight();
+		}
 			break;
 		}
 		return;

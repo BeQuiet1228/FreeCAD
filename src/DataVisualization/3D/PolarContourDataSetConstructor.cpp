@@ -4,7 +4,7 @@
 #include "vtkPointData.h"
 namespace DV3D
 {
-	PolarContourDatasetConstructor::PolarContourDatasetConstructor()
+	PolarContourDatasetConstructor::PolarContourDatasetConstructor():rGridSize(1),thetaGridSize(1),zGridSize(1)
 	{
 
 	}
@@ -21,39 +21,29 @@ namespace DV3D
 		structuredGrid->GetPointData()->SetScalars(scalar);
 		return structuredGrid;
 	}
-	void PolarContourDatasetConstructor::createPointsRtheta()
+	void PolarContourDatasetConstructor::initData()
 	{
 		auto h5d = getHdf5Data();
 		std::shared_ptr<DV::ContourDataPolar> data = std::shared_ptr<DV::ContourDataPolar>(DV::CreateContourDataPolar(h5d));
 		data->loadPoint();
 		auto datas = data->getGrids();
 		auto face = data->getStructFace();
-		std::map<float, float> rGridMap;
-		std::map<float, float> thetaGirdMap;
-		std::map<float, float> zGridMap;
 		points = vtkSmartPointer<vtkPoints>::New();
 		scalar = vtkSmartPointer<vtkFloatArray>::New();
+		float z;
+		//根据坐标系判断
+		(h5d.coordinateSystem == Hdf5Data::CoordinateSystem::CYLINDER) ?
+			z = face[0] :
+			z = face[2];
 		for (auto i = 0; i < datas.size(); ++i)
 		{
 			float x = datas[i].x * cos(datas[i].y);
 			float y = datas[i].x * sin(datas[i].y);
-			float z = face[2];
 			points->InsertNextPoint(x, y, z);
 			scalar->InsertNextTuple1(datas[i].value);
-			rGridMap[datas[i].x] = 1;
-			thetaGirdMap[datas[i].y] = 1;
-			zGridMap[z] = 1;
 		}
-		rGridSize = rGridMap.size();
-		thetaGridSize = thetaGirdMap.size();
-		zGridSize = zGridMap.size();
-		return;
-	}
-	void PolarContourDatasetConstructor::initData()
-	{
-		auto h5d = getHdf5Data();
-		std::shared_ptr<DV::ContourData> data = std::shared_ptr<DV::ContourData>(new DV::ContourData(h5d));
-		createPointsRtheta();
+		rGridSize = data->getWidth();
+		thetaGridSize = data->getHeight();
 		return;
 
 	}
