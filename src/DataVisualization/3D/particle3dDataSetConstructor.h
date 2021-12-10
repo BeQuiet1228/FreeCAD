@@ -8,6 +8,9 @@ namespace DV3D {
 
 	public:
 		vtkSmartPointer<vtkDataSet> creatDataset() override;
+
+	private:
+		void disposThetaData(std::vector<float>& data);
 	};
 
 }
