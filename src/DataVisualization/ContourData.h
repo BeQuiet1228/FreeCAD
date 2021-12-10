@@ -35,6 +35,8 @@ namespace DV {
 	public:
 		void setValueRang(const Rang& r);
 		Rang getVlaueRange();
+		unsigned int getWidth();
+		unsigned int getHeight();
 	private:
 		void setXYRange();
 		//根据坐标轴的名称 获取范围

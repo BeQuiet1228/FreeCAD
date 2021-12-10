@@ -553,4 +553,12 @@ namespace DV {
 	{
 		return grids;
 	}
+	unsigned int ContourData::getWidth()
+	{
+		return width;
+	}
+	unsigned int ContourData::getHeight()
+	{
+		return height;
+	}
 };
