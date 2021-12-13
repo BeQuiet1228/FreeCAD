@@ -27,9 +27,6 @@ public:
 	virtual void dataInit() override;
 	virtual void loadconfig() override;
 public:
-
-	bool getPloy_grid();
-	bool drawPloy();
 private:
 	QVector<QLineF> Getlines(std::vector<QPointF> points);
 	void drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d);
@@ -58,12 +55,7 @@ private:
 		float& yScale);
 	void clipImg(QImage& img,QPolygonF& polyon);
 	void drawPolygons(
-		QPainter& painter,
-		Data::Rang& xr,
-		Data::Rang& yr,
-		float& xScale,
-		float& yScale,
-		std::vector<QPointF>& points);
+		QPainter& painter,std::vector<QPointF>& points);
 private:
 	QMap<int, QColor> color_tab;
 	QMap<int, QColor> color_pen;
