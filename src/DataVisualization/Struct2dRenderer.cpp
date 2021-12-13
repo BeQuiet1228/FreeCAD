@@ -337,54 +337,42 @@ bool Struct2DRenderer::getPloy_grid(){
 	//绘制线段
 	std::map<int, std::map<int, std::vector<QPointF>>> mlines = d->getLineF();
 	for (auto iter = mlines.begin(); iter != mlines.end(); iter++)
-	{
-		//查找当前属性是否有对应颜色
-		auto iterColor=pixmap.find(iter->first);
-		if (iterColor!=pixmap.end())
 		{
-			std::vector<QLineF> s;
-			for (auto iterline = iter->second.begin(); iterline != iter->second.end(); iterline++)
+			for (auto iter2 = iter->second.begin(); iter2 != iter->second.end(); iter2++)
 			{
-				std::vector<QPointF> lines = iterline->second;
-				if (2 == lines.size())
+				auto iterColor = pixmap.find(iter2->first);
+				if (iterColor == pixmap.end() && 2 != iter2->second.size())
+					continue;
+				QLineF line(iter2->second[0],iter2->second[1]);
+				transitionLineF(line, xScale, yScale, xr, yr);
+				QLine iline = QLine(QPoint(line.p1().x(), line.p1().y()), QPoint(line.p2().x(), line.p2().y()));
+				DrawLine(painter1,line,iter2->first);
+
+			}
+		}
+		/**********************************************/
+		auto nImg = img1.mirrored(false, true);
+		//替换白色为透明色
+		QColor srColor(255, 255, 255, 255);
+		QColor desAlpha(0, 0, 0, 0);
+		for (int w = 0; w < nImg.width(); ++w)
+		{
+			for (int h = 0; h < nImg.height(); ++h)
+			{
+				if (nImg.pixel(w, h) == srColor.rgb())
 				{
-					QLineF line(lines[0], lines[1]);
-					transitionLineF(line, xScale, yScale, xr, yr);
-					QLine iline = QLine(QPoint(line.p1().x(), line.p1().y()), QPoint(line.p2().x(), line.p2().y()));
-					QLineF linef = iline;
-					s.push_back(linef);
+					nImg.setPixel(w, h, desAlpha.rgba());
 				}
 			}
-			QVector<QLineF> lines = QVector<QLineF>::fromStdVector(s);
-			DrawLine(painter1, lines, iter->first);
 		}
-		
+		setImage(nImg);
+		return true;
 	}
-	/**********************************************/
-	auto nImg = img1.mirrored(false, true);
-	//替换白色为透明色
-	QColor srColor(255, 255, 255, 255);
-	QColor desAlpha(0, 0, 0, 0);
-	for (int w = 0; w < nImg.width();++w)
+	void Struct2DRenderer::DrawLine(QPainter& painter, QLineF& line, int mPorper)
 	{
-		for (int h = 0; h < nImg.height();++h)
-		{
-			if (nImg.pixel(w,h)==srColor.rgb())
-			{
-				nImg.setPixel(w, h, desAlpha.rgba());
-			}
-		}
-	}
-	setImage(nImg);
-	return true;
-}
-void Struct2DRenderer::DrawLine(QPainter& painter, QVector<QLineF>& lines, int mPorper)
-{
-	QSize pngSize = pixmap[mPorper].size();
-	for (auto iter = lines.begin(); iter != lines.end(); iter++)
-	{
-		QPointF p1 = iter->p1();
-		QPointF p2 = iter->p2();
+		QSize pngSize = pixmap[mPorper].size();
+		QPointF p1 = line.p1();
+		QPointF p2 = line.p2();
 		//纵向
 		if (p1.x() == p2.x())
 		{
@@ -442,7 +430,6 @@ void Struct2DRenderer::DrawLine(QPainter& painter, QVector<QLineF>& lines, int m
 			}
 		}
 	}
-}
 /**
 * @brief Struct2DRenderer::transitionLineF
 * @param QLineF & line
