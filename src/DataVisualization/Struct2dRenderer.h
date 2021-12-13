@@ -51,6 +51,19 @@ private:
 	QPointF GetApos(QPointF& A_pos);
 	QVector<QLineF> GetCurLine_x();
 	QVector<QLineF> GetCutLine_y();
+	QImage createImg(std::map<int, std::vector<QPointF>>::iterator& it,
+		Data::Rang& xr,
+		Data::Rang& yr,
+		float& xScale,
+		float& yScale);
+	void clipImg(QImage& img,QPolygonF& polyon);
+	void drawPolygons(
+		QPainter& painter,
+		Data::Rang& xr,
+		Data::Rang& yr,
+		float& xScale,
+		float& yScale,
+		std::vector<QPointF>& points);
 private:
 	QMap<int, QColor> color_tab;
 	QMap<int, QColor> color_pen;

@@ -8,45 +8,45 @@
 #include "StructData.h"
 void chang2colormap(QPixmap& map, QColor& color);
 QString line2icon[] = { ":/struct/C.png", ":/struct/a.png", ":/struct/s.png" };
-Struct2DRenderer::Struct2DRenderer(std::shared_ptr<Struct2dData> data):
-Renderer(std::dynamic_pointer_cast<Data> (data)){
+Struct2DRenderer::Struct2DRenderer(std::shared_ptr<Struct2dData> data) :
+	Renderer(std::dynamic_pointer_cast<Data> (data)) {
 
-	color_tab[1]=QColor(125,125,125,255);
-	color_tab[3]=QColor(255,0,255,0);
-	color_tab[4]=QColor(255,125,125,255);
-	color_tab[5]=QColor(125,125,255,255);
-	color_tab[9]=QColor(255,255,0,255);
+	color_tab[1] = QColor(125, 125, 125, 255);
+	color_tab[3] = QColor(255, 0, 255, 0);
+	color_tab[4] = QColor(255, 125, 125, 255);
+	color_tab[5] = QColor(125, 125, 255, 255);
+	color_tab[9] = QColor(255, 255, 0, 255);
 	QPen pen(Qt::red);
 	//虚线
 	pen.setStyle(Qt::DashLine);
 	pen.setWidth(5);
 
 }
-Struct2DRenderer::~Struct2DRenderer(){  }
+Struct2DRenderer::~Struct2DRenderer() {  }
 /**
 * @brief Struct2DRenderer::drawImage()
-* @return bool 
+* @return bool
 */
 bool Struct2DRenderer::drawImage() {
 	//return drawPloy();
 	return getPloy_grid();
 }
 /**
-* @brief Struct2DRenderer::addListRang 
+* @brief Struct2DRenderer::addListRang
 * @param std::list<Data::Rang> listRang
 * @return bool
 */
-bool Struct2DRenderer::addListRang(std::list<Data::Rang> listRang){
+bool Struct2DRenderer::addListRang(std::list<Data::Rang> listRang) {
 	return true;
 }
 /**
 * @brief Struct2DRenderer::drawPointImage 点位绘制
 * @return bool
 */
-bool Struct2DRenderer::drawPointImage(){
+bool Struct2DRenderer::drawPointImage() {
 	//新建画布
 
-	QImage img(getSize(),QImage::Format_ARGB32);
+	QImage img(getSize(), QImage::Format_ARGB32);
 	img.fill(qRgba(0, 0, 0, 0));
 	QPen pen(Qt::red);
 	pen.setBrush(Qt::blue);
@@ -54,15 +54,15 @@ bool Struct2DRenderer::drawPointImage(){
 	QPainter painter(&img);
 	painter.setPen(pen);
 	//原始坐标
-	QPointF A_pos=this->getFindPosition();
-	QPointF d_pos=QPointF(0.0,0.0);
+	QPointF A_pos = this->getFindPosition();
+	QPointF d_pos = QPointF(0.0, 0.0);
 	//获取当前点位
 	/**************************/
-	d_pos=GetApos(A_pos);
+	d_pos = GetApos(A_pos);
 	/***************************/
-	A_pos.setY(getSize().height()-A_pos.y());
+	A_pos.setY(getSize().height() - A_pos.y());
 	painter.drawPoint(A_pos);
-	drawDisplayPoint(painter,A_pos,d_pos);
+	drawDisplayPoint(painter, A_pos, d_pos);
 	setImage(img);
 	return true;
 }
@@ -70,7 +70,7 @@ bool Struct2DRenderer::drawPointImage(){
 * @brief Struct2DRenderer::setDefaultRang 设置默认数据区间
 * @return bool
 */
-bool Struct2DRenderer::setDefaultRang(){
+bool Struct2DRenderer::setDefaultRang() {
 	auto _Struct2DData = std::dynamic_pointer_cast<Struct2dData>(data);
 	if (!_Struct2DData)
 		return false;
@@ -90,14 +90,14 @@ bool Struct2DRenderer::setDefaultRang(){
 		setXRang(_Struct2DData->getXRang());
 		setYRang(_Struct2DData->getYRang());
 	}
-	
+
 	return true;
 }
 /**
 * @brief Struct2DRenderer::dataInit 数值初始化
 * return void
 */
-void Struct2DRenderer::dataInit(){
+void Struct2DRenderer::dataInit() {
 	Renderer::dataInit();
 	auto _Struct2DData = std::dynamic_pointer_cast<Struct2dData>(data);
 	if (_Struct2DData)
@@ -110,9 +110,9 @@ void Struct2DRenderer::dataInit(){
 * @param std::vector<QPointF> points
 * @return QVector<QLineF>
 */
-QVector<QLineF> Struct2DRenderer::Getlines(std::vector<QPointF> points){
+QVector<QLineF> Struct2DRenderer::Getlines(std::vector<QPointF> points) {
 	QVector<QLineF> lines;
-	for (auto i = 0; i < points.size()-1;i++)
+	for (auto i = 0; i < points.size() - 1; i++)
 	{
 		lines.push_back(QLineF(points[i], points[i + 1]));
 	}
@@ -157,11 +157,11 @@ void Struct2DRenderer::drawDisplayPoint(QPainter& painter, const QPointF& positi
 	painter.drawText(displayRect.x() + 10,
 		displayRect.y() + 20,
 		QString("X:%1").arg(d.x(), 0, 'E', 2)
-		);
+	);
 	painter.drawText(displayRect.x() + 10,
 		displayRect.y() + 40,
 		QString("Y:%1").arg(d.y(), 0, 'E', 2)
-		);
+	);
 }
 /**
 * @brief Struct2DRenderer::GetApos 获取最接近的点
@@ -177,14 +177,14 @@ QPointF Struct2DRenderer::GetApos(QPointF& A_pos)
 	std::shared_ptr<Struct2dData> d = std::dynamic_pointer_cast<Struct2dData> (data);
 	std::map<int, std::map<int, std::vector<QPointF>>> map = d->GetAllinfo();
 	std::map<int, std::map<int, std::vector<QPointF>>> lines = d->getLineF();
-	
+
 	//获取全部的点位
 	std::vector<QPointF> poss;
 	//
-	for (auto iter=map.begin();iter!=map.end();iter++)
+	for (auto iter = map.begin(); iter != map.end(); iter++)
 	{
 		auto itercolor = color_tab.find(iter->first);
-		if (itercolor!=color_tab.end())
+		if (itercolor != color_tab.end())
 		{
 			for (auto iter2 = iter->second.begin(); iter2 != iter->second.end(); iter2++)
 			{
@@ -193,10 +193,10 @@ QPointF Struct2DRenderer::GetApos(QPointF& A_pos)
 		}
 	}
 	//
-	for (auto iter=lines.begin();iter!=lines.end();iter++)
+	for (auto iter = lines.begin(); iter != lines.end(); iter++)
 	{
 		auto itercolor = pixmap.find(iter->first);
-		if (itercolor!=pixmap.end())
+		if (itercolor != pixmap.end())
 		{
 			for (auto iter2 = iter->second.begin(); iter2 != iter->second.end(); iter2++)
 			{
@@ -206,12 +206,12 @@ QPointF Struct2DRenderer::GetApos(QPointF& A_pos)
 	}
 	unsigned int minDistance = ~0;
 	QPointF srcpos;
-	for (auto iter=poss.begin();iter!=poss.end();iter++)
+	for (auto iter = poss.begin(); iter != poss.end(); iter++)
 	{
 		QPointF p1 = *iter;
-		transitionPoint(p1,xScale,xr,yScale,yr);
+		transitionPoint(p1, xScale, xr, yScale, yr);
 		unsigned int Cur_Distance = sqrt((p1.x() - A_pos.x()) * (p1.x() - A_pos.x()) + (p1.y() - A_pos.y()) * (p1.y() - A_pos.y()));
-		if (minDistance>Cur_Distance)
+		if (minDistance > Cur_Distance)
 		{
 			srcpos = *iter;
 			minDistance = Cur_Distance;
@@ -223,18 +223,91 @@ QPointF Struct2DRenderer::GetApos(QPointF& A_pos)
 	A_pos = apos;
 	return dpos;
 }
-/**
-* @brief Struct2DRenderer::SetColor 设置不同多边形的颜色
-* @param int pro 多边形属性
-* @param QColor _color 颜色
-* @return void
-*/
+void Struct2DRenderer::clipImg(QImage& img, QPolygonF& polyon)
+{
+	QColor desAlpha(0, 0, 0, 0);
+	for (int w = 0; w < getSize().width(); ++w)
+	{
+		for (int h = 0; h < getSize().height(); ++h)
+		{
+			if (!polyon.containsPoint(QPointF(w, h), Qt::WindingFill))
+			{
+				img.setPixel(w, h, desAlpha.rgba());
+			}
 
+		}
+	}
+}
+void Struct2DRenderer::drawPolygons(
+	QPainter& painter,
+	Data::Rang& xr,
+	Data::Rang& yr,
+	float& xScale,
+	float& yScale,
+	std::vector<QPointF>& points)
+{
+	QVector<QPointF> vpf;
+	QPainterPath painterPath;
+	auto iterpoint = points.begin();
+	transitionPoint(*iterpoint, xScale, xr, yScale, yr);
+	vpf.append(*iterpoint);
+	painterPath.moveTo(*iterpoint); iterpoint++;
+	for (; iterpoint != points.end(); iterpoint++)
+	{
+		transitionPoint(*iterpoint, xScale, xr, yScale, yr);
+		vpf.append(*iterpoint);
+		painterPath.lineTo(*iterpoint);
+	}
+	painter.drawPath(painterPath);
+	QVector<QLineF> linex = GetCurLine_x();
+	QVector<QLineF> liney = GetCutLine_y();
+	painter.drawLines(linex);
+	painter.drawLines(liney);
+	//裁剪
+}
+QImage Struct2DRenderer::createImg(
+	std::map<int, std::vector<QPointF>>::iterator& it,
+	Data::Rang& xr,
+	Data::Rang& yr,
+	float& xScale,
+	float& yScale)
+{
+	QImage img1(getSize(), QImage::Format_ARGB32);
+	img1.fill(qRgba(0.0, 0.0, 0.0, 0.0));
+	//获取画刷颜色
+	auto colorbrush = color_tab.find(it->first);
+	auto colorpen = color_pen.find(it->first);
+	if (colorbrush == color_tab.end() || colorpen == color_pen.end())
+		return img1;
+	//创建画师
+	QPainter painter(&img1);
+	painter.setPen(QPen(colorpen.value()));
+	painter.setBrush(QBrush(colorbrush.value()));
+	painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+	//绘制线段
+	if (it->second.size() == 2 && colorpen != color_pen.end())
+	{
+		QPen pen;
+		pen.setColor(colorpen.value());
+		pen.setStyle(Qt::DashLine);
+		pen.setWidth(5);
+		painter.setPen(pen);
+		auto iterPoint = (*it).second.begin();
+		transitionPoint(*iterPoint, xScale, xr, yScale, yr);
+		transitionPoint(*(iterPoint + 1), xScale, xr, yScale, yr);
+		painter.drawLine(QLineF(*iterPoint, *(iterPoint + 1)));
+		return img1;
+	}
+	QPolygonF polyF;
+	//绘制多边形	
+	drawPolygons(painter,xr,yr,xScale,yScale,it->second);
+	return img1;
+}
 /**
 * @brief Struct2DRenderer::getPloy_grid 获取多边形的网格
 * @return void
 */
-bool Struct2DRenderer::getPloy_grid(){
+bool Struct2DRenderer::getPloy_grid() {
 	float xScale, yScale;
 	if (!getTransitionScale(xScale, yScale))
 		return false;
@@ -243,193 +316,105 @@ bool Struct2DRenderer::getPloy_grid(){
 	auto xr = getXRang();
 	auto yr = getYRang();
 	//开始绘制
-	QImage img1(getSize(), QImage::Format_ARGB32);
-	img1.fill(qRgba(255,255,255,255));
-	QPen pen(Qt::black);
-	pen.setWidth(1);
-	QPainter painter1(&img1);
-	painter1.setPen(pen);
-	std::vector<QPointF> allpos = d->ALLPOINTF();
-	int XSize = d->getposxSize();
-	int YSize = d->getposySize();
-
-	//绘制第二张图
-	QImage img2(getSize(), QImage::Format_ARGB32);
-	img2.fill(qRgba(255, 255, 255, 255));
-	QPainter painter2(&img2);
-	painter2.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+	QImage img(getSize(), QImage::Format_ARGB32);
+	img.fill(qRgba(0.0, 0.0, 0.0, 0.0));
+	QPainter painter(&img);
+	painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+	//多边形绘制
+	std::vector<QImage> imgs;
 	std::map<int, std::map<int, std::vector<QPointF>>> map = d->GetAllinfo();
-	QVector<QVector<QLineF>> lines_list;
-	QVector<linepen> linepenlist;
 	for (auto iter = map.begin(); iter != map.end(); iter++)
 	{
-		//修改根据多边形网格的编号绘制。
+		//根据多边形的网格的编号绘制
 		for (auto iterpro = iter->second.begin(); iterpro != iter->second.end(); iterpro++)
 		{
-			auto itercolor = color_tab.find(iterpro->first);
-			if (itercolor != color_tab.end())
-			{
-					QBrush brush(itercolor.value());
-					painter1.setBrush(brush);
-					painter2.setBrush(brush);
-					if (iterpro->second.size() == 2)
-					{
-						linepen _linepen;
-						auto linestyle = color_pen.find(iter->first);
-						if (linestyle != color_pen.end())
-						{
-							_linepen.pen= linestyle.value();
-							_linepen.pen.setStyle(Qt::DashLine);
-							_linepen.pen.setWidth(5);
-							auto iterpoint = (*iterpro).second.begin();
-							transitionPoint(*iterpoint, xScale, xr, yScale, yr);
-							transitionPoint(*(iterpoint + 1), xScale, xr, yScale, yr);
-							_linepen.line = QLineF((*iterpoint), *(iterpoint + 1));
-							linepenlist.push_back(_linepen);
-						}
-					}
-					if (iterpro->second.size() > 2)
-					{
-						QPainterPath _path;
-						auto iterpoint = (*iterpro).second.begin();
-						transitionPoint(*iterpoint, xScale, xr, yScale, yr);
-						_path.moveTo(*iterpoint); iterpoint++;
-						for (; iterpoint != (*iterpro).second.end(); iterpoint++)
-						{
-							transitionPoint(*iterpoint, xScale, xr, yScale, yr);
-							_path.lineTo(*iterpoint);
-						}
-						QVector<QLineF> lines = Getlines((*iterpro).second);
-						painter2.fillPath(_path, QBrush(QColor(0,0,0,0)));
-						painter1.drawPath(_path);
-						lines_list.push_back(lines);
-					}
-			}
+
+			auto imgit = createImg(iterpro, xr, yr, xScale, yScale);
+			painter.drawImage(0, 0, imgit);
 		}
 	}
-#pragma region 
-	//绘制横向切割线
-	QPen lastpen1 = painter1.pen();
-	QPen newPen;
-	newPen.setWidth(1);
-	newPen.setColor(color_pen[3]);
-	painter1.setPen(newPen);
-	QVector<QLineF> liney = GetCutLine_y();
-	QVector<QLineF> linex = GetCurLine_x();
-	painter1.drawLines(linex);
-	painter1.drawLines(liney);
-	
-#pragma endregion
-	painter1.setCompositionMode(QPainter::CompositionMode_SourceOver);
-	painter1.drawImage(0, 0, img2);
-	for each (QVector<QLineF> var in lines_list)
-	{
-		painter1.drawLines(var);
-	}
-	//绘制线段
-	/**********************************************/
-	for each (linepen var in linepenlist)
-	{
-		painter1.setPen(var.pen);
-		painter1.drawLine(var.line);
-	}
-	painter1.setPen(lastpen1);
 	//绘制线段
 	std::map<int, std::map<int, std::vector<QPointF>>> mlines = d->getLineF();
 	for (auto iter = mlines.begin(); iter != mlines.end(); iter++)
-		{
-			for (auto iter2 = iter->second.begin(); iter2 != iter->second.end(); iter2++)
-			{
-				auto iterColor = pixmap.find(iter2->first);
-				if (iterColor == pixmap.end() && 2 != iter2->second.size())
-					continue;
-				QLineF line(iter2->second[0],iter2->second[1]);
-				transitionLineF(line, xScale, yScale, xr, yr);
-				QLine iline = QLine(QPoint(line.p1().x(), line.p1().y()), QPoint(line.p2().x(), line.p2().y()));
-				DrawLine(painter1,line,iter2->first);
-
-			}
-		}
-		/**********************************************/
-		auto nImg = img1.mirrored(false, true);
-		//替换白色为透明色
-		QColor srColor(255, 255, 255, 255);
-		QColor desAlpha(0, 0, 0, 0);
-		for (int w = 0; w < nImg.width(); ++w)
-		{
-			for (int h = 0; h < nImg.height(); ++h)
-			{
-				if (nImg.pixel(w, h) == srColor.rgb())
-				{
-					nImg.setPixel(w, h, desAlpha.rgba());
-				}
-			}
-		}
-		setImage(nImg);
-		return true;
-	}
-	void Struct2DRenderer::DrawLine(QPainter& painter, QLineF& line, int mPorper)
 	{
-		QSize pngSize = pixmap[mPorper].size();
-		QPointF p1 = line.p1();
-		QPointF p2 = line.p2();
-		//纵向
-		if (p1.x() == p2.x())
+		for (auto iter2 = iter->second.begin(); iter2 != iter->second.end(); iter2++)
 		{
-			auto intervalnumber = abs(p1.y() - p2.y()) / pixmap[mPorper].size().height();
-			auto startpos = (p1.y() > p2.y()) ? (p2.y()) : (p1.y());
-			auto endpos = (p1.y() > p2.y()) ? (p1.y()) : (p2.y());
-			for (auto index = 0; index < intervalnumber; index++)
-			{
-				QRect rect;
-				rect.setLeft(p1.x() - pngSize.width() / 2);
-				rect.setRight(rect.left() + pngSize.width());
-				rect.setTop(startpos + index * pngSize.height());
-				if (rect.top() + pngSize.height() >= endpos)
-				{
-					rect.setBottom(endpos);
-					QPixmap map = pixmap[mPorper].copy(0, 0, pngSize.width(), endpos - rect.top());
-					painter.drawPixmap(rect, map);
-				}
-				else
-				{
-					rect.setBottom(rect.top() + pngSize.height());
-					painter.drawPixmap(rect, pixmap[mPorper]);
-				}
+			auto iterColor = pixmap.find(iter2->first);
+			if (iterColor == pixmap.end() && 2 != iter2->second.size())
+				continue;
+			QLineF line(iter2->second[0], iter2->second[1]);
+			transitionLineF(line, xScale, yScale, xr, yr);
+			QLine iline = QLine(QPoint(line.p1().x(), line.p1().y()), QPoint(line.p2().x(), line.p2().y()));
+			DrawLine(painter, line, iter2->first);
 
-			}
-		}
-		//横向
-		else if (p1.y() == p2.y())
-		{
-			auto intervalnumber = abs(p1.x() - p2.x()) / pixmap[mPorper].size().width();
-			auto startpos = (p1.x() > p2.x()) ? (p2.x()) : (p1.x());
-			auto endpos = (p1.x() > p2.x()) ? (p1.x()) : (p2.x());
-			//图像翻转
-			QMatrix rm;
-			rm.rotate(90);
-			QPixmap mapy = pixmap[mPorper].transformed(QPixmap::trueMatrix(rm, pngSize.width(), pngSize.height()));
-			for (auto index = 0; index < intervalnumber; index++)
-			{
-				QRect rect;
-				rect.setTop(p1.y() - pngSize.height() / 2);
-				rect.setBottom(rect.top() + pngSize.height());
-				rect.setLeft(startpos + index * pngSize.width());
-				if (rect.left() + pngSize.width() >= endpos)
-				{
-					rect.setRight(endpos);
-					QPixmap map = mapy.copy(0, 0, endpos - rect.left(), rect.height());
-					painter.drawPixmap(rect, map);
-				}
-				else
-				{
-					rect.setRight(rect.left() + pngSize.width());
-					painter.drawPixmap(rect, mapy);
-				}
-
-			}
 		}
 	}
+	auto nImg = img.mirrored(false, true);
+	setImage(nImg);
+	return true;
+}
+void Struct2DRenderer::DrawLine(QPainter& painter, QLineF& line, int mPorper)
+{
+	QSize pngSize = pixmap[mPorper].size();
+	QPointF p1 = line.p1();
+	QPointF p2 = line.p2();
+	//纵向
+	if (p1.x() == p2.x())
+	{
+		auto intervalnumber = abs(p1.y() - p2.y()) / pixmap[mPorper].size().height();
+		auto startpos = (p1.y() > p2.y()) ? (p2.y()) : (p1.y());
+		auto endpos = (p1.y() > p2.y()) ? (p1.y()) : (p2.y());
+		for (auto index = 0; index < intervalnumber; index++)
+		{
+			QRect rect;
+			rect.setLeft(p1.x() - pngSize.width() / 2);
+			rect.setRight(rect.left() + pngSize.width());
+			rect.setTop(startpos + index * pngSize.height());
+			if (rect.top() + pngSize.height() >= endpos)
+			{
+				rect.setBottom(endpos);
+				QPixmap map = pixmap[mPorper].copy(0, 0, pngSize.width(), endpos - rect.top());
+				painter.drawPixmap(rect, map);
+			}
+			else
+			{
+				rect.setBottom(rect.top() + pngSize.height());
+				painter.drawPixmap(rect, pixmap[mPorper]);
+			}
+
+		}
+	}
+	//横向
+	else if (p1.y() == p2.y())
+	{
+		auto intervalnumber = abs(p1.x() - p2.x()) / pixmap[mPorper].size().width();
+		auto startpos = (p1.x() > p2.x()) ? (p2.x()) : (p1.x());
+		auto endpos = (p1.x() > p2.x()) ? (p1.x()) : (p2.x());
+		//图像翻转
+		QMatrix rm;
+		rm.rotate(90);
+		QPixmap mapy = pixmap[mPorper].transformed(QPixmap::trueMatrix(rm, pngSize.width(), pngSize.height()));
+		for (auto index = 0; index < intervalnumber; index++)
+		{
+			QRect rect;
+			rect.setTop(p1.y() - pngSize.height() / 2);
+			rect.setBottom(rect.top() + pngSize.height());
+			rect.setLeft(startpos + index * pngSize.width());
+			if (rect.left() + pngSize.width() >= endpos)
+			{
+				rect.setRight(endpos);
+				QPixmap map = mapy.copy(0, 0, endpos - rect.left(), rect.height());
+				painter.drawPixmap(rect, map);
+			}
+			else
+			{
+				rect.setRight(rect.left() + pngSize.width());
+				painter.drawPixmap(rect, mapy);
+			}
+
+		}
+	}
+}
 /**
 * @brief Struct2DRenderer::transitionLineF
 * @param QLineF & line
@@ -464,7 +449,7 @@ bool Struct2DRenderer::drawPloy()
 	//获取x,y的取值范围
 	auto xr = getXRang();
 	auto yr = getYRang();
-	
+
 	//两张图用于合并
 	//图1
 	QImage img1(getSize(), QImage::Format_ARGB32);
@@ -475,28 +460,28 @@ bool Struct2DRenderer::drawPloy()
 	painter1.setPen(pen);
 
 	//图2
-	QImage img2(getSize(),QImage::Format_ARGB32);
+	QImage img2(getSize(), QImage::Format_ARGB32);
 	img2.fill(qRgba(255, 255, 255, 255));
 	QPainter painter2(&img2);
 	painter2.setCompositionMode(QPainter::CompositionMode_DestinationIn);
 	std::map<int, std::map<int, std::vector<QPointF>>> allinfo = d->GetAllinfo();
-	for (auto iter=allinfo.begin();iter!=allinfo.end();iter++)
+	for (auto iter = allinfo.begin(); iter != allinfo.end(); iter++)
 	{
 		//查找是否有对应颜色
 		auto iterColor = color_tab.find(iter->first);
-		if (iterColor!=color_tab.end())
+		if (iterColor != color_tab.end())
 		{
 			QBrush brush(iterColor.value());
 			painter1.setBrush(brush);
 			painter2.setBrush(brush);
-			for (auto iterline=iter->second.begin();iterline!=iter->second.end();iterline++)
+			for (auto iterline = iter->second.begin(); iterline != iter->second.end(); iterline++)
 			{
-				if (iterline->second.size()>2)
+				if (iterline->second.size() > 2)
 				{
 					QPainterPath _path;
 					auto iterpoint = iterline->second.begin();
-					transitionPoint(*iterpoint,xScale,xr,yScale,yr);
-					for (;iterpoint!=iterline->second.end();iterpoint++)
+					transitionPoint(*iterpoint, xScale, xr, yScale, yr);
+					for (; iterpoint != iterline->second.end(); iterpoint++)
 					{
 						transitionPoint(*iterpoint, xScale, xr, yScale, yr);
 						_path.lineTo(*iterpoint);
@@ -534,7 +519,7 @@ bool Struct2DRenderer::drawPloy()
 
 	return true;
 }
-QVector<QLineF> Struct2DRenderer::GetCurLine_x(){
+QVector<QLineF> Struct2DRenderer::GetCurLine_x() {
 	QVector<QLineF> lines;
 	float xScale, yScale;
 	getTransitionScale(xScale, yScale);
@@ -544,17 +529,17 @@ QVector<QLineF> Struct2DRenderer::GetCurLine_x(){
 	std::vector<QPointF> Allpoint = d->ALLPOINTF();
 	int posxSizeX = d->getposxSize();
 	int posxSizeY = d->getposySize();
-	for (auto y = 0; y < posxSizeY;y++)
+	for (auto y = 0; y < posxSizeY; y++)
 	{
-		QPointF _left = Allpoint[y*posxSizeX];
-		QPointF _right = Allpoint[(y + 1)*posxSizeX - 1];
+		QPointF _left = Allpoint[y * posxSizeX];
+		QPointF _right = Allpoint[(y + 1) * posxSizeX - 1];
 		transitionPoint(_left, xScale, xr, yScale, yr);
 		transitionPoint(_right, xScale, xr, yScale, yr);
 		lines.push_back(QLineF(_left, _right));
 	}
 	return lines;
 }
-QVector<QLineF> Struct2DRenderer::GetCutLine_y(){
+QVector<QLineF> Struct2DRenderer::GetCutLine_y() {
 	QVector<QLineF> lines;
 	float xScale, yScale;
 	getTransitionScale(xScale, yScale);
@@ -564,22 +549,22 @@ QVector<QLineF> Struct2DRenderer::GetCutLine_y(){
 	std::vector<QPointF> Allpoint = d->ALLPOINTF();
 	int posxsize = d->getposxSize();
 	int posysize = d->getposySize();
-	for (auto x = 0; x < posxsize;x++)
+	for (auto x = 0; x < posxsize; x++)
 	{
 		QPointF bottom = Allpoint[x];
-		QPointF top = Allpoint[(posysize - 1)*posxsize + x];
+		QPointF top = Allpoint[(posysize - 1) * posxsize + x];
 		transitionPoint(top, xScale, xr, yScale, yr);
 		transitionPoint(bottom, xScale, xr, yScale, yr);
-		lines.push_back(QLineF(top,bottom));
+		lines.push_back(QLineF(top, bottom));
 	}
 	return lines;
 }
 
 /**
 * @brief  Struct2DRenderer::loadconfig 加载配置
-* @return void  
+* @return void
 */
-void Struct2DRenderer::loadconfig(){
+void Struct2DRenderer::loadconfig() {
 	Config::GetInstance()->loadConfig();
 	ConfigGroup mGroup = Config::GetInstance()->getRootGroup();
 	ConfigGroup structConfig = mGroup.getGroup("struct");
@@ -603,8 +588,8 @@ void Struct2DRenderer::loadconfig(){
 	QPixmap mapc(line2icon[0]);
 	QPixmap mapa(line2icon[1]);
 	QPixmap maps(line2icon[2]);
-	QSize pngsize(16,16);
-	
+	QSize pngsize(16, 16);
+
 	chang2colormap(maps, QStringToQColor(QString::fromStdString(structConfig.getGroup("PORT").getValue("value"))));
 	chang2colormap(mapa, QStringToQColor(QString::fromStdString(structConfig.getGroup("DRIVER").getValue("value"))));
 	chang2colormap(mapc, QStringToQColor(QString::fromStdString(structConfig.getGroup("INDUCTOR").getValue("value"))));
@@ -626,7 +611,7 @@ void Struct2DRenderer::loadconfig(){
 }
 
 /**
-* @brief chang2colormap 
+* @brief chang2colormap
 * @param QPixmap & map
 * @param QColor & color
 * @return void
