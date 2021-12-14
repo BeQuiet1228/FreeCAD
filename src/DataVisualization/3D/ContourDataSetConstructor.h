@@ -24,10 +24,12 @@ namespace DV3D
 		void createPointsXz(std::vector<DV::ContourData::Grid>& data, float y);
 		void createPointsYz(std::vector<DV::ContourData::Grid>& data, float x);
 		void createPointsRz(std::vector<DV::ContourData::Grid>& data, float theta);
+		void setGridSize(int xGrid,int yGrid,int zGrid);
 	protected:
 		vtkSmartPointer<vtkPoints> points;
 		vtkSmartPointer < vtkFloatArray >scaler;
 		int xGridSize, yGridSize, zGridSize;
+		bool isNeg;
 	};
 };
 #endif // !CONTOURDATASETCONSTRUCTOR_H_

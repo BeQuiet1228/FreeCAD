@@ -3,6 +3,7 @@
 #include <vtkCamera.h>
 #include <QVTKInteractor.h>
 #include <vtkInteractorStyleJoystickCamera.h>
+#include"vtkAxesActor.h"
 DV3D::Widget3D::Widget3D(QWidget* parent /*= 0*/)
 	:QWidget(parent)
 {
@@ -22,6 +23,10 @@ DV3D::Widget3D::Widget3D(QWidget* parent /*= 0*/)
 // 	renderer->GetActiveCamera()->Azimuth(30.0);
 // 	renderer->GetActiveCamera()->Dolly(1.2);
 
+#if 0 //添加一个三维坐标系,用于判断方位
+	vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
+	renderer->AddActor(axes);
+#endif
 	initGUI();
 }
 
