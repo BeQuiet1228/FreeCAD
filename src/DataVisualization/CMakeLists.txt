@@ -143,6 +143,8 @@ SET(SRC main.cpp
 	PlotAdapter.h
 	PlotAdapterNeedStruct.h
 	PlotAdapterNeedStruct.cpp
+	UndoRedoStack.cpp
+	UndoRedoStack.h
 	)
 SET(SRC_TOOL ConfigWidget.h
 	ConfigWidget.cpp
