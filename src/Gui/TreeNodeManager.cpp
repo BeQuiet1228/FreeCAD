@@ -321,7 +321,6 @@ namespace Gui
 			n.initNode("3d�ṹͼ", Gui::TreeNodeType::TREENODE_FILE, index);
 			node.addChild(n);
 		}
-
 		return node;
 	}
 };

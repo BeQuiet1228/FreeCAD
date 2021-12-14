@@ -30,6 +30,8 @@
 #include "dataSetConstructorFactory.h"
 #include "ControlerFactory.h"
 #include "controlerItemFactor.h"
+#include "DataVisualization/ContourData.h"
+#include "ContourDataSetConstructor.h"
 #ifndef INIT_VTK_OPENGL_AND_FRNT	//防止多次初始化模块
 #define INIT_VTK_OPENGL_AND_FRNT
 #include <vtkAutoInit.h>
@@ -57,58 +59,31 @@ int main(int argc, char* argv[])
 	auto datalist = io.hdf5DataList;
 	if (datalist.size() == 0)
 		return 0;
+
 	auto iter = datalist.begin();
-	Hdf5Data structData;
+	Hdf5Data structData,paticle3d,contour;
+
 	for (; iter != datalist.end(); iter++)
 	{
 		if (iter->name == "struct")
 			structData = *iter;
 
-		if(iter->name =="")
-			break;
+		if (iter->name == "")
+			paticle3d = *iter;
+		if (iter->name == "CONTOUR" && contour.name =="")
+			contour = *iter;
 	}
-	if (iter == datalist.end())
-		return 0;
 
-	
-#if 0
-	vtkSmartPointer<vtkUnstructuredGridGeometryFilter> filter = vtkSmartPointer<vtkUnstructuredGridGeometryFilter>::New();
-	filter->SetInputData(dataset);
-	filter->MergingOn();
-	filter->Update();
-	vtkSmartPointer<vtkDataSetMapper> ugridMapper = vtkSmartPointer<vtkDataSetMapper>::New();
-//	ugridMapper->SetInputConnection(filter->GetOutputPort());
-	ugridMapper->SetInputData(filter->GetOutput());
-	ugridMapper->ScalarVisibilityOff();
-	ugridMapper->Update();
-	vtkSmartPointer<vtkActor> ugridActor = vtkSmartPointer<vtkActor>::New();
-	ugridActor->SetMapper(ugridMapper);
-	ugridActor->GetProperty()->EdgeVisibilityOn();
-	vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
-	renderer->AddActor(ugridActor.Get());
-	renderer->ResetCamera();
-	renderer->GetActiveCamera()->Elevation(60.0);
-	renderer->GetActiveCamera()->Azimuth(30.0);
-	renderer->GetActiveCamera()->Dolly(1.2);
-	vtkSmartPointer<vtkRenderWindow>renWin = vtkSmartPointer<vtkRenderWindow>::New();
-	vtkSmartPointer<vtkRenderWindowInteractor>iren = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-	renWin->AddRenderer(renderer);
-	renWin->SetSize(640, 480);
-	renWin->SetWindowName("UGrid)");
-	iren->SetRenderWindow(renWin);
-	// interact with data
-	renWin->Render();
-	iren->Start();
-	return a.exec();
-#endif
 
 	Widget3D* w3d = new Widget3D();
 
 	ControlerFactory controlerFactor;
-	auto controler = controlerFactor.CreatParticle3dControler(*iter);
+	auto controler = controlerFactor.CreatParticle3dControler(paticle3d);
 	auto structControler = controlerFactor.CreatStrucControler(structData);
+	auto contourControler = controlerFactor.CreatContourControler(contour);
 	w3d->binding(controler.get());
 	w3d->binding(structControler.get());
+	w3d->binding(contourControler.get());
 	w3d->show();
 
 	auto item = ControlerItemFactor::CreatControlerItem();

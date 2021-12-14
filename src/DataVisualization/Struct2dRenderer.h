@@ -35,7 +35,7 @@ namespace DV {
 		QVector<QLineF> Getlines(std::vector<QPointF> points);
 		void drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d);
 		void transitionLineF(QLineF& line, const float& xScale, const float& yScale, const Data::Rang& xr, const Data::Rang& yr);
-		void DrawLine(QPainter& painter, QVector<QLineF>& lines, int mPorper);
+		void DrawLine(QPainter& painter, QLineF& line, int mPorper);
 		void transitionPoint(QPointF& point, const float& xScale, const Data::Rang& xr, const float& yScale, const Data::Rang& yr)
 		{
 			point.setX(transitionX(point.x(), xScale, xr));

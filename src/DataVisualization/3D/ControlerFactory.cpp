@@ -11,6 +11,10 @@
 #include "actorPipeline.h"
 #include "particle3dActorPipeline.h"
 #include "particle3dDataSetConstructor.h"
+#include "ContourDataSetConstructor.h"
+#include "PolarContourDataSetConstructor.h"
+#include "ContourActorPipeline.h"
+#include "DataVisualization/ContourData.h"
 #include <cassert>
 
 std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatControler(Hdf5Data& h5data)
@@ -18,10 +22,29 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatControler(Hdf5Data
 	std::shared_ptr<Controler> controler;
 	if (h5data.name == "struct")
 		controler = CreatStrucControler(h5data);
+	if(h5data.name=="CONTOUR")
+		controler=CreatContourControler(h5data);
 	assert(controler && "controler is nullptr!");
 	return controler;
 }
-
+std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContourControler(Hdf5Data& h5data)
+{
+	std::shared_ptr<Controler> controler;
+	std::shared_ptr<DataSetConstructorH5> constructor;
+	std::shared_ptr<ActorPipemline> pipeline;
+	DV::ContourData data(h5data);
+	if (data.getDirectionType() != DV::R_THETA)
+		constructor.reset(new ContourDatasetConstructor);
+	else
+		constructor.reset(new PolarContourDatasetConstructor);
+	constructor->setHdf5Data(h5data);
+	pipeline.reset(new  ContourActorPipeline);
+	pipeline->setDataSet(constructor->creatDataset());
+	pipeline->connect();
+	controler.reset(new Controler());
+	controler->setActorPipeline(pipeline);
+	return controler;
+}
 std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucControler(Hdf5Data& h5data)
 {
 

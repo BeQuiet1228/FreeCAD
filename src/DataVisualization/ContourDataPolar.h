@@ -19,7 +19,7 @@ namespace DV {
 		ContourDataPloarHalfGridFullCircle(Hdf5Data& h5Data, const RunMod& mod = SINGLE_THREAD);
 		~ContourDataPloarHalfGridFullCircle() = default;
 	public:
-		virtual QwtMatrixRasterData* getQwtMatrixRasterData() override;
+		bool loadPoint() override;
 	};
 
 	class DATA_VISUALIZATION_EXPORT PolarMatrixRasterData :public DefineMatrixRasterData {
@@ -34,8 +34,8 @@ namespace DV {
 		static double FastAtan(double x);
 	};
 
-#ifdef _DATA_VISUALIZATION_
+//#ifdef _DATA_VISUALIZATION_
 	//根据h5文件信息创建数据对象
-	ContourDataPolar* CreateContourDataPolar(Hdf5Data& h5);
-#endif
+	EXTERN_C DATA_VISUALIZATION_EXPORT ContourDataPolar* CreateContourDataPolar(Hdf5Data& h5);
+//#endif
 };

@@ -30,9 +30,13 @@ namespace DV {
 		std::vector<float> getStructFace();
 		//获取图表信息
 		std::string getInformationTitle() override;
+		//添加获取网格点
+		std::vector<Grid>& getGrids();
 	public:
 		void setValueRang(const Rang& r);
 		Rang getVlaueRange();
+		unsigned int getWidth();
+		unsigned int getHeight();
 	private:
 		void setXYRange();
 		//根据坐标轴的名称 获取范围
