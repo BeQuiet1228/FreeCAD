@@ -22,73 +22,8 @@
 #include "TLabel.h"
 #include"CombAxis.h"
 namespace DV {
-	struct UndoRedoData
-	{
-		UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
-			:xr(xr), yr(yr) {};
-		UndoRedoData() = default;
-		Data::Rang xr, yr;
-	};
-	class UndoRedoStack {
-	public:
-		UndoRedoStack() = default;
-		~UndoRedoStack() = default;
-
-		/**
-		* @brief UndoRedoStack::undo 撤销之前的操作
-		* @param UndoRedoData & data 返回渲染范围
-		* @return bool false 代表操作失败
-		*/
-		bool undo(UndoRedoData& data) {
-			if (undoStack.size() < 2)
-				return false;
-			redoStack.push(undoStack.top());
-			undoStack.pop();
-			data = undoStack.top();
-
-		};
-		/**
-		* @brief UndoRedoStack::redo 恢复之前的撤销
-		* @param UndoRedoData & data 返回渲染数据
-		* @return bool false 代表操作失败
-		*/
-		bool redo(UndoRedoData& data) {
-			if (redoStack.empty())
-				return false;
-			data = redoStack.top();
-			undoStack.push(data);
-			redoStack.pop();
-		};
-		/**
-		* @brief UndoRedoStack::push 压入操作，如放大缩小操作的数据
-		* @param const UndoRedoData & data
-		* @return void
-		*/
-		void push(const UndoRedoData& data) {
-			undoStack.push(data);
-			clearStack(redoStack);
-		};
-		/**
-		* @brief UndoRedoStack::clear 清空数据
-		* @return void
-		*/
-		void clear() {
-			clearStack(redoStack);
-			clearStack(undoStack);
-		}
-	private:
-		std::stack<UndoRedoData> undoStack, redoStack;
-	private:
-		void clearStack(std::stack<UndoRedoData>& stack) {
-			while (!stack.empty())
-			{
-				stack.pop();
-			}
-		}
-	};
-
 	Plot::Plot(QWidget* parent /*= 0*/)
-		:QWidget(parent), URStack(new UndoRedoStack)
+		:QWidget(parent)
 	{
 		setObjectName("visualizationPlot");
 		initData();
@@ -203,24 +138,16 @@ namespace DV {
 	*/
 	void Plot::undo()
 	{
-		UndoRedoData data;
-		if (!URStack->undo(data))
+		if (!adapter->undo())
 			return;
-		Data::Rang& xr = data.xr;
-		Data::Rang& yr = data.yr;
-		adapter->setRenderRange(xr.min, xr.max, yr.min, yr.max);
 		updateAxis();
 		reRender();
 	}
 
 	void Plot::redo()
 	{
-		UndoRedoData data;
-		if (!URStack->redo(data))
+		if (!adapter->redo())
 			return;
-		Data::Rang& xr = data.xr;
-		Data::Rang& yr = data.yr;
-		adapter->setRenderRange(xr.min, xr.max, yr.min, yr.max);
 		updateAxis();
 		reRender();
 	}
@@ -249,8 +176,9 @@ namespace DV {
 		reRender();
 
 		//清空撤销恢复栈，将新的操作压入
+		auto URStack = adapter->getUndoRedoStack();
 		URStack->clear();
-		UndoRedoData URData(adapter->getAxisBottomRange(), adapter->getAxisLeftRange());
+		UndoRedoStack::DataPtr  URData(new UndoRedoData(adapter->getAxisBottomRange(), adapter->getAxisLeftRange()));
 		URStack->push(URData);
 	}
 
@@ -500,7 +428,8 @@ namespace DV {
 		yr.min = yMin * yScale + yr.min;
 
 		//将操作压入栈
-		UndoRedoData unData(xr, yr);
+		auto URStack = adapter->getUndoRedoStack();
+		UndoRedoStack::DataPtr unData(new UndoRedoData(xr, yr));
 		URStack->push(unData);
 
 		//设置渲染范围
