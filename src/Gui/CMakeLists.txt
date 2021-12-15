@@ -44,6 +44,7 @@ include_directories(
     ${XercesC_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIR}
     ${3DCONNEXION_INCLUDE_DIR}
+	${VTK_INCLUDE_DIRS}
 )
 
 if(MSVC)
@@ -54,6 +55,7 @@ if(MSVC)
          ${OPENGL_gl_LIBRARY}
 		 Editor
          transition
+		 DataVisualization3D
     )
 	if(contorl_client_dll)
 	list(APPEND FreeCADGui_LIBS
@@ -336,6 +338,7 @@ set(Gui_MOC_HDRS
     PlaneMDIView.h
 	TreeViewctrl.h
     MDIEditView.h
+	DataVisualization3dView.h
 )
 
 fc_wrap_cpp(Gui_MOC_SRCS ${Gui_MOC_HDRS})
@@ -408,8 +411,10 @@ SET(Gui_UIC_SRCS
     TaskView/TaskSelectLinkProperty.ui
     MainWindowDef.ui
 	picgui_ribbon/MainWindow.ui
-        picgui_ribbon/PICRibbonButtonGroup.ui
-        picgui_ribbon/PICRibbonTabContent.ui
+    picgui_ribbon/PICRibbonButtonGroup.ui
+    picgui_ribbon/PICRibbonTabContent.ui
+	ControlerItemListWidget.ui
+	
 )
 
 SET(Gui_RES_SRCS
@@ -452,6 +457,22 @@ SET(FILE_FORMAT_SRC
 	FileFormatH5.cpp
 	TreeViewctrl.h
 	TreeViewctrl.cpp
+	PlotAdapterBase.h
+	PlotAdapterBase.cpp
+	Item3DDoubleClickEvent.cpp
+	Item3DDoubleClickEvent.h
+	ControlerItemListWidget.cpp
+	ControlerItemListWidget.h
+)
+SET(TREENODE_SRC
+	TreeNode.h
+	TreeNode.cpp
+	TreeNodeManager.h
+	TreeNodeManager.cpp
+	#TreeNode3D.h
+	#TreeNode3D.cpp
+	#TreeNodeFactor.h
+	#TreeNodeFactor.cpp
 )
 SET(Command_SRCS
     ${Command_CPP_SRCS}
@@ -462,6 +483,7 @@ SET(Command_SRCS
 
 SOURCE_GROUP("Command" FILES ${Command_SRCS})
 SOURCE_GROUP("FileFormatH5" FILES ${FILE_FORMAT_SRC})
+SOURCE_GROUP("treenode" FILES ${TREENODE_SRC})
 # The dialog sources
 SET(Dialog_CPP_SRCS
     Clipping.cpp
@@ -1221,6 +1243,8 @@ SET(MDI_SRC
 	View3dMDI.h
     PlaneMDIView.h
     PlaneMDIView.cpp
+	DataVisualization3dView.cpp
+	DataVisualization3dView.h
 )
 
 source_group("MDIView" FILES ${MDI_SRC})
@@ -1255,6 +1279,7 @@ SET(FreeCADGui_SRCS
     ${Selection_SRCS}
     ${FreeCADGui_SRCS}
 	${FILE_FORMAT_SRC}
+	${TREENODE_SRC}
 	${MDI_SRC}
 )
 
@@ -1370,4 +1395,5 @@ else(WIN32)
         DESTINATION ${CMAKE_INSTALL_DATADIR}
     )
 endif(WIN32)
+
 

@@ -1,5 +1,6 @@
 #添加子文件目录
 add_subdirectory(qwt)
+add_subdirectory(3D)
 #设置项目名称
 project(DataVisualization)
 #引入头文件
@@ -103,8 +104,9 @@ SET(CONFIG_SRC CustomConfig.cpp
 
 SET(LISTTREE_SRC ListTreeWidget.h
 	ListTreeWidget.cpp
-	Dataresource.h
-	Dataresource.cpp)
+	#Dataresource.h
+	#Dataresource.cpp
+	)
 SET(AXIS_SRC
 	Axis.cpp
 	Axis.h
@@ -241,7 +243,7 @@ list(APPEND QT_LIB
 	)
 if(VisualizationOf3DDLL)
 list(APPEND QT_LIB
-	VisualizationOf3D
+	#VisualizationOf3D
 	)
 endif()
 

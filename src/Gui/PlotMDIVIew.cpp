@@ -13,7 +13,7 @@ namespace Gui{
 	*/
 	PlotMDIView::PlotMDIView(DocumentPic *_doc, QWidget* parent) :MDIViewPIC(_doc, parent)
 	{
-		plot = new Plot(this);
+		plot = new DV::Plot(this);
 		plot->resize(this->size());
 		//bIsPassive = false;
 		setWindowTitle(QString::fromStdString("chart"));
@@ -24,7 +24,7 @@ namespace Gui{
 	* @brief PlotMDIView::GetViewPtr 获取plot控件的指针
 	* @return void 
 	*/
-	Plot* PlotMDIView::GetViewPtr()
+	DV::Plot* PlotMDIView::GetViewPtr()
 	{
 		return plot;
 	}
@@ -93,6 +93,9 @@ namespace Gui{
 
 		return getDocumengPic()->onHasMsg(pMsg);
 	}
-
+	void PlotMDIView::setAdapter(const std::shared_ptr < DV::PlotAdapter>& adapter)
+	{
+		plot->setAdapter(adapter);
+	}
 }
 #include "moc_PlotMDIView.cpp"

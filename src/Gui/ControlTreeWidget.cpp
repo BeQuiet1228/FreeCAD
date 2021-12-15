@@ -25,7 +25,7 @@
 ControlTreeWidget::ControlTreeWidget(QWidget* parent)
 	:QTreeWidget(parent),tempHdf5IO(nullptr)
 {
-	QTreeWidget::setHeaderLabel(GetEncodingstr(" ", ENCODING_GB2312));
+	QTreeWidget::setHeaderLabel(DV::GetEncodingstr(" ", ENCODING_GB2312));
 	initItem();
 	connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(itemDouble_clicke(QTreeWidgetItem*, int)));
 	
@@ -81,19 +81,19 @@ void ControlTreeWidget::initItem()
 	}
 	
 	contourItem = items.at(0);
-	contourItem->setText(0,GetEncodingstr("等位图", ENCODING_GB2312));
+	contourItem->setText(0,DV::GetEncodingstr("等位图", ENCODING_GB2312));
 
 	phaseSpaceItem = items.at(1);
-	phaseSpaceItem->setText(0, GetEncodingstr("相空间图", ENCODING_GB2312));
+	phaseSpaceItem->setText(0, DV::GetEncodingstr("相空间图", ENCODING_GB2312));
 
 	observeItem = items.at(2);
-	observeItem->setText(0,GetEncodingstr("时间观测图", ENCODING_GB2312));
+	observeItem->setText(0, DV::GetEncodingstr("时间观测图", ENCODING_GB2312));
 
 	rangeItem = items.at(3);
-	rangeItem->setText(0, GetEncodingstr("空间观测图", ENCODING_GB2312));
+	rangeItem->setText(0, DV::GetEncodingstr("空间观测图", ENCODING_GB2312));
 
 	vectorItem = items.at(4);
-	vectorItem->setText(0, GetEncodingstr("矢量图", ENCODING_GB2312));
+	vectorItem->setText(0, DV::GetEncodingstr("矢量图", ENCODING_GB2312));
 
 	for each (QTreeWidgetItem* item in items)
 	{
@@ -240,7 +240,7 @@ bool ControlTreeWidget::addVectorItem(const std::string& str)
 */
 bool ControlTreeWidget::analysisType(const std::string& str, const QString& typeName, QString& name, QString& rank)
 {
-	QString qstr = GetEncodingstr(str.c_str(), ENCODING_GB2312);
+	QString qstr = DV::GetEncodingstr(str.c_str(), ENCODING_GB2312);
 	auto lists = qstr.split(QString::fromStdString("="));
 
 	if (lists.size() != 2)

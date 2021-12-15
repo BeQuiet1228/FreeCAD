@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="action">
+    <file>off.svg</file>
+    <file>on.svg</file>
+  </qresource>
+</RCC>

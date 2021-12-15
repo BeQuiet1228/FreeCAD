@@ -8,37 +8,22 @@
 #include <QStandardItemModel>
 #include <string>
 #include "exportConfig.hpp"
-//typedef void(*FuncBack)(void*,bool);
-class DATA_VISUALIZATION_EXPORT ListTreeWidget:public QWidget
-{
-	Q_OBJECT
-public:
-	explicit ListTreeWidget(QWidget* parent=nullptr);
-	virtual ~ListTreeWidget();
-	struct  itemInfo
+namespace DV {
+	class DATA_VISUALIZATION_EXPORT ListTreeWidget :public QWidget
 	{
-		itemInfo() :index(-1), time(-1.0f) {}
-		int index;
-		double time;
+		Q_OBJECT
+	public:
+		explicit ListTreeWidget(QWidget* parent = nullptr);
+		virtual ~ListTreeWidget();
+	protected:
+		virtual void resizeEvent(QResizeEvent* event) override;
+	public Q_SLOTS:
+		virtual void on_doubleclick(const QModelIndex& index);
+	public:
+		void clear();
+	protected:
+		QTreeView* m_TreeView;
+		QStandardItemModel* goodsModel;
 	};
-protected:
-	virtual void resizeEvent(QResizeEvent * event) override;
-	std::string GetType(std::string name);
-	Q_SIGNALS:
-	void _transfromRenderer(std::string name,int index);
-public Q_SLOTS:
-	virtual void loadHdflist(std::vector<Hdf5Data>& Hdf5Datalist);
-	virtual void on_doubleclick(const QModelIndex &index);
-	virtual void fromdataManageNewData(Hdf5Data& data,int index);	
-	virtual void soltFromWidget(QWidget*);
-public:
-	void clear();
-	void toStructh5df(Hdf5Data& data, int index);
-	void toPlaneh5df(Hdf5Data& data,int index);
-protected:
-	QTreeView* m_TreeView;
-	QStandardItemModel *goodsModel;
-	std::map <QStandardItem*, itemInfo> datainfor;
-	std::map<std::string, QStandardItem*> parentnode;
 };
 #endif
