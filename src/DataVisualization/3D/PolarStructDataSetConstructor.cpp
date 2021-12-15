@@ -7,15 +7,30 @@
 #include"vtkCellArray.h"
 #include"vtkRotationalExtrusionFilter.h"
 #include"vtkFloatArray.h"
-DV3D::PolarStructDaraSetConstruct::PolarStructDaraSetConstruct() :rSize(0), thetaSize(0), zSize(0) {
+
+#ifndef M_PI
+#define M_PI (3.141592654f)
+#define PRECISION (0.00001f) //精度
+#endif
+
+DV3D::PolarStructDaraSetConstruct::PolarStructDaraSetConstruct() :rSize(0), thetaSize(0), zSize(0), isCir(false) {
 
 }
 DV3D::PolarStructDaraSetConstruct::~PolarStructDaraSetConstruct() {
 
 }
+bool DV3D::PolarStructDaraSetConstruct::isComCir(std::vector<float>& thetas)
+{
+	//判断角度是否为一个封闭的圆
+	auto maxTheta = thetas.end() - 1;
+	if (2 * M_PI - (*maxTheta) > -PRECISION && 2 * M_PI - (*maxTheta) < PRECISION)
+		return true;
+	return false;
+}
 vtkSmartPointer<vtkDataSet> DV3D::PolarStructDaraSetConstruct::creatDataset() {
 	initPoints();
 	auto value = getPolarIndex();
+
 	auto ugrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
 	ugrid->Allocate(value.size() * 4);
 	//添加六面体
@@ -49,6 +64,7 @@ void DV3D::PolarStructDaraSetConstruct::initPoints() {
 	long long zs = grid[0].size();
 	long long rs = grid[1].size();
 	long long thetas = grid[2].size();
+	isCir = isComCir(grid[2]);
 	initGridsize(rs, thetas, zs);
 	//构建points
 	points = vtkSmartPointer<vtkPoints>::New();
@@ -117,5 +133,9 @@ void DV3D::PolarStructDaraSetConstruct::initGridsize(unsigned long long rs, unsi
 }
 long long DV3D::PolarStructDaraSetConstruct::getPointId(const long long& thetai, const long long& ri, const long long& zi)
 {
-	return zi * thetaSize * rSize + ri * thetaSize + thetai;
+	//考虑0.0rad和6.28..rad的S曲线的取值会有浮动,
+	//当theta取到6.28的时候修改pointid到0.0时
+	if (isCir && (thetai == thetaSize - 1))
+		return (zi * thetaSize * rSize + ri * thetaSize);
+	return (zi * thetaSize * rSize + ri * thetaSize + thetai);
 }
