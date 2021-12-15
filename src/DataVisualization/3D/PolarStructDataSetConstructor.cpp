@@ -19,11 +19,19 @@ DV3D::PolarStructDaraSetConstruct::PolarStructDaraSetConstruct() :rSize(0), thet
 DV3D::PolarStructDaraSetConstruct::~PolarStructDaraSetConstruct() {
 
 }
+/**
+* @brief DV3D::PolarStructDaraSetConstruct::isComCir 判断是否为闭关的圆
+* @param std::vector<float> & thetas
+* @return bool
+* @time	2021/12/15
+*/
 bool DV3D::PolarStructDaraSetConstruct::isComCir(std::vector<float>& thetas)
 {
 	//判断角度是否为一个封闭的圆
 	auto maxTheta = thetas.end() - 1;
-	if (2 * M_PI - (*maxTheta) > -PRECISION && 2 * M_PI - (*maxTheta) < PRECISION)
+	auto minTheta = thetas.begin();
+	if (2 * M_PI - (*maxTheta) > -PRECISION && 2 * M_PI - (*maxTheta) < PRECISION &&
+		(*minTheta)>-PRECISION && (*minTheta)<PRECISION)
 		return true;
 	return false;
 }
@@ -83,7 +91,13 @@ void DV3D::PolarStructDaraSetConstruct::initPoints() {
 			}
 		}
 	}
+	return;
 }
+/**
+* @brief DV3D::PolarStructDaraSetConstruct::getPolarDatas 从H5数据中获取点云
+* @return DV3D::PolarDatas
+* @time	2021/12/15
+*/
 DV3D::PolarDatas DV3D::PolarStructDaraSetConstruct::getPolarDatas()
 {
 	auto h5d = getHdf5Data();
@@ -101,6 +115,11 @@ DV3D::PolarDatas DV3D::PolarStructDaraSetConstruct::getPolarDatas()
 	grid[1].swap(grid[2]);
 	return grid;
 }
+/**
+* @brief DV3D::PolarStructDaraSetConstruct::getPolarIndex 获取k矩阵网格数据
+* @return DV3D::PolarIndes
+* @time	2021/12/15
+*/
 DV3D::PolarIndes DV3D::PolarStructDaraSetConstruct::getPolarIndex()
 {
 	auto h5d = getHdf5Data();
