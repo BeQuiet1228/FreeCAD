@@ -7,11 +7,9 @@
 #include"vtkCellArray.h"
 #include"vtkRotationalExtrusionFilter.h"
 #include"vtkFloatArray.h"
-
-#ifndef M_PI
-#define M_PI (3.141592654f)
-#define PRECISION (0.00001f) //精度
-#endif
+#define _USE_MATH_DEFINES
+#include"math.h"
+const float preciSion = 0.00001f;//精度
 
 DV3D::PolarStructDaraSetConstruct::PolarStructDaraSetConstruct() :rSize(0), thetaSize(0), zSize(0), isCir(false) {
 
@@ -30,8 +28,8 @@ bool DV3D::PolarStructDaraSetConstruct::isComCir(std::vector<float>& thetas)
 	//判断角度是否为一个封闭的圆
 	auto maxTheta = thetas.end() - 1;
 	auto minTheta = thetas.begin();
-	if (2 * M_PI - (*maxTheta) > -PRECISION && 2 * M_PI - (*maxTheta) < PRECISION &&
-		(*minTheta)>-PRECISION && (*minTheta)<PRECISION)
+	if (2 * M_PI - (*maxTheta) > -preciSion && 2 * M_PI - (*maxTheta) < preciSion &&
+		(*minTheta)>-preciSion && (*minTheta)< preciSion)
 		return true;
 	return false;
 }
