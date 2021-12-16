@@ -61,7 +61,8 @@ int main(int argc, char* argv[])
 		return 0;
 
 	auto iter = datalist.begin();
-	Hdf5Data structData,paticle3d,contour;
+	Hdf5Data structData, paticle3d;
+	std::vector<Hdf5Data> contours;
 
 	for (; iter != datalist.end(); iter++)
 	{
@@ -70,8 +71,8 @@ int main(int argc, char* argv[])
 
 		if (iter->name == "")
 			paticle3d = *iter;
-		if (iter->name == "CONTOUR" && contour.name =="")
-			contour = *iter;
+		if (iter->name == "CONTOUR")
+			contours.push_back(*iter);
 	}
 
 
@@ -80,10 +81,18 @@ int main(int argc, char* argv[])
 	ControlerFactory controlerFactor;
 	auto controler = controlerFactor.CreatParticle3dControler(paticle3d);
 	auto structControler = controlerFactor.CreatStrucControler(structData);
-	auto contourControler = controlerFactor.CreatContourControler(contour);
+	std::vector<std::shared_ptr<Controler>> temp;
+
+	for (auto contour = contours.begin(); contour != contours.end(); contour++)
+	{
+		auto contourControler = controlerFactor.CreatContourControler(*contour);
+		w3d->binding(contourControler.get());
+		temp.push_back(contourControler);
+	}
+	
+
 	w3d->binding(controler.get());
 	w3d->binding(structControler.get());
-	w3d->binding(contourControler.get());
 	w3d->show();
 
 	auto item = ControlerItemFactor::CreatControlerItem();
