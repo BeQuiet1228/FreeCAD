@@ -1,5 +1,4 @@
-#ifndef CONTOURDATASETCONSTRUCTOR_H_
-#define CONTOURDATASETCONSTRUCTOR_H_
+#pragma once
 #include"dataSetConstructor.h"
 #include"vtkPoints.h"
 #include "vtkFloatArray.h"
@@ -16,17 +15,16 @@ namespace DV3D
 	protected:
 		void initPoints();
 		void initGrid(
-			unsigned long long xs, 
-			unsigned long long ys, 
-			unsigned long long zs);
+			const vtkIdType& xs, 
+			const vtkIdType& ys, 
+			const vtkIdType& zs);
 		vtkIdType getpointId(
-			unsigned long long xi,
-			unsigned long long yi, 
-			unsigned long long zi);
+			const vtkIdType& xi,
+			const vtkIdType& yi,
+			const vtkIdType& zi);
 	private:
 		vtkSmartPointer<vtkPoints> points;
 		vtkSmartPointer<vtkFloatArray> scalars;
-		unsigned long long xGridSize, yGridSize, zGridSize;
+		vtkIdType xGridSize, yGridSize, zGridSize;
 	};
 }
-#endif 

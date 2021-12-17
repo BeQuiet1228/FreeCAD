@@ -3,6 +3,8 @@
 #include "vtkUnstructuredGrid.h"
 #include "vtkCellType.h"
 #include "vtkCellData.h"
+#include "vtkStructuredGrid.h"
+#include "vtkPointData.h"
 DV3D::PolarContour3dDatasetConstructor::PolarContour3dDatasetConstructor()
 	: rGridSize(0),thetaGridSize(0),zGridSize(0)
 {
@@ -15,31 +17,12 @@ DV3D::PolarContour3dDatasetConstructor::~PolarContour3dDatasetConstructor()
 vtkSmartPointer<vtkDataSet> DV3D::PolarContour3dDatasetConstructor::creatDataset()
 {
 	initPoints();
-	vtkSmartPointer<vtkUnstructuredGrid> ugrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
-	for (auto z=0;z<zGridSize;++z)
-	{
-		for (auto theta = 0; theta < thetaGridSize; ++theta)
-		{
-			for (auto r = 0; r < rGridSize; ++r)
-			{
-				std::vector<vtkIdType> cell =
-				{
-					getpointId(r,theta,z),
-					getpointId(r,theta+1,z),
-					getpointId(r+1,theta,z),
-					getpointId(r+1,theta+1,z),
-					getpointId(r,theta,z+1),
-					getpointId(r,theta + 1,z+1),
-					getpointId(r + 1,theta,z+1),
-					getpointId(r + 1,theta + 1,z+1),
-				};
-				ugrid->InsertNextCell(VTK_VOXEL,8,cell.data());
-			}
-		}
-	}
-	ugrid->SetPoints(points);
-	ugrid->GetCellData()->SetScalars(scalars);
-	return ugrid;
+	vtkSmartPointer<vtkStructuredGrid> grid = vtkSmartPointer<vtkStructuredGrid>::New();
+	grid->SetDimensions(rGridSize, thetaGridSize, zGridSize);
+	grid->SetPoints(points);
+	grid->GetPointData()->SetScalars(scalars);
+	return grid;
+
 }
 
 void DV3D::PolarContour3dDatasetConstructor::initPoints()
@@ -55,10 +38,10 @@ void DV3D::PolarContour3dDatasetConstructor::initPoints()
 		datas.push_back(d);
 	}
 	//r-theta-z
-	std::vector<float>& rList = datas[0];
-	std::vector<float>& thetaList = datas[1];
-	std::vector<float>& zList = datas[2];
-	std::vector<float>& valList = datas[3];
+	std::vector<float>& valList = datas[0];
+	std::vector<float>& rList = datas[1];
+	std::vector<float>& thetaList = datas[2];
+	std::vector<float>& zList = datas[3];
 	initGrid(rList.size(),thetaList.size(),zList.size());
 	//ªÒ»°µ„‘∆
 	points = vtkSmartPointer<vtkPoints>::New();

@@ -68,7 +68,6 @@ vtkSmartPointer<vtkActor> DV3D::Controler::getActor()
 	assert(actorPipeline && "actorPipeline can not be nullptr!");
 	return actorPipeline->getActor();
 }
-
 bool DV3D::Controler::isBinding()
 {
 	return bindingState;
@@ -161,5 +160,17 @@ bool DV3D::Controler::getClipEnable()
 void DV3D::Controler::setClipPlane(vtkSmartPointer<vtkPlane> palne)
 {
 	getActorPipeline()->setClipPlane(palne);
+}
+
+
+/**
+* @time	2021/12/17
+* @brief DV3D::Controler::setContourLeves 计算等值面时，设置等值面的等级
+* @param const int & n
+* @return void
+*/
+void DV3D::Controler::setContourLeves(const int& n)
+{
+	getActorPipeline()->setContourSurfarCount(n);
 }
 

@@ -3,6 +3,7 @@
 #include <vtkUnstructuredGridGeometryFilter.h>
 #include "vtkSmartPointer.h"
 #include "vtkPolyDataNormals.h"
+#include "vtkContourFilter.h"
 namespace DV3D
 {
 	class  Contour3dActorPipline :public ActorPipemline {
@@ -12,5 +13,10 @@ namespace DV3D
 	public:
 		void update() override;
 		void connect() override;
+		void setContourSurfarCount(const int& n);
+	private:
+		vtkSmartPointer<vtkContourFilter> file;
+		double scalarMin, scalarMax;
+		int contourSurfarCount;
 	};
 };

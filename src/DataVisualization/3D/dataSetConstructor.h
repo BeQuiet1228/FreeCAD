@@ -5,7 +5,10 @@
 #include <vtknew.h>
 #include <vtkSmartPointer.h>
 #include <HDF5Reader/hdf5io.h>
-class Data;
+namespace DV
+{
+	class Data;
+};
 namespace DV3D {
 	/*
 	vtkDataSet构造器
@@ -19,6 +22,8 @@ namespace DV3D {
 	public:
 		//生成vtk数据对象
 		virtual vtkSmartPointer<vtkDataSet> creatDataset() = 0;
+	private:
+
 	};
 	
 
@@ -45,10 +50,10 @@ namespace DV3D {
 
 	public:
 		//设置原始数据对象
-		void setSourceData(std::shared_ptr<Data> d);
-		std::shared_ptr<Data> getSourceData();
+		void setSourceData(std::shared_ptr<DV::Data> d);
+		std::shared_ptr<DV::Data> getSourceData();
 	private:
-		std::shared_ptr<Data> data;
+		std::shared_ptr<DV::Data> data;
 	};
 
 }

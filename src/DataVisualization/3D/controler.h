@@ -5,6 +5,7 @@
 #include <vtkActor.h>
 #include <vtkPlane.h>
 #include "DataVisualization3DExport.hpp"
+#include <vtkScalarBarActor.h>
 namespace DV3D {
 	class ActorPipemline;
 	class Widget3D;
@@ -48,6 +49,8 @@ namespace DV3D {
 		void setClipEnable(const bool& b);
 		bool getClipEnable();
 		void setClipPlane(vtkSmartPointer<vtkPlane> palne);
+		//设置等值面等级
+		void setContourLeves(const int& n);
 	private:
 		//单向绑定
 		void oneWayBinding(Widget3D* widget3D);

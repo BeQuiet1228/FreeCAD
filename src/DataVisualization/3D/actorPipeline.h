@@ -36,6 +36,8 @@ namespace DV3D {
 
 		void setClipper(std::shared_ptr<Clipper> clipper);
 
+		virtual void setContourSurfarCount(const int& n);
+
 		//更新渲染管线
 		virtual void update() = 0;
 		//链接管线

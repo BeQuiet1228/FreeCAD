@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 		return 0;
 
 	auto iter = datalist.begin();
-	Hdf5Data structData,paticle3d,contour;
+	/*Hdf5Data structData,paticle3d,contour;
 
 	for (; iter != datalist.end(); iter++)
 	{
@@ -72,22 +72,24 @@ int main(int argc, char* argv[])
 			paticle3d = *iter;
 		if (iter->name == "CONTOUR" && contour.name =="")
 			contour = *iter;
-	}
+	}*/
 
 
 	Widget3D* w3d = new Widget3D();
 
 	ControlerFactory controlerFactor;
-	auto controler = controlerFactor.CreatParticle3dControler(paticle3d);
-	auto structControler = controlerFactor.CreatStrucControler(structData);
-	auto contourControler = controlerFactor.CreatContourControler(contour);
-	w3d->binding(controler.get());
-	w3d->binding(structControler.get());
-	w3d->binding(contourControler.get());
+	//auto controler = controlerFactor.CreatParticle3dControler(paticle3d);
+	//auto structControler = controlerFactor.CreatStrucControler(structData);
+	//auto contourControler = controlerFactor.CreatContourControler(contour);
+	auto contour3dContrler = controlerFactor.CreatContour3dControler(*iter);
+	//w3d->binding(controler.get());
+	//w3d->binding(structControler.get());
+	//w3d->binding(contourControler.get());
+	w3d->binding(contour3dContrler.get());
 	w3d->show();
 
 	auto item = ControlerItemFactor::CreatControlerItem();
-	item->setControler(structControler);
+	item->setControler(contour3dContrler);
 	item->show();
 
 	return a.exec();

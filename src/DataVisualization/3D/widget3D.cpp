@@ -109,7 +109,6 @@ void DV3D::Widget3D::oneWayBinding(Controler* controler)
 
 	auto actor = controler->getActor();
 	renderer->AddActor(actor);
-	
 	auto value = std::map<Controler*, vtkSmartPointer<vtkActor>>::value_type(controler, actor);
 	controlerActor.insert(value);
 }
