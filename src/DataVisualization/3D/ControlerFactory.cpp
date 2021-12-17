@@ -24,6 +24,8 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatControler(Hdf5Data
 		controler = CreatStrucControler(h5data);
 	if(h5data.name=="CONTOUR")
 		controler=CreatContourControler(h5data);
+	if (h5data.name == "PARTICLE3D")
+		controler = CreatParticle3dControler(h5data);
 	assert(controler && "controler is nullptr!");
 	return controler;
 }

@@ -11,6 +11,12 @@
 #include"DataVisualization/ListTreeWidget.h"
 #include "Gui/MainWindow.h"
 #include"TreeViewctrl.h"
+
+
+
+#include "DataVisualizationTree.h"
+#include "hdf5DataItemFactory.h"
+#include "Hdf5DataItemEventHandler.h"
 /**
 * @brief FileFormatH5::open 打开h5文件并进行处理
 * @param const QStringList& fileList 文件路径列表
@@ -45,5 +51,16 @@ void FileFormatH5::openOnce(const QString& fileList, App::Document* doc)
 	docManager->loadFile(fileList);
 	m_lisTreeWidget->loadHdflist(docManager->gethdf5dataList());
 	mw->showVisualizationTree();
+
+	using namespace Gui;
+
+	DataVisualizationTree* tree = new DataVisualizationTree();
+	HDF5DataItemFactory* factory = new HDF5DataItem3DFactory();
+	std::shared_ptr<HDF5DataItemEventHander> hander(new HDF5DataItem3DDoubleClickEventHander());
+
+	factory->setEventHander(hander);
+	auto items = factory->CreatHDF5Items(docManager->gethdf5dataList());
+	tree->addHDF5DataItem(items);
+	tree->show();
 
 }

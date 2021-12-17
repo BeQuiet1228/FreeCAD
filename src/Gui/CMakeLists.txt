@@ -55,7 +55,7 @@ if(MSVC)
          ${OPENGL_gl_LIBRARY}
 		 Editor
          transition
-		 #DataVisualization3D
+		 DataVisualization3D
     )
 	if(contorl_client_dll)
 	list(APPEND FreeCADGui_LIBS
@@ -830,6 +830,29 @@ else()
 endif()
 SOURCE_GROUP("Widget\\iisTaskPanel\\Mocs" FILES ${iis_MOC_SRCS})
 
+SET(DATA_VISUALIZATION_GUI_SRC
+	Hdf5DataItem.cpp
+	Hdf5DataItem.h
+	Hdf5DataItemEventHandler.cpp
+	Hdf5DataItemEventHandler.h
+	DataVisualizationTree.h
+	DataVisualizationTree.cpp
+	hdf5DataItemFactory.cpp
+	hdf5DataItemFactory.h
+)
+SET(DATA_VISUALIZATION_GUI_MOC_H
+	Hdf5DataItem.h
+	DataVisualizationTree.h
+)
+
+if (BUILD_QT5)
+    qt5_wrap_cpp(DATA_VISUALIZATION_GUI_MOC_SRCS ${DATA_VISUALIZATION_GUI_MOC_H})
+else()
+    qt4_wrap_cpp(DATA_VISUALIZATION_GUI_MOC_SRCS ${DATA_VISUALIZATION_GUI_MOC_H})
+endif()
+source_group("DataVisualizationGUI" FILES ${DATA_VISUALIZATION_GUI_SRC} ${DATA_VISUALIZATION_GUI_MOC_SRCS})
+
+
 SET(qsintActionPanel_SRCS
     QSint/actionpanel/actionbox.cpp
     QSint/actionpanel/actionbox.h
@@ -1281,6 +1304,8 @@ SET(FreeCADGui_SRCS
 	${FILE_FORMAT_SRC}
 	${TREENODE_SRC}
 	${MDI_SRC}
+	${DATA_VISUALIZATION_GUI_SRC}
+	${DATA_VISUALIZATION_GUI_MOC_SRCS}
 )
 
 if(MSVC)
