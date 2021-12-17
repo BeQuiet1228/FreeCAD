@@ -68,6 +68,7 @@ vtkSmartPointer<vtkActor> DV3D::Controler::getActor()
 	assert(actorPipeline && "actorPipeline can not be nullptr!");
 	return actorPipeline->getActor();
 }
+
 bool DV3D::Controler::isBinding()
 {
 	return bindingState;

@@ -22,8 +22,6 @@ namespace DV3D {
 	public:
 		//生成vtk数据对象
 		virtual vtkSmartPointer<vtkDataSet> creatDataset() = 0;
-	private:
-
 	};
 	
 

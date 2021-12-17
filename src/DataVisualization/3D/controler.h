@@ -5,7 +5,6 @@
 #include <vtkActor.h>
 #include <vtkPlane.h>
 #include "DataVisualization3DExport.hpp"
-#include <vtkScalarBarActor.h>
 namespace DV3D {
 	class ActorPipemline;
 	class Widget3D;

@@ -4,7 +4,6 @@
 #include "dataSetConstructor.h"
 #include "vtkPoints.h"
 #include "vtkFloatArray.h"
-
 namespace DV3D
 {
 	class PolarContour3dDatasetConstructor :public DataSetConstructorH5

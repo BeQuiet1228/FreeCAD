@@ -12,10 +12,6 @@ DV3D::DataSetConstructor::~DataSetConstructor()
 
 
 
-
-
-
-
 void DV3D::DataSetConstructorH5::setHdf5Data(Hdf5Data& h5d)
 {
 	this->h5data = h5d;
