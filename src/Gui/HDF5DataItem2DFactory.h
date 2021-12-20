@@ -22,5 +22,6 @@ namespace Gui
 		void setStructData(Hdf5Data data);
 	private:
 		std::string getEffePartStr(std::string str);
+		HDF5DataItem* findTypeItem(HDF5DataItem* parentItem,std::string typeNodestr);
 	};
 }

@@ -12,7 +12,6 @@ namespace Gui
 	private:
 		DV::PlotAdapterPtr creatPlotAdapter(Hdf5Data h5d, std::string name);
 	private:
-		Hdf5Data structData;
-		bool ishaveStruct;
+		std::shared_ptr<DV::RendererFactory> factoryPtr;
 	};
 }

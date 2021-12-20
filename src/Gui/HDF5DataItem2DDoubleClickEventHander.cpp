@@ -38,10 +38,10 @@ namespace Gui
 			DV::DirectionType::X_Z
 		}
 	};
-}
-Gui::HDF5DataItem2DDoubleClickEventHander::HDF5DataItem2DDoubleClickEventHander():ishaveStruct(false)
+};
+Gui::HDF5DataItem2DDoubleClickEventHander::HDF5DataItem2DDoubleClickEventHander()
 {
-
+	factoryPtr.reset(new DV::RendererFactory());
 }
 
 void Gui::HDF5DataItem2DDoubleClickEventHander::trigger(HDF5DataItem* item)
@@ -53,6 +53,7 @@ void Gui::HDF5DataItem2DDoubleClickEventHander::trigger(HDF5DataItem* item)
 	auto plotAdapter = creatPlotAdapter(h5data, name);
 	//ªÒ»°Plot
 	auto guidoc = dynamic_cast<DocumentPic*>(Gui::Application::Instance->activeDocument());
+	assert(guidoc && "guidoc == nullptr!");//ÃÌº”∂œ—‘
 	std::list<Gui::MDIView*> list = guidoc->getMDIViews();
 	Gui::PlotMDIView* ptr = nullptr;
 	for each (Gui::MDIView * var in list)
@@ -78,8 +79,7 @@ void Gui::HDF5DataItem2DDoubleClickEventHander::trigger(HDF5DataItem* item)
 */
 void Gui::HDF5DataItem2DDoubleClickEventHander::setStructData(Hdf5Data data)
 {
-	ishaveStruct = true;
-	structData = data;
+	factoryPtr->setStructData(data);
 }
 
 
@@ -92,10 +92,6 @@ void Gui::HDF5DataItem2DDoubleClickEventHander::setStructData(Hdf5Data data)
 */
 DV::PlotAdapterPtr Gui::HDF5DataItem2DDoubleClickEventHander::creatPlotAdapter(Hdf5Data h5d, std::string name)
 {
-	std::shared_ptr<DV::RendererFactory> factoryPtr;
-	factoryPtr.reset(new DV::RendererFactory());
-	if (ishaveStruct)
-		factoryPtr->setStructData(structData);
 	if (h5d.name != "struct")
 		return factoryPtr->creatPlotAdapter(h5d);
 	DV::DirectionType type = DV::X_Y;

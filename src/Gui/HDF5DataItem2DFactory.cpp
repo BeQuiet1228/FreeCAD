@@ -244,9 +244,8 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatObserveDataItem(Hdf5Data& da
 		subNode = subss.str();
 	}
 	//创建节点
-	auto typeNodeItem = new HDF5DataItem(typeNode.c_str());
+	auto typeNodeItem = findTypeItem(parentItem,typeNode);
 	auto subNodeItem = new HDF5DataItem(data,subNode.c_str());
-	parentItem->addSubItem(typeNodeItem);
 	typeNodeItem->addSubItem(subNodeItem);
 	itemSetHander(subNodeItem);
 	return parentItem;
@@ -274,9 +273,8 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatVectorDataItem(Hdf5Data& dat
 		subNode = subs.str();
 	}
 	//创建节点
-	auto typeNodeItem = new HDF5DataItem(typeNode.c_str());
+	auto typeNodeItem = findTypeItem(parentItem, typeNode);
 	auto subNodeItem = new HDF5DataItem(data,subNode.c_str());
-	parentItem->addSubItem(typeNodeItem);
 	typeNodeItem->addSubItem(subNodeItem);
 	itemSetHander(subNodeItem);
 	return parentItem;
@@ -308,9 +306,8 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatPhasespaceDataItem(Hdf5Data&
 		subNode = subss.str();
 	}
 	//创建树控件节点
-	auto typeNodeItem = new HDF5DataItem(typeNode.c_str());
+	auto typeNodeItem = findTypeItem(parentItem, typeNode);
 	auto subNodeItem = new HDF5DataItem(data,subNode.c_str());
-	parentItem->addSubItem(typeNodeItem);
 	typeNodeItem->addSubItem(subNodeItem);
 	itemSetHander(subNodeItem);
 	return parentItem;
@@ -329,6 +326,30 @@ std::string Gui::HDF5DataItem2DFactory::getEffePartStr(std::string str)
 	QString qres = QString::fromStdString(str);
 	qres = qres.simplified();
 	return qres.toStdString();
+}
+
+
+/**
+* @time	2021/12/20
+* @brief Gui::HDF5DataItem2DFactory::findTypeItem 寻找分类节点
+* @param HDF5DataItem * parentItem
+* @param std::string typeNodestr
+* @return Gui::HDF5DataItem*
+*/
+Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::findTypeItem(HDF5DataItem* parentItem, std::string typeNodestr)
+{
+	int rowCount = parentItem->rowCount();
+	for (auto row=0;row<parentItem->rowCount();++row)
+	{
+		auto item = parentItem->child(row);
+		if(item->text().toStdString() != typeNodestr)
+			continue;
+		HDF5DataItem* hdf5Dataitem = dynamic_cast<HDF5DataItem*>(item);
+		return hdf5Dataitem;
+	}
+	auto typeNodeItem = new HDF5DataItem(typeNodestr.c_str());
+	parentItem->addSubItem(typeNodeItem);
+	return typeNodeItem;
 }
 
 /**
@@ -357,8 +378,8 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatContourDataItem(Hdf5Data& da
 		subss << art3 << " " << art13;
 		subNode = subss.str();
 	}
-	auto typeNodeItem = new HDF5DataItem(typeNode.c_str());
-	parentItem->addSubItem(typeNodeItem);
+	//查找是否已经创建过了
+	auto typeNodeItem = findTypeItem(parentItem, typeNode);
 	auto subNodeItem = new HDF5DataItem(data,subNode.c_str());
 	typeNodeItem->addSubItem(subNodeItem);
 	itemSetHander(subNodeItem);
