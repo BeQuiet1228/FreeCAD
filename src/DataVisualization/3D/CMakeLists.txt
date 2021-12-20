@@ -93,6 +93,10 @@ SET(CONTOUR3D_SRCS
 	Contour3dActorPipeline.h
 	Contour3dActorPipeline.cpp
 )
+SET(FLITER_SRCS
+PolarContourFliter.h
+PolarContourFliter.cpp
+)
 SET(UI_SRC
 	ControlerItem.ui
 	)
@@ -127,6 +131,7 @@ SET(DataVisualization3D_src
 	${PARTICLE_SRC}
 	${CONTOUR_SRCS}
 	${CONTOUR3D_SRCS}
+	${FLITER_SRCS}
 	)
 
 	
@@ -138,6 +143,7 @@ source_group("resource" FILES ${Gui_QRC_SRCs} ${QRC_SRC})
 source_group("particle3d" FILES ${PARTICLE_SRC})
 source_group("contour" FILES ${CONTOUR_SRCS})
 source_group("contour3d" FILES ${CONTOUR3D_SRCS})
+source_group("fliter" FILES ${FLITER_SRCS})
 add_executable(DataVisualization3D ${DataVisualization3D_src})
 add_definitions(-D_DATA_VISUALIZATION_3D)
 
