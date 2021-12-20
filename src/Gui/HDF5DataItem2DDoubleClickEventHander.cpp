@@ -78,6 +78,7 @@ void Gui::HDF5DataItem2DDoubleClickEventHander::trigger(HDF5DataItem* item)
 */
 void Gui::HDF5DataItem2DDoubleClickEventHander::setStructData(Hdf5Data data)
 {
+	ishaveStruct = true;
 	structData = data;
 }
 
