@@ -21,6 +21,7 @@ namespace Gui {
 		HDF5DataItem() = delete;
 		HDF5DataItem(const QString& name, const ItemType& type = FOLDER);
 		HDF5DataItem(const Hdf5Data &h5data,const QString &name,const ItemType& type = FILE);
+		HDF5DataItem(const HDF5DataItem& item);
 		~HDF5DataItem();
 
 	public:
@@ -39,9 +40,12 @@ namespace Gui {
 
 		//添加子节点
 		void addSubItem(HDF5DataItem* subItem);
+		//获取所有子节点
+		std::vector<HDF5DataItem*> getSubItems();
 		//合并两个相同的item
 		bool mergeItem(HDF5DataItem* item);
 		bool mergeItem(QStandardItem* item, HDF5DataItem* h5item);
+
 	public:
 		//重写运算符
 		bool operator==(const HDF5DataItem& item);

@@ -5,7 +5,7 @@
 #include "Hdf5DataItemEventHandler.h"
 #include <QList>
 
-const QString Gui::HDF5DataItem::IconPath[2] = { ":/Tree/TreeFile1.png",":/Tree/TreeFile2.png" };
+const QString Gui::HDF5DataItem::IconPath[2] = {":/Tree/TreeFile2.png" , ":/Tree/TreeFile1.png"};
 
 Gui::HDF5DataItem::HDF5DataItem(const Hdf5Data& h5data, const QString& name, const ItemType& type /*= FILE*/)
 	:QStandardItem(QIcon(IconPath[type]),name)
@@ -13,6 +13,22 @@ Gui::HDF5DataItem::HDF5DataItem(const Hdf5Data& h5data, const QString& name, con
 	this->hdf5data = h5data;
 	this->name = name;
 	this->itemType = type;
+}
+
+Gui::HDF5DataItem::HDF5DataItem(const HDF5DataItem& item)
+	:QStandardItem(item)
+{
+	this->name = item.name;
+	this->itemType = item.itemType;
+	this->hdf5data = item.hdf5data;
+	this->doubleClickEventHander = item.doubleClickEventHander;
+	
+	auto subItems = getSubItems();
+	for (auto iter = subItems.begin(); iter != subItems.end(); iter++)
+	{
+		  HDF5DataItem* newItem = new HDF5DataItem(**iter);
+		  addSubItem(newItem);
+	}
 }
 
 Gui::HDF5DataItem::HDF5DataItem(const QString& name, const ItemType& type /*= FOLDER*/)
@@ -90,6 +106,27 @@ void Gui::HDF5DataItem::addSubItem(HDF5DataItem* subItem)
 			break;
 	}
 	this->insertRow(row, subItem);
+}
+
+
+/**
+* @brief Gui::HDF5DataItem::getSubItem 获取所有子节点的指针
+* @return std::vector<Gui::HDF5DataItem*>
+*/
+std::vector<Gui::HDF5DataItem*> Gui::HDF5DataItem::getSubItems()
+{
+	std::vector<HDF5DataItem*> items;
+	int rowCount = this->rowCount();
+	for (int i = 0; i < rowCount; i++)
+	{
+		QStandardItem* stItem = child(i);
+		auto item = dynamic_cast<HDF5DataItem*>(stItem);
+		if (!item)
+			continue;
+		items.push_back(item);
+	}
+
+	return items;
 }
 
 /**

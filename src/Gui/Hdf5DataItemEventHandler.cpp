@@ -54,7 +54,7 @@ void Gui::HDF5DataItem3DDoubleClickEventHander::trigger(HDF5DataItem* item)
 	if (!listWidget)
 		listWidget = CreatControlerListWidget();
 	listWidget->addWidget(controlerItem);
-	hideControlerListWidget();
+	showControlerListWidget();
 }
 
 /**
