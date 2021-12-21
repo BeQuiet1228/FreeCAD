@@ -1,5 +1,6 @@
 #include "DataVisualizationTree.h"
 #include <cassert>
+#include "QDebug"
 Gui::DataVisualizationTree::DataVisualizationTree(QWidget* parent/*= 0*/)
 	:QTreeView(parent),model(new QStandardItemModel)
 {

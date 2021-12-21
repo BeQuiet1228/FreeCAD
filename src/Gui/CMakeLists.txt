@@ -839,6 +839,10 @@ SET(DATA_VISUALIZATION_GUI_SRC
 	DataVisualizationTree.cpp
 	hdf5DataItemFactory.cpp
 	hdf5DataItemFactory.h
+	HDF5DataItem2DFactory.h
+	HDF5DataItem2DFactory.cpp
+	HDF5DataItem2DDoubleClickEventHander.h
+	HDF5DataItem2DDoubleClickEventHander.cpp
 )
 SET(DATA_VISUALIZATION_GUI_MOC_H
 	Hdf5DataItem.h

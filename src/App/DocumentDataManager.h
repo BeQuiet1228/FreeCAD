@@ -27,7 +27,7 @@ public:
 	bool loadFile(const QString& filePath);
 	bool loadFile(const std::string& FilePath);
 	int saveHdf5Data(Hdf5Data data);
-	std::vector<Hdf5Data>& gethdf5dataList();
+	std::vector<Hdf5Data> gethdf5dataList();
 protected:
 	std::vector<Hdf5Data> hdf5dataList;
 };

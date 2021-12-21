@@ -17,6 +17,8 @@
 #include "DataVisualizationTree.h"
 #include "hdf5DataItemFactory.h"
 #include "Hdf5DataItemEventHandler.h"
+#include "HDF5DataItem2DFactory.h"
+#include "HDF5DataItem2DDoubleClickEventHander.h"
 /**
 * @brief FileFormatH5::open 打开h5文件并进行处理
 * @param const QStringList& fileList 文件路径列表
@@ -55,12 +57,17 @@ void FileFormatH5::openOnce(const QString& fileList, App::Document* doc)
 	using namespace Gui;
 
 	DataVisualizationTree* tree = new DataVisualizationTree();
-	HDF5DataItemFactory* factory = new HDF5DataItem3DFactory();
-	std::shared_ptr<HDF5DataItemEventHander> hander(new HDF5DataItem3DDoubleClickEventHander());
-
-	factory->setEventHander(hander);
-	auto items = factory->CreatHDF5Items(docManager->gethdf5dataList());
-	tree->addHDF5DataItem(items);
+	//HDF5DataItemFactory* factory = new HDF5DataItem3DFactory();
+	
+	HDF5DataItemFactory* factory2d = new HDF5DataItem2DFactory();
+	//std::shared_ptr<HDF5DataItemEventHander> hander(new HDF5DataItem3DDoubleClickEventHander());
+	std::shared_ptr<HDF5DataItemEventHander> hander2d(new HDF5DataItem2DDoubleClickEventHander());
+	//factory->setEventHander(hander);
+	factory2d->setEventHander(hander2d);
+	auto item2ds = factory2d->CreatHDF5Items(docManager->gethdf5dataList());
+	//auto items = factory->CreatHDF5Items(docManager->gethdf5dataList());
+	//tree->addHDF5DataItem(items);
+	tree->addHDF5DataItem(item2ds);
 	tree->show();
 
 }
