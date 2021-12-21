@@ -63,10 +63,13 @@ Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatParticle3DItem(std::vector<Hdf5Da
 {
 	HDF5DataItem* item = new HDF5DataItem(gbkStdstringToQstring("3DÁ£×ÓÍ¼"));;
 
-	for (auto iter = datas.begin(); iter != datas.end(); iter++)
+	for (auto iter = datas.begin(); iter != datas.end();)
 	{
-		if(iter->name != "PARTICLE3D")
+		if (iter->name != "PARTICLE3D")
+		{
+			iter++;
 			continue;
+		}
 		auto h5data = *iter;
 		iter = datas.erase(iter);
 
@@ -89,10 +92,14 @@ HDF5DataItem* HDF5DataItem3DFactory::CreatStructDataItem(std::vector<Hdf5Data>& 
 {
 	HDF5DataItem* item = nullptr;
 
-	for (auto iter = datas.begin(); iter != datas.end(); iter++)
+	for (auto iter = datas.begin(); iter != datas.end();)
 	{
 		if (iter->name != "struct")
+		{
+			iter++;
 			continue;
+		}
+			
 		auto h5data = *iter;
 		iter = datas.erase(iter);
 		item = CreatStructDataItem(h5data);

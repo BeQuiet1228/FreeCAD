@@ -86,7 +86,7 @@ void Gui::HDF5DataItem::addSubItem(HDF5DataItem* subItem)
 	//≥¢ ‘∫œ≤¢item
 	for (int row = 0; row < subItemCount; row++)
 	{
-		auto item = subItem->child(row);
+		auto item = this->child(row);
 		if (mergeItem(item, subItem))
 			return;
 	}
@@ -146,6 +146,7 @@ bool Gui::HDF5DataItem::mergeItem(HDF5DataItem* item)
 		addSubItem(item);
 	}
 
+	delete item;
 	return true;
 }
 
@@ -172,7 +173,7 @@ bool Gui::HDF5DataItem::mergeItem(QStandardItem* item, HDF5DataItem* h5item)
 */
 void Gui::HDF5DataItem::deleteQlistQStandardItem(QList<QStandardItem*> listItem)
 {
-	for (auto iter = listItem.begin(); iter != listItem.end(); iter++)
+	for (auto iter = listItem.begin(); iter != listItem.end();)
 	{
 		auto item = *iter;
 		iter = listItem.erase(iter);
