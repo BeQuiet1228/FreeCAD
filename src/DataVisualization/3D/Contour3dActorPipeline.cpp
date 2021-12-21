@@ -71,9 +71,11 @@ std::vector<DV3D::ContourValue> DV3D::Contour3dActorPipline::getContourValues()
 */
 void DV3D::Contour3dActorPipline::setContourValues(std::vector<ContourValue>& values)
 {
-	file->RemoveAllInputs();
-	file->SetInputData(getDataSet());
+	//file->RemoveAllInputs();
+	//file->RemoveAllObservers();
+	//file->SetInputData(getDataSet());
 	//
+	file->SetNumberOfContours(values.size());
 	for (auto index=0;index<values.size();index++)
 		file->SetValue(index,values[index]);
 	file->Update();
