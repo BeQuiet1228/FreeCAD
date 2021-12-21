@@ -10,6 +10,8 @@ DV3D::ControlerItem::ControlerItem(QWidget* parent /*=0*/)
 	ui->setupUi(this);
 	connect(ui->horizontalSlider, SIGNAL(valueChanged(int)), this, SLOT(transParentSliderValueChange(int)));
 
+	ui->toolbarLayout->setAlignment(Qt::AlignLeft);
+
 	visibleAction.reset(new ControlerVisible());
 	visibleAction->update(ui->toolButtonVisible);
 	connect(ui->toolButtonVisible, SIGNAL(clicked(bool)),this, SLOT(toolButtonClicked(bool)));
