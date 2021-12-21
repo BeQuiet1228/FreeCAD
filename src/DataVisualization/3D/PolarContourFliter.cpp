@@ -27,13 +27,13 @@ int PolarContourFilter::RequestData(
 {
 	vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
 	vtkInformation* outInfo = outputVector->GetInformationObject(0);
-	//»ñÈ¡¶à±ßÐÎÊý¾Ý
+	//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	vtkPolyData* input = vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
 	vtkPolyData* output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 	vtkIdType numPts, numCells;
 	numPts = input->GetNumberOfPoints();
 	numCells = input->GetNumberOfCells();
-	//´¦ÀíÔ²
+	//ï¿½ï¿½ï¿½ï¿½Ô²
 	auto points = input->GetPoints();
 	//
 	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
@@ -44,7 +44,12 @@ int PolarContourFilter::RequestData(
 		{
 			for (auto r = 0; r < rGridSize; r++)
 			{
-				//auto point1 = points->GetPoint(getPointId(r,thetai,z));
+				auto point1 = points->GetPoint(getPointId(r,thetai,z));
+				auto point2=points->GetPoint(getPointId(r,thetai+1,z));
+				arcTools->setCenter(0.0,0.0,0.0);
+				arcTools->SetPoint1(point1);
+				arcTools->setPoint2(point2);
+				arcTools->SetRotation();
 			}
 		}
 	}
