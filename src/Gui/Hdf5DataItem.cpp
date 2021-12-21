@@ -13,6 +13,7 @@ Gui::HDF5DataItem::HDF5DataItem(const Hdf5Data& h5data, const QString& name, con
 	this->hdf5data = h5data;
 	this->name = name;
 	this->itemType = type;
+	setEditable(false);
 }
 
 Gui::HDF5DataItem::HDF5DataItem(const HDF5DataItem& item)
@@ -36,6 +37,7 @@ Gui::HDF5DataItem::HDF5DataItem(const QString& name, const ItemType& type /*= FO
 {
 	this->name = name;
 	this->itemType = type;
+	setEditable(false);
 }
 
 Gui::HDF5DataItem::~HDF5DataItem()
@@ -71,8 +73,8 @@ Hdf5Data Gui::HDF5DataItem::getHdf5Data()
 
 void Gui::HDF5DataItem::triggerDoubleClickEvent()
 {
-	
-	getDoubleClickEventHander()->trigger(this);
+	if (doubleClickEventHander)
+		doubleClickEventHander->trigger(this);
 }
 
 /**
@@ -218,5 +220,5 @@ bool Gui::HDF5DataItem::operator==(const HDF5DataItem& item)
 
 bool Gui::HDF5DataItem::operator!=(const HDF5DataItem& item)
 {
-	return ~((*this) == item);
+	return !((*this) == item);
 }

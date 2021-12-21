@@ -386,7 +386,7 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatContourDataItem(Hdf5Data& da
 	}
 	//查找是否已经创建过了
 	//auto typeNodeItem = findTypeItem(parentItem, typeNode);
-	auhto typeNodeItem=new HDF5DataItem(typeNode.c_str());
+	auto typeNodeItem=new HDF5DataItem(typeNode.c_str());
 	auto subNodeItem = new HDF5DataItem(data,subNode.c_str());
 	typeNodeItem->addSubItem(subNodeItem);
 	parentItem->addSubItem(typeNodeItem);
