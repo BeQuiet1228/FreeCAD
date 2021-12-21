@@ -123,3 +123,15 @@ HDF5DataItemFactory::HDF5DataItems HDF5DataItem3DFactory::CreatHDF5Items(std::ve
 	return items;
 }
 
+Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatHDF5Item(Hdf5Data& data)
+{
+	auto item = CreatParticle3DItem(data);
+	if (item)
+		return item;
+	item = CreatStructDataItem(data);
+	if (item)
+		return item;
+
+	return nullptr;;
+}
+

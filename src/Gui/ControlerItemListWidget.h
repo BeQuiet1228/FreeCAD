@@ -12,7 +12,7 @@ namespace Gui {
 		~ControlerItemListWidget() = default;
 
 	private:
-		Ui::ControlerItemListWidget *ui;
+		::Ui::ControlerItemListWidget *ui;
 
 	public:
 		void addWidget(QWidget* widget);

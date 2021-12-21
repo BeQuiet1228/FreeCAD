@@ -30,6 +30,26 @@ Gui::HDF5DataItemFactory::HDF5DataItems Gui::HDF5DataItem2DFactory::CreatHDF5Ite
 }
 
 
+Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatHDF5Item(Hdf5Data& data)
+{
+	auto item = CreatStructDataItem(data);
+	if (item)
+		return item;
+	item = CreatContourDataItem(data);
+	if (item)
+		return item;
+	item = CreatPhasespaceDataItem(data);
+	if (item)
+		return item;
+	item = CreatVectorDataItem(data);
+	if (item)
+		return item;
+	item = CreatObserveDataItem(data);
+	if (item)
+		return item;
+	return nullptr;
+}
+
 /**
 * @time	2021/12/20
 * @brief Gui::HDF5DataItem2DFactory::setStructData 设置结构体数据

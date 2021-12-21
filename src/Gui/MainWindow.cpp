@@ -312,13 +312,6 @@ void MainWindow::inintContorlUI()
 		contorlButtonToolBar = new QToolBar();
 		contorlDataToolBar = new QToolBar();
 
-		/*contorlDataToolBar->setFixedSize(contorlDataBar->size());
-		contorlDataToolBar->addWidget(contorlDataBar);
-		contorlButtonToolBar->setFixedSize(QSize(70, contorlButtonBar->size().height()));
-		contorlButtonToolBar->addWidget(contorlButtonBar);
-
-		contorlButtonToolBar->hide();
-		contorlDataToolBar->hide();*/
 		QVBoxLayout *layout = new QVBoxLayout;
 		QWidget* wd = new QWidget;
         wd->setObjectName(QString::fromStdString("ControlDockWidget"));
@@ -326,7 +319,7 @@ void MainWindow::inintContorlUI()
 		layout->addWidget(contorlButtonBar);
 		layout->addWidget(contorlDataBar);
 		contorlDockWidget = DockWindowManager::instance()->addDockWindow("contorl", wd,Qt::DockWidgetArea::RightDockWidgetArea);
-		//contorlDockWidget->setVisible(true);
+
 		layout->addStretch();
 	});
 }
@@ -372,11 +365,11 @@ void MainWindow::hideVisualizationTree()
 	if (!pcCombiView)
 		return;
 	auto tab = pcCombiView->getTabPanel();
-	int index = tab->indexOf(mTreeWidget);
+	int index = tab->indexOf(dataVisualizationTree);
 	if (index < 0)
 		return;
 	tab->removeTab(index);
-    mTreeWidget->upClear();
+    dataVisualizationTree->clear();
 }
 
 void MainWindow::showVisualizationTree()
@@ -386,21 +379,17 @@ void MainWindow::showVisualizationTree()
 	if (!pcCombiView)
 		return;
 	auto tab = pcCombiView->getTabPanel();
-	int index = tab->indexOf(mTreeWidget);
+	int index = tab->indexOf(dataVisualizationTree);
 	if (index >= 0)
 		return;
-	tab->addTab(mTreeWidget, DV::GetEncodingstr("文件数据", ENCODING_UTF8));
-    tab->setCurrentWidget(mTreeWidget);
+	tab->addTab(dataVisualizationTree, DV::GetEncodingstr("文件数据", ENCODING_UTF8));
+    tab->setCurrentWidget(dataVisualizationTree);
 }
 
 void MainWindow::ClearVisualizationTree()
 {
-	if (mTreeWidget)
-	{
-		mTreeWidget->upClear();
-	}
+    dataVisualizationTree->clear();
 }
-
 
 } // namespace Gui
 
@@ -425,7 +414,7 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
 	this->menuBar()->setVisible(false);
 
 
-    mTreeWidget = new Gui::TreeViewCtrl();
+    dataVisualizationTree = new DataVisualizationTree();
     controlTreeWidget = new ControlTreeWidget;
 
     // Create the layout containing the workspace and a tab bar
@@ -638,7 +627,7 @@ MainWindow::~MainWindow()
     instance = 0;
 	delete smartContorlInterface;
     delete controlTreeWidget;
-    delete mTreeWidget;
+    delete dataVisualizationTree;
 }
 
 MainWindow* MainWindow::getInstance()
@@ -2005,15 +1994,7 @@ ActionStyleEvent::Style ActionStyleEvent::getType() const
 {
     return type;
 }
-void MainWindow::inittreeContor()
-{
-	//mTreeWidget = new ListTreeWidget();
-	Gui::DockWnd::CombiView* pcCombiView = qobject_cast<Gui::DockWnd::CombiView*>(Gui::DockWindowManager::instance()->getDockWindow("Combo View"));
-	QTabWidget* _tabwidget = pcCombiView->getTabPanel();
-	DV::ListTreeWidget* m_lisTreeWidget = new DV::ListTreeWidget();
-	int curindex = _tabwidget->count();
-	_tabwidget->insertTab(curindex, m_lisTreeWidget,DV::GetEncodingstr("获取结果",ENCODING_GB2312));
-}
+
 //void MainWindow::DisplatPlot(Hdf5Data data, DocumentManager* ptr, int _type){
 //	std::list<Gui::MDIView*> list = Gui::Application().activeDocument()->getMDIViews();
 //	Gui::PlotMDIView* ptr = nullptr;

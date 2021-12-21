@@ -332,7 +332,7 @@ void ControlTreeWidget::outputStructFile(unsigned long threadID)
 	Gui::MainWindow::getInstance()->ClearVisualizationTree();
 	Gui::MainWindow::getInstance()->showVisualizationTree();
  
-	Gui::Application::ToStruct(newStructData);
+	//Gui::Application::ToStruct(newStructData);
 }
 
 void ControlTreeWidget::outputTempFile(unsigned long threadID)
@@ -353,7 +353,7 @@ void ControlTreeWidget::outputTempFile(unsigned long threadID)
 		return;
 	auto structData = tempIO.hdf5DataList.begin();
 	auto newStructData = Hdf5IO::copyToHdf5IO(*tempHdf5IO, *structData);
-	Gui::Application::DisplatPlot(newStructData);
+	//Gui::Application::DisplatPlot(newStructData);
 }
 
 /**

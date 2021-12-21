@@ -9,6 +9,8 @@ namespace Gui
 		~HDF5DataItem2DFactory() = default;
 	public :
 		HDF5DataItemFactory::HDF5DataItems CreatHDF5Items(std::vector<Hdf5Data>& datas) override;
+		HDF5DataItem* CreatHDF5Item(Hdf5Data& data) override;
+
 		HDF5DataItem* CreatStructDataItem(Hdf5Data& data,HDF5DataItem* parentItem=nullptr);
 		HDF5DataItem* CreatStructDataItem(std::vector<Hdf5Data>& datas);
 		HDF5DataItem* CreatContourDataItem(Hdf5Data& data, HDF5DataItem* parentItem = nullptr);

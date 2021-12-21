@@ -1,8 +1,8 @@
 #pragma once
 //#include "Document.h"
-#include "DocumentDataManager.h"
+#include "Document.h"
 
-class DocumentM2dMod :public DocumentManager{
+class DocumentM2dMod :public App::Document{
 public:
 	DocumentM2dMod(){
 		classID = 3;

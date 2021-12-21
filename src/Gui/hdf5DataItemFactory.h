@@ -14,6 +14,7 @@ namespace Gui {
 
 	public:
 		virtual HDF5DataItems CreatHDF5Items(std::vector<Hdf5Data>& datas) = 0;
+		virtual HDF5DataItem* CreatHDF5Item(Hdf5Data& data) = 0;
 
 		//get set
 		void setEventHander(std::shared_ptr<HDF5DataItemEventHander> hander);
@@ -34,6 +35,7 @@ namespace Gui {
 
 	public:
 		HDF5DataItemFactory::HDF5DataItems CreatHDF5Items(std::vector<Hdf5Data>& datas) override;
+		HDF5DataItem* CreatHDF5Item(Hdf5Data& data) override;
 
 		HDF5DataItem* CreatStructDataItem(Hdf5Data& data, HDF5DataItem* parentItem = nullptr);
 		HDF5DataItem* CreatStructDataItem(std::vector<Hdf5Data>& datas);

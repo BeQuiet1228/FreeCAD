@@ -1,7 +1,7 @@
 #include "PreCompiled.h"
 #include "FileFormatH5.h"
 #include "Application.h"
-#include "App/DocumentDataManager.h"
+#include "App/DocumentH5.h"
 #include <FileDialog.h>
 #include"PlotMDIView.h"
 #include "CombiView.h"
@@ -44,30 +44,16 @@ void FileFormatH5::open(const QStringList& fileList)
 void FileFormatH5::openOnce(const QString& fileList, App::Document* doc)
 {
 	doc->FileName.setValue(fileList.toUtf8());
-	DocumentManager* docManager = static_cast<DocumentManager*> (doc);
-	if (!docManager)
+	App::DocumentH5* docH5 = static_cast<App::DocumentH5*> (doc);
+	if (!docH5)
 		return;
+	docH5->loadHdf5File(fileList.toStdString());
 	auto mw = Gui::MainWindow::getInstance();
 	mw->ClearVisualizationTree();
-	Gui::TreeViewCtrl* m_lisTreeWidget = Gui::MainWindow::getInstance()->mTreeWidget;
-	docManager->loadFile(fileList);
-	m_lisTreeWidget->loadHdflist(docManager->gethdf5dataList());
 	mw->showVisualizationTree();
 
-	using namespace Gui;
+	auto hdf5Datas = docH5->getHdf5IO()->hdf5DataList;
 
-	DataVisualizationTree* tree = new DataVisualizationTree();
-	HDF5DataItemFactory* factory = new HDF5DataItem3DFactory();
-	
-	HDF5DataItemFactory* factory2d = new HDF5DataItem2DFactory();
-	std::shared_ptr<HDF5DataItemEventHander> hander(new HDF5DataItem3DDoubleClickEventHander());
-	std::shared_ptr<HDF5DataItemEventHander> hander2d(new HDF5DataItem2DDoubleClickEventHander());
-	factory->setEventHander(hander);
-	factory2d->setEventHander(hander2d);
-	auto item2ds = factory2d->CreatHDF5Items(docManager->gethdf5dataList());
-	auto items = factory->CreatHDF5Items(docManager->gethdf5dataList());
-	tree->addHDF5DataItem(items);
-	tree->addHDF5DataItem(item2ds);
-	tree->show();
-
+	Gui::DataVisualizationTree* tree = mw->dataVisualizationTree;
+	tree->loadHdf5Datas(hdf5Datas);
 }

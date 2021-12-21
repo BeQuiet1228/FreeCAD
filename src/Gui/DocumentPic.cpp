@@ -125,20 +125,20 @@ std::string DocumentPic::getTextPath()
 
 void DocumentPic::openH5File(const std::string& path)
 {
-	auto appDoc = getAppDocument();
-	if (appDoc == nullptr)
-		return ;
-	DocumentManager* docm = dynamic_cast<DocumentManager*>(appDoc);
-	if (!docm)
-		return;
-	Gui::TreeViewCtrl* mlisttreewidget =(Gui::MainWindow::getInstance()->mTreeWidget);
-	if (!mlisttreewidget)
-	{
-		std::cerr << "ListTreeWidget is nullptr from Gui void DocumentPic::openH5File(const std::string& path)" << std::endl;
-		return;
-	}
-	docm->loadFile(path);
-	mlisttreewidget->loadHdflist(docm->gethdf5dataList());
+// 	auto appDoc = getAppDocument();
+// 	if (appDoc == nullptr)
+// 		return ;
+// 	DocumentManager* docm = dynamic_cast<DocumentManager*>(appDoc);
+// 	if (!docm)
+// 		return;
+// 	Gui::TreeViewCtrl* mlisttreewidget =(Gui::MainWindow::getInstance()->mTreeWidget);
+// 	if (!mlisttreewidget)
+// 	{
+// 		std::cerr << "ListTreeWidget is nullptr from Gui void DocumentPic::openH5File(const std::string& path)" << std::endl;
+// 		return;
+// 	}
+// 	docm->loadFile(path);
+// 	mlisttreewidget->loadHdflist(docm->gethdf5dataList());
 }
 
 void DocumentPic::runChipic()
