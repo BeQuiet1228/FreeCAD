@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 	w3d->binding(contour3dContrler.get());
 	w3d->show();
 
-	auto item = ControlerItemFactor::CreatControlerItem();
+	auto item = ControlerItemFactor::CreatContour3dControlerItem();
 	item->setControler(contour3dContrler);
 	item->show();
 

@@ -3,13 +3,15 @@
 #define REALTIME_WIDGET_H_
 #include <QWidget>
 #include <QDialog>
+#include "exportConfig.hpp"
 class QTableWidgetItem;
 namespace Ui
 {
 	class realTimewidget;
 }
+
 namespace DV {
-	class realTimewidget :public QDialog
+	class DATA_VISUALIZATION_EXPORT realTimewidget :public QDialog
 	{
 		Q_OBJECT
 	public:
