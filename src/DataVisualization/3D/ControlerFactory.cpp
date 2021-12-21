@@ -15,6 +15,10 @@
 #include "PolarContourDataSetConstructor.h"
 #include "ContourActorPipeline.h"
 #include "DataVisualization/ContourData.h"
+#include "Contour3dataSetConstructor.h"
+#include "PolarContour3dDataSetConstructor.h"
+#include "Contour3dActorPipeline.h"
+#include"Contour3dControler.h"
 #include <cassert>
 
 std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatControler(Hdf5Data& h5data)
@@ -47,6 +51,25 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContourControler(H
 	controler->setActorPipeline(pipeline);
 	return controler;
 }
+
+std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContour3dControler(Hdf5Data& h5data)
+{
+	std::shared_ptr<Controler> controler;
+	std::shared_ptr<DataSetConstructorH5> constructor;
+	std::shared_ptr<ActorPipemline> pipeline;
+	if (Hdf5Data::CoordinateSystem::CARTESIAN == h5data.coordinateSystem)
+		constructor.reset(new Contour3dDatasetConstructor());
+	else
+		constructor.reset(new PolarContour3dDatasetConstructor());
+	constructor->setHdf5Data(h5data);
+	pipeline.reset(new  Contour3dActorPipline());
+	pipeline->setDataSet(constructor->creatDataset());
+	pipeline->connect();
+	controler.reset(new Contour3dControler());
+	controler->setActorPipeline(pipeline);
+	return controler;
+}
+
 std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucControler(Hdf5Data& h5data)
 {
 

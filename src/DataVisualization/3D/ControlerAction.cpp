@@ -38,3 +38,30 @@ void DV3D::ControlerClipEnable::active(std::shared_ptr<Controler> controler)
 		controler->setClipEnable(true);
 	}
 }
+void DV3D::ControlerClipPlan::active(std::shared_ptr<Controler> controler)
+{
+	if(getState()==ON)
+	{
+		off();
+		//关闭切割面
+	}
+	else
+	{
+		on();
+		//打开切割面设置
+	}
+			
+}
+void DV3D::ControlerContourSurface::active(std::shared_ptr<Controler> controler)
+{
+	
+		if(getState()==ON)
+		{
+			//关闭等值面范围获取页面
+		}
+		else
+		{
+			//打开等值面范围获取页面
+			
+		}
+}
