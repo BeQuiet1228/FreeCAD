@@ -244,9 +244,11 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatObserveDataItem(Hdf5Data& da
 		subNode = subss.str();
 	}
 	//创建节点
-	auto typeNodeItem = findTypeItem(parentItem,typeNode);
+	//auto typeNodeItem = findTypeItem(parentItem,typeNode);
+	auto typeNodeItem=new HDF5DataItem(typeNode.c_str());
 	auto subNodeItem = new HDF5DataItem(data,subNode.c_str());
 	typeNodeItem->addSubItem(subNodeItem);
+	parentItem->addSubItem(typeNodeItem);
 	itemSetHander(subNodeItem);
 	return parentItem;
 }
@@ -273,9 +275,11 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatVectorDataItem(Hdf5Data& dat
 		subNode = subs.str();
 	}
 	//创建节点
-	auto typeNodeItem = findTypeItem(parentItem, typeNode);
+	//auto typeNodeItem = findTypeItem(parentItem, typeNode);
+	auto typeNodeItem=new HDF5DataItem(typeNode.c_str());
 	auto subNodeItem = new HDF5DataItem(data,subNode.c_str());
 	typeNodeItem->addSubItem(subNodeItem);
+	parentItem->addSubItem(typeNodeItem);
 	itemSetHander(subNodeItem);
 	return parentItem;
 }
@@ -306,9 +310,11 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatPhasespaceDataItem(Hdf5Data&
 		subNode = subss.str();
 	}
 	//创建树控件节点
-	auto typeNodeItem = findTypeItem(parentItem, typeNode);
+	//auto typeNodeItem = findTypeItem(parentItem, typeNode);
+	auto typeNodeItem=new HDF5DataItem(typeNode.c_str());
 	auto subNodeItem = new HDF5DataItem(data,subNode.c_str());
 	typeNodeItem->addSubItem(subNodeItem);
+	parentItem->addSubItem(typeNodeItem);
 	itemSetHander(subNodeItem);
 	return parentItem;
 }
@@ -379,9 +385,11 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatContourDataItem(Hdf5Data& da
 		subNode = subss.str();
 	}
 	//查找是否已经创建过了
-	auto typeNodeItem = findTypeItem(parentItem, typeNode);
+	//auto typeNodeItem = findTypeItem(parentItem, typeNode);
+	auhto typeNodeItem=new HDF5DataItem(typeNode.c_str());
 	auto subNodeItem = new HDF5DataItem(data,subNode.c_str());
 	typeNodeItem->addSubItem(subNodeItem);
+	parentItem->addSubItem(typeNodeItem);
 	itemSetHander(subNodeItem);
 	return parentItem;
 }
