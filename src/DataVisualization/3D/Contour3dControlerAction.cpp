@@ -28,15 +28,9 @@ void DV3D::ControlerContourSurface::showWidget(std::shared_ptr<Controler> contro
 
 
 
-DV3D::Contour3dControlerWidget::Contour3dControlerWidget(QWidget* parent/*=nullptr*/):DV::realTimewidget(parent)
-{
+DV3D::Contour3dControlerWidget::Contour3dControlerWidget(QWidget* parent/*=nullptr*/) :DV::realTimewidget(parent){}
 
-}
-
-DV3D::Contour3dControlerWidget::~Contour3dControlerWidget()
-{
-
-}
+DV3D::Contour3dControlerWidget::~Contour3dControlerWidget(){}
 void DV3D::Contour3dControlerWidget::init(std::vector<ContourValue>& values)
 {
 	//Êý¾Ý×ª»»

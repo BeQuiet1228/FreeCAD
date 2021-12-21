@@ -37,3 +37,15 @@ void DV3D::ControlerClipEnable::active(std::shared_ptr<Controler> controler)
 		controler->setClipEnable(true);
 	}
 }
+
+void DV3D::ControlerClipPlan::active(std::shared_ptr<Controler> controler)
+{
+	if (getState() == ON)
+	{
+		off();
+	}
+	else
+	{
+		on();
+	}
+}

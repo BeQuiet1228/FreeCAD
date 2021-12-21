@@ -51,6 +51,9 @@ SET(SRC
 	controlerItemFactor.cpp
 	controlerItemFactor.h
 	DataVisualization3DExport.hpp
+	ClipPlaneWidget.h
+	ClipPlaneWidget.cpp
+	
 )
 SET( STRUCT_SRC
 	CartesianStructDataSetConstructor.cpp
@@ -101,11 +104,13 @@ SET(CONTOUR3D_SRCS
 )
 SET(UI_SRC
 	ControlerItem.ui
+	ClipPlaneWidget.ui
 	)
 
 SET(MY_MOC_HDR
 	ControlerItem.h
 	Contour3dControlerAction.h
+	ClipPlaneWidget.h
 )
 SET(QRC_SRC
 	resource/rce.qrc

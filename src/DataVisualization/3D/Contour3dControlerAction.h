@@ -2,7 +2,7 @@
 #include "ControlerAction.h"
 #include <Contour3dActorPipeline.h>
 #include "../realTimewidget.h"
-#include<QObject>
+#include <QWidget>
 namespace DV3D
 {
 	class ControlerContourSurface :public ControlerAction

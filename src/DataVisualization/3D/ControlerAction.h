@@ -26,4 +26,9 @@ namespace DV3D {
 	public:
 		void active(std::shared_ptr<Controler> controler) override;
 	};
+	class ControlerClipPlan :public ControlerAction
+	{
+	public:
+		void active(std::shared_ptr<Controler> controler) override;
+	};
 }
