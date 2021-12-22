@@ -7,7 +7,7 @@ DV3D::ClipPlaneWidget::ClipPlaneWidget(QWidget* parent /*= nullptr*/) :
 	QDialog(parent), ui(new Ui::ClipPlaneWidget)
 {
 	ui->setupUi(this);
-	setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
+	//setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
 	connect(ui->okButton,SIGNAL(clicked()),this,SLOT(BtnClicked()));
 }
 

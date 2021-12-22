@@ -24,12 +24,12 @@ namespace DV3D
 		std::vector<ContourValue> getContourValues();
 		void setContourValues(std::vector<ContourValue>& values);
 	protected:
-		void updateFilter();
+		void initFilter();
 	private:
 		vtkSmartPointer<vtkContourFilter> file;
 		//double scalarMin, scalarMax;
 		ContourRang rang;
-		int contourSurfarCount;
-		bool ishavescalar;
+		int contourSurfarCount;//默认构造时，等值面的取值数量
+		bool isInit;//是否初始化的判断
 	};
 };
