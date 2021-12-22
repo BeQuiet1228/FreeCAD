@@ -22,6 +22,7 @@
 #include "Gui/Application.h"
 #include "DataVisualization/C_encoding.h"
 #include "DocumentPic.h"
+#include <HDF5Reader/hdf5io.h>
 ControlTreeWidget::ControlTreeWidget(QWidget* parent)
 	:QTreeWidget(parent),tempHdf5IO(nullptr)
 {
@@ -41,9 +42,11 @@ ControlTreeWidget::ControlTreeWidget(QWidget* parent)
 
 ControlTreeWidget::~ControlTreeWidget()
 {
-	for each (QTreeWidgetItem * item in items)
+	for (auto item = items.begin(); item != items.end();)
 	{
-		delete item;
+		auto ptr = item->second;
+		item = items.erase(item);
+		delete ptr;
 	}
 }
 
@@ -74,30 +77,38 @@ void ControlTreeWidget::init(const Hdf5Data& data)
 }
 
 void ControlTreeWidget::initItem()
-{
-	for (int i = 0; i < itemCount; i++)
+{	
+	auto item = new QTreeWidgetItem();
+	item->setText(0,DV::GetEncodingstr("等位图", ENCODING_GB2312));
+	items.insert(std::map<MsgType, QTreeWidgetItem*>::value_type(CONTOUR, item));
+
+	item = new QTreeWidgetItem();
+	item->setText(0, DV::GetEncodingstr("相空间图", ENCODING_GB2312));
+	items.insert(std::map<MsgType, QTreeWidgetItem*>::value_type(PHASE_SPACE, item));
+
+	item = new QTreeWidgetItem();
+	item->setText(0, DV::GetEncodingstr("时间观测图", ENCODING_GB2312));
+	items.insert(std::map<MsgType, QTreeWidgetItem*>::value_type(OBSERVE, item));
+
+	item = new QTreeWidgetItem();
+	item->setText(0, DV::GetEncodingstr("空间观测图", ENCODING_GB2312));
+	items.insert(std::map<MsgType, QTreeWidgetItem*>::value_type(RANGE, item));
+
+	item = new QTreeWidgetItem();
+	item->setText(0, DV::GetEncodingstr("矢量图", ENCODING_GB2312));
+	items.insert(std::map<MsgType, QTreeWidgetItem*>::value_type(VECTOR, item));
+
+	item = new QTreeWidgetItem();
+	item->setText(0, DV::GetEncodingstr("3D相空间图", ENCODING_GB2312));
+	items.insert(std::map<MsgType, QTreeWidgetItem*>::value_type(PARTICLE_3D, item));
+
+	item = new QTreeWidgetItem();
+	item->setText(0, DV::GetEncodingstr("3D等位图", ENCODING_GB2312));
+	items.insert(std::map<MsgType, QTreeWidgetItem*>::value_type(CONTOUR_3D, item));
+
+	for (auto iter = items.begin(); iter != items.end(); iter++)
 	{
-		items.push_back(new QTreeWidgetItem);
-	}
-	
-	contourItem = items.at(0);
-	contourItem->setText(0,DV::GetEncodingstr("等位图", ENCODING_GB2312));
-
-	phaseSpaceItem = items.at(1);
-	phaseSpaceItem->setText(0, DV::GetEncodingstr("相空间图", ENCODING_GB2312));
-
-	observeItem = items.at(2);
-	observeItem->setText(0, DV::GetEncodingstr("时间观测图", ENCODING_GB2312));
-
-	rangeItem = items.at(3);
-	rangeItem->setText(0, DV::GetEncodingstr("空间观测图", ENCODING_GB2312));
-
-	vectorItem = items.at(4);
-	vectorItem->setText(0, DV::GetEncodingstr("矢量图", ENCODING_GB2312));
-
-	for each (QTreeWidgetItem* item in items)
-	{
-		addTopLevelItem(item);
+		addTopLevelItem(iter->second);
 	}
 
 }
@@ -123,35 +134,29 @@ void ControlTreeWidget::sendControlMsg(QTreeWidgetItem* item)
 */
 bool ControlTreeWidget::getTypeAndIndex(QTreeWidgetItem* item, MsgType& type, int& index)
 {
-	type = NONE;
-	if (contourItem->indexOfChild(item) >=0)
+	for (auto iter = items.begin(); iter != items.end(); iter++)
 	{
-		index = contourItem->indexOfChild(item);
-		type = CONTOUR;
-	}else if (observeItem->indexOfChild(item) >= 0)
-	{
-		index = observeItem->indexOfChild(item);
-		type = OBSERVE;
-	}else if (vectorItem->indexOfChild(item) >= 0) {
-		index = vectorItem->indexOfChild(item);
-		type = VECTOR;
-	}else if (phaseSpaceItem->indexOfChild(item) >= 0) {
-		index = phaseSpaceItem->indexOfChild(item);
-		type = PHASE_SPACE;
-	}else if (rangeItem->indexOfChild(item) >= 0) {
-		index = rangeItem->indexOfChild(item);
-		type = RANGE;
+		index = iter->second->indexOfChild(item);
+		if (index < 0)
+			continue;
+		type = iter->first;
+		return true;
 	}
-	if (type == NONE)
-		return false;
-	return true;
+
+	return false;
 }
 
 void ControlTreeWidget::clearSubItem()
 {
-	for each (QTreeWidgetItem * item in items)
+	for (auto iter = items.begin(); iter != items.end(); iter++)
 	{
-		auto childs = item->takeChildren();
+		auto childrens = iter->second->takeChildren();
+		for (auto children = childrens.begin(); children != childrens.end();)
+		{
+			auto ptr = *children;
+			children = childrens.erase(children);
+			delete ptr;
+		}
 	}
 	update();
 }
@@ -165,6 +170,7 @@ void ControlTreeWidget::clear()
 	tempHdf5IO = nullptr;
 }
 
+
 bool ControlTreeWidget::addContourItem(const std::string& str)
 {
 	QString typeName, name, rank;
@@ -174,7 +180,8 @@ bool ControlTreeWidget::addContourItem(const std::string& str)
 
 	QTreeWidgetItem* childItem = new QTreeWidgetItem;
 	childItem->setText(0,name);
-	contourItem->addChild(childItem);
+	auto item = items[CONTOUR];
+	item->addChild(childItem);
 	return true;
 }
 
@@ -187,7 +194,8 @@ bool ControlTreeWidget::addPhaseSpaceItem(const std::string& str)
 
 	QTreeWidgetItem* childItem = new QTreeWidgetItem;
 	childItem->setText(0, name);
-	phaseSpaceItem->addChild(childItem);
+	auto item = items[PHASE_SPACE];
+	item->addChild(childItem);
 	return true;
 }
 
@@ -200,7 +208,8 @@ bool ControlTreeWidget::addObserveItem(const std::string& str)
 
 	QTreeWidgetItem* childItem = new QTreeWidgetItem;
 	childItem->setText(0, name);
-	observeItem->addChild(childItem);
+	auto item = items[OBSERVE];
+	item->addChild(childItem);
 	return true;
 }
 
@@ -213,7 +222,8 @@ bool ControlTreeWidget::addRangeItem(const std::string& str)
 
 	QTreeWidgetItem* childItem = new QTreeWidgetItem;
 	childItem->setText(0, name);
-	rangeItem->addChild(childItem);
+	auto item = items[RANGE];
+	item->addChild(childItem);
 	return true;
 }
 
@@ -226,7 +236,8 @@ bool ControlTreeWidget::addVectorItem(const std::string& str)
 
 	QTreeWidgetItem* childItem = new QTreeWidgetItem;
 	childItem->setText(0, name);
-	vectorItem->addChild(childItem);
+	auto item = items[VECTOR];
+	item->addChild(childItem);
 	return true;
 }
 
@@ -311,8 +322,6 @@ void ControlTreeWidget::outputStructFile(unsigned long threadID)
 	if (filePath == QString::fromStdString(""))
 		return;
 
-
-
 	//打开结构图文件 获取结构图对象
 	Hdf5IO tempIO;
 	tempIO.setFilePath(filePath.toStdString());
@@ -329,10 +338,13 @@ void ControlTreeWidget::outputStructFile(unsigned long threadID)
 	auto newStructData = Hdf5IO::copyToHdf5IO(*tempHdf5IO, *structData);
 	init(newStructData);
 	
-	Gui::MainWindow::getInstance()->ClearVisualizationTree();
-	Gui::MainWindow::getInstance()->showVisualizationTree();
+	auto mainWindow = Gui::MainWindow::getInstance();
+
+	mainWindow->ClearVisualizationTree();
+	mainWindow->showVisualizationTree();
+	mainWindow->dataVisualizationTree->addHdf5Data(newStructData);
  
-	//Gui::Application::ToStruct(newStructData);
+	
 }
 
 void ControlTreeWidget::outputTempFile(unsigned long threadID)
@@ -351,9 +363,10 @@ void ControlTreeWidget::outputTempFile(unsigned long threadID)
 	tempIO.initHdf5Data();
 	if (tempIO.hdf5DataList.size() < 1)
 		return;
-	auto structData = tempIO.hdf5DataList.begin();
-	auto newStructData = Hdf5IO::copyToHdf5IO(*tempHdf5IO, *structData);
-	//Gui::Application::DisplatPlot(newStructData);
+	auto data= tempIO.hdf5DataList.begin();
+	auto newData = Hdf5IO::copyToHdf5IO(*tempHdf5IO, *data);
+	
+	Gui::MainWindow::getInstance()->dataVisualizationTree->addHdf5Data(newData);
 }
 
 /**
@@ -373,14 +386,14 @@ void ControlTreeWidget::openResultFile(std::string path)
 	auto mw = Gui::MainWindow::getInstance();
 	mw->hideContorlUI();
 
-	//清空h5文件对象
-	auto doc = Gui::Application::Instance->activeDocument();
-	auto picDoc = dynamic_cast<DocumentPic*>(doc);
-	if (picDoc)
-		picDoc->releaseH5Object();
-	picDoc->openH5File(path);
-	//显示树控件
-	mw->showVisualizationTree();
+	//读取hdf5数据
+	Hdf5IO hdf5IO(path);
+	hdf5IO.initHdf5Data();
+	
+
+	//清空临时文件窗口
+	mw->ClearVisualizationTree();
+	mw->dataVisualizationTree->loadHdf5Datas(hdf5IO.hdf5DataList);
 }
 
 
@@ -391,9 +404,9 @@ void ControlTreeWidget::openResultFile(std::string path)
 void ControlTreeWidget::setTreeUnuseable()
 {
 	return;
-	for(auto iter = items.begin();iter != items.end();iter++)
-		(*iter)->setFlags(contourItem->flags() & (~Qt::ItemIsEnabled));
-	timer.start(timeOutCount);
+// 	for(auto iter = items.begin();iter != items.end();iter++)
+// 		(*iter)->setFlags(contourItem->flags() & (~Qt::ItemIsEnabled));
+// 	timer.start(timeOutCount);
 }
 
 /**
@@ -403,10 +416,10 @@ void ControlTreeWidget::setTreeUnuseable()
 void ControlTreeWidget::setTreeUseable()
 {
 	return;
-	for (auto iter = items.begin(); iter != items.end(); iter++)
-		(*iter)->setFlags(contourItem->flags() | Qt::ItemIsEnabled);
-	Gui::MainWindow::getInstance()->setFocus();
-	this->setEnabled(true);
-	timer.stop();
+// 	for (auto iter = items.begin(); iter != items.end(); iter++)
+// 		(*iter)->setFlags(contourItem->flags() | Qt::ItemIsEnabled);
+// 	Gui::MainWindow::getInstance()->setFocus();
+// 	this->setEnabled(true);
+// 	timer.stop();
 }
 

@@ -80,9 +80,9 @@ void Gui::HDF5DataItem::triggerDoubleClickEvent()
 /**
 * @brief Gui::HDF5DataItem::addSubItem 添加一个子节点，并使用name为节点排序
 * @param HDF5DataItem * subItem
-* @return void
+* @return Gui::HDF5DataItem*
 */
-void Gui::HDF5DataItem::addSubItem(HDF5DataItem* subItem)
+Gui::HDF5DataItem*  Gui::HDF5DataItem::addSubItem(HDF5DataItem* subItem)
 {
 	int subItemCount = this->rowCount();
 	//尝试合并item
@@ -90,7 +90,7 @@ void Gui::HDF5DataItem::addSubItem(HDF5DataItem* subItem)
 	{
 		auto item = this->child(row);
 		if (mergeItem(item, subItem))
-			return;
+			return dynamic_cast<HDF5DataItem*>(item);
 	}
 
 	/*
@@ -108,6 +108,8 @@ void Gui::HDF5DataItem::addSubItem(HDF5DataItem* subItem)
 			break;
 	}
 	this->insertRow(row, subItem);
+
+	return subItem;
 }
 
 
@@ -165,6 +167,7 @@ bool Gui::HDF5DataItem::mergeItem(QStandardItem* item, HDF5DataItem* h5item)
 	auto temp = dynamic_cast<HDF5DataItem*>(item);
 	if (!temp)
 		return false;
+
 	return temp->mergeItem(h5item);
 }
 

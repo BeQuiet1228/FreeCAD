@@ -23,12 +23,13 @@ namespace Gui {
 		void addHdf5Data(std::vector<Hdf5Data> datas);
 
 	private:
-		void initfactorys();
+		void initFactorys();
+		void clearFactorys();
 	private:
 		//item mod
 		QStandardItemModel* model;
 		//¹¤³§
-		std::vector<HDF5DataItemFactory*> factorys;
+		std::vector<std::shared_ptr<HDF5DataItemFactory>> factorys;
 	public Q_SLOTS:
 		void itemDoubleClicked(const QModelIndex& index);
 		

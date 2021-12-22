@@ -61,7 +61,7 @@ Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatParticle3DItem(Hdf5Data& data, HD
 */
 Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatParticle3DItem(std::vector<Hdf5Data>& datas)
 {
-	HDF5DataItem* item = new HDF5DataItem(gbkStdstringToQstring("3DÁ£×ÓÍ¼"));;
+	HDF5DataItem* item = nullptr;
 
 	for (auto iter = datas.begin(); iter != datas.end();)
 	{
@@ -76,11 +76,7 @@ Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatParticle3DItem(std::vector<Hdf5Da
 		CreatParticle3DItem(h5data,item);
 	}
 
-	if (item->rowCount() != 0)
-		return item;
-
-	delete item;
-	return nullptr;
+	return item;
 }
 
 /**
@@ -109,7 +105,7 @@ HDF5DataItem* HDF5DataItem3DFactory::CreatStructDataItem(std::vector<Hdf5Data>& 
 	return item;
 }
 
-HDF5DataItemFactory::HDF5DataItems HDF5DataItem3DFactory::CreatHDF5Items(std::vector<Hdf5Data>& datas)
+HDF5DataItemFactory::HDF5DataItems HDF5DataItem3DFactory::CreatHDF5Items(std::vector<Hdf5Data> datas)
 {
 	HDF5DataItemFactory::HDF5DataItems items;
 
@@ -128,17 +124,12 @@ HDF5DataItemFactory::HDF5DataItems HDF5DataItem3DFactory::CreatHDF5Items(std::ve
 
 Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatHDF5Item(Hdf5Data& data)
 {
-	auto item = CreatParticle3DItem(data);
-	if (item)
-		return item;
-	item = CreatStructDataItem(data);
-	if (item)
-		return item;
-	item = CreatContour3DItem(data);
-	if (item)
-		return item;
-
-	return nullptr;;
+	std::vector<Hdf5Data> datas;
+	datas.push_back(data);
+	auto its = CreatHDF5Items(datas);
+	if (its.size() <= 0)
+		return nullptr;
+	return *its.begin();
 }
 
 Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatContour3DItem(Hdf5Data& data, HDF5DataItem* parentItem /*= nullptr*/)

@@ -9,16 +9,12 @@ Gui::DataVisualizationTree::DataVisualizationTree(QWidget* parent/*= 0*/)
 	connect(this, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(itemDoubleClicked(QModelIndex)));
 	setModel(model);
 
-	initfactorys();
+	initFactorys();
 }
 
 Gui::DataVisualizationTree::~DataVisualizationTree()
 {
-	for (auto iter = factorys.begin(); iter != factorys.end(); iter++)
-	{
-		delete *iter;
-		iter = factorys.erase(iter);
-	}
+
 }
 
 void Gui::DataVisualizationTree::addHDF5DataItem(HDF5DataItem* item)
@@ -49,6 +45,8 @@ void Gui::DataVisualizationTree::addHDF5DataItem(std::vector<HDF5DataItem*> item
 void Gui::DataVisualizationTree::clear()
 {
 	model->clear();
+	clearFactorys();
+	initFactorys();
 }
 
 /**
@@ -76,9 +74,12 @@ void Gui::DataVisualizationTree::addHdf5Data(Hdf5Data& data)
 	for (auto iter = factorys.begin(); iter != factorys.end(); iter++)
 	{
 		auto item = (*iter)->CreatHDF5Item(data);
-		addHDF5DataItem(item);
+		if(item)
+			addHDF5DataItem(item);
 	}
 }
+
+
 
 void Gui::DataVisualizationTree::addHdf5Data(std::vector<Hdf5Data> datas)
 {
@@ -93,17 +94,26 @@ void Gui::DataVisualizationTree::addHdf5Data(std::vector<Hdf5Data> datas)
 * @brief Gui::DataVisualizationTree::initfactorys 初始化所有的工程对象
 * @return void
 */
-void Gui::DataVisualizationTree::initfactorys()
+void Gui::DataVisualizationTree::initFactorys()
 {
-	HDF5DataItemFactory* factory = new HDF5DataItem3DFactory();
+	std::shared_ptr<HDF5DataItemFactory> factory(new HDF5DataItem3DFactory());
 	std::shared_ptr<HDF5DataItemEventHander> hander(new HDF5DataItem3DDoubleClickEventHander());
 	factory->setEventHander(hander);
 	factorys.push_back(factory);
 
-	factory = new HDF5DataItem2DFactory();
+	factory.reset(new HDF5DataItem2DFactory());
 	hander.reset(new HDF5DataItem2DDoubleClickEventHander());
 	factory->setEventHander(hander);
 	factorys.push_back(factory);
+}
+
+/**
+* @brief Gui::DataVisualizationTree::clearFactorys 清理工厂类
+* @return void
+*/
+void Gui::DataVisualizationTree::clearFactorys()
+{
+	factorys.clear();
 }
 
 

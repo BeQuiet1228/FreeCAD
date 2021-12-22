@@ -39,7 +39,7 @@ namespace Gui {
 		virtual void triggerDoubleClickEvent();
 
 		//添加子节点
-		void addSubItem(HDF5DataItem* subItem);
+		HDF5DataItem* addSubItem(HDF5DataItem* subItem);
 		//获取所有子节点
 		std::vector<HDF5DataItem*> getSubItems();
 		//合并两个相同的item

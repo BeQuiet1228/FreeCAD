@@ -4,6 +4,7 @@
 #include <QTreeWidgetItem>
 #include <vector>
 #include <QTimer>
+#include <map>
 class ControlTreeWidget :public QTreeWidget {
 	enum MsgType {
 		NONE = 0,
@@ -12,6 +13,8 @@ class ControlTreeWidget :public QTreeWidget {
 		OBSERVE,
 		VECTOR = 5,
 		RANGE,
+		PARTICLE_3D,
+		CONTOUR_3D
 	};
 	Q_OBJECT
 public:
@@ -29,9 +32,8 @@ public:
 	//Çå³ýÊý¾Ý
 	void clear();
 private:
-	QTreeWidgetItem* contourItem,*phaseSpaceItem,*observeItem,*rangeItem,*vectorItem;
 	const unsigned int itemCount = 5;
-	std::vector<QTreeWidgetItem*> items;
+	std::map<MsgType,QTreeWidgetItem*> items;
 
 private:
 	bool addContourItem(const std::string& str);

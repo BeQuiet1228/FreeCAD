@@ -13,7 +13,7 @@ namespace Gui {
 		~HDF5DataItemFactory() = default;
 
 	public:
-		virtual HDF5DataItems CreatHDF5Items(std::vector<Hdf5Data>& datas) = 0;
+		virtual HDF5DataItems CreatHDF5Items(std::vector<Hdf5Data> datas) = 0;
 		virtual HDF5DataItem* CreatHDF5Item(Hdf5Data& data) = 0;
 
 		//get set
@@ -34,7 +34,7 @@ namespace Gui {
 		~HDF5DataItem3DFactory() = default;
 
 	public:
-		HDF5DataItemFactory::HDF5DataItems CreatHDF5Items(std::vector<Hdf5Data>& datas) override;
+		HDF5DataItemFactory::HDF5DataItems CreatHDF5Items(std::vector<Hdf5Data> datas) override;
 		HDF5DataItem* CreatHDF5Item(Hdf5Data& data) override;
 
 		HDF5DataItem* CreatStructDataItem(Hdf5Data& data, HDF5DataItem* parentItem = nullptr);

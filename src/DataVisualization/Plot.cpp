@@ -90,6 +90,7 @@ namespace DV {
 	Plot::Plot(QWidget* parent /*= 0*/)
 		:QWidget(parent), URStack(new UndoRedoStack)
 	{
+		CanvasItem::registerMetaTye();
 		setObjectName("visualizationPlot");
 		initData();
 		initGUI();

@@ -8,8 +8,10 @@
 * @param std::vector<Hdf5Data> & datas
 * @return Gui::HDF5DataItemFactory::HDF5DataItems
 */
-Gui::HDF5DataItemFactory::HDF5DataItems Gui::HDF5DataItem2DFactory::CreatHDF5Items(std::vector<Hdf5Data>& datas)
+Gui::HDF5DataItemFactory::HDF5DataItems Gui::HDF5DataItem2DFactory::CreatHDF5Items(std::vector<Hdf5Data> datas)
 {
+	initDoubleClickHanderStructData(datas);
+
 	HDF5DataItemFactory::HDF5DataItems items;
 	auto item = CreatStructDataItem(datas);
 	if (item)
@@ -32,22 +34,12 @@ Gui::HDF5DataItemFactory::HDF5DataItems Gui::HDF5DataItem2DFactory::CreatHDF5Ite
 
 Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatHDF5Item(Hdf5Data& data)
 {
-	auto item = CreatStructDataItem(data);
-	if (item)
-		return item;
-	item = CreatContourDataItem(data);
-	if (item)
-		return item;
-	item = CreatPhasespaceDataItem(data);
-	if (item)
-		return item;
-	item = CreatVectorDataItem(data);
-	if (item)
-		return item;
-	item = CreatObserveDataItem(data);
-	if (item)
-		return item;
-	return nullptr;
+	std::vector<Hdf5Data> datas;
+	datas.push_back(data);
+	auto its = CreatHDF5Items(datas);
+	if (its.size() <= 0)
+		return nullptr;
+	return *its.begin();
 }
 
 /**
@@ -64,6 +56,30 @@ void Gui::HDF5DataItem2DFactory::setStructData(Hdf5Data data)
 		return;
 	handPtr->setStructData(data);
 }
+
+bool Gui::HDF5DataItem2DFactory::initDoubleClickHanderStructData(Hdf5Data& data)
+{
+	if (data.name != "struct")
+		return false;
+	auto hander = getEventHander();
+	auto hander2d = std::dynamic_pointer_cast<HDF5DataItem2DDoubleClickEventHander>(hander);
+	if (!hander2d)
+		return false;
+	hander2d->setStructData(data);
+
+	return true;
+}
+
+bool Gui::HDF5DataItem2DFactory::initDoubleClickHanderStructData(std::vector<Hdf5Data>& datas)
+{
+	for (auto iter = datas.begin(); iter != datas.end(); iter++)
+	{
+		if (initDoubleClickHanderStructData(*iter))
+			return true;
+	}
+	return false;
+}
+
 /**
 * @time	2021/12/20
 * @brief Gui::HDF5DataItem2DFactory::CreatStructDataItem 创建结构图数据
@@ -267,9 +283,10 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatObserveDataItem(Hdf5Data& da
 	//auto typeNodeItem = findTypeItem(parentItem,typeNode);
 	auto typeNodeItem=new HDF5DataItem(typeNode.c_str());
 	auto subNodeItem = new HDF5DataItem(data,subNode.c_str());
-	typeNodeItem->addSubItem(subNodeItem);
-	parentItem->addSubItem(typeNodeItem);
 	itemSetHander(subNodeItem);
+	subNodeItem = typeNodeItem->addSubItem(subNodeItem);
+	typeNodeItem = parentItem->addSubItem(typeNodeItem);
+
 	return parentItem;
 }
 
@@ -298,9 +315,10 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatVectorDataItem(Hdf5Data& dat
 	//auto typeNodeItem = findTypeItem(parentItem, typeNode);
 	auto typeNodeItem=new HDF5DataItem(typeNode.c_str());
 	auto subNodeItem = new HDF5DataItem(data,subNode.c_str());
-	typeNodeItem->addSubItem(subNodeItem);
-	parentItem->addSubItem(typeNodeItem);
 	itemSetHander(subNodeItem);
+	subNodeItem = typeNodeItem->addSubItem(subNodeItem);
+	typeNodeItem = parentItem->addSubItem(typeNodeItem);
+	
 	return parentItem;
 }
 
@@ -333,9 +351,10 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatPhasespaceDataItem(Hdf5Data&
 	//auto typeNodeItem = findTypeItem(parentItem, typeNode);
 	auto typeNodeItem=new HDF5DataItem(typeNode.c_str());
 	auto subNodeItem = new HDF5DataItem(data,subNode.c_str());
-	typeNodeItem->addSubItem(subNodeItem);
-	parentItem->addSubItem(typeNodeItem);
 	itemSetHander(subNodeItem);
+	subNodeItem = typeNodeItem->addSubItem(subNodeItem);
+	typeNodeItem = parentItem->addSubItem(typeNodeItem);
+	
 	return parentItem;
 }
 
@@ -408,9 +427,10 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatContourDataItem(Hdf5Data& da
 	//auto typeNodeItem = findTypeItem(parentItem, typeNode);
 	auto typeNodeItem=new HDF5DataItem(typeNode.c_str());
 	auto subNodeItem = new HDF5DataItem(data,subNode.c_str());
-	typeNodeItem->addSubItem(subNodeItem);
-	parentItem->addSubItem(typeNodeItem);
 	itemSetHander(subNodeItem);
+	subNodeItem = typeNodeItem->addSubItem(subNodeItem);
+	typeNodeItem = parentItem->addSubItem(typeNodeItem);
+	
 	return parentItem;
 }
 
