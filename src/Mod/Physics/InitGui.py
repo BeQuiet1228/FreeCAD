@@ -9,7 +9,6 @@ class PhysicsWorkbench(Workbench):
 
     import PhysicsCommand
     import ProjectSetting.Commands.ProjectSettingCommand
-    import Control.controlCommand.TaskControlMain
 
     import FreeCADGui
     import FreeCAD,os
