@@ -119,6 +119,9 @@ HDF5DataItemFactory::HDF5DataItems HDF5DataItem3DFactory::CreatHDF5Items(std::ve
 	item = CreatStructDataItem(datas);
 	if (item)
 		items.push_back(item);
+	item = CreatContour3DItem(datas);
+	if (item)
+		items.push_back(item);
 
 	return items;
 }
@@ -129,6 +132,9 @@ Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatHDF5Item(Hdf5Data& data)
 	if (item)
 		return item;
 	item = CreatStructDataItem(data);
+	if (item)
+		return item;
+	item = CreatContour3DItem(data);
 	if (item)
 		return item;
 
