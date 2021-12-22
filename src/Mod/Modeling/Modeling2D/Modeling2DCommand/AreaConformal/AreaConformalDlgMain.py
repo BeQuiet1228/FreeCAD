@@ -96,8 +96,8 @@ class ShowDialog(BaseDialog.BaseModelDialog):
             ToolsUI.setPlaceToObj(self.obj, "Point2X", self.ui.le_point2_x.text())
             ToolsUI.setPlaceToObj(self.obj, "Point2Y", self.ui.le_point2_y.text())
             self.obj.recompute()
-
             self.addFillet()
+            self.obj.IsAutoFillet = self.ui.isFillet.isChecked()
         except:
             import traceback
             sayz("error:" + traceback.format_exc())

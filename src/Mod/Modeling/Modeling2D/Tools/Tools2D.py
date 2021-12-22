@@ -1274,3 +1274,37 @@ def defaultSettingForPolygonal(obj):
         pos = getattr(obj, "helper_" + str(i))
         setattr(obj, "user_point" + str(i + 1) + "_x", str(pos[0]) + "m")
         setattr(obj, "user_point" + str(i + 1) + "_y", str(pos[1]) + "m")
+
+
+def getPartValidModelObj():
+    """
+    获取当前文档所有有效的可以参与布尔运算的模型的列表
+    返回的列表是根据Order排序的
+    return type -> list
+    """
+    # 模型类型，随着项目的不断拓展，模型的类型可能会不断增加，新增类型如果需要参与布尔运算则添加到该列表
+    target_list = ["Part::Part2DObject", "Part::FeaturePython"]
+    model_list = []
+    for i in target_list:
+        model_list = model_list + FreeCAD.ActiveDocument.findObjects(i)
+    # 挑选含有Type，Attribute, Order属性的obj，并根据obj的Order进行排序
+    eligible_list = []  # 合格的obj列表
+    for i in model_list:
+        if hasattr(i, "IsAutoFillet") and i.IsAutoFillet == True:
+            if hasattr(i, "Type") and hasattr(i, "Order") and hasattr(i, "Attribute"):
+                if i.Attribute != Attribute.NotDefine:
+                    eligible_list.append(i)
+    # 对obj进行排序
+    eligible_list.sort(key=getOrderOfObj)
+    return eligible_list
+    # begin
+    # 时间：2020.11.24
+    # 修改原因：添加一个循环使得该函数的返回值总是以一个conductor或者custom属性的体开头
+    valid_num = 0
+    for i in eligible_list:
+        if i.Attribute == Attribute.Void:
+            valid_num += 1
+        else:
+            break
+    # end by lzg
+    return eligible_list[valid_num:]

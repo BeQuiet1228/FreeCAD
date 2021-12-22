@@ -23,7 +23,7 @@ class Mark(object):
         self.obj.addProperty("App::PropertyBool", "isMIDPOINT").isMIDPOINT = False
         self.obj.addProperty("App::PropertyBool", "isMAXIMUM").isMAXIMUM = False
         self.obj.addProperty("App::PropertyString", "size").size = "1mm"
-        if not hasattr(obj, "Boundary"):
+        if not hasattr(self.obj, "Boundary"):
             self.obj.addProperty("App::PropertyString", "Boundary")
 
 

@@ -177,7 +177,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             self.ui.LineEdit_end_z.setEnabled(False)
             self.ui.LineEdit_end_x.setEnabled(True)
             self.ui.LineEdit_end_y.setEnabled(True)
-            self.ui.LineEdit_end_y.setText(self.ui.LineEdit_start_y.text())
+            self.ui.LineEdit_end_z.setText(self.ui.LineEdit_start_z.text())
         else:
             pass
 

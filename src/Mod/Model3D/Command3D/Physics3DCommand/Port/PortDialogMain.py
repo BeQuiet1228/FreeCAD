@@ -7,6 +7,21 @@ import PortDialog
 import traceback
 
 
+# 坐标信息
+def getCoordinate():
+    """
+    获取坐标系的标签
+    """
+    coordinate = FreeCAD.ActiveDocument.CoordinateSystem
+    if coordinate == u'Rectangular':
+        unitList = ["X", "Y", "Z", "m", "m", "m"]
+    elif coordinate == u"Polar":
+        unitList = ["R", "P", "Z", "m", "deg", "m"]
+    else:
+        unitList = ["Z", "R", "P", "m", "m", "deg"]
+    return unitList
+
+
 class ShowDialog(BaseDialogMain.BasePhysicsDialog):
     def __init__(self, obj, isNew=False, parent=None):
         BaseDialogMain.BasePhysicsDialog.__init__(self, obj, isNew, parent)
@@ -24,7 +39,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             Tools3D.switchCheckLabel(self.ui)
 
             # 获取当前坐标系及坐标系单位
-            coord = Tools3D.getCoordinate()
+            coord = getCoordinate()
             self.x = coord[0]
             self.y = coord[1]
             self.z = coord[2]
@@ -34,6 +49,8 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             # 动态刷新下拉框
             self.refreshCombox()
             self.ui.ComboBox_Shadow.currentIndexChanged.connect(self.ComboBox_Shadow_clicked)
+            self.ui.ComboBox_Shadow.currentIndexChanged.connect(self.ComboBox_Shadow_clicked_1)
+
             # 当port name被修改时触发函数修改归一化名字
             self.ui.LineEdit_Name.textChanged.connect(self.LineEdit_Name_textChanged)
             self.ui.LineEdit_start_x.textChanged.connect(self.LineEdit_start_textChanged)
@@ -96,18 +113,11 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
     def ComboBox_Shadow_clicked(self):
         if self.ui.ComboBox_Shadow.currentIndex() == 0:
             self.ui.ComboBox_FT.setEnabled(False)
-            self.LineEdit_Name_textChanged()
             # 设置ui坐标的可编辑状态
             Tools3D.setCoordEnabled(self.ui, ObjectTools.ObjectType.Area_Conformal)
-            # 如果选择未指定，则线的名字跟随波导的名字
-            self.ui.ComboBox_FT.setItemText(0, self.ui.LineEdit_Name.text() + ".LINE")
         else:
-            # 线上电压归一化可选
-            self.ui.ComboBox_FT.setEnabled(True)
-            # 如果选择了投影面，则线的名字跟随投影面
-            self.ui.ComboBox_FT.setItemText(0, self.ui.ComboBox_Shadow.currentText()+".LINE")
-            # 正交投影面
             objName = self.ui.ComboBox_Shadow.currentText()
+            # 正交投影面
             if objName in self.defaultValue:
                 pass
             else:
@@ -205,6 +215,10 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
     def checkBox_GE_clicked(self):
         self.ui.LineEdit_GE2.setEnabled(self.ui.checkBox_GE2.isChecked())
         self.ui.LineEdit_GE3.setEnabled(self.ui.checkBox_GE3.isChecked())
+        if self.ui.checkBox_GE2.isChecked() or self.ui.checkBox_GE3.isChecked():
+            self.ui.checkBox_lap.setEnabled(False)
+        else:
+            self.ui.checkBox_lap.setEnabled(True)
 
     def checkBox_lap_clicked(self):
         self.ui.ComboBox_lap1.setEnabled(self.ui.checkBox_lap.isChecked())
@@ -213,6 +227,8 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
         self.ui.spinBox_2.setEnabled(self.ui.checkBox_lap.isChecked())
         self.ui.spinBox_num.setEnabled(self.ui.checkBox_lap.isChecked())
         self.ui.spinBox_num.valueChanged.connect(self.setSpinBoxNum)
+        self.ui.checkBox_GE2.setEnabled(not self.ui.checkBox_lap.isChecked())
+        self.ui.checkBox_GE3.setEnabled(not self.ui.checkBox_lap.isChecked())
 
     def setSpinBoxNum(self):
         spin_num = self.ui.spinBox_num.value()
@@ -253,6 +269,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
                 self.ui.ComboBox_Shadow.findText(str(self.obj.orthogonalProjectionPlane)))
             # 坐标
             Tools3D.setCoorToUI(self.ui, self.obj)
+            self.ComboBox_Shadow_clicked()
             # 法向
             Tools3D.setRadioButtonToUI(self.ui, self.obj)
             if self.ui.ComboBox_Shadow.currentIndex() == 0:
@@ -406,3 +423,24 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
                 Tools3D.sayz("错误")
             # self.obj.setExpression("helper", temp)
             # self.obj.helper = (self.obj.helper.Value) / 2
+
+    def ComboBox_Shadow_clicked_1(self):
+        if self.ui.ComboBox_Shadow.currentIndex() == 0:
+            self.ui.ComboBox_FT.setEnabled(False)
+            self.LineEdit_Name_textChanged()
+            # 设置ui坐标的可编辑状态
+            #Tools3D.setCoordEnabled(self.ui, ObjectTools.ObjectType.Area_Conformal)
+            # 如果选择未指定，则线的名字跟随波导的名字
+            self.ui.ComboBox_FT.setItemText(0, self.ui.LineEdit_Name.text() + ".LINE")
+            self.ui.ComboBox_FT.setCurrentIndex(0)
+        else:
+            # 线上电压归一化可选
+            self.ui.ComboBox_FT.setEnabled(True)
+            # 如果选择了投影面，则线的名字跟随投影面
+            tmp = self.ui.ComboBox_FT.findText(self.ui.ComboBox_Shadow.currentText() + ".LINE")
+            if tmp == -1:
+                self.ui.ComboBox_FT.setItemText(0, self.ui.ComboBox_Shadow.currentText() + ".LINE")
+                self.ui.ComboBox_FT.setCurrentIndex(0)
+            else:
+                self.ui.ComboBox_FT.setItemText(0, self.ui.LineEdit_Name.text() + ".LINE")
+                self.ui.ComboBox_FT.setCurrentIndex(tmp)

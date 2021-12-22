@@ -304,7 +304,7 @@ class ShowDialog(QtGui.QDialog):
 
             self.setInfoToObj()
             self.keepCustomData()
-            #self.obj.recompute()
+            self.obj.recompute()
             FreeCADGui.runCommand("CreateM3D_new")
             FreeCADGui.runCommand("UpdateBooleanCommand_3D")
         else:

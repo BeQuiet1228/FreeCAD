@@ -23,37 +23,36 @@ def new_getSelectionObj3D():
                 # Form.show()
                 Form.exec_()
         # 阵列体的baseObj的弹窗功能，暂时没有经过严格测试，不做发布
-        # else:
-        #     """
-        #     这里暂时只写入阵列体的baseObj的双击弹窗
-        #     之后又其他的体需要baseObj的双击弹窗，可以参照
-        #     """
-        #     # 调取当前点击的obj对应的arry
-        #     ArryObj = ObjectTools.getBaseTypeByType(ObjectTools.ObjectType.Vol_Array)
-        #
-        #     if ArryObj.has_key(obj[0].Label) is not None:
-        #         # 将最开始建立arry时删除的Type和Order属性添加到baseObj，致使baseObj的对话框弹出
-        #         obj[0].addProperty("App::PropertyString", "Type").Type = ArryObj[obj[0].Label].BaseObjType
-        #         obj[0].addProperty("App::PropertyInteger", "Order", "").Order = ArryObj[obj[0].Label].Order
-        #         Form = getFormByObj(obj[0])
-        #         Form.ui.spinBox_order.setEnabled(False)
-        #         Form.exec_()
-        #         if True:
-        #             # 至此baseObj对话框成功弹出，等待对话快关闭后，对baseObj做删除Type和Order及从分组中删除
-        #             # 整体目的：将baseObj调出用来更改arry模型，但caseObj不参与bool运算，并且不生成M3D，所以临时使用后要将其删除
-        #             group = obj[0].InList
-        #             obj[0].ViewObject.hide()
-        #             # 删除原group下的baseObj，这里的group[0]为阵列体，group[1]为baseObj
-        #             group[1].removeObject(obj[0])
-        #             # 删除Type属性和Order属性
-        #             obj[0].removeProperty("Type")
-        #             obj[0].removeProperty("Order")
-        #             Tools3D.sayz("2631642914")
-        #             # 将baseObj和arry都重新recompute，达到和FreeCADGui.runCommand("Refresh_3D")一样的效果，但不用将所有obj都遍历，节约时间
-        #             obj[0].recompute()
-        #             ArryObj[obj[0].Label].recompute()
-        #             FreeCADGui.runCommand("CreateM3D_new")
-        #             FreeCADGui.runCommand("UpdateBooleanCommand_3D")
+        else:
+            """
+            这里暂时只写入阵列体的baseObj的双击弹窗
+            之后又其他的体需要baseObj的双击弹窗，可以参照
+            """
+            # 调取当前点击的obj对应的arry
+            ArryObj = ObjectTools.getBaseTypeByType(ObjectTools.ObjectType.Vol_Array)
+
+            if ArryObj.has_key(obj[0].Label) is not None:
+                # 将最开始建立arry时删除的Type和Order属性添加到baseObj，致使baseObj的对话框弹出
+                obj[0].addProperty("App::PropertyString", "Type").Type = ArryObj[obj[0].Label].BaseObjType
+                obj[0].addProperty("App::PropertyInteger", "Order", "").Order = ArryObj[obj[0].Label].Order
+                Form = getFormByObj(obj[0])
+                Form.ui.spinBox_order.setEnabled(False)
+                Form.exec_()
+                if True:
+                    # 至此baseObj对话框成功弹出，等待对话快关闭后，对baseObj做删除Type和Order及从分组中删除
+                    # 整体目的：将baseObj调出用来更改arry模型，但caseObj不参与bool运算，并且不生成M3D，所以临时使用后要将其删除
+                    group = obj[0].InList
+                    obj[0].ViewObject.hide()
+                    # 删除原group下的baseObj，这里的group[0]为阵列体，group[1]为baseObj
+                    group[1].removeObject(obj[0])
+                    # 删除Type属性和Order属性
+                    obj[0].removeProperty("Type")
+                    obj[0].removeProperty("Order")
+                    # 将baseObj和arry都重新recompute，达到和FreeCADGui.runCommand("Refresh_3D")一样的效果，但不用将所有obj都遍历，节约时间
+                    obj[0].recompute()
+                    ArryObj[obj[0].Label].recompute()
+                    FreeCADGui.runCommand("CreateM3D_new")
+                    FreeCADGui.runCommand("UpdateBooleanCommand_3D")
     else:
         # 如果被选中数量大于一个，则不显示Dialog
         pass
@@ -200,7 +199,7 @@ def getFormByObj(obj):
         Form = Physics3DCommand.PhasSpace.PhasSpaceDialogMain.ShowDialog(obj)
     elif obj.Type == ObjectTools.ObjectType.AreaRan:
         Form = Physics3DCommand.AreaRan.AreaRanDialogMain.ShowDialog(obj)
-    elif obj.Type == ObjectTools.ObjectType.Observe:
+    elif obj.Type == ObjectTools.ObjectType.Observe or obj.Type == "Observe":
         Form = Physics3DCommand.Observe.ObserveDialogMain.ShowDialog(obj)
     # 定时器
     elif obj.Type == ObjectTools.ObjectType.DefaultTimer:

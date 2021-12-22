@@ -662,6 +662,8 @@ def VolArray(obj):
     else:
         temp_m3d += str(obj.numberPolar - 1)
     temp_m3d += semicolon + newLine
+    # 针对字符串太长作出的调整
+    temp_m3d += ArrayCoorLenth(obj)
 
     temp_m3d += "VOLUME" + blankSpace + newLabel + blankSpace
     # Base物体类型
@@ -1184,65 +1186,56 @@ def BaseCoordinates_Array(obj):
                     point1_y_value = str(baseObj.user_point1_y).replace(' ', '')
                     point1_z_value = str(baseObj.user_point1_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point1_x_value + comma + \
-                                point1_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point1_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point1_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point1_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                point1_x_value + comma + "yy1'i'" + comma + "zz1'i'"
+
                 if hasattr(baseObj, "Point2X"):
                     point2_x_value = str(baseObj.user_point2_x).replace(' ', '')
                     point2_y_value = str(baseObj.user_point2_y).replace(' ', '')
                     point2_z_value = str(baseObj.user_point2_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point2_x_value + comma + \
-                                point2_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point2_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point2_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point2_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                point2_x_value + comma + "yy2'i'" + comma + "zz2'i'"
+
                 if hasattr(baseObj, "Point3X"):
                     point3_x_value = str(baseObj.user_point3_x).replace(' ', '')
                     point3_y_value = str(baseObj.user_point3_y).replace(' ', '')
                     point3_z_value = str(baseObj.user_point3_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point3_x_value + comma + \
-                                point3_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point3_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point3_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point3_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                point3_x_value + comma + "yy3'i'" + comma + "zz3'i'"
+
                 if hasattr(baseObj, "Point4X"):
                     point4_x_value = str(baseObj.user_point4_x).replace(' ', '')
                     point4_y_value = str(baseObj.user_point4_y).replace(' ', '')
                     point4_z_value = str(baseObj.user_point4_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point4_x_value + comma + \
-                                point4_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point4_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point4_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point4_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                point4_x_value + comma + "yy4'i'" + comma + "zz4'i'"
+
                 if hasattr(baseObj, "Point5X"):
                     point5_x_value = str(baseObj.user_point5_x).replace(' ', '')
                     point5_y_value = str(baseObj.user_point5_y).replace(' ', '')
                     point5_z_value = str(baseObj.user_point5_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point5_x_value + comma + \
-                                point5_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point5_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point5_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point5_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                point5_x_value + comma + "yy5'i'" + comma + "zz5'i'"
+
                 if hasattr(baseObj, "Point6X"):
                     point6_x_value = str(baseObj.user_point6_x).replace(' ', '')
                     point6_y_value = str(baseObj.user_point6_y).replace(' ', '')
                     point6_z_value = str(baseObj.user_point6_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point6_x_value + comma + \
-                                point6_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point6_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point6_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point6_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                point6_x_value + comma + "yy6'i'" + comma + "zz6'i'"
+
                 if hasattr(baseObj, "Point7X"):
                     point7_x_value = str(baseObj.user_point7_x).replace(' ', '')
                     point7_y_value = str(baseObj.user_point7_y).replace(' ', '')
                     point7_z_value = str(baseObj.user_point7_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point7_x_value + comma + \
-                                point7_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point7_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point7_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point7_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                point7_x_value + comma + "yy7'i'" + comma + "zz7'i'"
+
                 if hasattr(baseObj, "Point8X"):
                     point8_x_value = str(baseObj.user_point8_x).replace(' ', '')
                     point8_y_value = str(baseObj.user_point8_y).replace(' ', '')
                     point8_z_value = str(baseObj.user_point8_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point8_x_value + comma + \
-                                point8_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point8_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point8_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point8_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                point8_x_value + comma + "yy8'i'" + comma + "zz8'i'"
 
             elif obj.centerAxis == "Y":
                 if hasattr(baseObj, "Point1X"):
@@ -1250,65 +1243,56 @@ def BaseCoordinates_Array(obj):
                     point1_y_value = str(baseObj.user_point1_y).replace(' ', '')
                     point1_z_value = str(baseObj.user_point1_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point1_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point1_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point1_y_value + comma + \
-                                point1_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point1_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                 "xx1'i'" + comma + point1_y_value + comma + "zz1'i'"
+
                 if hasattr(baseObj, "Point2X"):
                     point2_x_value = str(baseObj.user_point2_x).replace(' ', '')
                     point2_y_value = str(baseObj.user_point2_y).replace(' ', '')
                     point2_z_value = str(baseObj.user_point2_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point2_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point2_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point2_y_value + comma + \
-                                point2_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point2_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                "xx2'i'" + comma + point2_y_value + comma + "zz2'i'"
+
                 if hasattr(baseObj, "Point3X"):
                     point3_x_value = str(baseObj.user_point3_x).replace(' ', '')
                     point3_y_value = str(baseObj.user_point3_y).replace(' ', '')
                     point3_z_value = str(baseObj.user_point3_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point3_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point3_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point3_y_value + comma + \
-                                point3_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point3_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                "xx3'i'" + comma + point3_y_value + comma + "zz3'i'"
+
                 if hasattr(baseObj, "Point4X"):
                     point4_x_value = str(baseObj.user_point4_x).replace(' ', '')
                     point4_y_value = str(baseObj.user_point4_y).replace(' ', '')
                     point4_z_value = str(baseObj.user_point4_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point4_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point4_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point4_y_value + comma + \
-                                point4_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point4_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                "xx4'i'" + comma + point4_y_value + comma + "zz4'i'"
+
                 if hasattr(baseObj, "Point5X"):
                     point5_x_value = str(baseObj.user_point5_x).replace(' ', '')
                     point5_y_value = str(baseObj.user_point5_y).replace(' ', '')
                     point5_z_value = str(baseObj.user_point5_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point5_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point5_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point5_y_value + comma + \
-                                point5_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point5_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                "xx5'i'" + comma + point5_y_value + comma + "zz5'i'"
+
                 if hasattr(baseObj, "Point6X"):
                     point6_x_value = str(baseObj.user_point6_x).replace(' ', '')
                     point6_y_value = str(baseObj.user_point6_y).replace(' ', '')
                     point6_z_value = str(baseObj.user_point6_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point6_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point6_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point6_y_value + comma + \
-                                point6_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point6_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                "xx6'i'" + comma + point6_y_value + comma + "zz6'i'"
+
                 if hasattr(baseObj, "Point7X"):
                     point7_x_value = str(baseObj.user_point7_x).replace(' ', '')
                     point7_y_value = str(baseObj.user_point7_y).replace(' ', '')
                     point7_z_value = str(baseObj.user_point7_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point7_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point7_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point7_y_value + comma + \
-                                point7_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point7_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                "xx7'i'" + comma + point7_y_value + comma + "zz7'i'"
+
                 if hasattr(baseObj, "Point8X"):
                     point8_x_value = str(baseObj.user_point8_x).replace(' ', '')
                     point8_y_value = str(baseObj.user_point8_y).replace(' ', '')
                     point8_z_value = str(baseObj.user_point8_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point8_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point8_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point8_y_value + comma + \
-                                point8_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point8_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                "xx8'i'" + comma + point8_y_value + comma + "zz8'i'"
 
             else:
                 if hasattr(baseObj, "Point1X"):
@@ -1316,65 +1300,56 @@ def BaseCoordinates_Array(obj):
                     point1_y_value = str(baseObj.user_point1_y).replace(' ', '')
                     point1_z_value = str(baseObj.user_point1_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point1_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point1_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point1_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point1_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point1_z_value
+                                "xx1'i'" + comma + "yy1'i'" + comma + point1_z_value
+
                 if hasattr(baseObj, "Point2X"):
                     point2_x_value = str(baseObj.user_point2_x).replace(' ', '')
                     point2_y_value = str(baseObj.user_point2_y).replace(' ', '')
                     point2_z_value = str(baseObj.user_point2_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point2_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point2_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point2_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point2_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point2_z_value
+                                "xx2'i'" + comma + "yy2'i'" + comma + point2_z_value
+
                 if hasattr(baseObj, "Point3X"):
                     point3_x_value = str(baseObj.user_point3_x).replace(' ', '')
                     point3_y_value = str(baseObj.user_point3_y).replace(' ', '')
                     point3_z_value = str(baseObj.user_point3_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point3_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point3_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point3_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point3_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point3_z_value
+                                "xx3'i'" + comma + "yy3'i'" + comma + point3_z_value
+
                 if hasattr(baseObj, "Point4X"):
                     point4_x_value = str(baseObj.user_point4_x).replace(' ', '')
                     point4_y_value = str(baseObj.user_point4_y).replace(' ', '')
                     point4_z_value = str(baseObj.user_point4_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point4_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point4_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point4_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point4_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point4_z_value
+                                "xx4'i'" + comma + "yy4'i'" + comma + point4_z_value
+
                 if hasattr(baseObj, "Point5X"):
                     point5_x_value = str(baseObj.user_point5_x).replace(' ', '')
                     point5_y_value = str(baseObj.user_point5_y).replace(' ', '')
                     point5_z_value = str(baseObj.user_point5_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point5_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point5_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point5_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point5_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point5_z_value
+                                "xx5'i'" + comma + "yy5'i'" + comma + point5_z_value
+
                 if hasattr(baseObj, "Point6X"):
                     point6_x_value = str(baseObj.user_point6_x).replace(' ', '')
                     point6_y_value = str(baseObj.user_point6_y).replace(' ', '')
                     point6_z_value = str(baseObj.user_point6_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point6_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point6_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point6_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point6_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point6_z_value
+                                "xx6'i'" + comma + "yy6'i'" + comma + point6_z_value
+
                 if hasattr(baseObj, "Point7X"):
                     point7_x_value = str(baseObj.user_point7_x).replace(' ', '')
                     point7_y_value = str(baseObj.user_point7_y).replace(' ', '')
                     point7_z_value = str(baseObj.user_point7_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point7_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point7_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point7_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point7_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point7_z_value
+                                "xx7'i'" + comma + "yy7'i'" + comma + point7_z_value
+
                 if hasattr(baseObj, "Point8X"):
                     point8_x_value = str(baseObj.user_point8_x).replace(' ', '')
                     point8_y_value = str(baseObj.user_point8_y).replace(' ', '')
                     point8_z_value = str(baseObj.user_point8_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point8_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point8_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point8_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point8_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point8_z_value
+                                "xx8'i'" + comma + "yy8'i'" + comma + point8_z_value
 
         elif curCoordinate == "Polar":
             if hasattr(baseObj, "Point1X"):
@@ -1739,16 +1714,16 @@ def BaseCoordRadius_ArrayOfAnnularSection(obj):
                     point1_z_value = str(baseObj.user_point1_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
                                 point1_x_value + comma + \
-                                point1_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point1_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point1_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point1_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                point1_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point1_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
+                                point1_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point1_y_value + "*sin(((2*PI)/" + numPolar + ")*i)"
                 if hasattr(baseObj, "Point2X"):
                     point2_x_value = str(baseObj.user_point2_x).replace(' ', '')
                     point2_y_value = str(baseObj.user_point2_y).replace(' ', '')
                     point2_z_value = str(baseObj.user_point2_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
                                 point2_x_value + comma + \
-                                point2_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point2_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point2_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point2_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                point2_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point2_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
+                                point2_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point2_y_value + "*sin(((2*PI)/" + numPolar + ")*i)"
 
                 temp_m3d += BaseRadius_Array(obj)
 
@@ -1758,16 +1733,16 @@ def BaseCoordRadius_ArrayOfAnnularSection(obj):
                     point3_z_value = str(baseObj.user_point3_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
                                 point3_x_value + comma + \
-                                point3_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point3_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point3_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point3_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                point3_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point3_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
+                                point3_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point3_y_value + "*sin(((2*PI)/" + numPolar + ")*i)"
                 if hasattr(baseObj, "Point4X"):
                     point4_x_value = str(baseObj.user_point4_x).replace(' ', '')
                     point4_y_value = str(baseObj.user_point4_y).replace(' ', '')
                     point4_z_value = str(baseObj.user_point4_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
                                 point4_x_value + comma + \
-                                point4_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point4_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point4_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point4_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                point4_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point4_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
+                                point4_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point4_y_value + "*sin(((2*PI)/" + numPolar + ")*i)"
 
             elif obj.centerAxis == "Y":
                 if hasattr(baseObj, "Point1X"):
@@ -1775,17 +1750,17 @@ def BaseCoordRadius_ArrayOfAnnularSection(obj):
                     point1_y_value = str(baseObj.user_point1_y).replace(' ', '')
                     point1_z_value = str(baseObj.user_point1_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point1_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point1_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
+                                point1_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point1_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
                                 point1_y_value + comma + \
-                                point1_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point1_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                point1_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point1_x_value + "*sin(((2*PI)/" + numPolar + ")*i)"
                 if hasattr(baseObj, "Point2X"):
                     point2_x_value = str(baseObj.user_point2_x).replace(' ', '')
                     point2_y_value = str(baseObj.user_point2_y).replace(' ', '')
                     point2_z_value = str(baseObj.user_point2_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point2_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point2_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
+                                point2_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point2_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
                                 point2_y_value + comma + \
-                                point2_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point2_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                point2_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point2_x_value + "*sin(((2*PI)/" + numPolar + ")*i)"
 
                 temp_m3d += BaseRadius_Array(obj)
 
@@ -1794,17 +1769,17 @@ def BaseCoordRadius_ArrayOfAnnularSection(obj):
                     point3_y_value = str(baseObj.user_point3_y).replace(' ', '')
                     point3_z_value = str(baseObj.user_point3_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point3_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point3_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
+                                point3_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point3_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
                                 point3_y_value + comma + \
-                                point3_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point3_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                point3_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point3_x_value + "*sin(((2*PI)/" + numPolar + ")*i)"
                 if hasattr(baseObj, "Point4X"):
                     point4_x_value = str(baseObj.user_point4_x).replace(' ', '')
                     point4_y_value = str(baseObj.user_point4_y).replace(' ', '')
                     point4_z_value = str(baseObj.user_point4_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point4_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point4_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
+                                point4_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point4_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
                                 point4_y_value + comma + \
-                                point4_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point4_z_value + "*sin(((2*PI)/" + numPolar + ")*i)"
+                                point4_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point4_x_value + "*sin(((2*PI)/" + numPolar + ")*i)"
 
             else:
                 if hasattr(baseObj, "Point1X"):
@@ -1812,16 +1787,16 @@ def BaseCoordRadius_ArrayOfAnnularSection(obj):
                     point1_y_value = str(baseObj.user_point1_y).replace(' ', '')
                     point1_z_value = str(baseObj.user_point1_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point1_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point1_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point1_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point1_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
+                                point1_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point1_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
+                                point1_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point1_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
                                 point1_z_value
                 if hasattr(baseObj, "Point2X"):
                     point2_x_value = str(baseObj.user_point2_x).replace(' ', '')
                     point2_y_value = str(baseObj.user_point2_y).replace(' ', '')
                     point2_z_value = str(baseObj.user_point2_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point2_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point2_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point2_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point2_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
+                                point2_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point2_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
+                                point2_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point2_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
                                 point2_z_value
 
                 temp_m3d += BaseRadius_Array(obj)
@@ -1831,16 +1806,16 @@ def BaseCoordRadius_ArrayOfAnnularSection(obj):
                     point3_y_value = str(baseObj.user_point3_y).replace(' ', '')
                     point3_z_value = str(baseObj.user_point3_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point3_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point3_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point3_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point3_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
+                                point3_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point3_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
+                                point3_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point3_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
                                 point3_z_value
                 if hasattr(baseObj, "Point4X"):
                     point4_x_value = str(baseObj.user_point4_x).replace(' ', '')
                     point4_y_value = str(baseObj.user_point4_y).replace(' ', '')
                     point4_z_value = str(baseObj.user_point4_z).replace(' ', '')
                     temp_m3d += newLine + tab + \
-                                point4_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point4_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
-                                point4_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point4_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
+                                point4_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + point4_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
+                                point4_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + point4_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + comma + \
                                 point4_z_value
 
         elif curCoordinate == "Polar":
@@ -1917,4 +1892,213 @@ def BaseCoordRadius_ArrayOfAnnularSection(obj):
                             point4_y_value + comma + \
                             point4_z_value + "+i*360deg/" + numPolar
 
+    return temp_m3d
+
+
+# 针对阵列体正交坐标系下，并选择polar。坐标系信息太长的处理
+def ArrayCoorLenth(obj):
+    baseObj = ObjectTools.getObjByLabel(obj.BaseType)
+    curCoordinate = FreeCAD.ActiveDocument.CoordinateSystem
+    temp_m3d = ""
+    numPolar = str(obj.numberPolar).replace(' ', '')
+    if curCoordinate == "Rectangular" and obj.ArrayType == "polar":
+        if obj.centerAxis == "X":
+            if hasattr(baseObj, "Point1X"):
+                point1_x_value = str(baseObj.user_point1_x).replace(' ', '')
+                point1_y_value = str(baseObj.user_point1_y).replace(' ', '')
+                point1_z_value = str(baseObj.user_point1_z).replace(' ', '')
+                temp_m3d += "yy1'i'" + "=" + point1_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point1_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "zz1'i'" + "=" + point1_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point1_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+
+            if hasattr(baseObj, "Point2X"):
+                point2_x_value = str(baseObj.user_point2_x).replace(' ', '')
+                point2_y_value = str(baseObj.user_point2_y).replace(' ', '')
+                point2_z_value = str(baseObj.user_point2_z).replace(' ', '')
+                temp_m3d += "yy2'i'" + "=" + point2_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point2_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "zz2'i'" + "=" + point2_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point2_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point3X"):
+                point3_x_value = str(baseObj.user_point3_x).replace(' ', '')
+                point3_y_value = str(baseObj.user_point3_y).replace(' ', '')
+                point3_z_value = str(baseObj.user_point3_z).replace(' ', '')
+                temp_m3d += "yy3'i'" + "=" + point3_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point3_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "zz3'i'" + "=" + point3_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point3_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point4X"):
+                point4_x_value = str(baseObj.user_point4_x).replace(' ', '')
+                point4_y_value = str(baseObj.user_point4_y).replace(' ', '')
+                point4_z_value = str(baseObj.user_point4_z).replace(' ', '')
+                temp_m3d += "yy4'i'" + "=" + point4_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point4_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "zz4'i'" + "=" + point4_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point4_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point5X"):
+                point5_x_value = str(baseObj.user_point5_x).replace(' ', '')
+                point5_y_value = str(baseObj.user_point5_y).replace(' ', '')
+                point5_z_value = str(baseObj.user_point5_z).replace(' ', '')
+                temp_m3d += "yy5'i'" + "=" + point5_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point5_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "zz5'i'" + "=" + point5_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point5_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point6X"):
+                point6_x_value = str(baseObj.user_point6_x).replace(' ', '')
+                point6_y_value = str(baseObj.user_point6_y).replace(' ', '')
+                point6_z_value = str(baseObj.user_point6_z).replace(' ', '')
+                temp_m3d += "yy6'i'" + "=" + point6_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point6_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "zz6'i'" + "=" + point6_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point6_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point7X"):
+                point7_x_value = str(baseObj.user_point7_x).replace(' ', '')
+                point7_y_value = str(baseObj.user_point7_y).replace(' ', '')
+                point7_z_value = str(baseObj.user_point7_z).replace(' ', '')
+                temp_m3d += "yy7'i'" + "=" + point7_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point7_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "zz7'i'" + "=" + point7_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point7_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point8X"):
+                point8_x_value = str(baseObj.user_point8_x).replace(' ', '')
+                point8_y_value = str(baseObj.user_point8_y).replace(' ', '')
+                point8_z_value = str(baseObj.user_point8_z).replace(' ', '')
+                temp_m3d += "yy8'i'" + "=" + point8_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point8_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "zz8'i'" + "=" + point8_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point8_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+
+        elif obj.centerAxis == "Y":
+            if hasattr(baseObj, "Point1X"):
+                point1_x_value = str(baseObj.user_point1_x).replace(' ', '')
+                point1_y_value = str(baseObj.user_point1_y).replace(' ', '')
+                point1_z_value = str(baseObj.user_point1_z).replace(' ', '')
+                temp_m3d += "xx1'i'" + "=" + point1_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point1_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "zz1'i'" + "=" + point1_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point1_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point2X"):
+                point2_x_value = str(baseObj.user_point2_x).replace(' ', '')
+                point2_y_value = str(baseObj.user_point2_y).replace(' ', '')
+                point2_z_value = str(baseObj.user_point2_z).replace(' ', '')
+                temp_m3d += "xx2'i'" + "=" + point2_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point2_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "zz2'i'" + "=" + point2_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point2_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point3X"):
+                point3_x_value = str(baseObj.user_point3_x).replace(' ', '')
+                point3_y_value = str(baseObj.user_point3_y).replace(' ', '')
+                point3_z_value = str(baseObj.user_point3_z).replace(' ', '')
+                temp_m3d += "xx3'i'" + "=" + point3_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point3_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "zz3'i'" + "=" + point3_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point3_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point4X"):
+                point4_x_value = str(baseObj.user_point4_x).replace(' ', '')
+                point4_y_value = str(baseObj.user_point4_y).replace(' ', '')
+                point4_z_value = str(baseObj.user_point4_z).replace(' ', '')
+                temp_m3d += "xx4'i'" + "=" + point4_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point4_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "zz4'i'" + "=" + point4_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point4_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point5X"):
+                point5_x_value = str(baseObj.user_point5_x).replace(' ', '')
+                point5_y_value = str(baseObj.user_point5_y).replace(' ', '')
+                point5_z_value = str(baseObj.user_point5_z).replace(' ', '')
+                temp_m3d += "xx5'i'" + "=" + point5_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point5_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "zz5'i'" + "=" + point5_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point5_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point6X"):
+                point6_x_value = str(baseObj.user_point6_x).replace(' ', '')
+                point6_y_value = str(baseObj.user_point6_y).replace(' ', '')
+                point6_z_value = str(baseObj.user_point6_z).replace(' ', '')
+                temp_m3d += "xx6'i'" + "=" + point6_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point6_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "zz6'i'" + "=" + point6_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point6_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point7X"):
+                point7_x_value = str(baseObj.user_point7_x).replace(' ', '')
+                point7_y_value = str(baseObj.user_point7_y).replace(' ', '')
+                point7_z_value = str(baseObj.user_point7_z).replace(' ', '')
+                temp_m3d += "xx7'i'" + "=" + point7_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point7_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "zz7'i'" + "=" + point7_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point7_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point8X"):
+                point8_x_value = str(baseObj.user_point8_x).replace(' ', '')
+                point8_y_value = str(baseObj.user_point8_y).replace(' ', '')
+                point8_z_value = str(baseObj.user_point8_z).replace(' ', '')
+                temp_m3d += "xx8'i'" + "=" + point8_x_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point8_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "zz8'i'" + "=" + point8_z_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point8_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+
+        else:
+            if hasattr(baseObj, "Point1X"):
+                point1_x_value = str(baseObj.user_point1_x).replace(' ', '')
+                point1_y_value = str(baseObj.user_point1_y).replace(' ', '')
+                point1_z_value = str(baseObj.user_point1_z).replace(' ', '')
+                temp_m3d += "xx1'i'" + "=" + point1_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point1_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "yy1'i'" + "=" + point1_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point1_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+
+            if hasattr(baseObj, "Point2X"):
+                point2_x_value = str(baseObj.user_point2_x).replace(' ', '')
+                point2_y_value = str(baseObj.user_point2_y).replace(' ', '')
+                point2_z_value = str(baseObj.user_point2_z).replace(' ', '')
+                temp_m3d += "xx2'i'" + "=" + point2_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point2_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "yy2'i'" + "=" + point2_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point2_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point3X"):
+                point3_x_value = str(baseObj.user_point3_x).replace(' ', '')
+                point3_y_value = str(baseObj.user_point3_y).replace(' ', '')
+                point3_z_value = str(baseObj.user_point3_z).replace(' ', '')
+                temp_m3d += "xx3'i'" + "=" + point3_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point3_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "yy3'i'" + "=" + point3_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point3_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point4X"):
+                point4_x_value = str(baseObj.user_point4_x).replace(' ', '')
+                point4_y_value = str(baseObj.user_point4_y).replace(' ', '')
+                point4_z_value = str(baseObj.user_point4_z).replace(' ', '')
+                temp_m3d += "xx4'i'" + "=" + point4_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point4_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "yy4'i'" + "=" + point4_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point4_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point5X"):
+                point5_x_value = str(baseObj.user_point5_x).replace(' ', '')
+                point5_y_value = str(baseObj.user_point5_y).replace(' ', '')
+                point5_z_value = str(baseObj.user_point5_z).replace(' ', '')
+                temp_m3d += "xx5'i'" + "=" + point5_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point5_z_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "yy5'i'" + "=" + point5_z_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point5_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point6X"):
+                point6_x_value = str(baseObj.user_point6_x).replace(' ', '')
+                point6_y_value = str(baseObj.user_point6_y).replace(' ', '')
+                point6_z_value = str(baseObj.user_point6_z).replace(' ', '')
+                temp_m3d += "xx6'i'" + "=" + point6_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point6_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "yy6'i'" + "=" + point6_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point6_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point7X"):
+                point7_x_value = str(baseObj.user_point7_x).replace(' ', '')
+                point7_y_value = str(baseObj.user_point7_y).replace(' ', '')
+                point7_z_value = str(baseObj.user_point7_z).replace(' ', '')
+                temp_m3d += "xx7'i'" + "=" + point7_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point7_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "yy7'i'" + "=" + point7_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point7_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+            if hasattr(baseObj, "Point8X"):
+                point8_x_value = str(baseObj.user_point8_x).replace(' ', '')
+                point8_y_value = str(baseObj.user_point8_y).replace(' ', '')
+                point8_z_value = str(baseObj.user_point8_z).replace(' ', '')
+                temp_m3d += "xx8'i'" + "=" + point8_x_value + "*cos(((2*PI)/" + numPolar + ")*i)+" + \
+                            point8_y_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
+                temp_m3d += "yy8'i'" + "=" + point8_y_value + "*cos(((2*PI)/" + numPolar + ")*i)-" + \
+                            point8_x_value + "*sin(((2*PI)/" + numPolar + ")*i)" + semicolon + newLine
     return temp_m3d

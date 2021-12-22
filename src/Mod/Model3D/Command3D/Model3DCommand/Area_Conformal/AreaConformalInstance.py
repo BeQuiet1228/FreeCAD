@@ -138,7 +138,7 @@ class GetProperty:
             obj.addProperty("App::PropertyAngle", "Point1Y").Point1Y = 0
             obj.addProperty("App::PropertyDistance", "Point1Z").Point1Z = 0
             obj.addProperty("App::PropertyDistance", "Point2X").Point2X = 0
-            obj.addProperty("App::PropertyAngle", "Point2Y").Point2Y = 0
+            obj.addProperty("App::PropertyAngle", "Point2Y").Point2Y = 360
             obj.addProperty("App::PropertyDistance", "Point2Z").Point2Z = 0
             obj.addProperty("App::PropertyString", "Normal", "Normal", "").Normal = "R"
         else:
@@ -147,7 +147,7 @@ class GetProperty:
             obj.addProperty("App::PropertyAngle", "Point1Z").Point1Z = 0
             obj.addProperty("App::PropertyDistance", "Point2X").Point2X = 0
             obj.addProperty("App::PropertyDistance", "Point2Y").Point2Y = 0
-            obj.addProperty("App::PropertyAngle", "Point2Z").Point2Z = 0
+            obj.addProperty("App::PropertyAngle", "Point2Z").Point2Z = 360
             obj.addProperty("App::PropertyString", "Normal", "Normal", "").Normal = "Z"
 
         Tools3D.addCommonProperty(obj)

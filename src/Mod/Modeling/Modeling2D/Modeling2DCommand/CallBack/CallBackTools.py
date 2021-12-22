@@ -47,6 +47,9 @@ def processObject(obj, type_str):
             setattr(obj, "helper_" + str(i), obj.Points[i])
         Tools2D.addUserProperty(obj, len(obj.Points))
         Tools2D.defaultSettingForPolygonal(obj)
+        # 增加自动倒角属性
+        if not hasattr(obj, "IsAutoFillet"):
+            obj.addProperty("App::PropertyBool", "IsAutoFillet").IsAutoFillet = False
     elif type_str == "Rectangle":
         obj.addProperty("App::PropertyString", "Type").Type = Tools2D.ObjectType.Rectangle
         Tools2D.addUserProperty(obj, 2)
@@ -55,6 +58,8 @@ def processObject(obj, type_str):
         obj.addProperty("App::PropertyString", "Type").Type = Tools2D.ObjectType.AreaConformal
         Tools2D.addUserProperty(obj, 2)
         Tools2D.defaultSettingForArea(obj)
+        if not hasattr(obj, "IsAutoFillet"):
+            obj.addProperty("App::PropertyBool", "IsAutoFillet").IsAutoFillet = False
     elif type_str == "RegularPolygon":
         obj.addProperty("App::PropertyString", "Type").Type = Tools2D.ObjectType.RegularPolygon
     elif type_str == "Sector":
@@ -75,6 +80,9 @@ def processObject(obj, type_str):
         obj.addProperty("App::PropertyString", "user_endAngle").user_endAngle = "90"
         Tools2D.addUserProperty(obj, 2)
         Tools2D.defaultSettingForArea(obj)
+        # 增加自动倒角属性
+        if not hasattr(obj, "IsAutoFillet"):
+            obj.addProperty("App::PropertyBool", "IsAutoFillet").IsAutoFillet = False
 
     Tools2D.addAttributeToObject(obj)
     Tools2D.addCommonPropertyToObject(obj)
@@ -85,4 +93,5 @@ def changeLineStyle(obj):
     obj.ViewObject.Deviation = 0.2
     obj.ViewObject.DrawStyle = "Dotted"
     obj.ViewObject.LineWidth = 5
+
 

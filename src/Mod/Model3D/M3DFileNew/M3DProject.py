@@ -4,6 +4,7 @@
 import FreeCAD
 import M3DShare
 from Model3D.Tools import Tools3D
+import re
 
 blankSpace = " "
 semicolon = ";"
@@ -11,6 +12,22 @@ newLine = "\n"
 tab = "\t"
 comma = ","
 
+def getParamM3D():
+    """
+    由于参数模块的删除操作，执行后，盛放M3D的容器没有将需要删除的参数删除，导致M3D是实际不符，
+    当打开老工程时，M3D容器和FreeCAD的参数容器不统一，导致抛出异常
+    以下为适配老工程做适配，将不存在的参数不写入M3D中，但没有改变Company里的参数
+    在点击参数模块时，在cpp的recover中进行剔除已删除参数
+    """
+    docObj = FreeCAD.ActiveDocument.getObject("Param")
+    ParamList = docObj.PropertiesList
+    exp_list = re.split(r'\n\n', FreeCAD.ActiveDocument.Company)
+    temp_m3d_p = ""
+    for exp in exp_list:
+        searchName = re.split(r'\s', exp)
+        if ParamList.count(searchName[0]) is 1:
+            temp_m3d_p += exp + "\n\n"
+    return temp_m3d_p
 
 def ModelingInfo(obj):
     """
@@ -38,7 +55,7 @@ def NetStepSetting(obj):
     """
     temp_m3d_p = ""
     temp_m3d_gg = ""
-    temp_m3d_p += FreeCAD.ActiveDocument.Company
+    temp_m3d_p += getParamM3D()
     temp_m3d_p += "DX1" + blankSpace + "=" + blankSpace + obj.stepSizeX + semicolon + newLine
     temp_m3d_p += "DX2" + blankSpace + "=" + blankSpace + obj.stepSizeY + semicolon + newLine
     temp_m3d_p += "DX3" + blankSpace + "=" + blankSpace + obj.stepSizeZ + semicolon + newLine

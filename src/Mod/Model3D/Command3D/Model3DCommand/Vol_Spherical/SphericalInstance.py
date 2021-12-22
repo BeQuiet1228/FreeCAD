@@ -44,12 +44,12 @@ class Spherical:
 
         elif FreeCAD.ActiveDocument.CoordinateSystem == "Polar":
             obj.addProperty("App::PropertyDistance", "Point1X").Point1X = 0
-            obj.addProperty("App::PropertyAngle", "Point1Y").Point1Y = 0
+            obj.addProperty("App::PropertyAngle", "Point1Y").Point1Y = 360
             obj.addProperty("App::PropertyDistance", "Point1Z").Point1Z = 0
         else:
             obj.addProperty("App::PropertyDistance", "Point1X").Point1X = 0
             obj.addProperty("App::PropertyDistance", "Point1Y").Point1Y = 0
-            obj.addProperty("App::PropertyAngle", "Point1Z").Point1Z = 0
+            obj.addProperty("App::PropertyAngle", "Point1Z").Point1Z = 360
         obj.addProperty("App::PropertyDistance", "Radius").Radius = 0.01
         Tools3D.addCommonPropertyToObject(obj)
         Tools3D.addAttributeToObject(obj)

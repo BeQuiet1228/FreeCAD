@@ -415,10 +415,10 @@ def Symmry(obj):
                     temp_m3d += newLine + tab + obj.point1_X + comma + str(obj.helper1).replace(' ',
                                                                                                '') + comma + obj.point1_Z
                     temp_m3d += newLine + tab + obj.point2_X + comma + str(obj.helper1).replace(' ',
-                                                                                               '') + comma + obj.point1_Z
+                                                                                               '') + comma + obj.point2_Z
                 else:
                     temp_m3d += newLine + tab + obj.point1_X + comma + str(obj.helper).replace(' ', '') + comma + obj.point1_Z
-                    temp_m3d += newLine + tab + obj.point2_X + comma + str(obj.helper).replace(' ', '') + comma + obj.point1_Z
+                    temp_m3d += newLine + tab + obj.point2_X + comma + str(obj.helper).replace(' ', '') + comma + obj.point2_Z
 
             elif obj.isCheckNormal3:
                 if coodinate == u"Cylindrical":

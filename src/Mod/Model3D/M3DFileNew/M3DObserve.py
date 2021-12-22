@@ -252,7 +252,7 @@ def Observe(obj):
     if obj.orthogonalProjectionPlane == "未指定":
         if obj.ObservationType == "时间观测点":
             temp_m3d += "POINT" + blankSpace + obj.Label + blankSpace + obj.point1_X + blankSpace + \
-                        obj.point1_Y + semicolon + obj.point1_Z + semicolon + newLine
+                        obj.point1_Y + blankSpace + obj.point1_Z + semicolon + newLine
             if obj.isField:
                 Field_temp = "OBSERVE" + blankSpace + "FIELD" + blankSpace + obj.field + blankSpace + obj.Label
 

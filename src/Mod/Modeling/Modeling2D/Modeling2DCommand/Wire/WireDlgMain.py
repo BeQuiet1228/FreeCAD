@@ -74,6 +74,8 @@ class ShowDialog(BaseDialog.BaseModelDialog):
             # 自定义属性
             ToolsUI.setCustomAttributeToModelObj(self.obj, self.customAttribute.ui)
             self.getItemValue()
+            # 新建的多边形有时候只有线，不是个面。此处做个处理，多边形为面
+            self.obj.MakeFace = True
             self.obj.recompute()
 
             self.addFillet()
@@ -304,6 +306,19 @@ class ShowDialog(BaseDialog.BaseModelDialog):
 
             import Modeling.Modeling2D.Modeling2DCommand.AutoFillet.AutoFilletCommand as Fillet
 
-            Fillet.createAutoFilletForPolygonal(self.obj, num, radius)
+            # Fillet.createNewFillet(self.obj, num, radius)
+            Fillet.setAutoFillet(self.obj, num, radius)
+            # from Modeling.Modeling2D.Modeling2DCommand.testFillet import TestFilletInstance
+            # Obj = TestFilletInstance.getObject()
+            # Obj.Point1X = self.obj.user_point1_x
+            # Obj.Point1Y = self.obj.user_point1_y
+            # Obj.Point2X = self.obj.user_point2_x
+            # Obj.Point2Y = self.obj.user_point2_y
+            # Obj.Point3X = self.obj.user_point3_x
+            # Obj.Point3Y = self.obj.user_point3_y
+            # Obj.Radius = radius
+            # Obj.Attribute = "Void"
+            # Obj.recompute()
+
 
 

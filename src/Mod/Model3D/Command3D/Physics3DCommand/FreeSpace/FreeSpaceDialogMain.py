@@ -94,6 +94,8 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             Tools3D.setCoorToUI(self.ui, self.obj)
             Tools3D.setRadioButtonToUI(self.ui, self.obj)
             Tools3D.setGridToUI(self.ui, self.obj)
+            # 当选中的正交体的坐标改变了，此处要刷新一下
+            self.ComboBox_Shadow_clicked()
             self.ui.ComboBox_Absorption.setCurrentIndex(self.ui.ComboBox_Absorption.findText(self.obj.absorb))
             # 自定义传导率
             self.ui.checkBox_vport.setChecked(self.obj.isCustomConductivity)
@@ -118,6 +120,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
         从对话框读取数据，设置obj的属性值
         """
         try:
+            self.obj.Label = self.ui.LineEdit_Name.text()
             self.obj.orthogonalProjectionPlane = self.ui.ComboBox_Shadow.currentText()
             Tools3D.getUICoordinate(self.obj, self.ui)
             Tools3D.getUIRadioButton(self.obj, self.ui)

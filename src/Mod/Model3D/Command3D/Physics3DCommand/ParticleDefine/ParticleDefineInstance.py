@@ -17,7 +17,7 @@ class ParticleDefine(object):
         self.obj.addProperty("App::PropertyString", "powerUnit").powerUnit = "+1"
         self.obj.addProperty("App::PropertyString", "mass").mass = "28"
         self.obj.addProperty("App::PropertyString", "protonMassUnit").protonMassUnit = "PROTON"
-        if not hasattr(obj, "Boundary"):
+        if not hasattr(self.obj, "Boundary"):
             self.obj.addProperty("App::PropertyString", "Boundary")
 
 

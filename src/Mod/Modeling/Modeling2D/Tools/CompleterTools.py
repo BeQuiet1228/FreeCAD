@@ -4,6 +4,7 @@ import Modeling
 import sys
 from PySide.QtGui import *
 from PySide.QtCore import *
+from Modeling.Common.Tools import Completer
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
@@ -42,7 +43,7 @@ def getAllLineEdits(ui):
     '''
     lineEdits=[]
     for attr in dir(ui):
-        if isinstance(getattr(ui, attr), AutoCompleteEdit):
+        if isinstance(getattr(ui, attr), Completer.AutoCompleteEdit):
             lineEdits.append(getattr(ui, attr))
     return lineEdits
 

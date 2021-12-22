@@ -17,7 +17,7 @@ def Load(workbench):
     cmd2DCommon = ["CreatePoint_2D", "CreateLineConformal_2D", "CreateLine_2D"]
 
     cmd2DComplex = ["CreateAreaConformal_2D", "CreateRectangle_2D", "CreatePolygonal_2D", "CreateCircular2D",
-                    "CreateSector_2D", "Fillet2D_2D", "CreateFunction2D"]
+                    "CreateSector_2D", "Fillet2D_2D", "CreateFunction2D", "UpdateFilletBool"]
 
     modelBoolList = ["UpdateBooleanCommand", "AdjustView", "SetGrid", "RepairModel", "CreateText", "CreateDimension2D"]
 

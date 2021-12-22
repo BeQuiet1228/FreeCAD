@@ -169,7 +169,7 @@ def getAllPlotsDict():
         elif i.Type == ObjectType.AreaRan:
             res_dict[ObjectType.AreaRan].append(i)
 
-        elif i.Type == ObjectType.Observe:
+        elif i.Type == ObjectType.Observe or i.Type == "Observe":
             res_dict[ObjectType.Observe].append(i)
 
     return res_dict

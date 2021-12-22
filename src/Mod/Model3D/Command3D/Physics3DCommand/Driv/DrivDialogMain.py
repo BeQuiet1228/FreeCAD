@@ -68,8 +68,6 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             self.ui.radioButton_y.setEnabled(False)
             self.ui.radioButton_z.setEnabled(False)
 
-
-
     def slotRadioButton(self):
         """
         radioButton相关的槽函数，主要设置lineEdit的编辑状态

@@ -43,7 +43,7 @@ def getSelectionObj2D():
             elif obj[0].Type == Tools2D.ObjectType.AreaCircular:
                 Form = Modeling2DCommand.Circular.CircularDlgMain.ShowDialog(obj[0])
             elif obj[0].Type == Tools2D.ObjectType.AreaConformal:
-                Form = Modeling2DCommand.Rectangle.RectangleDlgMain.ShowDialog(obj[0])
+                Form = Modeling2DCommand.AreaConformal.AreaConformalDlgMain.ShowDialog(obj[0])
             elif obj[0].Type == Tools2D.ObjectType.Rectangle:
                 Form = Modeling2DCommand.Rectangle.RectangleDlgMain.ShowDialog(obj[0])
             elif obj[0].Type == Tools2D.ObjectType.Sector:

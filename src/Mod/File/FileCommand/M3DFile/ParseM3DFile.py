@@ -583,6 +583,7 @@ class ParseM3DFile:
                 pointParameterList.append(parameterList[i][1])
 
             i = i+1
+        FreeCAD.Console.PrintMessage("zhaozhou111\n")
         return pointParameterList
 
     def __getVertexGeometryParameterList(self,type,parameterList):

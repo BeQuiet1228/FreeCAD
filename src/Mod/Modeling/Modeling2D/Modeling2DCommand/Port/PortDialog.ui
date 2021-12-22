@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>691</width>
-    <height>758</height>
+    <width>666</width>
+    <height>635</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -34,8 +34,8 @@
   <property name="windowTitle">
    <string>波导端口</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_7">
-   <item row="0" column="0">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -50,9 +50,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-54</y>
+        <y>0</y>
         <width>646</width>
-        <height>788</height>
+        <height>615</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -415,38 +415,7 @@
           <string>非均匀网格</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
-          <item row="0" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_6">
-            <item>
-             <widget class="QCheckBox" name="checkBox_x">
-              <property name="text">
-               <string>X</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="checkBox_y">
-              <property name="text">
-               <string>R</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
           <item row="1" column="0">
-           <spacer name="verticalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="2" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_7">
             <item>
              <widget class="QLineEdit" name="LineEdit_DX1">
@@ -470,134 +439,37 @@
             </item>
            </layout>
           </item>
-          <item row="3" column="0">
-           <spacer name="verticalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QCheckBox" name="checkBox_x">
+              <property name="text">
+               <string>X</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBox_y">
+              <property name="text">
+               <string>R</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
        </item>
        <item>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="2" column="1">
-          <widget class="QCheckBox" name="checkBox_scale">
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="checkBox_vport">
            <property name="text">
-            <string>法向修正.SCALE =</string>
+            <string>相对相速比.VPORT =</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
-          <widget class="QCheckBox" name="checkBox_Ft">
-           <property name="text">
-            <string>输入场时间分布.F(T) =</string>
-           </property>
-          </widget>
-         </item>
-         <item row="12" column="2">
-          <widget class="QLineEdit" name="LineEdit_circuit">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>0.002E-9</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="2">
-          <spacer name="verticalSpacer_8">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="8" column="1">
-          <widget class="QCheckBox" name="checkBox_GE3">
-           <property name="text">
-            <string>空间分布.GE3(R,P,Z) =</string>
-           </property>
-          </widget>
-         </item>
-         <item row="12" column="1">
-          <widget class="QCheckBox" name="checkBox_circuit">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>circuit输入时间 =</string>
-           </property>
-          </widget>
-         </item>
-         <item row="10" column="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_8">
-           <item>
-            <widget class="StyledComboBox" name="ComboBox_FT">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <item>
-              <property name="text">
-               <string>未指定</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="8" column="2">
-          <widget class="QTextEdit" name="LineEdit_GE3">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>60</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="2">
-          <spacer name="verticalSpacer_9">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="11" column="2">
-          <spacer name="verticalSpacer_11">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="2">
+         <item row="0" column="1">
           <widget class="QLineEdit" name="LineEdit_vport">
            <property name="enabled">
             <bool>false</bool>
@@ -607,7 +479,14 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="2">
+         <item row="0" column="2" colspan="2">
+          <widget class="QCheckBox" name="checkBox_scale">
+           <property name="text">
+            <string>法向修正.SCALE =</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="4">
           <widget class="QLineEdit" name="LineEdit_scale">
            <property name="enabled">
             <bool>false</bool>
@@ -617,21 +496,14 @@
            </property>
           </widget>
          </item>
-         <item row="6" column="1">
-          <widget class="QCheckBox" name="checkBox_GE2">
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="checkBox_Ft">
            <property name="text">
-            <string>空间分布.GE2(R,P,Z) =</string>
+            <string>输入场时间分布.F(T) =</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QCheckBox" name="checkBox_vport">
-           <property name="text">
-            <string>相对相速比.VPORT =</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="2">
+         <item row="1" column="1" colspan="4">
           <widget class="QTextEdit" name="LineEdit_Ft">
            <property name="enabled">
             <bool>false</bool>
@@ -644,20 +516,14 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="2">
-          <spacer name="verticalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="checkBox_GE2">
+           <property name="text">
+            <string>空间分布.GE2(R,P,Z) =</string>
            </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
+          </widget>
          </item>
-         <item row="6" column="2">
+         <item row="2" column="1" colspan="4">
           <widget class="QTextEdit" name="LineEdit_GE2">
            <property name="enabled">
             <bool>false</bool>
@@ -670,7 +536,27 @@
            </property>
           </widget>
          </item>
-         <item row="10" column="1">
+         <item row="3" column="0">
+          <widget class="QCheckBox" name="checkBox_GE3">
+           <property name="text">
+            <string>空间分布.GE3(R,P,Z) =</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1" colspan="4">
+          <widget class="QTextEdit" name="LineEdit_GE3">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>60</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
           <widget class="QCheckBox" name="checkBox_FT">
            <property name="enabled">
             <bool>false</bool>
@@ -680,41 +566,47 @@
            </property>
           </widget>
          </item>
-         <item row="9" column="2">
-          <spacer name="verticalSpacer_10">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
+         <item row="4" column="1">
+          <widget class="StyledComboBox" name="ComboBox_FT">
+           <property name="enabled">
+            <bool>true</bool>
            </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
+           <item>
+            <property name="text">
+             <string>未指定</string>
+            </property>
+           </item>
+          </widget>
          </item>
-         <item row="13" column="1">
+         <item row="5" column="0">
+          <widget class="QCheckBox" name="checkBox_circuit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>circuit输入时间 =</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QLineEdit" name="LineEdit_circuit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>0.002E-9</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="2">
           <widget class="QLabel" name="label_obs">
            <property name="text">
             <string>   OBSERVE名称=</string>
            </property>
           </widget>
          </item>
-         <item row="13" column="2">
+         <item row="5" column="3" colspan="2">
           <widget class="QLineEdit" name="lineEdit_obs"/>
-         </item>
-         <item row="3" column="2">
-          <spacer name="verticalSpacer_5">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </item>
@@ -736,21 +628,7 @@
          </item>
         </layout>
        </item>
-       <item>
-        <spacer name="verticalSpacer_14">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
       </layout>
-      <zorder>verticalSpacer_14</zorder>
       <zorder>groupBox</zorder>
       <zorder></zorder>
       <zorder>groupBox_Port</zorder>

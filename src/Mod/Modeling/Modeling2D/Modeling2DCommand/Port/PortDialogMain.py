@@ -50,6 +50,7 @@ class ShowDialog(QtGui.QDialog):
             # self.ui.LineEdit_end_y.setText("0" + self.y_unit)
             self.refreshCombox() 
             self.ui.ComboBox_Shadow.currentIndexChanged.connect(self.ComboBox_Shadow_clicked)
+            self.ui.ComboBox_Shadow.currentIndexChanged.connect(self.ComboBox_Shadow_clicked_1)
 
             # 当port name被修改时触发函数修改归一化名字
             self.ui.LineEdit_Name.textChanged.connect(self.LineEdit_Name_textChanged)
@@ -264,7 +265,7 @@ class ShowDialog(QtGui.QDialog):
         # FreeCAD.Console.PrintError('\n下拉框点击第一条命令\n')
         if self.ui.ComboBox_Shadow.currentIndex() == 0:
             self.ui.ComboBox_FT.setEnabled(False)
-            self.LineEdit_Name_textChanged()
+            # self.LineEdit_Name_textChanged()
             # 起点可编辑
             self.ui.LineEdit_start_x.setEnabled(True)
             self.ui.LineEdit_start_y.setEnabled(True)
@@ -279,8 +280,8 @@ class ShowDialog(QtGui.QDialog):
         else:
             # 线上电压归一化可选
             self.ui.ComboBox_FT.setEnabled(True)
-            # 如果选择了投影面，则线的名字跟随投影面
-            self.ui.ComboBox_FT.setItemText(0, self.ui.ComboBox_Shadow.currentText())
+            # 如果选择了投影线，则线的名字跟随投影线
+            # self.ui.ComboBox_FT.setItemText(0, self.ui.ComboBox_Shadow.currentText())
             
             # 正交投影面
             objName = self.ui.ComboBox_Shadow.currentText()
@@ -421,7 +422,26 @@ class ShowDialog(QtGui.QDialog):
             if self.isNew:
                 FreeCAD.ActiveDocument.removeObject(self.obj.Label)
 
-
+    def ComboBox_Shadow_clicked_1(self):
+        if self.ui.ComboBox_Shadow.currentIndex() == 0:
+            self.ui.ComboBox_FT.setEnabled(False)
+            self.LineEdit_Name_textChanged()
+            # 设置ui坐标的可编辑状态
+            #Tools3D.setCoordEnabled(self.ui, ObjectTools.ObjectType.Area_Conformal)
+            # 如果选择未指定，则线的名字跟随波导的名字
+            self.ui.ComboBox_FT.setItemText(0, self.ui.LineEdit_Name.text())
+            self.ui.ComboBox_FT.setCurrentIndex(0)
+        else:
+            # 线上电压归一化可选
+            self.ui.ComboBox_FT.setEnabled(True)
+            # 如果选择了投影面，则线的名字跟随投影面
+            tmp = self.ui.ComboBox_FT.findText(self.ui.ComboBox_Shadow.currentText())
+            if tmp == -1:
+                self.ui.ComboBox_FT.setItemText(0, self.ui.ComboBox_Shadow.currentText())
+                self.ui.ComboBox_FT.setCurrentIndex(0)
+            else:
+                self.ui.ComboBox_FT.setItemText(0, self.ui.LineEdit_Name.text())
+                self.ui.ComboBox_FT.setCurrentIndex(tmp)
 
    
 

@@ -63,6 +63,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             self.ui.ComboBox_Shadow.setCurrentIndex(self.ui.ComboBox_Shadow.findText(self.obj.inductorType))
             Tools3D.setCoorToUI(self.ui, self.obj)
             Tools3D.setRadioButtonToUI(self.ui, self.obj)
+            self.ComboBox_Shadow_clicked()
             # 线圈直径
             self.ui.LineEdit_diam.setText(self.obj.coilDiameter)
             # 自感系数

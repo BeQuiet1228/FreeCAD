@@ -77,7 +77,7 @@ class ObjectType:
     Vector = "Vector"
     PhasSpace = "PhasSpace"
     AreaRan = "AreaRan"
-    Observe = "Observe"
+    Observe = "Obs"
     # 定时器
     DefaultTimer = "DefaultTimer"
     CustomTimer = "CustomTimer"
@@ -216,18 +216,18 @@ def getLabelsByType(obj_type):
     return resList
 
 
-# def getBaseTypeByType(obj_type):
-#     """
-#     根据输入的type，获取所有该类型的baseType
-#     """
-#     allObjsList = getAllObjs()
-#     resList = {}
-#     for i in allObjsList:
-#         if hasattr(i, "BaseObjType") and i.Type == obj_type:
-#             baseObj = getObjByLabel(i.BaseType)
-#             resList[str(baseObj.Label)] = i
-#             # resList.append(str(baseObj.Label) : str(i.Label))
-#     return resList
+def getBaseTypeByType(obj_type):
+    """
+    根据输入的type，获取所有该类型的baseType
+    """
+    allObjsList = getAllObjs()
+    resList = {}
+    for i in allObjsList:
+        if hasattr(i, "BaseObjType") and i.Type == obj_type:
+            baseObj = getObjByLabel(i.BaseType)
+            resList[str(baseObj.Label)] = i
+            # resList.append(str(baseObj.Label) : str(i.Label))
+    return resList
 
 
 def getConductorVols():
