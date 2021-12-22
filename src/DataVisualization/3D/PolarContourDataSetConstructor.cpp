@@ -2,6 +2,8 @@
 #include "DataVisualization/ContourDataPolar.h"
 #include "vtkStructuredGrid.h"
 #include "vtkPointData.h"
+#include "vtkPolyData.h"
+#include "PolarContourFliter.h"
 namespace DV3D
 {
 	PolarContourDatasetConstructor::PolarContourDatasetConstructor():rGridSize(1),thetaGridSize(1),zGridSize(1)
@@ -15,11 +17,20 @@ namespace DV3D
 	vtkSmartPointer<vtkDataSet> PolarContourDatasetConstructor::creatDataset()
 	{
 		initData();
+		vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+		polyData->SetPoints(points);
+		polyData->GetPointData()->SetScalars(scalar);
+		vtkSmartPointer<PolarContourFilter> polarContourFliter = vtkSmartPointer<PolarContourFilter>::New();
+		polarContourFliter->SetInputData(polyData);
+		polarContourFliter->SetDimensions(rGridSize, thetaGridSize, zGridSize);
+		polarContourFliter->SetRotation(30);
+		polarContourFliter->Update();
 		vtkSmartPointer<vtkStructuredGrid> structuredGrid = vtkSmartPointer<vtkStructuredGrid>::New();
 		structuredGrid->SetDimensions(rGridSize, thetaGridSize, zGridSize);
 		structuredGrid->SetPoints(points);
 		structuredGrid->GetPointData()->SetScalars(scalar);
 		return structuredGrid;
+		//return polarContourFliter->GetOutput();
 	}
 	void PolarContourDatasetConstructor::initData()
 	{

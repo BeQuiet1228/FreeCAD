@@ -15,12 +15,12 @@ protected:
 	PolarContourFilter();
 	~PolarContourFilter() {}
 	int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*);
-	int getPointId(vtkIdType& ri, vtkIdType& thetai, vtkIdType& zi);
+	int getPointId(vtkIdType ri, vtkIdType thetai, vtkIdType zi);
+	//vtkSmartPointer<vtkArcSource> getArc(double* p1,double* p2);
+	std::vector<double> getPoint(vtkSmartPointer<vtkPoints>,vtkIdType id);
 private:
 	PolarContourFilter(const PolarContourFilter&);
 	void operator =(const PolarContourFilter&);
 	int Rotation;
 	int rGridSize, thetaGridSize, zGridSize;
-	vtkSmartPointer<vtkArcSource> arcTools;
-	
 };
