@@ -9,6 +9,7 @@ namespace DV3D {
 
 	public:
 		static ControlerItem* CreatControlerItem();
+		static ControlerItem* CreatContour3dControlerItem();
 
 	};
 }

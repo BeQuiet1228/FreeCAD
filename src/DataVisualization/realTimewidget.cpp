@@ -21,7 +21,8 @@ namespace DV {
 	* @param  QWidget * parent
 	* @return
 	*/
-	realTimewidget::realTimewidget(QWidget* parent) :QDialog(parent), ui(new Ui::realTimewidget)
+	realTimewidget::realTimewidget(QWidget* parent) :QDialog(parent), 
+		ui(new Ui::realTimewidget)
 	{
 		ui->setupUi(this);
 		//curRow = -1;

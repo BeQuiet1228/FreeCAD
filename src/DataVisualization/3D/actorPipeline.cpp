@@ -63,6 +63,11 @@ void DV3D::ActorPipemline::setClipper(std::shared_ptr<Clipper> clipper)
 	this->clipper = clipper;
 }
 
+void DV3D::ActorPipemline::getClipPlane(vtkSmartPointer<vtkPlane>& palne)
+{
+	clipper->getClipPlane(palne);
+}
+
 void DV3D::ActorPipemline::setClipPlane(vtkSmartPointer<vtkPlane> plane)
 {
 	clipper->setClipPlane(plane);

@@ -51,6 +51,9 @@ SET(SRC
 	controlerItemFactor.cpp
 	controlerItemFactor.h
 	DataVisualization3DExport.hpp
+	ClipPlaneWidget.h
+	ClipPlaneWidget.cpp
+	
 )
 SET( STRUCT_SRC
 	CartesianStructDataSetConstructor.cpp
@@ -85,13 +88,30 @@ SET(CONTOUR_SRCS
 	PolarContourDataSetConstructor.h
 	PolarContourDataSetConstructor.cpp
 )
-
+SET(CONTOUR3D_SRCS
+	Contour3dataSetConstructor.cpp
+	Contour3dataSetConstructor.h
+	PolarContour3dDataSetConstructor.cpp
+	PolarContour3dDataSetConstructor.h
+	Contour3dActorPipeline.h
+	Contour3dActorPipeline.cpp
+	Contour3dControler.h
+	Contour3dControler.cpp
+	Contour3dControlerAction.h
+	Contour3dControlerAction.cpp
+	Contour3dControlerWidget.h
+	Contour3dControlerWidget.cpp
+)
 SET(UI_SRC
 	ControlerItem.ui
+	ClipPlaneWidget.ui
 	)
 
 SET(MY_MOC_HDR
 	ControlerItem.h
+	ClipPlaneWidget.h
+	Contour3dControlerWidget.h
+	Contour3dControlerAction.h
 )
 SET(QRC_SRC
 	resource/rce.qrc
@@ -119,6 +139,7 @@ SET(DataVisualization3D_src
 	${Gui_QRC_SRCs}
 	${PARTICLE_SRC}
 	${CONTOUR_SRCS}
+	${CONTOUR3D_SRCS}
 	)
 
 	
@@ -129,7 +150,8 @@ source_group("moc" FILES ${MY_MOC_SRCS})
 source_group("resource" FILES ${Gui_QRC_SRCs} ${QRC_SRC})
 source_group("particle3d" FILES ${PARTICLE_SRC})
 source_group("contour" FILES ${CONTOUR_SRCS})
-	
+source_group("contour3d" FILES ${CONTOUR3D_SRCS})
+
 #add_executable(DataVisualization3D ${DataVisualization3D_src})
 add_definitions(-D_DATA_VISUALIZATION_3D)
 

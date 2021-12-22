@@ -163,3 +163,8 @@ void DV3D::Controler::setClipPlane(vtkSmartPointer<vtkPlane> palne)
 	getActorPipeline()->setClipPlane(palne);
 }
 
+void DV3D::Controler::getClipPlane(vtkSmartPointer<vtkPlane>& palne)
+{
+	getActorPipeline()->getClipPlane(palne);
+}
+

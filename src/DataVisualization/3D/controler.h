@@ -48,6 +48,7 @@ namespace DV3D {
 		void setClipEnable(const bool& b);
 		bool getClipEnable();
 		void setClipPlane(vtkSmartPointer<vtkPlane> palne);
+		void getClipPlane(vtkSmartPointer<vtkPlane>& palne);
 	private:
 		//µ¥Ïò°ó¶¨
 		void oneWayBinding(Widget3D* widget3D);

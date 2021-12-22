@@ -34,3 +34,8 @@ void DV3D::Clipper::setClipPlane(vtkSmartPointer<vtkPlane> plane)
 	this->vtkClipper->SetClipFunction(plane);
 }
 
+void DV3D::Clipper::getClipPlane(vtkSmartPointer<vtkPlane>& palne)
+{
+	palne = this->clipperPlane;
+}
+
