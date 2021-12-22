@@ -1,21 +1,16 @@
-#-*- coding: utf-8 -*-
-
+# -*- coding: utf-8 -*-
 import FreeCAD as App
-import FreeCADGui
 import File.FileGui.FileTextEditor
 import File.FileCommand.M3DFile.CHIPICCommand
 import File.FileCommand.M3DFile.M3DFileUtil
-
 import PySide
 
-class FileView(PySide.QtGui.QWidget):
 
-    def __init__(self,
-                 parent=None):
+class FileView(PySide.QtGui.QWidget):
+    def __init__(self, parent=None):
         """
         Keyword arguments:
         parent -- Widget parent.
-        
         """
         PySide.QtGui.QWidget.__init__(self, parent)
         self.ui = File.FileGui.FileTextEditor.Ui_Form()
@@ -34,11 +29,11 @@ class FileView(PySide.QtGui.QWidget):
         # 为了显示事件服务
         self.showNum = 0
 
-    def updateText(self, str):
+    def updateText(self, text):
         # 获得面板
         thisSubWindow = self.getThisSubWindow()
 
-        if thisSubWindow == None:
+        if thisSubWindow is None:
             self.showThisSubWindow()
             thisSubWindow = self.getThisSubWindow()
 
@@ -60,31 +55,11 @@ class FileView(PySide.QtGui.QWidget):
         white = PySide.QtGui.QColor(255, 255, 255, 255)
 
         # 将要显示的字符串按行分割并赋值给lineStrs
-        lineStrs = str.split("\n")
+        lineStrs = text.split("\n")
 
         # 循环遍历每一行字符，并根据需求加上具体的效果
         lineNum = 0
         for lineStr in lineStrs:
-            # 为每一行增加行号
-            # lineNum = lineNum + 1
-
-            # # 将行号对应的数字转换为4位的字符串
-            # if lineNum / 10 >= 100:
-            #     lineNumStr = lineNum.__str__()
-            # elif lineNum / 10 >= 10:
-            #     lineNumStr = " " + lineNum.__str__()
-            # elif lineNum / 10 >= 1:
-            #     lineNumStr = "  " + lineNum.__str__()
-            # else:
-            #     lineNumStr = "   " + lineNum.__str__()
-
-            # textEdit.setTextBackgroundColor(gray)
-            # textEdit.setTextColor(black)
-            # textEdit.append(lineNum.__str__())
-            # textEdit.setTextBackgroundColor(white)
-            # textEdit.insertPlainText("  ")
-
-            # 不显示行号，则需换行
             textEdit.append("")
 
             # 如果某一行的首字符为!，则这一行为注释行，颜色为绿色
@@ -103,54 +78,17 @@ class FileView(PySide.QtGui.QWidget):
                     textEdit.setTextColor(black)
                     textEdit.insertPlainText(lineStr)
 
-
     def closeEvent(self, event):
         """关闭m3d显示界面时，应该关闭该工程"""
+        pass
 
-        # msgBox = PySide.QtGui.QMessageBox()
-        # msgBox.setText("The document has been modified.")
-        # msgBox.setInformativeText("Do you want to save your changes?")
-        # msgBox.setStandardButtons(PySide.QtGui.QMessageBox.Save | PySide.QtGui.QMessageBox.Discard | PySide.QtGui.QMessageBox.Cancel)
-        # msgBox.setDefaultButton(PySide.QtGui.QMessageBox.Save)
-        # ret = msgBox.exec_()
-        #
-        # if ret == PySide.QtGui.QMessageBox.Save:
-        #     # Save was clicked
-        #
-        #     # 重新保存
-        #     # 重新保存m3d
-        #     fileUtil = File.FileCommand.M3DFile.M3DFileUtil.M3DFileUtil()
-        #     fileUtil.writeToFile()
-        #     # 重新保存工程
-        #
-        #     # 关闭工程
-        #     App.closeDocument(App.ActiveDocument.Label)
-        #
-        # elif ret == PySide.QtGui.QMessageBox.Discard:
-        #     # Don't save was clicked
-        #
-        #     # 删除已有m3d文件
-        #     fileUtil = File.FileCommand.M3DFile.M3DFileUtil.M3DFileUtil()
-        #     fileUtil.deleteFile()
-        #     # 关闭工程
-        #     App.closeDocument(App.ActiveDocument.Label)
-        #
-        # elif ret == PySide.QtGui.QMessageBox.Cancel:
-        #     # cancel was clicked
-        #
-        #     # 忽略关闭事件
-        #     event.ignore()
-        #
-        # else:
-        #     # should never be reached
-        #     print("error, should never be reached")
     def updateM3dFile(self):
         # 获得m3d的util
         fileUtil = File.FileCommand.M3DFile.M3DFileUtil.M3DFileUtil()
         # 获得最近的m3d字符串
-        str = fileUtil.getLatestM3DFileStr()
+        text = fileUtil.getLatestM3DFileStr()
         # 进行文本的更新
-        self.ui.textEdit.setText(str)
+        self.ui.textEdit.setText(text)
         # self.updateText(str)
         # 写文件
         fileUtil.writeToFile(isRefresh=True)
@@ -182,12 +120,10 @@ class FileView(PySide.QtGui.QWidget):
                 # 表示切换到其余的界面，重新将showNum置为等待切换的状态
                 self.showNum = 3
 
-
     def setTitle(self, src):
         # 更换窗口的名字
         sub = self.getThisSubWindow()
         sub.widget().setWindowTitle(src + " M3d")
-
 
     def isThisSubWindow(self):
         # 获得中间窗口
@@ -203,7 +139,6 @@ class FileView(PySide.QtGui.QWidget):
 
         return isExist
 
-
     def addThisSubWindow(self):
         # 获得中间窗口
         mdi = self.__getMdiArea()
@@ -214,20 +149,18 @@ class FileView(PySide.QtGui.QWidget):
         sub.widget().setWindowTitle(ActiveDocumentLabel + " M3d")
         sub.widget().setStatusTip(App.ActiveDocument.Uid)
 
-
     def getThisSubWindow(self):
         # 获得中间窗口
         mdi = self.__getMdiArea()
 
         # 遍历所有窗口
-        flag = False # 标志是否找到了
+        flag = False  # 标志是否找到了
         subWindowList = mdi.subWindowList()
         for subWindow in subWindowList:
             if isinstance(subWindow.widget(), FileView):
                 if subWindow.widget().statusTip() == App.ActiveDocument.Uid:
                     flag = True
                     return subWindow
-
 
     def showThisSubWindow(self):
         # 获得中间窗口
@@ -245,15 +178,23 @@ class FileView(PySide.QtGui.QWidget):
         # 使中间的窗口激活前面的子窗口，而不是新加入的子窗口
         mdi.activatePreviousSubWindow()
 
-
     def __getMainWindow(self):
         """ Return the FreeCAD main window. """
         toplevel = PySide.QtGui.QApplication.topLevelWidgets()
+        mwdf =  None
         for i in toplevel:
+            if i.metaObject().className() == "MainWindowDef":
+                mwdf = i
+                break
+        wid = None
+        for i in mwdf.children():
+            if i.metaObject().className() == "QWidget":
+                wid = i 
+                break
+        for i in wid.children():
             if i.metaObject().className() == "Gui::MainWindow":
                 return i
         return None
-
 
     def __getMdiArea(self):
         """ Return FreeCAD MdiArea. """
@@ -304,12 +245,3 @@ class FileView(PySide.QtGui.QWidget):
             # 如果没找到，则从头再找
             editor.moveCursor(PySide.QtGui.QTextCursor.Start)
             editor.find(str, findFlag)
-
-
-
-
-
-
-
-
-

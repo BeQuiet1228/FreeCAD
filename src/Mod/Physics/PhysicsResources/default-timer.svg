@@ -1,9 +1,38 @@
-<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
-  <title>default-timer</title>
-  <g>
-    <path d="M12,10.8a.789.789,0,0,1-.8-.8V4.6a.8.8,0,1,1,1.6,0V10A.736.736,0,0,1,12,10.8Z" style="fill: #ec2232"/>
-    <path d="M17,10.9H12a.8.8,0,0,1,0-1.6h5a.8.8,0,0,1,0,1.6Z" style="fill: #ec2232"/>
-    <path d="M12,24a2.476,2.476,0,0,1-2.5-2.5V19.3a.9.9,0,0,1,1.8,0v2.2a.789.789,0,0,0,.8.8.736.736,0,0,0,.8-.8V19.3a.9.9,0,0,1,1.8,0v2.2A2.8,2.8,0,0,1,12,24Z" style="fill: #ec2232"/>
-    <path d="M12,20.1a10.05,10.05,0,1,1,10.1-10A9.988,9.988,0,0,1,12,20.1ZM12,1.6A8.4,8.4,0,1,0,20.4,10,8.386,8.386,0,0,0,12,1.6Z"/>
-  </g>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>默认定时器</title>
+    <defs>
+        <linearGradient x1="13.9580867%" y1="13.7035346%" x2="84.5373643%" y2="87.8067418%" id="linearGradient-1">
+            <stop stop-color="#54FE9D" offset="0%"></stop>
+            <stop stop-color="#31CF75" offset="100%"></stop>
+        </linearGradient>
+        <circle id="path-2" cx="8" cy="9" r="6"></circle>
+        <filter x="-6.2%" y="-6.2%" width="112.5%" height="112.5%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="1" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.8 0" type="matrix" in="shadowInnerInner1" result="shadowMatrixInner1"></feColorMatrix>
+            <feOffset dx="-1" dy="-1" in="SourceAlpha" result="shadowOffsetInner2"></feOffset>
+            <feComposite in="shadowOffsetInner2" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner2"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.2 0" type="matrix" in="shadowInnerInner2" result="shadowMatrixInner2"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner2"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="图标输出" transform="translate(-248.000000, -947.000000)">
+            <g id="默认定时器" transform="translate(248.000000, 947.000000)">
+                <rect id="Rectangle-Copy-2" fill="#1A1A1A" transform="translate(8.000000, 2.500000) scale(-1, 1) translate(-8.000000, -2.500000) " x="7.5" y="1" width="1" height="3" rx="0.5"></rect>
+                <line x1="6" y1="1" x2="10" y2="1" id="Path-3" stroke="#1A1A1A" stroke-linecap="round" stroke-linejoin="round"></line>
+                <g id="Oval">
+                    <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
+                    <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                    <use stroke="#1A1A1A" stroke-width="0.5" xlink:href="#path-2"></use>
+                </g>
+                <rect id="Rectangle" fill="#1A1A1A" transform="translate(8.000000, 7.500000) scale(-1, 1) translate(-8.000000, -7.500000) " x="7.5" y="5" width="1" height="5" rx="0.5"></rect>
+                <rect id="Rectangle-Copy" fill="#1A1A1A" transform="translate(9.500000, 9.500000) scale(-1, 1) rotate(-90.000000) translate(-9.500000, -9.500000) " x="9" y="7.5" width="1" height="4" rx="0.5"></rect>
+            </g>
+        </g>
+    </g>
 </svg>

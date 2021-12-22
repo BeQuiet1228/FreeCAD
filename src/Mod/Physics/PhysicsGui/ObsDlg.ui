@@ -979,17 +979,17 @@
              </property>
              <item>
               <property name="text">
+               <string>ALL</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
                <string>ELECTRON</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>IONS</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>ALL</string>
+               <string>PROTON</string>
               </property>
              </item>
             </widget>
@@ -1226,11 +1226,6 @@
       </item>
      </layout>
      <zorder>groupBox</zorder>
-     <zorder>groupBox_4</zorder>
-     <zorder>radioButton_collected</zorder>
-     <zorder>radioButton_emitted</zorder>
-     <zorder>checkBox_interval</zorder>
-     <zorder>lineEdit_interval</zorder>
      <zorder>verticalSpacer</zorder>
      <zorder>verticalSpacer_3</zorder>
      <zorder>verticalSpacer_7</zorder>

@@ -663,7 +663,7 @@
     <message>
         <location filename="../../../../ProjectSetting/Commands/ProjectSettingCommand.py" line="31"/>
         <source>WorkSpaceSettings</source>
-        <translation>网格步长设定</translation>
+        <translation type="unfinished">工作区间设置</translation>
     </message>
 </context>
 <context>

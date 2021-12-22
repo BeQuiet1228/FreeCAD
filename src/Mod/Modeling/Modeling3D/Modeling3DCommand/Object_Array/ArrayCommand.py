@@ -105,7 +105,7 @@ class Array(Modifier):
             ArrayDraft.autogroup(objArray)
             import PartGui,PartChipic
             #PartGui.updateBoolean(curOrder) #ZD
-            PartGui.updateBoolean(curOrder, 1)
+            PartChipic.updateBoolean(curOrder, 1)
             FreeCAD.ActiveDocument.recompute()
             return objArray
 

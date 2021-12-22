@@ -1,5 +1,6 @@
 add_custom_target(Physics)
 SET(Sources_Srcs
+	PhysicsCommand
 	PhysicsGui
 	PhysicsResources
 	PhysicsTools

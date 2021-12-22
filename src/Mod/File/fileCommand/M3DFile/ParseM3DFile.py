@@ -124,7 +124,7 @@ class ParseM3DFile:
         # 定义不同命令组类型对应的字符串列表
         self.__headerSystemStrList = [[],[]]
         # 我认为下面这个变量便是我所查找的点
-        self.__parameterStrList = []
+        self. __parameterStrList = []
         self.__objectStrList = [[]]
         self.__panelObjectStrList = [[]]
         self.__meshStrList = []

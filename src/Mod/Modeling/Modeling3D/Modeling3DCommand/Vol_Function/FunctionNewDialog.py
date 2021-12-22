@@ -9,23 +9,47 @@ import re
 
 class showFunctionDialog(showObjDialog):
     def __init__(self, obj, parent=None):
-        #手动调用父类构造函数。
+        # 手动调用父类构造函数。
         showObjDialog.__init__(self,obj,parent)
-        #设置ui文件
+        # 设置ui文件
         self.ui = FunctionDialog.Ui_Dialog()
         self.ui.setupUi(self)
-        #初始化对话框
+        self.obj = obj
+        if not hasattr(self.obj, "precision_z"):
+            self.obj.addProperty("App::PropertyFloat", "precision_x", "Object of a Function",
+                                 "Precision of the function").precision_x = 10
+            self.obj.addProperty("App::PropertyFloat", "precision_y", "Object of a Function",
+                                 "Precision of the function").precision_y = 10
+            self.obj.addProperty("App::PropertyFloat", "precision_z", "Object of a Function",
+                                 "Precision of the function").precision_z = 10
+
+        if FreeCAD.ActiveDocument.CoordinateSystem == "Rectangular":
+            # self.ui.precision_x.setSuffix()
+            self.ui.label_13.setText("Expression:\nf(X,Y,Z)")
+            pass
+        elif FreeCAD.ActiveDocument.CoordinateSystem == "Polar":
+            self.ui.precision_y.setSuffix('deg')
+            self.ui.label_13.setText("Expression:\nf(R,THETA,Z)")
+        else:
+            self.ui.precision_z.setSuffix('deg')
+            self.ui.label_13.setText("Expression:\nf(Z,R,THETA)")
+        # 初始化对话框
         self.initDialog()
 
-        self.ui.lineEdit.setcompleterlist(getGlobalVar())
-        self.ui.lineEdit_2.setcompleterlist(getGlobalVar())
-        self.ui.lineEdit_3.setcompleterlist(getGlobalVar())
-        self.ui.lineEdit_4.setcompleterlist(getGlobalVar())
-        self.ui.lineEdit_5.setcompleterlist(getGlobalVar())
-        self.ui.lineEdit_6.setcompleterlist(getGlobalVar())
+        self.ui.lineEdit_7.setPlainText(self.obj.Expression)
+        # self.ui.le_precision.setText(str(self.obj.Precision))
+        self.ui.precision_x.setValue(self.obj.precision_x)
+        self.ui.precision_y.setValue(self.obj.precision_y)
+        self.ui.precision_z.setValue(self.obj.precision_z)
+
+        # self.ui.lineEdit.setcompleterlist(getGlobalVar())
+        # self.ui.lineEdit_2.setcompleterlist(getGlobalVar())
+        # self.ui.lineEdit_3.setcompleterlist(getGlobalVar())
+        # self.ui.lineEdit_4.setcompleterlist(getGlobalVar())
+        # self.ui.lineEdit_5.setcompleterlist(getGlobalVar())
+        # self.ui.lineEdit_6.setcompleterlist(getGlobalVar())
         # self.ui.lineEdit_7.setcompleterlist(getGlobalVar())
 
-        self.obj = obj
         self.error = ''
 
         self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
@@ -202,7 +226,16 @@ class showFunctionDialog(showObjDialog):
                 self.obj.Expression = point_ex_before
             except:
                 self.error = self.error +'Expression'+'  '+str(point_ex_before)+'\n'
-                
+
+            # pre = int(self.ui.le_precision.text())
+            # self.obj.Precision = pre
+            pre_x = self.ui.precision_x.value()
+            self.obj.precision_x = pre_x
+            pre_y = self.ui.precision_y.value()
+            self.obj.precision_y = pre_y
+            pre_z = self.ui.precision_z.value()
+            self.obj.precision_z = pre_z
+
         elif FreeCAD.ActiveDocument.CoordinateSystem=="Polar":
             point_1_x_before=self.ui.lineEdit.text()
             point_1_x_after=InputTools.Stringfunctions(point_1_x_before)
@@ -275,6 +308,16 @@ class showFunctionDialog(showObjDialog):
                 self.obj.Expression = point_ex_before
             except:
                 self.error = self.error +'Expression'+'  '+str(point_ex_before)+'\n'
+
+            # pre = int(self.ui.le_precision.text())
+            # self.obj.Precision = pre
+            pre_x = self.ui.precision_x.value()
+            self.obj.precision_x = pre_x
+            pre_y = self.ui.precision_y.value()
+            self.obj.precision_y = pre_y
+            pre_z = self.ui.precision_z.value()
+            self.obj.precision_z = pre_z
+
         else:
             point_1_x_before=self.ui.lineEdit_2.text()
             point_1_x_after=InputTools.Stringfunctions(point_1_x_before)
@@ -348,8 +391,15 @@ class showFunctionDialog(showObjDialog):
             except:
                 self.error = self.error +'Expression'+'  '+str(point_ex_before)+'\n'
 
+            # pre = int(self.ui.le_precision.text())
+            # self.obj.Precision = pre
+            pre_x = self.ui.precision_x.value()
+            self.obj.precision_x = pre_x
+            pre_y = self.ui.precision_y.value()
+            self.obj.precision_y = pre_y
+            pre_z = self.ui.precision_z.value()
+            self.obj.precision_z = pre_z
 
-            pass
 
 class reshowFunctionDialog(showFunctionDialog):
     def deleteobj(self):

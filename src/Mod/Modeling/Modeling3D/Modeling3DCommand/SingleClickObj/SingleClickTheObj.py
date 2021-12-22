@@ -43,13 +43,13 @@ class SingleClickCommand:
                 try:
                     # 将被引用的模型设置85的透明度
                     objsBeUsed=SetVisibilityOfModels.setVisibility(85)
-                    # FreeCAD.Console.PrintError('\n进入单机效果函数')
+                    FreeCAD.Console.PrintError('\n进入单机效果函数')
                     obj_resultshape = FreeCAD.ActiveDocument.ResultShape
                     obj_resultshape.ViewObject.DisplayMode = u'Flat Lines'
                     # obj_resultshape.ViewObject.ShapeColor = (0.58, 0.58, 0.58)
                     obj_resultshape.ViewObject.LineColor = (0.33, 0.33, 0.33)
                     obj_resultshape.ViewObject.Transparency = 85
-                    # FreeCAD.Console.PrintError('   执行完resultshape')
+                    FreeCAD.Console.PrintError('   执行完resultshape')
                     # obj[0].ViewObject.ShapeColor = (0.00, 1.00, 0.00)
                     objs[0].ViewObject.DisplayMode = u'Flat Lines'
                     objs[0].ViewObject.Transparency = 0
@@ -57,10 +57,10 @@ class SingleClickCommand:
                     self.lastClick.append(objs[0])
                     self.lastClick.append(objs[0].ViewObject.ShapeColor)
                     # 判断这个选择的模型是不是属于被引用的，如果是被引用的，就显示原来的颜色，否则显示为绿色
-                    # FreeCAD.Console.PrintError(self.lastClick)
+                    FreeCAD.Console.PrintError(self.lastClick)
                     if not objs[0] in objsBeUsed:
                         objs[0].ViewObject.ShapeColor = (0.00, 1.00, 0.00)
-                    # FreeCAD.Console.PrintError('   执行完选中物体')
+                    FreeCAD.Console.PrintError('   执行完选中物体')
                     # FreeCAD.Console.PrintError(objs[0].ViewObject.ShapeColor)
                     
                 except:
@@ -133,5 +133,5 @@ class SingleClickCommand:
                 pass
 
 
-FreeCADGui.addCommand('SingleClickDisplayMode', SingleClickCommand())
+# FreeCADGui.addCommand('SingleClickDisplayMode', SingleClickCommand())
 

@@ -2085,24 +2085,25 @@ def getToroidalSectionVolumeCommands(volumeName, point1Coordinates, point2Coordi
     ## 生成具体命令
     ### 生成点命令
     point1Name = volumeName + ".P1"
-    point1 = Point(point1Name, point1Coordinates)
+    point1 = PointForTS(point1Name, point1Coordinates)
     volumeCommandsStr = volumeCommandsStr + point1.getPonitStr() + NEWLINE
 
     point2Name = volumeName + ".P2"
-    point2 = Point(point2Name, point2Coordinates)
+    point2 = PointForTS(point2Name, point2Coordinates)
     volumeCommandsStr = volumeCommandsStr + point2.getPonitStr() + NEWLINE
 
     point3Name = volumeName + ".P3"
-    point3 = Point(point3Name, point3Coordinates)
+    point3 = PointForTS(point3Name, point3Coordinates)
     volumeCommandsStr = volumeCommandsStr + point3.getPonitStr() + NEWLINE
 
     point4Name = volumeName + ".P4"
-    point4 = Point(point4Name, point4Coordinates)
+    point4 = PointForTS(point4Name, point4Coordinates)
     volumeCommandsStr = volumeCommandsStr + point4.getPonitStr() + NEWLINE
 
     ###生成体命令
     volumeType = Volume.Shape.toroidalSection
-    volume = Volume(volumeName, volumeType, [point1Name, point2Name, radiusInner, radiusOuter, point3Name, point4Name])
+    #这条m3d的内外半径写反了，所以进行了修改
+    volume = Volume(volumeName, volumeType, [point1Name, point2Name, radiusOuter, radiusInner, point3Name, point4Name])
     volumeCommandsStr = volumeCommandsStr + volume.getVolumeStr() + NEWLINE
 
     return volumeCommandsStr
@@ -3401,7 +3402,8 @@ def getEmGCommands(coordinateSystem, emitName, It, Bg, Pl, Pt, Dgc, pointCoordin
                    isOutwardSpacing=False, outwardSpacing="", dn="",
                    isEmit=False, mobject="",
                    isExclude1=False, excludeVolume1="", isExclude2=False, excludeVolume2="",
-                   isInclude1=False, includeVolume1="", isInclude2=False, includeVolume2=""
+                   isInclude1=False, includeVolume1="", isInclude2=False, includeVolume2="",
+                   isCheckedVelocity = False, velocity_spread=""
                    ):
     """
     EmG面板对应的命令组
@@ -3511,7 +3513,8 @@ def getEmGCommands(coordinateSystem, emitName, It, Bg, Pl, Pt, Dgc, pointCoordin
                                      isNumber, creationRate,
                                      isTiming, timingType, stepMultiple,
                                      isSurfaceSpacing, surfaceSpacing,
-                                     isOutwardSpacing, outwardSpacing)
+                                     isOutwardSpacing, outwardSpacing,
+                                     isCheckedVelocity, velocity_spread)
     EmGCommandsStr = EmGCommandsStr + emissionOptions.getEmissionExplosiveStr() + newline
 
     ## 定义具体EMIT命令
@@ -3827,8 +3830,8 @@ def getPhasespaceCommands(panelName, horizontalAxis, verticalAxis,
     """
 
     # 检查常变量是否符合规范
-    if species!=Phasespace.SpeciesType.all and species!=Phasespace.SpeciesType.proton and species!=Phasespace.SpeciesType.electron:
-        return "Phasespace命令组生成：请检查species"
+    # if species!=Phasespace.SpeciesType.all and species!=Phasespace.SpeciesType.proton and species!=Phasespace.SpeciesType.electron:
+    #     return "Phasespace命令组生成：请检查species"
 
     if direction!=Phasespace.Direction.x1 and direction!=Phasespace.Direction.x2 and direction!=Phasespace.Direction.x3:
         return "Phasespace命令组生成：请检查direction"
@@ -4382,9 +4385,11 @@ def getPresetCommands(coordinateSystem="P",
         if isSetB1:
             preset = Preset(Preset.Type.B1ST, coordinateSystem)            
             function = Function(functionName=preset.getFunN(), functionExpression=setB1)
-
-            returnStr = returnStr + function.getFunctionStr() + NEWLINE
-            returnStr = returnStr + preset.getPresetStr() + NEWLINE
+            if "PANDIRA" in function.getFunctionStr():
+                returnStr = returnStr + "PRESET" + blankSpace + "B1ST" + blankSpace +function.getFunctionStr() +NEWLINE
+            else:
+                returnStr = returnStr + function.getFunctionStr() + NEWLINE
+                returnStr = returnStr + preset.getPresetStr() + NEWLINE
     else:
         return "场环境设置，请检查isSetB1"
     
@@ -4392,9 +4397,11 @@ def getPresetCommands(coordinateSystem="P",
         if isSetB2:
             preset = Preset(Preset.Type.B2ST, coordinateSystem)            
             function = Function(functionName=preset.getFunN(), functionExpression=setB2)
-
-            returnStr = returnStr + function.getFunctionStr() + NEWLINE
-            returnStr = returnStr + preset.getPresetStr() + NEWLINE
+            if "PANDIRA" in function.getFunctionStr():
+                returnStr = returnStr + "PRESET" + blankSpace + "B2ST" + blankSpace + function.getFunctionStr() +NEWLINE
+            else:
+                returnStr = returnStr + function.getFunctionStr() + NEWLINE
+                returnStr = returnStr + preset.getPresetStr() + NEWLINE
     else:
         return "场环境设置，请检查isSetB2"
     
@@ -4402,9 +4409,11 @@ def getPresetCommands(coordinateSystem="P",
         if isSetB3:
             preset = Preset(Preset.Type.B3ST, coordinateSystem)            
             function = Function(functionName=preset.getFunN(), functionExpression=setB3)
-
-            returnStr = returnStr + function.getFunctionStr() + NEWLINE
-            returnStr = returnStr + preset.getPresetStr() + NEWLINE
+            if "PANDIRA" in function.getFunctionStr():
+                returnStr = returnStr + "PRESET" + blankSpace + "B3ST" + blankSpace +function.getFunctionStr() +NEWLINE
+            else:
+                returnStr = returnStr + function.getFunctionStr() + NEWLINE
+                returnStr = returnStr + preset.getPresetStr() + NEWLINE
     else:
         return "场环境设置，请检查isSetB3"
     
@@ -4412,9 +4421,11 @@ def getPresetCommands(coordinateSystem="P",
         if isSetE1:
             preset = Preset(Preset.Type.E1ST, coordinateSystem)            
             function = Function(functionName=preset.getFunN(), functionExpression=setE1)
-
-            returnStr = returnStr + function.getFunctionStr() + NEWLINE
-            returnStr = returnStr + preset.getPresetStr() + NEWLINE
+            if "PANDIRA" in function.getFunctionStr():
+                returnStr = returnStr + "PRESET" + blankSpace + "E1ST" + blankSpace +function.getFunctionStr() +NEWLINE
+            else:
+                returnStr = returnStr + function.getFunctionStr() + NEWLINE
+                returnStr = returnStr + preset.getPresetStr() + NEWLINE
     else:
         return "场环境设置，请检查isSetE1"
     
@@ -4422,9 +4433,11 @@ def getPresetCommands(coordinateSystem="P",
         if isSetE2:
             preset = Preset(Preset.Type.E2ST, coordinateSystem)            
             function = Function(functionName=preset.getFunN(), functionExpression=setE2)
-
-            returnStr = returnStr + function.getFunctionStr() + NEWLINE
-            returnStr = returnStr + preset.getPresetStr() +NEWLINE
+            if "PANDIRA" in function.getFunctionStr():
+                returnStr = returnStr + "PRESET" + blankSpace + "E2ST" + blankSpace +function.getFunctionStr() +NEWLINE
+            else:
+                returnStr = returnStr + function.getFunctionStr() + NEWLINE
+                returnStr = returnStr + preset.getPresetStr() +NEWLINE
     else:
         return "场环境设置，请检查isSetE2"
     
@@ -4432,9 +4445,11 @@ def getPresetCommands(coordinateSystem="P",
         if isSetE3:
             preset = Preset(Preset.Type.E3ST, coordinateSystem)            
             function = Function(functionName=preset.getFunN(), functionExpression=setE3)
-
-            returnStr = returnStr + function.getFunctionStr() + NEWLINE
-            returnStr = returnStr + preset.getPresetStr() +NEWLINE
+            if "PANDIRA" in function.getFunctionStr():
+                returnStr = returnStr + "PRESET" + blankSpace + "E3ST" + blankSpace +function.getFunctionStr() +NEWLINE
+            else:
+                returnStr = returnStr + function.getFunctionStr() + NEWLINE
+                returnStr = returnStr + preset.getPresetStr() +NEWLINE
     else:
         return "场环境设置，请检查isSetE3"
     

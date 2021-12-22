@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+import traceback
 
 from GetCommandByParameter import *
 import File.FileCommand.TextUI.FileTextView
@@ -12,13 +13,12 @@ import json
 import _winreg
 import os
 
-
-
 """
 根据commandManager，生成m3d文件
 """
-class M3DFileUtil:
 
+
+class M3DFileUtil:
     class __Classification(Enum):
         """
         定义命令组类型
@@ -42,7 +42,6 @@ class M3DFileUtil:
         RUN = 17
         PANEL_OBJECTS = 18
 
-
     class __ManagerIndex(Enum):
         """
         定义一维列表中不同列表示的意义
@@ -60,7 +59,6 @@ class M3DFileUtil:
         # 4.1附加命令的内容
         COMMANDS_EXTRAS_CONTENT = 1
 
-
     class __StrInit(Enum):
         """
         不同命令组类型对应的字符串
@@ -71,7 +69,7 @@ class M3DFileUtil:
         strDefineObjects = "\n! ==============================================================================!\n" \
                            "! DEFINE OBJECTS\n"
         strPanelObjects = "\n! ==============================================================================!\n" \
-                           "! PANEL OBJECTS\n"
+                          "! PANEL OBJECTS\n"
         strGenerateGrid = "\n! ==============================================================================!\n" \
                           "! GENERATE GRID/MESH\n"
         strCommonPresets = "\n! ==============================================================================!\n" \
@@ -89,12 +87,10 @@ class M3DFileUtil:
         strRun = "\n! ==============================================================================!\n" \
                  "! RUN\n"
 
-
     class CoordinateSystem(Enum):
         rectangularSys = "R"
         polarSys = "P"
         cylindricalSys = "C"
-
 
     def __init__(self, commandsManager=[], path="", coordinateSystem="R"):
 
@@ -125,10 +121,10 @@ class M3DFileUtil:
         self.__strRunOptions = self.__StrInit.strRunOptions
         self.__strRun = self.__StrInit.strRun
 
-
         # 判断路径是否存在，若不存在则新建
         if not os.path.exists(FreeCAD.clientWorkpath()):
-            try: os.makedirs(FreeCAD.clientWorkpath())
+            try:
+                os.makedirs(FreeCAD.clientWorkpath())
             except:
                 FreeCAD.Console.PrintMessage("地址无效，且无法新建，请在File下configure项修改workpath\n")
             else:
@@ -137,28 +133,25 @@ class M3DFileUtil:
             # FreeCAD.Console.PrintMessage("new FIle\n")
         # 定义有关文件的属性
         self.__fileStr = ""
-        if path=="":
-            self.path = FreeCAD.clientWorkpath() +FreeCAD.ActiveDocument.Label.encode("gbk") +".m3d"
+        if path == "":
+            self.path = FreeCAD.clientWorkpath() + FreeCAD.ActiveDocument.Label.encode("gbk") + ".m3d"
             # self.path=self.path.encode("gbk")
         else:
-            #utf-8编码
+            # utf-8编码
             try:
                 # FreeCAD.Console.PrintError("path:"+str(type(path)))
-                self.path=path.decode("utf-8").encode("gbk")
+                self.path = path.decode("utf-8").encode("gbk")
                 # self.path=path.encode("gbk")
             except:
-                #unicode编码
+                # unicode编码
                 try:
-                    self.path=path.encode("gbk")
+                    self.path = path.encode("gbk")
                 except:
-                    #gbk编码
-                    self.path=path
+                    # gbk编码
+                    self.path = path
         # FreeCAD.Console.PrintMessage("path333:  "+str(self.path)+"\n")
         # self.path=self.path.decode("utf-8")
         # self.path=self.path.decode("utf8")
-
-
-       
 
         # 定义当前坐标系
         self.coordinateSystem = coordinateSystem
@@ -181,18 +174,17 @@ class M3DFileUtil:
             # 初始化文件中的一些参数
             self.__magicHardCoding()
 
-
     def __getDesktop(self):
-        key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER,r'Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders')
+        key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER,
+                              r'Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders')
         return _winreg.QueryValueEx(key, "Desktop")[0]
-
 
     def __magicHardCoding(self):
 
         self.__strHeaderSystem = self.__strHeaderSystem + \
                                  getSystemCommands(self.coordinateSystem)
 
-        #根据坐标系初始化数值
+        # 根据坐标系初始化数值
         x1Start = x1Stop = x1Step = x2Start = x2Stop = x2Step = x3Start = x3Stop = x3Step = "检查坐标系"
         if self.coordinateSystem == self.CoordinateSystem.rectangularSys:
             x1Start = "0mm"
@@ -227,7 +219,6 @@ class M3DFileUtil:
 
         self.__strRun = self.__strRun + "\nSTART ;\n" + "STOP ;\n"
 
-
     def __addOrUpdateCommands(self, id, classification, content, extras=[]):
         """
         添加或更新一个命令组
@@ -244,11 +235,10 @@ class M3DFileUtil:
                 isExist = True
                 break
         # 判断如果是注释的话，isExit保持为False,不然由于前面相同的注释会被替换
-        if re.search(r"!+",id):
-            isExist=False
+        if re.search(r"!+", id):
+            isExist = False
         if not isExist:
             self.commandsManager.append([id, classification, content, extras])
-
 
     def __deleteComannds(self, id):
         """
@@ -259,7 +249,6 @@ class M3DFileUtil:
         for commands in self.commandsManager:
             if commands[self.__ManagerIndex.COMMANDS_ID] == id:
                 self.commandsManager.remove(commands)
-
 
     def __sortCommands(self, classification, content):
         """
@@ -323,7 +312,6 @@ class M3DFileUtil:
         if classification == self.__Classification.RUN:
             self.__strRun = self.__strRun + content
 
-
     def __refreshM3DFileStr(self):
         """
         根据commandManager获得m3d文件的字符串
@@ -380,7 +368,6 @@ class M3DFileUtil:
 
         return self.__fileStr
 
-
     def __resetCommandsStr(self):
         """
         重置不同命令组类型对应的字符串
@@ -408,14 +395,12 @@ class M3DFileUtil:
         # 添加坐标系信息
         self.__magicHardCoding()
 
-
     def __getLatestManagerWithPhysics(self):
         # 重置manager
         self.commandsManager = []
 
         # 更新物理部分的Comannds，实则修改manager
         self.__updatePhysicsInfo()
-
 
     def __getLatestManagerWithEngineering(self):
         # 重置manager
@@ -424,14 +409,12 @@ class M3DFileUtil:
         # 更新物理部分的Comannds，实则修改manager
         self.__updateEngineeringInfo()
 
-
     def __getLatestManagerWithModeling(self):
         # 重置manager
         self.commandsManager = []
 
         # 更新物理部分的Comannds，实则修改manager
         self.__updateModelingInfo()
-
 
     def getLatestM3DFileStr(self):
         # 重置各命令组对应字符串，防止多次调用时异常
@@ -453,13 +436,11 @@ class M3DFileUtil:
         # 更新工程部分的Comannds，实则修改manager
         self.__updateEngineeringInfo()
 
-
         # 重新生成m3d文件的字符串
         self.__refreshM3DFileStr()
 
         # 返回文件字符串
         return self.__fileStr
-
 
     def writeToFile(self, isRefresh=False):
 
@@ -475,8 +456,6 @@ class M3DFileUtil:
         fo.write(str.encode("UTF-8"))
         fo.close()
 
-
-
     def deleteFile(self):
         """删除m3d文件"""
         # 如果文件存在
@@ -487,11 +466,9 @@ class M3DFileUtil:
             # 则返回文件不存在
             sayz("no such file")
 
-
     def saveCommandsManager(self):
         # 将commandsManager转化为json并保存到文件对应的全局变量中
         FreeCAD.ActiveDocument.Company = json.dumps(self.commandsManager)
-
 
     ########################### 以下是为任务控制部分提供的获取不同类型图像个数的接口##########################
 
@@ -505,7 +482,6 @@ class M3DFileUtil:
                 num = num + 1
         return num
 
-
     def getVectorGraphNum(self):
 
         self.__getLatestManagerWithPhysics()
@@ -515,7 +491,6 @@ class M3DFileUtil:
             if commands[self.__ManagerIndex.COMMANDS_CLASSIFICATION] == self.__Classification.ALL_PLOTS_VECTOR:
                 num = num + 1
         return num
-
 
     def getPhasespaceGraphNum(self):
 
@@ -527,7 +502,6 @@ class M3DFileUtil:
                 num = num + 1
         return num
 
-
     def getObserveGraphNum(self):
 
         self.__getLatestManagerWithPhysics()
@@ -535,12 +509,15 @@ class M3DFileUtil:
         num = 0
         for commands in self.commandsManager:
             if commands[self.__ManagerIndex.COMMANDS_CLASSIFICATION] == self.__Classification.ALL_PLOTS_OBSERVE:
-                #这里计数按照命令中分号个数+“FFT”的个数，“FFT”记为两个
-                thisNum=commands[self.__ManagerIndex.COMMANDS_CONTENT].count(";")+commands[self.__ManagerIndex.COMMANDS_CONTENT].count("FFT")
-                FreeCAD.Console.PrintMessage("COMMAND OBSERVER :   "+ commands[self.__ManagerIndex.COMMANDS_CONTENT]+ ";;;;;  "+str(commands[self.__ManagerIndex.COMMANDS_CONTENT].count(";"))+"FFT  :"+str(commands[self.__ManagerIndex.COMMANDS_CONTENT].count("FFT"))+"\n")
+                # 这里计数按照命令中分号个数+“FFT”的个数，“FFT”记为两个
+                thisNum = commands[self.__ManagerIndex.COMMANDS_CONTENT].count(";") + commands[
+                    self.__ManagerIndex.COMMANDS_CONTENT].count("FFT")
+                FreeCAD.Console.PrintMessage(
+                    "COMMAND OBSERVER :   " + commands[self.__ManagerIndex.COMMANDS_CONTENT] + ";;;;;  " + str(
+                        commands[self.__ManagerIndex.COMMANDS_CONTENT].count(";")) + "FFT  :" + str(
+                        commands[self.__ManagerIndex.COMMANDS_CONTENT].count("FFT")) + "\n")
                 num = num + thisNum
         return num
-
 
     def getRangeGraphNum(self):
 
@@ -552,7 +529,6 @@ class M3DFileUtil:
                 num = num + 1
         return num
 
-
     def getIterationTime(self):
 
         self.__getLatestManagerWithEngineering()
@@ -561,7 +537,6 @@ class M3DFileUtil:
             if commands[self.__ManagerIndex.COMMANDS_CLASSIFICATION] == self.__Classification.SIMULATION_SETTINGS:
                 content = commands[self.__ManagerIndex.COMMANDS_CONTENT]
                 return getTimeDomainComputingParameter(content)[0]
-
 
     ########################### 以下是为可视化部分提供的获取图像对应命令的接口##########################
 
@@ -575,14 +550,13 @@ class M3DFileUtil:
                 content = commands[self.__ManagerIndex.COMMANDS_CONTENT]
 
                 # 判断是否是SHADE类型
-                if content[len(content)-7:len(content)-2] == "SHADE":
+                if content[len(content) - 7:len(content) - 2] == "SHADE":
                     isShade = True
                 else:
                     isShade = False
 
-                returnList.append([content,isShade])
+                returnList.append([content, isShade])
         return returnList
-
 
     def getVectorGraphName(self):
 
@@ -594,7 +568,6 @@ class M3DFileUtil:
                 returnList.append(commands[self.__ManagerIndex.COMMANDS_CONTENT])
         return returnList
 
-
     def getPhasespaceGraphName(self):
 
         self.__getLatestManagerWithPhysics()
@@ -605,17 +578,14 @@ class M3DFileUtil:
                 returnList.append(commands[self.__ManagerIndex.COMMANDS_CONTENT])
         return returnList
 
-
     def getObserveGraphName(self):
 
         self.__getLatestManagerWithPhysics()
-
         returnList = []
         for commands in self.commandsManager:
             if commands[self.__ManagerIndex.COMMANDS_CLASSIFICATION] == self.__Classification.ALL_PLOTS_OBSERVE:
                 returnList.append(commands[self.__ManagerIndex.COMMANDS_CONTENT])
         return returnList
-
 
     def getRangeGraphName(self):
 
@@ -627,45 +597,64 @@ class M3DFileUtil:
                 returnList.append(commands[self.__ManagerIndex.COMMANDS_CONTENT])
         return returnList
 
+    # 去注释、去末尾空格
+    def removeAnnotation(self, text):
+        # 去掉注释
+        _index = text.find("!")
+        if _index != -1:
+            text = text[0:_index]
+            # 去掉末尾的空格
+        text = text.rstrip()
+        return text
 
     def getStructNameStr(self):
         self.__getLatestManagerWithModeling()
         self.__refreshM3DFileStr()
         return self.__strPropertiesAndProcesses
+
     ######################################### 以下是从M3DFileEditor工作台调用的接口#####################
     import re
     def getPoltNameForM3dFileEditor(self):
-        resultList=[]
-        CONTOURList=[]
-        VECTORList=[]
-        PHASESPACEList=[]
-        OBSERVEList=[]
-        RANGEList=[]
-        StructsName=""
-        nDURATION=0
-        fo=open(self.path,"r")
-        text=""
-        #用一个string数组来存放临时的m3d行，以便后面找对应的变量时用
-        textList=[]
+        resultList = []
+        CONTOURList = []
+        VECTORList = []
+        PHASESPACEList = []
+        OBSERVEList = []
+        RANGEList = []
+        StructsName = ""
+        nDURATION = 0
+        fo = open(self.path, "r")
+        text = ""
+        _cmd = ""
+        # 用一个string数组来存放临时的m3d行，以便后面找对应的变量时用
+        textList = []
         for line in fo.readlines():
             # 去掉开头的空格
-            text=text+line.strip()
-            #append
-            textList.append(text)
+            _cmd = _cmd + line.strip()
+            _cmd = self.removeAnnotation(_cmd)
+
+            while _cmd.find(";") != -1:
+                _index = _cmd.find(";")
+                text = _cmd[0:_index + 1]
+                _cmd = _cmd[_index + 2: len(_cmd)]
+                # append
+                textList.append(text)
+
+        for text in textList:
             if not text.startswith("!"):
                 if not text.endswith(";"):
-                    text=text+" "
+                    text = text + " "
                     pass
                 else:
-                    #upper()是因为关键字不区分大小写
-                    #是否以CONTOUR开头
+                    # upper()是因为关键字不区分大小写
+                    # 是否以CONTOUR开头
                     if text.upper().startswith("CONTOUR "):
                         if text.upper().endswith("SHADE;"):
-                            CONTOURList.append([text,True])
+                            CONTOURList.append([text, True])
                         else:
-                            CONTOURList.append([text,False])
+                            CONTOURList.append([text, False])
                         pass
-                    #是否以VECTOR开头
+                    # 是否以VECTOR开头
                     elif text.upper().startswith("VECTOR "):
                         VECTORList.append(text)
                         pass
@@ -678,63 +667,56 @@ class M3DFileUtil:
                     elif text.upper().startswith("RANGE "):
                         RANGEList.append(text)
                         pass
-                    elif text.upper().startswith("CONDUCTANCE ") or\
-                         text.upper().startswith("DIELECTRIC ") or \
-                         text.upper().startswith("CONDUCTOR ") or\
-                         text.upper().startswith("VOID "):
-                        StructsName=StructsName+text+"\n"
+                    elif text.upper().startswith("CONDUCTANCE ") or \
+                            text.upper().startswith("DIELECTRIC ") or \
+                            text.upper().startswith("CONDUCTOR ") or \
+                            text.upper().startswith("VOID "):
+                        StructsName = StructsName + text + "\n"
                         pass
                     elif text.upper().startswith("DURATION "):
-                        FreeCAD.Console.PrintMessage("DURATION\n")
-                        nums=re.findall(r"\d+",text)
-                        nDURATION=""
-                        if len(nums)>0:
-                            nDURATION=int(nums[0])
-                        else:
-                            try:
-                                # @fubiao 这里可能用的是参数
-                                nDURATION=text.split(" ")[1].replace(";","")
-                                param=""
-                                #找到这个参量对应的等式
-                                for paramLine in textList:
-                                    params=re.findall(r"\b"+nDURATION+"[^;]*[;]",paramLine,re.I)
-                                    if len(params)>0:
-                                        param=params[0]
-                                        nDURATION=Modeling.Common.Tools.UnitTools.turnIterTime("",param)
-                                        break
-                            except:
-                                FreeCAD.Console.PrintError("\nM3DFileUtil:getPoltNameForM3dFileEditor\n")
-                        
+                        # FreeCAD.Console.PrintMessage("DURATION\n")
+                        # nums=re.findall(r"\d+",text)
+                        nDURATION = ""
+                        # if len(nums)>0:
+                        #     nDURATION=int(nums[0])
+                        # else:
+                        #     try:
+                        #         # @fubiao 这里可能用的是参数
+                        #         nDURATION=text.split(" ")[1].replace(";","")
+                        #         param=""
+                        #         #找到这个参量对应的等式
+                        #         for paramLine in textList:
+                        #             params=re.findall(r"\b"+nDURATION+"[^;]*[;]",paramLine,re.I)
+                        #             if len(params)>0:
+                        #                 param=params[0]
+                        #                 nDURATION=Modeling.Common.Tools.UnitTools.turnIterTime("",param)
+                        #                 break
+                        #     except:
+                        #         FreeCAD.Console.PrintError("\nM3DFileUtil:getPoltNameForM3dFileEditor\n")
+
                         pass
-            text=""
-        resultList=[CONTOURList,VECTORList,PHASESPACEList,OBSERVEList,RANGEList,StructsName,nDURATION]
+            text = ""
+        resultList = [CONTOURList, VECTORList, PHASESPACEList, OBSERVEList, RANGEList, StructsName, nDURATION]
         return resultList
         pass
-
 
     def nNumOfContourGraphNameForM3dFileEditor(self):
         pass
 
-
     def nNumOfVectorGraphNameForM3dFileEditor(self):
         pass
-
 
     def nNumOfPhasespaceGraphNameForM3dFileEditor(self):
         pass
 
-
     def nNumOfObserveGraphNameForM3dFileEditor(self):
         pass
-
 
     def nNumOfRangeGraphNameForM3dFileEditor(self):
         pass
 
-
     def getStructNameStrForM3dFileEditor(self):
         pass
-
 
     ########################## 以下为根据几何建模或参数建模更新m3d文件v2 ################################
     def __updateParameterInfo(self):
@@ -746,7 +728,6 @@ class M3DFileUtil:
 
         for info in infoList:
             self.updateParameter(info[0], info[1])
-
 
     def __updateModelingInfo(self):
         infoList = Modeling.Common.Tools.ModelingCommandForM3dFile.getModelingCommands()
@@ -776,296 +757,309 @@ class M3DFileUtil:
                                         info[INFO_PARAMETER][4], info[INFO_PARAMETER][5],
                                         info[INFO_PARAMETER][6], info[INFO_PARAMETER][7],
                                         info[INFO_PARAMETER][8], info[INFO_PARAMETER][9],
-                                        info[INFO_PARAMETER][10],info[INFO_PARAMETER][11],
-                                        info[INFO_PARAMETER][12],info[INFO_PARAMETER][13],
-                                        info[INFO_PARAMETER][14],info[INFO_PARAMETER][15],
-                                        info[INFO_PARAMETER][16],info[INFO_PARAMETER][17],
+                                        info[INFO_PARAMETER][10], info[INFO_PARAMETER][11],
+                                        info[INFO_PARAMETER][12], info[INFO_PARAMETER][13],
+                                        info[INFO_PARAMETER][14], info[INFO_PARAMETER][15],
+                                        info[INFO_PARAMETER][16], info[INFO_PARAMETER][17],
                                         info[INFO_PARAMETER][18])
 
             # 线(Line_Oblique)
             if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Line_Oblique:
-                self.updateObliqueLineCommands(info[INFO_PARAMETER][0],info[INFO_PARAMETER][1],
-                                        info[INFO_PARAMETER][2], info[INFO_PARAMETER][3],
-                                        info[INFO_PARAMETER][4], info[INFO_PARAMETER][5],
-                                        info[INFO_PARAMETER][6], info[INFO_PARAMETER][7],
-                                        info[INFO_PARAMETER][8], info[INFO_PARAMETER][9],
-                                        info[INFO_PARAMETER][10],info[INFO_PARAMETER][11],
-                                        info[INFO_PARAMETER][12],info[INFO_PARAMETER][13],
-                                        info[INFO_PARAMETER][14],info[INFO_PARAMETER][15],
-                                        info[INFO_PARAMETER][16],info[INFO_PARAMETER][17],
-                                        info[INFO_PARAMETER][18])
+                self.updateObliqueLineCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
+                                               info[INFO_PARAMETER][2], info[INFO_PARAMETER][3],
+                                               info[INFO_PARAMETER][4], info[INFO_PARAMETER][5],
+                                               info[INFO_PARAMETER][6], info[INFO_PARAMETER][7],
+                                               info[INFO_PARAMETER][8], info[INFO_PARAMETER][9],
+                                               info[INFO_PARAMETER][10], info[INFO_PARAMETER][11],
+                                               info[INFO_PARAMETER][12], info[INFO_PARAMETER][13],
+                                               info[INFO_PARAMETER][14], info[INFO_PARAMETER][15],
+                                               info[INFO_PARAMETER][16], info[INFO_PARAMETER][17],
+                                               info[INFO_PARAMETER][18])
 
             # 面(Area_Conformal)
             if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Area_Conformal:
-                self.updateConformalAreaCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][2], info[INFO_PARAMETER][3],
-                                        info[INFO_PARAMETER][4], info[INFO_PARAMETER][5],
-                                        info[INFO_PARAMETER][6], info[INFO_PARAMETER][7],
-                                        info[INFO_PARAMETER][8], info[INFO_PARAMETER][9],
-                                        info[INFO_PARAMETER][10],info[INFO_PARAMETER][11],
-                                        info[INFO_PARAMETER][12],info[INFO_PARAMETER][13],
-                                        info[INFO_PARAMETER][14],info[INFO_PARAMETER][15],
-                                        info[INFO_PARAMETER][16],info[INFO_PARAMETER][17],
-                                        info[INFO_PARAMETER][18])
+                self.updateConformalAreaCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][2],
+                                                 info[INFO_PARAMETER][3],
+                                                 info[INFO_PARAMETER][4], info[INFO_PARAMETER][5],
+                                                 info[INFO_PARAMETER][6], info[INFO_PARAMETER][7],
+                                                 info[INFO_PARAMETER][8], info[INFO_PARAMETER][9],
+                                                 info[INFO_PARAMETER][10], info[INFO_PARAMETER][11],
+                                                 info[INFO_PARAMETER][12], info[INFO_PARAMETER][13],
+                                                 info[INFO_PARAMETER][14], info[INFO_PARAMETER][15],
+                                                 info[INFO_PARAMETER][16], info[INFO_PARAMETER][17],
+                                                 info[INFO_PARAMETER][18])
 
             # 面(Area_Rectangular)
             if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Area_Rectangular:
-                self.updateRectangularAreaCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][2], info[INFO_PARAMETER][3],
-                                        info[INFO_PARAMETER][4], info[INFO_PARAMETER][5],
-                                        info[INFO_PARAMETER][6], info[INFO_PARAMETER][7],
-                                        info[INFO_PARAMETER][8], info[INFO_PARAMETER][9],
-                                        info[INFO_PARAMETER][10],info[INFO_PARAMETER][11],
-                                        info[INFO_PARAMETER][12],info[INFO_PARAMETER][13],
-                                        info[INFO_PARAMETER][14],info[INFO_PARAMETER][15],
-                                        info[INFO_PARAMETER][16],info[INFO_PARAMETER][17],
-                                        info[INFO_PARAMETER][18])
+                self.updateRectangularAreaCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][2],
+                                                   info[INFO_PARAMETER][3],
+                                                   info[INFO_PARAMETER][4], info[INFO_PARAMETER][5],
+                                                   info[INFO_PARAMETER][6], info[INFO_PARAMETER][7],
+                                                   info[INFO_PARAMETER][8], info[INFO_PARAMETER][9],
+                                                   info[INFO_PARAMETER][10], info[INFO_PARAMETER][11],
+                                                   info[INFO_PARAMETER][12], info[INFO_PARAMETER][13],
+                                                   info[INFO_PARAMETER][14], info[INFO_PARAMETER][15],
+                                                   info[INFO_PARAMETER][16], info[INFO_PARAMETER][17],
+                                                   info[INFO_PARAMETER][18])
 
             # 面(Area_Polygonal)
             if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Area_Polygonal:
-                self.updatePolygonalAreaCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1], info[INFO_PARAMETER][2],
-                                        info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
-                                        info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
-                                        info[INFO_PARAMETER][7],
-                                        info[INFO_PARAMETER][8],info[INFO_PARAMETER][9],
-                                        info[INFO_PARAMETER][10],info[INFO_PARAMETER][11],
-                                        info[INFO_PARAMETER][12],info[INFO_PARAMETER][13],
-                                        info[INFO_PARAMETER][14],info[INFO_PARAMETER][15],
-                                        info[INFO_PARAMETER][16])
+                self.updatePolygonalAreaCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
+                                                 info[INFO_PARAMETER][2],
+                                                 info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
+                                                 info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
+                                                 info[INFO_PARAMETER][7],
+                                                 info[INFO_PARAMETER][8], info[INFO_PARAMETER][9],
+                                                 info[INFO_PARAMETER][10], info[INFO_PARAMETER][11],
+                                                 info[INFO_PARAMETER][12], info[INFO_PARAMETER][13],
+                                                 info[INFO_PARAMETER][14], info[INFO_PARAMETER][15],
+                                                 info[INFO_PARAMETER][16])
 
             # 体(Vol_Conformal 正投影体)
             if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Conformal:
                 # FreeCAD.Console.PrintError('\n正投影体获取参数并进入判断语句\n')
-                self.updateConformalVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1], info[INFO_PARAMETER][2],
-                                        info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
-                                        info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
-                                        info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
-                                        info[INFO_PARAMETER][9],
-                                        info[INFO_PARAMETER][10],info[INFO_PARAMETER][11],
-                                        info[INFO_PARAMETER][12],info[INFO_PARAMETER][13],
-                                        info[INFO_PARAMETER][14],info[INFO_PARAMETER][15],
-                                        info[INFO_PARAMETER][16],info[INFO_PARAMETER][17],
-                                        info[INFO_PARAMETER][18])
+                self.updateConformalVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
+                                                   info[INFO_PARAMETER][2],
+                                                   info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
+                                                   info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
+                                                   info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
+                                                   info[INFO_PARAMETER][9],
+                                                   info[INFO_PARAMETER][10], info[INFO_PARAMETER][11],
+                                                   info[INFO_PARAMETER][12], info[INFO_PARAMETER][13],
+                                                   info[INFO_PARAMETER][14], info[INFO_PARAMETER][15],
+                                                   info[INFO_PARAMETER][16], info[INFO_PARAMETER][17],
+                                                   info[INFO_PARAMETER][18])
 
             # 体(Vol_SpecialCone 圆锥或圆台)
             if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_SpecialCone:
                 self.updateConeVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1], info[INFO_PARAMETER][2],
-                                        info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
-                                        info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
-                                        info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
-                                        info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
-                                        info[INFO_PARAMETER][11],
-                                        info[INFO_PARAMETER][12],info[INFO_PARAMETER][13],
-                                        info[INFO_PARAMETER][14],info[INFO_PARAMETER][15],
-                                        info[INFO_PARAMETER][16],info[INFO_PARAMETER][17],
-                                        info[INFO_PARAMETER][18],info[INFO_PARAMETER][19],
-                                        info[INFO_PARAMETER][20])
+                                              info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
+                                              info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
+                                              info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
+                                              info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
+                                              info[INFO_PARAMETER][11],
+                                              info[INFO_PARAMETER][12], info[INFO_PARAMETER][13],
+                                              info[INFO_PARAMETER][14], info[INFO_PARAMETER][15],
+                                              info[INFO_PARAMETER][16], info[INFO_PARAMETER][17],
+                                              info[INFO_PARAMETER][18], info[INFO_PARAMETER][19],
+                                              info[INFO_PARAMETER][20])
 
             # 体(Vol_Cylinder 圆柱)
             if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Cylinder:
-                self.updateCylindricalVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1], info[INFO_PARAMETER][2],
-                                        info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
-                                        info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
-                                        info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
-                                        info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
-                                        info[INFO_PARAMETER][11],info[INFO_PARAMETER][12],
-                                        info[INFO_PARAMETER][13],info[INFO_PARAMETER][14],
-                                        info[INFO_PARAMETER][15],info[INFO_PARAMETER][16],
-                                        info[INFO_PARAMETER][17],info[INFO_PARAMETER][18],
-                                        info[INFO_PARAMETER][19])
+                self.updateCylindricalVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
+                                                     info[INFO_PARAMETER][2],
+                                                     info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
+                                                     info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
+                                                     info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
+                                                     info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
+                                                     info[INFO_PARAMETER][11], info[INFO_PARAMETER][12],
+                                                     info[INFO_PARAMETER][13], info[INFO_PARAMETER][14],
+                                                     info[INFO_PARAMETER][15], info[INFO_PARAMETER][16],
+                                                     info[INFO_PARAMETER][17], info[INFO_PARAMETER][18],
+                                                     info[INFO_PARAMETER][19])
 
             # 体(Vol_Annular 环形体)
             if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Annular:
-                self.updateAnnularVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1], info[INFO_PARAMETER][2],
-                                        info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
-                                        info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
-                                        info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
-                                        info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
-                                        info[INFO_PARAMETER][11],
-                                        info[INFO_PARAMETER][12],info[INFO_PARAMETER][13],
-                                        info[INFO_PARAMETER][14],info[INFO_PARAMETER][15],
-                                        info[INFO_PARAMETER][16],info[INFO_PARAMETER][17],
-                                        info[INFO_PARAMETER][18],info[INFO_PARAMETER][19],
-                                        info[INFO_PARAMETER][20])
+                self.updateAnnularVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
+                                                 info[INFO_PARAMETER][2],
+                                                 info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
+                                                 info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
+                                                 info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
+                                                 info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
+                                                 info[INFO_PARAMETER][11],
+                                                 info[INFO_PARAMETER][12], info[INFO_PARAMETER][13],
+                                                 info[INFO_PARAMETER][14], info[INFO_PARAMETER][15],
+                                                 info[INFO_PARAMETER][16], info[INFO_PARAMETER][17],
+                                                 info[INFO_PARAMETER][18], info[INFO_PARAMETER][19],
+                                                 info[INFO_PARAMETER][20])
 
             # 体(Vol_Annular_Section 部分环形体)
             if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Annular_Section:
-                self.updateAnnularSectionVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1], info[INFO_PARAMETER][2],
-                                        info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
-                                        info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
-                                        info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
-                                        info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
-                                        info[INFO_PARAMETER][11], info[INFO_PARAMETER][12],
-                                        info[INFO_PARAMETER][13],
-                                        info[INFO_PARAMETER][12],info[INFO_PARAMETER][13],
-                                        info[INFO_PARAMETER][14],info[INFO_PARAMETER][15],
-                                        info[INFO_PARAMETER][16],info[INFO_PARAMETER][17],
-                                        info[INFO_PARAMETER][18],info[INFO_PARAMETER][19],
-                                        info[INFO_PARAMETER][20])
-
-            # 体(Vol_Parallelepipedal 平行六面体)
-            if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Parallelepipedal:
-                self.updateParallelepipedalVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
+                self.updateAnnularSectionVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
                                                         info[INFO_PARAMETER][2],
                                                         info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
                                                         info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
                                                         info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
                                                         info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
-                                                        info[INFO_PARAMETER][11],
-                                                        info[INFO_PARAMETER][12],info[INFO_PARAMETER][13],
-                                                        info[INFO_PARAMETER][14],info[INFO_PARAMETER][15],
-                                                        info[INFO_PARAMETER][16],info[INFO_PARAMETER][17],
-                                                        info[INFO_PARAMETER][18],info[INFO_PARAMETER][19],
+                                                        info[INFO_PARAMETER][11], info[INFO_PARAMETER][12],
+                                                        info[INFO_PARAMETER][13],
+                                                        info[INFO_PARAMETER][12], info[INFO_PARAMETER][13],
+                                                        info[INFO_PARAMETER][14], info[INFO_PARAMETER][15],
+                                                        info[INFO_PARAMETER][16], info[INFO_PARAMETER][17],
+                                                        info[INFO_PARAMETER][18], info[INFO_PARAMETER][19],
                                                         info[INFO_PARAMETER][20])
+
+            # 体(Vol_Parallelepipedal 平行六面体)
+            if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Parallelepipedal:
+                self.updateParallelepipedalVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
+                                                          info[INFO_PARAMETER][2],
+                                                          info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
+                                                          info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
+                                                          info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
+                                                          info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
+                                                          info[INFO_PARAMETER][11],
+                                                          info[INFO_PARAMETER][12], info[INFO_PARAMETER][13],
+                                                          info[INFO_PARAMETER][14], info[INFO_PARAMETER][15],
+                                                          info[INFO_PARAMETER][16], info[INFO_PARAMETER][17],
+                                                          info[INFO_PARAMETER][18], info[INFO_PARAMETER][19],
+                                                          info[INFO_PARAMETER][20])
 
             # 体(Vol_Spherical 球体)
             if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Spherical:
                 self.updateSphericalVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
-                                                        info[INFO_PARAMETER][2],
-                                                        info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
-                                                        info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
-                                                        info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
-                                                        info[INFO_PARAMETER][9],
-                                                        info[INFO_PARAMETER][10],info[INFO_PARAMETER][11],
-                                                        info[INFO_PARAMETER][12],info[INFO_PARAMETER][13],
-                                                        info[INFO_PARAMETER][14],info[INFO_PARAMETER][15],
-                                                        info[INFO_PARAMETER][16],info[INFO_PARAMETER][17],
-                                                        info[INFO_PARAMETER][18])
+                                                   info[INFO_PARAMETER][2],
+                                                   info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
+                                                   info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
+                                                   info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
+                                                   info[INFO_PARAMETER][9],
+                                                   info[INFO_PARAMETER][10], info[INFO_PARAMETER][11],
+                                                   info[INFO_PARAMETER][12], info[INFO_PARAMETER][13],
+                                                   info[INFO_PARAMETER][14], info[INFO_PARAMETER][15],
+                                                   info[INFO_PARAMETER][16], info[INFO_PARAMETER][17],
+                                                   info[INFO_PARAMETER][18])
 
             # 体(Vol_Wedge 楔形体)
             if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Wedge:
-                self.updateWedgeVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1], info[INFO_PARAMETER][2],
-                                        info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
-                                        info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
-                                        info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
-                                        info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
-                                        info[INFO_PARAMETER][11], info[INFO_PARAMETER][12],
-                                        info[INFO_PARAMETER][13],
-                                        info[INFO_PARAMETER][14],info[INFO_PARAMETER][15],
-                                        info[INFO_PARAMETER][16],info[INFO_PARAMETER][17],
-                                        info[INFO_PARAMETER][18],info[INFO_PARAMETER][19],
-                                        info[INFO_PARAMETER][20],info[INFO_PARAMETER][21],
-                                        info[INFO_PARAMETER][22])
+                self.updateWedgeVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
+                                               info[INFO_PARAMETER][2],
+                                               info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
+                                               info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
+                                               info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
+                                               info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
+                                               info[INFO_PARAMETER][11], info[INFO_PARAMETER][12],
+                                               info[INFO_PARAMETER][13],
+                                               info[INFO_PARAMETER][14], info[INFO_PARAMETER][15],
+                                               info[INFO_PARAMETER][16], info[INFO_PARAMETER][17],
+                                               info[INFO_PARAMETER][18], info[INFO_PARAMETER][19],
+                                               info[INFO_PARAMETER][20], info[INFO_PARAMETER][21],
+                                               info[INFO_PARAMETER][22])
 
             # 体(Vol_Pyramid 棱锥体)
             if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Pyramid:
-                self.updatePyramidVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1], info[INFO_PARAMETER][2],
-                                        info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
-                                        info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
-                                        info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
-                                        info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
-                                        info[INFO_PARAMETER][11], info[INFO_PARAMETER][12],
-                                        info[INFO_PARAMETER][13],info[INFO_PARAMETER][14],
-                                        info[INFO_PARAMETER][15],info[INFO_PARAMETER][16],
-                                        info[INFO_PARAMETER][17],info[INFO_PARAMETER][18],
-                                        info[INFO_PARAMETER][19],info[INFO_PARAMETER][20],
-                                        info[INFO_PARAMETER][21])
+                self.updatePyramidVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
+                                                 info[INFO_PARAMETER][2],
+                                                 info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
+                                                 info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
+                                                 info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
+                                                 info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
+                                                 info[INFO_PARAMETER][11], info[INFO_PARAMETER][12],
+                                                 info[INFO_PARAMETER][13], info[INFO_PARAMETER][14],
+                                                 info[INFO_PARAMETER][15], info[INFO_PARAMETER][16],
+                                                 info[INFO_PARAMETER][17], info[INFO_PARAMETER][18],
+                                                 info[INFO_PARAMETER][19], info[INFO_PARAMETER][20],
+                                                 info[INFO_PARAMETER][21])
 
             # 体(Vol_Tetrahedron 四面体)
             if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Tetrahedron:
-                self.updateTetrahedronVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1], info[INFO_PARAMETER][2],
-                                        info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
-                                        info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
-                                        info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
-                                        info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
-                                        info[INFO_PARAMETER][11],
-                                        info[INFO_PARAMETER][12],info[INFO_PARAMETER][13],
-                                        info[INFO_PARAMETER][14],info[INFO_PARAMETER][15],
-                                        info[INFO_PARAMETER][16],info[INFO_PARAMETER][17],
-                                        info[INFO_PARAMETER][18],info[INFO_PARAMETER][19],
-                                        info[INFO_PARAMETER][20])
+                self.updateTetrahedronVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
+                                                     info[INFO_PARAMETER][2],
+                                                     info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
+                                                     info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
+                                                     info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
+                                                     info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
+                                                     info[INFO_PARAMETER][11],
+                                                     info[INFO_PARAMETER][12], info[INFO_PARAMETER][13],
+                                                     info[INFO_PARAMETER][14], info[INFO_PARAMETER][15],
+                                                     info[INFO_PARAMETER][16], info[INFO_PARAMETER][17],
+                                                     info[INFO_PARAMETER][18], info[INFO_PARAMETER][19],
+                                                     info[INFO_PARAMETER][20])
 
             # 体(Vol_Rhombus菱形体)
             if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Rhombus:
                 self.updateRhombusVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
+                                                 info[INFO_PARAMETER][2],
+                                                 info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
+                                                 info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
+                                                 info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
+                                                 info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
+                                                 info[INFO_PARAMETER][11], info[INFO_PARAMETER][12],
+                                                 info[INFO_PARAMETER][13], info[INFO_PARAMETER][14],
+                                                 info[INFO_PARAMETER][15],
+                                                 info[INFO_PARAMETER][16], info[INFO_PARAMETER][17],
+                                                 info[INFO_PARAMETER][18], info[INFO_PARAMETER][19],
+                                                 info[INFO_PARAMETER][20], info[INFO_PARAMETER][21],
+                                                 info[INFO_PARAMETER][22], info[INFO_PARAMETER][23],
+                                                 info[INFO_PARAMETER][24])
+
+            # 体(Vol_Toroidal_Section部分圆环体)
+            if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Toroidal_Section:
+                self.updateToroidalSectionVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
                                                          info[INFO_PARAMETER][2],
                                                          info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
                                                          info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
                                                          info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
                                                          info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
                                                          info[INFO_PARAMETER][11], info[INFO_PARAMETER][12],
-                                                         info[INFO_PARAMETER][13], info[INFO_PARAMETER][14],
-                                                         info[INFO_PARAMETER][15],
-                                                         info[INFO_PARAMETER][16],info[INFO_PARAMETER][17],
-                                                         info[INFO_PARAMETER][18],info[INFO_PARAMETER][19],
-                                                         info[INFO_PARAMETER][20],info[INFO_PARAMETER][21],
-                                                         info[INFO_PARAMETER][22],info[INFO_PARAMETER][23],
-                                                         info[INFO_PARAMETER][24])
-
-            # 体(Vol_Toroidal_Section部分圆环体)
-            if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Toroidal_Section:
-                self.updateToroidalSectionVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1], info[INFO_PARAMETER][2],
-                                        info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
-                                        info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
-                                        info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
-                                        info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
-                                        info[INFO_PARAMETER][11], info[INFO_PARAMETER][12],
-                                        info[INFO_PARAMETER][13],
-                                        info[INFO_PARAMETER][14],info[INFO_PARAMETER][15],
-                                        info[INFO_PARAMETER][16],info[INFO_PARAMETER][17],
-                                        info[INFO_PARAMETER][18],info[INFO_PARAMETER][19],
-                                        info[INFO_PARAMETER][20],info[INFO_PARAMETER][21],
-                                        info[INFO_PARAMETER][22])
+                                                         info[INFO_PARAMETER][13],
+                                                         info[INFO_PARAMETER][14], info[INFO_PARAMETER][15],
+                                                         info[INFO_PARAMETER][16], info[INFO_PARAMETER][17],
+                                                         info[INFO_PARAMETER][18], info[INFO_PARAMETER][19],
+                                                         info[INFO_PARAMETER][20], info[INFO_PARAMETER][21],
+                                                         info[INFO_PARAMETER][22])
 
             # 体(Extruded挤出体)
             if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Extruded:
                 self.updateExtrudedVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
-                                                         info[INFO_PARAMETER][2],
-                                                         info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
-                                                         info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
-                                                         info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
-                                                         info[INFO_PARAMETER][9],
-                                                         info[INFO_PARAMETER][10],info[INFO_PARAMETER][11],
-                                                        info[INFO_PARAMETER][12],info[INFO_PARAMETER][13],
-                                                        info[INFO_PARAMETER][14],info[INFO_PARAMETER][15],
-                                                        info[INFO_PARAMETER][16],info[INFO_PARAMETER][17],
-                                                        info[INFO_PARAMETER][18])
+                                                  info[INFO_PARAMETER][2],
+                                                  info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
+                                                  info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
+                                                  info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
+                                                  info[INFO_PARAMETER][9],
+                                                  info[INFO_PARAMETER][10], info[INFO_PARAMETER][11],
+                                                  info[INFO_PARAMETER][12], info[INFO_PARAMETER][13],
+                                                  info[INFO_PARAMETER][14], info[INFO_PARAMETER][15],
+                                                  info[INFO_PARAMETER][16], info[INFO_PARAMETER][17],
+                                                  info[INFO_PARAMETER][18])
 
             # 体(Vol_Helical螺旋体)
             if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Helical:
                 self.updateHelicalVolumeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
-                                                         info[INFO_PARAMETER][2],
-                                                         info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
-                                                         info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
-                                                         info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
-                                                         info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
-                                                         info[INFO_PARAMETER][11], info[INFO_PARAMETER][12],
-                                                         info[INFO_PARAMETER][13], info[INFO_PARAMETER][14],
-                                                         info[INFO_PARAMETER][15],info[INFO_PARAMETER][16],
-                                                         info[INFO_PARAMETER][17],info[INFO_PARAMETER][18],
-                                                         info[INFO_PARAMETER][19],info[INFO_PARAMETER][20],
-                                                         info[INFO_PARAMETER][21],info[INFO_PARAMETER][22],
-                                                         info[INFO_PARAMETER][23])
-                
+                                                 info[INFO_PARAMETER][2],
+                                                 info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
+                                                 info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
+                                                 info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
+                                                 info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
+                                                 info[INFO_PARAMETER][11], info[INFO_PARAMETER][12],
+                                                 info[INFO_PARAMETER][13], info[INFO_PARAMETER][14],
+                                                 info[INFO_PARAMETER][15], info[INFO_PARAMETER][16],
+                                                 info[INFO_PARAMETER][17], info[INFO_PARAMETER][18],
+                                                 info[INFO_PARAMETER][19], info[INFO_PARAMETER][20],
+                                                 info[INFO_PARAMETER][21], info[INFO_PARAMETER][22],
+                                                 info[INFO_PARAMETER][23])
+
             # 体(阵列体)
             if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Array:
                 self.updateArrayVolumeCommands(info[INFO_PARAMETER], info[2])
             # 体(Vol_ParamArray参数阵列体)
             if info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_ParamArray:
-                self.updateParamArrayVolumeCommands(info[INFO_PARAMETER][0], 
-                                                         info[INFO_PARAMETER][1],
-                                                         info[INFO_PARAMETER][2],info[INFO_PARAMETER][3], 
-                                                         info[INFO_PARAMETER][4],
-                                                         info[INFO_PARAMETER][5], 
-                                                         info[INFO_PARAMETER][6],info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
-                                                         info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],info[INFO_PARAMETER][11])
-            #体（函数体）
-            elif info[INFO_CLASSIFICATION]==Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Function:
-                self.updateFunctionVolumeCommands(info[INFO_PARAMETER][0],
+                self.updateParamArrayVolumeCommands(info[INFO_PARAMETER][0],
                                                     info[INFO_PARAMETER][1],
-                                                    info[INFO_PARAMETER][2],
-                                                    info[INFO_PARAMETER][3],
+                                                    info[INFO_PARAMETER][2], info[INFO_PARAMETER][3],
                                                     info[INFO_PARAMETER][4],
                                                     info[INFO_PARAMETER][5],
-                                                    info[INFO_PARAMETER][6],
-                                                    info[INFO_PARAMETER][7],
+                                                    info[INFO_PARAMETER][6], info[INFO_PARAMETER][7],
                                                     info[INFO_PARAMETER][8],
-                                                    info[INFO_PARAMETER][9],
-                                                    info[INFO_PARAMETER][10],
-                                                    info[INFO_PARAMETER][11],info[INFO_PARAMETER][12],
-                                                    info[INFO_PARAMETER][13],info[INFO_PARAMETER][14],
-                                                    info[INFO_PARAMETER][15],info[INFO_PARAMETER][16],
-                                                    info[INFO_PARAMETER][17],info[INFO_PARAMETER][18],
-                                                    info[INFO_PARAMETER][19])
-            elif info[INFO_CLASSIFICATION]==Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Revolution:
+                                                    info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
+                                                    info[INFO_PARAMETER][11])
+            # 体（函数体）
+            elif info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Function:
+                self.updateFunctionVolumeCommands(info[INFO_PARAMETER][0],
+                                                  info[INFO_PARAMETER][1],
+                                                  info[INFO_PARAMETER][2],
+                                                  info[INFO_PARAMETER][3],
+                                                  info[INFO_PARAMETER][4],
+                                                  info[INFO_PARAMETER][5],
+                                                  info[INFO_PARAMETER][6],
+                                                  info[INFO_PARAMETER][7],
+                                                  info[INFO_PARAMETER][8],
+                                                  info[INFO_PARAMETER][9],
+                                                  info[INFO_PARAMETER][10],
+                                                  info[INFO_PARAMETER][11], info[INFO_PARAMETER][12],
+                                                  info[INFO_PARAMETER][13], info[INFO_PARAMETER][14],
+                                                  info[INFO_PARAMETER][15], info[INFO_PARAMETER][16],
+                                                  info[INFO_PARAMETER][17], info[INFO_PARAMETER][18],
+                                                  info[INFO_PARAMETER][19])
+            elif info[INFO_CLASSIFICATION] == Modeling.Common.Tools.ObjectsTools.ObjectType.Vol_Revolution:
                 self.updataRotateVolumeCommands((info[INFO_PARAMETER][0]),
                                                 info[INFO_PARAMETER][1],
                                                 info[INFO_PARAMETER][2],
@@ -1083,16 +1077,17 @@ class M3DFileUtil:
 
         INFO_CLASSIFICATION = 0
         INFO_PARAMETER = 1
-        
+
         for info in infoList:
             if info[INFO_CLASSIFICATION] == "Mark_Type":
                 self.updateNewMarkCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
-                                        info[INFO_PARAMETER][2],
-                                        info[INFO_PARAMETER][3],
-                                        info[INFO_PARAMETER][4],
-                                        info[INFO_PARAMETER][5],
-                                        info[INFO_PARAMETER][6])
+                                           info[INFO_PARAMETER][2],
+                                           info[INFO_PARAMETER][3],
+                                           info[INFO_PARAMETER][4],
+                                           info[INFO_PARAMETER][5],
+                                           info[INFO_PARAMETER][6])
             pass
+
     def refreshjson(self):
         '''
         bug：创建一根线，Ind使用这根线，修改线的坐标但是m3d不会更新坐标信息\n
@@ -1101,23 +1096,33 @@ class M3DFileUtil:
         '''
         from Physics import PhysicsCommand
         from Modeling.Common.Tools import DocumentTools
-        #json格式数据需要保持原有顺序输出
+        # json格式数据需要保持原有顺序输出
         from collections import OrderedDict
-        REFRESH_JSON = json.loads(FreeCAD.ActiveDocument.Begin,object_pairs_hook=OrderedDict)
+        REFRESH_JSON = json.loads(FreeCAD.ActiveDocument.Begin, object_pairs_hook=OrderedDict)
         # 这个list用来存储需要更新的json，有新的需要更新的部分添加在下面的for循环中
         list_need_refresh = []
         for i in REFRESH_JSON.keys():
-            if REFRESH_JSON[i]['Dlg_Type'] == 'Ind_Type':
+            # if REFRESH_JSON[i]['Dlg_Type'] == 'Ind_Type':
+            #     list_need_refresh.append(i)
+            if REFRESH_JSON[i]["Dlg_Type"] == "Ran_Type":
                 list_need_refresh.append(i)
+
         for x in list_need_refresh:
-            if REFRESH_JSON[x]['Orthogonal_projection_surface'] != '未指定':
-                modelData = DocumentTools.getValueOfLineObjByLable(REFRESH_JSON[x]['Orthogonal_projection_surface'])
-                REFRESH_JSON[x]['start_R'] = modelData[1]
-                REFRESH_JSON[x]['start_Y'] = modelData[2]
-                REFRESH_JSON[x]['start_Z'] = modelData[3]
-                REFRESH_JSON[x]['end_R'] = modelData[4]
-                REFRESH_JSON[x]['end_Y'] = modelData[5]
-                REFRESH_JSON[x]['end_Z'] = modelData[6]
+
+            # if REFRESH_JSON[x]['Orthogonal_projection_surface'] != '未指定':
+            #     modelData = DocumentTools.getValueOfLineObjByLable(REFRESH_JSON[x]['Orthogonal_projection_surface'])
+            #     REFRESH_JSON[x]['start_R'] = modelData[1]
+            #     REFRESH_JSON[x]['start_Y'] = modelData[2]
+            #     REFRESH_JSON[x]['start_Z'] = modelData[3]
+            #     REFRESH_JSON[x]['end_R'] = modelData[4]
+            #     REFRESH_JSON[x]['end_Y'] = modelData[5]
+            #     REFRESH_JSON[x]['end_Z'] = modelData[6]
+            if not REFRESH_JSON[x].has_key("isParticle"):
+                FreeCAD.Console.PrintError("成功添加数据\n")
+                REFRESH_JSON[x]['isParticle'] = False
+                REFRESH_JSON[x]['chooseParticle'] = "CURRENT"
+                REFRESH_JSON[x]['particleType'] = "ELECTRON"
+                REFRESH_JSON[x]['particleAxis'] = "X1"
         FreeCAD.ActiveDocument.Begin = json.dumps(REFRESH_JSON)
         pass
 
@@ -1126,6 +1131,7 @@ class M3DFileUtil:
             self.refreshjson()
         except:
             FreeCAD.Console.PrintMessage("\n刷新json失败！！！")
+            FreeCAD.Console.PrintMessage(traceback.format_exc())
             pass
         from Physics.PhysicsCommand.DlgData import getDlgData
         infoList = getDlgData()
@@ -1169,7 +1175,7 @@ class M3DFileUtil:
                                         info[INFO_PARAMETER][35],
                                         info[INFO_PARAMETER][36], info[INFO_PARAMETER][37],
                                         info[INFO_PARAMETER][38],
-                                        info[INFO_PARAMETER][39],info[INFO_PARAMETER][40],
+                                        info[INFO_PARAMETER][39], info[INFO_PARAMETER][40],
                                         info[INFO_PARAMETER][41]
                                         )
             # EmSE
@@ -1194,32 +1200,32 @@ class M3DFileUtil:
             if info[INFO_CLASSIFICATION] == "Merge_Type":
                 # FreeCAD.Console.PrintError("\n进入加载Merge的数据过程")
                 self.updateMergeCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
-                                        info[INFO_PARAMETER][2],
-                                        info[INFO_PARAMETER][3])
+                                         info[INFO_PARAMETER][2],
+                                         info[INFO_PARAMETER][3])
                 FreeCAD.Console.PrintError("\n执行完merge的数据过程")
             # Populate
             if info[INFO_CLASSIFICATION] == "Populate_Type":
                 # FreeCAD.Console.PrintError("\n进入加载Populate的数据过程")
                 self.updatePopulateCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
-                                        info[INFO_PARAMETER][2],
-                                        info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
-                                        info[INFO_PARAMETER][5],
-                                        info[INFO_PARAMETER][6], info[INFO_PARAMETER][7],
-                                        info[INFO_PARAMETER][8],
-                                        info[INFO_PARAMETER][9], info[INFO_PARAMETER][10])
+                                            info[INFO_PARAMETER][2],
+                                            info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
+                                            info[INFO_PARAMETER][5],
+                                            info[INFO_PARAMETER][6], info[INFO_PARAMETER][7],
+                                            info[INFO_PARAMETER][8],
+                                            info[INFO_PARAMETER][9], info[INFO_PARAMETER][10])
                 FreeCAD.Console.PrintError("\n执行完加载Populate的数据过程")
             # Gasgas
             if info[INFO_CLASSIFICATION] == "Gasgas_Type":
-                self.updataGasgasCommands(info[INFO_PARAMETER][0],info[INFO_PARAMETER][1],
-                                        info[INFO_PARAMETER][2],
-                                        info[INFO_PARAMETER][3])
+                self.updataGasgasCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
+                                          info[INFO_PARAMETER][2],
+                                          info[INFO_PARAMETER][3])
                 FreeCAD.Console.PrintError("\n执行完加载Gasgas的数据过程")
             # Species
             if info[INFO_CLASSIFICATION] == "Species_Type":
                 # FreeCAD.Console.PrintError("\n进入Species的数据过程")
-                self.updataSpeciesCommands(info[INFO_PARAMETER][0],info[INFO_PARAMETER][1],
-                                        info[INFO_PARAMETER][2],
-                                        info[INFO_PARAMETER][3])
+                self.updataSpeciesCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
+                                           info[INFO_PARAMETER][2],
+                                           info[INFO_PARAMETER][3])
                 # FreeCAD.Console.PrintError("\n执行完加载Species的数据过程")
             # free
             if info[INFO_CLASSIFICATION] == "Free_Type":
@@ -1283,11 +1289,13 @@ class M3DFileUtil:
             # Exp
             if info[INFO_CLASSIFICATION] == "ExP_Type":
                 self.updateDriverCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
-                                [info[INFO_PARAMETER][2][0], info[INFO_PARAMETER][2][1], info[INFO_PARAMETER][2][2]],
-                                [info[INFO_PARAMETER][2][3], info[INFO_PARAMETER][2][4], info[INFO_PARAMETER][2][5]],
-                                            info[INFO_PARAMETER][3],
-                                            info[INFO_PARAMETER][4],
-                                            info[INFO_PARAMETER][5])
+                                          [info[INFO_PARAMETER][2][0], info[INFO_PARAMETER][2][1],
+                                           info[INFO_PARAMETER][2][2]],
+                                          [info[INFO_PARAMETER][2][3], info[INFO_PARAMETER][2][4],
+                                           info[INFO_PARAMETER][2][5]],
+                                          info[INFO_PARAMETER][3],
+                                          info[INFO_PARAMETER][4],
+                                          info[INFO_PARAMETER][5])
 
             # Foil
             if info[INFO_CLASSIFICATION] == "Foil_Type":
@@ -1306,14 +1314,14 @@ class M3DFileUtil:
             # Inductor
             if info[INFO_CLASSIFICATION] == "Ind_Type":
                 self.updateInductorCommands(info[INFO_PARAMETER][0],
-                                        info[INFO_PARAMETER][1],
-                                        [info[INFO_PARAMETER][2][0], info[INFO_PARAMETER][2][1],
-                                         info[INFO_PARAMETER][2][2]],
-                                        [info[INFO_PARAMETER][2][3], info[INFO_PARAMETER][2][4],
-                                         info[INFO_PARAMETER][2][5]],
-                                        info[INFO_PARAMETER][3],
-                                        info[INFO_PARAMETER][4][0],
-                                        info[INFO_PARAMETER][4][1])
+                                            info[INFO_PARAMETER][1],
+                                            [info[INFO_PARAMETER][2][0], info[INFO_PARAMETER][2][1],
+                                             info[INFO_PARAMETER][2][2]],
+                                            [info[INFO_PARAMETER][2][3], info[INFO_PARAMETER][2][4],
+                                             info[INFO_PARAMETER][2][5]],
+                                            info[INFO_PARAMETER][3],
+                                            info[INFO_PARAMETER][4][0],
+                                            info[INFO_PARAMETER][4][1])
 
             # EmB
             if info[INFO_CLASSIFICATION] == "EMB_Type":
@@ -1381,7 +1389,8 @@ class M3DFileUtil:
                                        info[INFO_PARAMETER][26],
                                        info[INFO_PARAMETER][27], info[INFO_PARAMETER][28],
                                        info[INFO_PARAMETER][29],
-                                       info[INFO_PARAMETER][30], info[INFO_PARAMETER][31])
+                                       info[INFO_PARAMETER][30], info[INFO_PARAMETER][31],
+                                       info[INFO_PARAMETER][32], info[INFO_PARAMETER][33])
 
             # EmH
             if info[INFO_CLASSIFICATION] == "EMH_Type":
@@ -1459,7 +1468,12 @@ class M3DFileUtil:
                                          info[INFO_PARAMETER][5],
                                          info[INFO_PARAMETER][6], info[INFO_PARAMETER][7],
                                          info[INFO_PARAMETER][8],
-                                         info[INFO_PARAMETER][9])
+                                         info[INFO_PARAMETER][9],
+                                         info[INFO_PARAMETER][10],
+                                         info[INFO_PARAMETER][11],
+                                         info[INFO_PARAMETER][12],
+                                         info[INFO_PARAMETER][13]
+                                         )
 
             # Obs
             if info[INFO_CLASSIFICATION] == "Obs_Type":
@@ -1485,8 +1499,25 @@ class M3DFileUtil:
                                            info[INFO_PARAMETER][25],
                                            info[INFO_PARAMETER][26],
                                            info[INFO_PARAMETER][27],
-                                           info[INFO_PARAMETER][28],)
+                                           info[INFO_PARAMETER][28], )
                 # FreeCAD.Console.PrintError('\n\n\nobserve222222\n')
+            # Sol
+            if info[INFO_CLASSIFICATION] == "Sol_Type":
+                FreeCAD.Console.PrintError('\nSol:\t' + str(info[INFO_PARAMETER]))
+                try:
+                    self.updateSolendCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1],
+                                              info[INFO_PARAMETER][2],
+                                              info[INFO_PARAMETER][3], info[INFO_PARAMETER][4],
+                                              info[INFO_PARAMETER][5],
+                                              info[INFO_PARAMETER][6], info[INFO_PARAMETER][7],
+                                              info[INFO_PARAMETER][8],
+                                              info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
+                                              info[INFO_PARAMETER][11],
+                                              info[INFO_PARAMETER][12], info[INFO_PARAMETER][13],
+                                              info[INFO_PARAMETER][14],
+                                              info[INFO_PARAMETER][15], info[INFO_PARAMETER][16])
+                except:
+                    FreeCAD.Console.PrintError('\n传递Sol参数失败')
             # timerName, type, numType, stratTime="", stopTime="", timeIncrement="", triggerTimes=""
             # timer
             if info[INFO_CLASSIFICATION] == "Timer_Type" or info[INFO_CLASSIFICATION] == "DefTimer_Type":
@@ -1515,7 +1546,6 @@ class M3DFileUtil:
                                          info[INFO_PARAMETER][4], info[INFO_PARAMETER][5],
                                          triggerTimeList)
 
-
     def __updateEngineeringInfo(self):
         from ProjectSetting.Commands.ProjectSettingsDlgData import getDlgData
         infoList = getDlgData()
@@ -1530,7 +1560,7 @@ class M3DFileUtil:
             # WorkSpaceSettings
             if info[INFO_CLASSIFICATION] == "WorkSpaceSettings":
                 try:
-                     flag=info[INFO_PARAMETER][4]
+                    flag = info[INFO_PARAMETER][4]
                 except:
                     pass
                 else:
@@ -1541,12 +1571,11 @@ class M3DFileUtil:
                                                 info[INFO_PARAMETER][2][0], info[INFO_PARAMETER][2][1],
                                                 info[INFO_PARAMETER][2][2],
                                                 info[INFO_PARAMETER][3][0], info[INFO_PARAMETER][3][1],
-                                                info[INFO_PARAMETER][3][2],flag)
-
+                                                info[INFO_PARAMETER][3][2], flag)
 
             # NewMaterical
             if info[INFO_CLASSIFICATION] == "NewMaterical":
-            # if "NewMaterical" in info[INFO_CLASSIFICATION]:
+                # if "NewMaterical" in info[INFO_CLASSIFICATION]:
                 # FreeCAD.Console.PrintError('\n'+str(info[INFO_PARAMETER][0])+'\n')
                 self.updateMaterialCommands(info[INFO_PARAMETER][0],
                                             info[INFO_PARAMETER][1],
@@ -1558,12 +1587,12 @@ class M3DFileUtil:
             # FiledSetting
             if info[INFO_CLASSIFICATION] == "FiledSetting":
                 self.updatePresetCommands(info[INFO_PARAMETER][0][0], info[INFO_PARAMETER][0][1],
-                                            info[INFO_PARAMETER][1][0], info[INFO_PARAMETER][1][1],
-                                            info[INFO_PARAMETER][2][0], info[INFO_PARAMETER][2][1],
-                                            info[INFO_PARAMETER][3][0], info[INFO_PARAMETER][3][1],
-                                            info[INFO_PARAMETER][4][0], info[INFO_PARAMETER][4][1],
-                                            info[INFO_PARAMETER][5][0], info[INFO_PARAMETER][5][1],
-                                            info[INFO_PARAMETER][6])
+                                          info[INFO_PARAMETER][1][0], info[INFO_PARAMETER][1][1],
+                                          info[INFO_PARAMETER][2][0], info[INFO_PARAMETER][2][1],
+                                          info[INFO_PARAMETER][3][0], info[INFO_PARAMETER][3][1],
+                                          info[INFO_PARAMETER][4][0], info[INFO_PARAMETER][4][1],
+                                          info[INFO_PARAMETER][5][0], info[INFO_PARAMETER][5][1],
+                                          info[INFO_PARAMETER][6])
 
             # TimeDomainComputing
             if info[INFO_CLASSIFICATION] == "TimeDomainComputing":
@@ -1590,12 +1619,12 @@ class M3DFileUtil:
                 self.updateTimeComputationCommands(info[INFO_PARAMETER][0],
                                                    algorithm,
                                                    info[INFO_PARAMETER][2][0], pattern,
-                                                   info[INFO_PARAMETER][3][0],info[INFO_PARAMETER][3][1],
+                                                   info[INFO_PARAMETER][3][0], info[INFO_PARAMETER][3][1],
                                                    info[INFO_PARAMETER][4],
-                                                   info[INFO_PARAMETER][5],info[INFO_PARAMETER][6],
-                                                   info[INFO_PARAMETER][7],info[INFO_PARAMETER][8],
-                                                   info[INFO_PARAMETER][9],info[INFO_PARAMETER][10],
-                                                   info[INFO_PARAMETER][11],info[INFO_PARAMETER][12])
+                                                   info[INFO_PARAMETER][5], info[INFO_PARAMETER][6],
+                                                   info[INFO_PARAMETER][7], info[INFO_PARAMETER][8],
+                                                   info[INFO_PARAMETER][9], info[INFO_PARAMETER][10],
+                                                   info[INFO_PARAMETER][11], info[INFO_PARAMETER][12])
 
             # DataProcessingSetting
             if info[INFO_CLASSIFICATION] == "DataProcessingSetting":
@@ -1609,21 +1638,20 @@ class M3DFileUtil:
                                               info[INFO_PARAMETER][2],
                                               info[INFO_PARAMETER][3],
                                               info[INFO_PARAMETER][4],
-                                              info[INFO_PARAMETER][5][0],info[INFO_PARAMETER][5][1],
-                                              info[INFO_PARAMETER][6][0],info[INFO_PARAMETER][6][1],
+                                              info[INFO_PARAMETER][5][0], info[INFO_PARAMETER][5][1],
+                                              info[INFO_PARAMETER][6][0], info[INFO_PARAMETER][6][1],
                                               isASCII)
 
             # ModelingInfo
             if info[INFO_CLASSIFICATION] == "ModelingInfo":
                 self.updateHeaderCommands(info[INFO_PARAMETER][2],
-                                        info[INFO_PARAMETER][1],
-                                        info[INFO_PARAMETER][0],
-                                        info[INFO_PARAMETER][3])
+                                          info[INFO_PARAMETER][1],
+                                          info[INFO_PARAMETER][0],
+                                          info[INFO_PARAMETER][3])
 
             # RunOptions
             if info[INFO_CLASSIFICATION] == "RunOptions":
                 self.updateRunOptionCommands(info[INFO_PARAMETER][0], info[INFO_PARAMETER][1])
-
 
     ########################## 以下是根据几何建模或参数建模更新m3d文件的函数 v1##########################
 
@@ -1642,12 +1670,11 @@ class M3DFileUtil:
                                    self.__Classification.PARAMETER,
                                    content)
 
-
     def updatePonitCommands(self, ponitName, coordinates,
                             isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                            ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+                            ismin_1=False, ismid_1=False, ismax_1=False,
+                            ismin_2=False, ismid_2=False, ismax_2=False,
+                            ismin_3=False, ismid_3=False, ismax_3=False):
         """
         添加或更新点命令组
         :param ponitName: 点名称
@@ -1664,21 +1691,20 @@ class M3DFileUtil:
         content = getPointCommands(ponitName, coordinates)
         # 获得附加的mark命令
         extraContent = getMarkCommands(ponitName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                   ismin_1, ismid_1, ismax_1,
-                   ismin_2, ismid_2, ismax_2,
-                   ismin_3, ismid_3, ismax_3)
+                                       ismin_1, ismid_1, ismax_1,
+                                       ismin_2, ismid_2, ismax_2,
+                                       ismin_3, ismid_3, ismax_3)
         # 更新manager
         self.__addOrUpdateCommands(ponitName,
                                    self.__Classification.DEFINE_OBJECTS,
                                    content,
                                    [[self.__Classification.DEFINE_OBJECTS, extraContent]])
 
-
     def updateLineCommands(self, lineName, lineType, startPointCoordinates, stopPointCoordinates,
                            isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                           ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+                           ismin_1=False, ismid_1=False, ismax_1=False,
+                           ismin_2=False, ismid_2=False, ismax_2=False,
+                           ismin_3=False, ismid_3=False, ismax_3=False):
         """
         添加或更新线命令组
         :param lineName: 线名称
@@ -1697,9 +1723,9 @@ class M3DFileUtil:
         content = getLineCommands(lineName, lineType, startPointCoordinates, stopPointCoordinates)
         # 获得附加的mark命令
         extraContent = getMarkCommands(lineName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                                        ismin_1, ismid_1, ismax_1,
-                                        ismin_2, ismid_2, ismax_2,
-                                        ismin_3, ismid_3, ismax_3)
+                                       ismin_1, ismid_1, ismax_1,
+                                       ismin_2, ismid_2, ismax_2,
+                                       ismin_3, ismid_3, ismax_3)
         # FreeCAD.Console.PrintError('\nconent:   '+str(content))
         # FreeCAD.Console.PrintError('\nextraconent:   '+str(extraContent))
         # 更新manager
@@ -1708,12 +1734,11 @@ class M3DFileUtil:
                                    content,
                                    [[self.__Classification.DEFINE_OBJECTS, extraContent]])
 
-
-    def updateObliqueLineCommands(self, lineName,lineType, startPointCoordinates, stopPointCoordinates,
-                           isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                           ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+    def updateObliqueLineCommands(self, lineName, lineType, startPointCoordinates, stopPointCoordinates,
+                                  isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
+                                  ismin_1=False, ismid_1=False, ismax_1=False,
+                                  ismin_2=False, ismid_2=False, ismax_2=False,
+                                  ismin_3=False, ismid_3=False, ismax_3=False):
         """
         添加或更新线命令组
         :param lineName: 线名称
@@ -1730,24 +1755,23 @@ class M3DFileUtil:
         :return:
         """
         # 获得line命令
-        content = getObliqueLineCommands(lineName,startPointCoordinates, stopPointCoordinates)
+        content = getObliqueLineCommands(lineName, startPointCoordinates, stopPointCoordinates)
         # 获得附加的mark命令
         extraContent = getMarkCommands(lineName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                    ismin_1, ismid_1, ismax_1,
-                   ismin_2, ismid_2, ismax_2,
-                   ismin_3, ismid_3, ismax_3)
+                                       ismin_1, ismid_1, ismax_1,
+                                       ismin_2, ismid_2, ismax_2,
+                                       ismin_3, ismid_3, ismax_3)
         # 更新manager
         self.__addOrUpdateCommands(lineName,
                                    self.__Classification.DEFINE_OBJECTS,
                                    content,
                                    [[self.__Classification.DEFINE_OBJECTS, extraContent]])
 
-
     def updateConformalAreaCommands(self, areaName, startPointCoordinates, stopPointCoordinates,
                                     isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                                    ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+                                    ismin_1=False, ismid_1=False, ismax_1=False,
+                                    ismin_2=False, ismid_2=False, ismax_2=False,
+                                    ismin_3=False, ismid_3=False, ismax_3=False):
         """
         :param areaName: 面名称
         :param startPointCoordinates: 起点坐标列表
@@ -1764,21 +1788,20 @@ class M3DFileUtil:
         content = getAreaCommands(areaName, Area.Shape.conformal, startPointCoordinates, stopPointCoordinates)
         # 获得附加的mark命令
         extraContent = getMarkCommands(areaName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                                    ismin_1, ismid_1, ismax_1,
-                                    ismin_2, ismid_2, ismax_2,
-                                    ismin_3, ismid_3, ismax_3)
+                                       ismin_1, ismid_1, ismax_1,
+                                       ismin_2, ismid_2, ismax_2,
+                                       ismin_3, ismid_3, ismax_3)
         # 更新manager
         self.__addOrUpdateCommands(areaName,
                                    self.__Classification.DEFINE_OBJECTS,
                                    content,
                                    [[self.__Classification.DEFINE_OBJECTS, extraContent]])
 
-
     def updateRectangularAreaCommands(self, areaName, startPointCoordinates, stopPointCoordinates,
                                       isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                                      ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+                                      ismin_1=False, ismid_1=False, ismax_1=False,
+                                      ismin_2=False, ismid_2=False, ismax_2=False,
+                                      ismin_3=False, ismid_3=False, ismax_3=False):
         """
 
         :param areaName: 面名称
@@ -1796,9 +1819,9 @@ class M3DFileUtil:
         content = getAreaCommands(areaName, Area.Shape.rectangular, startPointCoordinates, stopPointCoordinates)
         # 获得附加的mark命令
         extraContent = getMarkCommands(areaName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                    ismin_1, ismid_1, ismax_1,
-                    ismin_2, ismid_2, ismax_2,
-                    ismin_3, ismid_3, ismax_3)
+                                       ismin_1, ismid_1, ismax_1,
+                                       ismin_2, ismid_2, ismax_2,
+                                       ismin_3, ismid_3, ismax_3)
         # 更新manager
         self.__addOrUpdateCommands(areaName,
                                    self.__Classification.DEFINE_OBJECTS,
@@ -1806,10 +1829,10 @@ class M3DFileUtil:
                                    [[self.__Classification.DEFINE_OBJECTS, extraContent]])
 
     def updatePolygonalAreaCommands(self, areaName, pointCoordinatesList,
-                                      isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                                      ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+                                    isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
+                                    ismin_1=False, ismid_1=False, ismax_1=False,
+                                    ismin_2=False, ismid_2=False, ismax_2=False,
+                                    ismin_3=False, ismid_3=False, ismax_3=False):
         """
 
         :param areaName: 面名称
@@ -1826,22 +1849,21 @@ class M3DFileUtil:
         content = getPolygonalAreaCommands(areaName, pointCoordinatesList)
         # 获得附加的mark命令
         extraContent = getMarkCommands(areaName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                    ismin_1, ismid_1, ismax_1,
-                    ismin_2, ismid_2, ismax_2,
-                    ismin_3, ismid_3, ismax_3)
+                                       ismin_1, ismid_1, ismax_1,
+                                       ismin_2, ismid_2, ismax_2,
+                                       ismin_3, ismid_3, ismax_3)
         # 更新manager
         self.__addOrUpdateCommands(areaName,
                                    self.__Classification.DEFINE_OBJECTS,
                                    content,
                                    [[self.__Classification.DEFINE_OBJECTS, extraContent]])
 
-
     def updateConformalVolumeCommands(self, volumeName, nearPointCoordinates, farPointCoordinates,
                                       attributeResults,
                                       isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                                      ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+                                      ismin_1=False, ismid_1=False, ismax_1=False,
+                                      ismin_2=False, ismid_2=False, ismax_2=False,
+                                      ismin_3=False, ismid_3=False, ismax_3=False):
         """
         
         :param volumeName: 投影体名称
@@ -1862,9 +1884,9 @@ class M3DFileUtil:
         content = getConformalVolumeCommands(volumeName, nearPointCoordinates, farPointCoordinates)
         # 获得附加的mark命令
         extraContentMark = getMarkCommands(volumeName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                    ismin_1, ismid_1, ismax_1,
-                    ismin_2, ismid_2, ismax_2,
-                    ismin_3, ismid_3, ismax_3)
+                                           ismin_1, ismid_1, ismax_1,
+                                           ismin_2, ismid_2, ismax_2,
+                                           ismin_3, ismid_3, ismax_3)
         extra = [[self.__Classification.DEFINE_OBJECTS, extraContentMark]]
         # 获得附加的属性命令
         if attributeResults[0] == "Conductor":
@@ -1884,8 +1906,10 @@ class M3DFileUtil:
                 isotropy = False
 
             extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[1], attributeResults[2],
-                                  isDielectric, isotropy, attributeResults[4], attributeResults[5], attributeResults[6],
-                                  attributeResults[7],attributeResults[8],attributeResults[9])
+                                                            isDielectric, isotropy, attributeResults[4],
+                                                            attributeResults[5], attributeResults[6],
+                                                            attributeResults[7], attributeResults[8],
+                                                            attributeResults[9])
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentDIY])
 
         # 更新manager
@@ -1894,13 +1918,12 @@ class M3DFileUtil:
                                    content,
                                    extra)
 
-
     def updateConeVolumeCommands(self, volumeName, basePointCoordinates, topPointCoordinates, baseradius, topradius,
                                  attributeResults,
                                  isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                                 ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+                                 ismin_1=False, ismid_1=False, ismax_1=False,
+                                 ismin_2=False, ismid_2=False, ismax_2=False,
+                                 ismin_3=False, ismid_3=False, ismax_3=False):
         """
         
         :param volumeName: 圆锥或圆台名称
@@ -1922,9 +1945,9 @@ class M3DFileUtil:
         content = getConeVolumeCommands(volumeName, basePointCoordinates, topPointCoordinates, baseradius, topradius)
         # 获得附加的mark命令
         extraContentMark = getMarkCommands(volumeName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                    ismin_1, ismid_1, ismax_1,
-                    ismin_2, ismid_2, ismax_2,
-                    ismin_3, ismid_3, ismax_3)
+                                           ismin_1, ismid_1, ismax_1,
+                                           ismin_2, ismid_2, ismax_2,
+                                           ismin_3, ismid_3, ismax_3)
         extra = [[self.__Classification.DEFINE_OBJECTS, extraContentMark]]
         # 获得附加的属性命令
         if attributeResults[0] == "Conductor":
@@ -1946,7 +1969,8 @@ class M3DFileUtil:
             extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[1], attributeResults[2],
                                                             isDielectric, isotropy, attributeResults[4],
                                                             attributeResults[5], attributeResults[6],
-                                                            attributeResults[7],attributeResults[8],attributeResults[9])
+                                                            attributeResults[7], attributeResults[8],
+                                                            attributeResults[9])
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentDIY])
 
         # 更新manager
@@ -1955,13 +1979,12 @@ class M3DFileUtil:
                                    content,
                                    extra)
 
-
     def updateCylindricalVolumeCommands(self, volumeName, centerPoint1Coordinates, centerPoint2Coordinates, radius,
-                                 attributeResults,
-                                 isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                                 ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+                                        attributeResults,
+                                        isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
+                                        ismin_1=False, ismid_1=False, ismax_1=False,
+                                        ismin_2=False, ismid_2=False, ismax_2=False,
+                                        ismin_3=False, ismid_3=False, ismax_3=False):
         """
 
         :param volumeName: 名称
@@ -1979,12 +2002,12 @@ class M3DFileUtil:
         :return: 
         """
         # 获得volume命令
-        content = getCylindricalVolumeCommands(volumeName,centerPoint1Coordinates, centerPoint2Coordinates, radius)
+        content = getCylindricalVolumeCommands(volumeName, centerPoint1Coordinates, centerPoint2Coordinates, radius)
         # 获得附加的mark命令
         extraContentMark = getMarkCommands(volumeName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                    ismin_1, ismid_1, ismax_1,
-                    ismin_2, ismid_2, ismax_2,
-                    ismin_3, ismid_3, ismax_3)
+                                           ismin_1, ismid_1, ismax_1,
+                                           ismin_2, ismid_2, ismax_2,
+                                           ismin_3, ismid_3, ismax_3)
         extra = [[self.__Classification.DEFINE_OBJECTS, extraContentMark]]
         # 获得附加的属性命令
         if attributeResults[0] == "Conductor":
@@ -2006,7 +2029,8 @@ class M3DFileUtil:
             extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[1], attributeResults[2],
                                                             isDielectric, isotropy, attributeResults[4],
                                                             attributeResults[5], attributeResults[6],
-                                                            attributeResults[7],attributeResults[8],attributeResults[9])
+                                                            attributeResults[7], attributeResults[8],
+                                                            attributeResults[9])
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentDIY])
 
         # 更新manager
@@ -2015,13 +2039,13 @@ class M3DFileUtil:
                                    content,
                                    extra)
 
-
-    def updateAnnularVolumeCommands(self, volumeName, centerPoint1Coordinates, centerPoint2Coordinates, radiusInner, radiusOuter,
-                                 attributeResults,
-                                 isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                                 ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+    def updateAnnularVolumeCommands(self, volumeName, centerPoint1Coordinates, centerPoint2Coordinates, radiusInner,
+                                    radiusOuter,
+                                    attributeResults,
+                                    isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
+                                    ismin_1=False, ismid_1=False, ismax_1=False,
+                                    ismin_2=False, ismid_2=False, ismax_2=False,
+                                    ismin_3=False, ismid_3=False, ismax_3=False):
         """
 
         :param volumeName: 名称
@@ -2040,12 +2064,13 @@ class M3DFileUtil:
         :return: 
         """
         # 获得volume命令
-        content = getAnnularVolumeCommands(volumeName,centerPoint1Coordinates, centerPoint2Coordinates, radiusInner, radiusOuter)
+        content = getAnnularVolumeCommands(volumeName, centerPoint1Coordinates, centerPoint2Coordinates, radiusInner,
+                                           radiusOuter)
         # 获得附加的mark命令
         extraContentMark = getMarkCommands(volumeName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                    ismin_1, ismid_1, ismax_1,
-                    ismin_2, ismid_2, ismax_2,
-                    ismin_3, ismid_3, ismax_3)
+                                           ismin_1, ismid_1, ismax_1,
+                                           ismin_2, ismid_2, ismax_2,
+                                           ismin_3, ismid_3, ismax_3)
         extra = [[self.__Classification.DEFINE_OBJECTS, extraContentMark]]
         # 获得附加的属性命令
         if attributeResults[0] == "Conductor":
@@ -2065,8 +2090,10 @@ class M3DFileUtil:
                 isotropy = False
 
             extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[1], attributeResults[2],
-                                  isDielectric, isotropy, attributeResults[4], attributeResults[5], attributeResults[6],
-                                  attributeResults[7],attributeResults[8],attributeResults[9])
+                                                            isDielectric, isotropy, attributeResults[4],
+                                                            attributeResults[5], attributeResults[6],
+                                                            attributeResults[7], attributeResults[8],
+                                                            attributeResults[9])
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentDIY])
 
         # 更新manager
@@ -2075,13 +2102,13 @@ class M3DFileUtil:
                                    content,
                                    extra)
 
-
-    def updateAnnularSectionVolumeCommands(self, volumeName, point1Coordinates, point2Coordinates, radiusInner, radiusOuter,point3Coordinates, point4Coordinates,
-                                 attributeResults,
-                                 isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                                 ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+    def updateAnnularSectionVolumeCommands(self, volumeName, point1Coordinates, point2Coordinates, radiusInner,
+                                           radiusOuter, point3Coordinates, point4Coordinates,
+                                           attributeResults,
+                                           isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
+                                           ismin_1=False, ismid_1=False, ismax_1=False,
+                                           ismin_2=False, ismid_2=False, ismax_2=False,
+                                           ismin_3=False, ismid_3=False, ismax_3=False):
         """
 
         :param volumeName: 名称
@@ -2106,9 +2133,9 @@ class M3DFileUtil:
                                                   radiusInner, radiusOuter, point3Coordinates, point4Coordinates)
         # 获得附加的mark命令
         extraContentMark = getMarkCommands(volumeName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                    ismin_1, ismid_1, ismax_1,
-                    ismin_2, ismid_2, ismax_2,
-                    ismin_3, ismid_3, ismax_3)
+                                           ismin_1, ismid_1, ismax_1,
+                                           ismin_2, ismid_2, ismax_2,
+                                           ismin_3, ismid_3, ismax_3)
         extra = [[self.__Classification.DEFINE_OBJECTS, extraContentMark]]
         # 获得附加的属性命令
         if attributeResults[0] == "Conductor":
@@ -2128,8 +2155,10 @@ class M3DFileUtil:
                 isotropy = False
 
             extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[1], attributeResults[2],
-                                  isDielectric, isotropy, attributeResults[4], attributeResults[5], attributeResults[6],
-                                  attributeResults[7],attributeResults[8],attributeResults[9])
+                                                            isDielectric, isotropy, attributeResults[4],
+                                                            attributeResults[5], attributeResults[6],
+                                                            attributeResults[7], attributeResults[8],
+                                                            attributeResults[9])
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentDIY])
 
         # 更新manager
@@ -2138,13 +2167,13 @@ class M3DFileUtil:
                                    content,
                                    extra)
 
-
-    def updateParallelepipedalVolumeCommands(self, volumeName, point1Coordinates, point2Coordinates, point3Coordinates, point4Coordinates,
-                                 attributeResults,
-                                 isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                                 ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+    def updateParallelepipedalVolumeCommands(self, volumeName, point1Coordinates, point2Coordinates, point3Coordinates,
+                                             point4Coordinates,
+                                             attributeResults,
+                                             isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
+                                             ismin_1=False, ismid_1=False, ismax_1=False,
+                                             ismin_2=False, ismid_2=False, ismax_2=False,
+                                             ismin_3=False, ismid_3=False, ismax_3=False):
         """
 
         :param volumeName: 名称
@@ -2167,9 +2196,9 @@ class M3DFileUtil:
                                                     point4Coordinates)
         # 获得附加的mark命令
         extraContentMark = getMarkCommands(volumeName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                    ismin_1, ismid_1, ismax_1,
-                    ismin_2, ismid_2, ismax_2,
-                    ismin_3, ismid_3, ismax_3)
+                                           ismin_1, ismid_1, ismax_1,
+                                           ismin_2, ismid_2, ismax_2,
+                                           ismin_3, ismid_3, ismax_3)
         extra = [[self.__Classification.DEFINE_OBJECTS, extraContentMark]]
         # 获得附加的属性命令
         if attributeResults[0] == "Conductor":
@@ -2189,8 +2218,10 @@ class M3DFileUtil:
                 isotropy = False
 
             extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[1], attributeResults[2],
-                                  isDielectric, isotropy, attributeResults[4], attributeResults[5], attributeResults[6],
-                                  attributeResults[7],attributeResults[8],attributeResults[9])
+                                                            isDielectric, isotropy, attributeResults[4],
+                                                            attributeResults[5], attributeResults[6],
+                                                            attributeResults[7], attributeResults[8],
+                                                            attributeResults[9])
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentDIY])
 
         # 更新manager
@@ -2199,13 +2230,12 @@ class M3DFileUtil:
                                    content,
                                    extra)
 
-
     def updateSphericalVolumeCommands(self, volumeName, pointCoordinates, radius,
                                       attributeResults,
                                       isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                                      ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+                                      ismin_1=False, ismid_1=False, ismax_1=False,
+                                      ismin_2=False, ismid_2=False, ismax_2=False,
+                                      ismin_3=False, ismid_3=False, ismax_3=False):
         """
 
         :param volumeName: 名称
@@ -2227,9 +2257,9 @@ class M3DFileUtil:
         content = getSphericalVolumeCommands(volumeName, pointCoordinates, radius)
         # 获得附加的mark命令
         extraContentMark = getMarkCommands(volumeName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                    ismin_1, ismid_1, ismax_1,
-                    ismin_2, ismid_2, ismax_2,
-                    ismin_3, ismid_3, ismax_3)
+                                           ismin_1, ismid_1, ismax_1,
+                                           ismin_2, ismid_2, ismax_2,
+                                           ismin_3, ismid_3, ismax_3)
         extra = [[self.__Classification.DEFINE_OBJECTS, extraContentMark]]
         # 获得附加的属性命令
         if attributeResults[0] == "Conductor":
@@ -2249,8 +2279,10 @@ class M3DFileUtil:
                 isotropy = False
 
             extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[1], attributeResults[2],
-                                  isDielectric, isotropy, attributeResults[4], attributeResults[5], attributeResults[6],
-                                  attributeResults[7],attributeResults[8],attributeResults[9])
+                                                            isDielectric, isotropy, attributeResults[4],
+                                                            attributeResults[5], attributeResults[6],
+                                                            attributeResults[7], attributeResults[8],
+                                                            attributeResults[9])
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentDIY])
 
         # 更新manager
@@ -2259,14 +2291,13 @@ class M3DFileUtil:
                                    content,
                                    extra)
 
-
-    def updateWedgeVolumeCommands(self, volumeName,point1Coordinates, point2Coordinates,point3Coordinates,
-                                             point4Coordinates, point5Coordinates, point6Coordinates,
-                                 attributeResults,
-                                 isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                                 ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+    def updateWedgeVolumeCommands(self, volumeName, point1Coordinates, point2Coordinates, point3Coordinates,
+                                  point4Coordinates, point5Coordinates, point6Coordinates,
+                                  attributeResults,
+                                  isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
+                                  ismin_1=False, ismid_1=False, ismax_1=False,
+                                  ismin_2=False, ismid_2=False, ismax_2=False,
+                                  ismin_3=False, ismid_3=False, ismax_3=False):
         """
 
         :param volumeName: 名称
@@ -2288,12 +2319,12 @@ class M3DFileUtil:
         """
         # 获得volume命令
         content = getWedgeVolumeCommands(volumeName, point1Coordinates, point2Coordinates, point3Coordinates,
-                                                    point4Coordinates, point5Coordinates, point6Coordinates)
+                                         point4Coordinates, point5Coordinates, point6Coordinates)
         # 获得附加的mark命令
         extraContentMark = getMarkCommands(volumeName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                    ismin_1, ismid_1, ismax_1,
-                    ismin_2, ismid_2, ismax_2,
-                    ismin_3, ismid_3, ismax_3)
+                                           ismin_1, ismid_1, ismax_1,
+                                           ismin_2, ismid_2, ismax_2,
+                                           ismin_3, ismid_3, ismax_3)
         extra = [[self.__Classification.DEFINE_OBJECTS, extraContentMark]]
         # 获得附加的属性命令
         if attributeResults[0] == "Conductor":
@@ -2313,8 +2344,10 @@ class M3DFileUtil:
                 isotropy = False
 
             extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[1], attributeResults[2],
-                                  isDielectric, isotropy, attributeResults[4], attributeResults[5], attributeResults[6],
-                                  attributeResults[7],attributeResults[8],attributeResults[9])
+                                                            isDielectric, isotropy, attributeResults[4],
+                                                            attributeResults[5], attributeResults[6],
+                                                            attributeResults[7], attributeResults[8],
+                                                            attributeResults[9])
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentDIY])
 
         # 更新manager
@@ -2323,14 +2356,13 @@ class M3DFileUtil:
                                    content,
                                    extra)
 
-
-    def updatePyramidVolumeCommands(self, volumeName,point1Coordinates, point2Coordinates,point3Coordinates,
-                                             point4Coordinates, point5Coordinates,
-                                 attributeResults,
-                                 isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                                 ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+    def updatePyramidVolumeCommands(self, volumeName, point1Coordinates, point2Coordinates, point3Coordinates,
+                                    point4Coordinates, point5Coordinates,
+                                    attributeResults,
+                                    isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
+                                    ismin_1=False, ismid_1=False, ismax_1=False,
+                                    ismin_2=False, ismid_2=False, ismax_2=False,
+                                    ismin_3=False, ismid_3=False, ismax_3=False):
         """
 
         :param volumeName: 名称
@@ -2351,12 +2383,12 @@ class M3DFileUtil:
         """
         # 获得volume命令
         content = getPyramidVolumeCommands(volumeName, point1Coordinates, point2Coordinates, point3Coordinates,
-                                                    point4Coordinates, point5Coordinates)
+                                           point4Coordinates, point5Coordinates)
         # 获得附加的mark命令
         extraContentMark = getMarkCommands(volumeName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                    ismin_1, ismid_1, ismax_1,
-                    ismin_2, ismid_2, ismax_2,
-                    ismin_3, ismid_3, ismax_3)
+                                           ismin_1, ismid_1, ismax_1,
+                                           ismin_2, ismid_2, ismax_2,
+                                           ismin_3, ismid_3, ismax_3)
         extra = [[self.__Classification.DEFINE_OBJECTS, extraContentMark]]
         # 获得附加的属性命令
         if attributeResults[0] == "Conductor":
@@ -2376,8 +2408,10 @@ class M3DFileUtil:
                 isotropy = False
 
             extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[1], attributeResults[2],
-                                  isDielectric, isotropy, attributeResults[4], attributeResults[5], attributeResults[6],
-                                  attributeResults[7],attributeResults[8],attributeResults[9])
+                                                            isDielectric, isotropy, attributeResults[4],
+                                                            attributeResults[5], attributeResults[6],
+                                                            attributeResults[7], attributeResults[8],
+                                                            attributeResults[9])
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentDIY])
 
         # 更新manager
@@ -2386,14 +2420,13 @@ class M3DFileUtil:
                                    content,
                                    extra)
 
-
-    def updateTetrahedronVolumeCommands(self, volumeName,point1Coordinates, point2Coordinates,point3Coordinates,
-                                             point4Coordinates,
-                                 attributeResults,
-                                 isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                                 ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+    def updateTetrahedronVolumeCommands(self, volumeName, point1Coordinates, point2Coordinates, point3Coordinates,
+                                        point4Coordinates,
+                                        attributeResults,
+                                        isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
+                                        ismin_1=False, ismid_1=False, ismax_1=False,
+                                        ismin_2=False, ismid_2=False, ismax_2=False,
+                                        ismin_3=False, ismid_3=False, ismax_3=False):
         """
 
         :param volumeName: 名称
@@ -2413,12 +2446,12 @@ class M3DFileUtil:
         """
         # 获得volume命令
         content = getTetrahedronVolumeCommands(volumeName, point1Coordinates, point2Coordinates, point3Coordinates,
-                                                    point4Coordinates)
+                                               point4Coordinates)
         # 获得附加的mark命令
         extraContentMark = getMarkCommands(volumeName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                    ismin_1, ismid_1, ismax_1,
-                    ismin_2, ismid_2, ismax_2,
-                    ismin_3, ismid_3, ismax_3)
+                                           ismin_1, ismid_1, ismax_1,
+                                           ismin_2, ismid_2, ismax_2,
+                                           ismin_3, ismid_3, ismax_3)
         extra = [[self.__Classification.DEFINE_OBJECTS, extraContentMark]]
         # 获得附加的属性命令
         if attributeResults[0] == "Conductor":
@@ -2438,8 +2471,10 @@ class M3DFileUtil:
                 isotropy = False
 
             extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[1], attributeResults[2],
-                                  isDielectric, isotropy, attributeResults[4], attributeResults[5], attributeResults[6],
-                                  attributeResults[7],attributeResults[8],attributeResults[9])
+                                                            isDielectric, isotropy, attributeResults[4],
+                                                            attributeResults[5], attributeResults[6],
+                                                            attributeResults[7], attributeResults[8],
+                                                            attributeResults[9])
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentDIY])
 
         # 更新manager
@@ -2448,25 +2483,24 @@ class M3DFileUtil:
                                    content,
                                    extra)
 
-
     def updateRhombusVolumeCommands(self, volumeName, point1Coordinates, point2Coordinates, point3Coordinates,
-                                        point4Coordinates,point5Coordinates, point6Coordinates, point7Coordinates,
-                                        point8Coordinates,
-                                        attributeResults,
-                                        isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                                        ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+                                    point4Coordinates, point5Coordinates, point6Coordinates, point7Coordinates,
+                                    point8Coordinates,
+                                    attributeResults,
+                                    isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
+                                    ismin_1=False, ismid_1=False, ismax_1=False,
+                                    ismin_2=False, ismid_2=False, ismax_2=False,
+                                    ismin_3=False, ismid_3=False, ismax_3=False):
 
         # 获得volume命令
         content = getRhombusVolumeCommands(volumeName, point1Coordinates, point2Coordinates, point3Coordinates,
-                                               point4Coordinates, point5Coordinates, point6Coordinates, point7Coordinates,
-                                               point8Coordinates)
+                                           point4Coordinates, point5Coordinates, point6Coordinates, point7Coordinates,
+                                           point8Coordinates)
         # 获得附加的mark命令
         extraContentMark = getMarkCommands(volumeName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                    ismin_1, ismid_1, ismax_1,
-                    ismin_2, ismid_2, ismax_2,
-                    ismin_3, ismid_3, ismax_3)
+                                           ismin_1, ismid_1, ismax_1,
+                                           ismin_2, ismid_2, ismax_2,
+                                           ismin_3, ismid_3, ismax_3)
         extra = [[self.__Classification.DEFINE_OBJECTS, extraContentMark]]
         # 获得附加的属性命令
         if attributeResults[0] == "Conductor":
@@ -2486,8 +2520,10 @@ class M3DFileUtil:
                 isotropy = False
 
             extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[1], attributeResults[2],
-                                  isDielectric, isotropy, attributeResults[4], attributeResults[5], attributeResults[6],
-                                  attributeResults[7],attributeResults[8],attributeResults[9])
+                                                            isDielectric, isotropy, attributeResults[4],
+                                                            attributeResults[5], attributeResults[6],
+                                                            attributeResults[7], attributeResults[8],
+                                                            attributeResults[9])
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentDIY])
 
         # 更新manager
@@ -2496,13 +2532,13 @@ class M3DFileUtil:
                                    content,
                                    extra)
 
-
-    def updateToroidalSectionVolumeCommands(self, volumeName, point1Coordinates, point2Coordinates, radiusInner, radiusOuter,point3Coordinates, point4Coordinates,
-                                 attributeResults,
-                                 isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                                 ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+    def updateToroidalSectionVolumeCommands(self, volumeName, point1Coordinates, point2Coordinates, radiusInner,
+                                            radiusOuter, point3Coordinates, point4Coordinates,
+                                            attributeResults,
+                                            isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
+                                            ismin_1=False, ismid_1=False, ismax_1=False,
+                                            ismin_2=False, ismid_2=False, ismax_2=False,
+                                            ismin_3=False, ismid_3=False, ismax_3=False):
         """
 
         :param volumeName: 名称
@@ -2521,12 +2557,13 @@ class M3DFileUtil:
         :return: 
         """
         # 获得volume命令
-        content = getToroidalSectionVolumeCommands(volumeName, point1Coordinates, point2Coordinates, radiusInner, radiusOuter,point3Coordinates, point4Coordinates,)
+        content = getToroidalSectionVolumeCommands(volumeName, point1Coordinates, point2Coordinates, radiusInner,
+                                                   radiusOuter, point3Coordinates, point4Coordinates, )
         # 获得附加的mark命令
         extraContentMark = getMarkCommands(volumeName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                    ismin_1, ismid_1, ismax_1,
-                    ismin_2, ismid_2, ismax_2,
-                    ismin_3, ismid_3, ismax_3)
+                                           ismin_1, ismid_1, ismax_1,
+                                           ismin_2, ismid_2, ismax_2,
+                                           ismin_3, ismid_3, ismax_3)
         extra = [[self.__Classification.DEFINE_OBJECTS, extraContentMark]]
         # 获得附加的属性命令
         if attributeResults[0] == "Conductor":
@@ -2546,8 +2583,10 @@ class M3DFileUtil:
                 isotropy = False
 
             extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[1], attributeResults[2],
-                                  isDielectric, isotropy, attributeResults[4], attributeResults[5], attributeResults[6],
-                                  attributeResults[7],attributeResults[8],attributeResults[9])
+                                                            isDielectric, isotropy, attributeResults[4],
+                                                            attributeResults[5], attributeResults[6],
+                                                            attributeResults[7], attributeResults[8],
+                                                            attributeResults[9])
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentDIY])
 
         # 更新manager
@@ -2556,13 +2595,12 @@ class M3DFileUtil:
                                    content,
                                    extra)
 
-
     def updateExtrudedVolumeCommands(self, volumeName, areaLabel, lineLabel,
-                                 attributeResults,
-                                 isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                                 ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+                                     attributeResults,
+                                     isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
+                                     ismin_1=False, ismid_1=False, ismax_1=False,
+                                     ismin_2=False, ismid_2=False, ismax_2=False,
+                                     ismin_3=False, ismid_3=False, ismax_3=False):
         """
 
         :param volumeName: 名称
@@ -2578,12 +2616,12 @@ class M3DFileUtil:
         :return:
         """
         # 获得volume命令
-        content = getExtrudedVolumeCommands(volumeName,areaLabel, lineLabel)
+        content = getExtrudedVolumeCommands(volumeName, areaLabel, lineLabel)
         # 获得附加的mark命令
         extraContentMark = getMarkCommands(volumeName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                    ismin_1, ismid_1, ismax_1,
-                    ismin_2, ismid_2, ismax_2,
-                    ismin_3, ismid_3, ismax_3)
+                                           ismin_1, ismid_1, ismax_1,
+                                           ismin_2, ismid_2, ismax_2,
+                                           ismin_3, ismid_3, ismax_3)
         extra = [[self.__Classification.DEFINE_OBJECTS, extraContentMark]]
         # 获得附加的属性命令
         if attributeResults[0] == "Conductor":
@@ -2603,8 +2641,10 @@ class M3DFileUtil:
                 isotropy = False
 
             extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[1], attributeResults[2],
-                                  isDielectric, isotropy, attributeResults[4], attributeResults[5], attributeResults[6],
-                                  attributeResults[7],attributeResults[8],attributeResults[9])
+                                                            isDielectric, isotropy, attributeResults[4],
+                                                            attributeResults[5], attributeResults[6],
+                                                            attributeResults[7], attributeResults[8],
+                                                            attributeResults[9])
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentDIY])
 
         # 更新manager
@@ -2613,13 +2653,13 @@ class M3DFileUtil:
                                    content,
                                    extra)
 
-
-    def updateHelicalVolumeCommands(self, volumeName, point1Coordinates, point2Coordinates, radiusInner, radiusOuter,point3Coordinates, pitch, width,
-                                 attributeResults,
-                                 isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                                 ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
+    def updateHelicalVolumeCommands(self, volumeName, point1Coordinates, point2Coordinates, radiusInner, radiusOuter,
+                                    point3Coordinates, pitch, width,
+                                    attributeResults,
+                                    isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
+                                    ismin_1=False, ismid_1=False, ismax_1=False,
+                                    ismin_2=False, ismid_2=False, ismax_2=False,
+                                    ismin_3=False, ismid_3=False, ismax_3=False):
         """
 
         :param volumeName: 名称
@@ -2641,12 +2681,13 @@ class M3DFileUtil:
         :return:
         """
         # 获得volume命令
-        content = getHelicalVolumeCommands(volumeName, point1Coordinates, point2Coordinates, radiusInner, radiusOuter,point3Coordinates, pitch, width,)
+        content = getHelicalVolumeCommands(volumeName, point1Coordinates, point2Coordinates, radiusInner, radiusOuter,
+                                           point3Coordinates, pitch, width, )
         # 获得附加的mark命令
         extraContentMark = getMarkCommands(volumeName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                    ismin_1, ismid_1, ismax_1,
-                    ismin_2, ismid_2, ismax_2,
-                    ismin_3, ismid_3, ismax_3)
+                                           ismin_1, ismid_1, ismax_1,
+                                           ismin_2, ismid_2, ismax_2,
+                                           ismin_3, ismid_3, ismax_3)
         extra = [[self.__Classification.DEFINE_OBJECTS, extraContentMark]]
         # 获得附加的属性命令
         if attributeResults[0] == "Conductor":
@@ -2666,8 +2707,10 @@ class M3DFileUtil:
                 isotropy = False
 
             extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[1], attributeResults[2],
-                                  isDielectric, isotropy, attributeResults[4], attributeResults[5], attributeResults[6],
-                                  attributeResults[7],attributeResults[8],attributeResults[9])
+                                                            isDielectric, isotropy, attributeResults[4],
+                                                            attributeResults[5], attributeResults[6],
+                                                            attributeResults[7], attributeResults[8],
+                                                            attributeResults[9])
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentDIY])
 
         # 更新manager
@@ -2675,9 +2718,8 @@ class M3DFileUtil:
                                    self.__Classification.DEFINE_OBJECTS,
                                    content,
                                    extra)
-            
 
-    def updateArrayVolumeCommands(self,arrayParameterList, baseParameterList):
+    def updateArrayVolumeCommands(self, arrayParameterList, baseParameterList):
         """
         :param arrayParameterList: 阵列体的参数
         :param baseParameterList: 阵列体的基础物体参数
@@ -2685,16 +2727,16 @@ class M3DFileUtil:
         """
         arrayName = arrayParameterList[0]
         # 获得附加的mark命令
-        volumeName = "Arr_"+baseParameterList[1][0]
-        [isX1, isX2, isX3, X1Size, X2Size, X3Size, 
-        ismin_1, ismid_1, ismax_1,
-        ismin_2, ismid_2, ismax_2,
-        ismin_3, ismid_3, ismax_3] = baseParameterList[1][-15:]
-        extraContentMark = getMarkCommands(volumeName +'\'i\'', isX1, isX2, isX3, X1Size, X2Size, X3Size,
+        volumeName = "Arr_" + baseParameterList[1][0]
+        [isX1, isX2, isX3, X1Size, X2Size, X3Size,
+         ismin_1, ismid_1, ismax_1,
+         ismin_2, ismid_2, ismax_2,
+         ismin_3, ismid_3, ismax_3] = baseParameterList[1][-15:]
+        extraContentMark = getMarkCommands(volumeName + '\'i\'', isX1, isX2, isX3, X1Size, X2Size, X3Size,
                                            ismin_1, ismid_1, ismax_1,
                                            ismin_2, ismid_2, ismax_2,
                                            ismin_3, ismid_3, ismax_3)
-        extra=[]
+        extra = []
         # extra = [[self.__Classification.DEFINE_OBJECTS, extraContentMark]]
         baseType = baseParameterList[0]
 
@@ -2703,17 +2745,19 @@ class M3DFileUtil:
             # FreeCAD.Console.PrintError("\n执行到这里:   "+str(baseParameterList))
             # 此处可能出现问题，所以添加异常处理，待后续改进 @lzg
             try:
-                content = getArrayVolumeCommands(self.coordinateSystem, arrayParameterList,baseType, baseParameterList[1][:-16],extraContentMark)
+                content = getArrayVolumeCommands(self.coordinateSystem, arrayParameterList, baseType,
+                                                 baseParameterList[1][:-16], extraContentMark)
                 attributeResults = baseParameterList[1][-16:-15]
             except:
-                content = getArrayVolumeCommands(self.coordinateSystem, arrayParameterList,baseType, baseParameterList[1][:-7],extraContentMark)
+                content = getArrayVolumeCommands(self.coordinateSystem, arrayParameterList, baseType,
+                                                 baseParameterList[1][:-7], extraContentMark)
                 attributeResults = baseParameterList[1][-7:-6]
             # 获得附加的属性命令
             if attributeResults[0][0] == "Conductor":
-                extraContentConductor = getConductorCommands(volumeName,thiscontent=content)
+                extraContentConductor = getConductorCommands(volumeName, thiscontent=content)
                 extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentConductor])
             elif attributeResults[0][0] == "Vacuo":
-                extraContentVoid = getVoidCommands(volumeName,thiscontent=content)
+                extraContentVoid = getVoidCommands(volumeName, thiscontent=content)
                 extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentVoid])
             elif attributeResults[0][0] == "Custom":
                 isotropy = False
@@ -2725,43 +2769,48 @@ class M3DFileUtil:
                     isDielectric = True
                     isotropy = False
                 # 加上有一个默认参数不是阵列体的参数 @fubiao
-                extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[0][1], attributeResults[0][2],
-                                      isDielectric, isotropy, attributeResults[0][4], attributeResults[0][5], attributeResults[0][6],
-                                      attributeResults[0][7],attributeResults[0][8],attributeResults[0][9],
-                                      thiscontent=content)
+                extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[0][1],
+                                                                attributeResults[0][2],
+                                                                isDielectric, isotropy, attributeResults[0][4],
+                                                                attributeResults[0][5], attributeResults[0][6],
+                                                                attributeResults[0][7], attributeResults[0][8],
+                                                                attributeResults[0][9],
+                                                                thiscontent=content)
                 extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentDIY])
-                        # 获得volume命令
+                # 获得volume命令
             # content = getArrayVolumeCommands(self.coordinateSystem, arrayParameterList,baseType, baseParameterList[1][:-7],extraContentMark)
         else:
             # 获得volume命令
-            content = getArrayVolumeCommands(self.coordinateSystem, arrayParameterList, baseType,baseParameterList[1][:-6])
+            content = getArrayVolumeCommands(self.coordinateSystem, arrayParameterList, baseType,
+                                             baseParameterList[1][:-6])
         # 更新manager
         self.__addOrUpdateCommands(arrayName,
                                    self.__Classification.DEFINE_OBJECTS,
                                    content,
                                    extra)
-    # @fubiao
-    def updateParamArrayVolumeCommands(self,volumeName, 
-                                        baseObjType,
-                                        start,end, 
-                                        baseObjData,
-                                        attributeResults,
-                                        isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size=""):
-        
-        # 获得附加的mark命令
-        extraContentMark = getMarkCommands(volumeName+"\'i\'", isX1, isX2, isX3, X1Size, X2Size, X3Size)
 
-        content=getParamArrayVolumeCommands(volumeName,baseObjType,start,end,baseObjData,extraContentMark)
-        
+    # @fubiao
+    def updateParamArrayVolumeCommands(self, volumeName,
+                                       baseObjType,
+                                       start, end,
+                                       baseObjData,
+                                       attributeResults,
+                                       isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size=""):
+
+        # 获得附加的mark命令
+        extraContentMark = getMarkCommands(volumeName + "\'i\'", isX1, isX2, isX3, X1Size, X2Size, X3Size)
+
+        content = getParamArrayVolumeCommands(volumeName, baseObjType, start, end, baseObjData, extraContentMark)
+
         # content=content+extraContentMark
 
         extra = [[self.__Classification.DEFINE_OBJECTS, ""]]
         # 获得附加的属性命令
         if attributeResults[0] == "Conductor":
-            extraContentConductor = getConductorCommands(volumeName,thiscontent=content)
+            extraContentConductor = getConductorCommands(volumeName, thiscontent=content)
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentConductor])
         elif attributeResults[0] == "Vacuo":
-            extraContentVoid = getVoidCommands(volumeName,thiscontent=content)
+            extraContentVoid = getVoidCommands(volumeName, thiscontent=content)
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentVoid])
         elif attributeResults[0] == "Custom":
             isotropy = False
@@ -2774,8 +2823,10 @@ class M3DFileUtil:
                 isotropy = False
 
             extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[1], attributeResults[2],
-                                  isDielectric, isotropy, attributeResults[4], attributeResults[5], attributeResults[6],
-                                  attributeResults[7],attributeResults[8],attributeResults[9],thiscontent=content)
+                                                            isDielectric, isotropy, attributeResults[4],
+                                                            attributeResults[5], attributeResults[6],
+                                                            attributeResults[7], attributeResults[8],
+                                                            attributeResults[9], thiscontent=content)
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentDIY])
 
         # 更新manager
@@ -2783,20 +2834,21 @@ class M3DFileUtil:
                                    self.__Classification.DEFINE_OBJECTS,
                                    content,
                                    extra)
-    #体（函数体）
-    def updateFunctionVolumeCommands(self,volumeName,
-                                    Point_1,Point_2,functionStr,attributeResults,
-                                    isX1=False,isX2=False,isX3=False,X1Size="",X2Size="",X3Size="",
-                                    ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                            ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                            ismin_3 = False, ismid_3 = False, ismax_3 = False):
-        content = getFunctionVolumeCommands(volumeName,self.coordinateSystem, Point_1,Point_2,functionStr)
+
+    # 体（函数体）
+    def updateFunctionVolumeCommands(self, volumeName,
+                                     Point_1, Point_2, functionStr, attributeResults,
+                                     isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
+                                     ismin_1=False, ismid_1=False, ismax_1=False,
+                                     ismin_2=False, ismid_2=False, ismax_2=False,
+                                     ismin_3=False, ismid_3=False, ismax_3=False):
+        content = getFunctionVolumeCommands(volumeName, self.coordinateSystem, Point_1, Point_2, functionStr)
         # 获得附加的mark命令
         extraContentMark = getMarkCommands(volumeName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
-                    ismin_1, ismid_1, ismax_1,
-                    ismin_2, ismid_2, ismax_2,
-                    ismin_3, ismid_3, ismax_3)
-        FreeCAD.Console.PrintError("extraContentMark: "+str(extraContentMark)+"\n")
+                                           ismin_1, ismid_1, ismax_1,
+                                           ismin_2, ismid_2, ismax_2,
+                                           ismin_3, ismid_3, ismax_3)
+        FreeCAD.Console.PrintError("extraContentMark: " + str(extraContentMark) + "\n")
         extra = [[self.__Classification.DEFINE_OBJECTS, extraContentMark]]
         # 获得附加的属性命令
         if attributeResults[0] == "Conductor":
@@ -2816,8 +2868,10 @@ class M3DFileUtil:
                 isotropy = False
 
             extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[1], attributeResults[2],
-                                  isDielectric, isotropy, attributeResults[4], attributeResults[5], attributeResults[6],
-                                  attributeResults[7],attributeResults[8],attributeResults[9])
+                                                            isDielectric, isotropy, attributeResults[4],
+                                                            attributeResults[5], attributeResults[6],
+                                                            attributeResults[7], attributeResults[8],
+                                                            attributeResults[9])
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentDIY])
         # 更新manager
         self.__addOrUpdateCommands(volumeName,
@@ -2825,13 +2879,13 @@ class M3DFileUtil:
                                    content,
                                    extra)
 
-    def updataRotateVolumeCommands(self,volumeName,
-                                   axis_base_point,axis_top_point,area,
+    def updataRotateVolumeCommands(self, volumeName,
+                                   axis_base_point, axis_top_point, area,
                                    attributeResults,
-                                   isX1=False,isX2=False,isX3=False,X1Size="",X2Size="",X3Size="",
-                                   ismin_1 = False, ismid_1 = False, ismax_1 = False,
-                                   ismin_2 = False, ismid_2 = False, ismax_2 = False,
-                                   ismin_3 = False, ismid_3 = False, ismax_3 = False):
+                                   isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
+                                   ismin_1=False, ismid_1=False, ismax_1=False,
+                                   ismin_2=False, ismid_2=False, ismax_2=False,
+                                   ismin_3=False, ismid_3=False, ismax_3=False):
         """
 
         :param volumeName: 名称
@@ -2847,14 +2901,14 @@ class M3DFileUtil:
         :param X3Size:X3坐标轴上的值
         :return:
         """
-        #获得volume命令
-        content = getRotateVolumeCommands(volumeName,axis_base_point,axis_top_point,area)
-        #获得附加的mark命令
-        extraContenMark=getMarkCommands(volumeName,isX1,isX2,isX3,X1Size,X2Size,X3Size,
-                                        ismin_1, ismid_1, ismax_1,
-                                        ismin_2, ismid_2, ismax_2,
-                                        ismin_3, ismid_3, ismax_3)
-        extra=[[self.__Classification.DEFINE_OBJECTS,extraContenMark]]
+        # 获得volume命令
+        content = getRotateVolumeCommands(volumeName, axis_base_point, axis_top_point, area)
+        # 获得附加的mark命令
+        extraContenMark = getMarkCommands(volumeName, isX1, isX2, isX3, X1Size, X2Size, X3Size,
+                                          ismin_1, ismid_1, ismax_1,
+                                          ismin_2, ismid_2, ismax_2,
+                                          ismin_3, ismid_3, ismax_3)
+        extra = [[self.__Classification.DEFINE_OBJECTS, extraContenMark]]
         # 获得附加的属性命令,直接复制粘贴的
         if attributeResults[0] == "Conductor":
             extraContentConductor = getConductorCommands(volumeName)
@@ -2875,7 +2929,8 @@ class M3DFileUtil:
             extraContentDIY = getVolumeDIYAttributeCommands(volumeName, attributeResults[1], attributeResults[2],
                                                             isDielectric, isotropy, attributeResults[4],
                                                             attributeResults[5], attributeResults[6],
-                                                            attributeResults[7],attributeResults[8],attributeResults[9])
+                                                            attributeResults[7], attributeResults[8],
+                                                            attributeResults[9])
             extra.append([self.__Classification.PROPERTIES_AND_PROCESSES, extraContentDIY])
 
             # 更新manager
@@ -2883,23 +2938,24 @@ class M3DFileUtil:
                                    self.__Classification.DEFINE_OBJECTS,
                                    content,
                                    extra)
+
     ########物理信息
     def updatePortCommands(self, name, direction,
-                    isPhaseVelocity=False, phaseVelocity="",
-                    isScale=False, scale="",
-                    isFt=False, ftVal="",
-                    isGeFirst=False, geFirstName="", geFirstVal="",
-                    isGeSecond=False, geSecondName="", geSecondVal="",
-                    isNormalization=False, isNewConformalLine=True,normalizationLine="",
-                    isLaplacian=False, laplacianFirst="", laplacianSecond="",
-                    isAppointArea=False, areaName="", startPointCoordinates=[], stopPointCoordinates=[],
-                    isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
-                    laplacenumber1="",laplacenumber2="",
-                    laplacianThird="", laplacianFourth="",laplacianFifth="",
-                    laplacenumber3="",laplacenumber4="",laplacenumber5="",
-                    laplace_num = "",
-                    circuit_Checked = False,circuit = "",
-                    observe_name = ""):
+                           isPhaseVelocity=False, phaseVelocity="",
+                           isScale=False, scale="",
+                           isFt=False, ftVal="",
+                           isGeFirst=False, geFirstName="", geFirstVal="",
+                           isGeSecond=False, geSecondName="", geSecondVal="",
+                           isNormalization=False, isNewConformalLine=True, normalizationLine="",
+                           isLaplacian=False, laplacianFirst="", laplacianSecond="",
+                           isAppointArea=False, areaName="", startPointCoordinates=[], stopPointCoordinates=[],
+                           isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size="",
+                           laplacenumber1="", laplacenumber2="",
+                           laplacianThird="", laplacianFourth="", laplacianFifth="",
+                           laplacenumber3="", laplacenumber4="", laplacenumber5="",
+                           laplace_num="",
+                           circuit_Checked=False, circuit="",
+                           observe_name=""):
         """
         
         name为波导端口名称
@@ -2928,7 +2984,6 @@ class M3DFileUtil:
         :param X3Size: X3坐标轴上的值
         :return: 
         """
-        
 
         # 检查必要参数是否都填入
         if isAppointArea and areaName == "":
@@ -2953,13 +3008,13 @@ class M3DFileUtil:
                                           isFt, ftVal,
                                           isGeFirst, geFirstName, geFirstVal,
                                           isGeSecond, geSecondName, geSecondVal,
-                                          isNormalization, name+".LINE",
+                                          isNormalization, name + ".LINE",
                                           isLaplacian, laplacianFirst, laplacianSecond,
-                                          laplacenumber1,laplacenumber2,
-                                          laplacianThird, laplacianFourth,laplacianFifth,
-                                          laplacenumber3,laplacenumber4,laplacenumber5,
+                                          laplacenumber1, laplacenumber2,
+                                          laplacianThird, laplacianFourth, laplacianFifth,
+                                          laplacenumber3, laplacenumber4, laplacenumber5,
                                           laplace_num,
-                                          circuit_Checked,circuit,
+                                          circuit_Checked, circuit,
                                           observe_name)
 
                 # 获得附加的area命令
@@ -2974,8 +3029,10 @@ class M3DFileUtil:
                     # x坐标相同
                     if startPointCoordinates[0] == stopPointCoordinates[0]:
                         # 得到startpoint的值和单位组成的list
-                        start_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(startPointCoordinates[2])
-                        stop_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(stopPointCoordinates[2])
+                        start_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            startPointCoordinates[2])
+                        stop_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            stopPointCoordinates[2])
                         pointCoordinates_z = str((float(start_z_data[0]) + float(stop_z_data[0])) / 2) + start_z_data[1]
                         lineStarts = [startPointCoordinates[0], startPointCoordinates[1], pointCoordinates_z]
                         lineStops = [startPointCoordinates[0], stopPointCoordinates[1], pointCoordinates_z]
@@ -2983,8 +3040,10 @@ class M3DFileUtil:
                     # y坐标相同
                     elif startPointCoordinates[1] == stopPointCoordinates[1]:
                         # 得到startpoint的值和单位组成的list
-                        start_x_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(startPointCoordinates[0])
-                        stop_x_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(stopPointCoordinates[0])
+                        start_x_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            startPointCoordinates[0])
+                        stop_x_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            stopPointCoordinates[0])
                         pointCoordinates_x = str((float(start_x_data[0]) + float(stop_x_data[0])) / 2) + start_x_data[1]
                         lineStarts = [pointCoordinates_x, startPointCoordinates[1], startPointCoordinates[2]]
                         lineStops = [pointCoordinates_x, stopPointCoordinates[1], stopPointCoordinates[2]]
@@ -2992,8 +3051,10 @@ class M3DFileUtil:
                     # z坐标相同
                     else:
                         # 得到startpoint的值和单位组成的list
-                        start_y_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(startPointCoordinates[1])
-                        stop_y_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(stopPointCoordinates[1])
+                        start_y_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            startPointCoordinates[1])
+                        stop_y_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            stopPointCoordinates[1])
                         pointCoordinates_y = str((float(start_y_data[0]) + float(stop_y_data[0])) / 2) + start_y_data[1]
                         lineStarts = [startPointCoordinates[0], pointCoordinates_y, startPointCoordinates[2]]
                         lineStops = [stopPointCoordinates[0], pointCoordinates_y, startPointCoordinates[2]]
@@ -3006,15 +3067,18 @@ class M3DFileUtil:
                         # 得到startpoint的值和单位组成的list
                         start_theta_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
                             startPointCoordinates[2])
-                        stop_theta_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(stopPointCoordinates[2])
+                        stop_theta_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            stopPointCoordinates[2])
                         pointCoordinates_theta = str((float(start_theta_data[0]) + float(stop_theta_data[0])) / 2) + \
                                                  start_theta_data[1]
                         lineStarts = [startPointCoordinates[0], startPointCoordinates[1], pointCoordinates_theta]
                         lineStops = [stopPointCoordinates[0], stopPointCoordinates[1], pointCoordinates_theta]
                     else:
                         # 得到startpoint的值和单位组成的list
-                        start_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(startPointCoordinates[0])
-                        stop_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(stopPointCoordinates[0])
+                        start_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            startPointCoordinates[0])
+                        stop_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            stopPointCoordinates[0])
                         pointCoordinates_z = str((float(start_z_data[0]) + float(stop_z_data[0])) / 2) + start_z_data[1]
                         lineStarts = [pointCoordinates_z, startPointCoordinates[1], startPointCoordinates[2]]
                         lineStops = [pointCoordinates_z, stopPointCoordinates[1], startPointCoordinates[2]]
@@ -3027,22 +3091,26 @@ class M3DFileUtil:
                         # 得到startpoint的值和单位组成的list
                         start_theta_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
                             startPointCoordinates[1])
-                        stop_theta_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(stopPointCoordinates[1])
+                        stop_theta_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            stopPointCoordinates[1])
                         pointCoordinates_theta = str((float(start_theta_data[0]) + float(stop_theta_data[0])) / 2) + \
                                                  start_theta_data[1]
                         lineStarts = [startPointCoordinates[0], pointCoordinates_theta, startPointCoordinates[2]]
                         lineStops = [stopPointCoordinates[0], pointCoordinates_theta, stopPointCoordinates[2]]
                     else:
                         # 得到startpoint的值和单位组成的list
-                        start_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(startPointCoordinates[2])
-                        stop_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(stopPointCoordinates[2])
+                        start_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            startPointCoordinates[2])
+                        stop_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            stopPointCoordinates[2])
                         pointCoordinates_z = str((float(start_z_data[0]) + float(stop_z_data[0])) / 2) + start_z_data[1]
                         lineStarts = [startPointCoordinates[0], startPointCoordinates[1], pointCoordinates_z]
                         lineStops = [stopPointCoordinates[0], startPointCoordinates[1], pointCoordinates_z]
 
-                extraContentline = Point(name+".LNLO", lineStarts).getPonitStr() + NEWLINE + \
+                extraContentline = Point(name + ".LNLO", lineStarts).getPonitStr() + NEWLINE + \
                                    Point(name + ".LNHI", lineStops).getPonitStr() + NEWLINE + \
-                                   Line(name+".LINE", Line.Type.conformal, [name+".LNLO", name+".LNHI"]).getLineStr() + NEWLINE
+                                   Line(name + ".LINE", Line.Type.conformal,
+                                        [name + ".LNLO", name + ".LNHI"]).getLineStr() + NEWLINE
 
                 # 获得附加的mark命令
                 extraContentMark = getMarkCommands(name, isX1, isX2, isX3, X1Size, X2Size, X3Size)
@@ -3065,11 +3133,11 @@ class M3DFileUtil:
                                           isGeSecond, geSecondName, geSecondVal,
                                           isNormalization, normalizationLine,
                                           isLaplacian, laplacianFirst, laplacianSecond,
-                                          laplacenumber1,laplacenumber2,
-                                          laplacianThird, laplacianFourth,laplacianFifth,
-                                          laplacenumber3,laplacenumber4,laplacenumber5,
+                                          laplacenumber1, laplacenumber2,
+                                          laplacianThird, laplacianFourth, laplacianFifth,
+                                          laplacenumber3, laplacenumber4, laplacenumber5,
                                           laplace_num,
-                                          circuit_Checked,circuit,
+                                          circuit_Checked, circuit,
                                           observe_name)
 
                 # 获得附加的area命令
@@ -3102,11 +3170,11 @@ class M3DFileUtil:
                                           isGeSecond, geSecondName, geSecondVal,
                                           isNormalization, areaName + ".LINE",
                                           isLaplacian, laplacianFirst, laplacianSecond,
-                                          laplacenumber1,laplacenumber2,
-                                          laplacianThird, laplacianFourth,laplacianFifth,
-                                          laplacenumber3,laplacenumber4,laplacenumber5,
+                                          laplacenumber1, laplacenumber2,
+                                          laplacianThird, laplacianFourth, laplacianFifth,
+                                          laplacenumber3, laplacenumber4, laplacenumber5,
                                           laplace_num,
-                                          circuit_Checked,circuit,
+                                          circuit_Checked, circuit,
                                           observe_name)
 
                 # 获得归一化线的止点坐标
@@ -3118,17 +3186,21 @@ class M3DFileUtil:
                     # x坐标相同
                     if startPointCoordinates[0] == stopPointCoordinates[0]:
                         # 得到startpoint的值和单位组成的list
-                        start_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(startPointCoordinates[2])
-                        stop_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(stopPointCoordinates[2])
-                        pointCoordinates_z = str((float(start_z_data[0])+float(stop_z_data[0]))/2) + start_z_data[1]
+                        start_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            startPointCoordinates[2])
+                        stop_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            stopPointCoordinates[2])
+                        pointCoordinates_z = str((float(start_z_data[0]) + float(stop_z_data[0])) / 2) + start_z_data[1]
                         lineStarts = [startPointCoordinates[0], startPointCoordinates[1], pointCoordinates_z]
                         lineStops = [startPointCoordinates[0], stopPointCoordinates[1], pointCoordinates_z]
 
                     # y坐标相同
                     elif startPointCoordinates[1] == stopPointCoordinates[1]:
                         # 得到startpoint的值和单位组成的list
-                        start_x_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(startPointCoordinates[0])
-                        stop_x_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(stopPointCoordinates[0])
+                        start_x_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            startPointCoordinates[0])
+                        stop_x_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            stopPointCoordinates[0])
                         pointCoordinates_x = str((float(start_x_data[0]) + float(stop_x_data[0])) / 2) + start_x_data[1]
                         lineStarts = [pointCoordinates_x, startPointCoordinates[1], startPointCoordinates[2]]
                         lineStops = [pointCoordinates_x, stopPointCoordinates[1], stopPointCoordinates[2]]
@@ -3136,8 +3208,10 @@ class M3DFileUtil:
                     # z坐标相同
                     else:
                         # 得到startpoint的值和单位组成的list
-                        start_y_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(startPointCoordinates[1])
-                        stop_y_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(stopPointCoordinates[1])
+                        start_y_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            startPointCoordinates[1])
+                        stop_y_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            stopPointCoordinates[1])
                         pointCoordinates_y = str((float(start_y_data[0]) + float(stop_y_data[0])) / 2) + start_y_data[1]
                         lineStarts = [startPointCoordinates[0], pointCoordinates_y, startPointCoordinates[2]]
                         lineStops = [stopPointCoordinates[0], pointCoordinates_y, startPointCoordinates[2]]
@@ -3145,18 +3219,24 @@ class M3DFileUtil:
                 # 柱坐标系下(z,r,theta)
                 if self.coordinateSystem == self.CoordinateSystem.cylindricalSys:
                     # z坐标相同或r坐标相同
-                    if startPointCoordinates[0] == stopPointCoordinates[0] or startPointCoordinates[1] == stopPointCoordinates[1]:
+                    if startPointCoordinates[0] == stopPointCoordinates[0] or startPointCoordinates[1] == \
+                            stopPointCoordinates[1]:
                         # 得到startpoint的值和单位组成的list
-                        start_theta_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(startPointCoordinates[2])
-                        stop_theta_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(stopPointCoordinates[2])
-                        pointCoordinates_theta = str((float(start_theta_data[0]) + float(stop_theta_data[0])) / 2) + start_theta_data[1]
+                        start_theta_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            startPointCoordinates[2])
+                        stop_theta_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            stopPointCoordinates[2])
+                        pointCoordinates_theta = str((float(start_theta_data[0]) + float(stop_theta_data[0])) / 2) + \
+                                                 start_theta_data[1]
                         lineStarts = [startPointCoordinates[0], startPointCoordinates[1], pointCoordinates_theta]
                         lineStops = [stopPointCoordinates[0], stopPointCoordinates[1], pointCoordinates_theta]
                     else:
                         # 得到startpoint的值和单位组成的list
-                        start_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(startPointCoordinates[0])
-                        stop_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(stopPointCoordinates[0])
-                        pointCoordinates_z = str((float(start_z_data[0]) + float(stop_z_data[0]))/ 2) + start_z_data[1]
+                        start_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            startPointCoordinates[0])
+                        stop_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            stopPointCoordinates[0])
+                        pointCoordinates_z = str((float(start_z_data[0]) + float(stop_z_data[0])) / 2) + start_z_data[1]
                         lineStarts = [pointCoordinates_z, startPointCoordinates[1], startPointCoordinates[2]]
                         lineStops = [pointCoordinates_z, stopPointCoordinates[1], startPointCoordinates[2]]
 
@@ -3165,25 +3245,30 @@ class M3DFileUtil:
                     # z坐标相同或r坐标相同
                     if startPointCoordinates[0] == stopPointCoordinates[0] or startPointCoordinates[2] == \
                             stopPointCoordinates[2]:
-                        
+
                         # 得到startpoint的值和单位组成的list
-                        start_theta_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(startPointCoordinates[1])
-                        stop_theta_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(stopPointCoordinates[1])
-                        pointCoordinates_theta = str((float(start_theta_data[0]) + float(stop_theta_data[0]))/ 2) + start_theta_data[1]
+                        start_theta_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            startPointCoordinates[1])
+                        stop_theta_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            stopPointCoordinates[1])
+                        pointCoordinates_theta = str((float(start_theta_data[0]) + float(stop_theta_data[0])) / 2) + \
+                                                 start_theta_data[1]
                         lineStarts = [startPointCoordinates[0], pointCoordinates_theta, startPointCoordinates[2]]
                         lineStops = [stopPointCoordinates[0], pointCoordinates_theta, stopPointCoordinates[2]]
                     else:
                         # 得到startpoint的值和单位组成的list
-                        start_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(startPointCoordinates[2])
-                        stop_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(stopPointCoordinates[2])
-                        pointCoordinates_z = str((float(start_z_data[0]) + float(stop_z_data[0]))/ 2) + start_z_data[1]
+                        start_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            startPointCoordinates[2])
+                        stop_z_data = Modeling.Common.Tools.UnitTools.getValueAndUnitOfDataFromParamObj(
+                            stopPointCoordinates[2])
+                        pointCoordinates_z = str((float(start_z_data[0]) + float(stop_z_data[0])) / 2) + start_z_data[1]
                         lineStarts = [startPointCoordinates[0], startPointCoordinates[1], pointCoordinates_z]
                         lineStops = [stopPointCoordinates[0], startPointCoordinates[1], pointCoordinates_z]
                 # 生成对应的注释
                 lineCommandsStr = NEWLINE + "!!" + name + NEWLINE
 
-                extraContentline = lineCommandsStr+Point(areaName + ".LNLO", lineStarts).getPonitStr() + NEWLINE + \
-                                   Point(areaName + ".LNHI", lineStops).getPonitStr() + NEWLINE +\
+                extraContentline = lineCommandsStr + Point(areaName + ".LNLO", lineStarts).getPonitStr() + NEWLINE + \
+                                   Point(areaName + ".LNHI", lineStops).getPonitStr() + NEWLINE + \
                                    Line(areaName + ".LINE", Line.Type.conformal,
                                         [areaName + ".LNLO", areaName + ".LNHI"]).getLineStr() + NEWLINE
 
@@ -3195,24 +3280,25 @@ class M3DFileUtil:
             else:
                 # 获得port命令
                 content = getPortCommands(name, self.coordinateSystem, areaName, direction,
-                    isPhaseVelocity, phaseVelocity,
-                    isScale, scale,
-                    isFt,ftVal,
-                    isGeFirst, geFirstName, geFirstVal,
-                    isGeSecond, geSecondName, geSecondVal,
-                    isNormalization, normalizationLine,
-                    isLaplacian, laplacianFirst, laplacianSecond,
-                    laplacenumber1,laplacenumber2,
-                    laplacianThird, laplacianFourth,laplacianFifth,
-                                          laplacenumber3,laplacenumber4,laplacenumber5,
+                                          isPhaseVelocity, phaseVelocity,
+                                          isScale, scale,
+                                          isFt, ftVal,
+                                          isGeFirst, geFirstName, geFirstVal,
+                                          isGeSecond, geSecondName, geSecondVal,
+                                          isNormalization, normalizationLine,
+                                          isLaplacian, laplacianFirst, laplacianSecond,
+                                          laplacenumber1, laplacenumber2,
+                                          laplacianThird, laplacianFourth, laplacianFifth,
+                                          laplacenumber3, laplacenumber4, laplacenumber5,
                                           laplace_num,
-                                          circuit_Checked,circuit,
+                                          circuit_Checked, circuit,
                                           observe_name)
 
                 # 更新manager
                 self.__addOrUpdateCommands(name,
                                            self.__Classification.PROPERTIES_AND_PROCESSES,
                                            content)
+
     def updateNewMarkCommands(self, name, mark_obj, direction, isChecked_min, isChecked_mid, isChecked_max, size):
         '''
         需要额外添加的MARK命令
@@ -3224,73 +3310,76 @@ class M3DFileUtil:
         self.__addOrUpdateCommands(name,
                                    self.__Classification.DEFINE_OBJECTS,
                                    content)
-    def updateEmSECommands(self,name,energySec,maxNum,WEIGHT_FACTOR,ENERGY_DISTRIBUTION,min_energy,
-                            max_energy,ANGLE_DISTRIBUTION,isCheck_WF=False,isCheck_ED=False,isCheck_AD=False,
-                            notInclude1="未指定",notInclude2="未指定",include1="未指定",include2="未指定",Emitter="未指定",
-                            isEmit = False,isExclude1 = False,isExclude2 = False,isInclude1 = False,isInclude2 = False):
+
+    def updateEmSECommands(self, name, energySec, maxNum, WEIGHT_FACTOR, ENERGY_DISTRIBUTION, min_energy,
+                           max_energy, ANGLE_DISTRIBUTION, isCheck_WF=False, isCheck_ED=False, isCheck_AD=False,
+                           notInclude1="未指定", notInclude2="未指定", include1="未指定", include2="未指定", Emitter="未指定",
+                           isEmit=False, isExclude1=False, isExclude2=False, isInclude1=False, isInclude2=False):
         '''
         更新二次发射M3D的函数
         '''
         # FreeCAD.Console.PrintError("\n进入updateEmSECommands")
-        content = getEmSECommands(name,energySec,maxNum,WEIGHT_FACTOR,ENERGY_DISTRIBUTION,min_energy,
-                            max_energy,ANGLE_DISTRIBUTION,isCheck_WF,isCheck_ED,isCheck_AD,
-                            notInclude1,notInclude2,include1,include2,Emitter,
-                            isEmit,isExclude1,isExclude2,isInclude1,isInclude2)
+        content = getEmSECommands(name, energySec, maxNum, WEIGHT_FACTOR, ENERGY_DISTRIBUTION, min_energy,
+                                  max_energy, ANGLE_DISTRIBUTION, isCheck_WF, isCheck_ED, isCheck_AD,
+                                  notInclude1, notInclude2, include1, include2, Emitter,
+                                  isEmit, isExclude1, isExclude2, isInclude1, isInclude2)
         # FreeCAD.Console.PrintError("\n生成concent")
         # 更新manager
         self.__addOrUpdateCommands(name,
                                    self.__Classification.PROPERTIES_AND_PROCESSES,
                                    content)
-    def updateMergeCommands(self,name,Types,everyNum,maxNum):
+
+    def updateMergeCommands(self, name, Types, everyNum, maxNum):
         '''
         更新Merge的M3D的函数
         '''
         FreeCAD.Console.PrintError("\n进入加载update的数据过程")
-        content = getMergeCommands(name,Types,everyNum,maxNum)    
+        content = getMergeCommands(name, Types, everyNum, maxNum)
 
         # 更新manager
         self.__addOrUpdateCommands(name,
                                    self.__Classification.PROPERTIES_AND_PROCESSES,
-                                   content)   
-    def updataGasgasCommands(self,name,Types,pressure,temperature):
+                                   content)
+
+    def updataGasgasCommands(self, name, Types, pressure, temperature):
         '''
         更新Gasgas的M3D函数
         '''
-        content = getGasgasCommands(name,Types,pressure,temperature)
-        
+        content = getGasgasCommands(name, Types, pressure, temperature)
+
         # 更新manager
         self.__addOrUpdateCommands(name,
                                    self.__Classification.PROPERTIES_AND_PROCESSES,
-                                   content) 
+                                   content)
 
-    def updataSpeciesCommands(self,name,powerUnitl,quality,massUnit):
+    def updataSpeciesCommands(self, name, powerUnitl, quality, massUnit):
         '''
         更新Species的M3D的函数
         '''
-        content = getSpeciesCommands(name,powerUnitl,quality,massUnit)
+        content = getSpeciesCommands(name, powerUnitl, quality, massUnit)
         # 更新manager
         self.__addOrUpdateCommands(name,
                                    self.__Classification.COMMON_PRESETS,
-                                   content) 
+                                   content)
 
-    def updatePopulateCommands(self,name,types,volume,X1,Y1,Z1,X2,Y2,Z2,density,temp):
+    def updatePopulateCommands(self, name, types, volume, X1, Y1, Z1, X2, Y2, Z2, density, temp):
         '''
         更新Populate的函数
-        '''        
-        content = getPopulateCommands(name,types,volume,X1,Y1,Z1,X2,Y2,Z2,density,temp)
+        '''
+        content = getPopulateCommands(name, types, volume, X1, Y1, Z1, X2, Y2, Z2, density, temp)
         # FreeCAD.Console.PrintError("\n生成Populate的content")
         # 更新manager
         self.__addOrUpdateCommands(name,
                                    self.__Classification.PROPERTIES_AND_PROCESSES,
-                                   content) 
+                                   content)
 
-    def updateFreeSpaceCommands(self,freeSpaceName, trendType, xType, component, isConductivity, funExpression,
+    def updateFreeSpaceCommands(self, freeSpaceName, trendType, xType, component, isConductivity, funExpression,
                                 isAppointArea=False, areaName="", startPointCoordinates=[], stopPointCoordinates=[],
                                 isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size=""):
 
         # 检查必要参数是否都填入
         if isAppointArea and areaName == "":
-            sayz( "FreeSpace命令生成，请检查areaName是否填入")
+            sayz("FreeSpace命令生成，请检查areaName是否填入")
             return
 
         if not isAppointArea and startPointCoordinates == []:
@@ -3304,7 +3393,8 @@ class M3DFileUtil:
         # 如果没有指定正交投影面
         if not isAppointArea:
             # 获得FreeSpace命令
-            content = getFreespaceCommands(freeSpaceName, freeSpaceName, trendType, xType, component, isConductivity, funExpression)
+            content = getFreespaceCommands(freeSpaceName, freeSpaceName, trendType, xType, component, isConductivity,
+                                           funExpression)
 
             # 获得附加的area命令
             extraContentVolume = getConformalVolumeCommands(freeSpaceName, startPointCoordinates, stopPointCoordinates)
@@ -3322,17 +3412,19 @@ class M3DFileUtil:
         # 如果指定了正交投影面
         else:
             # 获得FreeSpace命令
-            content = getFreespaceCommands(freeSpaceName, areaName, trendType, xType, component, isConductivity, funExpression)
+            content = getFreespaceCommands(freeSpaceName, areaName, trendType, xType, component, isConductivity,
+                                           funExpression)
 
             # 更新manager
             self.__addOrUpdateCommands(freeSpaceName,
                                        self.__Classification.PROPERTIES_AND_PROCESSES,
                                        content)
 
-
     def updateSymmetryCommands(self, name, type, trendType,
-                                    isAppointArea=False, areaName="", startPointCoordinates=[], stopPointCoordinates=[],normalList=[True,False,False],
-                                    appointAreaInMid="",Normal_Period="" ,isX1=False, isX2=False, isX3=False, X1Size="", X2Size="", X3Size=""):
+                               isAppointArea=False, areaName="", startPointCoordinates=[], stopPointCoordinates=[],
+                               normalList=[True, False, False],
+                               appointAreaInMid="", Normal_Period="", isX1=False, isX2=False, isX3=False, X1Size="",
+                               X2Size="", X3Size=""):
         """
         :param name:面板名称
         :param type:对称类型 AXIAL、MIRROR、PERIODIC   
@@ -3363,33 +3455,45 @@ class M3DFileUtil:
         # 如果没有指定正交投影面
         if not isAppointArea:
             # 获得Symmetry命令
-            content = getSymmetryCommands(name, type, trendType, name, name+"P")
+            content = getSymmetryCommands(name, type, trendType, name, name + "P")
             # 获得附加的area命令
-            extraContentArea = getAreaCommands(name, Area.Shape.conformal, startPointCoordinates, stopPointCoordinates,explanatoryName=name+" "+str(Normal_Period))
-            extraContentAreaExtra=""
+            extraContentArea = getAreaCommands(name, Area.Shape.conformal, startPointCoordinates, stopPointCoordinates,
+                                               explanatoryName=name + " " + str(Normal_Period))
+            extraContentAreaExtra = ""
             # 如果对称类型是轴对称的话，还得再加一个面
-            if type==Symmetry.Type.periodic:
-                UnitType1=Modeling.Common.Tools.UnitTools.SupportUnitType.Length
-                UnitType2=Modeling.Common.Tools.UnitTools.SupportUnitType.Length
-                UnitType3=Modeling.Common.Tools.UnitTools.SupportUnitType.Length
-                if FreeCAD.ActiveDocument.CoordinateSystem==Modeling.Common.Tools.CoordinateSystemTools.CoordinateType.Rectangular:
+            if type == Symmetry.Type.periodic:
+                UnitType1 = Modeling.Common.Tools.UnitTools.SupportUnitType.Length
+                UnitType2 = Modeling.Common.Tools.UnitTools.SupportUnitType.Length
+                UnitType3 = Modeling.Common.Tools.UnitTools.SupportUnitType.Length
+                if FreeCAD.ActiveDocument.CoordinateSystem == Modeling.Common.Tools.CoordinateSystemTools.CoordinateType.Rectangular:
                     pass
-                elif FreeCAD.ActiveDocument.CoordinateSystem==Modeling.Common.Tools.CoordinateSystemTools.CoordinateType.Polar:
-                    UnitType2=Modeling.Common.Tools.UnitTools.SupportUnitType.Angle
+                elif FreeCAD.ActiveDocument.CoordinateSystem == Modeling.Common.Tools.CoordinateSystemTools.CoordinateType.Polar:
+                    UnitType2 = Modeling.Common.Tools.UnitTools.SupportUnitType.Angle
                 else:
-                    UnitType3=Modeling.Common.Tools.UnitTools.SupportUnitType.Angle
+                    UnitType3 = Modeling.Common.Tools.UnitTools.SupportUnitType.Angle
 
                 if normalList[0]:
-                    startPointCoordinates=[Modeling.Common.Tools.UnitTools.calculator(str(startPointCoordinates[0])+"+"+str(Normal_Period),UnitType1),startPointCoordinates[1],startPointCoordinates[2]]
-                    stopPointCoordinates=[Modeling.Common.Tools.UnitTools.calculator(str(stopPointCoordinates[0])+"+"+str(Normal_Period),UnitType1),stopPointCoordinates[1],stopPointCoordinates[2]]
+                    startPointCoordinates = [Modeling.Common.Tools.UnitTools.calculator(
+                        str(startPointCoordinates[0]) + "+" + str(Normal_Period), UnitType1), startPointCoordinates[1],
+                        startPointCoordinates[2]]
+                    stopPointCoordinates = [Modeling.Common.Tools.UnitTools.calculator(
+                        str(stopPointCoordinates[0]) + "+" + str(Normal_Period), UnitType1), stopPointCoordinates[1],
+                        stopPointCoordinates[2]]
                 elif normalList[1]:
-                    startPointCoordinates=[startPointCoordinates[0],Modeling.Common.Tools.UnitTools.calculator(str(startPointCoordinates[1])+"+"+str(Normal_Period),UnitType2),startPointCoordinates[2]]
-                    stopPointCoordinates=[stopPointCoordinates[0],Modeling.Common.Tools.UnitTools.calculator(str(stopPointCoordinates[1])+"+"+str(Normal_Period),UnitType2),stopPointCoordinates[2]]
+                    startPointCoordinates = [startPointCoordinates[0], Modeling.Common.Tools.UnitTools.calculator(
+                        str(startPointCoordinates[1]) + "+" + str(Normal_Period), UnitType2), startPointCoordinates[2]]
+                    stopPointCoordinates = [stopPointCoordinates[0], Modeling.Common.Tools.UnitTools.calculator(
+                        str(stopPointCoordinates[1]) + "+" + str(Normal_Period), UnitType2), stopPointCoordinates[2]]
                 else:
-                    startPointCoordinates=[startPointCoordinates[0],startPointCoordinates[1],Modeling.Common.Tools.UnitTools.calculator(str(startPointCoordinates[2])+"+"+str(Normal_Period),UnitType3)]
-                    stopPointCoordinates=[stopPointCoordinates[0],stopPointCoordinates[1],Modeling.Common.Tools.UnitTools.calculator(str(stopPointCoordinates[2])+"+"+str(Normal_Period),UnitType3)]
-                extraContentAreaExtra = getAreaCommands(name+"P", Area.Shape.conformal, startPointCoordinates, stopPointCoordinates)
-            extraContentArea=extraContentArea+extraContentAreaExtra
+                    startPointCoordinates = [startPointCoordinates[0], startPointCoordinates[1],
+                                             Modeling.Common.Tools.UnitTools.calculator(
+                                                 str(startPointCoordinates[2]) + "+" + str(Normal_Period), UnitType3)]
+                    stopPointCoordinates = [stopPointCoordinates[0], stopPointCoordinates[1],
+                                            Modeling.Common.Tools.UnitTools.calculator(
+                                                str(stopPointCoordinates[2]) + "+" + str(Normal_Period), UnitType3)]
+                extraContentAreaExtra = getAreaCommands(name + "P", Area.Shape.conformal, startPointCoordinates,
+                                                        stopPointCoordinates)
+            extraContentArea = extraContentArea + extraContentAreaExtra
             # 获得附加的mark命令
             extraContentMark = getMarkCommands(name, isX1, isX2, isX3, X1Size, X2Size, X3Size)
 
@@ -3410,8 +3514,7 @@ class M3DFileUtil:
                                        self.__Classification.PROPERTIES_AND_PROCESSES,
                                        content)
 
-
-    def updateDriverCommands(self, name, type, startPoints, stopPonits, currentDensity, funExpression,source_type):
+    def updateDriverCommands(self, name, type, startPoints, stopPonits, currentDensity, funExpression, source_type):
         """激励电流源m3d文本写入
 
         :param type: 电流源类型
@@ -3425,7 +3528,7 @@ class M3DFileUtil:
         """
 
         # 基本命令
-        content = getDriverCommands(self.coordinateSystem, name, currentDensity, funExpression,source_type)
+        content = getDriverCommands(self.coordinateSystem, name, currentDensity, funExpression, source_type)
         # FreeCAD.Console.PrintError('\nDriv的content：'+str(content))
 
         # 附加命令
@@ -3448,19 +3551,18 @@ class M3DFileUtil:
         # 如果指定了source_type就不生成extra @lzg
         if source_type == '未指定':
             self.__addOrUpdateCommands(name,
-                                   self.__Classification.PROPERTIES_AND_PROCESSES,
-                                   content,
-                                   [[self.__Classification.PANEL_OBJECTS, extra]])
+                                       self.__Classification.PROPERTIES_AND_PROCESSES,
+                                       content,
+                                       [[self.__Classification.PANEL_OBJECTS, extra]])
         else:
             self.__addOrUpdateCommands(name,
-                                   self.__Classification.PROPERTIES_AND_PROCESSES,
-                                   content)
-
+                                       self.__Classification.PROPERTIES_AND_PROCESSES,
+                                       content)
 
     def updateFoilCommands(self, name, type, startPoints, stopPoints, thick,
                            isDIY, DITMaterial, isDefault, defaultMaterial):
         # 基本命令
-        content = getFoilCommands(name, thick, isDIY, DITMaterial, isDefault, defaultMaterial,type)
+        content = getFoilCommands(name, thick, isDIY, DITMaterial, isDefault, defaultMaterial, type)
 
         # 附加命令
         if type == u"未指定":
@@ -3477,37 +3579,35 @@ class M3DFileUtil:
                                        self.__Classification.PROPERTIES_AND_PROCESSES,
                                        content)
 
-
     def updateInductorCommands(self, name, type, startPoints, stopPoints, diameter, isInductance, inductance):
         # 基本命令
         content = getInductorCommands(name, diameter, isInductance, inductance)
 
         # 附加命令
-        #if type == u"未指定":
+        # if type == u"未指定":
         extra = getLineCommands(name, Line.Type.conformal, startPoints, stopPoints)
 
         # 跟新manager
         self.__addOrUpdateCommands(name,
-                                    self.__Classification.PROPERTIES_AND_PROCESSES,
-                                    content,
-                                    [[self.__Classification.PANEL_OBJECTS, extra]])
+                                   self.__Classification.PROPERTIES_AND_PROCESSES,
+                                   content,
+                                   [[self.__Classification.PANEL_OBJECTS, extra]])
         # else:
         #     # 跟新manager
         #     self.__addOrUpdateCommands(name,
         #                                self.__Classification.PROPERTIES_AND_PROCESSES,
         #                                content)
 
-
     def updateEmBCommands(self, emitName, BeamJ, BeamV,
-                   isSpecies=False, species="",
-                   isNumber=False, creationRate="",
-                   isTiming=False, timingType="", stepMultiple="",
-                   isSurfaceSpacing=False, surfaceSpacing="",
-                   isOutwardSpacing=False, outwardSpacing="", dn="",
-                   isEmit=False, mobject="",
-                   isExclude1=False, excludeVolume1="", isExclude2=False, excludeVolume2="",
-                   isInclude1=False, includeVolume1="", isInclude2=False, includeVolume2=""
-                   ):
+                          isSpecies=False, species="",
+                          isNumber=False, creationRate="",
+                          isTiming=False, timingType="", stepMultiple="",
+                          isSurfaceSpacing=False, surfaceSpacing="",
+                          isOutwardSpacing=False, outwardSpacing="", dn="",
+                          isEmit=False, mobject="",
+                          isExclude1=False, excludeVolume1="", isExclude2=False, excludeVolume2="",
+                          isInclude1=False, includeVolume1="", isInclude2=False, includeVolume2=""
+                          ):
         """
             EmB面板对应的命令组
 
@@ -3542,20 +3642,19 @@ class M3DFileUtil:
                                    self.__Classification.PROPERTIES_AND_PROCESSES,
                                    content)
 
-
     def updateEmECommands(self, emitName,
-                         isTField=False, TField="",
-                         isRField=False, RField="",
-                         isCharg=False, Charg="",
-                         isFRate=False, FRate="",
-                         isSpecies=False, species="",
-                         isNumber=False, creationRate="",
-                         isTiming=False, timingType="", stepMultiple="",
-                         isSurfaceSpacing=False, surfaceSpacing="",
-                         isOutwardSpacing=False, outwardSpacing="", dn="",
-                         isEmit=False, mobject="",
-                         isExclude1=False, excludeVolume1="", isExclude2=False, excludeVolume2="",
-                         isInclude1=False, includeVolume1="", isInclude2=False, includeVolume2=""):
+                          isTField=False, TField="",
+                          isRField=False, RField="",
+                          isCharg=False, Charg="",
+                          isFRate=False, FRate="",
+                          isSpecies=False, species="",
+                          isNumber=False, creationRate="",
+                          isTiming=False, timingType="", stepMultiple="",
+                          isSurfaceSpacing=False, surfaceSpacing="",
+                          isOutwardSpacing=False, outwardSpacing="", dn="",
+                          isEmit=False, mobject="",
+                          isExclude1=False, excludeVolume1="", isExclude2=False, excludeVolume2="",
+                          isInclude1=False, includeVolume1="", isInclude2=False, includeVolume2=""):
         """
         EmE面板对应的命令组
         
@@ -3580,23 +3679,22 @@ class M3DFileUtil:
 
         # 获得EmE命令
         content = getEmECommands(self.coordinateSystem, emitName,
-                                  isTField, TField,
-                                  isRField, RField,
-                                  isCharg, Charg,
-                                  isFRate, FRate,
-                                  isSpecies, species,
-                                  isNumber, creationRate,
-                                  isTiming, timingType, stepMultiple,
-                                  isSurfaceSpacing, surfaceSpacing,
-                                  isOutwardSpacing, outwardSpacing, dn,
-                                  isEmit, mobject,
-                                  isExclude1, excludeVolume1, isExclude2, excludeVolume2,
-                                  isInclude1, includeVolume1, isInclude2, includeVolume2)
+                                 isTField, TField,
+                                 isRField, RField,
+                                 isCharg, Charg,
+                                 isFRate, FRate,
+                                 isSpecies, species,
+                                 isNumber, creationRate,
+                                 isTiming, timingType, stepMultiple,
+                                 isSurfaceSpacing, surfaceSpacing,
+                                 isOutwardSpacing, outwardSpacing, dn,
+                                 isEmit, mobject,
+                                 isExclude1, excludeVolume1, isExclude2, excludeVolume2,
+                                 isInclude1, includeVolume1, isInclude2, includeVolume2)
         # 更新manager
         self.__addOrUpdateCommands(emitName,
                                    self.__Classification.PROPERTIES_AND_PROCESSES,
                                    content)
-
 
     def updateEmGCommands(self, emitName, It, Bg, Pl, Pt, Dgc, pointCoordinates, isX1=False, isX2=False, isX3=False,
                           isSpecies=False, species="",
@@ -3606,7 +3704,8 @@ class M3DFileUtil:
                           isOutwardSpacing=False, outwardSpacing="", dn="",
                           isEmit=False, mobject="",
                           isExclude1=False, excludeVolume1="", isExclude2=False, excludeVolume2="",
-                          isInclude1=False, includeVolume1="", isInclude2=False, includeVolume2=""
+                          isInclude1=False, includeVolume1="", isInclude2=False, includeVolume2="",
+                          isCheckedVelocity=False, velocity_spread=""
                           ):
         """
             EmG面板对应的命令组
@@ -3642,22 +3741,22 @@ class M3DFileUtil:
                                  isOutwardSpacing, outwardSpacing, dn,
                                  isEmit, mobject,
                                  isExclude1, excludeVolume1, isExclude2, excludeVolume2,
-                                 isInclude1, includeVolume1, isInclude2, includeVolume2)
+                                 isInclude1, includeVolume1, isInclude2, includeVolume2,
+                                 isCheckedVelocity, velocity_spread)
         # 更新manager
         self.__addOrUpdateCommands(emitName,
                                    self.__Classification.PROPERTIES_AND_PROCESSES,
                                    content)
 
-
     def updateEmHCommands(self, emitName, A, B, PHI,
-                   isSpecies=False, species="",
-                   isNumber=False, creationRate="",
-                   isTiming=False, timingType="", stepMultiple="",
-                   isSurfaceSpacing=False, surfaceSpacing="",
-                   isOutwardSpacing=False, outwardSpacing="", dn="",
-                   isEmit=False, mobject="",
-                   isExclude1=False, excludeVolume1="", isExclude2=False, excludeVolume2="",
-                   isInclude1=False, includeVolume1="", isInclude2=False, includeVolume2=""
+                          isSpecies=False, species="",
+                          isNumber=False, creationRate="",
+                          isTiming=False, timingType="", stepMultiple="",
+                          isSurfaceSpacing=False, surfaceSpacing="",
+                          isOutwardSpacing=False, outwardSpacing="", dn="",
+                          isEmit=False, mobject="",
+                          isExclude1=False, excludeVolume1="", isExclude2=False, excludeVolume2="",
+                          isInclude1=False, includeVolume1="", isInclude2=False, includeVolume2=""
                           ):
         """
         EmH面板对应的命令组
@@ -3693,7 +3792,6 @@ class M3DFileUtil:
         self.__addOrUpdateCommands(emitName,
                                    self.__Classification.PROPERTIES_AND_PROCESSES,
                                    content)
-
 
     def updateEmTCommands(self, emitName, WF, TP,
                           isSpecies=False, species="",
@@ -3739,9 +3837,8 @@ class M3DFileUtil:
                                    self.__Classification.PROPERTIES_AND_PROCESSES,
                                    content)
 
-
     def updateContourCommands(self, name, field, timerName, isShade=False,
-                                   isAppointArea=False, areaName="",startPointCoordinates=[], stopPointCoordinates=[]):
+                              isAppointArea=False, areaName="", startPointCoordinates=[], stopPointCoordinates=[]):
         """
         
         :param name: 对应面板名称
@@ -3756,15 +3853,15 @@ class M3DFileUtil:
         """
 
         # 检查必要参数是否都填入
-        if isAppointArea and areaName=="":
+        if isAppointArea and areaName == "":
             sayz("Contour命令生成，请检查areaName是否填入")
             return
 
-        if not isAppointArea and startPointCoordinates==[]:
+        if not isAppointArea and startPointCoordinates == []:
             sayz("Contour命令生成，请检查startPointCoordinates是否填入")
             return
 
-        if not isAppointArea and stopPointCoordinates==[]:
+        if not isAppointArea and stopPointCoordinates == []:
             sayz("Contour命令生成，请检查stopPointCoordinates是否填入")
             return
 
@@ -3792,10 +3889,8 @@ class M3DFileUtil:
                                        self.__Classification.ALL_PLOTS_CONTOUR,
                                        content)
 
-
-
     def updateVectorCommands(self, field1, field2, name, timerName, isNumber=False, number1="", number2="",
-                                  isAppointArea=False, areaName="", startPointCoordinates=[], stopPointCoordinates=[]):
+                             isAppointArea=False, areaName="", startPointCoordinates=[], stopPointCoordinates=[]):
         """
         
         :param field1: 观测场1
@@ -3849,12 +3944,11 @@ class M3DFileUtil:
                                        self.__Classification.ALL_PLOTS_VECTOR,
                                        content)
 
-
     def updatePhasespaceCommands(self, name, horizontalAxis, verticalAxis,
-                 timerName,
-                 species,
-                 isThickness=False, direction="", thickness1="", thickness2="",
-                 isSuffix=False, suffix=""):
+                                 timerName,
+                                 species,
+                                 isThickness=False, direction="", thickness1="", thickness2="",
+                                 isSuffix=False, suffix=""):
         """
         :param name 面板名称
         :param horizontalAxis: 横轴显示
@@ -3872,17 +3966,17 @@ class M3DFileUtil:
 
         # 获得Phasespace命令
         content = getPhasespaceCommands(name, horizontalAxis, verticalAxis, timerName, species,
-                 isThickness, direction, thickness1, thickness2,
-                 isSuffix, suffix)
+                                        isThickness, direction, thickness1, thickness2,
+                                        isSuffix, suffix)
 
         # 更新manager
         self.__addOrUpdateCommands(name,
                                    self.__Classification.ALL_PLOTS_PHASESPACE,
                                    content)
 
-
     def updateRangeCommands(self, name, field, timerName, isFFT=False, isMagnitude=False, isComplex=False,
-                                 isAppointLine=False, lineName="", startPointCoordinates=[], stopPointCoordinates=[]):
+                            isAppointLine=False, lineName="", startPointCoordinates=[], stopPointCoordinates=[],
+                            isParticle=False, chooseParticle="CURRENT", particleType="ELECTRON", particleAxis="X1"):
         """
         
         :param name: 面板名称
@@ -3911,6 +4005,15 @@ class M3DFileUtil:
             sayz("Range命令生成，请检查stopPointCoordinates是否填入")
             return
 
+        # @WZG 2021.1.20 添加一条新的粒子命令
+        if isParticle:
+            ranName = newline + "!!" + name + newline
+            range_particle_m3d = ranName + "RANGE PARTICLE " + chooseParticle + blankSpace + \
+                                 particleType + blankSpace + particleAxis + blankSpace + \
+                                 timerName + semicolon + newline
+            self.__addOrUpdateCommands(name, self.__Classification.ALL_PLOTS_RANGE, range_particle_m3d)
+            return
+
         # 如果没有指定正交投影面
         if not isAppointLine:
             # 获得range命令
@@ -3935,16 +4038,17 @@ class M3DFileUtil:
                                        self.__Classification.ALL_PLOTS_RANGE,
                                        content)
 
-
     def updateObserveCommands(self, name="",
-                                   isField=False, isFieldIntegral=False, isFieldPower=False, isFieldEnergy=False, isParticleStatistics=False,
-                                   isParticleCollected=False,isParticleEmitted=False,isParticleDestroyed=False,field="",
-                                   isFFT=False, fftType="", isfreq=False,freqFrom="", freqTo="",
-                                   isTime=False, timeFrom="", timeTo="",
-                                   isInterval=False, interval="",
-                                   isFilter=False, filterType="", timePara="",
-                                   observeType="", isAppoint=False, appointName="", startPointCoordinates=[], stopPointCoordinates=[],
-                                   name2 = ''):
+                              isField=False, isFieldIntegral=False, isFieldPower=False, isFieldEnergy=False,
+                              isParticleStatistics=False,
+                              isParticleCollected=False, isParticleEmitted=False, isParticleDestroyed=False, field="",
+                              isFFT=False, fftType="", isfreq=False, freqFrom="", freqTo="",
+                              isTime=False, timeFrom="", timeTo="",
+                              isInterval=False, interval="",
+                              isFilter=False, filterType="", timePara="",
+                              observeType="", isAppoint=False, appointName="", startPointCoordinates=[],
+                              stopPointCoordinates=[],
+                              name2=''):
 
         """
         
@@ -3976,7 +4080,7 @@ class M3DFileUtil:
         :param timePara: RC分析
         
         """
-        
+
         # 检查必要参数是否都填入
         if isAppoint and appointName == "":
             sayz("Observe命令生成，请检查areaName是否填入")
@@ -3993,14 +4097,15 @@ class M3DFileUtil:
         # 如果没有指定
         if not isAppoint:
             # 获得observe命令
-            content = getObserveCommands(name, isField, isFieldIntegral, isFieldPower, isFieldEnergy, isParticleStatistics,
-                        isParticleCollected,isParticleEmitted,isParticleDestroyed,
-                        field, name,
-                        isFFT, fftType, isfreq, freqFrom, freqTo,
-                        isTime, timeFrom, timeTo,
-                        isInterval, interval,
-                        isFilter, filterType, timePara,
-                        name2)
+            content = getObserveCommands(name, isField, isFieldIntegral, isFieldPower, isFieldEnergy,
+                                         isParticleStatistics,
+                                         isParticleCollected, isParticleEmitted, isParticleDestroyed,
+                                         field, name,
+                                         isFFT, fftType, isfreq, freqFrom, freqTo,
+                                         isTime, timeFrom, timeTo,
+                                         isInterval, interval,
+                                         isFilter, filterType, timePara,
+                                         name2)
 
             # 获得附加命令
             extraContent = ""
@@ -4024,20 +4129,36 @@ class M3DFileUtil:
         # 如果指定了
         else:
             # 获得observe命令
-            content = getObserveCommands(name, isField, isFieldIntegral, isFieldPower, isFieldEnergy, isParticleStatistics,
-                        isParticleCollected,isParticleEmitted,isParticleDestroyed,
-                        field, appointName,
-                        isFFT, fftType,isfreq,freqFrom, freqTo,
-                        isTime, timeFrom, timeTo,
-                        isInterval, interval,
-                        isFilter, filterType, timePara,name2)
+            content = getObserveCommands(name, isField, isFieldIntegral, isFieldPower, isFieldEnergy,
+                                         isParticleStatistics,
+                                         isParticleCollected, isParticleEmitted, isParticleDestroyed,
+                                         field, appointName,
+                                         isFFT, fftType, isfreq, freqFrom, freqTo,
+                                         isTime, timeFrom, timeTo,
+                                         isInterval, interval,
+                                         isFilter, filterType, timePara, name2)
             # 更新manager
             self.__addOrUpdateCommands(name,
                                        self.__Classification.ALL_PLOTS_OBSERVE,
                                        content)
 
+    def updateSolendCommands(self, type1, name, zCenter, rCenter, innerRadius, outerRadius, coilCurrent, coilRadius,
+                             coilNum,
+                             theta, phi, rFactor, zFactor, spaceRatio, innerRadius2, outerRadius2, magneticRatio):
+        try:
+            content = getSolendCommands(type1, name, zCenter, rCenter, innerRadius, outerRadius, coilCurrent,
+                                        coilRadius, coilNum,
+                                        theta, phi, rFactor, zFactor, spaceRatio, innerRadius2, outerRadius2,
+                                        magneticRatio)
+        except:
+            FreeCAD.Console.PrintError('\n生成Sol的M3D文本失败')
+        # 更新manager
+        self.__addOrUpdateCommands(name,
+                                   self.__Classification.PROPERTIES_AND_PROCESSES,
+                                   content)
 
-    def updateTimerCommands(self, timerName, type, numType, stratTime="", stopTime="", timeIncrement="", triggerTimes=""):
+    def updateTimerCommands(self, timerName, type, numType, stratTime="", stopTime="", timeIncrement="",
+                            triggerTimes=""):
 
         """
         :param timerName: 定时器名称
@@ -4058,9 +4179,9 @@ class M3DFileUtil:
                                    self.__Classification.ALL_PLOTS_TIMER,
                                    content)
 
-
     ########工程信息
-    def updateWorkAreaCommands(self, name, x1Start, x1Stop, x1Step, x2Start, x2Stop, x2Step, x3Start, x3Stop, x3Step,flag):
+    def updateWorkAreaCommands(self, name, x1Start, x1Stop, x1Step, x2Start, x2Stop, x2Step, x3Start, x3Stop, x3Step,
+                               flag):
         """
         
         :param name: 
@@ -4078,7 +4199,7 @@ class M3DFileUtil:
         """
         # FreeCAD.Console.PrintMessage("\n断点\n")
         # 获得主设置区域的命令
-        content=""
+        content = ""
         if flag == True:
             content = getWorkAreaCommands(name, x1Start, x1Stop, x2Start, x2Stop, x3Start, x3Stop)
         else:
@@ -4096,15 +4217,14 @@ class M3DFileUtil:
                                    content,
                                    [[self.__Classification.PARAMETER, extra]])
 
-
     def updateMaterialCommands(self, name="", atomicNumber="", atomicMass="", massDensity="",
-                 isConductivity=False, conductivity="",
-                 isPermittivity=False, permittivity=""):
+                               isConductivity=False, conductivity="",
+                               isPermittivity=False, permittivity=""):
 
         # 获得主设置区域的命令
         content = getMaterialCommands(name, atomicNumber, atomicMass, massDensity,
-                            isConductivity, conductivity,
-                            isPermittivity, permittivity)
+                                      isConductivity, conductivity,
+                                      isPermittivity, permittivity)
         # FreeCAD.Console.PrintError("\n" +str(name)+'     '+str(content)+'\n')
 
         # 更新manager
@@ -4112,71 +4232,67 @@ class M3DFileUtil:
                                    self.__Classification.COMMON_PRESETS,
                                    content)
 
-
     def updatePresetCommands(self,
-                      isSetB1=False, setB1="", isSetB2=False, setB2="", isSetB3=False, setB3="",
-                      isSetE1=False, setE1="", isSetE2=False, setE2="", isSetE3=False, setE3="",
-                      diySet=""):
+                             isSetB1=False, setB1="", isSetB2=False, setB2="", isSetB3=False, setB3="",
+                             isSetE1=False, setE1="", isSetE2=False, setE2="", isSetE3=False, setE3="",
+                             diySet=""):
 
         # 获得主设置区域的命令
         content = getPresetCommands(self.coordinateSystem,
-                      isSetB1, setB1, isSetB2, setB2, isSetB3, setB3,
-                      isSetE1, setE1, isSetE2, setE2, isSetE3, setE3,
-                      diySet)
+                                    isSetB1, setB1, isSetB2, setB2, isSetB3, setB3,
+                                    isSetE1, setE1, isSetE2, setE2, isSetE3, setE3,
+                                    diySet)
 
         # 更新manager
         self.__addOrUpdateCommands("presetUESTC",
                                    self.__Classification.COMMON_PRESETS,
                                    content)
 
-
     def updateTimeComputationCommands(self, time="", algorithm="",
-                       isPattern=False, pattern="",
-                       isStep=False, step="",
-                       isChargeAlgorithm=False,Types = "",
-                       EveryNum = "",MaxNum = "",
-                       isChecked_part = False,
-                       checkBoxStep = False,
-                       computeTimeInterval = "1",
-                       is_re = False,
-                       is_nonre = False):
+                                      isPattern=False, pattern="",
+                                      isStep=False, step="",
+                                      isChargeAlgorithm=False, Types="",
+                                      EveryNum="", MaxNum="",
+                                      isChecked_part=False,
+                                      checkBoxStep=False,
+                                      computeTimeInterval="1",
+                                      is_re=False,
+                                      is_nonre=False):
 
         # 获得主设置区域的命令
         content = getTimeComputationCommands(time, algorithm,
-                                    isPattern, pattern,
-                                    isStep, step,
-                                    isChargeAlgorithm,
-                                    Types,
-                                    EveryNum,MaxNum,
-                                    isChecked_part,
-                                    checkBoxStep,
-                                    computeTimeInterval,
-                                    is_re,
-                                    is_nonre)
-        #FreeCAD.Console.PrintError(str(content)+'     '+str(isChargeAlgorithm)+'     '+str(step)+str(time)+'   '+str(algorithm))
+                                             isPattern, pattern,
+                                             isStep, step,
+                                             isChargeAlgorithm,
+                                             Types,
+                                             EveryNum, MaxNum,
+                                             isChecked_part,
+                                             checkBoxStep,
+                                             computeTimeInterval,
+                                             is_re,
+                                             is_nonre)
+        # FreeCAD.Console.PrintError(str(content)+'     '+str(isChargeAlgorithm)+'     '+str(step)+str(time)+'   '+str(algorithm))
 
         # 更新manager
         self.__addOrUpdateCommands("timeComputationUESTC",
                                    self.__Classification.SIMULATION_SETTINGS,
                                    content)
 
-
     def updateDataExportCommands(self, fileName, isObs=True, isRan=True, isCntr=True, isVec=True, isPha=True,
-                          isPrefix=False, prefix="",
-                          isSuffix=False, suffix="",
-                          isASCII=True):
+                                 isPrefix=False, prefix="",
+                                 isSuffix=False, suffix="",
+                                 isASCII=True):
 
         # 获得主设置区域的命令
         content = getDataExportCommands(fileName, isObs, isRan, isCntr, isVec, isPha,
-                          isPrefix, prefix,
-                          isSuffix, suffix,
-                          isASCII)
+                                        isPrefix, prefix,
+                                        isSuffix, suffix,
+                                        isASCII)
 
         # 更新manager
         self.__addOrUpdateCommands("dataExportUESTC",
                                    self.__Classification.DUMP_OPTIONS,
                                    content)
-
 
     def updateHeaderCommands(self, organization, author, device, remarks):
         # 获得主设置区域的命令
@@ -4187,7 +4303,6 @@ class M3DFileUtil:
                                    self.__Classification.HEADER_SYSTEM,
                                    content)
 
-
     def updateRunOptionCommands(self, isDisplay, isPause):
         # 获得主设置区域的命令
         content = getRunOptionCommands(isDisplay, isPause)
@@ -4196,7 +4311,7 @@ class M3DFileUtil:
         self.__addOrUpdateCommands("runOptionUESTC",
                                    self.__Classification.RUN_OPTIONS,
                                    content)
-    
+
     # 在批处理部分需要访问__StrInit这个类
     def getStrInit(self):
         return self.__StrInit
@@ -4206,8 +4321,7 @@ def sayz(msg):
     FreeCAD.Console.PrintMessage(msg)
     FreeCAD.Console.PrintMessage("\n")
 
-
-#===============================以下为测试代码，为了输出简洁，注释了=================================================
+# ===============================以下为测试代码，为了输出简洁，注释了=================================================
 
 # test = M3DFileUtil()
 #
@@ -4291,4 +4405,3 @@ def sayz(msg):
 #                                     appointAreaInMid="areaName2")
 #
 # test.addOrUpdateTimerCommands("timer", "PERIODIC", "INTEGER", stratTime="11", stopTime="11", timeIncrement="100", triggerTimes="")
-

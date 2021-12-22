@@ -11,7 +11,7 @@ from ProjectSettingsDlgData import ProjectSettingsDlgData as DlgData
 import ProjectSettingsDlgData
 import File.FileCommand.M3DFile.M3DFileUtil
 import File.FileCommand.TextUI.FileTextView
-from Tools import CompleterTools
+
 #json格式数据需要保持原有顺序输出
 from collections import OrderedDict
 class TimeDomainComputingSetting(QtGui.QDialog):
@@ -20,6 +20,7 @@ class TimeDomainComputingSetting(QtGui.QDialog):
         self.ui = TimeDomainComputingSettingDlg.Ui_Dialog_TimeDomainComputingSettingDlg()
         self.ui.setupUi(self)
         # global flag
+        from ProjectSetting.Tools import CompleterTools
         #代码补全
         CompleterTools.setLineEditsCompleter(CompleterTools.getAllLineEdits(self.ui))
         # self.ui.pushButton.clicked.connect(self.pushBtn_Cancel)

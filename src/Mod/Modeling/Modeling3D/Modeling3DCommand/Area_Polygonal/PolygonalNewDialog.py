@@ -74,16 +74,23 @@ class showPolygonalDialog(showObjDialog):
         
         # 显示错误信息
         self.ui.OK_pushButton.clicked.connect(self.closeDialog)
+        self.ui.OK_pushButton.clicked.connect(self.recomputeShape)
         self.ui.OK_pushButton.clicked.connect(self.showWarningDialog)
 
         # 点击取消删除该物体
         self.ui.Cancel_pushButton.clicked.connect(self.deleteobj)
         # 点击取消关闭对话框
         self.ui.Cancel_pushButton.clicked.connect(self.close)
+    def recomputeShape(self):
+        '''
+        由于多面体的点击确定后有可能不会更新，所以在这里更新
+        '''
+        FreeCAD.ActiveDocument.recompute()
     def setDeafultLineeditDialog(self):
         '''
         在子类中调用，在这里为纯虚函数
         '''
+        self.ui.spinBox_num.setValue(5)
         pass
     def setDefaultMark(self): 
         self.ui.checkBox.setCheckState(QtCore.Qt.CheckState.Unchecked)    

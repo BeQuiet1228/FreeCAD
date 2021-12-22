@@ -2,7 +2,7 @@
 import FreeCAD, Part, math
 from FreeCAD import Base
 from pivy import coin
-
+import numpy as np
 from Common.Tools import CoordinateSystemTools,DocumentTools,ObjectsTools,PlacementTools
 class Toroidal_Section:
     def __init__(self, obj):
@@ -150,6 +150,13 @@ class Toroidal_Section:
     # 3、通过弧上三个点求出这条弧线，
     # 4、求出圆面，是圆面扫掠弧线形成最终物体
     def redraw(self,obj):
+        close=False
+        sAngle=self.vectorList[2].y
+        eAngle=self.vectorList[3].y
+        grad=math.pi/180.0
+        if 360 - math.fabs(eAngle-sAngle) < 1: #0.000001:
+            close=True
+            self.vectorList[3].y = eAngle + 360 - math.fabs(eAngle-sAngle)
         tempPoints=CoordinateSystemTools.otherToRec(self.curCoordinateSystem,self.vectorList)
         tempPoint_1=tempPoints[0]
         tempPoint_2=tempPoints[1]
@@ -169,28 +176,32 @@ class Toroidal_Section:
         vec3Temp=tempPoint_3.sub(tempPoint_1)
         vec4Temp=tempPoint_4.sub(tempPoint_1)
         # 求方向点point3与弧线的交点
-        vec3ProjectToPlan=vec3Temp.projectToPlane(FreeCAD.Vector(0.0,0.0,0.0),normal)
+        #vec3ProjectToPlan=vec3Temp.projectToPlane(FreeCAD.Vector(0.0,0.0,0.0),normal)
+        vec3ProjectToPlan=vec3Temp.projectToPlane(tempPoint_1,normal)
 
         # k为原点到弧的交点与VecProjectToPlan长度的比例因子
         kMajorRadiusRatioVec3=1.0
+        d1 = vec3ProjectToPlan.distanceToPoint(tempPoint_1)
         if not vec3ProjectToPlan.Length==0.0:
-            kMajorRadiusRatioVec3=obj.MajorRadius.Value/vec3ProjectToPlan.Length
+            kMajorRadiusRatioVec3=obj.MajorRadius.Value/d1 #vec3ProjectToPlan.Length
 
         tempVec3OnArc=kMajorRadiusRatioVec3*vec3ProjectToPlan
-        vec3OnArc=tempVec3OnArc.add(tempPoint_1)
+        vec3OnArc=tempVec3OnArc #.add(tempPoint_1)
 
         # 求方向点point4与弧线的交点
-        vec4ProjectToPlan=vec4Temp.projectToPlane(FreeCAD.Vector(0.0,0.0,0.0),normal)
+        #vec4ProjectToPlan=vec4Temp.projectToPlane(FreeCAD.Vector(0.0,0.0,0.0),normal)
+        vec4ProjectToPlan=vec4Temp.projectToPlane(tempPoint_1,normal)
         # k为原点到弧的交点与VecProjectToPlan长度的比例因子
+        d1 = vec4ProjectToPlan.distanceToPoint(tempPoint_1)
         try:
-            kMajorRadiusRatioVec4=obj.MajorRadius.Value/vec4ProjectToPlan.Length
+            kMajorRadiusRatioVec4=obj.MajorRadius.Value/d1 #vec4ProjectToPlan.Length
         except exceptions.ZeroDivisionError as e:
             DocumentTools.printErrorMessage(e)
             return
             pass
         # kMajorRadiusRatioVec4=obj.MajorRadius.Value/vec4ProjectToPlan.Length
         tempVec4OnArc=kMajorRadiusRatioVec4*vec4ProjectToPlan
-        vec4OnArc=tempVec4OnArc.add(tempPoint_1)
+        vec4OnArc=tempVec4OnArc #.add(tempPoint_1)
 
 
 
@@ -199,16 +210,20 @@ class Toroidal_Section:
 
         vec4=vec4OnArc.sub(tempPoint_1)
 
-
-
+        if close:
+            vec4=vec3
+            angle=2*math.pi
+            vec4OnArc=vec3OnArc
+        else:
         # 求两个点的夹角
-        angle=vec3.getAngle(vec4)*180/math.pi
+        #vec3.getAngle(vec4)*180/math.pi
+           angle=self.SignedAngleBetween(vec3,vec4,normal)
 
         # 在原点位置将点旋转angle/2度
         # 将度数转化为弧度
         # q=(vNormal*sin(θ/2)，cos(θ/2))  θ是需要旋转的角度
-        sinValue=math.sin(angle/4.0*math.pi/180.0)
-        cosValue=math.cos(angle/4.0*math.pi/180.0)
+        sinValue=math.sin(angle/4.0*grad)
+        cosValue=math.cos(angle/4.0*grad)
         # 四元数
         
         q=FreeCAD.Rotation(sinValue*normal.x,sinValue*normal.y,sinValue*normal.z,cosValue)
@@ -218,29 +233,39 @@ class Toroidal_Section:
 
         # 平移到point1的位置
         vPoint1=vOrigin.add(tempPoint_1)
-
+        normalCircle=vec3.cross(normal).negative()
+        circle=Part.Circle(vec3OnArc,normalCircle,obj.MinorRadius)
+        circleFace=Part.makeFace([Part.Wire(circle.toShape())],"Part::FaceMakerBullseye")
+        FreeCAD.Console.PrintError("close:\n")
+        FreeCAD.Console.PrintError(str(close))
+        FreeCAD.Console.PrintError("close")
         try:
-            arc=Part.ArcOfCircle(vec3OnArc,vPoint1,vec4OnArc)
+            if close :
+                arc=Part.Circle(tempPoint_1,normal,d1)
+                arc1=Part.ArcOfCircle(arc,sAngle*grad,sAngle*grad+math.pi)
+                arc2=Part.ArcOfCircle(arc,sAngle*grad-math.pi,sAngle*grad)                
+               
+                arcShape=arc1.toShape()
+                path=Part.Wire(arcShape) 
+                sh1=path.makePipe(circleFace)
+
+                arcShape=arc2.toShape()
+                path=Part.Wire(arcShape)
+                sh2=path.makePipe(circleFace)
+
+                obj.Shape=sh1.fuse(sh2)
+            else:
+                arc=Part.ArcOfCircle(vec3OnArc,vPoint1,vec4OnArc)
+                arcShape=arc.toShape()
+                path=Part.Wire(arcShape)
+                
+                obj.Shape=path.makePipe(circleFace) 
         except Part.OCCError as e:
             DocumentTools.printErrorMessage(e)
             return
             pass
-        # arc=Part.ArcOfCircle(vec3OnArc,vPoint1,vec4OnArc)
-
-        arcShape=arc.toShape()
-        # Part.show(arcShape)
-        # arcShape.Label="ArcShape"
-        path=Part.Wire(arcShape)
-        
-        # 求圆面的法向量
-        normalCircle=vec3.cross(normal).negative()
-        circle=Part.makeCircle(obj.MinorRadius,vec3OnArc,normalCircle)
-
-        # Part.show(circle)
-        # circle.Label="Circle"
-        circleFace=Part.makeFace([Part.Wire(circle)],"Part::FaceMakerBullseye")
-        obj.Shape=path.makePipe(circleFace)
-
+        self.vectorList[3].y = eAngle
+        obj.Shape=obj.Shape.removeSplitter()
         ObjectsTools.doSomethingAfterRecomputerVolShape(obj)
 
         # tempPoints=CoordinateSystemTools.otherToRec(self.curCoordinateSystem,self.vectorList)
@@ -252,6 +277,14 @@ class Toroidal_Section:
         #                                   None))
         #     return
         # obj.Shape = Part.makeSphere(obj.Radius, tempPoint_0)
+    def SignedAngleBetween(self,vec3,vec4, n):
+        angle=vec3.getAngle(vec4)*180/math.pi
+        sign = np.sign(n.dot(vec3.cross(vec4)))
+        signed_angle = angle * sign;
+        if signed_angle <= 0 :
+            return 360 + signed_angle
+        return signed_angle
+
     def execute(self, fp):
         ''' Print a short message when doing a recomputation, this method is mandatory '''
         #设置自定义属性可编辑

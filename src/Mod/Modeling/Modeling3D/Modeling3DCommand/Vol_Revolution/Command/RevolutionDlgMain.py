@@ -11,6 +11,8 @@ import re
 from Modeling3D.Tools import  RebuildForUITools,ModelingByUITools
 import CreateRevolution as createObj
 # from Modeling.Common.CommonCommand.NewDocument import ObjectDict,NewDocument
+
+
 class VolRevolotion(QtGui.QDialog):
     def __init__(self, obj=None):
         QtGui.QDialog.__init__(self)
@@ -38,33 +40,36 @@ class VolRevolotion(QtGui.QDialog):
             self.ui.lineEdit_PointBaseZ.setText("0mm")
 
             self.ui.lineEdit_PointTopX.setText("0mm")
-            self.ui.lineEdit_PointTopY.setText("1mm")
-            self.ui.lineEdit_PointTopZ.setText("0mm")
+            self.ui.lineEdit_PointTopY.setText("0mm")
+            self.ui.lineEdit_PointTopZ.setText("1mm")
         elif units[0] == 1:
             self.ui.lineEdit_PointBaseX.setText("0cm")
             self.ui.lineEdit_PointBaseY.setText("0cm")
             self.ui.lineEdit_PointBaseZ.setText("0cm")
 
             self.ui.lineEdit_PointTopX.setText("0cm")
-            self.ui.lineEdit_PointTopY.setText("1cm")
-            self.ui.lineEdit_PointTopZ.setText("0cm")
+            self.ui.lineEdit_PointTopY.setText("0cm")
+            self.ui.lineEdit_PointTopZ.setText("1cm")
         else:
             self.ui.lineEdit_PointBaseX.setText("0m")
             self.ui.lineEdit_PointBaseY.setText("0m")
             self.ui.lineEdit_PointBaseZ.setText("0m")
 
             self.ui.lineEdit_PointTopX.setText("0m")
-            self.ui.lineEdit_PointTopY.setText("1m")
-            self.ui.lineEdit_PointTopZ.setText("0m")
+            self.ui.lineEdit_PointTopY.setText("0m")
+            self.ui.lineEdit_PointTopZ.setText("1m")
         if FreeCAD.ActiveDocument.CoordinateSystem == "Rectangular":
             pass
         elif FreeCAD.ActiveDocument.CoordinateSystem == "Polar":
             self.ui.label_5.setText("R")
             self.ui.label_6.setText("Theta")
             self.ui.label_7.setText("Z")
+            self.ui.checkBox_UniformX.setText("R")
+            self.ui.checkBox_UniformY.setText("Theta")
+            self.ui.checkBox_UniformZ.setText("Z")
             if units[1]==0:
                 self.ui.lineEdit_PointBaseY.setText("0deg")
-                self.ui.lineEdit_PointTopY.setText("1deg")
+                self.ui.lineEdit_PointTopY.setText("0deg")
             else:
                 self.ui.lineEdit_PointBaseY.setText("0rad")
                 self.ui.lineEdit_PointTopY.setText("0rad")
@@ -72,9 +77,14 @@ class VolRevolotion(QtGui.QDialog):
             self.ui.label_5.setText("Z")
             self.ui.label_6.setText("R")
             self.ui.label_7.setText("Theta")
+            self.ui.checkBox_UniformX.setText("Z")
+            self.ui.checkBox_UniformY.setText("R")
+            self.ui.checkBox_UniformZ.setText("Theta")
+            if units[0] == 0:
+                self.ui.lineEdit_PointTopX.setText("1mm")
             if units[1]==0:
                 self.ui.lineEdit_PointBaseZ.setText("0deg")
-                self.ui.lineEdit_PointTopZ.setText("1deg")
+                self.ui.lineEdit_PointTopZ.setText("0deg")
             else:
                 self.ui.lineEdit_PointBaseZ.setText("0rad")
                 self.ui.lineEdit_PointTopZ.setText("0rad")
@@ -82,6 +92,7 @@ class VolRevolotion(QtGui.QDialog):
         self.obj=obj
         #如果obj存在则，按照obj进行重建面板
         if obj:
+            self.ui.comboBox_Attribute.setCurrentIndex(self.ui.comboBox_Attribute.findText(self.obj.Attribute))
             self.ui.comboBox_Areas.setCurrentIndex(self.ui.comboBox_Areas.findText(str(obj.Area)))
             self.ui.lineEdit_name.setText(obj.Label)
             self.ui.spinBox_Order.setValue(obj.Order)
@@ -90,13 +101,23 @@ class VolRevolotion(QtGui.QDialog):
             #重建模型属性
             point_Base=ObjectsTools.turnPropertyToExpression(obj,"Point_Base")
             point_Top=ObjectsTools.turnPropertyToExpression(obj,"Point_Top")
-            self.ui.lineEdit_PointBaseX.setText(str(point_Base[0]))
-            self.ui.lineEdit_PointBaseY.setText(str(point_Base[1]))
-            self.ui.lineEdit_PointBaseZ.setText(str(point_Base[2]))
 
-            self.ui.lineEdit_PointTopX.setText(str(point_Top[0]))
-            self.ui.lineEdit_PointTopY.setText(str(point_Top[1]))
-            self.ui.lineEdit_PointTopZ.setText(str(point_Top[2]))
+            if not FreeCAD.ActiveDocument.CoordinateSystem == u'Cylindrical':
+                self.ui.lineEdit_PointBaseX.setText(str(point_Base[0]))
+                self.ui.lineEdit_PointBaseY.setText(str(point_Base[1]))
+                self.ui.lineEdit_PointBaseZ.setText(str(point_Base[2]))
+
+                self.ui.lineEdit_PointTopX.setText(str(point_Top[0]))
+                self.ui.lineEdit_PointTopY.setText(str(point_Top[1]))
+                self.ui.lineEdit_PointTopZ.setText(str(point_Top[2]))
+            else:
+                self.ui.lineEdit_PointBaseX.setText(str(point_Base[2]))
+                self.ui.lineEdit_PointBaseY.setText(str(point_Base[0]))
+                self.ui.lineEdit_PointBaseZ.setText(str(point_Base[1]))
+
+                self.ui.lineEdit_PointTopX.setText(str(point_Top[2]))
+                self.ui.lineEdit_PointTopY.setText(str(point_Top[0]))
+                self.ui.lineEdit_PointTopZ.setText(str(point_Top[1]))
         else:
             # 如果没有物体就跟着默认来
             pass
@@ -110,6 +131,7 @@ class VolRevolotion(QtGui.QDialog):
         # sayz(self.obj)
         if not self.obj:
             self.obj=createObj.createRevolution()
+        self.obj.Attribute = self.ui.comboBox_Attribute.currentText()
         self.obj.Label=str(self.ui.lineEdit_name.text())
         self.obj.Order=int(self.ui.spinBox_Order.value())
         ModelingByUITools.setDX1DX2DX3Value(self.obj,self.ui)
@@ -122,6 +144,8 @@ class VolRevolotion(QtGui.QDialog):
         self.obj.Area=str(self.ui.comboBox_Areas.currentText())
         self.obj.recompute()
         self.close()
+        import PartChipic
+        PartChipic.updateBoolean(self.obj.Order, 1)
 
     def pushButton_cancel(self):
         self.close()

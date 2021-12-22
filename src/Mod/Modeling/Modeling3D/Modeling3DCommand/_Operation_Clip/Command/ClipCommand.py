@@ -43,7 +43,7 @@ class ClipCommand:
         # IconPath=""
         MenuText = QtCore.QT_TRANSLATE_NOOP(
             'Clip',
-            'Clip')
+            '切开模型')
         ToolTip = QtCore.QT_TRANSLATE_NOOP(
             'Clip',
             'Clip Model')

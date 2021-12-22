@@ -1,1 +1,32 @@
-<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24"><defs><linearGradient id="未命名的渐变_7" y1="12" x2="24" y2="12" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f16274"/><stop offset="1" stop-color="#951b2a"/></linearGradient></defs><title>图标1(修改版3-4)</title><rect y="2.17" width="24" height="19.65" style="fill:url(#未命名的渐变_7)"/><path d="M4.13,12.62V15a3,3,0,0,0,.19,1.25.75.75,0,0,0,.7.34h.09v.34H2.41v-.34h.06a.77.77,0,0,0,.72-.34A2.78,2.78,0,0,0,3.39,15V9.6a2.73,2.73,0,0,0-.2-1.24A.75.75,0,0,0,2.47,8H2.41V7.67H5.14a2.12,2.12,0,0,1,2.41,2.39,2.82,2.82,0,0,1-.41,1.53,1.88,1.88,0,0,1-1.09.84l1.26,2.76c.42.9.94,1.35,1.55,1.35v.34H7.19L5.24,12.62H4.13Zm0-4v3.28q0,.18.21.18h.52c1.23,0,1.85-.66,1.85-2s-.54-2-1.63-2a2.4,2.4,0,0,0-.79.08C4.18,8.31,4.13,8.44,4.13,8.66Z" style="fill:#fff;stroke:#fff;stroke-miterlimit:10;stroke-width:0.25px"/><path d="M14.43,7.67l.1,2.22h-.19a2.26,2.26,0,0,0-.44-1.28,1.43,1.43,0,0,0-1.08-.38h-1.7v3.53l1.46,0a1.25,1.25,0,0,0,.95-.28,1.66,1.66,0,0,0,.25-1.07H14v3.24h-.21a1.77,1.77,0,0,0-.26-1.06,1.29,1.29,0,0,0-.94-.25l-1.46,0v3.34a1.17,1.17,0,0,0,.09.57c.06.09.19.13.4.13H13a1.71,1.71,0,0,0,1.23-.4A3.34,3.34,0,0,0,15,14.45l.18.08-.52,2.35H9.4v-.34h.06a.77.77,0,0,0,.72-.34A2.81,2.81,0,0,0,10.37,15V9.6a2.76,2.76,0,0,0-.19-1.24A.75.75,0,0,0,9.46,8H9.4V7.67Z" style="fill:#fff;stroke:#fff;stroke-miterlimit:10;stroke-width:0.25px"/><path d="M21.39,7.57V8a18,18,0,0,0,.16,2.56l-.19.05c-.29-1.71-1-2.56-2-2.56a2.06,2.06,0,0,0-1.8,1.16,5.64,5.64,0,0,0-.71,3,5.75,5.75,0,0,0,.7,3,2.1,2.1,0,0,0,1.84,1.14c.95,0,1.67-.61,2.14-1.83l.23.19C21.15,16.25,20.28,17,19.09,17a2.64,2.64,0,0,1-2.23-1.33A5.6,5.6,0,0,1,16,12.42a6.22,6.22,0,0,1,.91-3.48,2.68,2.68,0,0,1,2.28-1.4A3,3,0,0,1,20.55,8l.07,0,.07,0a.41.41,0,0,0,.19,0c.18,0,.28-.17.32-.52Z" style="fill:#fff;stroke:#fff;stroke-miterlimit:10;stroke-width:0.25px"/></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>矩形面</title>
+    <defs>
+        <linearGradient x1="8.67768595%" y1="0%" x2="91.322314%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#EEEEEE" offset="0.0409746503%"></stop>
+            <stop stop-color="#C2C2C2" offset="100%"></stop>
+        </linearGradient>
+        <path d="M13,7.59198747 L13,13.0833333 C13,13.5895944 12.5522847,14 12,14 L4,14 C3.44771525,14 3,13.5895944 3,13.0833333 L3,3.91666667 C3,3.41040565 3.44771525,3 4,3 L8.01142896,3 L12,3 C12.5522847,3 13,3.44771525 13,4 L13,7.59198747 L13,7.59198747 Z" id="path-2"></path>
+        <filter x="-7.5%" y="-6.8%" width="115.0%" height="113.6%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="1" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 1 0" type="matrix" in="shadowInnerInner1" result="shadowMatrixInner1"></feColorMatrix>
+            <feOffset dx="-1" dy="-1" in="SourceAlpha" result="shadowOffsetInner2"></feOffset>
+            <feComposite in="shadowOffsetInner2" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner2"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.2 0" type="matrix" in="shadowInnerInner2" result="shadowMatrixInner2"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner2"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="图标输出" transform="translate(-340.000000, -457.000000)">
+            <g id="Path" transform="translate(340.000000, 457.000000)">
+                <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
+                <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                <use stroke="#1A1A1A" stroke-width="0.5" xlink:href="#path-2"></use>
+            </g>
+        </g>
+    </g>
+</svg>

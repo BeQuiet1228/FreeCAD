@@ -1,24 +1,43 @@
-<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
-  <title>cntr</title>
-  <g>
-    <path d="M13.7,24l-4-.1L6,22.5,3,20,.9,16.6,0,12.8l.5-4L2.2,5.2,5,2.4,8.5.6,12.3,0l4,.8,3.4,2,2.6,3,1.5,3.7.2,3.9-1.1,3.9-2.3,3.2-3.2,2.3ZM9.9,23l3.7.1L17.1,22,20,19.8l2.1-3,1-3.5-.2-3.6L21.5,6.3,19,3.5,15.8,1.7,12.3,1l-3.6.5L5.4,3.1,2.9,5.8,1.3,9.1,1,12.7l.8,3.6,1.9,3.1,2.8,2.3Z" style="fill: #1c1c1c"/>
-    <g>
-      <path d="M12,20.8A8.813,8.813,0,0,1,3.2,12a.472.472,0,0,1,.5-.5.472.472,0,0,1,.5.5,7.853,7.853,0,0,0,7.9,7.9.472.472,0,0,1,.5.5A.675.675,0,0,1,12,20.8Z" style="fill: #eac324"/>
-      <path d="M12,20.8a.5.5,0,1,1,0-1,7.853,7.853,0,0,0,7.9-7.9.5.5,0,1,1,1,0A8.919,8.919,0,0,1,12,20.8Z" style="fill: #006837"/>
-      <path d="M20.4,12.5a.472.472,0,0,1-.5-.5A7.853,7.853,0,0,0,12,4.1a.472.472,0,0,1-.5-.5.472.472,0,0,1,.5-.5,8.813,8.813,0,0,1,8.8,8.8C20.8,12.3,20.6,12.5,20.4,12.5Z" style="fill: #eac324"/>
-      <path d="M3.6,12.5a.472.472,0,0,1-.5-.5A8.767,8.767,0,0,1,5.7,5.7,9.1,9.1,0,0,1,12,3.2h0a.472.472,0,0,1,.5.5.472.472,0,0,1-.5.5h0A7.865,7.865,0,0,0,6.4,6.5,7.472,7.472,0,0,0,4.1,12,.472.472,0,0,1,3.6,12.5Z" style="fill: #006837"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>等位图观测@4x</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="97.6343969%" id="linearGradient-1">
+            <stop stop-color="#5CE094" offset="0%"></stop>
+            <stop stop-color="#8AE9B2" offset="100%"></stop>
+        </linearGradient>
+        <circle id="path-2" cx="8" cy="8" r="6"></circle>
+        <filter x="-4.2%" y="-4.2%" width="108.3%" height="108.3%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="1" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.5 0" type="matrix" in="shadowInnerInner1" result="shadowMatrixInner1"></feColorMatrix>
+            <feOffset dx="-1" dy="-1" in="SourceAlpha" result="shadowOffsetInner2"></feOffset>
+            <feComposite in="shadowOffsetInner2" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner2"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.3 0" type="matrix" in="shadowInnerInner2" result="shadowMatrixInner2"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner2"></feMergeNode>
+            </feMerge>
+        </filter>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-4">
+            <stop stop-color="#B2F0CC" offset="0%"></stop>
+            <stop stop-color="#73E5A3" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="修改部分备份" transform="translate(-388.000000, -122.000000)">
+            <g id="等位图观测" transform="translate(388.000000, 122.000000)">
+                <g id="椭圆形">
+                    <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
+                    <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                    <circle stroke="#1A1A1A" stroke-width="0.5" stroke-linejoin="square" cx="8" cy="8" r="5.75"></circle>
+                </g>
+                <path d="M8,4 C5.790861,4 4,5.790861 4,8 M8,12 C10.209139,12 12,10.209139 12,8" id="形状" stroke="#1A1A1A" stroke-width="0.5"></path>
+                <path d="M8.00854492,3.99230957 C5.79940592,3.99230957 4.00854492,5.78317057 4.00854492,7.99230957 M8.00854492,11.9923096 C10.2176839,11.9923096 12.0085449,10.2014486 12.0085449,7.99230957" id="形状备份" stroke="#F6F700" stroke-width="0.5" transform="translate(8.008545, 7.992310) rotate(-270.000000) translate(-8.008545, -7.992310) "></path>
+                <path d="M5,8 C5,9.65685425 6.34314575,11 8,11 M11,8 C11,6.34314575 9.65685425,5 8,5" id="形状" stroke="#1A1A1A" stroke-width="0.5"></path>
+                <path d="M4.99829102,7.9954834 C4.99829102,9.65233765 6.34143677,10.9954834 7.99829102,10.9954834 M10.998291,7.9954834 C10.998291,6.33862915 9.65514527,4.9954834 7.99829102,4.9954834" id="形状备份-2" stroke="#F6F700" stroke-width="0.5" transform="translate(7.998291, 7.995483) rotate(-90.000000) translate(-7.998291, -7.995483) "></path>
+                <circle id="椭圆形" stroke="#1A1A1A" stroke-width="0.5" fill="url(#linearGradient-4)" cx="8" cy="8" r="1"></circle>
+            </g>
+        </g>
     </g>
-    <g>
-      <path d="M16.5,12.4a.472.472,0,0,1-.5-.5,4.2,4.2,0,0,0-4.2-4.1.5.5,0,0,1,0-1h.1a5.1,5.1,0,0,1,5.1,5,.56.56,0,0,1-.5.6Z" style="fill: #24ea24"/>
-      <path d="M7.4,12.5a.472.472,0,0,1-.5-.5A5.239,5.239,0,0,1,8.3,8.4a4.691,4.691,0,0,1,3.5-1.5.536.536,0,0,1,.5.5.472.472,0,0,1-.5.5A4.454,4.454,0,0,0,8.9,9.1,4.357,4.357,0,0,0,7.8,12a.4.4,0,0,1-.4.5Z" style="fill: #fabec3"/>
-      <path d="M12,17a5.1,5.1,0,0,1-5.1-5,.5.5,0,0,1,1,0,4.14,4.14,0,0,0,4.2,4.1h.1a.472.472,0,0,1,.5.5c0,.3-.4.4-.7.4Z" style="fill: #24ea24"/>
-      <path d="M12.1,17a.5.5,0,0,1,0-1A4.454,4.454,0,0,0,15,14.8a3.56,3.56,0,0,0,1.1-2.9.5.5,0,1,1,1,0,5.239,5.239,0,0,1-1.4,3.6A5.535,5.535,0,0,1,12.1,17Z" style="fill: #fabec3"/>
-    </g>
-    <g>
-      <path d="M12,13.9a2.046,2.046,0,0,1-2-1.8.458.458,0,0,1,.4-.5c.2,0,.5.2.5.4a.9.9,0,0,0,1.1.9.453.453,0,0,1,.1.9A.1.1,0,0,1,12,13.9Z" style="fill: #ec2232"/>
-      <path d="M12.1,13.9a.664.664,0,0,1-.5-.4A.458.458,0,0,1,12,13a.755.755,0,0,0,.7-.4.663.663,0,0,0,.2-.7.453.453,0,1,1,.9-.1,2.3,2.3,0,0,1-.4,1.4,2.091,2.091,0,0,1-1.3.7Z" style="fill: #873edb"/>
-      <path d="M13.4,12.3a.664.664,0,0,1-.5-.4.945.945,0,0,0-1.1-.9.453.453,0,1,1-.1-.9,1.925,1.925,0,0,1,2.1,1.8c.1.1-.1.4-.4.4Z" style="fill: #ec2232"/>
-      <path d="M10.5,12.5a.664.664,0,0,1-.5-.4,2.3,2.3,0,0,1,.4-1.4,2.091,2.091,0,0,1,1.3-.7.453.453,0,0,1,.1.9.755.755,0,0,0-.7.4.663.663,0,0,0-.2.7c.1.3-.1.5-.4.5Z" style="fill: #873edb"/>
-    </g>
-  </g>
 </svg>

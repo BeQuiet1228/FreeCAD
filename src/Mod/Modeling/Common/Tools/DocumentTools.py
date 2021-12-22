@@ -4,7 +4,9 @@ import FreeCADGui as Gui
 import re
 import time, thread
 import CoordinateSystemTools,ObjectsTools
+import Modeling
 import ObjectsTools
+# from Modeling.Modeling2D.Tools import InitDoc
 from ProjectSetting.Tools import ProjectSettingsTools
 import UnitTools
 import time
@@ -74,6 +76,10 @@ def initDocument(doc):
     #end
     #初始化分组创建
     ObjectsTools.initGroup()
+    # 新建3D,弹出工作区间对话框
+    import FreeCADGui
+    FreeCADGui.runCommand("WorkSpaceSettings")
+    FreeCADGui.runCommand("TimeDomainComputingMenu")
 
 # 初始化参量对象，这个不能直接加载initDocument中，因为解析时，也会执行上面的函数，报错
 def initParamObj(doc):
@@ -105,24 +111,37 @@ def otherDocInit():
     # Gui.activateWorkbench(nowWorkbenchText)
 
 def initWhenOpenFCStdFile():
-    Gui.doCommand("import Modeling")
-    Gui.doCommand("FreeCAD.addDocumentObserver(Modeling.Common.Tools.DocumentTools.DocumentObservers())")
-    Gui.doCommand("FreeCAD.addDocumentObserver(Modeling.Common.Tools.DocumentTools.TransparencyObserver())")
-    Gui.doCommand("from Modeling.Common.Tools import DocumentTools")
-    # FreeCAD.addDocumentObserver(AfterReBuildByM3dObserver())
-    FreeCAD.addDocumentObserver(NeedsRecomputeObserver())
-    updateBoolean()
-    # 现在初始界面是Start，这个可以不用了@fubiao
-    # # 切换一下工作台，刷新建模部分的图标 by pingyue
-    # nowWorkbenchText=Gui.activeWorkbench().name()
-    # Gui.activateWorkbench("Modeling2DWorkbench")
-    # Gui.activateWorkbench("Modeling3DWorkbench")
-    # Gui.activateWorkbench(nowWorkbenchText)
-    #如果LicenseURL等于emptyLIST,需要重置LicenseURL，来清空LIST
+    if FreeCAD.ActiveDocument.Comment == "2D":
+        sayz("当前工程为2D相关工程，进行文件初始化，添加必要监视器")
+        FreeCAD.addDocumentObserver(Modeling.Modeling2D.Tools.InitDoc.DocumentObservers())
+        # 如果当前工程没有对应的M2D显示界面则创建一个新的
+        Gui.runCommand("CreateM2D")
+        Modeling.Modeling2D.Modeling2DCommand.Grid.GridCommand.showGrid()
+    elif FreeCAD.ActiveDocument.Comment == "new3D":
+        sayz("当前工程为3D相关工程，进行文件初始化，添加必要监视器")
+        from Model3D.Tools import InitDoc3D
+        FreeCAD.addDocumentObserver(InitDoc3D.DocumentObservers())
+        # 如果当前工程没有对应的M2D显示界面则创建一个新的
+        Gui.runCommand("CreateM3D_new")
+        # Modeling.Modeling2D.Modeling2DCommand.Grid.GridCommand.showGrid()
+    else:
+        Gui.doCommand("import Modeling")
+        Gui.doCommand("FreeCAD.addDocumentObserver(Modeling.Common.Tools.DocumentTools.DocumentObservers())")
+        Gui.doCommand("FreeCAD.addDocumentObserver(Modeling.Common.Tools.DocumentTools.TransparencyObserver())")
+        Gui.doCommand("from Modeling.Common.Tools import DocumentTools")
+        # FreeCAD.addDocumentObserver(AfterReBuildByM3dObserver())
+        FreeCAD.addDocumentObserver(NeedsRecomputeObserver())
+        updateBoolean()
+        # 现在初始界面是Start，这个可以不用了@fubiao
+        # # 切换一下工作台，刷新建模部分的图标 by pingyue
+        # nowWorkbenchText=Gui.activeWorkbench().name()
+        # Gui.activateWorkbench("Modeling2DWorkbench")
+        # Gui.activateWorkbench("Modeling3DWorkbench")
+        # Gui.activateWorkbench(nowWorkbenchText)
+        # 如果LicenseURL等于emptyLIST,需要重置LicenseURL，来清空LIST
     FreeCAD.Console.PrintMessage(FreeCAD.ActiveDocument.LicenseURL)
     try:
-        if FreeCAD.ActiveDocument.LicenseURL =="emptyLIST":
-                
+        if FreeCAD.ActiveDocument.LicenseURL == "emptyLIST":
             FreeCAD.ActiveDocument.LicenseURL = "clearLIST"
             # FreeCAD.Console.PrintMessage(FreeCAD.ActiveDocument.LicenseURL)
     except:
@@ -136,7 +155,7 @@ class DocumentObservers(object):
         pass
 
     def slotDeletedObject(self,obj):
-        # FreeCAD.Console.PrintMessage("obj: "+str(obj.Label)+"\n")
+        FreeCAD.Console.PrintError("obs测试: "+str(obj.Label)+"\n")
         #为所有的物体重新编号
         if ObjectsTools.hasThePropertyByObj(obj,"Order"):
             for index in range(obj.Order+1,ObjectsTools.getNumOfObjects(FreeCAD.ActiveDocument.Name)):
@@ -325,7 +344,7 @@ class DocumentObservers(object):
     # 文档关闭，关闭物理设置与任务控制面板
     def slotDeletedDocument(self,doc):
         #移除所有的监听
-        FreeCAD.removeAllDocumentObserver()
+        # FreeCAD.removeAllDocumentObserver()
         import os
         import shutil
         if (os.path.exists(FreeCAD.clientUserDir())):
@@ -398,7 +417,7 @@ class NeedsRecomputeObserver(object):
         pass
     def slotRecomputedObject(self,obj):
         FreeCAD.Console.PrintError("recompute: "+str(obj.Name)+"\n")
-        Gui.SendMsgToActiveView("ViewFit")
+        # Gui.SendMsgToActiveView("ViewFit")
         FreeCAD.Console.PrintError("viewFile\n")
     # def slotBeforeChangeObject(self,obj,prop):
     #     if prop=="Attribute" or prop=="Order" or obj.getGroupOfProperty(prop).startswith("Object of"):
@@ -523,7 +542,7 @@ def updateBoolean():
     if FreeCAD.ActiveDocument.flagNeedUpdateBoolean>=0:
         FreeCAD.Console.PrintMessage("DocumentTool.updateBoolean() current order: "+str(FreeCAD.ActiveDocument.flagNeedUpdateBoolean)+"\n")
         #PartGui.updateBoolean(FreeCAD.ActiveDocument.flagNeedUpdateBoolean) #ZD
-        PartGui.updateBoolean(0, 1)
+        PartChipic.updateBoolean(0, 1)
         changedObjsAndProps={}
         FreeCAD.ActiveDocument.flagNeedUpdateBoolean=-1
         # changedObjsAndProps.clear()

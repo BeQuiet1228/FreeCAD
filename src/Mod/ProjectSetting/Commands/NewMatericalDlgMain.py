@@ -9,7 +9,7 @@ from Modeling.Common.CommonCommand.NewDocument import ObjectDict
 import ProjectSettingCommand
 from ProjectSettingsDlgData import ProjectSettingsDlgData as DlgData
 import ProjectSettingsDlgData
-from Tools import CompleterTools
+
 import File.FileCommand.M3DFile.M3DFileUtil
 import File.FileCommand.TextUI.FileTextView
 from Physics.PhysicsCommand import BoundPalMain
@@ -37,12 +37,14 @@ def show(type,className,itemUserName):
             ObjectDict[className].loadData(oldData)
 
             ObjectDict[className].flagUpdateItemName=True
+            ObjectDict[className].setNameUnable()
             ObjectDict[className].setModal(False)
             ObjectDict[className].show()
             ObjectDict[className].exec_()             
         else:
             ObjectDict[className] = NewMaterial(itemUserName,className)
             ObjectDict[className].flagUpdateItemName = True
+            ObjectDict[className].setNameUnable()
             ObjectDict[className].setModal(False)
             ObjectDict[className].show()
             ObjectDict[className].exec_()
@@ -55,6 +57,7 @@ class NewMaterial(QtGui.QDialog):
         self.ui.setupUi(self)
         global flag
         flag = 0
+        from ProjectSetting.Tools import CompleterTools
         #代码补全
         CompleterTools.setLineEditsCompleter(CompleterTools.getAllLineEdits(self.ui))
         self.ui.pushButton.clicked.connect(self.pushBtn_Cancel)
@@ -198,3 +201,6 @@ class NewMaterial(QtGui.QDialog):
         self.ui.lineEdit_conductivity.setEnabled(self.ui.checkBox_conductivity.isChecked()) 
     def onCheckBox_dielectric_constantClicked(self):
         self.ui.lineEdit_dielectric_constant.setEnabled(self.ui.checkBox_dielectric_constant.isChecked()) 
+
+    def setNameUnable(self):
+        self.ui.lineEdit_Name.setEnabled(False)

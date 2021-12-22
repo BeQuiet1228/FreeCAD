@@ -1,17 +1,26 @@
-<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
-  <title>3D_Vol_Parallelepipedal</title>
-  <g>
-    <polygon points="4.626 4.121 8.213 0.76 23.076 0.76 19.489 4.121 4.626 4.121" style="fill: #f4e143"/>
-    <g>
-      <rect x="3.896" y="1.917" width="4.955" height="0.826" transform="translate(0.126 4.979) rotate(-43.056)" style="fill: #212020"/>
-      <g>
-        <polygon points="15.788 23.877 19.375 20.517 23.076 0.76 19.489 4.121 15.788 23.877" style="fill: #e8d01f"/>
-        <polygon points="15.788 23.877 0.926 23.877 4.626 4.121 19.489 4.121 15.788 23.877" style="fill: #f7e64f"/>
-        <path d="M16.171,24.339H.369L4.243,3.659h15.8Zm-14.69-.923H15.405L18.933,4.582H5.009Z" style="fill: #212020"/>
-        <polygon points="19.775 20.93 19.264 20.93 19.216 20.476 19.026 20.441 22.634 1.174 7.858 1.178 7.854 0.347 23.631 0.347 19.775 20.93" style="fill: #212020"/>
-        <rect x="15.188" y="21.894" width="4.962" height="0.828" transform="translate(-10.438 17.856) rotate(-42.618)" style="fill: #212020"/>
-      </g>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>平行六面体@4x</title>
+    <defs>
+        <polygon id="path-1" points="3.08673096 3.21356201 7.17022705 3.237854 12.3651733 8.97186279 7.40209961 8.98748779"></polygon>
+        <filter x="-5.4%" y="-8.7%" width="110.8%" height="117.3%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.518821023 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="新增图标备份" transform="translate(-193.000000, -122.000000)">
+            <g id="平行六面体" transform="translate(193.000000, 122.000000)">
+                <path d="M7.26916372,9.23710979 L8.21336567,13.25 L13.7953165,13.25 L12.9518135,9.24348588 L7.26916372,9.23710979 Z" id="矩形" stroke="#191919" stroke-width="0.5" fill="#76B6EB"></path>
+                <polygon id="路径-70" stroke="#191919" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round" points="2.59753418 2.99145508 7.25860596 9.22625732 12.9455566 9.22943115 7.2909877 3"></polygon>
+                <polygon id="矩形" fill="#3F81B8" points="3.02133179 3.96737671 7.0380249 9.33459473 7.75701904 12.3759155 3.47149658 6.89904785"></polygon>
+                <g id="矩形">
+                    <use fill="#8CCBFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                </g>
+                <polyline id="路径-71" stroke="#191919" stroke-width="0.5" points="2.59576416 2.94165039 3.25158691 6.98168945 8.16638184 13.3146973"></polyline>
+            </g>
+        </g>
     </g>
-    <rect x="18.891" y="1.963" width="4.955" height="0.826" transform="translate(4.132 15.228) rotate(-43.056)" style="fill: #212020"/>
-  </g>
 </svg>

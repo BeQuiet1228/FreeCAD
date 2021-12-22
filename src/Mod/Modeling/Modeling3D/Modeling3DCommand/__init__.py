@@ -1,6 +1,4 @@
 #-*- coding: utf-8 -*-
-import DynamicData
-import CustomParameter
 
 import Modeling3DGuiTest
 import Vol_Cylinder           # a simple Cylinder
@@ -35,7 +33,6 @@ import Vol_Boolean
 import Object_Array
 import Vol_Function
 import DialogReShow
-import SingleClickObj
 import ShowAllFunction
 
 from Vol_Array.Command import Vol_Array_Dlg_Main
@@ -47,10 +44,9 @@ from DraftModeling_Revolution.Command import DraftModeling_RevolutionDlgMain
 import Area_Function
 
 from Vol_Revolution.Command import RevolutionCommand
-
+import SingleClickObj
 
 
 
 ######################################工程设置######################################
-import ProjectSetting.Commands.ProjectSettingCommand
 # import TestFolder

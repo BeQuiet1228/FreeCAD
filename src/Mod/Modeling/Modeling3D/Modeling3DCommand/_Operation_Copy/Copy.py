@@ -42,7 +42,7 @@ def doPaste(objs):
     App.ActiveDocument.recompute()
     import PartGui,PartChipic
     #PartGui.updateBoolean(minOrder) #ZD
-    PartGui.updateBoolean(minOrder, 0) #这儿minOrder是最大的
+    PartChipic.updateBoolean(minOrder, 0) #这儿minOrder是最大的
 
 def doCut(objs):
     # objs=Gui.Selection.getSelection()

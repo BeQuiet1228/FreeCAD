@@ -65,4 +65,4 @@ class My_Command_Class():
 FreeCADGui.addCommand('My_Command11',My_Command_Class())
 
 
-FreeCADGui.addCommand('ReShowDialog',ReShowCommand())
+# FreeCADGui.addCommand('ReShowDialog',ReShowCommand())

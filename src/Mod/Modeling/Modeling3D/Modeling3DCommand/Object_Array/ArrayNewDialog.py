@@ -716,7 +716,7 @@ class showArrayDialog(QtGui.QDialog):
             self.hide()
             FreeCAD.ActiveDocument.recompute()
             #PartGui.updateBoolean(lastOrder) #ZD
-            PartGui.updateBoolean(lastOrder, 1)
+            PartChipic.updateBoolean(lastOrder, 1)
             self.obj_resultshape.ViewObject.Transparency = 0
             self.obj.ViewObject.Visibility = False
             # self.obj_resultshape.ViewObject.ShapeColor = (0.58, 0.58, 0.58)

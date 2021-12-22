@@ -295,6 +295,8 @@ class showToroidalSectionDialog(showObjDialog):
 
             point_1_y_before=self.ui.lineEdit_2.text()
             point_1_y_after=InputTools.anglefunctions(point_1_y_before)
+            if point_1_y_after[0] == 360:
+                point_1_y_after[0] = 359.9
             try:
                 if point_1_y_after[1]==2:
                     self.obj.setExpression('Point1.y',point_1_y_after[0])
@@ -328,6 +330,8 @@ class showToroidalSectionDialog(showObjDialog):
             
             point_2_y_before=self.ui.lineEdit_5.text()
             point_2_y_after=InputTools.anglefunctions(point_2_y_before)
+            if point_2_y_after[0] == 360:
+                point_2_y_after[0] = 359.9
             try:
                 if point_2_y_after[1]==2:
                     self.obj.setExpression('Point2.y',point_2_y_after[0])
@@ -361,6 +365,8 @@ class showToroidalSectionDialog(showObjDialog):
             
             point_3_y_before=self.ui.lineEdit_8.text()
             point_3_y_after=InputTools.anglefunctions(point_3_y_before)
+            if point_3_y_after[0] == 360:
+                point_3_y_after[0] = 359.9
             try:
                 if point_3_y_after[1]==2:
                     self.obj.setExpression('Point3.y',point_3_y_after[0])
@@ -395,6 +401,8 @@ class showToroidalSectionDialog(showObjDialog):
             
             point_4_y_before=self.ui.lineEdit_11.text()
             point_4_y_after=InputTools.anglefunctions(point_4_y_before)
+            if point_4_y_after[0] == 360:
+                point_4_y_after[0] = 359.9
             try:
                 if point_4_y_after[1]==2:
                     self.obj.setExpression('Point4.y',point_4_y_after[0])
@@ -449,7 +457,11 @@ class showToroidalSectionDialog(showObjDialog):
                 self.error=self.error+'Point1.R'+'  '+str(point_1_x_before)+'\n'
 
             point_1_y_before=self.ui.lineEdit_3.text()
+            # FreeCAD.Console.PrintError('\n圆环角度，前：' + str(point_1_y_before) + '\n')
             point_1_y_after=InputTools.anglefunctions(point_1_y_before)
+            # FreeCAD.Console.PrintError('\n圆环角度，后：' + str(point_1_y_after) + '\n')
+            if point_1_y_after[0] == 360:
+                point_1_y_after[0] = 359.9
             try:
                 if point_1_y_after[1]==2:
                     self.obj.setExpression('Point1.y',point_1_y_after[0])
@@ -483,6 +495,8 @@ class showToroidalSectionDialog(showObjDialog):
             
             point_2_y_before=self.ui.lineEdit_6.text()
             point_2_y_after=InputTools.anglefunctions(point_2_y_before)
+            if point_2_y_after[0] == 360:
+                point_2_y_after[0] = 359.9
             try:
                 if point_2_y_after[1]==2:
                     self.obj.setExpression('Point2.y',point_2_y_after[0])
@@ -516,6 +530,8 @@ class showToroidalSectionDialog(showObjDialog):
             
             point_3_y_before=self.ui.lineEdit_9.text()
             point_3_y_after=InputTools.anglefunctions(point_3_y_before)
+            if point_3_y_after[0] == 360:
+                point_3_y_after[0] = 359.9
             try:
                 if point_3_y_after[1]==2:
                     self.obj.setExpression('Point3.y',point_3_y_after[0])
@@ -550,6 +566,8 @@ class showToroidalSectionDialog(showObjDialog):
             
             point_4_y_before=self.ui.lineEdit_12.text()
             point_4_y_after=InputTools.anglefunctions(point_4_y_before)
+            if point_4_y_after[0] == 360:
+                point_4_y_after[0] = 359.9
             try:
                 if point_4_y_after[1]==2:
                     self.obj.setExpression('Point4.y',point_4_y_after[0])
@@ -758,28 +776,28 @@ class reshowToroidalSectionDialog(showToroidalSectionDialog):
                         list2[x]=str(ValueUnitslength(self.obj.Point1.x,length))+length
                     elif x==1:
                         # list2[x]=str(self.obj.Point1.y)+angle
-                        list2[x]=str(ValueUnitsangle(self.obj.Point1.y,angle))+angle
+                        list2[x]=str(ValueUnitsangleForTS(self.obj.Point1.y,angle))+angle
                     elif x==2:
                         list2[x]=str(ValueUnitslength(self.obj.Point1.z,length))+length
                     elif x==3:
                         list2[x]=str(ValueUnitslength(self.obj.Point2.x,length))+length
                     elif x==4:
                         # list2[x]=str(self.obj.Point2.y)+angle
-                        list2[x]=str(ValueUnitsangle(self.obj.Point2.y,angle))+angle
+                        list2[x]=str(ValueUnitsangleForTS(self.obj.Point2.y,angle))+angle
                     elif x==5:
                         list2[x]=str(ValueUnitslength(self.obj.Point2.z,length))+length
                     elif x==6:
                         list2[x]=str(ValueUnitslength(self.obj.Point3.x,length))+length
                     elif x==7:
                         # list2[x]=str(self.obj.Point2.y)+angle
-                        list2[x]=str(ValueUnitsangle(self.obj.Point3.y,angle))+angle
+                        list2[x]=str(ValueUnitsangleForTS(self.obj.Point3.y,angle))+angle
                     elif x==8:
                         list2[x]=str(ValueUnitslength(self.obj.Point3.z,length))+length
                     elif x==9:
                         list2[x]=str(ValueUnitslength(self.obj.Point4.x,length))+length
                     elif x==10:
                         # list2[x]=str(self.obj.Point2.y)+angle
-                        list2[x]=str(ValueUnitsangle(self.obj.Point4.y,angle))+angle
+                        list2[x]=str(ValueUnitsangleForTS(self.obj.Point4.y,angle))+angle
                     elif x==11:
                         list2[x]=str(ValueUnitslength(self.obj.Point4.z,length))+length
                     elif x==12:

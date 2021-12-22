@@ -263,6 +263,8 @@ class Clip(QtGui.QDockWidget):
                 #     PartGui.customBoolean(self.beBooleanObj,cyl,self.cs,1)
                 # else:
                 #     PartGui.customBoolean(self.beBooleanObj,cyl,self.cs,0)
+                #import PartChipic
+                #PartChipic.customBoolean(self.beBooleanObj, cyl, self.cs, 1)
                 PartGui.customBoolean(self.beBooleanObj,cyl,self.cs,1)
                 # PartGui.customBoolean(cyl,self.cs)
                 # FreeCAD.Console.PrintError(str(self.ui.checkBox_showCutFace.isChecked()))

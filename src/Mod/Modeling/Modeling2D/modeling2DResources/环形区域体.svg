@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>环形区域体</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="99.6558129%" id="linearGradient-1">
+            <stop stop-color="#8CCBFF" offset="0%"></stop>
+            <stop stop-color="#3F81B8" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="图标输出" transform="translate(-533.000000, -618.000000)" fill="url(#linearGradient-1)" stroke="#1A1A1A" stroke-width="0.5">
+            <g id="环形区域体" transform="translate(533.000000, 618.000000)">
+                <g id="Group" transform="translate(2.500000, 3.000000)">
+                    <path d="M5.6,0 C8.6927946,0 11.2,2.1490332 11.2,4.8 C11.2,7.4509668 8.6927946,9.6 5.6,9.6 C2.5072054,9.6 0,7.4509668 0,4.8 C0,2.1490332 2.5072054,0 5.6,0 Z M5.6,2.4 C3.8326888,2.4 2.4,3.4745166 2.4,4.8 C2.4,6.1254834 3.8326888,7.2 5.6,7.2 C7.3673112,7.2 8.8,6.1254834 8.8,4.8 C8.8,3.4745166 7.3673112,2.4 5.6,2.4 Z" id="Combined-Shape"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,11 +1,37 @@
-<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
-  <title>_Operation_Clip</title>
-  <path d="M8.5,23.1,22.7,0l-.6,22.8ZM19.9,8.3,12.8,19.5a1.179,1.179,0,0,0,1,1.8l5.6-.1A1.287,1.287,0,0,0,20.6,20l.3-11.5C20.8,8,20.1,7.8,19.9,8.3Z" style="fill: #ec2232"/>
-  <g>
-    <g>
-      <path d="M5,23.1a3.585,3.585,0,0,1-3.6-3.6A3.5,3.5,0,0,1,5,16a3.55,3.55,0,1,1,0,7.1Zm0-5.9A2.4,2.4,0,0,0,5,22a2.4,2.4,0,0,0,0-4.8Z" style="fill: #141414"/>
-      <path d="M14.6,23.1a3.6,3.6,0,1,1,3.6-3.6A3.585,3.585,0,0,1,14.6,23.1Zm0-5.9A2.4,2.4,0,1,0,17,19.6,2.433,2.433,0,0,0,14.6,17.2Z" style="fill: #141414"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>切面</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#EEEEEE" offset="0%"></stop>
+            <stop stop-color="#D8D8D8" offset="97.4767736%"></stop>
+        </linearGradient>
+        <rect id="path-2" x="3" y="2" width="10" height="12" rx="1"></rect>
+        <filter x="-5.0%" y="-4.2%" width="110.0%" height="108.3%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="1" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 1 0" type="matrix" in="shadowInnerInner1" result="shadowMatrixInner1"></feColorMatrix>
+            <feOffset dx="-1" dy="-1" in="SourceAlpha" result="shadowOffsetInner2"></feOffset>
+            <feComposite in="shadowOffsetInner2" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner2"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.3 0" type="matrix" in="shadowInnerInner2" result="shadowMatrixInner2"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner2"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="图标输出" transform="translate(-489.000000, -411.000000)">
+            <g id="切面" transform="translate(489.000000, 411.000000)">
+                <g id="矩形">
+                    <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
+                    <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                    <rect stroke="#1A1A1A" stroke-width="0.5" stroke-linejoin="square" x="3.25" y="2.25" width="9.5" height="11.5" rx="1"></rect>
+                </g>
+                <line x1="3" y1="8.5" x2="13" y2="8.5" id="Path-50" stroke="#F4A246" stroke-width="0.5"></line>
+                <path d="M4.58501155,7.24368829 L6.41277368,4.72844316 L7.42950879,5.41096488 C6.80062226,6.38442992 6.28560137,6.9440395 5.88444611,7.08979362 C5.48329084,7.23554774 5.05014599,7.28684597 4.58501155,7.24368829 Z" id="Path-51" fill="#F1AC5F" transform="translate(6.007260, 5.993460) rotate(19.000000) translate(-6.007260, -5.993460) "></path>
+                <polygon id="Path-52" fill="#2E2E2E" points="6.80253005 4.92938539 9.02215157 3.36389775 9.4085807 3.85596287 7.0974697 5.33709394"></polygon>
+            </g>
+        </g>
     </g>
-    <path d="M15.1,4.3l-5.2,9-5.2-9a5.667,5.667,0,0,0-.2,4.6l4,7h0L10,18.5h0l1.5-2.6h0l4-7A6.128,6.128,0,0,0,15.1,4.3ZM9.9,16.7a.6.6,0,1,1,.6-.6A.576.576,0,0,1,9.9,16.7Z" style="fill: #141414"/>
-  </g>
 </svg>

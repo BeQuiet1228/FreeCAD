@@ -55,12 +55,17 @@
       <widget class="QComboBox" name="comboBox">
        <item>
         <property name="text">
-         <string>离子</string>
+         <string>全部</string>
         </property>
        </item>
        <item>
         <property name="text">
          <string>电子</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>质子</string>
         </property>
        </item>
       </widget>

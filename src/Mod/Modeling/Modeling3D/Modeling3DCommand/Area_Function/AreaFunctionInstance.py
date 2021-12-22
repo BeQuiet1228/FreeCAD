@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import FreeCAD, Part, math
+import FreeCAD, Part, math, PartChipic
 from FreeCAD import Base
 import FreeCADGui
 from pivy import coin
@@ -212,8 +212,13 @@ class AreaFunction:
         expressionStr=OtherTools.parseFunctionObjStr(expressionStr)
 
         try:
-            [tempPoint1,tempPoint2]=ObjectsTools.getRMinMaxPoints(obj.Point_1,obj.Point_2,self.curCoordinateSystem)
-            obj.Shape=Part.makeFuncMesh(0,expressionStr,tempPoint1[0],tempPoint2[0],tempPoint1[1],tempPoint2[1],tempPoint1[2],tempPoint2[2],FreeCAD.getUserAppDataDir()+"\\tempFunc.json",str(obj.Precision))
+            #[tempPoint1,tempPoint2]=ObjectsTools.getRMinMaxPoints(obj.Point_1,obj.Point_2,self.curCoordinateSystem) #ZD
+            tempPoint1=obj.Point_1
+            tempPoint2=obj.Point_2
+            #todo type
+            type=10
+            #obj.Shape=Part.makeFuncMesh(0,expressionStr,tempPoint1[0],tempPoint2[0],tempPoint1[1],tempPoint2[1],tempPoint1[2],tempPoint2[2],FreeCAD.getUserAppDataDir()+"\\tempFunc.json",str(obj.Precision))
+            obj.Shape=PartChipic.makeFuncMesh(type,expressionStr,tempPoint1[0],tempPoint2[0],tempPoint1[1],tempPoint2[1],tempPoint1[2],tempPoint2[2],self.curCoordinateSystem,str(obj.Precision),"")
         except:
             from Modeling.Common.Tools import DocumentTools
             DocumentTools.printErrorMessage("Redraw Function Failed!")

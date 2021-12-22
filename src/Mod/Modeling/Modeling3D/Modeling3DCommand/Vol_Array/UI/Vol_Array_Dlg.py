@@ -482,7 +482,7 @@ class Ui_Dialog_Vol_Array(object):
         self.checkBox_UniformX.setText(QtGui.QApplication.translate("Dialog_Vol_Array", "X", None, QtGui.QApplication.UnicodeUTF8))
         self.lineEdit_UniformX.setText(QtGui.QApplication.translate("Dialog_Vol_Array", "dx1", None, QtGui.QApplication.UnicodeUTF8))
         self.lineEdit_UniformY.setText(QtGui.QApplication.translate("Dialog_Vol_Array", "dx2", None, QtGui.QApplication.UnicodeUTF8))
-        self.lineEdit_UniformZ.setText(QtGui.QApplication.translate("Dialog_Vol_Array", "dx2", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEdit_UniformZ.setText(QtGui.QApplication.translate("Dialog_Vol_Array", "dx3", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_ok.setText(QtGui.QApplication.translate("Dialog_Vol_Array", "确定", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_cancel.setText(QtGui.QApplication.translate("Dialog_Vol_Array", "取消", None, QtGui.QApplication.UnicodeUTF8))
 

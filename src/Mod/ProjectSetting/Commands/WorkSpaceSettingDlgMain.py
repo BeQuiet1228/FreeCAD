@@ -11,7 +11,7 @@ import ProjectSettingsDlgData
 import File.FileCommand.M3DFile.M3DFileUtil
 import File.FileCommand.TextUI.FileTextView
 from Modeling.Common.Tools import ObjectsTools
-from Tools import CompleterTools
+
 #json格式数据需要保持原有顺序输出
 from collections import OrderedDict
 
@@ -95,6 +95,7 @@ class WorkSpaceSettings(QtGui.QDialog):
         QtGui.QDialog.__init__(self)
         self.ui = WorkSpaceSettingsDlg.Ui_Dialog_WorkSpaceDlg()
         self.ui.setupUi(self)
+        from ProjectSetting.Tools import CompleterTools
         #代码补全
         CompleterTools.setLineEditsCompleter(CompleterTools.getAllLineEdits(self.ui))
         global flag

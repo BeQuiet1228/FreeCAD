@@ -1,16 +1,16 @@
-<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24">
-  <defs>
-    <linearGradient id="未命名的渐变_3" data-name="未命名的渐变 3" x1="11.76" y1="14.02" x2="23.996" y2="14.02" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#fdee5f"/>
-      <stop offset="1" stop-color="#dec200"/>
-    </linearGradient>
-    <linearGradient id="未命名的渐变_3-2" x1="0.462" y1="12.339" x2="11.76" y2="12.339" xlink:href="#未命名的渐变_3"/>
-  </defs>
-  <title>3D_Vol_Wedge</title>
-  <g>
-    <polygon points="11.76 5.097 11.76 22.942 23.996 20.33 11.76 5.097" style="fill: url(#未命名的渐变_3)"/>
-    <polygon points="11.76 22.942 0.462 19.58 0.462 1.735 11.76 5.097 11.76 22.942" style="fill: url(#未命名的渐变_3-2)"/>
-    <path d="M12.207,23.518,0,19.925V1.115L12.222,4.752ZM.924,19.235,11.3,22.322V5.442L.924,2.355Z" style="fill: #212020"/>
-    <polygon points="12.253 23.518 11.992 22.705 22.603 19.873 11.521 5.256 12.222 4.752 24.047 20.367 12.253 23.518" style="fill: #212020"/>
-  </g>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>楔形体@4x</title>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="新增图标备份" transform="translate(-522.000000, -78.000000)">
+            <g id="楔形体" transform="translate(522.000000, 78.000000)">
+                <polygon id="路径-55" stroke="#191919" stroke-width="0.5" points="3.90136719 3.14341478 1.04223633 11.9521484 10.1855469 11.9941406 15.126709 8.97290039 9.95709229 3.00317383"></polygon>
+                <polygon id="矩形" fill="#8CCBFF" points="4.09082031 3.34619141 9.70739746 3.21032715 9.92810059 11.7489014 1.3918457 11.7001953"></polygon>
+                <polygon id="三角形" fill="#3F81B8" points="10.2157593 3.63137817 14.777832 8.94143677 10.4242249 11.5647278"></polygon>
+                <line x1="9.94818115" y1="2.97644043" x2="10.1855469" y2="11.9941406" id="路径-56" stroke="#191919" stroke-width="0.5"></line>
+                <path d="M1.04223633,11.9521484 L6.16516113,9.09545898 L4.00720215,3.20751953" id="路径-57" stroke="#191919" stroke-width="0.5" stroke-dasharray="1"></path>
+                <line x1="5.99945068" y1="9.00390625" x2="14.8681641" y2="8.90899658" id="路径-58" stroke="#191919" stroke-width="0.5" stroke-dasharray="1"></line>
+            </g>
+        </g>
+    </g>
 </svg>
