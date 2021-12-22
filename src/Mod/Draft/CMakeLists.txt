@@ -5,6 +5,7 @@ IF (BUILD_GUI)
 ENDIF (BUILD_GUI)
 
 SET(Draft_SRCS
+	__init__.py
     Init.py
     InitGui.py
     Draft.py

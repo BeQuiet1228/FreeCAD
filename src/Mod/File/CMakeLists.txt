@@ -1,8 +1,8 @@
 add_custom_target(File)
 SET(Sources_Srcs
-	fileCommand
-	fileGui
-	fileResources
+	FileCommand
+	FileGui
+	FileResources
 	InitGui.py
 	__init__.py
 )
