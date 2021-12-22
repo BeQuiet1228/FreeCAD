@@ -44,6 +44,9 @@ private:
 	bool analysisType(const std::string& str,const QString& typeName ,QString& name, QString& rank);
 	//生成临时文件路径
 	QString makeFilePath(unsigned long threadID);
+	//初始化3d粒子图观测和三维等位图观测
+	void initParticle3DItem();
+	void initContour3DItem();
 public Q_SLOTS :
 	void itemDouble_clicke(QTreeWidgetItem* item, int column);
 	//控制模块解析完成

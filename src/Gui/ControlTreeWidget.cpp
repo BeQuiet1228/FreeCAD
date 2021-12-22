@@ -73,6 +73,9 @@ void ControlTreeWidget::init(const Hdf5Data& data)
 			continue;
 	}
 
+	initContour3DItem();
+	initParticle3DItem();
+
 	update();
 }
 
@@ -110,7 +113,6 @@ void ControlTreeWidget::initItem()
 	{
 		addTopLevelItem(iter->second);
 	}
-
 }
 
 void ControlTreeWidget::sendControlMsg(QTreeWidgetItem* item)
@@ -302,6 +304,41 @@ QString ControlTreeWidget::makeFilePath(unsigned long threadID)
 	this->tempFilePath = newTempPath;
 
 	return tempFilePath;
+}
+
+void ControlTreeWidget::initParticle3DItem()
+{
+	auto item = items[PARTICLE_3D];
+
+	auto subItem = new QTreeWidgetItem();
+	subItem->setText(0,QString::fromLocal8Bit("Particle3D"));
+	item->addChild(subItem);
+}
+
+void ControlTreeWidget::initContour3DItem()
+{
+	//¹Û²âÃû³Æ
+	std::vector<std::string> names;
+	names.reserve(9);
+	names.push_back("E1");
+	names.push_back("E2");
+	names.push_back("E3");
+	names.push_back("B1");
+	names.push_back("B2");
+	names.push_back("B3"); 
+	names.push_back("J1"); 
+	names.push_back("J2");
+	names.push_back("J3");
+
+	auto item = items[CONTOUR_3D];
+
+	for each ( std::string name in names)
+	{
+		auto subItem = new  QTreeWidgetItem();
+		subItem->setText(0,QString::fromStdString(name));
+		item->addChild(subItem);
+	}
+
 }
 
 void ControlTreeWidget::itemDouble_clicke(QTreeWidgetItem* item, int column)
