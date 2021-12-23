@@ -19,12 +19,13 @@ SET(Sources_Srcs
 	ply
 	Resources
 	#${OpenSCAD_QRC_SRCS}
+	OpenSCAD_rc.py
 )
-IF (BUILD_GUI)
-list(APPEND Sources_Srcs
-${OpenSCAD_QRC_SRCS}
-)
-ENDIF (BUILD_GUI)
+#IF (BUILD_GUI)
+#list(APPEND Sources_Srcs
+#${OpenSCAD_QRC_SRCS}
+#)
+#ENDIF (BUILD_GUI)
 File(COPY ${Sources_Srcs} DESTINATION ${CMAKE_BINARY_DIR}/Mod/OpenSCAD)
 add_custom_target(OPenSCAD ALL SOURCES)
 #SET(OpenSCAD_SRCS
