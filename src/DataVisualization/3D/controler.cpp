@@ -163,15 +163,8 @@ void DV3D::Controler::setClipPlane(vtkSmartPointer<vtkPlane> palne)
 	getActorPipeline()->setClipPlane(palne);
 }
 
-
-/**
-* @time	2021/12/17
-* @brief DV3D::Controler::setContourLeves 计算等值面时，设置等值面的等级
-* @param const int & n
-* @return void
-*/
-void DV3D::Controler::setContourLeves(const int& n)
+void DV3D::Controler::getClipPlane(vtkSmartPointer<vtkPlane>& palne)
 {
-	getActorPipeline()->setContourSurfarCount(n);
+	getActorPipeline()->getClipPlane(palne);
 }
 

@@ -55,7 +55,7 @@ if(MSVC)
          ${OPENGL_gl_LIBRARY}
 		 Editor
          transition
-		 DataVisualization3D
+		 #DataVisualization3D
     )
 	if(contorl_client_dll)
 	list(APPEND FreeCADGui_LIBS

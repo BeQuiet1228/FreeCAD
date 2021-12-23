@@ -19,6 +19,7 @@ namespace DV3D
 		vtkSmartPointer<vtkPoints> points;
 		vtkSmartPointer<vtkFloatArray> scalar;
 		int rGridSize, thetaGridSize, zGridSize;
+		double polarZ;
 	};
 }
 #endif

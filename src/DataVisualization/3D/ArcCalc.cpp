@@ -6,6 +6,11 @@ DV3D::ArcCalc::ArcCalc()
 	init();
 }
 
+DV3D::ArcCalc::~ArcCalc()
+{
+
+}
+
 DV3D::ArcCalc::ArcCalc(int res)
 {
 	init();
@@ -32,6 +37,8 @@ void DV3D::ArcCalc::init()
 	this->mNormal[0] = 1.0;
 	//Resolution
 	this->mResolution = 1;
+	scalar1 = 0.0;
+	scalar2 = 1.0;
 }
 
 void DV3D::ArcCalc::setCenter(double* center)
@@ -84,9 +91,10 @@ int DV3D::ArcCalc::getResolution()
 void DV3D::ArcCalc::Update()
 {
 	//获取两点之间的夹角
-	double r1 = vtkMath::Distance2BetweenPoints(mPoint1,mCenter);
-	double r2 = vtkMath::Distance2BetweenPoints(mPoint2,mCenter);
-	if (abs(r1 - r2) < 0.00001f)
+	double r1 = vtkMath::Distance2BetweenPoints(mPoint1, mCenter);
+	double r2 = vtkMath::Distance2BetweenPoints(mPoint2, mCenter);
+	double subVal = abs(r1 - r2);
+	if (subVal > 0.00001f)
 	{
 		printf("The two points are not on the same arc\n");
 		return;
@@ -95,10 +103,39 @@ void DV3D::ArcCalc::Update()
 	double v2[3];
 	vtkMath::Subtract(mPoint1, mCenter, v1);
 	vtkMath::Subtract(mPoint2, mCenter, v2);
-	auto rad=vtkMath::AngleBetweenVectors(v1,v2);
+	auto rad = vtkMath::AngleBetweenVectors(v1, v2);
 	//获取弧度的间距
 	auto intervalRad = vtkMath::RadiansFromDegrees(360.0) / mResolution;
-
+	if (intervalRad >= rad)
+	{
+		notMalkArcText();
+		return;
+	}
+	//做处理
+	double perpendicular[3];//垂直向量
+	double normal[3];
+	vtkMath::Cross(this->mNormal, this->mPolarVector, perpendicular);
+	/*double dotprod =
+		vtkMath::Dot(v1, v2) / vtkMath::Norm(v1) * vtkMath::Norm(v2);
+	double angle = acos(dotprod);*/
+	vtkMath::Normalize(perpendicular);
+	auto radius = vtkMath::Normalize(v1);
+	double theta = intervalRad;
+	insertPoint1();
+	for (int i = 0; i <= this->mResolution; ++i, theta += intervalRad)
+	{
+		if (theta >= rad)
+			break;
+		const double cosine = cos(theta);
+		const double sine = sin(theta);
+		ArcTextInfo p;
+		p.point.setX(this->mCenter[0] + cosine * radius * v1[0] + sine * radius * perpendicular[0]);
+		p.point.setY(this->mCenter[1] + cosine * radius * v1[1] + sine * radius * perpendicular[1]);
+		p.point.setZ(this->mCenter[2] + cosine * radius * v1[2] + sine * radius * perpendicular[2]);
+		p.scalar = (scalar2 - scalar1) * (theta / rad) + scalar1;
+		outputArc.push_back(p);
+	}
+	insertPoint2();
 }
 
 void DV3D::ArcCalc::setPoint1(double* p)
@@ -123,6 +160,64 @@ double* DV3D::ArcCalc::getPoint1()
 double* DV3D::ArcCalc::getPoint2()
 {
 	return mPoint2;
+}
+
+void DV3D::ArcCalc::setScalar1(double s1)
+{
+	scalar1 = s1;
+}
+
+void DV3D::ArcCalc::setScalar2(double s2)
+{
+	scalar2 = s2;
+}
+
+double DV3D::ArcCalc::getScalar1()
+{
+	return scalar1;
+}
+
+double DV3D::ArcCalc::getScalar2()
+{
+	return scalar2;
+}
+
+std::vector<DV3D::ArcCalc::ArcTextInfo>& DV3D::ArcCalc::getOutputArc()
+{
+	return outputArc;
+}
+
+
+/**
+* @time	2021/12/23
+* @brief DV3D::ArcCalc::notMalkArcText 不做处理
+* @return void
+*/
+void DV3D::ArcCalc::notMalkArcText()
+{
+	insertPoint1();
+	insertPoint2();
+}
+
+void DV3D::ArcCalc::insertPoint1()
+{
+	outputArc.clear();
+	ArcTextInfo port1;
+	port1.point.setX(mPoint1[0]);
+	port1.point.setY(mPoint1[1]);
+	port1.point.setZ(mPoint1[2]);
+	port1.scalar = scalar1;
+	outputArc.push_back(port1);
+}
+
+void DV3D::ArcCalc::insertPoint2()
+{
+	ArcTextInfo port2;
+	port2.point.setX(mPoint2[0]);
+	port2.point.setY(mPoint2[1]);
+	port2.point.setZ(mPoint2[2]);
+	port2.scalar = scalar2;
+	outputArc.push_back(port2);
 }
 
 void DV3D::ArcCalc::setPoint2(double x, double y, double z)

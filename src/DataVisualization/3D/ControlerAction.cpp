@@ -1,6 +1,5 @@
 #include "ControlerAction.h"
 #include "controler.h"
-
 void DV3D::ControlerVisible::active(std::shared_ptr<Controler> controler)
 {
 	if (getState() == ON)
@@ -37,4 +36,16 @@ void DV3D::ControlerClipEnable::active(std::shared_ptr<Controler> controler)
 		on();
 		controler->setClipEnable(true);
 	}
+}
+
+void DV3D::ControlerClipPlan::active(std::shared_ptr<Controler> controler)
+{
+	showWidget(controler);
+}
+
+void DV3D::ControlerClipPlan::showWidget(std::shared_ptr<Controler> controler)
+{
+	ClipPlaneWidget* clipPlaneWidget = new ClipPlaneWidget();
+	clipPlaneWidget->setControler(controler);
+	clipPlaneWidget->show();
 }

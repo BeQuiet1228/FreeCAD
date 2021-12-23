@@ -42,6 +42,17 @@ namespace DV3D
 		void setPoint2(double x, double y, double z);
 		double* getPoint1();
 		double* getPoint2();
+		//scalar1and2
+		void setScalar1(double);
+		void setScalar2(double);
+		double getScalar1();
+		double getScalar2();
+		//
+		std::vector<ArcTextInfo>& getOutputArc();
+	protected:
+		void notMalkArcText();
+		void insertPoint1();
+		void insertPoint2();
 	private:
 		double mPoint1[3];//端点1
 		double mPoint2[3];//端点2
@@ -49,6 +60,8 @@ namespace DV3D
 		double mNormal[3];//法线
 		double mPolarVector[3];//极坐标方向
 		int mResolution;//分辨率
+		double scalar1;
+		double scalar2;
 		std::vector<ArcTextInfo>  outputArc;
 	};
 }

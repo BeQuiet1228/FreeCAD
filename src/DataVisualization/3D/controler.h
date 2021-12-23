@@ -48,8 +48,7 @@ namespace DV3D {
 		void setClipEnable(const bool& b);
 		bool getClipEnable();
 		void setClipPlane(vtkSmartPointer<vtkPlane> palne);
-		//设置等值面等级
-		void setContourLeves(const int& n);
+		void getClipPlane(vtkSmartPointer<vtkPlane>& palne);
 	private:
 		//单向绑定
 		void oneWayBinding(Widget3D* widget3D);

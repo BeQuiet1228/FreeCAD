@@ -35,9 +35,7 @@ namespace DV3D {
 		void setClipperEnable(const bool& b);
 
 		void setClipper(std::shared_ptr<Clipper> clipper);
-
-		virtual void setContourSurfarCount(const int& n);
-
+		void getClipPlane(vtkSmartPointer<vtkPlane>& palne);
 		//更新渲染管线
 		virtual void update() = 0;
 		//链接管线

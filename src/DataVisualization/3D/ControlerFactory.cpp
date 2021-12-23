@@ -18,6 +18,8 @@
 #include "Contour3dataSetConstructor.h"
 #include "PolarContour3dDataSetConstructor.h"
 #include "Contour3dActorPipeline.h"
+
+#include"Contour3dControler.h"
 #include <cassert>
 
 std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatControler(Hdf5Data& h5data)
@@ -64,7 +66,7 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContour3dControler
 	pipeline.reset(new  Contour3dActorPipline());
 	pipeline->setDataSet(constructor->creatDataset());
 	pipeline->connect();
-	controler.reset(new Controler());
+	controler.reset(new Contour3dControler());
 	controler->setActorPipeline(pipeline);
 	return controler;
 }

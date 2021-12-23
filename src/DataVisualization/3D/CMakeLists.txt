@@ -51,6 +51,9 @@ SET(SRC
 	controlerItemFactor.cpp
 	controlerItemFactor.h
 	DataVisualization3DExport.hpp
+	ClipPlaneWidget.h
+	ClipPlaneWidget.cpp
+	
 )
 SET( STRUCT_SRC
 	CartesianStructDataSetConstructor.cpp
@@ -92,6 +95,12 @@ SET(CONTOUR3D_SRCS
 	PolarContour3dDataSetConstructor.h
 	Contour3dActorPipeline.h
 	Contour3dActorPipeline.cpp
+	Contour3dControler.h
+	Contour3dControler.cpp
+	Contour3dControlerAction.h
+	Contour3dControlerAction.cpp
+	Contour3dControlerWidget.h
+	Contour3dControlerWidget.cpp
 )
 SET(FLITER_SRCS
 PolarContourFliter.h
@@ -101,10 +110,14 @@ ArcCalc.cpp
 )
 SET(UI_SRC
 	ControlerItem.ui
+	ClipPlaneWidget.ui
 	)
 
 SET(MY_MOC_HDR
 	ControlerItem.h
+	ClipPlaneWidget.h
+	Contour3dControlerWidget.h
+	Contour3dControlerAction.h
 )
 SET(QRC_SRC
 	resource/rce.qrc
@@ -146,10 +159,10 @@ source_group("particle3d" FILES ${PARTICLE_SRC})
 source_group("contour" FILES ${CONTOUR_SRCS})
 source_group("contour3d" FILES ${CONTOUR3D_SRCS})
 source_group("fliter" FILES ${FLITER_SRCS})
-#add_executable(DataVisualization3D ${DataVisualization3D_src})
+add_executable(DataVisualization3D ${DataVisualization3D_src})
 add_definitions(-D_DATA_VISUALIZATION_3D)
 
-add_library(DataVisualization3D SHARED ${DataVisualization3D_src})
+#add_library(DataVisualization3D SHARED ${DataVisualization3D_src})
 #设置执行文件的输出目录
 set(DEBUG_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(RELEASE_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
