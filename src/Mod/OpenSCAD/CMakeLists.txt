@@ -18,8 +18,13 @@ SET(Sources_Srcs
 	#prototype.py
 	ply
 	Resources
-	${OpenSCAD_QRC_SRCS}
+	#${OpenSCAD_QRC_SRCS}
 )
+IF (BUILD_GUI)
+list(APPEND Sources_Srcs
+${OpenSCAD_QRC_SRCS}
+)
+ENDIF (BUILD_GUI)
 File(COPY ${Sources_Srcs} DESTINATION ${CMAKE_BINARY_DIR}/Mod/OpenSCAD)
 add_custom_target(OPenSCAD ALL SOURCES)
 #SET(OpenSCAD_SRCS
@@ -81,4 +86,4 @@ add_custom_target(OPenSCAD ALL SOURCES)
 #
 #fc_copy_sources(OpenSCAD "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_DATADIR}/Mod/OpenSCAD" ${OpenSCADGuiIcon_SVG})
 
-INSTALL(FILES ${OpenSCADGuiIcon_SVG} DESTINATION "${CMAKE_INSTALL_DATADIR}/Mod/OpenSCAD/Resources/icons")
+#INSTALL(FILES ${OpenSCADGuiIcon_SVG} DESTINATION "${CMAKE_INSTALL_DATADIR}/Mod/OpenSCAD/Resources/icons")

@@ -282,7 +282,10 @@ PyObject* Application::sDisplayText(PyObject* self, PyObject* args, PyObject* kw
     MDIEditView* textEdit = new MDIEditView(picDoc);
     textEdit->setReadOnly(true);
     auto mw = MainWindow::getInstance();
+    auto view = mv->activeWindow();
     mw->addWindow(textEdit);
+    if(view)
+        mv->setActiveWindow(view)
     textEdit->setText(QString::fromStdString(text));
     textEdit->setWindowTitle(QString::fromStdString(picDoc->getDocument()->getName())
                              + QString::fromStdString(" Code"));
@@ -384,20 +387,20 @@ PyObject* Application::sChipicOpen(PyObject * /*self*/, PyObject *args, PyObject
 	transform(suffix.begin(), suffix.end(), suffix.begin(), ::tolower);
 	if (strcmp(suffix.c_str(), ".fcstd") == 0)
 	{
-		//ÏÖÔÚÒÑ´æÔÚ´ò¿ªÎÄµµ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Ú´ï¿½ï¿½Äµï¿½
 		if (Gui::Application::Instance->activeDocument())
 		{
-			//¹Ø±ÕËùÓÐ
+			//ï¿½Ø±ï¿½ï¿½ï¿½ï¿½ï¿½
 			//Gui::doCommand
 		}
 		Gui::Application::Instance->open(EncodedName.c_str(), "FreeCAD");
 	}
 	else if (strcmp(suffix.c_str(), ".m3d") == 0)
 	{
-		//ÏÖÔÚÒÑ´æÔÚ´ò¿ªÎÄµµ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Ú´ï¿½ï¿½Äµï¿½
 		if (Gui::Application::Instance->activeDocument())
 		{
-			//¹Ø±ÕËùÓÐ
+			//ï¿½Ø±ï¿½ï¿½ï¿½ï¿½ï¿½
 			//Gui::getMainWindow()->closeAllWindows();
 		}
 		Gui::Application::Instance->open(EncodedName.c_str(), "importM3D");
