@@ -5,6 +5,7 @@
 #include "vtkCellData.h"
 #include "vtkStructuredGrid.h"
 #include "vtkPointData.h"
+#include "PolarContourFliter.h"
 DV3D::PolarContour3dDatasetConstructor::PolarContour3dDatasetConstructor()
 	: rGridSize(0),thetaGridSize(0),zGridSize(0)
 {
@@ -29,19 +30,13 @@ void DV3D::PolarContour3dDatasetConstructor::initPoints()
 {
 	auto h5d = getHdf5Data();
 	assert(h5d.listDataSet.size() == 4 && "list DataSet size is not 4");
-	std::vector <std::vector <float>> datas;
-	datas.reserve(4);
-	for (auto i : h5d.listDataSet)
-	{
-		std::vector<float> d;
-		Hdf5IO::getValue(i, d);
-		datas.push_back(d);
-	}
+	PolarContourFilter polarContourFilter;
+	polarContourFilter.loadPoint(h5d, 40);
 	//r-theta-z
-	std::vector<float>& valList = datas[0];
-	std::vector<float>& rList = datas[1];
-	std::vector<float>& thetaList = datas[2];
-	std::vector<float>& zList = datas[3];
+	std::vector<double> valList = polarContourFilter.getVallist();
+	std::vector<double> rList = polarContourFilter.getRGridData();
+	std::vector<double> thetaList = polarContourFilter.getThetaGridData();
+	std::vector<double> zList = polarContourFilter.getZGridData();
 	initGrid(rList.size(),thetaList.size(),zList.size());
 	//ªÒ»°µ„‘∆
 	points = vtkSmartPointer<vtkPoints>::New();

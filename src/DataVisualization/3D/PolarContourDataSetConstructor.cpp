@@ -4,7 +4,6 @@
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 #include "PolarContourFliter.h"
-#include "PolarContourFliter.h"
 namespace DV3D
 {
 	PolarContourDatasetConstructor::PolarContourDatasetConstructor():rGridSize(1),thetaGridSize(1),zGridSize(1)
@@ -32,7 +31,7 @@ namespace DV3D
 		auto h5d = getHdf5Data();
 		//对数据进行插值
 		PolarContourFilter polarContourFilter;
-		polarContourFilter.loadPoint(h5d,30);
+		polarContourFilter.loadPoint(h5d,40);
 		points = vtkSmartPointer<vtkPoints>::New();
 		scalar = vtkSmartPointer<vtkFloatArray>::New();
 		auto rDatas = polarContourFilter.getRGridData();

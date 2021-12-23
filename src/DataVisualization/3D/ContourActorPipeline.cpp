@@ -30,6 +30,6 @@ namespace DV3D
 		mp->Update();
 		auto ac = getActor();
 		ac->SetMapper(mp);
-		ac->GetProperty()->SetEdgeVisibility(1);
+		//ac->GetProperty()->SetEdgeVisibility(1);
 	}
 }
