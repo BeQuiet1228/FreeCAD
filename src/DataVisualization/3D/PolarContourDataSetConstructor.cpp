@@ -20,22 +20,16 @@ namespace DV3D
 		vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
 		polyData->SetPoints(points);
 		polyData->GetPointData()->SetScalars(scalar);
-		vtkSmartPointer<PolarContour2dFilter> polarContourFliter = vtkSmartPointer<PolarContour2dFilter>::New();
-		polarContourFliter->SetInputData(polyData);
-		polarContourFliter->setCenter(0.0, 0.0, polarZ);
-		polarContourFliter->SetDimensions(rGridSize, thetaGridSize, zGridSize);
-		polarContourFliter->SetRotation(30);
-		polarContourFliter->Update();
-		/*vtkSmartPointer<vtkStructuredGrid> structuredGrid = vtkSmartPointer<vtkStructuredGrid>::New();
+		vtkSmartPointer<vtkStructuredGrid> structuredGrid = vtkSmartPointer<vtkStructuredGrid>::New();
 		structuredGrid->SetDimensions(rGridSize, thetaGridSize, zGridSize);
 		structuredGrid->SetPoints(points);
-		structuredGrid->GetPointData()->SetScalars(scalar);*/
-		//return structuredGrid;
-		return polarContourFliter->getStructuredGrid();
+		structuredGrid->GetPointData()->SetScalars(scalar);
+		return structuredGrid;
 	}
 	void PolarContourDatasetConstructor::initData()
 	{
 		auto h5d = getHdf5Data();
+		//对数据进行插值
 		std::shared_ptr<DV::ContourDataPolar> data = std::shared_ptr<DV::ContourDataPolar>(DV::CreateContourDataPolar(h5d));
 		data->loadPoint();
 		auto datas = data->getGrids();

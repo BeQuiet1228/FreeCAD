@@ -1,6 +1,7 @@
 #include "ArcCalc.h"
 #include "vtkMath.h"
 #include "math.h"
+#include "../ContourDataPolar.h"
 DV3D::ArcCalc::ArcCalc()
 {
 	init();
@@ -251,5 +252,10 @@ void DV3D::ArcCalc::setCenter(double x, double y, double z)
 	mCenter[0] = x;
 	mCenter[1] = y;
 	mCenter[2] = z;
+}
+
+DV::ContourDataPolar* DV3D::polarInterVal(Hdf5Data& h5)
+{
+
 }
 

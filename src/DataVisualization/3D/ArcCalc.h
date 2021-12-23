@@ -1,6 +1,12 @@
 #pragma once
 #include <vector>
 #include <QVector3D>
+#include "HDF5Reader/hdf5io.h"
+namespace  DV
+{
+	class ContourDataPolar;
+}
+
 namespace DV3D
 {
 	//用于计算弧度相关
@@ -64,4 +70,5 @@ namespace DV3D
 		double scalar2;
 		std::vector<ArcTextInfo>  outputArc;
 	};
+	DV::ContourDataPolar* polarInterVal(Hdf5Data& h5);
 }
