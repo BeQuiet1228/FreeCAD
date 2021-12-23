@@ -105,8 +105,6 @@ SET(CONTOUR3D_SRCS
 SET(FLITER_SRCS
 PolarContourFliter.h
 PolarContourFliter.cpp
-#ArcCalc.h
-#ArcCalc.cpp
 )
 SET(UI_SRC
 	ControlerItem.ui

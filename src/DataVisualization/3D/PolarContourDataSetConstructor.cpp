@@ -4,6 +4,7 @@
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 #include "PolarContourFliter.h"
+#include "PolarContourFliter.h"
 namespace DV3D
 {
 	PolarContourDatasetConstructor::PolarContourDatasetConstructor():rGridSize(1),thetaGridSize(1),zGridSize(1)
@@ -30,25 +31,28 @@ namespace DV3D
 	{
 		auto h5d = getHdf5Data();
 		//对数据进行插值
-		std::shared_ptr<DV::ContourDataPolar> data = std::shared_ptr<DV::ContourDataPolar>(DV::CreateContourDataPolar(h5d));
-		data->loadPoint();
-		auto datas = data->getGrids();
-		auto face = data->getStructFace();
+		PolarContourFilter polarContourFilter;
+		polarContourFilter.loadPoint(h5d,30);
 		points = vtkSmartPointer<vtkPoints>::New();
 		scalar = vtkSmartPointer<vtkFloatArray>::New();
-		//根据坐标系判断
-		(h5d.coordinateSystem == Hdf5Data::CoordinateSystem::CYLINDER) ?
-			polarZ = face[0] :
-			polarZ = face[2];
-		for (auto i = 0; i < datas.size(); ++i)
-		{
-			float x = datas[i].x * cos(datas[i].y);
-			float y = datas[i].x * sin(datas[i].y);
-			points->InsertNextPoint(x, y, polarZ);
-			scalar->InsertNextTuple1(datas[i].value);
-		}
-		rGridSize = data->getWidth();
-		thetaGridSize = data->getHeight();
+		auto rDatas = polarContourFilter.getRGridData();
+		auto thetaDatas = polarContourFilter.getThetaGridData();
+		auto zDatas = polarContourFilter.getZGridData();
+		auto valDatas = polarContourFilter.getVallist();
+		rGridSize = rDatas.size();
+		thetaGridSize = thetaDatas.size();
+		zGridSize = zDatas.size();
+		for(int zi=0;zi<zGridSize;++zi)
+			for (int thetai=0;thetai<thetaGridSize;++thetai)
+				for (int ri=0;ri<rGridSize;++ri)
+				{
+					float x = rDatas[ri] * cos(thetaDatas[thetai]);
+					float y= rDatas[ri] * sin(thetaDatas[thetai]);
+					float z = zDatas[zi];
+					points->InsertNextPoint(x, y, z);
+					scalar->InsertNextTuple1(
+						valDatas[ri+thetai*rGridSize+zi*rGridSize*thetaGridSize]);
+				}
 		return;
 	}
 }

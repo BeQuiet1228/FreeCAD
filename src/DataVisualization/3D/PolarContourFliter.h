@@ -7,9 +7,17 @@ namespace DV3D
 	public:
 		PolarContourFilter();
 		~PolarContourFilter();
-		bool loadPoint(Hdf5Data& h5);
+		bool loadPoint(Hdf5Data& h5,int resolution);
+		std::vector<double>& getRGridData();
+		std::vector<double>& getThetaGridData();
+		std::vector<double>& getZGridData();
+		std::vector<double>& getVallist();
+	protected:
+		bool loadPoint3d(Hdf5Data& h5, int resolution);
+		bool loadPoint2d(Hdf5Data& h5, int resolution);
+		void eraseRedundant(std::vector<double>&);
 	private:
-		int mResolution;//平滑度
+		//int mResolution;//平滑度
 		std::vector<double> rGridData;
 		std::vector<double> thetaGridData;
 		std::vector<double> zGridData;
