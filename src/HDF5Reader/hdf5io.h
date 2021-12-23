@@ -124,3 +124,14 @@ private:
 	std::vector<DataSet> getDataSetlist(Group);
 	void digGroup(Group);
 };
+
+class CONTROL_EXPORT H5DataHead {
+public:
+	H5DataHead() = default;
+	~H5DataHead() = default;
+
+public:
+	//获取$分割的属性
+	static std::string  getAttributeForIndex(std::string str,int index);
+	
+};

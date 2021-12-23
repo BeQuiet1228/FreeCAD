@@ -965,3 +965,34 @@ std::vector<DataSet> Hdf5IO::getDataSetlist(Group group)
 	}
 	return datasetlist;
 }
+
+/**
+* @brief H5DataHead::getAttributeForIndex 获取头部信息中使用$符号分割的信息
+* @param std::string str
+* @param int index
+* @return std::string
+*/
+std::string H5DataHead::getAttributeForIndex(std::string str, int index)
+{
+	if (str.size() <= 0)
+		return "";
+
+	std::vector <std::string> attributes;
+	attributes.push_back("");
+	int attributeIndex = 0;
+	for (auto iter = str.begin(); iter != str.end(); iter++)
+	{
+		if (*iter == '$')
+		{
+			attributeIndex++;
+			attributes.push_back("");
+			continue;
+		}
+		attributes[attributeIndex] += *iter;
+	}
+
+	if (index > attributeIndex)
+		return attributes.at(attributeIndex);
+	return attributes.at(index);
+}
+

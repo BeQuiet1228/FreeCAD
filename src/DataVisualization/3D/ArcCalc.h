@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include <QVector3D>
 namespace DV3D
 {
@@ -48,5 +49,6 @@ namespace DV3D
 		double mNormal[3];//法线
 		double mPolarVector[3];//极坐标方向
 		int mResolution;//分辨率
+		std::vector<ArcTextInfo>  outputArc;
 	};
 }
