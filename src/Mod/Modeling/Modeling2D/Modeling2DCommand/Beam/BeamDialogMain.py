@@ -2,10 +2,6 @@
 import BeamDialog
 from PySide import QtGui
 import FreeCAD
-from Physics.PhysicsCommand import Simulation
-from Physics.PhysicsCommand.DlgData import sayz
-from Modeling.Common.Tools import DocumentTools,ObjectsTools
-from Physics.PhysicsTools import CompleterTools
 from Modeling.Modeling2D.Tools import Tools2D
 import FreeCADGui
 
@@ -48,7 +44,7 @@ class ShowDialog(QtGui.QDialog):
 
         except:
             import traceback
-            sayz("error:" + traceback.format_exc())
+            Tools2D.sayz("error:" + traceback.format_exc())
 
     # 点击取消按钮关闭窗口
     def onCancel(self):
@@ -115,7 +111,7 @@ class ShowDialog(QtGui.QDialog):
             self.ui.textEdit_BeamV.setText(self.obj.beamVoltageDensity)
             # Tools2D.EmissionUiData(self.obj, self.ui).loadDataFromObj()
         except KeyError as reason:
-            sayz("!!!Error:KeyError,Maybe lack of key:%s" % str(reason))
+            Tools2D.sayz("!!!Error:KeyError,Maybe lack of key:%s" % str(reason))
     # 这部分可以抽象出来，但临时出现一些问题，做个标记，后续抽象出来
     def loadShareData(self):
         self.ui.LineEdit_Name.setText(self.obj.Label)
@@ -155,7 +151,7 @@ class ShowDialog(QtGui.QDialog):
             # Tools2D.EmissionUiData(self.obj, self.ui).getDataFromUi()
         except:
             import traceback
-            sayz("error:" + traceback.format_exc())
+            Tools2D.sayz("error:" + traceback.format_exc())
         pass
 
     # 这部分可以抽象出来，但临时出现一些问题，做个标记，后续抽象出来

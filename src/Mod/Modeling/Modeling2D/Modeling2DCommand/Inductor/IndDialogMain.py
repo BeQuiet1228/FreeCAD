@@ -3,10 +3,7 @@ import IndDialog
 from PySide import QtGui
 import FreeCAD
 import FreeCADGui
-from Physics.PhysicsCommand import Simulation
-from Physics.PhysicsCommand.DlgData import sayz
-from Modeling.Common.Tools import DocumentTools,ObjectsTools
-from Physics.PhysicsTools import CompleterTools
+from Modeling.Common.Tools import ObjectsTools
 from Modeling.Modeling2D.Tools import Tools2D
 
 
@@ -80,7 +77,7 @@ class ShowDialog(QtGui.QDialog):
             self.ui.ComboBox_Shadow.currentIndexChanged.connect(self.ComboBox_Shadow_clicked)
         except:
             import traceback
-            sayz("error:" + traceback.format_exc())
+            Tools2D.sayz("error:" + traceback.format_exc())
 
     def refreshCombo(self):
         # 每次加载窗口时都要重新加载下拉列表，以实现动态加载
@@ -169,7 +166,7 @@ class ShowDialog(QtGui.QDialog):
             self.ui.LineEdit_induc.setEnabled(self.obj.isCheckSelfInductor)
             self.ui.LineEdit_induc.setText(self.obj.selfInductorCoefficient)
         except KeyError as reason:
-            sayz("!!!Error:KeyError,Maybe lack of key:%s"%str(reason))              
+            Tools2D.sayz("!!!Error:KeyError,Maybe lack of key:%s"%str(reason))
 
     def keepData(self):
         try:
@@ -192,7 +189,7 @@ class ShowDialog(QtGui.QDialog):
             # Comment[DlgData.id] = DlgData.data
         except:
             import traceback
-            sayz("error:" + traceback.format_exc())
+            Tools2D.sayz("error:" + traceback.format_exc())
 
     # x法向修改时，修改起点即修改终点
     def LineEdit_start_x_textChanged(self):

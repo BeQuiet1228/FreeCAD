@@ -3,10 +3,7 @@ import FreeDialog
 from PySide import QtGui
 import FreeCAD
 import FreeCADGui
-from Physics.PhysicsCommand import Simulation
-from Physics.PhysicsCommand.DlgData import sayz
-from Modeling.Common.Tools import DocumentTools,ObjectsTools
-from Physics.PhysicsTools import CompleterTools
+from Modeling.Common.Tools import ObjectsTools
 from Modeling.Modeling2D.Tools import Tools2D
 
 
@@ -89,7 +86,7 @@ class ShowDialog(QtGui.QDialog):
 
         except:
             import traceback
-            sayz("error:" + traceback.format_exc())
+            Tools2D.sayz("error:" + traceback.format_exc())
 
     def refreshCombox(self):  
         '''
@@ -186,7 +183,7 @@ class ShowDialog(QtGui.QDialog):
                 self.ui.radioButton_forward.setChecked(True)
 
         except KeyError as reason:
-            sayz("!!!Error:KeyError,Maybe lack of key:%s"%str(reason))              
+            Tools2D.sayz("!!!Error:KeyError,Maybe lack of key:%s"%str(reason))
 
     def keepData(self):
         try:
@@ -219,7 +216,7 @@ class ShowDialog(QtGui.QDialog):
 
         except:
             import traceback
-            sayz("error:" + traceback.format_exc())
+            Tools2D.sayz("error:" + traceback.format_exc())
         pass
 
     def checkBox_x_clicked(self):

@@ -3,10 +3,8 @@ import FreeCAD
 import FreeCADGui
 import PySide
 from PySide import QtCore, QtGui
-from Modeling.Common.Tools import ObjectsTools
 from Modeling.Modeling2D.Tools import Tools2D
-from Modeling.Modeling2D.Tools.Tools2D import ObjectType
-from Physics.PhysicsTools import SetVisibilityOfModels
+
 
 class SingleClickCommand:
     lastClick = []

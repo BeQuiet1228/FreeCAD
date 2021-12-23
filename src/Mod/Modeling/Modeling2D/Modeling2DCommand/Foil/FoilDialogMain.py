@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 import FoilDialog
 from PySide import QtGui
-import FreeCAD
-from Physics.PhysicsCommand.DlgData import sayz
-from Physics.PhysicsTools import CompleterTools
 from Modeling.Modeling2D.Tools import Tools2D
 from Modeling.Modeling2D.Modeling2DCommand.BaseUI import BaseDialog
 
@@ -97,7 +94,7 @@ class ShowDialog(BaseDialog.BaseOtherDialog):
                     self.ui.ComboBox_Material.addItem(i)
         except:
             import traceback
-            sayz("error:" + traceback.format_exc())
+            Tools2D.sayz("error:" + traceback.format_exc())
 
     def ComboBox_Shadow_clicked(self):
         try:

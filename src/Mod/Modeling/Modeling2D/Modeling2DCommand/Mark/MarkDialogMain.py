@@ -3,10 +3,6 @@ import MarkDialog
 from PySide import QtGui
 import FreeCAD
 import FreeCADGui
-from Physics.PhysicsCommand import Simulation
-from Physics.PhysicsCommand.DlgData import sayz
-from Modeling.Common.Tools import DocumentTools,ObjectsTools
-from Physics.PhysicsTools import CompleterTools
 from Modeling.Modeling2D.Tools import Tools2D
 
 
@@ -28,7 +24,7 @@ class ShowDialog(QtGui.QDialog):
             self.refreshCombox()
         except:
             import traceback
-            sayz("error:" + traceback.format_exc())
+            Tools2D.sayz("error:" + traceback.format_exc())
 
     def onCancel(self):
         self.isKeepData = False
@@ -54,7 +50,7 @@ class ShowDialog(QtGui.QDialog):
             self.ui.lineEdit_size.setText(self.obj.size)
 
         except KeyError as reason:
-            sayz("!!!Error:KeyError,Maybe lack of key:%s"%str(reason))        
+            Tools2D.sayz("!!!Error:KeyError,Maybe lack of key:%s"%str(reason))
 
     def keepData(self):
         try:
@@ -71,7 +67,7 @@ class ShowDialog(QtGui.QDialog):
 
         except:
             import traceback
-            sayz("error:" + traceback.format_exc())
+            Tools2D.sayz("error:" + traceback.format_exc())
         pass
 
     def refreshCombox(self):  
