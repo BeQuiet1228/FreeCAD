@@ -4,6 +4,7 @@
 #include <cassert>
 #include "Hdf5DataItemEventHandler.h"
 #include <QList>
+#include <iostream>
 
 const QString Gui::HDF5DataItem::IconPath[2] = {":/Tree/TreeFile2.png" , ":/Tree/TreeFile1.png"};
 

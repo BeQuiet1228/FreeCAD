@@ -16,7 +16,14 @@ namespace Gui {
 
 	public:
 		void addWidget(QWidget* widget);
+		void clearWidget();
 
 	};
+
+	//¶ÔÐü¸¡´°¿Ú²Ù×÷
+	ControlerItemListWidget* getControlerListWidget();
+	ControlerItemListWidget* CreatControlerListWidget();
+	void hideControlerListWidget();
+	void showControlerListWidget();
 
 }

@@ -8,15 +8,8 @@ DV3D::ControlerItem::ControlerItem(QWidget* parent /*=0*/)
 	:QWidget(parent),ui(new Ui::ControlerItem())
 {
 	ui->setupUi(this);
-	connect(ui->horizontalSlider, SIGNAL(valueChanged(int)), this, SLOT(transParentSliderValueChange(int)));
-
-	ui->toolbarLayout->setAlignment(Qt::AlignLeft);
-
-	visibleAction.reset(new ControlerVisible());
-	visibleAction->update(ui->toolButtonVisible);
-	connect(ui->toolButtonVisible, SIGNAL(clicked(bool)),this, SLOT(toolButtonClicked(bool)));
-	auto value = ToolButtonMap::value_type(ui->toolButtonVisible, visibleAction);
-	toolButtonMap.insert(value);
+	initGui();
+	setAttribute(Qt::WA_DeleteOnClose);
 }
 
 DV3D::ControlerItem::~ControlerItem()
@@ -46,6 +39,23 @@ void DV3D::ControlerItem::addAction(std::shared_ptr<ControlerAction> action)
 	toolButtonMap.insert(value);
 }
 
+void DV3D::ControlerItem::initGui()
+{
+	//绑定拖动条
+	connect(ui->horizontalSlider, SIGNAL(valueChanged(int)), this, SLOT(transParentSliderValueChange(int)));
+	ui->toolbarLayout->setAlignment(Qt::AlignLeft);
+
+	//创建是否可见按钮
+	visibleAction.reset(new ControlerVisible());
+	visibleAction->update(ui->toolButtonVisible);
+	connect(ui->toolButtonVisible, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));
+	auto value = ToolButtonMap::value_type(ui->toolButtonVisible, visibleAction);
+	toolButtonMap.insert(value);
+
+	//绑定关闭按钮
+	connect(ui->toolButtonClose, SIGNAL(clicked(bool)), this, SLOT(closeButtonClicked(bool)));
+}
+
 /**
 * @brief DV3D::ControlerItem::toolButtonClicked 按钮被点击，调用action触发并刷新btn的状态
 * @return void
@@ -65,4 +75,10 @@ void DV3D::ControlerItem::toolButtonClicked(bool)
 void DV3D::ControlerItem::transParentSliderValueChange(int value)
 {
 	controler->setTransparent((double)value / 100);
+}
+
+void DV3D::ControlerItem::closeButtonClicked(bool)
+{
+	controler->unbing();
+	close();
 }

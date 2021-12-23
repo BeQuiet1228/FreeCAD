@@ -3,6 +3,7 @@
 #include "HDF5DataItem2DFactory.h"
 #include "Hdf5DataItemEventHandler.h"
 #include "HDF5DataItem2DDoubleClickEventHander.h"
+#include <QStandardItem>
 Gui::DataVisualizationTree::DataVisualizationTree(QWidget* parent/*= 0*/)
 	:QTreeView(parent),model(new QStandardItemModel)
 {
@@ -44,6 +45,14 @@ void Gui::DataVisualizationTree::addHDF5DataItem(std::vector<HDF5DataItem*> item
 
 void Gui::DataVisualizationTree::clear()
 {
+// 	while (model->columnCount())
+// 	{
+// 		auto items = model->takeColumn(0);
+// 		for each (auto item in items)
+// 		{
+// 			delete item;
+// 		}
+// 	}
 	model->clear();
 	clearFactorys();
 	initFactorys();

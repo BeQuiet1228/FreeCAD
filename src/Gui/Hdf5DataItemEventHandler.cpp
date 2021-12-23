@@ -72,33 +72,3 @@ Gui::ControlerItemListWidget* Gui::getControlerListWidget()
 	return listWidget;
 }
 
-/**
-* @brief Gui::CreatControlerListWidget 创建一个listitemWidget 并添加到悬浮窗口中
-* @return Gui::ControlerItemListWidget*
-*/
-Gui::ControlerItemListWidget* Gui::CreatControlerListWidget()
-{
-	auto listItem = new ControlerItemListWidget;
-	listItem->setObjectName(QString::fromLocal8Bit("ControlerItemListWidget"));
-	DockWindowManager::instance()->addDockWindow("3dControler", listItem, Qt::DockWidgetArea::RightDockWidgetArea)->show();
-
-	return listItem;
-}
-
-void Gui::hideControlerListWidget()
-{
-	auto widget = DockWindowManager::instance()->getDockWindow("3dControler");
-	if (!widget)
-		return;
-	auto docWidget = dynamic_cast<QDockWidget*>(widget->parent());
-	docWidget->hide();
-}
-
-void Gui::showControlerListWidget()
-{
-	auto widget = DockWindowManager::instance()->getDockWindow("3dControler");
-	if (!widget)
-		return;
-	auto docWidget = dynamic_cast<QDockWidget*>(widget->parent());
-	docWidget->show();
-}

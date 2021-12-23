@@ -73,7 +73,7 @@ Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatParticle3DItem(std::vector<Hdf5Da
 		auto h5data = *iter;
 		iter = datas.erase(iter);
 
-		CreatParticle3DItem(h5data,item);
+		item = CreatParticle3DItem(h5data,item);
 	}
 
 	return item;

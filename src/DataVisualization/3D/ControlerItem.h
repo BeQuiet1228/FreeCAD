@@ -27,6 +27,8 @@ namespace DV3D {
 		//Ìí¼Óaction
 		void addAction(std::shared_ptr<ControlerAction> action);
 	private:
+		void initGui();
+	private:
 		Ui::ControlerItem* ui;
 
 		//¿ØÖÆÆ÷
@@ -38,6 +40,9 @@ namespace DV3D {
 	public Q_SLOTS:
 		void toolButtonClicked(bool);
 		void transParentSliderValueChange(int value);
+		void closeButtonClicked(bool);
+	 Q_SIGNALS:
+		 void itemClose();
 
 	};
 }

@@ -15,11 +15,4 @@ namespace Gui {
 	public:
 		void trigger(HDF5DataItem* item) override;
 	};
-
-
-	//¶ÔÐü¸¡´°¿Ú²Ù×÷
-	ControlerItemListWidget* getControlerListWidget();
-	ControlerItemListWidget* CreatControlerListWidget();
-	void hideControlerListWidget();
-	void showControlerListWidget();
 }
