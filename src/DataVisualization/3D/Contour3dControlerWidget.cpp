@@ -19,7 +19,7 @@ void DV3D::Contour3dControlerWidget::init(std::vector<ContourValue>& values)
 	std::list<double> valueFs;
 	for (auto& i : values)
 		valueFs.push_back(i);
-	DV::realTimewidget::init(valueFs);
+	DV::realTimewidget::loadConfigLevels(valueFs);
 }
 
 void DV3D::Contour3dControlerWidget::setControler(std::shared_ptr<Controler> controler)

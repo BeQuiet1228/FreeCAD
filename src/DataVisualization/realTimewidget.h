@@ -9,37 +9,29 @@ namespace Ui
 {
 	class realTimewidget;
 }
-
-namespace DV {
+namespace DV
+{
 	class DATA_VISUALIZATION_EXPORT realTimewidget :public QDialog
 	{
 		Q_OBJECT
 	public:
-		explicit realTimewidget(QWidget* parent = nullptr);
+		explicit realTimewidget(QWidget* parent=nullptr);
 		~realTimewidget();
-		void init(float min, float max);
-		void init(std::list<double>&);
+		void loadConfigLevels(std::list<double>&);
+	protected:
+		void addTableItem(double val);
+		void setRangTitle();
 	Q_SIGNALS:
-		void setcoloseEvent(bool);
-		void GetListDouble(std::list<double>&);
-	public Q_SLOTS:
+		void sendConfigLevels(std::list<double>&);
+	private Q_SLOTS:
+		void btnClicked();
+	private:
 		void addClicked();
 		void deleteClicked();
-		void tableWidgetClicked(QTableWidgetItem*);
-		void BtnClicked();
-	public:
-		void closeEvent(QCloseEvent* event);
-	protected:
-		int GetdecimalBit(float& value);
-		int GetdecimalBit(double& value);
-		void insertformatTableItem();
-		void addTableItem(double);
-		QString valToQString(double val, int bit);
+		void saveClicked();
 	private:
 		Ui::realTimewidget* ui;
-		double min;
-		double max;
+		double min, max;
 	};
-};
-
+}
 #endif

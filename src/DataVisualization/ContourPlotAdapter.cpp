@@ -203,7 +203,7 @@ namespace DV {
 			return;
 		realTimewidget* mrealTimewidget = new realTimewidget();
 		mrealTimewidget->setModal(true);
-		mrealTimewidget->init(leves);
+		mrealTimewidget->loadConfigLevels(leves);
 		mrealTimewidget->resize(500, 300);
 		mrealTimewidget->show();
 		connect(mrealTimewidget, SIGNAL(GetListDouble(std::list<double>&)), this, SLOT(Getlevels(std::list<double>&)));
