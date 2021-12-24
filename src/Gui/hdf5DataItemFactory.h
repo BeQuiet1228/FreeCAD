@@ -43,5 +43,7 @@ namespace Gui {
 		HDF5DataItem* CreatParticle3DItem(std::vector<Hdf5Data>& datas);
 		HDF5DataItem* CreatContour3DItem(Hdf5Data& data, HDF5DataItem* parentItem = nullptr);
 		HDF5DataItem* CreatContour3DItem(std::vector<Hdf5Data>& datas);
+		HDF5DataItem* CreatContour2DItem(std::vector<Hdf5Data>& datas);
+		HDF5DataItem* CreatContour2DItem(Hdf5Data& data, HDF5DataItem* parentItem = nullptr);
 	};
 }

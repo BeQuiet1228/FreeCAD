@@ -409,7 +409,7 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatContourDataItem(Hdf5Data& da
 	//等位图
 	if (nullptr == parentItem)
 	{
-		parentItem = new HDF5DataItem(gbkStdstringToQstring("等位图"));
+		parentItem = new HDF5DataItem(gbkStdstringToQstring("2D等位图"));
 	}
 	std::string typeNode;//分类
 	std::string subNode;//

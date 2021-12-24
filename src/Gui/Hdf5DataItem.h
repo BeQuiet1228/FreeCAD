@@ -34,6 +34,9 @@ namespace Gui {
 		void setHdf5Data(const Hdf5Data& data);
 		Hdf5Data getHdf5Data();
 
+		void setName(const QString& name);
+		QString getNmae();
+
 
 		//´¥·¢Ë«»÷ÊÂ¼þ
 		virtual void triggerDoubleClickEvent();

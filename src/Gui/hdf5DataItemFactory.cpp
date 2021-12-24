@@ -1,5 +1,6 @@
 #include "hdf5DataItemFactory.h"
 #include <transition/transition.h>
+#include "HDF5DataItem2DFactory.h"
 using namespace Gui;
 
 
@@ -118,6 +119,9 @@ HDF5DataItemFactory::HDF5DataItems HDF5DataItem3DFactory::CreatHDF5Items(std::ve
 	item = CreatContour3DItem(datas);
 	if (item)
 		items.push_back(item);
+	item = CreatContour2DItem(datas);
+	if (item)
+		items.push_back(item);
 
 	return items;
 }
@@ -167,6 +171,28 @@ Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatContour3DItem(std::vector<Hdf5Dat
 		break;
 	}
 
+	return item;
+}
+
+Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatContour2DItem(std::vector<Hdf5Data>& datas)
+{
+	HDF5DataItem2DFactory factory2d;
+	factory2d.setEventHander(getEventHander());
+	auto item = factory2d.CreatContourDataItem(datas);
+	if (!item)
+		return item;
+	item->setName(gbkStdstringToQstring("2D等位图3D显示"));
+	return item;
+}
+
+Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatContour2DItem(Hdf5Data& data, HDF5DataItem* parentItem /*= nullptr*/)
+{
+	HDF5DataItem2DFactory factory2d;
+	factory2d.setEventHander(getEventHander());
+	auto item = factory2d.CreatContourDataItem(data,parentItem);
+	if (!item)
+		return item;
+	item->setName(gbkStdstringToQstring("2D等位图3D显示"));
 	return item;
 }
 

@@ -72,6 +72,17 @@ Hdf5Data Gui::HDF5DataItem::getHdf5Data()
 	return hdf5data;
 }
 
+void Gui::HDF5DataItem::setName(const QString& name)
+{
+	this->name = name;
+	setText(name);
+}
+
+QString Gui::HDF5DataItem::getNmae()
+{
+	return this->name;
+}
+
 void Gui::HDF5DataItem::triggerDoubleClickEvent()
 {
 	if (doubleClickEventHander)
