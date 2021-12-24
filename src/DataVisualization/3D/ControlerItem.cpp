@@ -26,6 +26,13 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerItem::getControler()
 void DV3D::ControlerItem::setControler(std::shared_ptr<Controler> controler)
 {
 	this->controler = controler;
+
+	//刷新所有按钮状态
+	for (auto iter = toolButtonMap.begin(); iter != toolButtonMap.end(); iter++)
+	{
+		iter->second->initState(controler);
+		iter->second->update(iter->first);
+	}
 }
 
 void DV3D::ControlerItem::addAction(std::shared_ptr<ControlerAction> action)

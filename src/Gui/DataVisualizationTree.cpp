@@ -77,24 +77,42 @@ void Gui::DataVisualizationTree::loadHdf5Datas(std::vector<Hdf5Data> datas)
 /**
 * @brief Gui::DataVisualizationTree::addHdf5Data 使用数据添加item
 * @param Hdf5Data & data
-* @return void
+* @return HDF5DataItem* 添加失败返回nullptr
 */
 Gui::HDF5DataItem* Gui::DataVisualizationTree::addHdf5Data(Hdf5Data& data)
 {
+	//临时存储添加成功的item
+	HDF5DataItem *temp = nullptr;
 	for (auto iter = factorys.begin(); iter != factorys.end(); iter++)
 	{
 		auto item = (*iter)->CreatHDF5Item(data);
 		if (item)
 		{
+			temp = item;
 			addHDF5DataItem(item);
-			return item;
 		}
 	}
+	
+	return temp;
 }
 
 void Gui::DataVisualizationTree::addHdf5DataToShow(Hdf5Data& data)
 {
 	auto item = addHdf5Data(data);
+
+	if (!item)
+		return;
+	/*
+		创建item时会返回父节点的item，所以这里要先找到子节点的item才能触发显示。
+		不存在一个hdf5会生成多个父节点然后对应多个子节点的item。
+	*/
+	while (item->type() == HDF5DataItem::FOLDER)
+	{
+		auto items = item->getSubItems();
+		if(items.size() <= 0)
+			break;
+		item = *items.begin();
+	}
 	item->triggerDoubleClickEvent();
 }
 

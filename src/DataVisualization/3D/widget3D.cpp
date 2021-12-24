@@ -95,7 +95,7 @@ void DV3D::Widget3D::oneWayUnbing(Controler* controler)
 
 	renderer->RemoveActor(citer->second);
 	controlerActor.erase(citer);
-	update();
+	reRender();
 }
 /**
 * @brief DV3D::Widget3D::oneWayBinding 将控制器绑定到widget，并为其绑定渲染器和渲染窗口
