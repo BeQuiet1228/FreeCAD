@@ -21,6 +21,7 @@ SET(QRC_SRC resource/rce.qrc)
 SET(UI_SRC 
 ConfigWidget.ui
 realTimewidget.ui
+FourierDialog.ui
 )
 SET(MY_MOC_HDR RenderThread.h
 	RenderThreadManager.h
@@ -44,11 +45,17 @@ SET(MY_MOC_HDR RenderThread.h
 	phasorPlotAdapter.h
 	PlotAdapter.h
 	PlotAdapterNeedStruct.h
+	TimePlotAdapter.h
+	FourierDialog.h
 	)
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
 	TimeRenderer.cpp
 	TimeRenderer.h
+	TimePlotAdapter.cpp
+	TimePlotAdapter.h
+	FourierDialog.h
+	FourierDialog.cpp
 )
 SET(CHAR_ENCODE C_encoding.cpp
 	C_encoding.h)
@@ -229,7 +236,7 @@ SOURCE_GROUP("axis" FILES ${AXIS_SRC})
 #增加包含目录
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
-	
+    ${FREECAD_LIBPACK_DIR}/include
 )
 #增加外部库
 list(APPEND QT_LIB
@@ -240,6 +247,9 @@ list(APPEND QT_LIB
 	qwt
 	HDF5Reader
 	qwt_polar
+	${FREECAD_LIBPACK_DIR}/lib/libfftw3-3.lib
+	${FREECAD_LIBPACK_DIR}/lib/libfftw3l-3.lib
+	${FREECAD_LIBPACK_DIR}/lib/libfftw3f-3.lib
 	)
 if(VisualizationOf3DDLL)
 list(APPEND QT_LIB
