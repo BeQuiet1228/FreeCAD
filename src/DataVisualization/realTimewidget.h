@@ -18,9 +18,11 @@ namespace DV
 		explicit realTimewidget(QWidget* parent=nullptr);
 		~realTimewidget();
 		void loadConfigLevels(std::list<double>&);
+		std::list<double> getConfigLevels();
 	protected:
 		void addTableItem(double val);
 		void setRangTitle();
+		void clearTableItem();
 	Q_SIGNALS:
 		void sendConfigLevels(std::list<double>&);
 	private Q_SLOTS:
@@ -32,6 +34,7 @@ namespace DV
 	private:
 		Ui::realTimewidget* ui;
 		double min, max;
+		std::list<double> valLevel;
 	};
 }
 #endif

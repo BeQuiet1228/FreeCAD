@@ -34,6 +34,8 @@ DV::realTimewidget::~realTimewidget()
 
 void DV::realTimewidget::loadConfigLevels(std::list<double>& leves)
 {
+	leves.sort();
+	clearTableItem();
 	min = max = *leves.begin();
 	for (auto iter = leves.begin(); iter != leves.end(); iter++)
 	{
@@ -43,6 +45,20 @@ void DV::realTimewidget::loadConfigLevels(std::list<double>& leves)
 	}
 	setRangTitle();
 }
+
+
+/**
+* @time	2021/12/24
+* @brief DV::realTimewidget::getConfigLevels 获取等值线等级
+* @return std::list<double>
+*/
+
+std::list<double> DV::realTimewidget::getConfigLevels()
+{
+	valLevel.sort();
+	return valLevel;
+}
+
 /**
 * @time	2021/12/24
 * @brief DV::realTimewidget::addTableItem 添加item
@@ -66,6 +82,18 @@ void DV::realTimewidget::setRangTitle()
 	this->setWindowTitle(QString("Rang:(%1-%2)").arg(min).arg(max));
 }
 
+
+/**
+* @time	2021/12/24
+* @brief DV::realTimewidget::clearTableItem 清空表格的内容
+* @return void
+*/
+void DV::realTimewidget::clearTableItem()
+{
+	auto row = ui->tableWidget->rowCount();
+	for (int i = row - 1; i >= 0; --i)
+		ui->tableWidget->removeRow(i);
+}
 /**
 * @time	2021/12/24
 * @brief DV::realTimewidget::btnClicked 按钮点击事件
@@ -124,9 +152,9 @@ void DV::realTimewidget::deleteClicked()
 void DV::realTimewidget::saveClicked()
 {
 	//取出数据
-	auto row = ui->tableWidget->rowCount();
-	std::vector<double> val;
-	val.reserve(row);
+	auto dataList = getConfigLevels();
+	loadConfigLevels(dataList);
+	emit sendConfigLevels(dataList);
 }
 
 QString DV::valToQString(double val, int bit)
