@@ -403,7 +403,7 @@ void ControlTreeWidget::outputTempFile(unsigned long threadID)
 	auto data= tempIO.hdf5DataList.begin();
 	auto newData = Hdf5IO::copyToHdf5IO(*tempHdf5IO, *data);
 	
-	Gui::MainWindow::getInstance()->dataVisualizationTree->addHdf5Data(newData);
+	Gui::MainWindow::getInstance()->dataVisualizationTree->addHdf5DataToShow(newData);
 }
 
 /**

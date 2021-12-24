@@ -461,8 +461,6 @@ SET(FILE_FORMAT_SRC
 	PlotAdapterBase.cpp
 	Item3DDoubleClickEvent.cpp
 	Item3DDoubleClickEvent.h
-	ControlerItemListWidget.cpp
-	ControlerItemListWidget.h
 )
 SET(TREENODE_SRC
 	TreeNode.h
@@ -843,10 +841,13 @@ SET(DATA_VISUALIZATION_GUI_SRC
 	HDF5DataItem2DFactory.cpp
 	HDF5DataItem2DDoubleClickEventHander.h
 	HDF5DataItem2DDoubleClickEventHander.cpp
+	ControlerItemListWidget.cpp
+	ControlerItemListWidget.h
 )
 SET(DATA_VISUALIZATION_GUI_MOC_H
 	Hdf5DataItem.h
 	DataVisualizationTree.h
+	ControlerItemListWidget.h
 )
 
 if (BUILD_QT5)

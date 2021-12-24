@@ -2,25 +2,49 @@
 #include "ControlerItemListWidget.h"
 #include "ui_ControlerItemListWidget.h"
 #include "DockWindowManager.h"
-#include <QListWidgetItem>
+#include "DataVisualization/3D/ControlerItem.h"
 Gui::ControlerItemListWidget::ControlerItemListWidget(QWidget* parent /*= 0*/)
 	:QWidget(parent),ui(new Ui::ControlerItemListWidget())
 {
 	ui->setupUi(this);
 }
 
-void Gui::ControlerItemListWidget::addWidget(QWidget* widget)
+void Gui::ControlerItemListWidget::addWidget(DV3D::ControlerItem* widget)
 {
 	auto item = new QListWidgetItem();
-	item->setSizeHint(widget->size());
-	ui->listWidget->addItem(item);
-	ui->listWidget->setItemWidget(item, widget);
+	addItemWidget(widget, item);
 }
 
 
 void Gui::ControlerItemListWidget::clearWidget()
 {
 	ui->listWidget->clear();
+}
+
+void Gui::ControlerItemListWidget::addItemWidget(DV3D::ControlerItem* widget, QListWidgetItem* item)
+{
+	item->setSizeHint(widget->size());
+	ui->listWidget->addItem(item);
+	ui->listWidget->setItemWidget(item, widget);
+
+	std::map<DV3D::ControlerItem*, QListWidgetItem*>::value_type temp(widget, item);
+	widgetMap.insert(temp);
+	connect(widget, SIGNAL(itemClose()), this, SLOT(itemClose()));
+	
+}
+
+void Gui::ControlerItemListWidget::itemClose()
+{
+	auto controlerItem = dynamic_cast<DV3D::ControlerItem*>(sender());
+	if (!controlerItem)
+		return;
+	auto iter = widgetMap.find(controlerItem);
+	if (iter == widgetMap.end())
+		return;
+	int index = ui->listWidget->row(iter->second);
+	auto item = ui->listWidget->takeItem(index);
+	delete item;
+	widgetMap.erase(iter);
 }
 
 /**
@@ -53,4 +77,3 @@ void Gui::showControlerListWidget()
 	auto docWidget = dynamic_cast<QDockWidget*>(widget->parent());
 	docWidget->show();
 }
-

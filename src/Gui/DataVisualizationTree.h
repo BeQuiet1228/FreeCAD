@@ -19,7 +19,8 @@ namespace Gui {
 
 		//‘ÿ»Îhdf ˝æ›
 		void loadHdf5Datas(std::vector<Hdf5Data> datas);
-		void addHdf5Data(Hdf5Data& data);
+		HDF5DataItem* addHdf5Data(Hdf5Data& data);
+		void addHdf5DataToShow(Hdf5Data& data);
 		void addHdf5Data(std::vector<Hdf5Data> datas);
 
 	private:

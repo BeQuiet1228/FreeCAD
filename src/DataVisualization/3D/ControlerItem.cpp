@@ -79,6 +79,7 @@ void DV3D::ControlerItem::transParentSliderValueChange(int value)
 
 void DV3D::ControlerItem::closeButtonClicked(bool)
 {
+	emit itemClose();
 	controler->unbing();
 	close();
 }

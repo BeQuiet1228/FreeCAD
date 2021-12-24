@@ -3,6 +3,7 @@
 #include "HDF5DataItem2DFactory.h"
 #include "Hdf5DataItemEventHandler.h"
 #include "HDF5DataItem2DDoubleClickEventHander.h"
+#include "Hdf5DataItem.h"
 #include <QStandardItem>
 Gui::DataVisualizationTree::DataVisualizationTree(QWidget* parent/*= 0*/)
 	:QTreeView(parent),model(new QStandardItemModel)
@@ -78,17 +79,24 @@ void Gui::DataVisualizationTree::loadHdf5Datas(std::vector<Hdf5Data> datas)
 * @param Hdf5Data & data
 * @return void
 */
-void Gui::DataVisualizationTree::addHdf5Data(Hdf5Data& data)
+Gui::HDF5DataItem* Gui::DataVisualizationTree::addHdf5Data(Hdf5Data& data)
 {
 	for (auto iter = factorys.begin(); iter != factorys.end(); iter++)
 	{
 		auto item = (*iter)->CreatHDF5Item(data);
-		if(item)
+		if (item)
+		{
 			addHDF5DataItem(item);
+			return item;
+		}
 	}
 }
 
-
+void Gui::DataVisualizationTree::addHdf5DataToShow(Hdf5Data& data)
+{
+	auto item = addHdf5Data(data);
+	item->triggerDoubleClickEvent();
+}
 
 void Gui::DataVisualizationTree::addHdf5Data(std::vector<Hdf5Data> datas)
 {
