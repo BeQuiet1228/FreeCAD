@@ -12,6 +12,7 @@ namespace DV3D
 		std::vector<double>& getThetaGridData();
 		std::vector<double>& getZGridData();
 		std::vector<double>& getVallist();
+
 	protected:
 		bool loadPoint3d(Hdf5Data& h5, int resolution);
 		bool loadPoint2d(Hdf5Data& h5, int resolution);

@@ -18,7 +18,7 @@ DV3D::PolarContourFilter::~PolarContourFilter()
 /**
 * @brief DV3D::PolarContourFilter::loadPoint 加载点云
 * @param Hdf5Data & h5
-* @param int resolution
+* @param int resolution 插入的分辨率，会与本来的分辨率重合
 * @return bool
 * @time	2021/12/23
 */
