@@ -9,6 +9,7 @@ namespace DV3D
 	{
 	public:
 		void active(std::shared_ptr<Controler> controler) override;
+		virtual void initState(std::shared_ptr<Controler> controler) override;
 	private:
 		bool showWidget(std::shared_ptr<Controler> controler);
 	};

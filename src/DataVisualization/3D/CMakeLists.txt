@@ -111,7 +111,7 @@ SET(MY_MOC_HDR
 	ControlerItem.h
 	ClipPlaneWidget.h
 	Contour3dControlerWidget.h
-	Contour3dControlerAction.h
+	#Contour3dControlerAction.h
 )
 SET(QRC_SRC
 	resource/rce.qrc

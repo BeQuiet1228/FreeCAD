@@ -70,6 +70,11 @@ void DV3D::ControlerClipPlan::active(std::shared_ptr<Controler> controler)
 void DV3D::ControlerClipPlan::showWidget(std::shared_ptr<Controler> controler)
 {
 	ClipPlaneWidget* clipPlaneWidget = new ClipPlaneWidget();
+	clipPlaneWidget->setModal(true);
 	clipPlaneWidget->setControler(controler);
 	clipPlaneWidget->show();
+}
+void DV3D::ControlerClipPlan::initState(std::shared_ptr<Controler> controler)
+{
+	on();
 }

@@ -29,9 +29,14 @@ bool  DV3D::ControlerContourSurface::showWidget(std::shared_ptr<Controler> contr
 		return false;
 	contour3dControler->getContourValues(values);
 	Contour3dControlerWidget* contour3dControlerWidget = new Contour3dControlerWidget();
+	contour3dControlerWidget->setModal(true);
 	contour3dControlerWidget->setControler(controler);
 	contour3dControlerWidget->init(values);
 	contour3dControlerWidget->resize(500, 300);
 	contour3dControlerWidget->show();
 	return true;
+}
+void DV3D::ControlerContourSurface::initState(std::shared_ptr<Controler> controler)
+{
+	on();
 }
