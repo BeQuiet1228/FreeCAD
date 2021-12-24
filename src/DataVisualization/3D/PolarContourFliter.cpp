@@ -16,7 +16,7 @@ DV3D::PolarContourFilter::~PolarContourFilter()
 }
 
 /**
-* @brief DV3D::PolarContourFilter::loadPoint 加载点位
+* @brief DV3D::PolarContourFilter::loadPoint 加载点云
 * @param Hdf5Data & h5
 * @param int resolution
 * @return bool
@@ -76,6 +76,8 @@ bool DV3D::PolarContourFilter::loadPoint3d(Hdf5Data& h5, int resolution)
 	for (auto i = 0; i < resolution; ++i)
 		angs.push_back(angInterval * i);
 	
+	
+	//按z-theta-r-val的顺序放入表中
 	std::map<double, std::map<double, std::map<double, double>>> maplist;
 	for (int zi = 0; zi < zSize; ++zi)
 	{
@@ -99,6 +101,7 @@ bool DV3D::PolarContourFilter::loadPoint3d(Hdf5Data& h5, int resolution)
 						iter++;
 						continue;
 					}
+					//计算插值的标量值
 					double curScalar = (scalValNext - scalVal) * ((*iter) - thetVal) / (thetValNext - thetVal) + scalVal;
 					maplist[zList[zi]][*iter][rVal] = curScalar;
 					iter++;
@@ -107,6 +110,7 @@ bool DV3D::PolarContourFilter::loadPoint3d(Hdf5Data& h5, int resolution)
 		}
 			
 	}
+	//取出数据
 	for (auto iterZ = maplist.begin(); iterZ != maplist.end(); iterZ++)
 	{
 		zGridData.push_back(iterZ->first);
@@ -120,6 +124,7 @@ bool DV3D::PolarContourFilter::loadPoint3d(Hdf5Data& h5, int resolution)
 			}
 		}
 	}
+	//网格标尺去除冗余
 	eraseRedundant(zGridData);
 	eraseRedundant(rGridData);
 	eraseRedundant(thetaGridData);
@@ -167,13 +172,14 @@ bool DV3D::PolarContourFilter::loadPoint2d(Hdf5Data& h5, int resolution)
 					iter++;
 					continue;
 				}
+				//插值的标量值计算
 				double curScalar = (scalValNext - scalVal) * ((*iter) - thetVal) / (thetValNext - thetVal) + scalVal;
 				maplist[*iter][rVal] = curScalar;
 				iter++;
 			}
 		}
 	}
-	//获取完毕
+	//取出数据
 	for (auto iterTheta = maplist.begin(); iterTheta != maplist.end(); iterTheta++)
 	{
 		thetaGridData.push_back(iterTheta->first);
@@ -183,6 +189,7 @@ bool DV3D::PolarContourFilter::loadPoint2d(Hdf5Data& h5, int resolution)
 			vallist.push_back(iterR->second);
 		}
 	}
+	//网格标尺去除冗余
 	eraseRedundant(rGridData);
 	eraseRedundant(thetaGridData);
 	zGridData.push_back(polarZ);
