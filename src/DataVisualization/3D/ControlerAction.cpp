@@ -64,26 +64,12 @@ void DV3D::ControlerClipEnable::initState(std::shared_ptr<Controler> controler)
 
 void DV3D::ControlerClipPlan::active(std::shared_ptr<Controler> controler)
 {
-
-	if (getState() == ON)
-	{
-		hideWidget();
-		off();
-	}
-	else
-	{
-		showWidget(controler);
-		on();
-	}
+	showWidget(controler);
 }
 
 void DV3D::ControlerClipPlan::showWidget(std::shared_ptr<Controler> controler)
 {
-	clipPlaneWidget.setControler(controler);
-	clipPlaneWidget.show();
-}
-
-void DV3D::ControlerClipPlan::hideWidget()
-{
-	clipPlaneWidget.hide();
+	ClipPlaneWidget* clipPlaneWidget = new ClipPlaneWidget();
+	clipPlaneWidget->setControler(controler);
+	clipPlaneWidget->show();
 }

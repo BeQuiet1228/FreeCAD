@@ -11,9 +11,5 @@ namespace DV3D
 		void active(std::shared_ptr<Controler> controler) override;
 	private:
 		bool showWidget(std::shared_ptr<Controler> controler);
-		void hideWidger();
-	private:
-		Contour3dControlerWidget contour3dControlerWidget;
-
 	};
 };

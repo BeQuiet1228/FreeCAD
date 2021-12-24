@@ -37,8 +37,5 @@ namespace DV3D {
 		void active(std::shared_ptr<Controler> controler) override;
 	private:
 		void showWidget(std::shared_ptr<Controler> controler);
-		void hideWidget();
-	private:
-		ClipPlaneWidget clipPlaneWidget;
 	};
 }
