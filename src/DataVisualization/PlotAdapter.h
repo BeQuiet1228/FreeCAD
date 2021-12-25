@@ -18,6 +18,7 @@ namespace DV {
 		~PlotAdapter();
 
 	public:
+		Plot* plot;
 
 	protected:
 		//äÖÈ¾¹ÜÀíÆ÷

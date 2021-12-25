@@ -18,6 +18,7 @@
 #include "Renderer.h"
 #include "ContourPlotAdapter.h"
 #include "phasorPlotAdapter.h"
+#include "TimePlotAdapter.h"
 #include <iostream>
 namespace DV {
 	RendererFactory::RendererFactory(Hdf5Data h5d)
@@ -272,6 +273,10 @@ namespace DV {
 		else if (h5d.name == "PHASESPACE" && (*renders.begin())->getNeedStrucuType() == Data::NEED_STRUCT) {
 			adapter.reset(new PlotAdapterNeedStruct);
 			adapter->addRenderer(renders);
+		}
+		else if (h5d.name == "OBSERVE" || h5d.name == "RANGE")
+		{
+			adapter.reset(new TimePlotAdapter(renders));
 		}
 		else {
 			adapter.reset(new PlotAdapter);

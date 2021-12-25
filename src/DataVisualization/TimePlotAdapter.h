@@ -3,23 +3,27 @@
 #include <QAction>
 #include <QSize>
 #include "FourierDialog.h"
-class TimePlotAdapter :public PlotAdapter {
-	Q_OBJECT
-public:
-	TimePlotAdapter(std::list<std::shared_ptr<Renderer>>& listRender);
-	~TimePlotAdapter();
 
-public Q_SLOTS:
-	void FourierTrigger();
+namespace DV {
+	class TimePlotAdapter :public PlotAdapter {
+		Q_OBJECT
+	public:
+		TimePlotAdapter(std::list<std::shared_ptr<Renderer>>& listRender);
+		~TimePlotAdapter();
 
-public:
-	std::list<QAction*> getActions() override;
+	public Q_SLOTS:
+		void FourierTrigger();
 
-private:
-	QAction* Fourier;
-	QDialog* errorDialog;
-	std::list<std::shared_ptr<Renderer>> listRender;
+	public:
+		std::list<QAction*> getActions() override;
+		void dataInStack();//½«²Ù×÷Ñ¹ÈëÕ»
 
-private:
-	void initAction();
+	private:
+		QAction* Fourier;
+		QDialog* errorDialog;
+		std::list<std::shared_ptr<Renderer>> listRender;
+
+	private:
+		void initAction();
+	};
 };

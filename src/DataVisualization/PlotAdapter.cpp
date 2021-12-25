@@ -143,6 +143,7 @@ namespace DV {
 	{
 		Plot::connect(renderManager.get(), SIGNAL(allWorkFinished()), &plot, SLOT(renderFinished()));
 		Plot::connect(this, SIGNAL(updatePlot()), &plot, SLOT(reRender()));
+		this->plot = &plot;
 	}
 
 	std::list<QAction*> PlotAdapter::getActions()
