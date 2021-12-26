@@ -3,8 +3,7 @@
 
 DV3D::Contour3dControlerWidget::Contour3dControlerWidget(QWidget* parent /*= nullptr*/):DV::realTimewidget(parent)
 {
-	//setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
-	connect(this,SIGNAL(GetListDouble(std::list<double>&)),
+	connect(this,SIGNAL(sendConfigLevels(std::list<double>&)),
 		this,SLOT(slotGetContourValues(std::list<double>&)));
 }
 

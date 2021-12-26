@@ -10,6 +10,9 @@ namespace DV
 		explicit ScalarTableItem(const QIcon& icon, const QString& text, double val, int type = Type);
 		ScalarTableItem(const ScalarTableItem& other);
 		~ScalarTableItem();
+	public:
+		void setValue(double);
+		double& getValue();
 	private:
 		double scalarValue;
 	};

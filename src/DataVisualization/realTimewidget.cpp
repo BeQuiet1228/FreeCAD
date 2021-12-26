@@ -1,7 +1,7 @@
 #include "realTimewidget.h"
 #include "ui_realTimewidget.h"
 #include "QHeaderView"
-
+#include "ScalarTableItem.h"
 namespace DV
 {
 	const long long max64 = 0x7fffffffffffffff;
@@ -55,8 +55,15 @@ void DV::realTimewidget::loadConfigLevels(std::list<double>& leves)
 
 std::list<double> DV::realTimewidget::getConfigLevels()
 {
-	valLevel.sort();
-	return valLevel;
+	int rowCount = ui->tableWidget->rowCount();
+	std::list<double> values;
+	for (int i = 0; i < rowCount; ++i)
+	{
+		 ScalarTableItem* scalarItem=dynamic_cast<ScalarTableItem*>(ui->tableWidget->item(i,0));
+		 if (scalarItem != nullptr)
+			 values.push_back(scalarItem->getValue());
+	}
+	return values;
 }
 
 /**
@@ -70,10 +77,9 @@ void DV::realTimewidget::addTableItem(double val)
 	int row = ui->tableWidget->rowCount();
 	ui->tableWidget->insertRow(row);
 	/*ui->tableWidget->setItem(row, 0,
-		new QTableWidgetItem(QString("%1").arg(valToQString(val, GetdecimalBit(val)))));*/
-	ui->tableWidget->setItem(row, 0,
-		new QTableWidgetItem(QString("%1").arg(val)));
-
+		new QTableWidgetItem(QString("%1").arg(val)));*/
+	ScalarTableItem* item = new ScalarTableItem(QString("%1").arg(val),val);
+	ui->tableWidget->setItem(row, 0, item);
 }
 
 
@@ -166,6 +172,7 @@ QString DV::valToQString(double val, int bit)
 		temp = QString("%1").arg(val, 0, 'f', bit);
 	return temp;
 }
+
 int DV::GetdecimalBit(double& value)
 {
 	double absvalue = abs(value);

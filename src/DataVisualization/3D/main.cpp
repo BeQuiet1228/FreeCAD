@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
 	if (datalist.size() == 0)
 		return 0;
 
-	auto iter = datalist.begin();
+	auto iter = datalist.begin()+1;
 	//Hdf5Data structData,paticle3d,contour;
 	//
 	//for (; iter != datalist.end(); iter++)
@@ -80,17 +80,17 @@ int main(int argc, char* argv[])
 	ControlerFactory controlerFactor;
 	//auto controler = controlerFactor.CreatParticle3dControler(paticle3d);
 	//auto structControler = controlerFactor.CreatStrucControler(structData);
-	auto contourControler = controlerFactor.CreatContourControler(*iter);
-	//auto contour3dContrler = controlerFactor.CreatContour3dControler(*iter);
+	//auto contourControler = controlerFactor.CreatContourControler(*iter);
+	auto contour3dContrler = controlerFactor.CreatContour3dControler(*iter);
 	//w3d->binding(controler.get());
 	//w3d->binding(structControler.get());
-	w3d->binding(contourControler.get());
-	//w3d->binding(contour3dContrler.get());
+	//w3d->binding(contourControler.get());
+	w3d->binding(contour3dContrler.get());
 	w3d->show();
 
-	//auto item = ControlerItemFactor::CreatContour3dControlerItem();
-	//item->setControler(contour3dContrler);
-	//item->show();
+	auto item = ControlerItemFactor::CreatContour3dControlerItem();
+	item->setControler(contour3dContrler);
+	item->show();
 
 	return a.exec();
 }

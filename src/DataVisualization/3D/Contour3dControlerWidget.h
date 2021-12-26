@@ -1,7 +1,7 @@
 #pragma once
 #include "ControlerAction.h"
 #include "Contour3dActorPipeline.h"
-#include "DataVisualization/realTimewidget.h"
+#include "../realTimewidget.h"
 namespace DV3D
 {
 	class Contour3dControlerWidget :public DV::realTimewidget

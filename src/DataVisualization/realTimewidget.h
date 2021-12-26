@@ -34,7 +34,6 @@ namespace DV
 	private:
 		Ui::realTimewidget* ui;
 		double min, max;
-		std::list<double> valLevel;
 	};
 }
 #endif
