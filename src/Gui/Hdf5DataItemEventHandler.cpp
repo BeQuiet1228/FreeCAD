@@ -23,7 +23,8 @@ void Gui::HDF5DataItem3DDoubleClickEventHander::trigger(HDF5DataItem* item)
 	assert(item && "item is nullptr!");
 
 	auto controler = DV3D::ControlerFactory::CreatControler(item->getHdf5Data());
-	auto controlerItem = DV3D::ControlerItemFactor::CreatControlerItem();
+	//auto controlerItem = DV3D::ControlerItemFactor::CreatControlerItem();
+	auto controlerItem = DV3D::ControlerItemFactor::CreatContour3dControlerItem();
 	controlerItem->setControler(controler);
 
 	auto doc = Gui::Application::Instance->activeDocument();

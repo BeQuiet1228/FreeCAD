@@ -15,7 +15,7 @@ namespace DV
 	{
 		Q_OBJECT
 	public:
-		explicit realTimewidget(QWidget* parent=nullptr);
+		explicit realTimewidget(QWidget* parent = nullptr);
 		~realTimewidget();
 		void loadConfigLevels(std::list<double>&);
 		std::list<double> getConfigLevels();
@@ -25,13 +25,13 @@ namespace DV
 		void clearTableItem();
 	Q_SIGNALS:
 		void sendConfigLevels(std::list<double>&);
-	private Q_SLOTS:
+	public Q_SLOTS:
 		void btnClicked();
-	private:
-		void addClicked();
-		void deleteClicked();
-		void saveClicked();
-	private:
+	protected:
+		virtual void addClicked();
+		virtual void deleteClicked();
+		virtual void saveClicked();
+	protected:
 		Ui::realTimewidget* ui;
 		double min, max;
 	};

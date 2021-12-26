@@ -1,10 +1,7 @@
 #include "Contour3dControlerWidget.h"
 #include "Contour3dControler.h"
-
 DV3D::Contour3dControlerWidget::Contour3dControlerWidget(QWidget* parent /*= nullptr*/):DV::realTimewidget(parent)
 {
-	connect(this,SIGNAL(sendConfigLevels(std::list<double>&)),
-		this,SLOT(slotGetContourValues(std::list<double>&)));
 }
 
 DV3D::Contour3dControlerWidget::~Contour3dControlerWidget()
@@ -25,7 +22,6 @@ void DV3D::Contour3dControlerWidget::setControler(std::shared_ptr<Controler> con
 {
 	controlerptr = controler;
 }
-
 void DV3D::Contour3dControlerWidget::slotGetContourValues(std::list<double>& values)
 {
 	std::shared_ptr<Contour3dControler> contour3dControler =
@@ -39,5 +35,10 @@ void DV3D::Contour3dControlerWidget::slotGetContourValues(std::list<double>& val
 	//×ª»»Íê³É
 	contour3dControler->setContourValues(valueFs);
 }
-//#include "moc_Contour3dControlerWidget.cpp"
-#include "../moc_realTimewidget.cpp"
+
+void DV3D::Contour3dControlerWidget::saveClicked()
+{
+	auto dataList = getConfigLevels();
+	loadConfigLevels(dataList);
+	slotGetContourValues(dataList);
+}
