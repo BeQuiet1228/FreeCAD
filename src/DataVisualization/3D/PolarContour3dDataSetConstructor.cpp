@@ -113,10 +113,15 @@ void DV3D::PolarContour3dDatasetConstructor::generateMapList(
 				double rVal = rList[ri];
 				double thetVal = thetaList[thetai];
 				double scalVal = vaList[getpointId(ri, thetai, zi)];
-				maplist[zList[zi]][thetVal][rVal] = scalVal;
+				double zVal = zList[zi];
+				//将从原生数据中取出的按照z->theta-R的顺序分类存入
+				maplist[zVal][thetVal][rVal] = scalVal;
 				if (thetai == thetaGridSize - 1)
 					continue;
-				//这里比较原始数据中的相邻的两个theta之间是否需要进行插值
+				/*
+					需要判断相邻的两个tehta之间是否需要进行插值，
+					需要先获得相邻的两个theta和标量值
+				*/
 				double thetValNext = thetaList[(thetai + 1)];
 				double scalValNext = vaList[getpointId(ri, thetai + 1, zi)];
 				auto iter = angles.begin();
@@ -126,7 +131,7 @@ void DV3D::PolarContour3dDatasetConstructor::generateMapList(
 					if (*iter <= thetVal)
 					{
 						/*
-						 当前角度没在两个相邻角度之间，且小于左侧,不进入下方的插值，判断下个角度
+						 当前角度没在两个相邻角度之间，且小于左侧,不进行插值计算，判断下个角度
 						*/
 						iter++;
 						continue;
@@ -134,7 +139,8 @@ void DV3D::PolarContour3dDatasetConstructor::generateMapList(
 					//计算插值的标量值
 					double curScalar = (scalValNext - scalVal) * ((*iter) - thetVal)
 						/ (thetValNext - thetVal) + scalVal;
-					maplist[zList[zi]][*iter][rVal] = curScalar;
+					//将生成的插值数据按z->theta->r的顺序分类存入
+					maplist[zVal][*iter][rVal] = curScalar;
 					iter++;
 				}
 			}
@@ -153,6 +159,9 @@ void DV3D::PolarContour3dDatasetConstructor::generateMapList(
 void DV3D::PolarContour3dDatasetConstructor::generatePoints(
 	std::map<double, std::map<double, std::map<double, double>>>& maplist)
 {
+	/*
+		使用已经生成好的maplist，按照z->theta->r的访问顺序生成点位，以及装入标量值
+	*/
 	points = vtkSmartPointer<vtkPoints>::New();
 	scalars = vtkSmartPointer<vtkFloatArray>::New();
 	//重新设置theta方向的网格

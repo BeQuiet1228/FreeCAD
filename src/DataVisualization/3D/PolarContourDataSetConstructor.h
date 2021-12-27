@@ -18,6 +18,8 @@ namespace DV3D
 		void initData();
 		void generateMapList(std::map<double, std::map<double, double>>& maplist);
 		void generatePoints(std::map<double, std::map<double, double>>& maplist);
+		void initGrid(vtkIdType zGrid,vtkIdType thetaGrid,vtkIdType rGrid);
+		vtkIdType getPointId(vtkIdType thetai,vtkIdType ri);
 	protected:
 		vtkSmartPointer<vtkPoints> points;
 		vtkSmartPointer<vtkFloatArray> scalar;

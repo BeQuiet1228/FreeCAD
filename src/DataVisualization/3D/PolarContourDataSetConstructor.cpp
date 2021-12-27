@@ -15,9 +15,6 @@ DV3D::PolarContourDatasetConstructor::~PolarContourDatasetConstructor()
 vtkSmartPointer<vtkDataSet> DV3D::PolarContourDatasetConstructor::creatDataset()
 {
 	initData();
-	vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
-	polyData->SetPoints(points);
-	polyData->GetPointData()->SetScalars(scalar);
 	vtkSmartPointer<vtkStructuredGrid> structuredGrid = vtkSmartPointer<vtkStructuredGrid>::New();
 	structuredGrid->SetDimensions(rGridSize, thetaGridSize, zGridSize);
 	structuredGrid->SetPoints(points);
@@ -62,6 +59,9 @@ void DV3D::PolarContourDatasetConstructor::initData()
 */
 void DV3D::PolarContourDatasetConstructor::generateMapList(std::map<double, std::map<double, double>>& maplist)
 {
+	/*
+		maplist 装入了原生的数据集和新生成的插值，并按照theta-r的顺序进行了排序
+	*/
 	auto h5d = getHdf5Data();
 	std::shared_ptr<DV::ContourDataPolar> data =
 		std::shared_ptr<DV::ContourDataPolar>(DV::CreateContourDataPolar(h5d));
@@ -71,22 +71,24 @@ void DV3D::PolarContourDatasetConstructor::generateMapList(std::map<double, std:
 	(h5d.coordinateSystem == Hdf5Data::CoordinateSystem::CYLINDER) ?
 		polarZ = face[0] :
 		polarZ = face[2];
-	//开始进行插值
-	rGridSize = data->getWidth();
-	thetaGridSize = data->getHeight();
-	zGridSize = 1;
+	//初始化网格信息，并开始进行插值
+	initGrid(1,data->getHeight(),data->getWidth());
 	for (int thetai = 0; thetai < thetaGridSize; ++thetai)
 	{
 		for (int ri = 0; ri < rGridSize; ++ri)
 		{
-			double rVal = datas[ri + thetai * rGridSize].x;
-			double thetVal = datas[ri + thetai * rGridSize].y;
-			double scalVal = datas[ri + thetai * rGridSize].value;
+			double rVal = datas[getPointId(thetai,ri)].x;
+			double thetVal = datas[getPointId(thetai, ri)].y;
+			double scalVal = datas[getPointId(thetai, ri)].value;
+			//将取出的数据按theta-r-进行分类存储
 			maplist[thetVal][rVal] = scalVal;
 			if (thetai == thetaGridSize - 1)
 				continue;
-			double thetValNext = datas[ri + (thetai + 1) * rGridSize].y;
-			double scalValNext = datas[ri + (thetai + 1) * rGridSize].value;
+			/*
+				判断两个theta之间是否需要进行插值，先获取相邻两个theta的值，和标量值
+			*/
+			double thetValNext = datas[getPointId(thetai+1, ri)].y;
+			double scalValNext = datas[getPointId(thetai+1, ri)].value;
 			auto iter = angles.begin();
 			while (iter != angles.end() && thetValNext > *iter)
 			{
@@ -96,7 +98,9 @@ void DV3D::PolarContourDatasetConstructor::generateMapList(std::map<double, std:
 					continue;
 				}
 				//插值的标量值计算
-				double curScalar = (scalValNext - scalVal) * ((*iter) - thetVal) / (thetValNext - thetVal) + scalVal;
+				double curScalar = (scalValNext - scalVal) * ((*iter) - thetVal) 
+					/ (thetValNext - thetVal) + scalVal;
+				//将生成的数据按theta-r的索引关系分类存入
 				maplist[*iter][rVal] = curScalar;
 				iter++;
 			}
@@ -130,4 +134,25 @@ void DV3D::PolarContourDatasetConstructor::generatePoints(std::map<double, std::
 			scalar->InsertNextTuple1(iterR->second);
 		}
 	}
+}
+
+
+/**
+* @time	2021/12/27
+* @brief DV3D::PolarContourDatasetConstructor::initGrid 初始化网格信息
+* @param vtkIdType zGrid
+* @param vtkIdType thetaGrid
+* @param vtkIdType rGrid
+* @return void
+*/
+void DV3D::PolarContourDatasetConstructor::initGrid(vtkIdType zGrid, vtkIdType thetaGrid, vtkIdType rGrid)
+{
+	zGridSize = zGrid;
+	thetaGridSize = thetaGrid;
+	rGridSize = rGrid;
+}
+
+vtkIdType DV3D::PolarContourDatasetConstructor::getPointId(vtkIdType thetai, vtkIdType ri)
+{
+	return (ri+thetai*rGridSize);
 }
