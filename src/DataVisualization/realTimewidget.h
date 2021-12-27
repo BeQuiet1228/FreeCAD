@@ -23,6 +23,8 @@ namespace DV
 		void addTableItem(double val);
 		void setRangTitle();
 		void clearTableItem();
+		void boolCellChangedConnect(bool);
+		void addTableItem(QString, double);
 	Q_SIGNALS:
 		void sendConfigLevels(std::list<double>&);
 	public Q_SLOTS:

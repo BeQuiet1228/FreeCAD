@@ -24,7 +24,7 @@ DV::realTimewidget::realTimewidget(QWidget* parent/*=nullptr*/) :
 	connect(ui->addBtn, SIGNAL(clicked()), this, SLOT(btnClicked()));
 	connect(ui->saveBtn, SIGNAL(clicked()), this, SLOT(btnClicked()));
 	connect(ui->deleteBtn, SIGNAL(clicked()), this, SLOT(btnClicked()));
-	connect(ui->tableWidget,SIGNAL(cellChanged(int,int)),this,SLOT(slotCellChange(int,int)));
+
 }
 
 DV::realTimewidget::~realTimewidget()
@@ -35,6 +35,7 @@ DV::realTimewidget::~realTimewidget()
 
 void DV::realTimewidget::loadConfigLevels(std::list<double>& leves)
 {
+	boolCellChangedConnect(false);
 	leves.sort();
 	clearTableItem();
 	min = max = *leves.begin();
@@ -45,6 +46,7 @@ void DV::realTimewidget::loadConfigLevels(std::list<double>& leves)
 		addTableItem(*iter);
 	}
 	setRangTitle();
+	boolCellChangedConnect(true);
 }
 
 
@@ -60,9 +62,9 @@ std::list<double> DV::realTimewidget::getConfigLevels()
 	std::list<double> values;
 	for (int i = 0; i < rowCount; ++i)
 	{
-		 ScalarTableItem* scalarItem=dynamic_cast<ScalarTableItem*>(ui->tableWidget->item(i,0));
-		 if (scalarItem != nullptr)
-			 values.push_back(scalarItem->getValue());
+		ScalarTableItem* scalarItem = dynamic_cast<ScalarTableItem*>(ui->tableWidget->item(i, 0));
+		if (scalarItem != nullptr)
+			values.push_back(scalarItem->getValue());
 	}
 	return values;
 }
@@ -77,9 +79,7 @@ void DV::realTimewidget::addTableItem(double val)
 {
 	int row = ui->tableWidget->rowCount();
 	ui->tableWidget->insertRow(row);
-	/*ui->tableWidget->setItem(row, 0,
-		new QTableWidgetItem(QString("%1").arg(val)));*/
-	ScalarTableItem* item = new ScalarTableItem(QString("%1").arg(val),val);
+	ScalarTableItem* item = new ScalarTableItem(QString("%1").arg(val), val);
 	ui->tableWidget->setItem(row, 0, item);
 }
 
@@ -101,6 +101,40 @@ void DV::realTimewidget::clearTableItem()
 	for (int i = row - 1; i >= 0; --i)
 		ui->tableWidget->removeRow(i);
 }
+
+
+/**
+* @time	2021/12/27
+* @brief DV::realTimewidget::boolCellChangedConnect 用于开启和关闭条目改变时是否需要关联到槽
+* @param bool
+* @return void
+*/
+void DV::realTimewidget::boolCellChangedConnect(bool b)
+{
+	/*
+		用于防止读取数据列表时，字符串信息，改变时调用单元改变时的槽函数，频繁修改val的值。
+	*/
+	(b) ?
+		(connect(ui->tableWidget, SIGNAL(cellChanged(int, int)), this, SLOT(slotCellChange(int, int)))) :
+		(disconnect(ui->tableWidget, SIGNAL(cellChanged(int, int)), this, SLOT(slotCellChange(int, int))));
+}
+
+
+/**
+* @time	2021/12/27
+* @brief DV::realTimewidget::addTableItem 添加item
+* @param QString
+* @param double
+* @return void
+*/
+void DV::realTimewidget::addTableItem(QString str, double val)
+{
+	int row = ui->tableWidget->rowCount();
+	ui->tableWidget->insertRow(row);
+	ScalarTableItem* item = new ScalarTableItem(str, val);
+	ui->tableWidget->setItem(row, 0, item);
+}
+
 /**
 * @time	2021/12/24
 * @brief DV::realTimewidget::btnClicked 按钮点击事件
@@ -195,14 +229,14 @@ int DV::GetdecimalBit(double& value)
 
 /**
 * @time	2021/12/27
-* @brief DV::realTimewidget::slotCellChange 
+* @brief DV::realTimewidget::slotCellChange
 * @param int r
 * @param int c
 * @return void
 */
 void DV::realTimewidget::slotCellChange(int r, int c)
 {
-	ScalarTableItem* item=dynamic_cast<ScalarTableItem*>(ui->tableWidget->item(r, c));
+	ScalarTableItem* item = dynamic_cast<ScalarTableItem*>(ui->tableWidget->item(r, c));
 	if (item == nullptr)
 		return;
 	double val = item->text().toDouble();
