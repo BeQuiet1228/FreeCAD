@@ -40,7 +40,7 @@ namespace DV {
 	{
 		std::list<QAction*> actions;
 		actions.push_back(Fourier);
-		actions.push_back(saveData);
+		//actions.push_back(saveData);
 		return actions;
 	}
 

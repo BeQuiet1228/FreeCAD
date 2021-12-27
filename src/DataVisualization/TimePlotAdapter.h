@@ -14,7 +14,7 @@ namespace DV {
 
 	public Q_SLOTS:
 		void FourierTrigger();
-		void saveDataFunc();
+		//void saveDataFunc();
 
 	public:
 		std::list<QAction*> getActions() override;
