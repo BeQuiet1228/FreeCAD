@@ -36,12 +36,7 @@ void DV3D::PolarContour3dDatasetConstructor::setResolution(int resolution)
 {
 	if (resolution < 1)
 		return;
-	angles.clear();
-	angles.reserve(resolution);
 	mResolution = resolution;
-	double angInterval = vtkMath::RadiansFromDegrees(360.0) / mResolution;
-	for (auto i = 0; i < mResolution; ++i)
-		angles.push_back(angInterval * i);
 }
 
 void DV3D::PolarContour3dDatasetConstructor::initPoints()
@@ -98,6 +93,15 @@ void DV3D::PolarContour3dDatasetConstructor::generateMapList(
 	std::vector<float>& rList = grid[1];
 	std::vector<float>& thetaList = grid[2];
 	std::vector<float>& zList = grid[3];
+	//获取最大角度,和最小角度
+	{
+		auto minTheta = *thetaList.begin();
+		auto maxTheta = *(thetaList.end() - 1);
+		double angInterval = (maxTheta - minTheta) / mResolution;
+		angles.clear(); angles.reserve(mResolution);
+		for (auto i = 0; i < mResolution; ++i)
+			angles.push_back(minTheta + angInterval * i);
+	}
 	//先初始化网格标尺
 	initGrid(rList.size(), thetaList.size(), zList.size());
 	for (int zi = 0; zi < zGridSize; ++zi)

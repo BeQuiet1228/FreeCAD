@@ -12,7 +12,7 @@ namespace Gui {
 		~DataVisualizationTree();
 
 	public:
-		void addHDF5DataItem(HDF5DataItem* item);
+		HDF5DataItem* addHDF5DataItem(HDF5DataItem* item);
 		void addHDF5DataItem(std::vector<HDF5DataItem*> items);
 		//«Â¿Ìitem
 		void clear();
@@ -26,6 +26,7 @@ namespace Gui {
 	private:
 		void initFactorys();
 		void clearFactorys();
+		std::vector<HDF5DataItem*> creatHdf5DataItem(Hdf5Data data);
 	private:
 		//item mod
 		QStandardItemModel* model;
