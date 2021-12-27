@@ -54,3 +54,12 @@ void DV3D::Contour3dControler::setContourValues(std::vector<ContourValue>& data)
 	contour3dActorPipline->setContourValues(data);
 	return;
 }
+
+double* DV3D::Contour3dControler::getScalarRange()
+{
+	auto pipeline = getActorPipeline();
+	std::shared_ptr<Contour3dActorPipline> contour3dActorPipline =
+		std::dynamic_pointer_cast<Contour3dActorPipline>(pipeline);
+	assert(contour3dActorPipline && "contour3dActorPipline is nullptr");
+	return contour3dActorPipline->getScalarRang();
+}

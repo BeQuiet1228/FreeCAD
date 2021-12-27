@@ -13,5 +13,6 @@ namespace DV3D
 		void setContourLeves(const int& n);
 		void getContourValues(std::vector<ContourValue>& data);
 		void setContourValues(std::vector<ContourValue>& data);
+		double* getScalarRange();
 	};
 };

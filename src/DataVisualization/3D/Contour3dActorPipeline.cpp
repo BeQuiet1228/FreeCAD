@@ -77,6 +77,12 @@ void DV3D::Contour3dActorPipline::setContourValues(std::vector<ContourValue>& va
 }
 
 
+double* DV3D::Contour3dActorPipline::getScalarRang()
+{
+	auto dataset = getDataSet();
+	return dataset->GetPointData()->GetScalars()->GetRange();
+}
+
 void DV3D::Contour3dActorPipline::initFilter()
 {
 	if (isInit)

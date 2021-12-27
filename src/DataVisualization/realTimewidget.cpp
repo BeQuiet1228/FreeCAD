@@ -2,9 +2,11 @@
 #include "ui_realTimewidget.h"
 #include "QHeaderView"
 #include "ScalarTableItem.h"
+#include "QMessageBox"
+#include "C_encoding.h"
 namespace DV
 {
-	QString compareValToQString(double& val1, double& val2, const double callVal);
+	QString compareValToQString(double& val1, double& val2);
 	int getBitInt(const double values);
 	int getBitDec(const double values);
 };
@@ -40,13 +42,11 @@ void DV::realTimewidget::loadConfigLevels(std::list<double>& leves)
 	leves.sort();
 	boolCellChangedConnect(false);
 	clearTableItem();
-	//min = max = *(leves.begin());
-	min = *leves.begin();
-	max = *leves.rbegin();
+	//min = *leves.begin();
+	//max = *leves.rbegin();
 	auto datas = getScalarDatas(leves);
 	for (auto iter = datas.begin(); iter != datas.end(); ++iter)
 		addTableItem(iter->valStr, iter->value);
-	setRangTitle();
 	boolCellChangedConnect(true);
 }
 
@@ -73,6 +73,30 @@ std::list<double> DV::realTimewidget::getConfigLevels()
 
 /**
 * @time	2021/12/27
+* @brief DV::realTimewidget::setValRange 设置数值区间
+* @param double min
+* @param double max
+* @return void
+*/
+void DV::realTimewidget::setValRange(double min, double max)
+{
+	double* minValPtr, * maxValPtr;
+	if (min > max)
+	{
+		minValPtr = &max;
+		maxValPtr = &min;
+	}
+	else
+	{
+		minValPtr = &min;
+		maxValPtr = &max;
+	}
+	minVal = *minValPtr;
+	maxVal = *maxValPtr;
+	this->setWindowTitle(QString("value Rang:(%1,%2)").arg(minVal).arg(maxVal));
+}
+/**
+* @time	2021/12/27
 * @brief DV::realTimewidget::getScalarDatas 获取标尺数据类型
 * @param std::list<double> & value
 * @return std::list<DV::realTimewidget::ScalarItemData>
@@ -97,9 +121,9 @@ std::list<DV::realTimewidget::ScalarItemData> DV::realTimewidget::getScalarDatas
 		 有一种特殊情况，当正负两个数值比较大小时，无法获取到精确的有效位，因为始终满足非负>负数的情况
 		*/
 		if ((*iterLast) * (*iter) < 0.0f && *iter < secondVal)
-			data.valStr = compareValToQString(*iter, secondVal, *iter);
+			data.valStr = compareValToQString(*iter, secondVal);
 		else
-			data.valStr = compareValToQString(*iterLast, *iter, *iter);
+			data.valStr = compareValToQString(*iter, *iterLast);
 		data.value = *iter;
 		datas.push_back(data);
 		firstVal = *iterLast;
@@ -108,7 +132,7 @@ std::list<DV::realTimewidget::ScalarItemData> DV::realTimewidget::getScalarDatas
 	//装入最后一个点
 	{
 		ScalarItemData data;
-		data.valStr = compareValToQString(firstVal, secondVal, firstVal);
+		data.valStr = compareValToQString(firstVal, secondVal);
 		data.value = firstVal;
 		datas.push_back(data);
 	}
@@ -152,14 +176,6 @@ void DV::realTimewidget::addTableItem(double val)
 	ScalarTableItem* item = new ScalarTableItem(QString("%1").arg(val), val);
 	ui->tableWidget->setItem(row, 0, item);
 }
-
-
-void DV::realTimewidget::setRangTitle()
-{
-	this->setWindowTitle(QString("Rang:(%1-%2)").arg(min).arg(max));
-}
-
-
 /**
 * @time	2021/12/24
 * @brief DV::realTimewidget::clearTableItem 清空表格的内容
@@ -199,6 +215,11 @@ void DV::realTimewidget::boolCellChangedConnect(bool b)
 */
 void DV::realTimewidget::addTableItem(QString str, double val)
 {
+	/*
+		若val超出范围，直接返回，不添加该item
+	*/
+	if (val<minVal || val>maxVal)
+		return;
 	int row = ui->tableWidget->rowCount();
 	ui->tableWidget->insertRow(row);
 	ScalarTableItem* item = new ScalarTableItem(str, val);
@@ -235,7 +256,7 @@ void DV::realTimewidget::btnClicked()
 void DV::realTimewidget::addClicked()
 {
 	int row = ui->tableWidget->rowCount();
-	addTableItem(0.0f);
+	addTableItem((minVal + maxVal)/2);
 }
 
 
@@ -281,6 +302,20 @@ void DV::realTimewidget::slotCellChange(int r, int c)
 	if (item == nullptr)
 		return;
 	double val = item->text().toDouble();
+	//判断数值是否在数值区间内
+	if (val<minVal || val>maxVal)
+	{
+		/*
+			弹出窗口，警告数值超出范围
+		*/
+		QMessageBox box;
+		QString message = QString("value rang:(%1~%2)").arg(minVal).arg(maxVal);
+		box.setText(message);
+		box.exec();
+		//恢复到原本的数值
+		item->setText(QString("%1").arg(item->getValue()));
+		return;
+	}
 	item->setValue(val);
 }
 bool DV::realTimewidget::ScalarItemData::operator<(const ScalarItemData& that) const
@@ -289,17 +324,16 @@ bool DV::realTimewidget::ScalarItemData::operator<(const ScalarItemData& that) c
 		return true;
 	return false;
 }
-
 /**
 * @time	2021/12/27
-* @brief DV::compareValToQString 比较浮点数获取有效位，并将callVal转换成字符串
-* @param double & val1 比较的数值
+* @brief DV::compareValToQString 比较两个数的有效位，并返回val1的字符串
+* @param double & val1
 * @param double & val2
-* @param const double callVal 需要转换的数值
 * @return QString
 */
-QString DV::compareValToQString(double& val1, double& val2, const double callVal)
+QString DV::compareValToQString(double& val1, double& val2)
 {
+	const double callVal =val1;
 	double intervalVal = abs(val1 - val2);
 	if (0.0f == intervalVal)
 		return QString("%1").arg(callVal);
@@ -340,7 +374,6 @@ QString DV::compareValToQString(double& val1, double& val2, const double callVal
 		return qstr;
 	}
 }
-
 /**
 * @time	2021/12/27
 * @brief DV::getBitInt 获取数值整数部分最高位

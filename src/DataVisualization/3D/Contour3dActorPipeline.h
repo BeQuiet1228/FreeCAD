@@ -24,6 +24,7 @@ namespace DV3D
 		void setContourSurfarCount(const int& n);
 		std::vector<ContourValue> getContourValues();
 		void setContourValues(std::vector<ContourValue>& values);
+		double* getScalarRang();
 	protected:
 		void initFilter();
 	private:

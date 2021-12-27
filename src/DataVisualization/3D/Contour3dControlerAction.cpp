@@ -28,9 +28,11 @@ bool  DV3D::ControlerContourSurface::showWidget(std::shared_ptr<Controler> contr
 	if (nullptr == contour3dControler)
 		return false;
 	contour3dControler->getContourValues(values);
+	auto rang = contour3dControler->getScalarRange();
 	Contour3dControlerWidget* contour3dControlerWidget = new Contour3dControlerWidget();
 	contour3dControlerWidget->setModal(true);//ÉèÖÃÎªÄ£Ì¬
 	contour3dControlerWidget->setControler(controler);
+	contour3dControlerWidget->setValRange(rang[0],rang[1]);
 	contour3dControlerWidget->init(values);
 	contour3dControlerWidget->resize(500, 300);
 	contour3dControlerWidget->show();

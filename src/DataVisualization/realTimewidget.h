@@ -19,8 +19,6 @@ namespace DV
 	public:
 		explicit realTimewidget(QWidget* parent = nullptr);
 		~realTimewidget();
-		void loadConfigLevels(std::list<double>&);
-		std::list<double> getConfigLevels();
 	public:
 		struct ScalarItemData
 		{
@@ -29,9 +27,11 @@ namespace DV
 			bool  operator <(const ScalarItemData& that) const;
 		};
 		std::list<ScalarItemData> getScalarDatas(std::list<double>& value);
+		void loadConfigLevels(std::list<double>&);
+		std::list<double> getConfigLevels();
+		void setValRange(double min,double max);
 	protected:
 		void addTableItem(double val);
-		void setRangTitle();
 		void clearTableItem();
 		void boolCellChangedConnect(bool);
 		void addTableItem(QString, double);
@@ -46,7 +46,7 @@ namespace DV
 		virtual void saveClicked();
 	protected:
 		Ui::realTimewidget* ui;
-		double min, max;
+		double minVal, maxVal;
 	};
 }
 #endif
