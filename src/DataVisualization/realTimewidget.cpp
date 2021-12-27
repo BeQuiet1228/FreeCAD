@@ -340,6 +340,13 @@ QString DV::compareValToQString(double& val1, double& val2, const double callVal
 		return qstr;
 	}
 }
+
+/**
+* @time	2021/12/27
+* @brief DV::getBitInt 获取数值整数部分最高位
+* @param const double value
+* @return int
+*/
 int DV::getBitInt(const double value)
 {
 	int index = 0;
