@@ -25,7 +25,7 @@ class CreateSymtryCommand:
         Form.exec_()
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Physics/PhysicsResources/sym.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Modeling/Modeling2D/modeling2DResources/对称边界.svg"
         MenuText = Tools2D.QT_TRANSLATE_NOOP(
             'CreateSymtry',
             '对称边界')

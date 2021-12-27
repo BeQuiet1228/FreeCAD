@@ -27,7 +27,7 @@ class CreatePortCommand:
         Form.exec_()
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Physics/PhysicsResources/port.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Modeling/Modeling2D/modeling2DResources/波导端口.svg"
         MenuText = Tools2D.QT_TRANSLATE_NOOP(
             'CreatePort',
             '波导端口')

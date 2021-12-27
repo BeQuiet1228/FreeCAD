@@ -28,7 +28,7 @@ class CreateObserveCommand:
         Form.exec_()
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Physics/PhysicsResources/obs.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Modeling/Modeling2D/modeling2DResources/时间观测.svg"
         MenuText = Tools2D.QT_TRANSLATE_NOOP(
             'CreateObserve',
             '时间图')

@@ -26,7 +26,7 @@ class CreateFreeSpaceCommand:
         Form.exec_()
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Physics/PhysicsResources/free.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Modeling/Modeling2D/modeling2DResources/吸收边界.svg"
         MenuText = Tools2D.QT_TRANSLATE_NOOP(
             'CreateFreeSpace',
             '吸收边界')

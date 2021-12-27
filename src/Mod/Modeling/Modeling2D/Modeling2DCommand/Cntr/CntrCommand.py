@@ -26,7 +26,7 @@ class CreateCntrCommand:
         Form.exec_()
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Physics/PhysicsResources/cntr.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Modeling/Modeling2D/modeling2DResources/等位图观测.svg"
         MenuText = Tools2D.QT_TRANSLATE_NOOP(
             'CreateCntr',
             '等位图')

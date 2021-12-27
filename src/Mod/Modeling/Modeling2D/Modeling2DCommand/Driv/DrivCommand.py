@@ -27,7 +27,7 @@ class CreateDrivCommand:
         Form.exec_()
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Physics/PhysicsResources/driver.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Modeling/Modeling2D/modeling2DResources/空间电流源.svg"
         MenuText = Tools2D.QT_TRANSLATE_NOOP(
             'CreateDriv',
             '电流源')

@@ -27,7 +27,7 @@ class CreatePhasSpaceCommand:
         Form.exec_()
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Physics/PhysicsResources/pha.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Modeling/Modeling2D/modeling2DResources/粒子相对空间观测.svg"
         MenuText = Tools2D.QT_TRANSLATE_NOOP(
             'CreatePhasSpace',
             '相空间图')

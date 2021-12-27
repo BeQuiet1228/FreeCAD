@@ -27,7 +27,7 @@ class CreateInductorCommand:
         Form.exec_()
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Physics/PhysicsResources/ind.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Modeling/Modeling2D/modeling2DResources/电感.svg"
         MenuText = Tools2D.QT_TRANSLATE_NOOP(
             'CreateInductor',
             '电感')

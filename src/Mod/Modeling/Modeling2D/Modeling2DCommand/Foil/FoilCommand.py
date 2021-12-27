@@ -27,7 +27,7 @@ class CreateFoilCommand:
         Form.exec_()
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Physics/PhysicsResources/foil.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Modeling/Modeling2D/modeling2DResources/箔片.svg"
         MenuText = Tools2D.QT_TRANSLATE_NOOP(
             'CreateFoil',
             '箔片')

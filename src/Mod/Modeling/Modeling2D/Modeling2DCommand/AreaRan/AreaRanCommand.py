@@ -27,7 +27,7 @@ class CreateAreaRanCommand:
         Form.exec_()
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Physics/PhysicsResources/ran.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Modeling/Modeling2D/modeling2DResources/空间观测.svg"
         MenuText = Tools2D.QT_TRANSLATE_NOOP(
             'CreateAreaRan',
             '空间图')
