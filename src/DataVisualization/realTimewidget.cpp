@@ -175,7 +175,7 @@ void DV::realTimewidget::clearTableItem()
 
 /**
 * @time	2021/12/27
-* @brief DV::realTimewidget::boolCellChangedConnect 用于开启和关闭条目改变时是否需要关联到槽
+* @brief DV::realTimewidget::boolCellChangedConnect 用于开启和关闭单元被编辑时是否需要关联到槽
 * @param bool
 * @return void
 */
