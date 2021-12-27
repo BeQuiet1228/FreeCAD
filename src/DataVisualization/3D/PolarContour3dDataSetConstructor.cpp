@@ -56,6 +56,9 @@ void DV3D::PolarContour3dDatasetConstructor::initPoints()
 		Hdf5IO::getValue(h5d.listDataSet.at(i), d);
 		grid.push_back(d);
 	}
+	/*
+		创建表格索引表，按z-theta-r的顺序分类存放，可以自动完成排序功能。
+	*/
 	std::map<double, std::map<double, std::map<double, double>>> maplist;
 	//
 	generateMapList(maplist, grid);
@@ -86,6 +89,10 @@ void DV3D::PolarContour3dDatasetConstructor::generateMapList(
 	std::map<double, std::map<double, std::map<double, double>>>& maplist,
 	std::vector<std::vector<float>>& grid)
 {
+	/*
+		maplist主要时用来分类存放增加的插入值，当新增一个插入值的时候，在完全计算完毕时，并不确定这个值的序号id，
+		所以按照z-theta-r的索引存放，之后创建点位时，自动完成排序。
+	*/
 	//val-r-theta-z
 	std::vector<float>& vaList = grid[0];
 	std::vector<float>& rList = grid[1];
@@ -105,13 +112,18 @@ void DV3D::PolarContour3dDatasetConstructor::generateMapList(
 				maplist[zList[zi]][thetVal][rVal] = scalVal;
 				if (thetai == thetaGridSize - 1)
 					continue;
+				//这里比较原始数据中的相邻的两个theta之间是否需要进行插值
 				double thetValNext = thetaList[(thetai + 1)];
 				double scalValNext = vaList[getpointId(ri, thetai + 1, zi)];
 				auto iter = angles.begin();
+				//遍历插入的值角度列表
 				while (iter != angles.end() && thetValNext > *iter)
 				{
 					if (*iter <= thetVal)
 					{
+						/*
+						 当前角度没在两个相邻角度之间，且小于左侧,不进入下方的插值，判断下个角度
+						*/
 						iter++;
 						continue;
 					}

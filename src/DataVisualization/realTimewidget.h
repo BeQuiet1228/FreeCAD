@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QDialog>
 #include "exportConfig.hpp"
+#include <list>
 class QTableWidgetItem;
 namespace Ui
 {
@@ -11,6 +12,7 @@ namespace Ui
 }
 namespace DV
 {
+	
 	class DATA_VISUALIZATION_EXPORT realTimewidget :public QDialog
 	{
 		Q_OBJECT
@@ -19,6 +21,14 @@ namespace DV
 		~realTimewidget();
 		void loadConfigLevels(std::list<double>&);
 		std::list<double> getConfigLevels();
+	public:
+		struct ScalarItemData
+		{
+			QString valStr;
+			double value;
+			bool  operator <(const ScalarItemData& that) const;
+		};
+		std::list<ScalarItemData> getScalarDatas(std::list<double>& value);
 	protected:
 		void addTableItem(double val);
 		void setRangTitle();
