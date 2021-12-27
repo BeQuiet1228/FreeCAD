@@ -27,6 +27,7 @@ namespace DV
 		void sendConfigLevels(std::list<double>&);
 	public Q_SLOTS:
 		void btnClicked();
+		void slotCellChange(int,int);
 	protected:
 		virtual void addClicked();
 		virtual void deleteClicked();

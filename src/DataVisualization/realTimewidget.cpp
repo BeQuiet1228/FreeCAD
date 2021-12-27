@@ -24,6 +24,7 @@ DV::realTimewidget::realTimewidget(QWidget* parent/*=nullptr*/) :
 	connect(ui->addBtn, SIGNAL(clicked()), this, SLOT(btnClicked()));
 	connect(ui->saveBtn, SIGNAL(clicked()), this, SLOT(btnClicked()));
 	connect(ui->deleteBtn, SIGNAL(clicked()), this, SLOT(btnClicked()));
+	connect(ui->tableWidget,SIGNAL(cellChanged(int,int)),this,SLOT(slotCellChange(int,int)));
 }
 
 DV::realTimewidget::~realTimewidget()
@@ -190,5 +191,21 @@ int DV::GetdecimalBit(double& value)
 		fspace = fspace - static_cast<double>(valinter);
 	}
 	return index;
+}
+
+/**
+* @time	2021/12/27
+* @brief DV::realTimewidget::slotCellChange 
+* @param int r
+* @param int c
+* @return void
+*/
+void DV::realTimewidget::slotCellChange(int r, int c)
+{
+	ScalarTableItem* item=dynamic_cast<ScalarTableItem*>(ui->tableWidget->item(r, c));
+	if (item == nullptr)
+		return;
+	double val = item->text().toDouble();
+	item->setValue(val);
 }
 #include "moc_realTimewidget.cpp"
