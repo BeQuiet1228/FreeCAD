@@ -142,8 +142,9 @@ namespace DV {
 	* @return Data::ValuesPtr
 	*/
 	void TimeData::dataToFFT(Data::Rang xr) {
-		//initpoints = *points;
-		Data::Values nowPoints;
+		initPoints = *points;//将当前数据记录再initpoints中，便于恢复数据
+		this->initXr = xr;
+		nowPoints.clear();
 		//确定现在的左右边界的index
 		int n = (*points).size() / 2;
 		int indexL = findIndexFromXValueR(xr.min);
@@ -169,6 +170,8 @@ namespace DV {
 			nowPoints.emplace_back(Ydata[index]);
 		}
 		*points = nowPoints;
+		nowXr.min = nowPoints[0];
+		nowXr.max = nowPoints[num * 2];
 
 		//暂时用来看FFT后的数据的TXT文本，后面能够对数据保存后删除
 		/*std::ofstream cppWrite;
@@ -233,9 +236,24 @@ namespace DV {
 		return XYRange;
 	}
 	
-	void TimeData::recoverData() {
-		*points = initpoints;
-		int n = (*points).size() / 2;
-		int n1 = (initpoints).size() / 2;
+	/*
+	@ 将points重新指向记录的数据
+	*/
+	bool TimeData::recoverInitData(const float& xMin, const float xMax) {
+		if (initPoints.empty() || xMin != initXr.min || xMax != initXr.max)
+			return false;
+		*points = initPoints;
+		return true;
 	}
+
+	/*
+	@ 将points重新指向更改后的数据
+	*/
+	bool TimeData::recoverNowData(const float& xMin, const float xMax) {
+		if (nowPoints.empty() || xMin != nowXr.min || xMax != nowXr.max)
+			return false;
+		*points = nowPoints;
+		return true;
+	}
+
 };

@@ -28,8 +28,11 @@ namespace DV {
 		bool initXYRang() override;
 	private:
 		//所有的点数据
-		Data::ValuesPtr points;
-		Data::Values initpoints;//原始数据
+		Data::ValuesPtr points;//显示的指针
+		Data::Values initPoints;//原始数据
+		Data::Rang initXr;
+		Data::Values nowPoints;//当前数据
+		Data::Rang nowXr;
 		void fft(std::vector<float>& initdata, float fs);
 		std::vector<Values> pointsContain;
 
@@ -37,6 +40,7 @@ namespace DV {
 		//对数据points进行FFT变换生成新的数据
 		void dataToFFT(Data::Rang xr);
 		std::vector<float> TimeData::getXYRange();
-		void recoverData();
+		bool recoverInitData(const float& xMin, const float xMax);
+		bool recoverNowData(const float& xMin, const float xMax);
 	};
 };
