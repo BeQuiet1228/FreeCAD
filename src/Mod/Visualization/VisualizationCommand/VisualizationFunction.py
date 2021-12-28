@@ -206,4 +206,3 @@ FreeCADGui.addCommand('Vis_Struct_grid', Struct_grid())
 # FreeCADGui.addCommand('Modeling 2D', Modeling2DWorkbench())
 # FreeCADGui.addCommand('Modeling 3D', Modeling3DWorkbench())
 # FreeCADGui.addCommand('Simulation', SimulationWorkbench())
-import SwitchWorkbench

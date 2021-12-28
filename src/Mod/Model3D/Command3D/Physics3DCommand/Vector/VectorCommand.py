@@ -27,7 +27,7 @@ class CreateVectorCommand:
         Form.exec_()
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Physics/PhysicsResources/vec.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Model3D/Resources3D/Physics/vec.svg"
         MenuText = Tools3D.QT_TRANSLATE_NOOP(
             'CreateVector',
             '矢量图')

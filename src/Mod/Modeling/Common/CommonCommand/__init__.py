@@ -3,4 +3,3 @@ import NewDocument
 # import SimulationWorkbench
 # import PostProcessingWorkbench
 import OtherToolbarCommand
-import SwitchWorkbench
