@@ -143,7 +143,6 @@ namespace DV {
 	{
 		Plot::connect(renderManager.get(), SIGNAL(allWorkFinished()), &plot, SLOT(renderFinished()));
 		Plot::connect(this, SIGNAL(updatePlot()), &plot, SLOT(reRender()));
-		this->plot = &plot;
 	}
 
 	std::list<QAction*> PlotAdapter::getActions()
@@ -324,6 +323,11 @@ namespace DV {
 	std::shared_ptr<DV::UndoRedoStack> PlotAdapter::getUndoRedoStack()
 	{
 		return URStack;
+	}
+
+	UndoRedoStack::DataPtr PlotAdapter::CreateUndoRedoData(const Data::Rang& xr, const Data::Rang& yr) {
+		UndoRedoStack::DataPtr  URData(new UndoRedoData(xr, yr));
+		return URData;
 	}
 
 };

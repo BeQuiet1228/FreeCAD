@@ -5,6 +5,11 @@
 #include "fftw3.h"
 
 namespace DV {
+	enum Alogrithm {
+		InitData = 0,
+		DataForFFT = 1
+	};
+
 	class TimeData :public XYData {
 	public:
 		TimeData(Hdf5Data& h5Data, const RunMod& mod = SINGLE_THREAD);
@@ -26,21 +31,21 @@ namespace DV {
 	protected:
 		//初始化xy的范围
 		bool initXYRang() override;
+
 	private:
 		//所有的点数据
 		Data::ValuesPtr points;//显示的指针
-		Data::Values initPoints;//原始数据
-		Data::Rang initXr;
-		Data::Values nowPoints;//当前数据
-		Data::Rang nowXr;
 		void fft(std::vector<float>& initdata, float fs);
-		std::vector<Values> pointsContain;
+
+		void printheadList();
 
 	public:
 		//对数据points进行FFT变换生成新的数据
-		void dataToFFT(Data::Rang xr);
-		std::vector<float> TimeData::getXYRange();
-		bool recoverInitData(const float& xMin, const float xMax);
-		bool recoverNowData(const float& xMin, const float xMax);
+		void dataToFFT(Data::Rang xr);		
+		Data::ValuesPtr getPointsPtr();
+
+	public:
+		int FunOfAlogrithm;//用来记录是否做过变换，为一个枚举值，后续可以增加枚举
+
 	};
 };

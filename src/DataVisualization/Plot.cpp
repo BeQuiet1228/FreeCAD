@@ -56,7 +56,7 @@ namespace DV {
 		//创建坐标轴网格渲染任务
 		creatGridRenderTask();
 		//更新信息显示label
-		//updateInformationLabel();
+		updateInformationLabel();
 		adapter->reRender(this->canvas->size());
 	}
 
@@ -178,7 +178,7 @@ namespace DV {
 		//清空撤销恢复栈，将新的操作压入
 		auto URStack = adapter->getUndoRedoStack();
 		URStack->clear();
-		UndoRedoStack::DataPtr  URData(new UndoRedoData(adapter->getAxisBottomRange(), adapter->getAxisLeftRange()));
+		UndoRedoStack::DataPtr URData(adapter->CreateUndoRedoData(adapter->getAxisBottomRange(), adapter->getAxisLeftRange()));
 		URStack->push(URData);
 	}
 
@@ -429,7 +429,8 @@ namespace DV {
 
 		//将操作压入栈
 		auto URStack = adapter->getUndoRedoStack();
-		UndoRedoStack::DataPtr unData(new UndoRedoData(xr, yr));
+		//UndoRedoStack::DataPtr unData(new UndoRedoData(xr, yr));
+		UndoRedoStack::DataPtr unData(adapter->CreateUndoRedoData(xr, yr));
 		URStack->push(unData);
 
 		//设置渲染范围

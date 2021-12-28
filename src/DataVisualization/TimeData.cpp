@@ -38,7 +38,17 @@ namespace DV {
 		//初始化范围
 		initXYRang();
 
-		return true;
+		//由于在initInformation中做过错误判断，所以这里不需要再做判断
+		QString str = QString::fromStdString(headList.at(0));
+		QStringList sl = str.split("$");
+		if (sl.at(3).toStdString().find("Frequency") != std::string::npos) {
+			this->FunOfAlogrithm = DataForFFT;
+		}
+		else {
+			this->FunOfAlogrithm = InitData;
+		}
+
+		return true; 
 	}
 
 	std::string TimeData::getInformationTitle()
@@ -142,9 +152,7 @@ namespace DV {
 	* @return Data::ValuesPtr
 	*/
 	void TimeData::dataToFFT(Data::Rang xr) {
-		initPoints = *points;//将当前数据记录再initpoints中，便于恢复数据
-		this->initXr = xr;
-		nowPoints.clear();
+		std::vector<float> nowPoints;
 		//确定现在的左右边界的index
 		int n = (*points).size() / 2;
 		int indexL = findIndexFromXValueR(xr.min);
@@ -170,16 +178,7 @@ namespace DV {
 			nowPoints.emplace_back(Ydata[index]);
 		}
 		*points = nowPoints;
-		nowXr.min = nowPoints[0];
-		nowXr.max = nowPoints[num * 2];
-
-		//暂时用来看FFT后的数据的TXT文本，后面能够对数据保存后删除
-		/*std::ofstream cppWrite;
-		std::ofstream file_writer("C:\\Users\\Administrator\\Desktop\\cppWrite.txt", std::ios_base::out);
-		cppWrite.open("C:\\Users\\Administrator\\Desktop\\cppWrite.txt");
-		for (int i = 0; i < Ydata.size(); i++) {
-			cppWrite << Ydata[i] << std::endl;
-		}*/
+		printheadList();
 	}
 
 	/**
@@ -218,42 +217,20 @@ namespace DV {
 
 		//释放out
 		fftw_free(out);
-		//fftw_free(out);
 	}
 
-	std::vector<float> TimeData::getXYRange() {
-		//确定现在的左右边界的index
-		std::vector<float> XYRange;
-		auto xr = getXRang();
-
-		////屏蔽第一个直流信号的显示
-		//int indexL = findIndexFromXValueL(xr.min) + 1;
-
-		int indexL = findIndexFromXValueL(xr.min);
-		int indexR = findIndexFromXValueR(xr.max);
-		XYRange.emplace_back(points->at(indexL * 2));
-		XYRange.emplace_back(points->at(indexR * 2));
-		return XYRange;
-	}
-	
-	/*
-	@ 将points重新指向记录的数据
-	*/
-	bool TimeData::recoverInitData(const float& xMin, const float xMax) {
-		if (initPoints.empty() || xMin != initXr.min || xMax != initXr.max)
-			return false;
-		*points = initPoints;
-		return true;
+	Data::ValuesPtr TimeData::getPointsPtr() {
+		return points;
 	}
 
-	/*
-	@ 将points重新指向更改后的数据
-	*/
-	bool TimeData::recoverNowData(const float& xMin, const float xMax) {
-		if (nowPoints.empty() || xMin != nowXr.min || xMax != nowXr.max)
-			return false;
-		*points = nowPoints;
-		return true;
+	void TimeData::printheadList() {
+		//暂时用来看FFT后的数据的TXT文本，后面能够对数据保存后删除
+		std::ofstream cppWrite;
+		std::ofstream file_writer("C:\\Users\\Administrator\\Desktop\\cppWrite.txt", std::ios_base::out);
+		cppWrite.open("C:\\Users\\Administrator\\Desktop\\cppWrite.txt");
+		for (int i = 0; i < headList.size(); i++) {
+			cppWrite << headList[i] << std::endl;
+		}
 	}
 
 };

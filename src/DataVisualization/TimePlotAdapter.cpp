@@ -6,42 +6,51 @@
 #include "RenderThreadManager.h"
 #include "Plot.h"
 #include "TimeRenderer.h"
-#include <qdir.h>
 #include <qcoreapplication.h>
-#include "HDF5Reader/hdf5io.h"
 
 namespace DV {
+	TimeUndoRedoData::TimeUndoRedoData(const Data::Rang& xr, const Data::Rang& yr) :UndoRedoData(xr, yr), point(NULL) {
+
+	}
+
+	TimeUndoRedoData::TimeUndoRedoData(int FunOfAlogrithm, std::vector<float> point, std::string Xtag, std::string Ytag, const Data::Rang& xr, const Data::Rang& yr)
+		: FunOfAlogrithm(FunOfAlogrithm), point(point), Xtag(Xtag), Ytag(Ytag), UndoRedoData(xr, yr) {
+		
+	}
+
+
 	TimePlotAdapter::TimePlotAdapter(std::list<std::shared_ptr<Renderer>>& listRender)
 	{
 		addRenderer(listRender);
 		initAction();
-		this->listRender = listRender;
-		undoSignal = "";
+		initTimeData();
 	}
 
 	TimePlotAdapter::~TimePlotAdapter()
 	{
 		delete this->Fourier;
-		//delete this->saveData;
 	}
 
 	void TimePlotAdapter::initAction() {
 		Fourier = new QAction(this);
-		//saveData = new QAction(this);
 		Fourier->setIcon(QIcon(":/ActionIcon/contour_image_on.svg"));
 		Fourier->setText(QString::fromUtf8("Fourier"));
-		//saveData->setIcon(QIcon(":/ActionIcon/contour_image_on.svg"));
-		//saveData->setText(QString::fromUtf8("Save Data"));
 		connect(Fourier, SIGNAL(triggered()), SLOT(FourierTrigger()));
-		//connect(saveData, SIGNAL(triggered()), SLOT(saveDataFunc()));
 	}
 
 	std::list<QAction*> TimePlotAdapter::getActions()
 	{
 		std::list<QAction*> actions;
 		actions.push_back(Fourier);
-		//actions.push_back(saveData);
 		return actions;
+	}
+
+	/*
+	初始化和TimeData的关系
+	*/
+	void TimePlotAdapter::initTimeData() {
+		std::shared_ptr<TimeRenderer> d = std::dynamic_pointer_cast<TimeRenderer>(mainRenderer);
+		this->Timedata = std::dynamic_pointer_cast<TimeData>(d->getData());
 	}
 
 	/*
@@ -60,15 +69,17 @@ namespace DV {
 		auto xr = rd->xr;
 		auto yr = rd->yr;
 		
-		auto xd = std::dynamic_pointer_cast<XYData>(Timedata);
-		if (xd != nullptr && xd->getXTag() == "Frequency(Hz)" && Timedata->recoverInitData(xr.min, xr.max)) {
-			setMainRenderer(this->listRender.back());
-			xd->setXTag("Time(ns)");//更新坐标Tag
-			xd->setYTag("Watts");
-			plot->updateInformationLabel();
-			undoSignal = "Fourier";
-		}
-		
+		std::shared_ptr<TimeUndoRedoData> Timerd = std::dynamic_pointer_cast<TimeUndoRedoData>(rd);
+
+		*(Timedata->getPointsPtr()) = Timerd->point;
+		setMainRenderer(mainRenderer);
+
+		//更新坐标Tag
+		Timedata->setXTag(Timerd->Xtag);
+		Timedata->setYTag(Timerd->Ytag);
+		Timedata->FunOfAlogrithm = InitData;//还原变换
+		emit updatePlot();
+
 		setRenderRange(xr.min, xr.max, yr.min, yr.max);
 		return true;
 	}
@@ -81,26 +92,24 @@ namespace DV {
 		auto xr = rd->xr;
 		auto yr = rd->yr;
 
-		auto xd = std::dynamic_pointer_cast<XYData>(Timedata);
-		if (this->undoSignal == "Fourier" && Timedata->recoverNowData(xr.min, xr.max)) {
-			setMainRenderer(this->listRender.back());
-			xd->setXTag("Frequency(Hz)");//更新坐标Tag
-			xd->setYTag("Watts\\GHz");
-			plot->updateInformationLabel();
-			undoSignal = "";
-		}
-		
+		std::shared_ptr<TimeUndoRedoData> Timerd = std::dynamic_pointer_cast<TimeUndoRedoData>(rd);
+
+		*(Timedata->getPointsPtr()) = Timerd->point;
+		setMainRenderer(mainRenderer);
+
+		//更新坐标Tag
+		Timedata->setXTag(Timerd->Xtag);
+		Timedata->setYTag(Timerd->Ytag);
+		Timedata->FunOfAlogrithm = Timerd->FunOfAlogrithm;//还原变换
+		emit updatePlot();
+
 		setRenderRange(xr.min, xr.max, yr.min, yr.max);
 		return true;
 	}
 
 	//为action添加点击函数
 	void TimePlotAdapter::FourierTrigger() {
-		std::shared_ptr<Renderer> TimePtr = this->listRender.back();
-		std::shared_ptr<TimeData> d = std::dynamic_pointer_cast<TimeRenderer>(TimePtr)->getTimedata();
-		this->Timedata = d;
-		auto xd = std::dynamic_pointer_cast<XYData>(d);
-		if (xd->getXTag() == "Frequency(Hz)") {
+		if (Timedata->FunOfAlogrithm == DataForFFT) {
 			errorDialog = new FourierDialog();
 			errorDialog->exec();
 			delete errorDialog;
@@ -108,44 +117,34 @@ namespace DV {
 		}
 
 		Data::Rang xr = getAxisBottomRange();
-		d->dataToFFT(xr);//对数据进行处理
-		
+		Timedata->dataToFFT(xr);//对数据进行处理
+
 		//重新渲染
-		setMainRenderer(TimePtr);
-		//Hdf5IO::getCurPath();
-		xd->setXTag("Frequency(Hz)");//更新坐标Tag
-		xd->setYTag("Watts\\GHz");
-		plot->updateInformationLabel();
-		dataInStack();//将操作入栈
-		
+		setMainRenderer(mainRenderer);
+		Timedata->FunOfAlogrithm = DataForFFT;//更新FFT标识符
+		Timedata->setXTag("Frequency(Hz)");//更新坐标Tag
+		Timedata->setYTag("Watts\\GHz");
+
+		dataIntoStack();//将操作入栈
+
 		emit updatePlot();
 	}
 
 	//将操作压入栈
-	void TimePlotAdapter::dataInStack() {
+	void TimePlotAdapter::dataIntoStack() {
 		Data::Rang xr = getAxisBottomRange();
 		Data::Rang yr = getAxisLeftRange();
-		UndoRedoStack::DataPtr unData(new UndoRedoData(xr, yr));
-		URStack->push(unData);
+		URStack->push(CreateUndoRedoData(xr, yr));
 	}
 
-	//void TimePlotAdapter::saveDataFunc() {
-	//	//std::string path = "C:/Users/Administrator/Desktop/TestMode/test_data/chipic//GYRO-C.h5";
-	//	////MainRendererDataSaveAs(path); 
-	//	//auto data = TimePtr->getData();
-	//	//data->saveAs(path);
-	//	plot->SaveAs("./FFT.png");
-	//	
-	//	QDir temDir("./FFT.png");
-	//	QString filePath = temDir.absolutePath();
-	//	std::string tmp = filePath.toStdString();
-	//	QString applicationDirPath;
-	//	applicationDirPath = QCoreApplication::applicationDirPath();
-	//	std::string tmp1 = applicationDirPath.toStdString();
-	//	applicationDirPath = QCoreApplication::applicationFilePath();
-	//	std::string tmp2 = applicationDirPath.toStdString();
-	//	
-	//}
+	//创建UndoRedoData数据
+	UndoRedoStack::DataPtr TimePlotAdapter::CreateUndoRedoData(const Data::Rang& xr, const Data::Rang& yr) {
+		std::vector<float> point = *(Timedata->getPointsPtr());
+		int FunOfAlogrithm = Timedata->FunOfAlogrithm;
+
+		UndoRedoStack::DataPtr unData(new TimeUndoRedoData(FunOfAlogrithm, point, Timedata->getXTag(), Timedata->getYTag(), xr, yr));
+		return unData;
+	}
 };
 
 #include "moc_TimePlotAdapter.cpp"

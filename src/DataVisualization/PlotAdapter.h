@@ -16,17 +16,15 @@ namespace DV {
 	public:
 		PlotAdapter();
 		~PlotAdapter();
-
-	public:
-		Plot* plot;
+		//主渲染器
+		std::shared_ptr<Renderer> mainRenderer;
 
 	protected:
 		//渲染管理器
 		std::shared_ptr<RenderThreadManager> renderManager;
 		//从渲染器
 		std::list<std::shared_ptr<Renderer>> subRenderers;
-		//主渲染器
-		std::shared_ptr<Renderer> mainRenderer;
+		
 		//撤销恢复栈
 		std::shared_ptr<UndoRedoStack> URStack;
 
@@ -90,6 +88,8 @@ namespace DV {
 		//撤销恢复操作
 		virtual bool undo();
 		virtual bool redo();
+		//创建UndoRedoData
+		virtual UndoRedoStack::DataPtr CreateUndoRedoData(const Data::Rang& xr, const Data::Rang& yr);
 	Q_SIGNALS:
 		void updatePlot();
 	};

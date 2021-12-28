@@ -6,6 +6,18 @@
 #include "TimeData.h"
 
 namespace DV {
+	class TimeUndoRedoData :public UndoRedoData{
+	public:
+		TimeUndoRedoData(const Data::Rang& xr, const Data::Rang& yr);
+		TimeUndoRedoData(int FunOfAlogrithm, std::vector<float> point, std::string Xtag, std::string Ytag, const Data::Rang& xr, const Data::Rang& yr);
+		TimeUndoRedoData() = default;
+
+		Data::Rang xr, yr;
+		std::string Xtag, Ytag;
+		std::vector<float> point;
+		int FunOfAlogrithm;
+	};
+
 	class TimePlotAdapter :public PlotAdapter {
 		Q_OBJECT
 	public:
@@ -14,25 +26,21 @@ namespace DV {
 
 	public Q_SLOTS:
 		void FourierTrigger();
-		//void saveDataFunc();
 
 	public:
 		std::list<QAction*> getActions() override;
+		UndoRedoStack::DataPtr CreateUndoRedoData(const Data::Rang& xr, const Data::Rang& yr) override;
 		bool undo() override;
 		bool redo() override;
-		void dataInStack();//将操作压入栈
+		void dataIntoStack();//将操作压入栈
 
 	private:
 		QAction* Fourier;
-		QAction* saveData;
 		QDialog* errorDialog;
-		std::list<std::shared_ptr<Renderer>> listRender;
-		std::shared_ptr<TimeData> Timedata;
+		std::shared_ptr<TimeData> Timedata;//初始和TimeData的关系
 
 	private:
 		void initAction();
-
-	private:
-		std::string undoSignal;//记录功能键的undo操作信号
+		void initTimeData();
 	};
 };

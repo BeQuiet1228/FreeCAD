@@ -54,10 +54,14 @@ void DV::UndoRedoStack::clear()
 	clearStack(undoStack);
 }
 
-void DV::UndoRedoStack::clearStack(DataStack stack)
+void DV::UndoRedoStack::clearStack(DataStack& stack)
 {
 	while (!stack.empty())
 	{
 		stack.pop();
 	}
+}
+
+void DV::UndoRedoData::printTmp() {
+
 }
