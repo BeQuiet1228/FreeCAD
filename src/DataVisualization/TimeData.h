@@ -5,6 +5,7 @@
 #include "fftw3.h"
 
 namespace DV {
+	//后续的所有算法都通过这里枚举
 	enum Alogrithm {
 		InitData = 0,
 		DataForFFT = 1
@@ -36,8 +37,6 @@ namespace DV {
 		//所有的点数据
 		Data::ValuesPtr points;//显示的指针
 		void fft(std::vector<float>& initdata, float fs);
-
-		void printheadList();
 
 	public:
 		//对数据points进行FFT变换生成新的数据

@@ -178,7 +178,6 @@ namespace DV {
 			nowPoints.emplace_back(Ydata[index]);
 		}
 		*points = nowPoints;
-		printheadList();
 	}
 
 	/**
@@ -221,16 +220,6 @@ namespace DV {
 
 	Data::ValuesPtr TimeData::getPointsPtr() {
 		return points;
-	}
-
-	void TimeData::printheadList() {
-		//暂时用来看FFT后的数据的TXT文本，后面能够对数据保存后删除
-		std::ofstream cppWrite;
-		std::ofstream file_writer("C:\\Users\\Administrator\\Desktop\\cppWrite.txt", std::ios_base::out);
-		cppWrite.open("C:\\Users\\Administrator\\Desktop\\cppWrite.txt");
-		for (int i = 0; i < headList.size(); i++) {
-			cppWrite << headList[i] << std::endl;
-		}
 	}
 
 };

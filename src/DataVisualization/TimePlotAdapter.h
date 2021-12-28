@@ -9,6 +9,10 @@ namespace DV {
 	class TimeUndoRedoData :public UndoRedoData{
 	public:
 		TimeUndoRedoData(const Data::Rang& xr, const Data::Rang& yr);
+		/*
+		根据需求导入参数
+		point记录每个节点的数据
+		*/
 		TimeUndoRedoData(int FunOfAlogrithm, std::vector<float> point, std::string Xtag, std::string Ytag, const Data::Rang& xr, const Data::Rang& yr);
 		TimeUndoRedoData() = default;
 
@@ -37,7 +41,7 @@ namespace DV {
 	private:
 		QAction* Fourier;
 		QDialog* errorDialog;
-		std::shared_ptr<TimeData> Timedata;//初始和TimeData的关系
+		std::shared_ptr<TimeData> Timedata;//初始和TimeData的关系，通过initTimeData在构造函数中被初始化
 
 	private:
 		void initAction();

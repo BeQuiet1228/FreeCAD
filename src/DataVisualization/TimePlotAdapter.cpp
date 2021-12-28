@@ -71,6 +71,7 @@ namespace DV {
 		
 		std::shared_ptr<TimeUndoRedoData> Timerd = std::dynamic_pointer_cast<TimeUndoRedoData>(rd);
 
+		//通过对TimeUndoRedoData初始化构造的参数，可以适配以后的其他变换的undo和redo
 		*(Timedata->getPointsPtr()) = Timerd->point;
 		setMainRenderer(mainRenderer);
 
