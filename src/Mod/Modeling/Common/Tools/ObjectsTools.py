@@ -442,10 +442,24 @@ def setInitTransparency(obj):
     FreeCADGui.ActiveDocument.getObject(obj.Name).Transparency=95
 
 # 新建模型后，该模型最大视图
+def setObjToFitTheView (obj):
+    '''
+    obj:    被放到适合位置的物体
+    return: none
+    '''
+    # TypeId:对象在C++中的TypeId,本程序所有的模型均为“Part::PartFeature”
+    if obj.TypeId == "Part::FeaturePython":
+        #清除所有的选择
+        Gui.Selection.clearSelection()
+        # 增加当前选择
+        Gui.Selection.addSelection(obj)
+        # 将当前选择的物体放在镜头前合适位置
+        Gui.SendMsgToActiveView("ViewSelection")
+
 def setFitViewOfObject(obj):
-    import GuiTools
-    GuiTools.setObjToFitTheView(obj)
+    setObjToFitTheView(obj)
     FreeCADGui.ActiveDocument.getObject(obj.Name).Transparency=0
+
 # 判断是数还是字符串
 def isNumber(n):
     result=True
