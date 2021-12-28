@@ -27,13 +27,16 @@ HDF5DataItem* HDF5DataItem3DFactory::CreatStructDataItem(Hdf5Data& data, HDF5Dat
 	{
 		parentItem = new HDF5DataItem(gbkStdstringToQstring("3D结构图"));
 	}
-	//创建两个结构图对象
-	auto gridItem = new HDF5DataItem(data, "Grid");
-	itemSetHander(gridItem);
-	auto structItem = new HDF5DataItem(data, "Struct");
+	//如果不是直角坐标系则创建两个项
+	if (Hdf5Data::CoordinateSystem::CARTESIAN != data.coordinateSystem)
+	{
+		auto gridItem = new HDF5DataItem(data, "Struct");
+		itemSetHander(gridItem);
+		parentItem->addSubItem(gridItem);
+	}
+	auto structItem = new HDF5DataItem(data, "Grid");
 	itemSetHander(structItem);
 
-	parentItem->addSubItem(gridItem);
 	parentItem->addSubItem(structItem);
 	
 	return parentItem;

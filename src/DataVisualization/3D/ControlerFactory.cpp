@@ -87,26 +87,15 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucControler(Hdf
 	}
 	else if (Hdf5Data::CoordinateSystem::POLAR == h5data.coordinateSystem)
 	{
-		
-		if (findStringAttribute(h5data.headList.at(1)) > 20)
-		{
-			constructor.reset(new PolarStructDaraSetConstruct());
-			pipeline.reset(new CartesianStructActorPipeline());
-		}else {
-			constructor.reset(new PolarPlanConstruct());
-			pipeline.reset(new PolarStructActorPipeline);
-		}
+		constructor.reset(new PolarStructDaraSetConstruct());
+		pipeline.reset(new CartesianStructActorPipeline());
+
 	}
 	else if (Hdf5Data::CoordinateSystem::CYLINDER == h5data.coordinateSystem)
 	{
-		if (findStringAttribute(h5data.headList.at(2)) > 20)
-		{
-			constructor.reset(new CylinderStructDataSetConstructor());
-			pipeline.reset(new CartesianStructActorPipeline());
-		}else{
-			constructor.reset(new CylinderPlanConstruct());
-			pipeline.reset(new PolarStructActorPipeline());
-		}
+		constructor.reset(new CylinderStructDataSetConstructor());
+		pipeline.reset(new CartesianStructActorPipeline());
+
 	}else {
 		assert(true && "unknown coordinate system!");
 	}
@@ -116,6 +105,39 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucControler(Hdf
 	controler.reset(new Controler());
 	controler->setActorPipeline(pipeline);
 	
+	return controler;
+}
+
+/**
+* @brief DV3D::ControlerFactory::CreatStrucRotateControler 创建通过旋转获得的结构图，仅支持圆柱坐标系和极坐标系
+* @param Hdf5Data & h5data
+* @return std::shared_ptr<DV3D::Controler> 构造失败返回nullptr
+*/
+std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucRotateControler(Hdf5Data& h5data)
+{
+
+	std::shared_ptr<Controler> controler;
+	std::shared_ptr<DataSetConstructorH5> constructor;
+	std::shared_ptr<ActorPipemline> pipeline(new PolarStructActorPipeline);
+
+	if (Hdf5Data::CoordinateSystem::CARTESIAN == h5data.coordinateSystem)
+	{
+		return nullptr;
+	}
+	else if (Hdf5Data::CoordinateSystem::POLAR == h5data.coordinateSystem)
+	{
+		constructor.reset(new PolarPlanConstruct());
+	}
+	else if (Hdf5Data::CoordinateSystem::CYLINDER == h5data.coordinateSystem)
+	{
+		constructor.reset(new CylinderPlanConstruct());
+	}
+
+	constructor->setHdf5Data(h5data);
+	pipeline->setDataSet(constructor->creatDataset());
+	pipeline->connect();
+	controler.reset(new Controler);
+	controler->setActorPipeline(pipeline);
 	return controler;
 }
 
