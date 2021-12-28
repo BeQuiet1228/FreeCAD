@@ -8,8 +8,6 @@ class FileWorkbench(Workbench):
         self.__class__.MenuText = "Files"
         self.__class__.ToolTip = "File workbench"
 
-    import FileCommand.FileActions
-
     def Initialize(self):
         cmdlst = ["File_SaveAs",
                   "File_Recent",

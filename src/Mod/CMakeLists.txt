@@ -152,7 +152,6 @@ if(BUILD_TUX)
 endif(BUILD_TUX)
 
 #新添加路径
-add_subdirectory(CustomParameter)
 add_subdirectory(Communication)
 #add_subdirectory(Control) 丢弃
 add_subdirectory(ErrorFunction)

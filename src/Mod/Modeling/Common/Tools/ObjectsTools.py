@@ -6,7 +6,6 @@ import re
 import FreeCADGui as Gui
 import CoordinateSystemTools
 import CoordinateSystemTools,DocumentTools
-from File.FileCommand.M3DFile import GetCommandByParameter
 import Part
 import UnitTools
 

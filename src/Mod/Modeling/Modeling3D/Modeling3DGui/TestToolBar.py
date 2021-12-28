@@ -1,5 +1,4 @@
 # -*- coding: UTF-8 -*-
-import CustomParameter
 def Load(workbench):
     # fileList = ["Std_New"]
     # workbench.appendToolbar('File', fileList)
