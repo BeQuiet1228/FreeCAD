@@ -46,6 +46,11 @@ void DV3D::ControlerItem::addAction(std::shared_ptr<ControlerAction> action)
 	toolButtonMap.insert(value);
 }
 
+void DV3D::ControlerItem::setName(const QString& name)
+{
+	ui->labelName->setText(name);
+}
+
 void DV3D::ControlerItem::initGui()
 {
 	//°ó¶¨ÍÏ¶¯Ìõ
