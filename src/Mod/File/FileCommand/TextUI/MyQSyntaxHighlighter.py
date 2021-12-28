@@ -1,8 +1,23 @@
 #-*- coding: utf-8 -*-
 
 from PySide import QtCore, QtGui
-from File.FileCommand.M3DFile.CHIPICCommand import keywordInCommand
-import FreeCAD
+# 定义涉及到的关键字
+keywordInCommand = ["FUNCTION",
+                    "START", "STOP",
+                    "SYSTEM", "POINT", "LINE", "AREA", "VOLUME",
+                    "DURATION", "TIMER", "MARK", "AUTOGRID",
+                    "SYMMETRY", "PORT", "FREESPACE",
+                    "CONDUCTANCE", "DIELECTRIC", "CONDUCTOR", "VOID", "MATERIAL", "FOIL", "INDUCTOR", "DRIVER",
+                    "EMISSION", "EMIT",
+                    "MAXWELL", "MODE", "TIME_STEP",
+                    "CONTINUITY",
+                    "PRESET",
+                    "GRAPHICS", "DUMP", "HEADER",
+                    "OBSERVE",
+                    "DISPLAY", "CONTOUR", "VECTOR", "PHASESPACE", "RANGE",
+                    "KINEMATICS"]
+
+
 class Highlighter(QtGui.QSyntaxHighlighter):
     def __init__(self, parent=None):
         super(Highlighter, self).__init__(parent)

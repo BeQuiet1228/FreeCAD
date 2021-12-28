@@ -33,7 +33,7 @@ INSTALL(
 SET(Sources_Srcs
 Resources
 importHDF5.py
-importM3D.py
+# importM3D.py
 importOBJ2.py
 )
 File(COPY ${Sources_Srcs} DESTINATION ${CMAKE_BINARY_DIR}/Mod/Import)
