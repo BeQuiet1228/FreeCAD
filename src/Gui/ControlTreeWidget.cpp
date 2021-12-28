@@ -431,6 +431,7 @@ void ControlTreeWidget::openResultFile(std::string path)
 	//清空临时文件窗口
 	mw->ClearVisualizationTree();
 	mw->dataVisualizationTree->loadHdf5Datas(hdf5IO.hdf5DataList);
+	mw->showVisualizationTree();
 }
 
 
