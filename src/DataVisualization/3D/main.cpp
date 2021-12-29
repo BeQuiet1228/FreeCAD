@@ -57,24 +57,10 @@ int main(int argc, char* argv[])
 	io.initHdf5Data();
 
 	auto datalist = io.hdf5DataList;
+#if 0
 	if (datalist.size() == 0)
 		return 0;
-
-	auto iter = datalist.begin()+1;
-	//Hdf5Data structData,paticle3d,contour;
-	//
-	//for (; iter != datalist.end(); iter++)
-	//{
-	//	if (iter->name == "struct")
-	//		structData = *iter;
-	//
-	//	if (iter->name == "")
-	//		paticle3d = *iter;
-	//	if (iter->name == "CONTOUR" && contour.name =="")
-	//		contour = *iter;
-	//}
-
-
+	auto iter = datalist.begin() + 1;
 	Widget3D* w3d = new Widget3D();
 
 	ControlerFactory controlerFactor;
@@ -91,6 +77,18 @@ int main(int argc, char* argv[])
 	auto item = ControlerItemFactor::CreatContour3dControlerItem();
 	item->setControler(contour3dContrler);
 	item->show();
-
+#endif
+	if (datalist.size() < 4)
+		return 0;
+	ControlerFactory controlerFactory;
+	auto vector3dContrler = controlerFactory.CreatVector3dControler(datalist);
+	auto structControler = controlerFactory.CreatStrucControler(*datalist.begin());
+	Widget3D* w3d = new Widget3D();
+	w3d->binding(vector3dContrler.get());
+	w3d->binding(structControler.get());
+	w3d->show();
+	auto item = ControlerItemFactor::CreatContour3dControlerItem();
+	item->setControler(structControler);
+	item->show();
 	return a.exec();
 }

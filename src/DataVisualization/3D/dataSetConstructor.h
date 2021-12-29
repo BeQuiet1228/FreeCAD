@@ -5,6 +5,7 @@
 #include <vtknew.h>
 #include <vtkSmartPointer.h>
 #include <HDF5Reader/hdf5io.h>
+#include "vector"
 namespace DV
 {
 	class Data;
@@ -39,7 +40,19 @@ namespace DV3D {
 		Hdf5Data h5data;
 	};
 
-
+	class DataSetConstructorH5S : public DataSetConstructor {
+	public:
+		DataSetConstructorH5S() = default;
+		~DataSetConstructorH5S() = default;
+	public:
+		//设置原始数据
+		void setHdf5Datas(std::vector<Hdf5Data> h5d);
+		std::vector<Hdf5Data> getHdf5Datas();
+		Hdf5Data getStructData();
+	private:
+		std::vector<Hdf5Data> h5datas;//矢量数据
+		Hdf5Data structH5data;//结构数据
+	};
 	//通过DataVisualization项目中的Data数据构造vtkDataSet数据
 	class DataSetConstructorFor2DData :public DataSetConstructor {
 	public:
