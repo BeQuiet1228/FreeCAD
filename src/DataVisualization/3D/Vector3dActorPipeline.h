@@ -13,7 +13,5 @@ namespace DV3D
 		void update() override;
 		void connect() override;
 	private:
-		vtkSmartPointer<vtkArrowSource> arrowSource;
-		vtkSmartPointer<vtkGlyph3D> glyph;
 	};
 }
