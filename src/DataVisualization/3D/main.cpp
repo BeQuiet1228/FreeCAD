@@ -32,6 +32,7 @@
 #include "controlerItemFactor.h"
 #include "DataVisualization/ContourData.h"
 #include "ContourDataSetConstructor.h"
+#include "vtkOutputWindow.h"
 #ifndef INIT_VTK_OPENGL_AND_FRNT	//防止多次初始化模块
 #define INIT_VTK_OPENGL_AND_FRNT
 #include <vtkAutoInit.h>
@@ -44,6 +45,7 @@ using namespace DV3D;
 
 int main(int argc, char* argv[])
 {
+	//vtkOutputWindow::SetGlobalWarningDisplay(0);
 	QApplication a(argc, argv);
 
 	QFileDialog* fileDialog = new QFileDialog();
@@ -57,10 +59,10 @@ int main(int argc, char* argv[])
 	io.initHdf5Data();
 
 	auto datalist = io.hdf5DataList;
-#if 0
+#if 1
 	if (datalist.size() == 0)
 		return 0;
-	auto iter = datalist.begin() + 1;
+	auto iter = datalist.begin() + 3;
 	Widget3D* w3d = new Widget3D();
 
 	ControlerFactory controlerFactor;
@@ -78,6 +80,7 @@ int main(int argc, char* argv[])
 	item->setControler(contour3dContrler);
 	item->show();
 #endif
+#if 0
 	if (datalist.size() < 4)
 		return 0;
 	ControlerFactory controlerFactory;
@@ -90,5 +93,6 @@ int main(int argc, char* argv[])
 	auto item = ControlerItemFactor::CreatContour3dControlerItem();
 	item->setControler(structControler);
 	item->show();
+#endif
 	return a.exec();
 }

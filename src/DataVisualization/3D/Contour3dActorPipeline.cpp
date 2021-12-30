@@ -12,6 +12,7 @@ DV3D::Contour3dActorPipline::Contour3dActorPipline() :contourSurfarCount(10), is
 	rang.valMin = 0.0f;
 	rang.valMax = 1.0f;
 	file = vtkSmartPointer<vtkContourFilter>::New();
+	normal = vtkSmartPointer<vtkPolyDataNormals>::New();
 }
 
 DV3D::Contour3dActorPipline::~Contour3dActorPipline()
@@ -27,7 +28,14 @@ void DV3D::Contour3dActorPipline::update()
 void DV3D::Contour3dActorPipline::connect()
 {
 	initFilter();
-	connectClipperToMapper(file->GetOutput());
+	normal->SetInputConnection(file->GetOutputPort());
+	normal->ComputeCellNormalsOff();
+	normal->ComputePointNormalsOn();
+	normal->SetSplitting(0);
+	normal->SetAutoOrientNormals(1);
+	normal->SetFeatureAngle(30);
+	normal->Update();
+	connectClipperToMapper(normal->GetOutput());
 	auto mp = getMapper();
 	mp->SetScalarRange(rang.valMin,rang.valMax);
 	mp->ScalarVisibilityOn();
@@ -72,6 +80,8 @@ void DV3D::Contour3dActorPipline::setContourValues(std::vector<ContourValue>& va
 	file->SetNumberOfContours(values.size());
 	for (auto index=0;index<values.size();index++)
 		file->SetValue(index,values[index]);
+	file->SetComputeNormals(0);
+	file->SetComputeGradients(0);
 	file->Update();
 	isInit = true;
 }
@@ -93,6 +103,8 @@ void DV3D::Contour3dActorPipline::initFilter()
 	rang.valMin = rangs[0];
 	rang.valMax = rangs[1];
 	file->GenerateValues(contourSurfarCount,rangs);
+	file->SetComputeNormals(0);
+	file->SetComputeGradients(0);
 	file->Update();
 	isInit = true;
 }
