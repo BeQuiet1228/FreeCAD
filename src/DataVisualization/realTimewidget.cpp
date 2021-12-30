@@ -402,6 +402,11 @@ int DV::getBitInt(const double value)
 int DV::getBitDec(const double value)
 {
 	int index = 0;
+	/*
+	如果传入的数值为0的情况，直接返回
+	*/
+	if (!(abs(value) > 0.0f))
+		return index;
 	//获取小鼠部分
 	double valueDec = abs(value);
 	while (valueDec < 1.0f)
