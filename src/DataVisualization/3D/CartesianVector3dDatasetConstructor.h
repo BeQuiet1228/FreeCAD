@@ -14,7 +14,7 @@ namespace DV3D
 		Theta,
 		Axis_NUll
 	};
-	class CartesianVector3dDatasetConstructor :public DataSetConstructorH5S
+	class CartesianVector3dDatasetConstructor :public DataSetConstructorH5
 	{
 	public:
 		CartesianVector3dDatasetConstructor();
@@ -25,14 +25,20 @@ namespace DV3D
 		void initDatas();
 		void loadStructPoint();
 		void initGrid(vtkIdType x,vtkIdType y,vtkIdType z);
-		std::vector<vtkPoint3d> generateVectorData(Hdf5Data& h5d);
-		void mergeDatas(std::vector<std::vector<vtkPoint3d>>&);
+		std::vector<vtkPoint3d> generateVectorData();
+		void mergeDatas(std::vector<vtkPoint3d>&);
 		vtkIdType getPointId(vtkIdType zi,vtkIdType yi,vtkIdType xi);
 		AxisDir getAxisDir(Hdf5Data& h5d);
+		//测试
+		vtkPoint3d getMergeVector(
+			std::vector<vtkPoint3d>& datas,
+			vtkIdType zi,vtkIdType yi,vtkIdType xi,
+			vtkIdType zUnit,vtkIdType yUnit,vtkIdType xUnit);
 	private:
 		vtkSmartPointer<vtkPoints> structPoint;
 		vtkSmartPointer<vtkPolyData> polyData;
 		vtkIdType xGridSize, yGridSize, zGridSize;
+		vtkIdType xUnit, yUnit, zUnit;//矢量网格的合并方阵
 		double scaleFactor;//缩放因子
 	};
 }
