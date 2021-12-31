@@ -759,7 +759,7 @@ bool Hdf5Data::initM2dStructInformation()
 	if (sl.at(2) != "STRUCTRUE")
 		return false;
 
-	name = "struct";
+	name = "struct2d";
 	return true;
 }
 

@@ -71,8 +71,12 @@ SET( STRUCT_SRC
 	PolarStructActorPipeline.h
 	PolarStructActorPipeline.cpp
 )
-
-
+SET(VECTOR3D_SRC
+	CartesianVector3dDatasetConstructor.h
+	CartesianVector3dDatasetConstructor.cpp
+	Vector3dActorPipeline.h
+	Vector3dActorPipeline.cpp
+)
 SET(PARTICLE_SRC 
 	particle3dDataSetConstructor.cpp
 	particle3dDataSetConstructor.h
@@ -102,6 +106,7 @@ SET(CONTOUR3D_SRCS
 	Contour3dControlerWidget.h
 	Contour3dControlerWidget.cpp
 )
+
 SET(UI_SRC
 	ControlerItem.ui
 	ClipPlaneWidget.ui
@@ -140,6 +145,7 @@ SET(DataVisualization3D_src
 	${PARTICLE_SRC}
 	${CONTOUR_SRCS}
 	${CONTOUR3D_SRCS}
+	${VECTOR3D_SRC}
 	)
 
 	
@@ -151,7 +157,7 @@ source_group("resource" FILES ${Gui_QRC_SRCs} ${QRC_SRC})
 source_group("particle3d" FILES ${PARTICLE_SRC})
 source_group("contour" FILES ${CONTOUR_SRCS})
 source_group("contour3d" FILES ${CONTOUR3D_SRCS})
-
+source_group("vector3d" FILES ${VECTOR3D_SRC})
 #add_executable(DataVisualization3D ${DataVisualization3D_src})
 add_definitions(-D_DATA_VISUALIZATION_3D)
 

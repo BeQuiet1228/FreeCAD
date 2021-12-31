@@ -9,6 +9,9 @@
 DV3D::PolarContour3dDatasetConstructor::PolarContour3dDatasetConstructor()
 	: rGridSize(0), thetaGridSize(0), zGridSize(0)
 {
+	points=nullptr;
+	scalars=nullptr;
+	angles.clear();
 	setResolution(40);
 }
 DV3D::PolarContour3dDatasetConstructor::~PolarContour3dDatasetConstructor()

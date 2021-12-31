@@ -32,6 +32,7 @@
 #include "controlerItemFactor.h"
 #include "DataVisualization/ContourData.h"
 #include "ContourDataSetConstructor.h"
+#include "vtkOutputWindow.h"
 #ifndef INIT_VTK_OPENGL_AND_FRNT	//防止多次初始化模块
 #define INIT_VTK_OPENGL_AND_FRNT
 #include <vtkAutoInit.h>
@@ -44,6 +45,7 @@ using namespace DV3D;
 
 int main(int argc, char* argv[])
 {
+	//vtkOutputWindow::SetGlobalWarningDisplay(0);
 	QApplication a(argc, argv);
 
 	QFileDialog* fileDialog = new QFileDialog();
@@ -57,33 +59,19 @@ int main(int argc, char* argv[])
 	io.initHdf5Data();
 
 	auto datalist = io.hdf5DataList;
+#if 1
 	if (datalist.size() == 0)
 		return 0;
-
-	auto iter = datalist.begin()+1;
-	//Hdf5Data structData,paticle3d,contour;
-	//
-	//for (; iter != datalist.end(); iter++)
-	//{
-	//	if (iter->name == "struct")
-	//		structData = *iter;
-	//
-	//	if (iter->name == "")
-	//		paticle3d = *iter;
-	//	if (iter->name == "CONTOUR" && contour.name =="")
-	//		contour = *iter;
-	//}
-
-
+	auto iter = datalist.begin();
 	Widget3D* w3d = new Widget3D();
 
 	ControlerFactory controlerFactor;
 	//auto controler = controlerFactor.CreatParticle3dControler(paticle3d);
-	//auto structControler = controlerFactor.CreatStrucControler(structData);
+	auto structControler = controlerFactor.CreatStrucControler(*iter);
 	//auto contourControler = controlerFactor.CreatContourControler(*iter);
-	auto contour3dContrler = controlerFactor.CreatContour3dControler(*iter);
+	auto contour3dContrler = controlerFactor.CreatContour3dControler(*(iter+1));
 	//w3d->binding(controler.get());
-	//w3d->binding(structControler.get());
+	w3d->binding(structControler.get());
 	//w3d->binding(contourControler.get());
 	w3d->binding(contour3dContrler.get());
 	w3d->show();
@@ -91,6 +79,20 @@ int main(int argc, char* argv[])
 	auto item = ControlerItemFactor::CreatContour3dControlerItem();
 	item->setControler(contour3dContrler);
 	item->show();
-
+#endif
+#if 0
+	if (datalist.size() < 4)
+		return 0;
+	ControlerFactory controlerFactory;
+	auto vector3dContrler = controlerFactory.CreatVector3dControler(datalist);
+	auto structControler = controlerFactory.CreatStrucControler(*datalist.begin());
+	Widget3D* w3d = new Widget3D();
+	w3d->binding(vector3dContrler.get());
+	w3d->binding(structControler.get());
+	w3d->show();
+	auto item = ControlerItemFactor::CreatContour3dControlerItem();
+	item->setControler(structControler);
+	item->show();
+#endif
 	return a.exec();
 }

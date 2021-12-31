@@ -18,7 +18,8 @@
 #include "Contour3dataSetConstructor.h"
 #include "PolarContour3dDataSetConstructor.h"
 #include "Contour3dActorPipeline.h"
-
+#include "CartesianVector3dDatasetConstructor.h"
+#include "Vector3dActorPipeline.h"
 #include"Contour3dControler.h"
 #include <cassert>
 
@@ -69,6 +70,30 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContour3dControler
 	pipeline->setDataSet(constructor->creatDataset());
 	pipeline->connect();
 	controler.reset(new Contour3dControler());
+	controler->setActorPipeline(pipeline);
+	return controler;
+}
+
+
+/**
+* @time	2021/12/29
+* @brief DV3D::ControlerFactory::CreatVector3dControler
+* @param std::vector<Hdf5Data> & h5datas
+* @return std::shared_ptr<DV3D::Controler>
+*/
+std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatVector3dControler(std::vector<Hdf5Data>& h5datas)
+{
+	std::shared_ptr<Controler> controler;
+	std::shared_ptr<DataSetConstructorH5S> constructor;
+	std::shared_ptr<ActorPipemline> pipeline;
+	auto iter = h5datas.begin();
+	if (Hdf5Data::CoordinateSystem::CARTESIAN == iter->coordinateSystem)
+		constructor.reset(new CartesianVector3dDatasetConstructor());
+	constructor->setHdf5Datas(h5datas);
+	pipeline.reset(new Vector3dActorPipeline());
+	pipeline->setDataSet(constructor->creatDataset());
+	pipeline->connect();
+	controler.reset(new Controler());
 	controler->setActorPipeline(pipeline);
 	return controler;
 }
