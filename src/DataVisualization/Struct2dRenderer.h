@@ -54,6 +54,5 @@ namespace DV {
 		std::map<unsigned __int64, QPixmap> pixmap;
 		bool isAA;
 	};
-};
-
+}
 #endif

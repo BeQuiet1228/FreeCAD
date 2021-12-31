@@ -6,9 +6,11 @@
 #include "StructRender.h"
 #include <QDebug>
 #include "StructData.h"
+#include "QVector"
 namespace DV {
 	void chang2colormap(QPixmap& map, QColor& color);
 	QString line2icon[] = { ":/struct/C.png", ":/struct/a.png", ":/struct/s.png" };
+
 	Struct2DRenderer::Struct2DRenderer(std::shared_ptr<Struct2dData> data) :
 		Renderer(std::dynamic_pointer_cast<Data> (data)) {
 
@@ -577,4 +579,5 @@ namespace DV {
 		}
 		map = QPixmap::fromImage(img);
 	}
-};
+}
+
