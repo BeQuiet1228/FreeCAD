@@ -24,13 +24,51 @@ namespace DV {
 
 	}
 	Struct2DRenderer::~Struct2DRenderer() {  }
-	/**
-	* @brief Struct2DRenderer::drawImage()
-	* @return bool
-	*/
 	bool Struct2DRenderer::drawImage() {
-		//return drawPloy();
-		return getPloy_grid();
+		float xScale, yScale;
+		if (!getTransitionScale(xScale, yScale))
+			return false;
+		std::shared_ptr<Struct2dData> d = std::dynamic_pointer_cast<Struct2dData>(data);
+		//获取x,y的取值范围
+		auto xr = getXRang();
+		auto yr = getYRang();
+		//开始绘制
+		QImage img(getSize(), QImage::Format_ARGB32);
+		img.fill(qRgba(0.0, 0.0, 0.0, 0.0));
+		QPainter painter(&img);
+		painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+		//多边形绘制
+		std::vector<QImage> imgs;
+		std::map<int, std::map<int, std::vector<QPointF>>> map = d->GetAllinfo();
+		for (auto iter = map.begin(); iter != map.end(); iter++)
+		{
+			//根据多边形的网格的编号绘制
+			for (auto iterpro = iter->second.begin(); iterpro != iter->second.end(); iterpro++)
+			{
+				auto imgit = createImg(iterpro, xr, yr, xScale, yScale);
+				painter.drawImage(0, 0, imgit);
+			}
+		}
+		//绘制线段
+		std::map<int, std::map<int, std::vector<QPointF>>> mlines = d->getLineF();
+		for (auto iter = mlines.begin(); iter != mlines.end(); iter++)
+		{
+			for (auto iter2 = iter->second.begin(); iter2 != iter->second.end(); iter2++)
+			{
+				auto iterColor = pixmap.find(iter2->first);
+				if (iterColor == pixmap.end() && 2 != iter2->second.size())
+					continue;
+				QLineF line(iter2->second[0], iter2->second[1]);
+				transitionLineF(line, xScale, yScale, xr, yr);
+				QLine iline = QLine(QPoint(line.p1().x(), line.p1().y()), QPoint(line.p2().x(), line.p2().y()));
+				DrawLine(painter, line, iter2->first);
+
+			}
+		}
+		auto nImg = img.mirrored(false, true);
+		setImage(nImg);
+		return true;
+
 	}
 	/**
 	* @brief Struct2DRenderer::addListRang
@@ -184,16 +222,14 @@ namespace DV {
 		//
 		for (auto iter = map.begin(); iter != map.end(); iter++)
 		{
-			auto itercolor = color_tab.find(iter->first);
-			if (itercolor != color_tab.end())
+			for (auto iter2 = iter->second.begin(); iter2 != iter->second.end(); iter2++)
 			{
-				for (auto iter2 = iter->second.begin(); iter2 != iter->second.end(); iter2++)
-				{
-					poss.insert(poss.end(), iter2->second.begin(), iter2->second.end());
-				}
+				auto itercolor = color_tab.find(iter2->first);
+				if (itercolor == color_tab.end())
+					continue;
+				poss.insert(poss.end(), iter2->second.begin(), iter2->second.end());
 			}
 		}
-		//
 		for (auto iter = lines.begin(); iter != lines.end(); iter++)
 		{
 			auto itercolor = pixmap.find(iter->first);
@@ -225,150 +261,109 @@ namespace DV {
 		return dpos;
 	}
 	/**
-	* @brief Struct2DRenderer::SetColor 设置不同多边形的颜色
-	* @param int pro 多边形属性
-	* @param QColor _color 颜色
+	* @brief Struct2DRenderer::clipImg 对图像进行裁剪
+	* @param QImage & img
+	* @param QPolygonF & polyon 多边形数据
 	* @return void
+	* @time	2021/12/13
 	*/
+	void Struct2DRenderer::clipImg(QImage& img, QPolygonF& polyon)
+	{
+		QColor desAlpha(0, 0, 0, 0);
+		for (int w = 0; w < getSize().width(); ++w)
+		{
+			for (int h = 0; h < getSize().height(); ++h)
+			{
+				if (!polyon.containsPoint(QPointF(w, h), Qt::WindingFill))
+				{
+					img.setPixel(w, h, desAlpha.rgba());
+				}
+
+			}
+		}
+	}
+	/**
+	* @brief Struct2DRenderer::drawPolygons 绘制多边形
+	* @param QPainter & painter
+	* @param std::vector<QPointF> & points 多边形的顶点
+	* @return void
+	* @time	2021/12/13
+	*/
+	void Struct2DRenderer::drawPolygons(
+		QPainter& painter, std::vector<QPointF>& points)
+	{
+		QPainterPath painterPath;
+		auto iterpoint = points.begin();
+		painterPath.moveTo(*iterpoint); iterpoint++;
+		for (; iterpoint != points.end(); iterpoint++)
+			painterPath.lineTo(*iterpoint);
+		painter.drawPath(painterPath);
+		QVector<QLineF> linex = GetCurLine_x();
+		QVector<QLineF> liney = GetCutLine_y();
+		painter.drawLines(linex);
+		painter.drawLines(liney);
+		//裁剪
+	}
+	/**
+	* @brief Struct2DRenderer::createImg 创建图像
+	* @param std::map<int
+	* @param std::vector<QPointF>>::iterator & it 顶点数据，若只有两个顶点时绘制线段，否则绘制多边形
+	* @param Data::Rang & xr
+	* @param Data::Rang & yr
+	* @param float & xScale
+	* @param float & yScale
+	* @return QT_NAMESPACE::QImage
+	* @time	2021/12/13
+	*/
+	QImage Struct2DRenderer::createImg(
+		std::map<int, std::vector<QPointF>>::iterator& it,
+		Data::Rang& xr,
+		Data::Rang& yr,
+		float& xScale,
+		float& yScale)
+	{
+		QImage img1(getSize(), QImage::Format_ARGB32);
+		img1.fill(qRgba(0.0, 0.0, 0.0, 0.0));
+		//获取画刷颜色
+		auto colorbrush = color_tab.find(it->first);
+		auto colorpen = color_pen.find(it->first);
+		if (colorbrush == color_tab.end() || colorpen == color_pen.end())
+			return img1;
+		//创建画师
+		QPainter painter(&img1);
+		painter.setPen(QPen(colorpen.value()));
+		painter.setBrush(QBrush(colorbrush.value()));
+		painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+		auto points = it->second;
+		for (auto iter = points.begin(); iter != points.end(); iter++)
+			transitionPoint(*iter, xScale, xr, yScale, yr);
+		//绘制线段
+		if (it->second.size() == 2 && colorpen != color_pen.end())
+		{
+			QPen pen;
+			pen.setColor(colorpen.value());
+			pen.setStyle(Qt::DashLine);
+			pen.setWidth(5);
+			painter.setPen(pen);
+			painter.drawLine(QLineF(*points.begin(), *(points.begin() + 1)));
+			return img1;
+		}
+		QPolygonF polyF(QVector<QPointF>::fromStdVector(points));
+		//绘制多边形	
+		drawPolygons(painter, points);
+		//裁剪其余部分
+		clipImg(img1, polyF);
+		return img1;
+	}
 
 	/**
-	* @brief Struct2DRenderer::getPloy_grid 获取多边形的网格
+	* @brief Struct2DRenderer::DrawLine 绘制，端口，电源，导电杆三种属性的线段
+	* @param QPainter & painter
+	* @param QLineF & line
+	* @param int mPorper
 	* @return void
+	* @time	2021/12/13
 	*/
-	bool Struct2DRenderer::getPloy_grid() {
-		float xScale, yScale;
-		if (!getTransitionScale(xScale, yScale))
-			return false;
-		std::shared_ptr<Struct2dData> d = std::dynamic_pointer_cast<Struct2dData>(data);
-		//获取x,y的取值范围
-		auto xr = getXRang();
-		auto yr = getYRang();
-		//开始绘制
-		QImage img1(getSize(), QImage::Format_ARGB32);
-		img1.fill(qRgba(255, 255, 255, 255));
-		QPen pen(Qt::black);
-		pen.setWidth(1);
-		QPainter painter1(&img1);
-		painter1.setPen(pen);
-		std::vector<QPointF> allpos = d->ALLPOINTF();
-		int XSize = d->getposxSize();
-		int YSize = d->getposySize();
-
-		//绘制第二张图
-		QImage img2(getSize(), QImage::Format_ARGB32);
-		img2.fill(qRgba(255, 255, 255, 255));
-		QPainter painter2(&img2);
-		painter2.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-		std::map<int, std::map<int, std::vector<QPointF>>> map = d->GetAllinfo();
-		QVector<QVector<QLineF>> lines_list;
-		QVector<linepen> linepenlist;
-		for (auto iter = map.begin(); iter != map.end(); iter++)
-		{
-			//修改根据多边形网格的编号绘制。
-			for (auto iterpro = iter->second.begin(); iterpro != iter->second.end(); iterpro++)
-			{
-				auto itercolor = color_tab.find(iterpro->first);
-				if (itercolor != color_tab.end())
-				{
-					QBrush brush(itercolor.value());
-					painter1.setBrush(brush);
-					painter2.setBrush(brush);
-					if (iterpro->second.size() == 2)
-					{
-						linepen _linepen;
-						auto linestyle = color_pen.find(iter->first);
-						if (linestyle != color_pen.end())
-						{
-							_linepen.pen = linestyle.value();
-							_linepen.pen.setStyle(Qt::DashLine);
-							_linepen.pen.setWidth(5);
-							auto iterpoint = (*iterpro).second.begin();
-							transitionPoint(*iterpoint, xScale, xr, yScale, yr);
-							transitionPoint(*(iterpoint + 1), xScale, xr, yScale, yr);
-							_linepen.line = QLineF((*iterpoint), *(iterpoint + 1));
-							linepenlist.push_back(_linepen);
-						}
-					}
-					if (iterpro->second.size() > 2)
-					{
-						QPainterPath _path;
-						auto iterpoint = (*iterpro).second.begin();
-						transitionPoint(*iterpoint, xScale, xr, yScale, yr);
-						_path.moveTo(*iterpoint); iterpoint++;
-						for (; iterpoint != (*iterpro).second.end(); iterpoint++)
-						{
-							transitionPoint(*iterpoint, xScale, xr, yScale, yr);
-							_path.lineTo(*iterpoint);
-						}
-						QVector<QLineF> lines = Getlines((*iterpro).second);
-						painter2.fillPath(_path, QBrush(QColor(0, 0, 0, 0)));
-						painter1.drawPath(_path);
-						lines_list.push_back(lines);
-					}
-				}
-			}
-		}
-#pragma region 
-		//绘制横向切割线
-		QPen lastpen1 = painter1.pen();
-		QPen newPen;
-		newPen.setWidth(1);
-		newPen.setColor(color_pen[3]);
-		painter1.setPen(newPen);
-		QVector<QLineF> liney = GetCutLine_y();
-		QVector<QLineF> linex = GetCurLine_x();
-		painter1.drawLines(linex);
-		painter1.drawLines(liney);
-
-#pragma endregion
-		painter1.setCompositionMode(QPainter::CompositionMode_SourceOver);
-		painter1.drawImage(0, 0, img2);
-		for each (QVector<QLineF> var in lines_list)
-		{
-			painter1.drawLines(var);
-		}
-		//绘制线段
-		/**********************************************/
-		for each (linepen var in linepenlist)
-		{
-			painter1.setPen(var.pen);
-			painter1.drawLine(var.line);
-		}
-		painter1.setPen(lastpen1);
-		//绘制线段
-		std::map<int, std::map<int, std::vector<QPointF>>> mlines = d->getLineF();
-		for (auto iter = mlines.begin(); iter != mlines.end(); iter++)
-		{
-			for (auto iter2 = iter->second.begin(); iter2 != iter->second.end(); iter2++)
-			{
-				auto iterColor = pixmap.find(iter2->first);
-				if (iterColor == pixmap.end() && 2 != iter2->second.size())
-					continue;
-				QLineF line(iter2->second[0],iter2->second[1]);
-				transitionLineF(line, xScale, yScale, xr, yr);
-				QLine iline = QLine(QPoint(line.p1().x(), line.p1().y()), QPoint(line.p2().x(), line.p2().y()));
-				DrawLine(painter1,line,iter2->first);
-
-			}
-		}
-		/**********************************************/
-		auto nImg = img1.mirrored(false, true);
-		//替换白色为透明色
-		QColor srColor(255, 255, 255, 255);
-		QColor desAlpha(0, 0, 0, 0);
-		for (int w = 0; w < nImg.width(); ++w)
-		{
-			for (int h = 0; h < nImg.height(); ++h)
-			{
-				if (nImg.pixel(w, h) == srColor.rgb())
-				{
-					nImg.setPixel(w, h, desAlpha.rgba());
-				}
-			}
-		}
-		setImage(nImg);
-		return true;
-	}
 	void Struct2DRenderer::DrawLine(QPainter& painter, QLineF& line, int mPorper)
 	{
 		QSize pngSize = pixmap[mPorper].size();
@@ -431,6 +426,20 @@ namespace DV {
 			}
 		}
 	}
+	void Struct2DRenderer::transitionPoint(QPointF& point, const float& xScale, const Data::Rang& xr, const float& yScale, const Data::Rang& yr)
+	{
+		point.setX(transitionX(point.x(), xScale, xr));
+		point.setY(transitionY(point.y(), yScale, yr));
+	}
+	float Struct2DRenderer::transitionX(const float& x, const float& xScale, const Data::Rang& xr)
+	{
+		return (x - xr.min) * xScale;
+	}
+	float Struct2DRenderer::transitionY(const float& y, const float& yScale, const Data::Rang& yr)
+	{
+		return (y - yr.min) * yScale;
+	}
+
 	/**
 	* @brief Struct2DRenderer::transitionLineF
 	* @param QLineF & line
@@ -451,89 +460,6 @@ namespace DV {
 		p2.setY(transitionY(p2.y(), yScale, yr));
 		line.setP1(p1);
 		line.setP2(p2);
-	}
-	/**
-	* @brief Struct2DRenderer::drawPloy 绘制多边形
-	* @return bool
-	*/
-	bool Struct2DRenderer::drawPloy()
-	{
-		float xScale, yScale;
-		if (!getTransitionScale(xScale, yScale))
-			return false;
-		std::shared_ptr<Struct2dData> d = std::dynamic_pointer_cast<Struct2dData>(data);
-		//获取x,y的取值范围
-		auto xr = getXRang();
-		auto yr = getYRang();
-
-		//两张图用于合并
-		//图1
-		QImage img1(getSize(), QImage::Format_ARGB32);
-		img1.fill(qRgba(255, 255, 255, 255));
-		QPen pen(Qt::black);
-		pen.setWidth(1);
-		QPainter painter1(&img1);
-		painter1.setPen(pen);
-
-		//图2
-		QImage img2(getSize(), QImage::Format_ARGB32);
-		img2.fill(qRgba(255, 255, 255, 255));
-		QPainter painter2(&img2);
-		painter2.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-		std::map<int, std::map<int, std::vector<QPointF>>> allinfo = d->GetAllinfo();
-		for (auto iter = allinfo.begin(); iter != allinfo.end(); iter++)
-		{
-			//查找是否有对应颜色
-			auto iterColor = color_tab.find(iter->first);
-			if (iterColor != color_tab.end())
-			{
-				QBrush brush(iterColor.value());
-				painter1.setBrush(brush);
-				painter2.setBrush(brush);
-				for (auto iterline = iter->second.begin(); iterline != iter->second.end(); iterline++)
-				{
-					if (iterline->second.size() > 2)
-					{
-						QPainterPath _path;
-						auto iterpoint = iterline->second.begin();
-						transitionPoint(*iterpoint, xScale, xr, yScale, yr);
-						for (; iterpoint != iterline->second.end(); iterpoint++)
-						{
-							transitionPoint(*iterpoint, xScale, xr, yScale, yr);
-							_path.lineTo(*iterpoint);
-						}
-						painter2.fillPath(_path, QBrush(QColor(0, 0, 0, 0)));
-						painter1.drawPath(_path);
-					}
-				}
-			}
-		}
-
-		//绘制横向切割线
-		QVector<QLineF> liney = GetCutLine_y();
-		QVector<QLineF> linex = GetCurLine_x();
-		painter1.drawLines(linex);
-		painter1.drawLines(liney);
-		painter1.setCompositionMode(QPainter::CompositionMode_SourceOver);
-		painter1.drawImage(0, 0, img2);
-		//绘制线段
-
-		auto nImg = img1.mirrored(false, true);
-		QColor srColor(255, 255, 255, 255);
-		QColor desAlpha(0, 0, 0, 0);
-		for (int w = 0; w < nImg.width(); ++w)
-		{
-			for (int h = 0; h < nImg.height(); ++h)
-			{
-				if (nImg.pixel(w, h) == srColor.rgb())
-				{
-					nImg.setPixel(w, h, desAlpha.rgba());
-				}
-			}
-		}
-		setImage(nImg);
-
-		return true;
 	}
 	QVector<QLineF> Struct2DRenderer::GetCurLine_x() {
 		QVector<QLineF> lines;
@@ -651,5 +577,4 @@ namespace DV {
 		}
 		map = QPixmap::fromImage(img);
 	}
-
 };

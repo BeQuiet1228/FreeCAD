@@ -82,7 +82,9 @@ namespace DV {
 			InterspaceRender* r = new InterspaceRender(d);
 			return RendererPtr(r);
 		}
-		else if (h5d.name == "struct") {
+		else if (h5d.name == "struct"
+				|| h5d.name=="struct2d")
+		{
 			return creatStructRender(h5d, type);
 		}
 		else if (h5d.name == "VECTOR")
