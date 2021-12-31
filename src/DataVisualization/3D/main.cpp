@@ -62,16 +62,16 @@ int main(int argc, char* argv[])
 #if 1
 	if (datalist.size() == 0)
 		return 0;
-	auto iter = datalist.begin() + 3;
+	auto iter = datalist.begin();
 	Widget3D* w3d = new Widget3D();
 
 	ControlerFactory controlerFactor;
 	//auto controler = controlerFactor.CreatParticle3dControler(paticle3d);
-	//auto structControler = controlerFactor.CreatStrucControler(structData);
+	auto structControler = controlerFactor.CreatStrucControler(*iter);
 	//auto contourControler = controlerFactor.CreatContourControler(*iter);
-	auto contour3dContrler = controlerFactor.CreatContour3dControler(*iter);
+	auto contour3dContrler = controlerFactor.CreatContour3dControler(*(iter+1));
 	//w3d->binding(controler.get());
-	//w3d->binding(structControler.get());
+	w3d->binding(structControler.get());
 	//w3d->binding(contourControler.get());
 	w3d->binding(contour3dContrler.get());
 	w3d->show();
