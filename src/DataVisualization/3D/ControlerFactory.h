@@ -2,6 +2,8 @@
 #include <memory>
 #include <string>
 #include "DataVisualization3DExport.hpp"
+#include "vector"
+#include "HDF5Reader/hdf5io.h"
 class Hdf5Data;
 namespace DV3D {
 	class Controler;
@@ -22,6 +24,8 @@ namespace DV3D {
 		static std::shared_ptr<Controler> CreatContourControler(Hdf5Data& h5data);
 		//创建3d等位图
 		static std::shared_ptr<Controler> CreatContour3dControler(Hdf5Data& h5data);
+		//创建3d矢量图
+		static std::shared_ptr<Controler> CreatVector3dControler(std::vector<Hdf5Data>& h5datas);
 		//寻找字符串中的长度信息
 		static int findStringAttribute(const std::string& str);
 	};

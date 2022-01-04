@@ -29,6 +29,7 @@ namespace DV3D
 		void initFilter();
 	private:
 		vtkSmartPointer<vtkContourFilter> file;
+		vtkSmartPointer<vtkPolyDataNormals> normal;
 		//double scalarMin, scalarMax;
 		ContourRang rang;
 		int contourSurfarCount;//默认构造时，等值面的取值数量

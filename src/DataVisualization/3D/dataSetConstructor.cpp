@@ -32,3 +32,24 @@ std::shared_ptr<DV::Data> DV3D::DataSetConstructorFor2DData::getSourceData()
 {
 	return this->data;
 }
+
+void DV3D::DataSetConstructorH5S::setHdf5Datas(std::vector<Hdf5Data> h5ds)
+{
+	h5datas.clear(); 
+	for (auto iter = h5ds.begin(); iter != h5ds.end(); iter++)
+	{
+		if (iter->name != "struct")
+			h5datas.push_back(*iter);
+		else
+			structH5data = *iter;
+	}
+}
+
+std::vector<Hdf5Data> DV3D::DataSetConstructorH5S::getHdf5Datas()
+{
+	return h5datas;
+}
+Hdf5Data DV3D::DataSetConstructorH5S::getStructData()
+{
+	return structH5data;
+}

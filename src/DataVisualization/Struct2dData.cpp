@@ -1,17 +1,8 @@
 #include "Struct2dData.h"
 namespace DV {
-	/**
-	* @brief  Struct2dData::Struct2dData
-	* @param  Hdf5Data & heData
-	* @param  const RunMod & mode
-	* @return
-	*/
 	Struct2dData::Struct2dData(Hdf5Data& heData, const RunMod& mode) :XYData(heData, mode), istrue(false) {
 	}
-	/**
-	* @brief  Struct2dData::~Struct2dData
-	* @return
-	*/
+
 	Struct2dData::~Struct2dData() {
 	}
 	/**
@@ -35,15 +26,19 @@ namespace DV {
 		Data::ValuesPtr IM1X = *it; it++;
 		Data::ValuesPtr IM2X = *it;
 		Rang xr, yr;
+
 		//x
-		auto itx = IM1X->begin();
-		xr.min = 0.0;//*itx;
+		auto itx = IM1X->begin(); itx++;//取第二个
+		xr.min =*itx;
+
 		itx = IM1X->end() - 1;
 		xr.max = *itx;
 		setXRang(xr);
 		//y
-		auto ity = IM2X->begin();
-		yr.min = 0.0;//*ity;
+
+		auto ity = IM2X->begin(); ity++;////取第二个
+		yr.min = *ity;
+
 		ity = IM2X->end() - 1;
 		yr.max = *ity;
 		setYRang(yr);
@@ -181,28 +176,6 @@ namespace DV {
 		mstart = start;
 		mend = end;
 	}
-
-	/**************************************/
-	Data::Rang Struct2dData::getXRang()
-	{
-		std::lock_guard<std::mutex> am(xRangMutex);
-		return xRang;
-	}
-	Data::Rang Struct2dData::getYRang()
-	{
-		std::lock_guard<std::mutex> am(yRangMutex);
-		return yRang;
-	}
-	void Struct2dData::setXRang(const Rang& xr)
-	{
-		std::lock_guard<std::mutex> am(xRangMutex);
-		xRang = xr;
-	}
-	void Struct2dData::setYRang(const Rang& yr)
-	{
-		std::lock_guard<std::mutex> am(yRangMutex);
-		yRang = yr;
-	}
 	int Struct2dData::getposxSize()
 	{
 		return posxSize;
@@ -222,4 +195,6 @@ namespace DV {
 	{
 		return ALLPointf;
 	}
+
+
 }

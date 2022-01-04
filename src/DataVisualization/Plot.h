@@ -53,8 +53,6 @@ namespace DV {
 		QwtScaleEngine* scaleEngine;
 		//图例是否可用
 		bool axisRightEnabled;
-		//撤销恢复栈
-		std::shared_ptr<UndoRedoStack> URStack;
 		//图表网格线渲染器
 		std::shared_ptr<Renderer> gridRender;
 		//坐标轴网格等级

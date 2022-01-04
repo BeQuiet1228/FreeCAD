@@ -861,6 +861,7 @@ function resultDataFilter()
     end
 	index = index + 1;
  end
+ printInformation();
  return true;
 end
 
@@ -874,7 +875,8 @@ function resultExpcet()
  --判断目标模式
 if(excpectMod == 0)
 then
-	if(math.abs(pgtF - excpectF) &lt; (accuracy * pgtF))
+	--cppPrint(&quot;pgtF&quot;..pgtF..&quot;,excpectF:&quot;..excpectF..&quot;,accuracy:&quot;..accuracy);
+	if(math.abs(pgtF - excpectF) &lt; accuracy * math.abs(pgtF))
  	then
 	return true;
 	end
@@ -895,8 +897,10 @@ function optimize()
  do
      local index = 1;
      local tempVariate = variates[variateIndex];
+	 --cppPrint(&quot;variateIndex:&quot;..variateIndex);
 	 while(index &lt; valueCount + 1)
 	 do
+		--cppPrint(&quot;index:&quot;..index)
         local temp = 0;
         local value = tempVariate.variate[index];
 		local vit = tempVariate.vit[index];
@@ -907,8 +911,10 @@ function optimize()
 		vmax=(max-mini)*0.15;
 		vmin = -vmax;
         temp = omiga*vit + c1*rand()*(pit - value) + c2*rand()*(pgt - value);
+		--cppPrint(&quot;omiga:&quot;..omiga..&quot;,vit:&quot;..vit..&quot;,cl:&quot;..c1..&quot;,pit:&quot;..pit..&quot;,pgt:&quot;..pgt..&quot;,value:&quot;..value);
 		while(temp &lt; vmin  or temp &gt; vmax )
 		do 
+			--cppPrint(&quot;temp&quot;..temp..&quot;,vmin:&quot;..vmin..&quot;,vmax:&quot;..vmax);
 		  if (temp &lt; vmin)
           then 
               temp = vmin  + math.abs(temp  - vmin )	
@@ -920,6 +926,7 @@ function optimize()
         value = value + temp;
 		while(value &lt; mini or value &gt; max)
 		do
+			--cppPrint(&quot;value:&quot;..value..&quot;,mini:&quot;..mini..&quot;,max:&quot;..max);
 			if(value &lt; mini)
 			then
 				value = mini + math.abs(value - mini);
@@ -933,7 +940,6 @@ function optimize()
      variates[variateIndex] = tempVariate;
 	 variateIndex = variateIndex + 1;
  end
- printInformation();
  saveVarToFile();
  init();
 end</string>

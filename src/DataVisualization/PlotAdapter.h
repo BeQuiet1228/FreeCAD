@@ -4,6 +4,7 @@
 #include <list>
 #include "Data.h"
 #include "Canvas.h"
+#include "UndoRedoStack.h"
 #include <QAction>
 #include <QObject>
 namespace DV {
@@ -25,6 +26,9 @@ namespace DV {
 		std::list<std::shared_ptr<Renderer>> subRenderers;
 		//主渲染器
 		std::shared_ptr<Renderer> mainRenderer;
+		//撤销恢复栈
+		std::shared_ptr<UndoRedoStack> URStack;
+
 
 		//修改框架时从plot中移动过来的函数
 	public:
@@ -47,20 +51,15 @@ namespace DV {
 		//根据横纵比例显示
 		void setRatioDisplay(const double& horizonal, const double& vertical);
 		//清理从渲染器
-		void clearSubRenderer() {
-			subRenderers.clear();
-		}
+		void clearSubRenderer();
+		//获取撤销恢复栈
+		std::shared_ptr<UndoRedoStack> getUndoRedoStack();
 
 	public:
 		//取走渲染结果
 		std::list<CanvasItem> takeResut();
 		//获取图表信息
 		QString getInformationTitile();
-
-
-		virtual std::string getXTag();
-		virtual std::string getYTag();
-
 
 		//虚函数接口
 	public:
@@ -84,7 +83,12 @@ namespace DV {
 		virtual void setAxisRightRange(const float& min, const float& max);
 		//重渲染
 		virtual void reRender(const QSize& size);
-
+		//获取坐标轴标签
+		virtual std::string getXTag();
+		virtual std::string getYTag();
+		//撤销恢复操作
+		virtual bool undo();
+		virtual bool redo();
 	Q_SIGNALS:
 		void updatePlot();
 	};

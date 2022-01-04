@@ -59,7 +59,7 @@ void Gui::HDF5DataItem2DFactory::setStructData(Hdf5Data data)
 
 bool Gui::HDF5DataItem2DFactory::initDoubleClickHanderStructData(Hdf5Data& data)
 {
-	if (data.name != "struct")
+	if (data.name != "struct" && data.name!="struct2d")
 		return false;
 	auto hander = getEventHander();
 	auto hander2d = std::dynamic_pointer_cast<HDF5DataItem2DDoubleClickEventHander>(hander);
@@ -445,7 +445,7 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatStructDataItem(std::vector<H
 	HDF5DataItem* item = nullptr;
 	for (auto iter=datas.begin();iter!=datas.end();iter++)
 	{
-		if(iter->name!="struct")
+		if(iter->name!="struct" && iter->name!="struct2d")
 			continue;
 		auto h5data = *iter;
 		iter = datas.erase(iter);

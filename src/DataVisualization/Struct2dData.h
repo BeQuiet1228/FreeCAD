@@ -22,10 +22,6 @@ namespace DV {
 		virtual unsigned int findIndexFromXValueL(const float& x) override;
 		std::list<unsigned __int64> isAnAttribute(unsigned __int64 p, StructData::PROPERTYPE);
 	public:
-		Rang getXRang();
-		Rang getYRang();
-		void setXRang(const Rang& xr);
-		void setYRang(const Rang& yr);
 		int getposxSize();
 		int getposySize();
 		std::map<int, std::map<int, std::vector<QPointF>>> GetAllinfo();

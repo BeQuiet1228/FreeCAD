@@ -6,8 +6,9 @@
 #include "C_encoding.h"
 namespace DV {
 	PlotAdapter::PlotAdapter()
+		:URStack(new UndoRedoStack),renderManager(new RenderThreadManager)
 	{
-		renderManager.reset(new RenderThreadManager);
+
 	}
 
 	PlotAdapter::~PlotAdapter()
@@ -227,6 +228,28 @@ namespace DV {
 		return xd->getYTag();
 	}
 
+	bool PlotAdapter::undo()
+	{
+		UndoRedoStack::DataPtr rd;
+		if (!this->URStack->undo(rd))
+			return false;
+		auto xr = rd->xr;
+		auto yr = rd->yr;
+		setRenderRange(xr.min, xr.max, yr.min, yr.max);
+		return true;
+	}
+
+	bool PlotAdapter::redo()
+	{
+		UndoRedoStack::DataPtr rd;
+		if (!this->URStack->redo(rd))
+			return false;
+		auto xr = rd->xr;
+		auto yr = rd->yr;
+		setRenderRange(xr.min, xr.max, yr.min, yr.max);
+		return true;
+	}
+
 	void PlotAdapter::setRenderRange(const float& xMin, const float xMax, const float& yMin, const float& yMax)
 	{
 		Data::Rang xr(xMin, xMax), yr(yMin, yMax);
@@ -291,6 +314,17 @@ namespace DV {
 			(*iter)->setYRang(yr);
 		}
 	}
+
+	void PlotAdapter::clearSubRenderer()
+	{
+		subRenderers.clear();
+	}
+
+	std::shared_ptr<DV::UndoRedoStack> PlotAdapter::getUndoRedoStack()
+	{
+		return URStack;
+	}
+
 };
 
 
