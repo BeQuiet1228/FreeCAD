@@ -67,7 +67,7 @@ void DV3D::CartesianVector3dDatasetConstructor::initDatas()
 	std::vector<float>& zList = grid[3];
 	initGrid(xList.size(), yList.size(), zList.size());
 	/*
-		获取矢量数据
+		获取方向数据
 	*/
 	std::vector<vtkPoint3d> datas;
 	generateVectorData(datas,varList);
@@ -138,6 +138,14 @@ void DV3D::CartesianVector3dDatasetConstructor::generatePolyData(std::vector<vtk
 		scaleFactorZ * scaleFactorZ);
 	scaleFactor /= scalarMax;
 }
+
+/**
+* @time	2022/01/04
+* @brief DV3D::CartesianVector3dDatasetConstructor::generateVectorData 获取方向数据
+* @param std::vector<vtkPoint3d> & datas
+* @param std::vector<float> & varList
+* @return void
+*/
 void DV3D::CartesianVector3dDatasetConstructor::generateVectorData(std::vector<vtkPoint3d>& datas, std::vector<float>& varList)
 {
 	datas.clear();
@@ -166,7 +174,9 @@ vtkIdType DV3D::CartesianVector3dDatasetConstructor::getPointId(vtkIdType zi, vt
 */
 DV3D::vtkPoint3d DV3D::CartesianVector3dDatasetConstructor::getMergeVector(
 	std::vector<vtkPoint3d>& datas,
-	vtkIdType zIndex, vtkIdType yIndex, vtkIdType xIndex)
+	vtkIdType zIndex, 
+	vtkIdType yIndex, 
+	vtkIdType xIndex)
 {
 	/*
 		获取出矢量数据，并按照zUnit*yUnit*xUnit为一个单位网格的方式进行合并

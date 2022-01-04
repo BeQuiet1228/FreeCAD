@@ -11,6 +11,13 @@ DV3D::CylinderVector3dDatasetContructor::CylinderVector3dDatasetContructor()
 {
 
 }
+
+DV3D::CylinderVector3dDatasetContructor::CylinderVector3dDatasetContructor(vtkIdType zunit, vtkIdType thetaunit, vtkIdType runit)
+	:rGridSize(0), thetaGridSize(0), zGridSize(0), rUnit(runit), thetaUnit(thetaunit), zUnit(zunit)
+{
+
+}
+
 DV3D::CylinderVector3dDatasetContructor::~CylinderVector3dDatasetContructor()
 {
 
@@ -29,6 +36,13 @@ vtkSmartPointer<vtkDataSet> DV3D::CylinderVector3dDatasetContructor::creatDatase
 	return glyph->GetOutput();
 }
 
+
+void DV3D::CylinderVector3dDatasetContructor::setGridMergeUnit(vtkIdType zunit, vtkIdType thetaunit, vtkIdType runit)
+{
+	zUnit = zunit;
+	thetaUnit = thetaunit;
+	rUnit = runit;
+}
 
 /**
 * @time	2022/01/04
@@ -70,6 +84,14 @@ void DV3D::CylinderVector3dDatasetContructor::initGridSize(vtkIdType zgrid, vtkI
 	rGridSize = rgrid;
 }
 
+
+/**
+* @time	2022/01/04
+* @brief DV3D::CylinderVector3dDatasetContructor::generateVectorData 获取方向数据
+* @param std::vector<vtkPoint3d> & datas
+* @param std::vector<float> & varList
+* @return void
+*/
 void DV3D::CylinderVector3dDatasetContructor::generateVectorData(std::vector<vtkPoint3d>& datas, std::vector<float>& varList)
 {
 	datas.reserve(zGridSize * thetaGridSize * rGridSize);
@@ -83,7 +105,21 @@ void DV3D::CylinderVector3dDatasetContructor::generateVectorData(std::vector<vtk
 	}
 }
 
-void DV3D::CylinderVector3dDatasetContructor::generatePolyData(std::vector<vtkPoint3d>& datas, std::vector<float>& rList, std::vector<float>& thetaList, std::vector<float>& zList)
+
+/**
+* @time	2022/01/04
+* @brief DV3D::CylinderVector3dDatasetContructor::generatePolyData 生成三维矢量数据集
+* @param std::vector<vtkPoint3d> & datas
+* @param std::vector<float> & rList
+* @param std::vector<float> & thetaList
+* @param std::vector<float> & zList
+* @return void
+*/
+void DV3D::CylinderVector3dDatasetContructor::generatePolyData(
+	std::vector<vtkPoint3d>& datas, 
+	std::vector<float>& rList, 
+	std::vector<float>& thetaList, 
+	std::vector<float>& zList)
 {
 	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 	vtkSmartPointer<vtkFloatArray> normal = vtkSmartPointer<vtkFloatArray>::New();//法向
@@ -92,9 +128,15 @@ void DV3D::CylinderVector3dDatasetContructor::generatePolyData(std::vector<vtkPo
 	normal->SetNumberOfComponents(3); //normal->SetName("Normals");
 	vector->SetNumberOfComponents(3); //vector->SetName("Vector");
 	double scalarMax = 0.0f;
+	/*
+		按合并计算每个方向的步长
+	*/
 	auto zSize = (zGridSize % zUnit > 0) ? (zGridSize / zUnit + 1) : (zGridSize / zUnit);
 	auto thetaSize = (thetaGridSize% thetaUnit > 0) ? (thetaGridSize / thetaUnit + 1) : (thetaGridSize / thetaUnit);
 	auto rSize = (rGridSize % rUnit > 0) ? (rGridSize / rUnit + 1) : (rGridSize / rUnit);
+	/*
+		构建数据
+	*/
 	for (auto zi = 0; zi < zSize; ++zi)
 		for (auto thetai = 0; thetai < thetaSize; ++thetai)
 			for (auto ri = 0; ri < rSize; ++ri)
@@ -164,6 +206,9 @@ DV3D::vtkPoint3d DV3D::CylinderVector3dDatasetContructor::getMergeVector(
 				auto r = rList[rIndex];
 				auto theta = thetaList[tIndex];
 				auto z = zlist[zIndex];
+				/*
+					计算出三个方向的矢量数据
+				*/
 				vtkPoint3d direct_R(r * cos(theta), r * sin(theta), 0.0);
 				vtkPoint3d direct_T(r * cos(theta + M_PI / 2), r * sin(theta + M_PI / 2), 0.0);
 				vtkPoint3d direct_Z(0.0, 0.0, z);

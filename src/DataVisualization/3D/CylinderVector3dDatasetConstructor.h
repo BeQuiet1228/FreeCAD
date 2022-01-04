@@ -9,9 +9,11 @@ namespace DV3D
 	{
 	public:
 		CylinderVector3dDatasetContructor();
+		CylinderVector3dDatasetContructor(vtkIdType zunit, vtkIdType thetaunit, vtkIdType runit);
 		~CylinderVector3dDatasetContructor();
 	public:
 		vtkSmartPointer<vtkDataSet> creatDataset();
+		void setGridMergeUnit(vtkIdType zunit, vtkIdType thetaunit, vtkIdType runit);
 	protected:
 		vtkIdType getPointId(vtkIdType zi,vtkIdType thetai,vtkIdType ri);
 		void initData();
