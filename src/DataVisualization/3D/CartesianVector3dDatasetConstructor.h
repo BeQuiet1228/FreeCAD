@@ -18,9 +18,11 @@ namespace DV3D
 	{
 	public:
 		CartesianVector3dDatasetConstructor();
+		CartesianVector3dDatasetConstructor(vtkIdType zunit,vtkIdType yunit,vtkIdType xunit);
 		~CartesianVector3dDatasetConstructor();
 	public:
 		vtkSmartPointer<vtkDataSet> creatDataset();
+		void setGridMergeUnit(vtkIdType zunit, vtkIdType yunit, vtkIdType xunit);
 	protected:
 		void initDatas();
 		void loadStructPoint();
@@ -32,8 +34,7 @@ namespace DV3D
 		//≤‚ ‘
 		vtkPoint3d getMergeVector(
 			std::vector<vtkPoint3d>& datas,
-			vtkIdType zi,vtkIdType yi,vtkIdType xi,
-			vtkIdType zUnit,vtkIdType yUnit,vtkIdType xUnit);
+			vtkIdType zi,vtkIdType yi,vtkIdType xi);
 	private:
 		vtkSmartPointer<vtkPoints> structPoint;
 		vtkSmartPointer<vtkPolyData> polyData;

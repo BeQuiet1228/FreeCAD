@@ -19,7 +19,13 @@ namespace DV3D
 	};
 }
 DV3D::CartesianVector3dDatasetConstructor::CartesianVector3dDatasetConstructor() :
-	xGridSize(0), yGridSize(0), zGridSize(0), scaleFactor(0.0f), xUnit(5), yUnit(5), zUnit(2)
+	xGridSize(0), yGridSize(0), zGridSize(0), scaleFactor(0.0f), xUnit(5), yUnit(2), zUnit(2)
+{
+
+}
+
+DV3D::CartesianVector3dDatasetConstructor::CartesianVector3dDatasetConstructor(vtkIdType zunit, vtkIdType yunit, vtkIdType xunit)
+	:xGridSize(0), yGridSize(0), zGridSize(0), scaleFactor(0.0f), xUnit(xunit), yUnit(yunit), zUnit(zunit)
 {
 
 }
@@ -42,6 +48,19 @@ vtkSmartPointer<vtkDataSet> DV3D::CartesianVector3dDatasetConstructor::creatData
 	return glyph->GetOutput();
 }
 
+
+/**
+* @time	2022/01/04
+* @brief DV3D::CartesianVector3dDatasetConstructor::setGridMergeUnit 设置网格合并的单位方阵
+* @param vtkIdType zunit
+* @param vtkIdType yunit
+* @param vtkIdType xunit
+* @return void
+*/
+void DV3D::CartesianVector3dDatasetConstructor::setGridMergeUnit(vtkIdType zunit, vtkIdType yunit, vtkIdType xunit)
+{
+
+}
 void DV3D::CartesianVector3dDatasetConstructor::initDatas()
 {
 	//将结构数据处理成点位,z-y-x
@@ -150,14 +169,14 @@ void DV3D::CartesianVector3dDatasetConstructor::mergeDatas(std::vector<vtkPoint3
 		//记录下最大的标量
 	double scalarMax = 0.0;
 	long long index = 0;
-#if 1
+#if 0
 	for (auto zi = 0; zi < zGridSize; ++zi)
 	{
 		for (auto yi = 0; yi < yGridSize; ++yi)
 		{
 			for (auto xi = 0; xi < xGridSize; ++xi)
 			{
-				vtkPoint3d vectorPoint=datas[getPointId(zi, yi, xi)];
+				vtkPoint3d vectorPoint = datas[getPointId(zi, yi, xi)];
 				//获取大小
 				auto saclar = getScalar(vectorPoint);
 				if (0.0f == saclar)
@@ -186,19 +205,18 @@ void DV3D::CartesianVector3dDatasetConstructor::mergeDatas(std::vector<vtkPoint3
 		{
 			for (auto xi = 0; xi < xSize; ++xi)
 			{
-				auto vectorPoint =
-					getMergeVector(datas, zi * zUnit, yi * yUnit, xi * xUnit, zUnit, yUnit, xUnit);
-				//获取大小
-				auto saclar = getScalar(vectorPoint);
-				if (0.0f == saclar)
+				auto vectorPoint = getMergeVector(datas,zi,yi,xi);
+				auto scalar = getScalar(vectorPoint);
+				if (0.0f == scalar)
 					continue;
-				if (scalarMax < saclar)
-					scalarMax = saclar;
 				index++;
-				scalars->InsertNextTuple1(saclar);
+				if (scalarMax < scalar)
+					scalarMax = scalar;
+				scalars->InsertNextTuple1(scalar);
 				vectorPoint = vectorPoint.normalized();
 				vector->InsertNextTuple3(vectorPoint.x(), vectorPoint.y(), vectorPoint.z());
-				auto p1 = structPoint->GetPoint(getPointId(zi * zUnit, yi * yUnit, xi * xUnit));
+				auto pointId = getPointId(zi * zUnit, yi*yUnit, xi * xUnit);
+				auto p1 = structPoint->GetPoint(pointId);
 				points->InsertNextPoint(p1[0], p1[1], p1[2]);
 				normal->InsertNextTuple3(1.0, 1.0, 1.0);
 			}
@@ -257,35 +275,27 @@ DV3D::AxisDir DV3D::CartesianVector3dDatasetConstructor::getAxisDir(Hdf5Data& h5
 * @param vtkIdType zi
 * @param vtkIdType yi
 * @param vtkIdType xi
-* @param vtkIdType zUnit
-* @param vtkIdType yUnit
-* @param vtkIdType xUnit
 * @return DV3D::vtkPoint3d
 */
 DV3D::vtkPoint3d DV3D::CartesianVector3dDatasetConstructor::getMergeVector(
 	std::vector<vtkPoint3d>& datas,
-	vtkIdType zIndex, vtkIdType yIndex, vtkIdType xIndex,
-	vtkIdType zUnit, vtkIdType yUnit, vtkIdType xUnit)
+	vtkIdType zIndex, vtkIdType yIndex, vtkIdType xIndex)
 {
 	/*
 		获取出矢量数据，并按照zUnit*yUnit*xUnit为一个单位网格的方式进行合并
 	*/
-	auto pointNumber = xGridSize * yGridSize * zGridSize;
-	vtkPoint3d vecPoint(0.0, 0.0, 0.0);
-	for (auto zi = 0; zi < zUnit; ++zi)
-	{
-		for (auto yi = 0; yi < yUnit; ++yi)
-		{
-			for (auto xi = 0; xi < xUnit; ++xi)
+	vtkPoint3d vectorPoint(0.0, 0.0, 0.0);
+	//获取大小
+	for (auto zUniti = 0; zUniti < zUnit; zUniti++)
+		for (auto yUniti = 0; yUniti < yUnit; yUniti++)
+			for (auto xUniti = 0; xUniti < xUnit; xUniti++)
 			{
-				auto pointId = getPointId(zi + zIndex, yi + yIndex, xi + zIndex);
-				if (pointId > pointNumber)
+				auto pointId = getPointId(zIndex * zUnit + zUniti, yIndex * yUnit + yUniti, xIndex * xUnit + xUniti);
+				if (pointId >= (xGridSize * yGridSize * zGridSize))
 					continue;
-				vecPoint += datas[pointId];
+				vectorPoint += datas[pointId];
 			}
-		}
-	}
-	return vecPoint;
+	return vectorPoint;
 }
 double DV3D::getScalar(vtkPoint3d p)
 {
