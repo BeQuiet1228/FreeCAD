@@ -103,7 +103,6 @@ HDF5DataItem* HDF5DataItem3DFactory::CreatStructDataItem(std::vector<Hdf5Data>& 
 		auto h5data = *iter;
 		iter = datas.erase(iter);
 		item = CreatStructDataItem(h5data,item);
-		break;
 	}
 	
 	return item;
@@ -171,7 +170,6 @@ Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatContour3DItem(std::vector<Hdf5Dat
 		auto h5data = *iter;
 		iter = datas.erase(iter);
 		item = CreatContour3DItem(h5data,item);
-		break;
 	}
 
 	return item;
@@ -179,6 +177,12 @@ Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatContour3DItem(std::vector<Hdf5Dat
 
 Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatContour2DItem(std::vector<Hdf5Data>& datas)
 {
+	/*
+	2022-1-4
+	暂时不适用2d结构图的三维显示
+	*/
+	return nullptr;
+
 	HDF5DataItem2DFactory factory2d;
 	factory2d.setEventHander(getEventHander());
 	auto item = factory2d.CreatContourDataItem(datas);
@@ -190,6 +194,12 @@ Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatContour2DItem(std::vector<Hdf5Dat
 
 Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatContour2DItem(Hdf5Data& data, HDF5DataItem* parentItem /*= nullptr*/)
 {
+	/*
+	2022-1-4
+	暂时不适用2d结构图的三维显示
+	*/
+	return nullptr;
+
 	HDF5DataItem2DFactory factory2d;
 	factory2d.setEventHander(getEventHander());
 	auto item = factory2d.CreatContourDataItem(data,parentItem);
