@@ -122,9 +122,9 @@ void DV3D::CylinderVector3dDatasetContructor::generatePolyData(std::vector<vtkPo
 	polyData->GetPointData()->SetVectors(vector);
 	polyData->GetPointData()->SetNormals(normal);
 	//计算缩放因子
-	double scaleFactorX = (rList[rGridSize - 1] - rList[0]) / (rGridSize);
+	double scaleFactorX = (rList[rGridSize - 1] - rList[0]) / (rGridSize/rUnit);
 	double scaleFactorY = scaleFactorX;
-	double scaleFactorZ = (zList[zGridSize - 1] - zList[0]) / (zGridSize);
+	double scaleFactorZ = (zList[zGridSize - 1] - zList[0]) / (zGridSize/zUnit);
 	scaleFactor = sqrt(scaleFactorX * scaleFactorX + scaleFactorY * scaleFactorY + scaleFactorZ * scaleFactorZ);
 	scaleFactor /= scalarMax;
 }
