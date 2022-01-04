@@ -7,13 +7,13 @@
 #define _USE_MATH_DEFINES
 #include "math.h"
 DV3D::CylinderVector3dDatasetContructor::CylinderVector3dDatasetContructor()
-	:rGridSize(0), thetaGridSize(0), zGridSize(0), rUnit(1), thetaUnit(1), zUnit(1)
+	:CartesianVector3dDatasetConstructor()
 {
-
+	setGridMergeUnit(1, 1, 1);
 }
 
 DV3D::CylinderVector3dDatasetContructor::CylinderVector3dDatasetContructor(vtkIdType zunit, vtkIdType thetaunit, vtkIdType runit)
-	:rGridSize(0), thetaGridSize(0), zGridSize(0), rUnit(runit), thetaUnit(thetaunit), zUnit(zunit)
+	: CartesianVector3dDatasetConstructor(zunit,thetaunit,runit)
 {
 
 }
@@ -22,90 +22,6 @@ DV3D::CylinderVector3dDatasetContructor::~CylinderVector3dDatasetContructor()
 {
 
 }
-
-vtkSmartPointer<vtkDataSet> DV3D::CylinderVector3dDatasetContructor::creatDataset()
-{
-	initData();
-	vtkSmartPointer<vtkArrowSource> arrowSource = vtkSmartPointer<vtkArrowSource>::New();
-	vtkSmartPointer<vtkGlyph3D> glyph = vtkSmartPointer<vtkGlyph3D>::New();
-	glyph->SetInputData(polyData);
-	glyph->SetScaleFactor(scaleFactor);//设置缩放因子
-	glyph->SetSourceConnection(arrowSource->GetOutputPort());
-	//glyph->SetScaleModeToDataScalingOff();//关闭缩放
-	glyph->Update();
-	return glyph->GetOutput();
-}
-
-
-void DV3D::CylinderVector3dDatasetContructor::setGridMergeUnit(vtkIdType zunit, vtkIdType thetaunit, vtkIdType runit)
-{
-	zUnit = zunit;
-	thetaUnit = thetaunit;
-	rUnit = runit;
-}
-
-/**
-* @time	2022/01/04
-* @brief DV3D::CylinderVector3dDatasetContructor::initData 初始化数据
-* @return void
-*/
-void DV3D::CylinderVector3dDatasetContructor::initData()
-{
-	auto h5d = getHdf5Data();
-	assert(h5d.listDataSet.size() == 4 && "list DataSet size is not 4");
-	std::vector<std::vector<float>> grid;
-	grid.reserve(4);
-	for (auto i = 0; i < h5d.listDataSet.size(); ++i)
-	{
-		std::vector<float> d;
-		Hdf5IO::getValue(h5d.listDataSet.at(i), d);
-		grid.push_back(d);
-	}
-	std::vector<float>& varList = grid[0];
-	std::vector<float>& rList = grid[1];
-	std::vector<float>& thetaList = grid[2];
-	std::vector<float>& zList = grid[3];
-	initGridSize(zList.size(), thetaList.size(), rList.size());
-	/*
-		获取矢量数据
-	*/
-	std::vector<vtkPoint3d> datas;
-	generateVectorData(datas, varList);
-	/*
-		构建数据
-	*/
-	generatePolyData(datas, rList, thetaList, zList);
-}
-
-void DV3D::CylinderVector3dDatasetContructor::initGridSize(vtkIdType zgrid, vtkIdType thetagrid, vtkIdType rgrid)
-{
-	zGridSize = zgrid;
-	thetaGridSize = thetagrid;
-	rGridSize = rgrid;
-}
-
-
-/**
-* @time	2022/01/04
-* @brief DV3D::CylinderVector3dDatasetContructor::generateVectorData 获取方向数据
-* @param std::vector<vtkPoint3d> & datas
-* @param std::vector<float> & varList
-* @return void
-*/
-void DV3D::CylinderVector3dDatasetContructor::generateVectorData(std::vector<vtkPoint3d>& datas, std::vector<float>& varList)
-{
-	datas.reserve(zGridSize * thetaGridSize * rGridSize);
-	auto iter = varList.begin();
-	while (iter != varList.end())
-	{
-		auto normalX = *iter; iter++;
-		auto normalY = *iter; iter++;
-		auto normalZ = *iter; iter++;
-		datas.push_back(vtkPoint3d(normalX, normalY, normalZ));
-	}
-}
-
-
 /**
 * @time	2022/01/04
 * @brief DV3D::CylinderVector3dDatasetContructor::generatePolyData 生成三维矢量数据集
@@ -131,6 +47,9 @@ void DV3D::CylinderVector3dDatasetContructor::generatePolyData(
 	/*
 		按合并计算每个方向的步长
 	*/
+	//单位转换
+	auto thetaGridSize = yGridSize, rGridSize = xGridSize, thetaUnit =yUnit,rUnit=xUnit;
+
 	auto zSize = (zGridSize % zUnit > 0) ? (zGridSize / zUnit + 1) : (zGridSize / zUnit);
 	auto thetaSize = (thetaGridSize% thetaUnit > 0) ? (thetaGridSize / thetaUnit + 1) : (thetaGridSize / thetaUnit);
 	auto rSize = (rGridSize % rUnit > 0) ? (rGridSize / rUnit + 1) : (rGridSize / rUnit);
@@ -193,6 +112,7 @@ DV3D::vtkPoint3d DV3D::CylinderVector3dDatasetContructor::getMergeVector(
 	vtkIdType thetai,
 	vtkIdType ri)
 {
+	auto thetaUnit = yUnit, rUnit=xUnit;
 	vtkPoint3d vectorPoint(0.0, 0.0, 0.0);
 	for (auto zUniti = 0; zUniti < zUnit; ++zUniti)
 		for (auto thetaUniti = 0; thetaUniti < thetaUnit; ++thetaUniti)
@@ -220,9 +140,3 @@ DV3D::vtkPoint3d DV3D::CylinderVector3dDatasetContructor::getMergeVector(
 			}
 	return vectorPoint;
 }
-
-vtkIdType DV3D::CylinderVector3dDatasetContructor::getPointId(vtkIdType zi, vtkIdType thetai, vtkIdType ri)
-{
-	return (ri + thetai * rGridSize + zi * rGridSize * thetaGridSize);
-}
-

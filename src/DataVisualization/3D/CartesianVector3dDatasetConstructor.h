@@ -18,14 +18,14 @@ namespace DV3D
 	protected:
 		void initDatas();
 		void initGrid(vtkIdType x,vtkIdType y,vtkIdType z);
-		void generatePolyData(std::vector<vtkPoint3d>& datas,
+		virtual void generatePolyData(std::vector<vtkPoint3d>& datas,
 			std::vector<float>& xList,
 			std::vector<float>& yList,
 			std::vector<float>& zList);
 		void generateVectorData(std::vector<vtkPoint3d>& datas,std::vector<float>& varList);
 		vtkIdType getPointId(vtkIdType zi,vtkIdType yi,vtkIdType xi);
 		vtkPoint3d getMergeVector(std::vector<vtkPoint3d>& datas,vtkIdType zi,vtkIdType yi,vtkIdType xi);
-	private:
+	protected:
 		vtkSmartPointer<vtkPolyData> polyData;
 		vtkIdType xGridSize, yGridSize, zGridSize;
 		vtkIdType xUnit, yUnit, zUnit;//矢量网格的合并方阵
