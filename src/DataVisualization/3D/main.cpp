@@ -83,14 +83,14 @@ int main(int argc, char* argv[])
 #if 1
 	auto iter = datalist.begin();
 	ControlerFactory controlerFactory;
-	auto vector3dContrler = controlerFactory.CreatVector3dControler(*iter);
-//	auto structControler = controlerFactory.CreatStrucControler(*datalist.begin());
+	auto vector3dContrler = controlerFactory.CreatVector3dControler(*(iter+1));
+	auto structControler = controlerFactory.CreatStrucControler(*datalist.begin());
 	Widget3D* w3d = new Widget3D();
 	w3d->binding(vector3dContrler.get());
-	//w3d->binding(structControler.get());
+	w3d->binding(structControler.get());
 	w3d->show();
 	auto item = ControlerItemFactor::CreatContour3dControlerItem();
-	item->setControler(vector3dContrler);
+	item->setControler(structControler);
 	item->show();
 #endif
 	return a.exec();

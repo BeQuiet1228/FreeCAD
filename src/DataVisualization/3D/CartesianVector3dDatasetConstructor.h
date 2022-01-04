@@ -6,14 +6,6 @@
 namespace DV3D
 {
 	using vtkPoint3d = QVector3D;
-	enum AxisDir {
-		X=0,
-		Y,
-		Z,
-		R,
-		Theta,
-		Axis_NUll
-	};
 	class CartesianVector3dDatasetConstructor :public DataSetConstructorH5
 	{
 	public:
@@ -25,21 +17,23 @@ namespace DV3D
 		void setGridMergeUnit(vtkIdType zunit, vtkIdType yunit, vtkIdType xunit);
 	protected:
 		void initDatas();
-		void loadStructPoint();
 		void initGrid(vtkIdType x,vtkIdType y,vtkIdType z);
-		std::vector<vtkPoint3d> generateVectorData();
-		void mergeDatas(std::vector<vtkPoint3d>&);
+		void generatePolyData(std::vector<vtkPoint3d>& datas,
+			std::vector<float>& xList,
+			std::vector<float>& yList,
+			std::vector<float>& zList);
+		void generateVectorData(std::vector<vtkPoint3d>& datas,std::vector<float>& varList);
 		vtkIdType getPointId(vtkIdType zi,vtkIdType yi,vtkIdType xi);
-		AxisDir getAxisDir(Hdf5Data& h5d);
-		//测试
-		vtkPoint3d getMergeVector(
-			std::vector<vtkPoint3d>& datas,
-			vtkIdType zi,vtkIdType yi,vtkIdType xi);
+		vtkPoint3d getMergeVector(std::vector<vtkPoint3d>& datas,vtkIdType zi,vtkIdType yi,vtkIdType xi);
 	private:
-		vtkSmartPointer<vtkPoints> structPoint;
 		vtkSmartPointer<vtkPolyData> polyData;
 		vtkIdType xGridSize, yGridSize, zGridSize;
 		vtkIdType xUnit, yUnit, zUnit;//矢量网格的合并方阵
 		double scaleFactor;//缩放因子
 	};
+
+
+	double getScalar(vtkPoint3d);
+	std::vector<std::string> vStringSplit(const  std::string& s, const std::string& delim);
 }
+

@@ -14,7 +14,7 @@ class ControlTreeWidget :public QTreeWidget {
 		VECTOR = 5,
 		RANGE,
 		PARTICLE_3D,
-		CONTOUR_3D
+		CONTOUR_3D=9
 	};
 	Q_OBJECT
 public:

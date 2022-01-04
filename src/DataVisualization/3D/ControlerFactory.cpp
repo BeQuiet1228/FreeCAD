@@ -19,6 +19,7 @@
 #include "PolarContour3dDataSetConstructor.h"
 #include "Contour3dActorPipeline.h"
 #include "CartesianVector3dDatasetConstructor.h"
+#include "CylinderVector3dDatasetConstructor.h"
 #include "Vector3dActorPipeline.h"
 #include"Contour3dControler.h"
 #include <cassert>
@@ -88,6 +89,9 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatVector3dControler(
 	std::shared_ptr<ActorPipemline> pipeline;
 	if (Hdf5Data::CoordinateSystem::CARTESIAN == h5data.coordinateSystem)
 		constructor.reset(new CartesianVector3dDatasetConstructor());
+	else if (Hdf5Data::CoordinateSystem::CYLINDER == h5data.coordinateSystem)
+		constructor.reset(new CylinderVector3dDatasetContructor());
+
 	constructor->setHdf5Data(h5data);
 	pipeline.reset(new Vector3dActorPipeline());
 	pipeline->setDataSet(constructor->creatDataset());

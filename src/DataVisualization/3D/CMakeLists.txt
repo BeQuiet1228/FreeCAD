@@ -74,6 +74,8 @@ SET( STRUCT_SRC
 SET(VECTOR3D_SRC
 	CartesianVector3dDatasetConstructor.h
 	CartesianVector3dDatasetConstructor.cpp
+	CylinderVector3dDatasetConstructor.h
+	CylinderVector3dDatasetConstructor.cpp
 	Vector3dActorPipeline.h
 	Vector3dActorPipeline.cpp
 )
