@@ -3,6 +3,7 @@
 #include <vtkCamera.h>
 #include <QVTKInteractor.h>
 #include <vtkInteractorStyleJoystickCamera.h>
+#include <vtkScalarsToColors.h>
 #include"vtkAxesActor.h"
 DV3D::Widget3D::Widget3D(QWidget* parent /*= 0*/)
 	:QWidget(parent)
@@ -11,17 +12,17 @@ DV3D::Widget3D::Widget3D(QWidget* parent /*= 0*/)
 
 	viewer3d = new QVTKWidget(this);
 	viewer3d->GetRenderWindow()->AddRenderer(renderer);
-	
-	//viewer3d->GetInteractor()->SetInteractorStyle(vtkInteractorStyleJoystickCamera::New());
-	//viewer3d->GetRenderWindow()->GetInteractor()->Start();
 
 	renderer->SetBackground(0.529, 0.8078, 0.92157);
 	renderer->SetBackground2(1.0, 1.0, 1.0);
 	renderer->SetGradientBackground(1);
-// 	renderer->ResetCamera();
-// 	renderer->GetActiveCamera()->Elevation(60.0);
-// 	renderer->GetActiveCamera()->Azimuth(30.0);
-// 	renderer->GetActiveCamera()->Dolly(1.2);
+
+	//初始化颜色条
+	scalarBarActor = vtkSmartPointer<vtkScalarBarActor>::New();
+	scalarBarActor->SetLookupTable(vtkScalarsToColors::New());
+	scalarBarActor->SetNumberOfLabels(6);
+	renderer->AddActor(scalarBarActor);
+
 
 #if 0 //添加一个三维坐标系,用于判断方位
 	vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
@@ -110,6 +111,7 @@ void DV3D::Widget3D::oneWayBinding(Controler* controler)
 
 	auto actor = controler->getActor();
 	renderer->AddActor(actor);
+
 	
 	auto value = std::map<Controler*, vtkSmartPointer<vtkActor>>::value_type(controler, actor);
 	controlerActor.insert(value);

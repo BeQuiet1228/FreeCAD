@@ -8,6 +8,7 @@
 #include <QVBoxLayout>
 #include <map>
 #include "DataVisualization3DExport.hpp"
+#include <vtkScalarBarActor.h>
 namespace DV3D {
 	class Controler;
 }
@@ -48,7 +49,8 @@ namespace DV3D {
 		vtkSmartPointer<vtkRenderWindow> renderWindow;
 		//控制器
 		std::map<Controler*, vtkSmartPointer<vtkActor>> controlerActor;
-
+		//颜色映射表
+		vtkSmartPointer<vtkScalarBarActor> scalarBarActor;
 	private:
 		//中心布局
 		QVBoxLayout* centerLayout;
