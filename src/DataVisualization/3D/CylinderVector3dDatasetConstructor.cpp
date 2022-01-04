@@ -4,6 +4,8 @@
 #include "vtkPointData.h"
 #include "vtkArrowSource.h"
 #include "vtkGlyph3D.h"
+#define _USE_MATH_DEFINES
+#include "math.h"
 DV3D::CylinderVector3dDatasetContructor::CylinderVector3dDatasetContructor()
 	:rGridSize(0), thetaGridSize(0), zGridSize(0), rUnit(1), thetaUnit(1), zUnit(1)
 {
@@ -22,7 +24,7 @@ vtkSmartPointer<vtkDataSet> DV3D::CylinderVector3dDatasetContructor::creatDatase
 	glyph->SetInputData(polyData);
 	glyph->SetScaleFactor(scaleFactor);//设置缩放因子
 	glyph->SetSourceConnection(arrowSource->GetOutputPort());
-	glyph->SetScaleModeToDataScalingOff();//关闭缩放
+	//glyph->SetScaleModeToDataScalingOff();//关闭缩放
 	glyph->Update();
 	return glyph->GetOutput();
 }
@@ -90,16 +92,14 @@ void DV3D::CylinderVector3dDatasetContructor::generatePolyData(std::vector<vtkPo
 	normal->SetNumberOfComponents(3); //normal->SetName("Normals");
 	vector->SetNumberOfComponents(3); //vector->SetName("Vector");
 	double scalarMax = 0.0f;
-	for (auto zi = 0; zi < zGridSize; ++zi)
-		for (auto thetai = 0; thetai < thetaGridSize; ++thetai)
-			for (auto ri = 0; ri < rGridSize; ++ri)
+	auto zSize = (zGridSize % zUnit > 0) ? (zGridSize / zUnit + 1) : (zGridSize / zUnit);
+	auto thetaSize = (thetaGridSize% thetaUnit > 0) ? (thetaGridSize / thetaUnit + 1) : (thetaGridSize / thetaUnit);
+	auto rSize = (rGridSize % rUnit > 0) ? (rGridSize / rUnit + 1) : (rGridSize / rUnit);
+	for (auto zi = 0; zi < zSize; ++zi)
+		for (auto thetai = 0; thetai < thetaSize; ++thetai)
+			for (auto ri = 0; ri < rSize; ++ri)
 			{
-				auto pointId = getPointId(zi, thetai, ri);
-				auto polarVectorPoint = datas[pointId];
-				vtkPoint3d vectorPoint;
-				vectorPoint.setX(polarVectorPoint.x()*cos(polarVectorPoint.y()));
-				vectorPoint.setY(polarVectorPoint.x() * cos(polarVectorPoint.y()));
-				vectorPoint.setZ(polarVectorPoint.z());
+				vtkPoint3d vectorPoint = getMergeVector(datas, zList, thetaList, rList, zi, thetai, ri);
 				auto scalar = getScalar(vectorPoint);
 				if (0.0f == scalar)
 					continue;
@@ -109,9 +109,9 @@ void DV3D::CylinderVector3dDatasetContructor::generatePolyData(std::vector<vtkPo
 				vectorPoint = vectorPoint.normalized();
 				vector->InsertNextTuple3(vectorPoint.x(), vectorPoint.y(), vectorPoint.z());
 				{
-					auto x = rList[ri] * cos(thetaList[thetai]);
-					auto y = rList[ri] * sin(thetaList[thetai]);
-					auto z = zList[zi];
+					auto x = rList[ri*rUnit] * cos(thetaList[thetai*thetaUnit]);
+					auto y = rList[ri*rUnit] * sin(thetaList[thetai*thetaUnit]);
+					auto z = zList[zi*zUnit];
 					points->InsertNextPoint(x, y, z);
 					normal->InsertNextTuple3(1.0, 1.0, 1.0);
 				}
@@ -126,7 +126,54 @@ void DV3D::CylinderVector3dDatasetContructor::generatePolyData(std::vector<vtkPo
 	double scaleFactorY = scaleFactorX;
 	double scaleFactorZ = (zList[zGridSize - 1] - zList[0]) / (zGridSize);
 	scaleFactor = sqrt(scaleFactorX * scaleFactorX + scaleFactorY * scaleFactorY + scaleFactorZ * scaleFactorZ);
-	//scaleFactor /= scalarMax;
+	scaleFactor /= scalarMax;
+}
+
+
+/**
+* @time	2022/01/04
+* @brief DV3D::CylinderVector3dDatasetContructor::getMergeVector 方向合并
+* @param std::vector<vtkPoint3d> & datas
+* @param std::vector<float> & zlist
+* @param std::vector<float> & thetaList
+* @param std::vector<float> & rList
+* @param vtkIdType zi
+* @param vtkIdType thetai
+* @param vtkIdType ri
+* @return DV3D::vtkPoint3d
+*/
+DV3D::vtkPoint3d DV3D::CylinderVector3dDatasetContructor::getMergeVector(
+	std::vector<vtkPoint3d>& datas,
+	std::vector<float>& zlist,
+	std::vector<float>& thetaList,
+	std::vector<float>& rList,
+	vtkIdType zi,
+	vtkIdType thetai,
+	vtkIdType ri)
+{
+	vtkPoint3d vectorPoint(0.0, 0.0, 0.0);
+	for (auto zUniti = 0; zUniti < zUnit; ++zUniti)
+		for (auto thetaUniti = 0; thetaUniti < thetaUnit; ++thetaUniti)
+			for (auto rUniti = 0; rUniti < rUnit; ++rUniti)
+			{
+				auto rIndex = ri * rUnit + rUniti;
+				auto tIndex = thetai * thetaUnit + thetaUniti;
+				auto zIndex = zi * zUnit + zUniti;
+				if (rIndex >= rList.size() || tIndex >= thetaList.size() || zIndex >= zlist.size())
+					continue;
+				auto r = rList[rIndex];
+				auto theta = thetaList[tIndex];
+				auto z = zlist[zIndex];
+				vtkPoint3d direct_R(r * cos(theta), r * sin(theta), 0.0);
+				vtkPoint3d direct_T(r * cos(theta + M_PI / 2), r * sin(theta + M_PI / 2), 0.0);
+				vtkPoint3d direct_Z(0.0, 0.0, z);
+				direct_R = direct_R.normalized() * datas[getPointId(zIndex, tIndex, rIndex)].x();
+				direct_T = direct_T.normalized() * datas[getPointId(zIndex, tIndex, rIndex)].y();
+				direct_Z = direct_Z.normalized() * datas[getPointId(zIndex, tIndex, rIndex)].z();
+				auto curPoint = direct_R + direct_T + direct_Z;
+				vectorPoint += curPoint;
+			}
+	return vectorPoint;
 }
 
 vtkIdType DV3D::CylinderVector3dDatasetContructor::getPointId(vtkIdType zi, vtkIdType thetai, vtkIdType ri)

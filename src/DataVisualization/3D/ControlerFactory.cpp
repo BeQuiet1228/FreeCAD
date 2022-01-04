@@ -29,8 +29,8 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatControler(Hdf5Data
 	std::shared_ptr<Controler> controler;
 	if (h5data.name == "struct")
 		controler = CreatStrucControler(h5data);
-	if(h5data.name=="CONTOUR")
-		controler=CreatContourControler(h5data);
+	if (h5data.name == "CONTOUR")
+		controler = CreatContourControler(h5data);
 	if (h5data.name == "PARTICLE3D")
 		controler = CreatParticle3dControler(h5data);
 	if (h5data.name == "CONTOUR3D")
@@ -89,9 +89,8 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatVector3dControler(
 	std::shared_ptr<ActorPipemline> pipeline;
 	if (Hdf5Data::CoordinateSystem::CARTESIAN == h5data.coordinateSystem)
 		constructor.reset(new CartesianVector3dDatasetConstructor());
-	else if (Hdf5Data::CoordinateSystem::CYLINDER == h5data.coordinateSystem)
+	else
 		constructor.reset(new CylinderVector3dDatasetContructor());
-
 	constructor->setHdf5Data(h5data);
 	pipeline.reset(new Vector3dActorPipeline());
 	pipeline->setDataSet(constructor->creatDataset());
@@ -115,12 +114,13 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucControler(Hdf
 	}
 	else if (Hdf5Data::CoordinateSystem::POLAR == h5data.coordinateSystem)
 	{
-		
+
 		if (findStringAttribute(h5data.headList.at(1)) > 20)
 		{
 			constructor.reset(new PolarStructDaraSetConstruct());
 			pipeline.reset(new CartesianStructActorPipeline());
-		}else {
+		}
+		else {
 			constructor.reset(new PolarPlanConstruct());
 			pipeline.reset(new PolarStructActorPipeline);
 		}
@@ -131,11 +131,13 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucControler(Hdf
 		{
 			constructor.reset(new CylinderStructDataSetConstructor());
 			pipeline.reset(new CartesianStructActorPipeline());
-		}else{
+		}
+		else {
 			constructor.reset(new CylinderPlanConstruct());
 			pipeline.reset(new PolarStructActorPipeline());
 		}
-	}else {
+	}
+	else {
 		assert(true && "unknown coordinate system!");
 	}
 	constructor->setHdf5Data(h5data);
@@ -143,7 +145,7 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucControler(Hdf
 	pipeline->connect();
 	controler.reset(new Controler());
 	controler->setActorPipeline(pipeline);
-	
+
 	return controler;
 }
 

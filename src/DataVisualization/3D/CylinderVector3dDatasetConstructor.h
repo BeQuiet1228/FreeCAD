@@ -22,6 +22,14 @@ namespace DV3D
 			std::vector<float>& rList, 
 			std::vector<float>& thetaList, 
 			std::vector<float>& zList);
+		vtkPoint3d getMergeVector(
+			std::vector<vtkPoint3d>& datas, 
+			std::vector<float>& zlist, 
+			std::vector<float>& thetaList, 
+			std::vector<float>& rList,
+			vtkIdType zi, 
+			vtkIdType thetai, 
+			vtkIdType ri);
 	private:
 		vtkIdType rGridSize, thetaGridSize, zGridSize;//网格标尺数
 		vtkIdType rUnit, thetaUnit, zUnit;//合并方阵
