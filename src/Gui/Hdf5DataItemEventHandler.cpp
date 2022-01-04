@@ -72,13 +72,15 @@ void Gui::HDF5DataItem3DDoubleClickEventHander::showView3D(DV3D::ControlerItem* 
 			break;
 	}
 
+	auto mw = Gui::MainWindow::getInstance();
 	if (view3d == nullptr)
 	{
-		auto mw = Gui::MainWindow::getInstance();
 		view3d = new Gui::DataVisualizationView(picDoc);
 		mw->addWindow(view3d);
 		view3d->setWindowTitle(QString::fromLocal8Bit("3D_Plot"));
 	}
+	mw->setActiveWindow(view3d);
+
 
 	view3d->getWidget3D()->binding(controlerItem->getControler().get());
 
