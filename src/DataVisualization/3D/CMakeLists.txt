@@ -74,6 +74,8 @@ SET( STRUCT_SRC
 SET(VECTOR3D_SRC
 	CartesianVector3dDatasetConstructor.h
 	CartesianVector3dDatasetConstructor.cpp
+	CylinderVector3dDatasetConstructor.h
+	CylinderVector3dDatasetConstructor.cpp
 	Vector3dActorPipeline.h
 	Vector3dActorPipeline.cpp
 )
@@ -161,7 +163,6 @@ source_group("vector3d" FILES ${VECTOR3D_SRC})
 
 #add_executable(DataVisualization3D ${DataVisualization3D_src})
 add_definitions(-D_DATA_VISUALIZATION_3D)
-
 add_library(DataVisualization3D SHARED ${DataVisualization3D_src})
 #设置执行文件的输出目录
 set(DEBUG_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)

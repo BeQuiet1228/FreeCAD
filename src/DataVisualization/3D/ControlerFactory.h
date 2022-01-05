@@ -25,7 +25,7 @@ namespace DV3D {
 		//创建3d等位图
 		static std::shared_ptr<Controler> CreatContour3dControler(Hdf5Data& h5data);
 		//创建3d矢量图
-		static std::shared_ptr<Controler> CreatVector3dControler(std::vector<Hdf5Data>& h5datas);
+		static std::shared_ptr<Controler> CreatVector3dControler(Hdf5Data& h5datas);
 		//寻找字符串中的长度信息
 		static int findStringAttribute(const std::string& str);
 	};

@@ -59,19 +59,19 @@ int main(int argc, char* argv[])
 	io.initHdf5Data();
 
 	auto datalist = io.hdf5DataList;
-#if 1
+#if 0
 	if (datalist.size() == 0)
 		return 0;
-	auto iter = datalist.begin();
+	auto iter = datalist.begin()+3;
 	Widget3D* w3d = new Widget3D();
 
 	ControlerFactory controlerFactor;
 	//auto controler = controlerFactor.CreatParticle3dControler(paticle3d);
-	auto structControler = controlerFactor.CreatStrucControler(*iter);
+	//auto structControler = controlerFactor.CreatStrucControler(*iter);
 	//auto contourControler = controlerFactor.CreatContourControler(*iter);
-	auto contour3dContrler = controlerFactor.CreatContour3dControler(*(iter+1));
+	auto contour3dContrler = controlerFactor.CreatContour3dControler(*(iter));
 	//w3d->binding(controler.get());
-	w3d->binding(structControler.get());
+	//w3d->binding(structControler.get());
 	//w3d->binding(contourControler.get());
 	w3d->binding(contour3dContrler.get());
 	w3d->show();
@@ -80,11 +80,10 @@ int main(int argc, char* argv[])
 	item->setControler(contour3dContrler);
 	item->show();
 #endif
-#if 0
-	if (datalist.size() < 4)
-		return 0;
+#if 1
+	auto iter = datalist.begin();
 	ControlerFactory controlerFactory;
-	auto vector3dContrler = controlerFactory.CreatVector3dControler(datalist);
+	auto vector3dContrler = controlerFactory.CreatVector3dControler(*(iter+1));
 	auto structControler = controlerFactory.CreatStrucControler(*datalist.begin());
 	Widget3D* w3d = new Widget3D();
 	w3d->binding(vector3dContrler.get());

@@ -19,6 +19,7 @@
 #include "PolarContour3dDataSetConstructor.h"
 #include "Contour3dActorPipeline.h"
 #include "CartesianVector3dDatasetConstructor.h"
+#include "CylinderVector3dDatasetConstructor.h"
 #include "Vector3dActorPipeline.h"
 #include"Contour3dControler.h"
 #include <cassert>
@@ -28,12 +29,14 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatControler(Hdf5Data
 	std::shared_ptr<Controler> controler;
 	if (h5data.name == "struct")
 		controler = CreatStrucControler(h5data);
-	if(h5data.name=="CONTOUR")
-		controler=CreatContourControler(h5data);
+	if (h5data.name == "CONTOUR")
+		controler = CreatContourControler(h5data);
 	if (h5data.name == "PARTICLE3D")
 		controler = CreatParticle3dControler(h5data);
 	if (h5data.name == "CONTOUR3D")
 		controler = CreatContour3dControler(h5data);
+	if (h5data.name == "VECTOR3D")
+		controler = CreatVector3dControler(h5data);
 	assert(controler && "controler is nullptr!");
 	return controler;
 }
@@ -81,15 +84,16 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContour3dControler
 * @param std::vector<Hdf5Data> & h5datas
 * @return std::shared_ptr<DV3D::Controler>
 */
-std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatVector3dControler(std::vector<Hdf5Data>& h5datas)
+std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatVector3dControler(Hdf5Data& h5data)
 {
 	std::shared_ptr<Controler> controler;
-	std::shared_ptr<DataSetConstructorH5S> constructor;
+	std::shared_ptr<DataSetConstructorH5> constructor;
 	std::shared_ptr<ActorPipemline> pipeline;
-	auto iter = h5datas.begin();
-	if (Hdf5Data::CoordinateSystem::CARTESIAN == iter->coordinateSystem)
+	if (Hdf5Data::CoordinateSystem::CARTESIAN == h5data.coordinateSystem)
 		constructor.reset(new CartesianVector3dDatasetConstructor());
-	constructor->setHdf5Datas(h5datas);
+	else
+		constructor.reset(new CylinderVector3dDatasetContructor());
+	constructor->setHdf5Data(h5data);
 	pipeline.reset(new Vector3dActorPipeline());
 	pipeline->setDataSet(constructor->creatDataset());
 	pipeline->connect();
@@ -129,7 +133,7 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucControler(Hdf
 	pipeline->connect();
 	controler.reset(new Controler());
 	controler->setActorPipeline(pipeline);
-	
+
 	return controler;
 }
 

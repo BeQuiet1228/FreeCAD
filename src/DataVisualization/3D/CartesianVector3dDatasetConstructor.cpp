@@ -5,93 +5,76 @@
 #include "vtkPointData.h"
 #include "vtkArrowSource.h"
 #include "vtkGlyph3D.h"
-namespace DV3D
-{
-	double getScalar(vtkPoint3d);
-	std::vector<std::string> vStringSplit(const  std::string& s, const std::string& delim);
-	struct AxisInfo
-	{
-		std::string str;
-		AxisDir axisDir;
-	};
-	const AxisInfo axisInfos[] = {
-		{"E1",X},{"E2",Y},{"E3",Z}
-	};
-}
+
 DV3D::CartesianVector3dDatasetConstructor::CartesianVector3dDatasetConstructor() :
-	xGridSize(0), yGridSize(0), zGridSize(0), scaleFactor(0.0f)
+	xGridSize(0), yGridSize(0), zGridSize(0), scaleFactor(0.0f), xUnit(5), yUnit(2), zUnit(2)
 {
-
+	polyData=nullptr;
 }
-
+DV3D::CartesianVector3dDatasetConstructor::CartesianVector3dDatasetConstructor(vtkIdType zunit, vtkIdType yunit, vtkIdType xunit)
+	:xGridSize(0), yGridSize(0), zGridSize(0), scaleFactor(0.0f), xUnit(xunit), yUnit(yunit), zUnit(zunit)
+{
+	//if (polyData != nullptr)
+	//{
+	//	polyData->Delete();
+	//	polyData = nullptr;
+	//}
+}
 DV3D::CartesianVector3dDatasetConstructor::~CartesianVector3dDatasetConstructor()
 {
-
 }
-
 vtkSmartPointer<vtkDataSet> DV3D::CartesianVector3dDatasetConstructor::creatDataset()
 {
 	initDatas();
 	vtkSmartPointer<vtkArrowSource> arrowSource = vtkSmartPointer<vtkArrowSource>::New();
 	vtkSmartPointer<vtkGlyph3D> glyph = vtkSmartPointer<vtkGlyph3D>::New();
 	glyph->SetInputData(polyData);
-	glyph->SetScaleFactor(scaleFactor*0.5);//设置缩放因子
+	glyph->SetScaleFactor(scaleFactor);//设置缩放因子
 	glyph->SetSourceConnection(arrowSource->GetOutputPort());
-	glyph->SetScaleModeToDataScalingOff();//关闭缩放
+	//glyph->SetScaleModeToDataScalingOff();//关闭缩放
 	glyph->Update();
 	return glyph->GetOutput();
 }
-
+/**
+* @time	2022/01/04
+* @brief DV3D::CartesianVector3dDatasetConstructor::setGridMergeUnit 设置网格合并的单位方阵
+* @param vtkIdType zunit
+* @param vtkIdType yunit
+* @param vtkIdType xunit
+* @return void
+*/
+void DV3D::CartesianVector3dDatasetConstructor::setGridMergeUnit(vtkIdType zunit, vtkIdType yunit, vtkIdType xunit)
+{
+	zUnit = zunit;
+	yUnit = yunit;
+	xUnit = xunit;
+}
 void DV3D::CartesianVector3dDatasetConstructor::initDatas()
 {
-	//获取矢量数据
-	auto h5ds = getHdf5Datas();
-	//将结构数据处理成点位,z-y-x
-	loadStructPoint();
-	//生成矢量数据
-	std::vector<std::vector<vtkPoint3d>> vectorDatas;
-	vectorDatas.reserve(3);
-	for (auto iter = h5ds.begin(); iter != h5ds.end(); iter++)
-		vectorDatas.push_back(generateVectorData(*iter));
-	//合并
-	mergeDatas(vectorDatas);
-}
-
-void DV3D::CartesianVector3dDatasetConstructor::loadStructPoint()
-{
-	//获取结构数据
-	auto structData = getStructData();
-	assert(structData.listDataSet.size() == 4 && "list DataSet size is not 4");
+	auto h5d = getHdf5Data();
+	assert(h5d.listDataSet.size() == 4 && "list DataSet size is not 4");
 	std::vector<std::vector<float>> grid;
 	grid.reserve(4);
-	for (auto i = 0; i < structData.listDataSet.size(); ++i)
+	for (auto i = 0; i < h5d.listDataSet.size(); ++i)
 	{
 		std::vector<float> d;
-		Hdf5IO::getValue(structData.listDataSet.at(i), d);
+		Hdf5IO::getValue(h5d.listDataSet.at(i), d);
 		grid.push_back(d);
 	}
-	std::vector<float>& xList = grid[0];
-	std::vector<float>& yList = grid[1];
-	std::vector<float>& zList = grid[2];
+	std::vector<float>& varList = grid[0];
+	std::vector<float>& xList = grid[1];
+	std::vector<float>& yList = grid[2];
+	std::vector<float>& zList = grid[3];
 	initGrid(xList.size(), yList.size(), zList.size());
-	structPoint = vtkSmartPointer<vtkPoints>::New();
-	for (auto zi = 0; zi < zGridSize; ++zi)
-	{
-		for (auto yi = 0; yi < yGridSize; ++yi)
-		{
-			for (auto xi = 0; xi < xGridSize; ++xi)
-			{
-				structPoint->InsertNextPoint(xList[xi], yList[yi], zList[zi]);
-			}
-		}
-	}
-	//计算缩放因子
-	double scaleFactorX = (xList[xGridSize - 1] - xList[0]) / xGridSize;
-	double scaleFactorY = (yList[yGridSize - 1] - yList[0]) / yGridSize;
-	double scaleFactorZ = (zList[zGridSize - 1] - zList[0]) / zGridSize;
-	scaleFactor = sqrt(scaleFactorX * scaleFactorX + 
-		scaleFactorY * scaleFactorY + 
-		scaleFactorZ * scaleFactorZ);
+	/*
+		获取方向数据
+	*/
+	std::vector<vtkPoint3d> datas;
+	generateVectorData(datas,varList);
+	/*
+		构建数据
+	*/
+	generatePolyData(datas,xList,yList,zList);
 }
 void DV3D::CartesianVector3dDatasetConstructor::initGrid(vtkIdType x, vtkIdType y, vtkIdType z)
 {
@@ -100,87 +83,43 @@ void DV3D::CartesianVector3dDatasetConstructor::initGrid(vtkIdType x, vtkIdType 
 	zGridSize = z;
 }
 
-
 /**
-* @time	2021/12/28
-* @brief DV3D::CartesianVector3dDatasetConstructor::generateVectorData 生成矢量数据
-* @param Hdf5Data & h5d
-* @return std::vector<DV3D::VectorData>
-*/
-std::vector<DV3D::vtkPoint3d> DV3D::CartesianVector3dDatasetConstructor::generateVectorData(Hdf5Data& h5d)
-{
-	//获取数据的方向
-	vtkPoint3d vectorP(0.0, 0.0, 0.0);
-	switch (getAxisDir(h5d))
-	{
-	case AxisDir::X:
-		vectorP.setX(1.0);	break;
-	case AxisDir::Y:
-		vectorP.setY(1.0);	break;
-	case AxisDir::Z:
-		vectorP.setZ(1.0);	break;
-	}
-	std::vector<float> vaList;
-	Hdf5IO::getValue(h5d.listDataSet.at(0), vaList);
-	std::vector<vtkPoint3d> datas;
-	datas.reserve(xGridSize * yGridSize * zGridSize);
-	for (auto zi = 0; zi < zGridSize; ++zi)
-	{
-		for (auto yi = 0; yi < yGridSize; ++yi)
-		{
-			for (auto xi = 0; xi < xGridSize; ++xi)
-			{
-				auto scalar = vaList[getPointId(zi, yi, xi)];
-				vtkPoint3d p2 = vectorP * scalar;
-				datas.push_back(p2);
-			}
-		}
-	}
-	return datas;
-}
-
-
-/**
-* @time	2021/12/28
-* @brief DV3D::CartesianVector3dDatasetConstructor::mergeDatas 将三轴的数据进行合并
-* @param std::vector<std::vector<VectorData>> &
+* @time	2022/01/04
+* @brief DV3D::CartesianVector3dDatasetConstructor::generatePolyData 构建三维矢量数据
+* @param std::vector<vtkPoint3d> & datas 方向数据
+* @param std::vector<float> & xList  x-方向标尺
+* @param std::vector<float> & yList  y-方向标尺
+* @param std::vector<float> & zList  z-方向标尺
 * @return void
 */
-void DV3D::CartesianVector3dDatasetConstructor::mergeDatas(std::vector<std::vector<vtkPoint3d>>& datas)
+void DV3D::CartesianVector3dDatasetConstructor::generatePolyData(std::vector<vtkPoint3d>& datas, std::vector<float>& xList, std::vector<float>& yList, std::vector<float>& zList)
 {
-	/*
-		对数据进行合并并生成polydata数据
-	*/
 	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 	vtkSmartPointer<vtkFloatArray> normal = vtkSmartPointer<vtkFloatArray>::New();//法向
 	vtkSmartPointer<vtkFloatArray> vector = vtkSmartPointer<vtkFloatArray>::New();//方向
 	vtkSmartPointer<vtkFloatArray> scalars = vtkSmartPointer<vtkFloatArray>::New();//大小
 	normal->SetNumberOfComponents(3); //normal->SetName("Normals");
 	vector->SetNumberOfComponents(3); //vector->SetName("Vector");
-	int index = 0;
-	for (auto zi = 0; zi < zGridSize; ++zi)
+	double scalarMax = 0.0f;
+	auto zSize = (zGridSize % zUnit > 0) ? (zGridSize / zUnit + 1) : (zGridSize / zUnit);
+	auto ySize = (yGridSize % yUnit > 0) ? (yGridSize / yUnit + 1) : (yGridSize / yUnit);
+	auto xSize = (xGridSize % xUnit > 0) ? (xGridSize / xUnit + 1) : (xGridSize / xUnit);
+	for (auto zi = 0; zi < zSize; ++zi)
 	{
-		for (auto yi = 0; yi < yGridSize; ++yi)
+		for (auto yi = 0; yi < ySize; ++yi)
 		{
-			for (auto xi = 0; xi < xGridSize; ++xi)
+			for (auto xi = 0; xi < xSize; ++xi)
 			{
-				vtkPoint3d vectorPoint(0.0, 0.0, 0.0);
-				auto iter = datas.begin();
-				while (iter != datas.end())
-				{
-					vectorPoint += (*iter)[getPointId(zi, yi, xi)];
-					iter++;
-				}
-				//获取大小
-				auto saclar = getScalar(vectorPoint);
-				if (0.0f == saclar)
+				auto vectorPoint = getMergeVector(datas, zi, yi, xi);
+				auto scalar = getScalar(vectorPoint);
+				if (0.0f == scalar)
 					continue;
-				index++;
-				scalars->InsertNextTuple1(saclar);
+				if (scalarMax < scalar)
+					scalarMax = scalar;
+				scalars->InsertNextTuple1(scalar);
 				vectorPoint = vectorPoint.normalized();
 				vector->InsertNextTuple3(vectorPoint.x(), vectorPoint.y(), vectorPoint.z());
-				auto p1 = structPoint->GetPoint(getPointId(zi, yi, xi));
-				points->InsertNextPoint(p1[0], p1[1], p1[2]);
+				points->InsertNextPoint(xList[xi * xUnit], yList[yi * yUnit], zList[zi * zUnit]);
 				normal->InsertNextTuple3(1.0, 1.0, 1.0);
 			}
 		}
@@ -190,40 +129,70 @@ void DV3D::CartesianVector3dDatasetConstructor::mergeDatas(std::vector<std::vect
 	polyData->GetPointData()->SetScalars(scalars);
 	polyData->GetPointData()->SetVectors(vector);
 	polyData->GetPointData()->SetNormals(normal);
+	//计算缩放因子
+	double scaleFactorX = (xList[xGridSize - 1] - xList[0]) / (xGridSize / xUnit);
+	double scaleFactorY = (yList[yGridSize - 1] - yList[0]) / (yGridSize / yUnit);
+	double scaleFactorZ = (zList[zGridSize - 1] - zList[0]) / (zGridSize / zUnit);
+	scaleFactor = sqrt(scaleFactorX * scaleFactorX +
+		scaleFactorY * scaleFactorY +
+		scaleFactorZ * scaleFactorZ);
+	scaleFactor /= scalarMax;
 }
 
+/**
+* @time	2022/01/04
+* @brief DV3D::CartesianVector3dDatasetConstructor::generateVectorData 获取方向数据
+* @param std::vector<vtkPoint3d> & datas
+* @param std::vector<float> & varList
+* @return void
+*/
+void DV3D::CartesianVector3dDatasetConstructor::generateVectorData(std::vector<vtkPoint3d>& datas, std::vector<float>& varList)
+{
+	datas.clear();
+	datas.reserve(xGridSize * yGridSize * zGridSize);
+	auto iter = varList.begin();
+	while (iter != varList.end())
+	{
+		auto normalX = *iter; iter++;
+		auto normalY = *iter; iter++;
+		auto normalZ = *iter; iter++;
+		datas.push_back(vtkPoint3d(normalX, normalY, normalZ));
+	}
+}
 vtkIdType DV3D::CartesianVector3dDatasetConstructor::getPointId(vtkIdType zi, vtkIdType yi, vtkIdType xi)
 {
 	return (zi * xGridSize * yGridSize + yi * xGridSize + xi);
 }
-
-
-
 /**
-* @time	2021/12/29
-* @brief DV3D::CartesianVector3dDatasetConstructor::getAxisDir 获取轴向
-* @param Hdf5Data & h5d
-* @return DV3D::AxisDir
+* @time	2021/12/31
+* @brief DV3D::CartesianVector3dDatasetConstructor::getMergeVector 更具单位进行合并矢量
+* @param std::vector<std::vector<vtkPoint3d>> & datas
+* @param vtkIdType zi
+* @param vtkIdType yi
+* @param vtkIdType xi
+* @return DV3D::vtkPoint3d
 */
-DV3D::AxisDir DV3D::CartesianVector3dDatasetConstructor::getAxisDir(Hdf5Data& h5d)
+DV3D::vtkPoint3d DV3D::CartesianVector3dDatasetConstructor::getMergeVector(
+	std::vector<vtkPoint3d>& datas,
+	vtkIdType zIndex, 
+	vtkIdType yIndex, 
+	vtkIdType xIndex)
 {
-	std::string headstr = h5d.headList.at(0);
-	headstr.erase(0, headstr.find("=") + 1);
-	int off = 0;
-	auto elems = vStringSplit(headstr, "$");
-	auto axisInfo = elems.at(2);
-	AxisDir mAxisDir;
-	bool isbreak = false;
-	for (auto& i : axisInfos)
-	{
-		if (i.str == axisInfo)
-		{
-			mAxisDir = i.axisDir;
-			isbreak = true; break;
-		}
-	}
-	if (!isbreak) mAxisDir = Axis_NUll;
-	return mAxisDir;
+	/*
+		获取出矢量数据，并按照zUnit*yUnit*xUnit为一个单位网格的方式进行合并
+	*/
+	vtkPoint3d vectorPoint(0.0, 0.0, 0.0);
+	//获取大小
+	for (auto zUniti = 0; zUniti < zUnit; zUniti++)
+		for (auto yUniti = 0; yUniti < yUnit; yUniti++)
+			for (auto xUniti = 0; xUniti < xUnit; xUniti++)
+			{
+				auto pointId = getPointId(zIndex * zUnit + zUniti, yIndex * yUnit + yUniti, xIndex * xUnit + xUniti);
+				if (pointId >= (xGridSize * yGridSize * zGridSize))
+					continue;
+				vectorPoint += datas[pointId];
+			}
+	return vectorPoint;
 }
 double DV3D::getScalar(vtkPoint3d p)
 {

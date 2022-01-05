@@ -124,7 +124,9 @@ HDF5DataItemFactory::HDF5DataItems HDF5DataItem3DFactory::CreatHDF5Items(std::ve
 	item = CreatContour2DItem(datas);
 	if (item)
 		items.push_back(item);
-
+	item = CreatVector3DItem(datas);
+	if (item)
+		items.push_back(item);
 	return items;
 }
 
@@ -206,6 +208,43 @@ Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatContour2DItem(Hdf5Data& data, HDF
 	if (!item)
 		return item;
 	item->setName(gbkStdstringToQstring("2D等位图3D显示"));
+	return item;
+}
+
+Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatVector3DItem(Hdf5Data& data, HDF5DataItem* parentItem /*= nullptr*/)
+{
+	if (parentItem == nullptr)
+	{
+		parentItem = new HDF5DataItem(gbkStdstringToQstring("3D矢量图"));
+	}
+	//获场值+迭代步数为名称
+	std::string  name = H5DataHead::getAttributeForIndex(*data.headList.begin(), 3);
+	name += H5DataHead::getAttributeForIndex(*data.headList.begin(), 4);
+
+	auto contourItem = new HDF5DataItem(data, gbkStdstringToQstring(name));
+	itemSetHander(contourItem);
+	parentItem->addSubItem(contourItem);
+
+	return parentItem;
+}
+
+Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatVector3DItem(std::vector<Hdf5Data>& datas)
+{
+	HDF5DataItem* item = nullptr;
+
+	for (auto iter = datas.begin(); iter != datas.end();)
+	{
+		if (iter->name != "VECTOR3D")
+		{
+			iter++;
+			continue;
+		}
+
+		auto h5data = *iter;
+		iter = datas.erase(iter);
+		item = CreatVector3DItem(h5data, item);
+	}
+
 	return item;
 }
 
