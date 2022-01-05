@@ -40,14 +40,16 @@ namespace DV {
 		QPointF GetApos(QPointF& A_pos);
 		QVector<QLineF> GetCurLine_x();
 		QVector<QLineF> GetCutLine_y();
-		QImage createImg(std::map<int, std::vector<QPointF>>::iterator& it,
+		void createImg(
+			std::map<int, std::vector<QPointF>>::iterator& it,
 			Data::Rang& xr,
 			Data::Rang& yr,
 			float& xScale,
-			float& yScale);
-		void clipImg(QImage& img, QPolygonF& polyon);
+			float& yScale,
+			QImage& img,
+			QPainter& painter);
 		void drawPolygons(
-			QPainter& painter, std::vector<QPointF>& points);
+			QPainter& painter, QPolygonF& innerpolyF);
 	private:
 		QMap<int, QColor> color_tab;
 		QMap<int, QColor> color_pen;
