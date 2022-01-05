@@ -39,6 +39,10 @@ namespace DV3D {
 		void initGUI();
 		//获取所有actor 以及controler
 		ControlerActorMap getControlerActorMap();
+		//开启图例显示
+		bool scalarBarOn(Controler* controler);
+		//关闭图例显示
+		void scalarBarOff();
 	private:
 		//单向解除绑定
 		void oneWayUnbing(Controler* controler);

@@ -50,6 +50,7 @@ void Gui::DataVisualizationView::removeOtherControler()
 		widget3d->unbing(controler);
 		removeControlerItemWidget(controler);
 	}
+	widget3d->scalarBarOff();
 }
 
 void Gui::DataVisualizationView::removeControlerItemWidget(DV3D::Controler* controler)
@@ -93,6 +94,7 @@ void Gui::DataVisualizationView::addControler(std::shared_ptr<DV3D::Controler> c
 	else
 		removeOtherControler();
 
+	widget3d->scalarBarOn(controler.get());
 	widget3d->binding(controler.get());
 }
 

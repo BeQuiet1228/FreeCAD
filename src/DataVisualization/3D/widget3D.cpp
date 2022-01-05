@@ -20,9 +20,9 @@ DV3D::Widget3D::Widget3D(QWidget* parent /*= 0*/)
 
 	//初始化颜色条
 	scalarBarActor = vtkSmartPointer<vtkScalarBarActor>::New();
-	scalarBarActor->SetLookupTable(vtkScalarsToColors::New());
 	scalarBarActor->SetNumberOfLabels(6);
-	renderer->AddActor(scalarBarActor);
+ 	scalarBarActor->SetMaximumWidthInPixels(120);
+ 	scalarBarActor->SetMaximumHeightInPixels(300);
 
 
 #if 0 //添加一个三维坐标系,用于判断方位
@@ -87,6 +87,30 @@ void DV3D::Widget3D::initGUI()
 DV3D::Widget3D::ControlerActorMap DV3D::Widget3D::getControlerActorMap()
 {
 	return controlerActor;
+}
+
+
+/**
+* @brief DV3D::Widget3D::scalarBarOn 开始图例显示 使用控制器中的数据初始化图例颜色表
+* @param Controler * controler
+* @return bool 如果控制器中的数据没有开始标量显示则返回 false
+*/
+bool DV3D::Widget3D::scalarBarOn(Controler* controler)
+{
+	auto pipeline = controler->getActorPipeline();
+	auto mapper = pipeline->getMapper();
+	if (!mapper->GetScalarVisibility())
+		return false;
+
+	scalarBarActor->SetLookupTable(mapper->GetLookupTable());
+	renderer->AddActor(scalarBarActor);
+
+	return true;
+}
+
+void DV3D::Widget3D::scalarBarOff()
+{
+	renderer->RemoveActor(scalarBarActor);
 }
 
 /**
