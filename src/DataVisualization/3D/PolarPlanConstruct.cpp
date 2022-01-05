@@ -8,6 +8,7 @@
 #include"array"
 #include"vtk-7.0/vtkTriangleFilter.h"
 #include"vtk-7.0/vtkPolyDataNormals.h"
+#include "StructRotationFilter.h"
 DV3D::PolarPlanConstruct::PolarPlanConstruct() :PolarStructDaraSetConstruct() {}
 DV3D::PolarPlanConstruct::~PolarPlanConstruct() {}
 vtkSmartPointer<vtkDataSet> DV3D::PolarPlanConstruct::creatDataset()
@@ -39,6 +40,7 @@ vtkSmartPointer<vtkDataSet> DV3D::PolarPlanConstruct::creatDataset()
 	}
 	polyData->SetPoints(points);
 	polyData->SetPolys(cellData);
+#if 1
 	vtkSmartPointer<vtkTriangleFilter> triangle = vtkSmartPointer<vtkTriangleFilter>::New();
 	triangle->SetInputData(polyData);
 	triangle->Update();
@@ -49,6 +51,14 @@ vtkSmartPointer<vtkDataSet> DV3D::PolarPlanConstruct::creatDataset()
 	filter->SetAngle(360 / (thetaSize - 1));
 	filter->SetCapping(0);
 	filter->Update();
+#else
+	vtkSmartPointer<StructRotationFilter> filter = vtkSmartPointer<StructRotationFilter>::New();
+	filter->SetInputData(polyData);
+	filter->SetResolution(22);
+	filter->SetAngle(360 / (thetaSize - 1));
+	filter->Update();
+#endif
+
 	//自动计算法向
 	vtkSmartPointer<vtkPolyDataNormals> normalfilter = vtkSmartPointer<vtkPolyDataNormals>::New();
 	normalfilter->SetComputePointNormals(1);
