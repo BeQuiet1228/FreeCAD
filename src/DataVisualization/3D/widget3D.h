@@ -19,6 +19,9 @@ namespace DV3D {
 	*/
 	class DATA_VISUALIZATION_3D_EXPORT Widget3D :public QWidget {
 		friend class Controler;
+
+	public:
+		using ControlerActorMap = std::map<Controler*, vtkSmartPointer<vtkActor>>;
 	public:
 		Widget3D(QWidget* parent = 0);
 		~Widget3D();
@@ -34,6 +37,8 @@ namespace DV3D {
 		void reRender();
 		//初始化布局
 		void initGUI();
+		//获取所有actor 以及controler
+		ControlerActorMap getControlerActorMap();
 	private:
 		//单向解除绑定
 		void oneWayUnbing(Controler* controler);
@@ -48,7 +53,7 @@ namespace DV3D {
 		QVTKWidget* viewer3d;
 		vtkSmartPointer<vtkRenderWindow> renderWindow;
 		//控制器
-		std::map<Controler*, vtkSmartPointer<vtkActor>> controlerActor;
+		ControlerActorMap  controlerActor;
 		//颜色映射表
 		vtkSmartPointer<vtkScalarBarActor> scalarBarActor;
 	private:

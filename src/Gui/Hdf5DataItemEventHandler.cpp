@@ -27,6 +27,7 @@ void Gui::HDF5DataItem3DDoubleClickEventHander::trigger(HDF5DataItem* item)
 		return;
 
 	auto controler = DV3D::ControlerFactory::CreatControler(item->getHdf5Data());
+	controler->setObjectName(item->getNmae().toStdString());
 	auto controlerItem = DV3D::ControlerItemFactor::CreatContour3dControlerItem();
 	controlerItem->setControler(controler);
 	controlerItem->setName(item->getNmae());
@@ -49,6 +50,7 @@ bool Gui::HDF5DataItem3DDoubleClickEventHander::disposStructItem(HDF5DataItem* i
 
 	auto controler = DV3D::ControlerFactory::CreatStrucRotateControler(item->getHdf5Data());
 	auto controlerItem = DV3D::ControlerItemFactor::CreatContour3dControlerItem();
+	controler->setObjectName(item->getNmae().toStdString());
 	controlerItem->setControler(controler);
 	controlerItem->setName(item->getNmae());
 
@@ -82,7 +84,7 @@ void Gui::HDF5DataItem3DDoubleClickEventHander::showView3D(DV3D::ControlerItem* 
 	mw->setActiveWindow(view3d);
 
 
-	view3d->getWidget3D()->binding(controlerItem->getControler().get());
+	view3d->addControler(controlerItem->getControler());
 
 	auto listWidget = getControlerListWidget();
 	if (!listWidget)

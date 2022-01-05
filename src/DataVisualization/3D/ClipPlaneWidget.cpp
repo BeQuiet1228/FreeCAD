@@ -2,6 +2,7 @@
 #include "ui_ClipPlaneWidget.h"
 #include "controler.h"
 #include "vtkPlane.h"
+#include "actorPipeline.h"
 #include "QString"
 DV3D::ClipPlaneWidget::ClipPlaneWidget(QWidget* parent /*= nullptr*/) :
 	QDialog(parent), ui(new Ui::ClipPlaneWidget)
@@ -21,7 +22,7 @@ void DV3D::ClipPlaneWidget::setControler(std::shared_ptr<Controler> controler)
 {
 	controlerPtr = controler;
 	vtkSmartPointer<vtkPlane> planeptr;
-	controler->getClipPlane(planeptr);
+	controler->getActorPipeline()->getClipPlane(planeptr);
 	auto centerPoint = planeptr->GetOrigin();
 	auto normalPoint = planeptr->GetNormal();
 	//ªÒ»°µ„
@@ -50,6 +51,6 @@ void DV3D::ClipPlaneWidget::BtnClicked()
 		vtkSmartPointer<vtkPlane> planeF = vtkSmartPointer<vtkPlane>::New();
 		planeF->SetOrigin(center_X, center_Y, center_Z);
 		planeF->SetNormal(normal_X, normal_Y, normal_Z);
-		controlerPtr->setClipPlane(planeF);
+		controlerPtr->getActorPipeline()->setClipPlane(planeF);
 	}
 }

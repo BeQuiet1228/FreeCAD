@@ -5,6 +5,7 @@
 #include <vtkInteractorStyleJoystickCamera.h>
 #include <vtkScalarsToColors.h>
 #include"vtkAxesActor.h"
+#include "actorPipeline.h"
 DV3D::Widget3D::Widget3D(QWidget* parent /*= 0*/)
 	:QWidget(parent)
 {
@@ -83,6 +84,11 @@ void DV3D::Widget3D::initGUI()
 	this->resize(500,500);
 }
 
+DV3D::Widget3D::ControlerActorMap DV3D::Widget3D::getControlerActorMap()
+{
+	return controlerActor;
+}
+
 /**
 * @brief DV3D::Widget3D::oneWayUnbing 取消控制器绑定，并移除对应的actor
 * @param Controler * controler
@@ -109,7 +115,7 @@ void DV3D::Widget3D::oneWayBinding(Controler* controler)
 	if (citer != controlerActor.end())
 		return;
 
-	auto actor = controler->getActor();
+	auto actor = controler->getActorPipeline()->getActor();
 	renderer->AddActor(actor);
 
 	
@@ -127,11 +133,12 @@ void DV3D::Widget3D::synchronousControlerActor()
 {
 	for (auto iter = controlerActor.begin(); iter != controlerActor.end(); iter++)
 	{
-		if (iter->second != iter->first->getActor())
+		auto actor = iter->first->getActorPipeline()->getActor();
+		if (iter->second != actor)
 		{
 			renderer->RemoveActor(iter->second);
-			renderer->AddActor(iter->first->getActor());
-			iter->second = iter->first->getActor();
+			renderer->AddActor(actor);
+			iter->second = actor;
 		}
 	}
 

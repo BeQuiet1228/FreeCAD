@@ -1,9 +1,6 @@
 #pragma once
 #include "object.h"
 #include <memory>
-#include <vtkSmartPointer.h>
-#include <vtkActor.h>
-#include <vtkPlane.h>
 #include "DataVisualization3DExport.hpp"
 namespace DV3D {
 	class ActorPipemline;
@@ -47,15 +44,11 @@ namespace DV3D {
 		//设置剪切
 		void setClipEnable(const bool& b);
 		bool getClipEnable();
-		void setClipPlane(vtkSmartPointer<vtkPlane> palne);
-		void getClipPlane(vtkSmartPointer<vtkPlane>& palne);
 	private:
 		//单向绑定
 		void oneWayBinding(Widget3D* widget3D);
 		//单向解除绑定
 		void oneWayUnbing();
-		
-		vtkSmartPointer<vtkActor> getActor();
 	protected:
 		//获取3d窗口
 		Widget3D* getWidget3D();
