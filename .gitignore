@@ -29,7 +29,6 @@ install_manifest.txt
 /build/
 /src/Tools/offlinedoc/localwiki/
 /src/Tools/offlinedoc/*.txt
-OpenSCAD_rc.py
 .subuser-dev
 /\.idea/
 .tags
