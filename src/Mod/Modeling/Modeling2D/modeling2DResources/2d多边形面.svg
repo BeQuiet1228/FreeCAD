@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>2d多边行面</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="91.3356775%" id="linearGradient-1">
+            <stop stop-color="#87C6FB" offset="0%"></stop>
+            <stop stop-color="#1169B1" offset="100%"></stop>
+        </linearGradient>
+        <polygon id="path-2" points="8 2 14.1818674 6.49138954 11.8206041 13.7586105 4.17939586 13.7586105 1.81813264 6.49138954"></polygon>
+        <filter x="-3.7%" y="-6.2%" width="107.3%" height="102.4%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="-1" dy="-1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.2 0" type="matrix" in="shadowInnerInner1" result="shadowMatrixInner1"></feColorMatrix>
+            <feOffset dx="1" dy="1" in="SourceAlpha" result="shadowOffsetInner2"></feOffset>
+            <feComposite in="shadowOffsetInner2" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner2"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.5 0" type="matrix" in="shadowInnerInner2" result="shadowMatrixInner2"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner2"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="图标输出" transform="translate(-533.000000, -562.000000)">
+            <g id="Polygon" transform="translate(533.000000, 562.000000)">
+                <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
+                <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                <use stroke="#1A1A1A" stroke-width="0.5" xlink:href="#path-2"></use>
+            </g>
+        </g>
+    </g>
+</svg>

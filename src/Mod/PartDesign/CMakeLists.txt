@@ -115,7 +115,10 @@ SET(FeatureHole_UI
 )
 
 SET(all_featurehole_files ${FeatureHole_SRCS} ${FeatureHole_UI})
-
+SET(Sources_Srcs
+FeatureHole
+)
+File(COPY ${Sources_Srcs} DESTINATION ${CMAKE_BINARY_DIR}/Mod/PartDesign)
 #ADD_CUSTOM_TARGET(FeatureHole ALL
 #    SOURCES ${all_featurehole_files}
 #)

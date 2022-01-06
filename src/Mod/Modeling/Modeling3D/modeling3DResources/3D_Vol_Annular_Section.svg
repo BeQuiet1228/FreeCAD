@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>环形区域体@4x</title>
+    <defs>
+        <ellipse id="path-1" cx="8.05" cy="11.5" rx="6.75" ry="2.5"></ellipse>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="13.5" height="5" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-3">
+            <stop stop-color="#0D65AE" offset="0%"></stop>
+            <stop stop-color="#5193C9" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="99.6558129%" id="linearGradient-4">
+            <stop stop-color="#8CCBFF" offset="0%"></stop>
+            <stop stop-color="#3F81B8" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="99.8812289%" id="linearGradient-5">
+            <stop stop-color="#8CCBFF" offset="0%"></stop>
+            <stop stop-color="#4D8EC5" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-6">
+            <stop stop-color="#8CCBFF" offset="0%"></stop>
+            <stop stop-color="#5597CD" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="修改部分备份" transform="translate(-611.000000, -78.000000)" stroke="#1A1A1A">
+            <g id="环形区域体" transform="translate(611.000000, 78.000000)">
+                <use id="椭圆形" mask="url(#mask-2)" stroke-width="0.6" stroke-dasharray="1" xlink:href="#path-1"></use>
+                <path d="M3.03803711,7.15808105 L3,9.41143799 C4.42096355,9.1960189 5.43939897,9.06207744 6.05530625,9.0096136 C6.75663458,8.94987347 7.40346202,8.92197005 7.99578857,8.92590332 C9.36838786,8.9350179 11.0324707,9.09686279 12.9880371,9.41143799 L12.9880371,5.90808105 L9.90130615,4 L6.17425537,4 L4.19262695,4.74951172 L3.03803711,7.15808105 Z" id="路径-30" stroke-width="0.5" fill="url(#linearGradient-3)"></path>
+                <path d="M8,3 C11.104689,3 13.6943798,3.85907885 14.2885166,5.0003966 L11.3629351,5.00106812 C10.7978434,4.55902152 9.50477959,4.25 8,4.25 C6.49522041,4.25 5.20215662,4.55902152 4.63706485,5.00106812 L1.71148337,5.0003966 C2.30562021,3.85907885 4.89531105,3 8,3 Z" id="形状结合" stroke-width="0.5" fill="url(#linearGradient-4)"></path>
+                <polyline id="路径" stroke-width="0.5" fill="url(#linearGradient-5)" points="4.48916713 5.23552246 4.55 11.2355225 1.55 11.2355225 1.56232561 5.23608549"></polyline>
+                <polyline id="路径备份" stroke-width="0.5" fill="url(#linearGradient-6)" points="14.4480896 5.24711609 14.5 11.2 11.5 11.2 11.5123256 5.20056303"></polyline>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,3 @@
+import Point3DInstance
+import Point3DCommand
+import Point3DDialogMain

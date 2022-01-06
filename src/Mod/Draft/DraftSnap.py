@@ -1,3 +1,4 @@
+# encoding:utf-8
 #***************************************************************************
 #*                                                                         *
 #*   Copyright (c) 2011                                                    *  
@@ -160,11 +161,12 @@ class Snapper:
             self.makeSnapToolBar()
         mw = FreeCADGui.getMainWindow()
         bt = mw.findChild(QtGui.QToolBar,"Draft Snap")
-        if not bt:
-            mw.addToolBar(self.toolbar)
-        else:
-            if Draft.getParam("showSnapBar",True):
-                bt.show()
+        # @lzg
+        # if not bt:
+        #     mw.addToolBar(self.toolbar)
+        # else:
+        #     if Draft.getParam("showSnapBar",True):
+        #         bt.show()
 
         def cstr(point):
             "constrains if needed"
@@ -252,8 +254,16 @@ class Snapper:
                 self.trackLine.p2(fp)
                 self.trackLine.on()
             # set the arch point tracking
-            if self.lastArchPoint:
-                self.setArchDims(self.lastArchPoint,fp)
+            # if self.lastArchPoint:
+            #     self.setArchDims(self.lastArchPoint,fp)
+            # 此处大胆的对源码进行修改，暂且认为原有代码是FreeCAD的Bug @lzg @time 2020-12-14-17：06
+            # noinspection PyBroadException
+            try:
+                if lastpoint:
+                    self.setArchDims(lastpoint, fp)
+            except:
+                pass
+
             self.spoint = fp
             self.running = False
             return fp
@@ -1193,7 +1203,8 @@ class Snapper:
         "builds the Snap toolbar"
         mw = FreeCADGui.getMainWindow()
         self.toolbar = QtGui.QToolBar(mw)
-        mw.addToolBar(QtCore.Qt.TopToolBarArea, self.toolbar)
+        # @lzg
+        # mw.addToolBar(QtCore.Qt.TopToolBarArea, self.toolbar)
         self.toolbar.setObjectName("Draft Snap")
         self.toolbar.setWindowTitle(QtCore.QCoreApplication.translate("Workbench", "Draft Snap"))
         self.toolbarButtons = []
@@ -1310,10 +1321,12 @@ class Snapper:
         mw = FreeCADGui.getMainWindow()
         bt = mw.findChild(QtGui.QToolBar,"Draft Snap")
         if not bt:
-            mw.addToolBar(self.toolbar)
-            self.toolbar.setParent(mw)
-        self.toolbar.show()
-        self.toolbar.toggleViewAction().setVisible(True)
+            # @lzg
+            # mw.addToolBar(self.toolbar)
+            # self.toolbar.setParent(mw)
+            pass
+        # self.toolbar.show()
+        # self.toolbar.toggleViewAction().setVisible(True)
         if FreeCADGui.ActiveDocument:
             self.setTrackers()
 
@@ -1382,7 +1395,9 @@ class Snapper:
             self.trackers[8].append(self.extLine2)
             self.trackers[9].append(self.holdTracker)
         if self.grid and (not self.forceGridOff):
-            self.grid.set()
+            # self.grid.set()
+            # 由于对网格的独特需求，此处对源码进行修改  lzg  2020-12-29
+            self.grid.on()
             
     def addHoldPoint(self):
         if self.spoint:
@@ -1398,3 +1413,7 @@ if not hasattr(FreeCAD,"DraftWorkingPlane"):
     FreeCAD.DraftWorkingPlane = WorkingPlane.plane()
     #print(FreeCAD.DraftWorkingPlane)
     FreeCADGui.addIconPath(":/icons")
+
+def sayz(msg):
+    FreeCAD.Console.PrintError(msg)
+    FreeCAD.Console.PrintError("\n")

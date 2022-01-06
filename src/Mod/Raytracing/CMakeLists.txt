@@ -20,4 +20,7 @@ INSTALL(
         ${CMAKE_INSTALL_DATADIR}/Mod/Raytracing
     FILES_MATCHING PATTERN "*.pov*" PATTERN "*.lxs*"
 )
-
+SET(Sources_Srcs
+Templates
+)
+FILE(COPY ${Sources_Srcs} DESTINATION ${CMAKE_BINARY_DIR}/Mod/Raytracing)

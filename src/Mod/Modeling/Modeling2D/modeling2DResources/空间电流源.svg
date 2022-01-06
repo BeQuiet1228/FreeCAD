@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>空间电流源</title>
+    <defs>
+        <polygon id="path-1" points="8 8 13.1961524 5 13.1961524 10.9103014 8 14"></polygon>
+        <filter x="-9.6%" y="-5.6%" width="119.2%" height="111.1%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="-1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.3 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+        <polygon id="path-3" points="2.85463909 5.06588858 8 8 12.9916882 5.06588858 8 2"></polygon>
+        <filter x="-4.9%" y="-8.3%" width="109.9%" height="116.7%" filterUnits="objectBoundingBox" id="filter-4">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.5 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="图标输出" transform="translate(-295.000000, -828.000000)">
+            <g id="空间电流源" transform="translate(295.000000, 828.000000)">
+                <g id="Path-12">
+                    <use fill="#43CB7F" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                </g>
+                <polygon id="Path-11" fill="#45CD7F" points="2.85463909 5.06588858 7.92316366 8 8 14 2.85463909 11"></polygon>
+                <g id="Path-10">
+                    <use fill="#5BFFA6" fill-rule="evenodd" xlink:href="#path-3"></use>
+                    <use fill="black" fill-opacity="1" filter="url(#filter-4)" xlink:href="#path-3"></use>
+                </g>
+                <polygon id="Polygon" stroke="#1A1A1A" stroke-width="0.5" points="8 2 13.1961524 5 13.1961524 11 8 14 2.80384758 11 2.80384758 5"></polygon>
+                <polyline id="Path-8" stroke="#1A1A1A" stroke-width="0.5" points="12.9916882 5.06588858 8 8 2.85463909 5.06588858"></polyline>
+                <path d="M12.9916882,8.06588858 L8,11 L2.85463909,8.06588858" id="Path-8-Copy" stroke="#1A1A1A" stroke-width="0.5" stroke-dasharray="1,1" transform="translate(7.923164, 9.532944) scale(1, -1) translate(-7.923164, -9.532944) "></path>
+                <line x1="8" y1="8" x2="8" y2="13.8206028" id="Path-9" stroke="#1A1A1A" stroke-width="0.5"></line>
+                <line x1="8" y1="2" x2="8" y2="12" id="Path-9" stroke="#1A1A1A" stroke-width="0.5" stroke-dasharray="1,1"></line>
+                <polygon id="Path" stroke="#1A1A1A" stroke-width="0.5" fill="#E7E7E7" stroke-linejoin="round" points="7 5 10.2727273 5 8.27272727 7.45 11 7.45 6.63636364 12 7.54545455 8.675 5 8.675"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

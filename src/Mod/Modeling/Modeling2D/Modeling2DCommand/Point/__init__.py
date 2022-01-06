@@ -1,0 +1,3 @@
+import PointDialog
+import PointDlgMain
+import PointInstance

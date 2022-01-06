@@ -1,0 +1,14 @@
+<svg id="图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
+  <title>Grid</title>
+  <g>
+    <line x1="0.6" y1="5.3" x2="23.6" y2="5.3" style="fill: none;stroke: #f9bdc2;stroke-miterlimit: 10"/>
+    <line x1="0.4" y1="12" x2="23.4" y2="12" style="fill: none;stroke: #f9bdc2;stroke-miterlimit: 10"/>
+    <line x1="0.4" y1="18.7" x2="23.4" y2="18.7" style="fill: none;stroke: #f9bdc2;stroke-miterlimit: 10"/>
+  </g>
+  <g>
+    <line x1="5.3" y1="23.4" x2="5.3" y2="0.4" style="fill: none;stroke: #f9bdc2;stroke-miterlimit: 10"/>
+    <line x1="12" y1="23.6" x2="12" y2="0.6" style="fill: none;stroke: #f9bdc2;stroke-miterlimit: 10"/>
+    <line x1="18.7" y1="23.6" x2="18.7" y2="0.6" style="fill: none;stroke: #f9bdc2;stroke-miterlimit: 10"/>
+  </g>
+  <path d="M22.5,24.1H1.5A1.538,1.538,0,0,1,0,22.6V1.4A1.538,1.538,0,0,1,1.5-.1h21A1.538,1.538,0,0,1,24,1.4V22.7A1.453,1.453,0,0,1,22.5,24.1Z" style="fill: none;stroke: #161616;stroke-linecap: round;stroke-miterlimit: 10;stroke-width: 2px"/>
+</svg>

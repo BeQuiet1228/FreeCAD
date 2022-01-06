@@ -1,0 +1,3 @@
+import BeamInstance
+import BeamDialogMain
+import BeamCommand

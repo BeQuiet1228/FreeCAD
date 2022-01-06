@@ -1,0 +1,3 @@
+import AreaRectangleInstance
+import AreaRectangleDialogMain
+import AreaRectangleCommand

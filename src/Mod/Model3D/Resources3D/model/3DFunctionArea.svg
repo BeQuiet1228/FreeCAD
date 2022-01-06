@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>函数面</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#83C4FA" offset="0%"></stop>
+            <stop stop-color="#136AB2" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="图标输出" transform="translate(-443.000000, -562.000000)">
+            <g id="函数面" transform="translate(443.000000, 562.000000)">
+                <polygon id="Rectangle" stroke="#1A1A1A" stroke-width="0.5" fill="url(#linearGradient-1)" points="4.4 4 11.6 4 14 12 2 12"></polygon>
+                <line x1="3.22817889" y1="8" x2="12.682875" y2="8" id="Path-48" stroke="#1A1A1A" stroke-width="0.5"></line>
+                <line x1="7.95552696" y1="4" x2="7.95552696" y2="12" id="Path-49" stroke="#1A1A1A" stroke-width="0.5"></line>
+                <g id="Group-2" transform="translate(7.500000, 7.500000)">
+                    <circle id="Oval" stroke="#1A1A1A" stroke-width="0.5" fill="#FFFFFF" cx="4" cy="4" r="4"></circle>
+                    <text id="fx" font-family="Georgia-Bold, Georgia" font-size="6" font-weight="bold" fill="#1A1A1A">
+                        <tspan x="1.05712891" y="6.25">fx</tspan>
+                    </text>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

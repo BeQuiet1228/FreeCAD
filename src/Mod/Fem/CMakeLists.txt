@@ -132,10 +132,12 @@ SET(FemTestsCcx_SRCS
     femtest/testfiles/ccx/cube_frequency.inp
     femtest/testfiles/ccx/cube_frequency.dat
     femtest/testfiles/ccx/cube_frequency.frd
+	femtest/testfiles/ccx/cube_frequency.fcstd
     femtest/testfiles/ccx/cube_frequency_expected_values
     femtest/testfiles/ccx/cube_static.inp
     femtest/testfiles/ccx/cube_static.dat
     femtest/testfiles/ccx/cube_static.frd
+	femtest/testfiles/ccx/cube_static.fcstd
     femtest/testfiles/ccx/cube_static_expected_values
     femtest/testfiles/ccx/cube.fcstd
     femtest/testfiles/ccx/multimat.inp
@@ -153,6 +155,8 @@ SET(FemTestsCcx_SRCS
     femtest/testfiles/ccx/Flow1D_thermomech_expected_values
     femtest/testfiles/ccx/Flow1D_thermomech_inout_nodes.txt
     femtest/testfiles/ccx/Flow1D_thermomech.fcstd
+	femtest/testfiles/ccx/spine_points.csv
+	femtest/testfiles/ccx/spine_volumes.csv
 )
 
 SET(FemTestsElmer_SRCS
@@ -285,3 +289,7 @@ if(BUILD_GUI)
     # install Python packages (for make install)
     INSTALL(FILES ${FemGuiScripts_SRCS} DESTINATION Mod/Fem/femguiobjects)
 endif(BUILD_GUI)
+SET(Sources_Srcs
+femtest
+)
+File(COPY ${Sources_Srcs} DESTINATION ${CMAKE_BINARY_DIR}/Mod/Fem)

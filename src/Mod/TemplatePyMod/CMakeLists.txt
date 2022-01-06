@@ -1,22 +1,24 @@
-
-
-fc_copy_to_mod_path("TemplatePyMod" 
-	InitGui.py
-	Init.py
-	Commands.py
-	PythonQt.py
-	Tests.py
-	DocumentObject.py
+SET(TemplatePyMod_Srcs
+./Automation.py
+./Commands.py
+./DocumentObject.py
+./FeaturePython.py
+./Init.py
+./InitGui.py
+./MengerSponge.py
+./Mesh2Shape.py
+./PythonQt.py
+./SplineSurface.py
+./TaskPanel.py
+./TaskPanel.ui
+./Tests.py
+./Texture.py
 )
-
-INSTALL(
-    FILES
-        Init.py
-        InitGui.py
-        Commands.py
-        FeaturePython.py
-        PythonQt.py
-        Tests.py
-    DESTINATION
-        Mod/TemplatePyMod
+add_custom_target(TemplatePyMod ALL SOURCES ${TemplatePyMod_Srcs})
+fc_copy_sources(TemplatePyMod "${CMAKE_BINARY_DIR}/Mod/TemplatePyMod" ${TemplatePyMod_Srcs})
+install(
+	FILES
+	${TemplatePyMod}
+	DESTINATION
+	Mod/TemplatePyMod
 )

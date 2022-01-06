@@ -1,1 +1,2 @@
 import CoordinateSystemUI
+import CoordinateSystemDialogMain

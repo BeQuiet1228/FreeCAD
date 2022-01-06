@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>保存</title>
+    <defs>
+        <linearGradient x1="15.2777778%" y1="0%" x2="84.7222222%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#EEEEEE" offset="0.0409746503%"></stop>
+            <stop stop-color="#C2C2C2" offset="100%"></stop>
+        </linearGradient>
+        <path d="M10,6.00944088 L10,12 C10,12.5522847 9.55228475,13 9,13 L1,13 C0.44771525,13 0,12.5522847 0,12 L0,2 C0,1.44771525 0.44771525,1 1,1 L5.01142896,1 L9,1 C9.55228475,1 10,1.44771525 10,2 L10,6.00944088 L10,6.00944088 Z" id="path-2"></path>
+        <filter x="-7.5%" y="-6.2%" width="115.0%" height="112.5%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="1" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 1 0" type="matrix" in="shadowInnerInner1" result="shadowMatrixInner1"></feColorMatrix>
+            <feOffset dx="-1" dy="-1" in="SourceAlpha" result="shadowOffsetInner2"></feOffset>
+            <feComposite in="shadowOffsetInner2" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner2"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.2 0" type="matrix" in="shadowInnerInner2" result="shadowMatrixInner2"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner2"></feMergeNode>
+            </feMerge>
+        </filter>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-4">
+            <stop stop-color="#3F6FFF" offset="0%"></stop>
+            <stop stop-color="#B8CAFF" offset="100%"></stop>
+        </linearGradient>
+        <path d="M2,0.75 L8,0.75 L8,4.75 C8,5.30228475 7.55228475,5.75 7,5.75 L3,5.75 C2.44771525,5.75 2,5.30228475 2,4.75 L2,0.75 L2,0.75 Z" id="path-5"></path>
+        <filter x="-58.3%" y="-50.0%" width="216.7%" height="240.0%" filterUnits="objectBoundingBox" id="filter-6">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="1" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.4 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="图标输出" transform="translate(-193.000000, -78.000000)">
+            <g id="保存" transform="translate(193.000000, 78.000000)">
+                <g id="Group" transform="translate(3.000000, 1.000000)">
+                    <g id="Path">
+                        <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
+                        <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                        <use stroke="#1A1A1A" stroke-width="0.5" xlink:href="#path-2"></use>
+                    </g>
+                    <g id="矩形">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-6)" xlink:href="#path-5"></use>
+                        <path stroke="#1A1A1A" stroke-width="0.5" d="M7.75,1 L7.75,4.75 C7.75,4.95710678 7.66605339,5.14460678 7.53033009,5.28033009 C7.39460678,5.41605339 7.20710678,5.5 7,5.5 L7,5.5 L3,5.5 C2.79289322,5.5 2.60539322,5.41605339 2.46966991,5.28033009 C2.33394661,5.14460678 2.25,4.95710678 2.25,4.75 L2.25,4.75 L2.25,1 L7.75,1 Z" stroke-linejoin="square" fill="url(#linearGradient-4)" fill-rule="evenodd"></path>
+                    </g>
+                </g>
+                <line x1="9.00262451" y1="2" x2="9.00262451" y2="4.01135254" id="路径-2" stroke="#1A1A1A" stroke-width="0.5" stroke-linecap="round"></line>
+            </g>
+        </g>
+    </g>
+</svg>
