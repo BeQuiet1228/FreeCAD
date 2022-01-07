@@ -7,9 +7,7 @@ void DV3D::ControlerContourSurface::active(std::shared_ptr<Controler> controler)
 {
 	std::shared_ptr<Contour3dControler> contour3dControler =
 		std::dynamic_pointer_cast<Contour3dControler>(controler);
-	//assert(contour3dControler && "contour3dControler is nullptr");
-	if (nullptr==contour3dControler)
-		return;
+	assert(contour3dControler && "contour3dControler is nullptr");
 	//µ¯´°,µ¯³ö´°¿Ú
 	showWidget(controler);
 

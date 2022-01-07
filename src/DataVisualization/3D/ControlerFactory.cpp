@@ -37,7 +37,7 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatControler(Hdf5Data
 		controler = CreatContour3dControler(h5data);
 	if (h5data.name == "VECTOR3D")
 		controler = CreatVector3dControler(h5data);
-	assert(controler && "controler is nullptr!");
+	//assert(controler && "controler is nullptr!");
 	return controler;
 }
 std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContourControler(Hdf5Data& h5data)
@@ -95,6 +95,9 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatVector3dControler(
 		constructor.reset(new CylinderVector3dDatasetContructor());
 	constructor->setHdf5Data(h5data);
 	pipeline.reset(new Vector3dActorPipeline());
+	auto dataSet = constructor->creatDataset();
+	if (nullptr == dataSet)
+		return nullptr;
 	pipeline->setDataSet(constructor->creatDataset());
 	pipeline->connect();
 	controler.reset(new Controler());

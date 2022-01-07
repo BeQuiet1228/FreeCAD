@@ -39,7 +39,7 @@ void DV3D::ActorPipemline::setMapper(vtkSmartPointer<vtkMapper> mp)
 
 vtkSmartPointer<vtkDataSet> DV3D::ActorPipemline::getDataSet()
 {
-	//assert(dataSet && "dataSet is nullptr");
+	assert(dataSet && "dataSet is nullptr");
 	return dataSet;
 }
 
