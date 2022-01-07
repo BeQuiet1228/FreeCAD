@@ -42,7 +42,6 @@ int StructRotationFilter::RequestData(
 	vtkIdType numPts, numCell;
 	vtkPointData* pd = input->GetPointData();
 	vtkCellData* cd = input->GetCellData();
-	vtkPolyData* mesh;
 	vtkPoints* inPts=input->GetPoints();
 	vtkCellArray* polys=input->GetPolys();
 	/*
@@ -90,6 +89,15 @@ int StructRotationFilter::RequestData(
 	/*
 		构建多面体
 	*/
+	vtkPolyData* mesh;
+	mesh = vtkPolyData::New();
+	mesh->SetPoints(input->GetPoints());
+	mesh->SetVerts(input->GetVerts());
+	mesh->SetLines(input->GetLines());
+	mesh->SetPolys(input->GetPolys());
+	mesh->SetStrips(input->GetStrips());
+	if (input->GetPolys() || input->GetStrips())
+		mesh->BuildLinks();
 	output->SetPoints(newPts);
 	for (auto i = 1; i <= this->Resolution; ++i)
 	{
