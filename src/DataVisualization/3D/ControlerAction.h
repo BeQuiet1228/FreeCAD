@@ -1,6 +1,7 @@
 #pragma once
 #include "action.h"
 #include "ClipPlaneWidget.h"
+#include <HDF5Reader/hdf5io.h>
 
 namespace DV3D {
 	class Controler;
@@ -38,5 +39,14 @@ namespace DV3D {
 		virtual void initState(std::shared_ptr<Controler> controler) override;
 	private:
 		void showWidget(std::shared_ptr<Controler> controler);
+	};
+	class ControlerSave :public ControlerAction {
+	public:
+		void active(std::shared_ptr<Controler> controler) override;
+		void initState(std::shared_ptr<Controler> controler) override;
+		void setHdf5Data(const Hdf5Data& data);
+		Hdf5Data getHdf5Data();
+	private:
+		Hdf5Data hdf5data;
 	};
 }

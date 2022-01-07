@@ -78,3 +78,23 @@ void DV3D::ControlerClipPlan::initState(std::shared_ptr<Controler> controler)
 {
 	on();
 }
+
+void DV3D::ControlerSave::active(std::shared_ptr<Controler> controler)
+{
+
+}
+
+void DV3D::ControlerSave::initState(std::shared_ptr<Controler> controler)
+{
+	on();
+}
+
+void DV3D::ControlerSave::setHdf5Data(const Hdf5Data& data)
+{
+	this->hdf5data = data;
+}
+
+Hdf5Data DV3D::ControlerSave::getHdf5Data()
+{
+	return hdf5data;
+}
