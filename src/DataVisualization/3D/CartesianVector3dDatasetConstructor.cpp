@@ -5,14 +5,16 @@
 #include "vtkPointData.h"
 #include "vtkArrowSource.h"
 #include "vtkGlyph3D.h"
+#include "QMessageBox.h"
+#include "../C_encoding.h"
 
 DV3D::CartesianVector3dDatasetConstructor::CartesianVector3dDatasetConstructor() :
-	xGridSize(0), yGridSize(0), zGridSize(0), scaleFactor(0.0f), xUnit(5), yUnit(2), zUnit(2)
+	xGridSize(0), yGridSize(0), zGridSize(0), scaleFactor(0.0f), xUnit(5), yUnit(2), zUnit(2), isNull(true)
 {
-	polyData=nullptr;
+	polyData = nullptr;
 }
 DV3D::CartesianVector3dDatasetConstructor::CartesianVector3dDatasetConstructor(vtkIdType zunit, vtkIdType yunit, vtkIdType xunit)
-	:xGridSize(0), yGridSize(0), zGridSize(0), scaleFactor(0.0f), xUnit(xunit), yUnit(yunit), zUnit(zunit)
+	: xGridSize(0), yGridSize(0), zGridSize(0), scaleFactor(0.0f), xUnit(xunit), yUnit(yunit), zUnit(zunit), isNull(true)
 {
 	//if (polyData != nullptr)
 	//{
@@ -26,6 +28,17 @@ DV3D::CartesianVector3dDatasetConstructor::~CartesianVector3dDatasetConstructor(
 vtkSmartPointer<vtkDataSet> DV3D::CartesianVector3dDatasetConstructor::creatDataset()
 {
 	initDatas();
+	if (isNull)
+	{
+		/*
+		弹出窗口
+		*/
+		QMessageBox box;
+		QString message = DV::GetEncodingstr("绘制失败,所有的场值均为零.", ENCODING_GB2312);
+		box.setText(message);
+		box.exec();
+		return nullptr;
+	}
 	vtkSmartPointer<vtkArrowSource> arrowSource = vtkSmartPointer<vtkArrowSource>::New();
 	vtkSmartPointer<vtkGlyph3D> glyph = vtkSmartPointer<vtkGlyph3D>::New();
 	glyph->SetInputData(polyData);
@@ -70,11 +83,11 @@ void DV3D::CartesianVector3dDatasetConstructor::initDatas()
 		获取方向数据
 	*/
 	std::vector<vtkPoint3d> datas;
-	generateVectorData(datas,varList);
+	generateVectorData(datas, varList);
 	/*
 		构建数据
 	*/
-	generatePolyData(datas,xList,yList,zList);
+	generatePolyData(datas, xList, yList, zList);
 }
 void DV3D::CartesianVector3dDatasetConstructor::initGrid(vtkIdType x, vtkIdType y, vtkIdType z)
 {
@@ -114,6 +127,7 @@ void DV3D::CartesianVector3dDatasetConstructor::generatePolyData(std::vector<vtk
 				auto scalar = getScalar(vectorPoint);
 				if (0.0f == scalar)
 					continue;
+				isNull = false;
 				if (scalarMax < scalar)
 					scalarMax = scalar;
 				scalars->InsertNextTuple1(scalar);
@@ -124,6 +138,11 @@ void DV3D::CartesianVector3dDatasetConstructor::generatePolyData(std::vector<vtk
 			}
 		}
 	}
+	/*
+		场值为空，直接返回
+	*/
+	if (isNull)
+		return;
 	polyData = vtkSmartPointer<vtkPolyData>::New();
 	polyData->SetPoints(points);
 	polyData->GetPointData()->SetScalars(scalars);
@@ -174,8 +193,8 @@ vtkIdType DV3D::CartesianVector3dDatasetConstructor::getPointId(vtkIdType zi, vt
 */
 DV3D::vtkPoint3d DV3D::CartesianVector3dDatasetConstructor::getMergeVector(
 	std::vector<vtkPoint3d>& datas,
-	vtkIdType zIndex, 
-	vtkIdType yIndex, 
+	vtkIdType zIndex,
+	vtkIdType yIndex,
 	vtkIdType xIndex)
 {
 	/*
