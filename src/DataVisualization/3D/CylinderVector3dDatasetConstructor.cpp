@@ -64,6 +64,7 @@ void DV3D::CylinderVector3dDatasetContructor::generatePolyData(
 				auto scalar = getScalar(vectorPoint);
 				if (0.0f == scalar)
 					continue;
+				isNull = false;
 				if (scalarMax < scalar)
 					scalarMax = scalar;
 				scalars->InsertNextTuple1(scalar);
@@ -77,6 +78,8 @@ void DV3D::CylinderVector3dDatasetContructor::generatePolyData(
 					normal->InsertNextTuple3(1.0, 1.0, 1.0);
 				}
 			}
+	if (isNull)
+		return;
 	polyData = vtkSmartPointer<vtkPolyData>::New();
 	polyData->SetPoints(points);
 	polyData->GetPointData()->SetScalars(scalars);
