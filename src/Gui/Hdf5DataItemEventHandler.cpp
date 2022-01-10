@@ -11,6 +11,7 @@
 #include "DocumentPic.h"
 #include "DataVisualization3dView.h"
 #include "MainWindow.h"
+#include "FileDialog.h"
 #include <mutex>
 #include <cassert>
 #include <QDockWidget>
@@ -23,38 +24,35 @@ void Gui::HDF5DataItem3DDoubleClickEventHander::trigger(HDF5DataItem* item)
 	assert(item && "item is nullptr!");
 
 	//单独处理特殊情况下的结构图
-	if (disposStructItem(item))
-		return;
+	auto controler = creatStructControler(item);
 
-	auto controler = DV3D::ControlerFactory::CreatControler(item->getHdf5Data());
+	if(!controler)
+		auto controler = DV3D::ControlerFactory::CreatControler(item->getHdf5Data());
+
 	controler->setObjectName(item->getNmae().toStdString());
 	auto controlerItem = DV3D::ControlerItemFactor::CreatContour3dControlerItem();
+
+	//添加一个save按钮 ，并且传入工程路径作为路径选择的文件浏览器起始路径
+	auto workPath = Gui::FileDialog::getWorkingDirectory();
+	DV3D::ControlerItemFactor::AddSaveAction(controlerItem, item->getHdf5Data(), workPath);
+
 	controlerItem->setControler(controler);
 	controlerItem->setName(item->getNmae());
 
 	showView3D(controlerItem);
 }
 
-/**
-* @brief Gui::HDF5DataItem3DDoubleClickEventHander::disposStructItem 处理需要旋转得到的结构图
-* @param HDF5DataItem * item
-* @return bool
-*/
-bool Gui::HDF5DataItem3DDoubleClickEventHander::disposStructItem(HDF5DataItem* item)
+
+std::shared_ptr<DV3D::Controler> Gui::HDF5DataItem3DDoubleClickEventHander::creatStructControler(HDF5DataItem* item)
 {
 	auto hdf5Data = item->getHdf5Data();
 	if (hdf5Data.name != "struct")
-		return false;
-	if (item->getNmae() !=  QString::fromLocal8Bit("Struct"))
-		return false;
+		return nullptr;
+	if (item->getNmae() != QString::fromLocal8Bit("Struct"))
+		return nullptr;
 
 	auto controler = DV3D::ControlerFactory::CreatStrucRotateControler(item->getHdf5Data());
-	auto controlerItem = DV3D::ControlerItemFactor::CreatContour3dControlerItem();
-	controler->setObjectName(item->getNmae().toStdString());
-	controlerItem->setControler(controler);
-	controlerItem->setName(item->getNmae());
-
-	showView3D(controlerItem);
+	return controler;
 }
 
 void Gui::HDF5DataItem3DDoubleClickEventHander::showView3D(DV3D::ControlerItem* controlerItem)

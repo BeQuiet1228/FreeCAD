@@ -1,7 +1,9 @@
 #pragma once
 #include "ControlerItemListWidget.h"
+#include <memory>
 namespace DV3D {
 	class ControlerItem;
+	class Controler;
 }
 namespace Gui {
 	class HDF5DataItem;
@@ -18,7 +20,7 @@ namespace Gui {
 	public:
 		void trigger(HDF5DataItem* item) override;
 	private:
-		bool disposStructItem(HDF5DataItem* item);
+		std::shared_ptr<DV3D::Controler> creatStructControler(HDF5DataItem* item);
 		void showView3D(DV3D::ControlerItem* controlerItem);
 	};
 }

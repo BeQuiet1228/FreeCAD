@@ -2,6 +2,7 @@
 #include "action.h"
 #include "ClipPlaneWidget.h"
 #include <HDF5Reader/hdf5io.h>
+#include <QString>
 
 namespace DV3D {
 	class Controler;
@@ -44,9 +45,14 @@ namespace DV3D {
 	public:
 		void active(std::shared_ptr<Controler> controler) override;
 		void initState(std::shared_ptr<Controler> controler) override;
+		//set get
 		void setHdf5Data(const Hdf5Data& data);
 		Hdf5Data getHdf5Data();
+		void setPath(const QString& pt);
+		QString getPath();
 	private:
 		Hdf5Data hdf5data;
+		//文件浏览器打开的路径
+		QString path;
 	};
 }
