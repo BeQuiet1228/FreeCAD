@@ -15,6 +15,7 @@ namespace DV
 	public:
 		std::vector<float> getValue();
 		std::vector<QColor> getColors(std::vector<float>&);
+		void setvals(std::vector<float>& vals, std::vector<QColor>& colors);
 	protected:
 		void initUi();
 	private:

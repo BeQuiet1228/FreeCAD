@@ -5,6 +5,7 @@
 #include "vector"
 #include "HDF5Reader/hdf5io.h"
 class Hdf5Data;
+class QWidget;
 namespace DV3D {
 	class Controler;
 	class DATA_VISUALIZATION_3D_EXPORT ControlerFactory {
@@ -27,5 +28,7 @@ namespace DV3D {
 		static std::shared_ptr<Controler> CreatVector3dControler(Hdf5Data& h5datas);
 		//寻找字符串中的长度信息
 		static int findStringAttribute(const std::string& str);
+		//
+		static std::vector<QWidget*> CreateConfigWidget();
 	};
 }

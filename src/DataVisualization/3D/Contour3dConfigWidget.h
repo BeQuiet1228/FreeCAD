@@ -5,14 +5,17 @@ namespace Ui
 {
 	class Contour3dConfigWidget;
 };
+class QBoxLayout;
 namespace DV
 {
-	class ColorBarWidget;
+	class ArrowCtrl;
+	class ColorTab;
 };
 namespace DV3D
 {
 	class Contour3dConfigWidget :public QWidget,public DV::ConfigUnify
 	{
+		Q_OBJECT
 	public:
 		explicit Contour3dConfigWidget(QWidget* parent=nullptr);
 		~Contour3dConfigWidget();
@@ -21,8 +24,12 @@ namespace DV3D
 		void saveConfig();
 	protected:
 		void initUi();
+	protected Q_SLOTS:
+		void btnClicked();
 	private:
 		Ui::Contour3dConfigWidget* ui;
-		DV::ColorBarWidget* mColorBarWidget;
+		QBoxLayout* boxLayout;
+		DV::ColorTab* mColorTab;
+		DV::ArrowCtrl* arrowCtrl;
 	};
 };

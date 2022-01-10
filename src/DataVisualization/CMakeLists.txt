@@ -21,6 +21,13 @@ SET(QRC_SRC resource/rce.qrc)
 SET(UI_SRC 
 ConfigWidget.ui
 realTimewidget.ui
+#新加
+AxisConfigWidget.ui
+#RangConfigWidget.ui
+#VectorConfigWidget.ui
+#ContourConfigWidget.ui
+#StructConfigWidget.ui
+#ParticleConfigWidget.ui
 )
 SET(MY_MOC_HDR RenderThread.h
 	RenderThreadManager.h
@@ -45,6 +52,13 @@ SET(MY_MOC_HDR RenderThread.h
 	PlotAdapter.h
 	PlotAdapterNeedStruct.h
 	ColorBarWidget.h
+	#修改配置窗口
+	AxisConfigWidget.h
+	RangConfigWidget.h
+	VectorConfigWidget.h
+	ContourConfigWidget.h
+	StructConfigWidget.h
+	ParticleConfigWidget.h
 	)
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
@@ -173,6 +187,21 @@ SET(SRC_TOOL
 	ColorBarWidget.h
 	ColorBarWidget.cpp
 	)
+	
+SET(CONFIGWIDGET_Srcs
+	AxisConfigWidget.h
+	AxisConfigWidget.cpp
+	RangConfigWidget.h
+	RangConfigWidget.cpp
+	VectorConfigWidget.h
+	VectorConfigWidget.cpp
+	ContourConfigWidget.h
+	ContourConfigWidget.cpp
+	StructConfigWidget.h
+	StructConfigWidget.cpp
+	ParticleConfigWidget.h
+	ParticleConfigWidget.cpp
+	)
 #处理ui和qrc文件
 if (BUILD_QT5)
     QT5_ADD_RESOURCES(Gui_QRC_SRCS ${QRC_SRC})
@@ -199,6 +228,7 @@ SET(DataVisualization_src
 	${SRC_TOOL}
 	${Gui_QRC_SRCS}
 	${AXIS_SRC}
+	${CONFIGWIDGET_Srcs}
 	)
 add_definitions( -D_DATA_VISUALIZATION_)
 if(DataVisualizationDll)
@@ -232,6 +262,7 @@ SOURCE_GROUP("tool" FILES ${SRC_TOOL})
 SOURCE_GROUP("uifile" FILES ${UI_SRC})
 SOURCE_GROUP("qrcfile" FILES ${QRC_SRC})
 SOURCE_GROUP("axis" FILES ${AXIS_SRC})
+SOURCE_GROUP("configWidget" FILES ${CONFIGWIDGET_Srcs})
 #增加包含目录
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}

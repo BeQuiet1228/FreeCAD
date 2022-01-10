@@ -64,6 +64,7 @@ namespace DV {
 		void initUI();
 	public:
 		void bindplot(Plot* lp);
+		void addTabWidget(std::vector<QWidget*>&);
 	public:
 		static QwtLinearColorMap* getQwtLinearColorMap();
 	Q_SIGNALS:

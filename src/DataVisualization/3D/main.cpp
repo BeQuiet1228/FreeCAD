@@ -40,14 +40,15 @@ VTK_MODULE_INIT(vtkRenderingOpenGL2)   //³õÊ¼»¯opengläÖÈ¾Æ÷
 VTK_MODULE_INIT(vtkRenderingFreeType)   //³õÊ¼»¯×ÖÌåäÖÈ¾Æ÷
 VTK_MODULE_INIT(vtkInteractionStyle)
 #endif //INIT_VTK_OPENGL_AND_FRNT
-
+#include "Vector3dConfigWidget.h"
+#include "Contour3dConfigWidget.h"
 using namespace DV3D;
 
 int main(int argc, char* argv[])
 {
 	//vtkOutputWindow::SetGlobalWarningDisplay(0);
 	QApplication a(argc, argv);
-
+#if 0
 	QFileDialog* fileDialog = new QFileDialog();
 	fileDialog->setWindowTitle("OpenFile");
 	fileDialog->setDirectory("D:/test");
@@ -97,5 +98,10 @@ int main(int argc, char* argv[])
 	item->setControler(structControler);
 	item->show();
 #endif
+#endif
+	//Vector3dConfigWidget* vector3dconfigwidget = new Vector3dConfigWidget();
+	//vector3dconfigwidget->show();
+	//Contour3dConfigWidget* contour3dconfigwidget = new Contour3dConfigWidget();
+	//contour3dconfigwidget->show();
 	return a.exec();
 }

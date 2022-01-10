@@ -15,6 +15,7 @@
 #include <sstream>
 #include "Plot.h"
 #include "SysInfo.h"
+#include "ConfigUnify.h"
 namespace DV {
 	/**
 	* @brief ConfigWidget::ConfigWidget
@@ -158,6 +159,20 @@ namespace DV {
 	*/
 	void ConfigWidget::saveclicked()
 	{
+		/*
+			三维模块
+		*/
+		auto tabCount = ui->mTab->count();
+		for (auto tabIndex = 0; tabIndex < tabCount; ++tabIndex)
+		{
+			auto tabWidget = ui->mTab->widget(tabIndex);
+			ConfigUnify* configunify = dynamic_cast<ConfigUnify*>(tabWidget);
+			if (nullptr != configunify)
+				configunify->saveConfig();
+		}
+		/*
+			二维模块
+		*/
 		ui->applicButtom->setEnabled(false);
 		Config::GetInstance()->loadConfig();
 		ConfigGroup Group = Config::GetInstance()->getRootGroup();
@@ -395,6 +410,20 @@ namespace DV {
 	* @return void
 	*/
 	void ConfigWidget::loadxmlConfig() {
+		/*
+			三维模块
+		*/
+		auto tabCount=ui->mTab->count();
+		for (auto index=0;index<tabCount;++index)
+		{
+			auto tabWidget = ui->mTab->widget(index);
+			ConfigUnify* configunify = dynamic_cast<ConfigUnify*>(tabWidget);
+			if (nullptr != configunify)
+				configunify->loadConfig();
+		}
+		/*
+			二维模块
+		*/
 		Config::GetInstance()->loadConfig();
 		auto Group = Config::GetInstance()->getRootGroup();
 		auto toComboxIndex = [&](QComboBox* combox, QString& str) {
@@ -690,20 +719,6 @@ namespace DV {
 		}
 
 	}
-	//std::map<double, QColor> ConfigWidget::getColortab()
-	//{
-	//	std::map<double, QColor> maptab;
-	//	Config::GetInstance()->loadConfig();
-	//	ConfigGroup mGroup = Config::GetInstance()->getRootGroup();
-	//	if (!mGroup.GroupIsempty("contour"))
-	//	{
-	//
-	//	}
-	//	else
-	//	{
-	//
-	//	}
-	//}
 	void ConfigWidget::bindplot(Plot* lp)
 	{
 		if (lp)
@@ -711,6 +726,16 @@ namespace DV {
 			connect(this, SIGNAL(plotLoadconfig()), lp, SLOT(setappEvent()));
 		}
 	}
+
+	void ConfigWidget::addTabWidget(std::vector<QWidget*>& widgets)
+	{
+		for (auto iter=widgets.begin();iter!=widgets.end();iter++)
+		{
+			(*iter)->setParent(this);
+			ui->mTab->addTab(*iter,(*iter)->windowTitle());
+		}
+	}
+
 	/**
 	* @brief  Mas::Setconfig::Setconfig
 	* @return

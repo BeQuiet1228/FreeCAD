@@ -25,6 +25,7 @@ namespace DV
 		void SetAllreRenderer(QPushButton* button);
 		QColor setButtonColor(QPushButton* button);
 		QColor setButtonColor(QPushButton* button, std::string color);
+		QColor setButtonColor(QPushButton* button, QColor color);
 		std::string getButtonColorstr(QPushButton* button);
 		
 	};

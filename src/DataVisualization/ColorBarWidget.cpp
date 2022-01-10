@@ -4,7 +4,7 @@
 #include "Arrowctrl.h"
 DV::ColorBarWidget::ColorBarWidget(QWidget* parent/*=nullptr*/)
 {
-
+	initUi();
 }
 DV::ColorBarWidget::~ColorBarWidget()
 {
@@ -25,6 +25,15 @@ std::vector<QColor> DV::ColorBarWidget::getColors(std::vector<float>& datas)
 {
 	return mColorTab->GetColors(datas);
 }
+
+void DV::ColorBarWidget::setvals(std::vector<float>& vals, std::vector<QColor>& colors)
+{
+	arrowCtrl->setvals(vals,colors);
+	mColorTab->setColors(vals, colors);
+	arrowCtrl->SetFirstColor(*colors.begin());
+	arrowCtrl->SetEndColor(*(colors.end() - 1));
+}
+
 void DV::ColorBarWidget::initUi()
 {
 	//初始化颜色条

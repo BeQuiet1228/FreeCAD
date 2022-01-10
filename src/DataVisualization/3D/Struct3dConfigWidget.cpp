@@ -1,6 +1,7 @@
 #include "Struct3dConfigWidget.h"
 #include "ui_Struct3dConfigWidget.h"
 #include "../CustomConfig.h"
+#include "../C_encoding.h"
 DV3D::Struct3dConfigWidget::Struct3dConfigWidget(QWidget* parent/*=nullptr*/)
 	:QWidget(parent), ui(new Ui::Struct3dConfigWidget)
 {
@@ -36,6 +37,7 @@ void DV3D::Struct3dConfigWidget::saveConfig()
 
 void DV3D::Struct3dConfigWidget::initUi()
 {
+	this->setWindowTitle(DV::GetEncodingstr("3ά�ṹͼ", ENCODING_GB2312));
 	SetAllreRenderer(ui->btnColor);
 	connect(ui->btnColor, SIGNAL(clicked()),this,SLOT(btnClicked()));
 }

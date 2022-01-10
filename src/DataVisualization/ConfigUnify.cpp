@@ -34,6 +34,16 @@ QColor DV::ConfigUnify::setButtonColor(QPushButton* button)
 	}
 	return lastColor;
 }
+
+QColor DV::ConfigUnify::setButtonColor(QPushButton* button, QColor color)
+{
+	QPalette qpalette = button->palette();
+	qpalette.setColor(QPalette::Button, color);
+	button->setPalette(qpalette);
+	button->setText(QColorToQstring(color));
+	return color;
+}
+
 QColor DV::ConfigUnify::setButtonColor(QPushButton* button, std::string color)
 {
 	QColor rgba = QStringToQColor(QString::fromStdString(color));

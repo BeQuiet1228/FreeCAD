@@ -23,7 +23,13 @@
 #include "Vector3dActorPipeline.h"
 #include"Contour3dControler.h"
 #include <cassert>
-
+/*
+	配置窗口
+*/
+#include "Struct3dConfigWidget.h"
+#include "Contour3dConfigWidget.h"
+#include "Particle3dConfigWidget.h"
+#include "Vector3dConfigWidget.h"
 std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatControler(Hdf5Data& h5data)
 {
 	std::shared_ptr<Controler> controler;
@@ -189,5 +195,24 @@ int DV3D::ControlerFactory::findStringAttribute(const std::string& str)
 	}
 
 	return std::stoi(temp);
+}
+
+/**
+* @brief DV3D::ControlerFactory::CreateConfigWidget 创建配置窗口
+* @return std::vector<QWidget*>
+* @time	2022/01/10
+*/
+std::vector<QWidget*> DV3D::ControlerFactory::CreateConfigWidget()
+{
+	std::vector<QWidget*> widgets;
+	//Struct3dConfigWidget* struct3dConfigWidget = new Struct3dConfigWidget(); 
+	//Contour3dConfigWidget* contour3dConfigWidget = new Contour3dConfigWidget();
+	//Particle3dConfigWidget* particle3dConfigWidget = new Particle3dConfigWidget();
+	//Vector3dConfigWidget* vector3dConfigWidget = new Vector3dConfigWidget();
+	widgets.push_back(new Struct3dConfigWidget());
+	widgets.push_back(new Contour3dConfigWidget());
+	widgets.push_back(new Particle3dConfigWidget());
+	widgets.push_back(new Vector3dConfigWidget());
+	return widgets;
 }
 

@@ -138,6 +138,7 @@
 #include "DataVisualizationWorkbench.h"
 #include"DataVisualization/ListTreeWidget.h"
 #include"TreeViewctrl.h"
+#include "DataVisualization/3D/ControlerFactory.h"
 using namespace Gui;
 using namespace Gui::DockWnd;
 using namespace std;
@@ -306,6 +307,11 @@ Gui::MDIView* Application::activeView(void) const
 void Application::showPlotSettingDialog()
 {
 	DV::ConfigWidget* configWidget = new DV::ConfigWidget();
+    /*
+        添加后处理3d的窗口
+    */
+    auto widgets = DV3D::ControlerFactory::CreateConfigWidget();
+    configWidget->addTabWidget(widgets);
 	configWidget->setAttribute(Qt::WA_DeleteOnClose);
 	auto doc = Gui::Application::Instance->activeDocument();
 	if (doc)

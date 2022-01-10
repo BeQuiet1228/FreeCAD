@@ -1,6 +1,7 @@
 #include "Particle3dConfigWidget.h"
 #include "ui_Particle3dConfigWidget.h"
 #include "../CustomConfig.h"
+#include "../C_encoding.h"
 DV3D::Particle3dConfigWidget::Particle3dConfigWidget(QWidget* parent/*=nullptr*/)
 	:QWidget(parent),ui(new Ui::Particle3dConfigWidget)
 {
@@ -48,6 +49,7 @@ void DV3D::Particle3dConfigWidget::saveConfig()
 }
 void DV3D::Particle3dConfigWidget::initUi()
 {
+	this->setWindowTitle(DV::GetEncodingstr("3Î¬Á£×ÓÍ¼",ENCODING_GB2312));
 	SetAllreRenderer(ui->particleColor);
 	connect(ui->particleColor,SIGNAL(clicked()),this,SLOT(btnClicked()));
 }
