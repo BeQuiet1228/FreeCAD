@@ -2,6 +2,7 @@
 #include "exportConfig.hpp"
 #include "QColor"
 class QPushButton;
+class QComboBox;
 namespace DV
 {
 	class DATA_VISUALIZATION_EXPORT ConfigUnify
@@ -27,6 +28,9 @@ namespace DV
 		QColor setButtonColor(QPushButton* button, std::string color);
 		QColor setButtonColor(QPushButton* button, QColor color);
 		std::string getButtonColorstr(QPushButton* button);
-		
+		void toComboxIndex(QComboBox* combox, QString& str);
 	};
 }
+#define SETPERPORE(a,b)\
+	connect((a),SIGNAL(clicked()),this,SLOT(b));\
+	SetAllreRenderer(a);

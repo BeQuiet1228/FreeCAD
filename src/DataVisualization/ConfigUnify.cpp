@@ -2,6 +2,7 @@
 #include "QPushButton"
 #include "QColorDialog"
 #include "QPalette"
+#include "QComboBox"
 #include "C_encoding.h"
 /**
 * @time	2022/01/10
@@ -58,4 +59,17 @@ std::string DV::ConfigUnify::getButtonColorstr(QPushButton* button)
 	QColor lastColor = button->palette().button().color();
 	auto qstr=QColorToQstring(lastColor);
 	return qstr.toStdString();
+}
+
+void DV::ConfigUnify::toComboxIndex(QComboBox* combox, QString& str)
+{
+	for (int i = 0; i < combox->count(); i++)
+	{
+		if (combox->itemText(i) == str)
+		{
+			combox->setCurrentIndex(i);
+			return;
+		}
+	}
+	combox->setCurrentIndex(0);
 }

@@ -23,11 +23,11 @@ ConfigWidget.ui
 realTimewidget.ui
 #新加
 AxisConfigWidget.ui
-#RangConfigWidget.ui
-#VectorConfigWidget.ui
-#ContourConfigWidget.ui
-#StructConfigWidget.ui
-#ParticleConfigWidget.ui
+RangConfigWidget.ui
+VectorConfigWidget.ui
+ContourConfigWidget.ui
+StructConfigWidget.ui
+ParticleConfigWidget.ui
 )
 SET(MY_MOC_HDR RenderThread.h
 	RenderThreadManager.h
@@ -186,6 +186,8 @@ SET(SRC_TOOL
 	ScalarTableItem.cpp
 	ColorBarWidget.h
 	ColorBarWidget.cpp
+	structbutton.h
+	structbutton.cpp
 	)
 	
 SET(CONFIGWIDGET_Srcs
