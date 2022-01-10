@@ -44,6 +44,7 @@ SET(MY_MOC_HDR RenderThread.h
 	phasorPlotAdapter.h
 	PlotAdapter.h
 	PlotAdapterNeedStruct.h
+	ColorBarWidget.h
 	)
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
@@ -146,8 +147,11 @@ SET(SRC main.cpp
 	PlotAdapterNeedStruct.h
 	PlotAdapterNeedStruct.cpp
 	)
-SET(SRC_TOOL ConfigWidget.h
+SET(SRC_TOOL 
+	ConfigWidget.h
 	ConfigWidget.cpp
+	ConfigUnify.h
+	ConfigUnify.cpp
 	Arrowctrl.h
 	Arrowctrl.cpp
 	ColorTab.cpp
@@ -166,6 +170,8 @@ SET(SRC_TOOL ConfigWidget.h
 	SysInfo.cpp
 	ScalarTableItem.h
 	ScalarTableItem.cpp
+	ColorBarWidget.h
+	ColorBarWidget.cpp
 	)
 #处理ui和qrc文件
 if (BUILD_QT5)

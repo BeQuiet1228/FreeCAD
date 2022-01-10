@@ -1,0 +1,31 @@
+#pragma once
+#include "exportConfig.hpp"
+#include "QColor"
+class QPushButton;
+namespace DV
+{
+	class DATA_VISUALIZATION_EXPORT ConfigUnify
+	{
+	public:
+		ConfigUnify() = default;
+		virtual ~ConfigUnify() {}
+	public:
+		/*
+			读取配置
+		*/
+		virtual void loadConfig() = 0;
+		/*
+			保存配置
+		*/
+		virtual void saveConfig() = 0;
+	protected:
+		/*
+			一些派生类通用的方法
+		*/
+		void SetAllreRenderer(QPushButton* button);
+		QColor setButtonColor(QPushButton* button);
+		QColor setButtonColor(QPushButton* button, std::string color);
+		std::string getButtonColorstr(QPushButton* button);
+		
+	};
+}

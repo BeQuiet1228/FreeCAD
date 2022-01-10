@@ -7,4 +7,3 @@ void DV3D::Particle3dActorPipeline::connect()
 	auto actor = getActor();
 	actor->GetProperty()->SetColor(1, 0, 0);
 }
-
