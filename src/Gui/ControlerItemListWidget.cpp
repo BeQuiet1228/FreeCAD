@@ -21,6 +21,18 @@ void Gui::ControlerItemListWidget::clearWidget()
 	ui->listWidget->clear();
 }
 
+void Gui::ControlerItemListWidget::removeControlerItemWithControler(DV3D::Controler* controler)
+{
+	for (auto iter = widgetMap.begin(); iter != widgetMap.end(); iter++)
+	{
+		auto controlerItem = iter->first;
+		if (controlerItem->getControler().get() != controler)
+			continue;
+		removeControlerItem(controlerItem);
+		return;
+	}
+}
+
 void Gui::ControlerItemListWidget::addItemWidget(DV3D::ControlerItem* widget, QListWidgetItem* item)
 {
 	item->setSizeHint(widget->size());
@@ -33,11 +45,8 @@ void Gui::ControlerItemListWidget::addItemWidget(DV3D::ControlerItem* widget, QL
 	
 }
 
-void Gui::ControlerItemListWidget::itemClose()
+void Gui::ControlerItemListWidget::removeControlerItem(DV3D::ControlerItem* controlerItem)
 {
-	auto controlerItem = dynamic_cast<DV3D::ControlerItem*>(sender());
-	if (!controlerItem)
-		return;
 	auto iter = widgetMap.find(controlerItem);
 	if (iter == widgetMap.end())
 		return;
@@ -45,6 +54,14 @@ void Gui::ControlerItemListWidget::itemClose()
 	auto item = ui->listWidget->takeItem(index);
 	delete item;
 	widgetMap.erase(iter);
+}
+
+void Gui::ControlerItemListWidget::itemClose()
+{
+	auto controlerItem = dynamic_cast<DV3D::ControlerItem*>(sender());
+	if (!controlerItem)
+		return;
+	removeControlerItem(controlerItem);
 }
 
 /**

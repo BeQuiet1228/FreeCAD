@@ -27,13 +27,16 @@ HDF5DataItem* HDF5DataItem3DFactory::CreatStructDataItem(Hdf5Data& data, HDF5Dat
 	{
 		parentItem = new HDF5DataItem(gbkStdstringToQstring("3D结构图"));
 	}
-	//创建两个结构图对象
-	auto gridItem = new HDF5DataItem(data, "Grid");
-	itemSetHander(gridItem);
-	auto structItem = new HDF5DataItem(data, "Struct");
+	//如果不是直角坐标系则创建两个项
+	if (Hdf5Data::CoordinateSystem::CARTESIAN != data.coordinateSystem)
+	{
+		auto gridItem = new HDF5DataItem(data, "Struct");
+		itemSetHander(gridItem);
+		parentItem->addSubItem(gridItem);
+	}
+	auto structItem = new HDF5DataItem(data, "Grid");
 	itemSetHander(structItem);
 
-	parentItem->addSubItem(gridItem);
 	parentItem->addSubItem(structItem);
 	
 	return parentItem;
@@ -100,7 +103,6 @@ HDF5DataItem* HDF5DataItem3DFactory::CreatStructDataItem(std::vector<Hdf5Data>& 
 		auto h5data = *iter;
 		iter = datas.erase(iter);
 		item = CreatStructDataItem(h5data,item);
-		break;
 	}
 	
 	return item;
@@ -122,7 +124,9 @@ HDF5DataItemFactory::HDF5DataItems HDF5DataItem3DFactory::CreatHDF5Items(std::ve
 	item = CreatContour2DItem(datas);
 	if (item)
 		items.push_back(item);
-
+	item = CreatVector3DItem(datas);
+	if (item)
+		items.push_back(item);
 	return items;
 }
 
@@ -168,7 +172,6 @@ Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatContour3DItem(std::vector<Hdf5Dat
 		auto h5data = *iter;
 		iter = datas.erase(iter);
 		item = CreatContour3DItem(h5data,item);
-		break;
 	}
 
 	return item;
@@ -176,6 +179,12 @@ Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatContour3DItem(std::vector<Hdf5Dat
 
 Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatContour2DItem(std::vector<Hdf5Data>& datas)
 {
+	/*
+	2022-1-4
+	暂时不适用2d结构图的三维显示
+	*/
+	return nullptr;
+
 	HDF5DataItem2DFactory factory2d;
 	factory2d.setEventHander(getEventHander());
 	auto item = factory2d.CreatContourDataItem(datas);
@@ -187,12 +196,55 @@ Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatContour2DItem(std::vector<Hdf5Dat
 
 Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatContour2DItem(Hdf5Data& data, HDF5DataItem* parentItem /*= nullptr*/)
 {
+	/*
+	2022-1-4
+	暂时不适用2d结构图的三维显示
+	*/
+	return nullptr;
+
 	HDF5DataItem2DFactory factory2d;
 	factory2d.setEventHander(getEventHander());
 	auto item = factory2d.CreatContourDataItem(data,parentItem);
 	if (!item)
 		return item;
 	item->setName(gbkStdstringToQstring("2D等位图3D显示"));
+	return item;
+}
+
+Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatVector3DItem(Hdf5Data& data, HDF5DataItem* parentItem /*= nullptr*/)
+{
+	if (parentItem == nullptr)
+	{
+		parentItem = new HDF5DataItem(gbkStdstringToQstring("3D矢量图"));
+	}
+	//获场值+迭代步数为名称
+	std::string  name = H5DataHead::getAttributeForIndex(*data.headList.begin(), 3);
+	name += H5DataHead::getAttributeForIndex(*data.headList.begin(), 4);
+
+	auto contourItem = new HDF5DataItem(data, gbkStdstringToQstring(name));
+	itemSetHander(contourItem);
+	parentItem->addSubItem(contourItem);
+
+	return parentItem;
+}
+
+Gui::HDF5DataItem* HDF5DataItem3DFactory::CreatVector3DItem(std::vector<Hdf5Data>& datas)
+{
+	HDF5DataItem* item = nullptr;
+
+	for (auto iter = datas.begin(); iter != datas.end();)
+	{
+		if (iter->name != "VECTOR3D")
+		{
+			iter++;
+			continue;
+		}
+
+		auto h5data = *iter;
+		iter = datas.erase(iter);
+		item = CreatVector3DItem(h5data, item);
+	}
+
 	return item;
 }
 

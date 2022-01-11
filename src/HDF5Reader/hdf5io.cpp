@@ -703,7 +703,7 @@ bool Hdf5Data::initInformation()
 
 bool Hdf5Data::initM3dStructInformation()
 {
-	if (headList.size() < 4)
+	if (headList.size() < 4 && listDataSet.size()!= 4)
 		return false;
 	QString str = QString::fromStdString(headList.at(3));
 	str = str.simplified();
@@ -734,7 +734,7 @@ bool Hdf5Data::initM3dStructInformation()
 
 bool Hdf5Data::initM2dStructInformation()
 {
-	if (headList.size() < 4)
+	if (headList.size() < 3 && listDataSet.size() != 3)
 		return false;
 	QString str = QString::fromStdString(headList.at(2));
 	str = str.simplified();

@@ -177,6 +177,7 @@ void DocumentPic::paralleRunChipic()
 {
 	auto mw = Gui::MainWindow::getInstance();
 	mw->setContorlUI();
+	this->releaseH5Object();
 	auto contorl = ContorlInterface::GetInstance();
 	contorl->setM3dPath(getTextPath());
 	contorl->buttonClicked(1);

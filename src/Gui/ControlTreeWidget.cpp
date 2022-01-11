@@ -71,11 +71,13 @@ void ControlTreeWidget::init(const Hdf5Data& data)
 			continue;
 		if (addRangeItem(str))
 			continue;
+		if (addParticle3DItem(str))
+			continue;
+		if (addVector3DItem(str))
+			continue;
+		if (addContour3DItem(str))
+			continue;
 	}
-
-	initContour3DItem();
-	initParticle3DItem();
-
 	update();
 }
 
@@ -108,6 +110,10 @@ void ControlTreeWidget::initItem()
 	item = new QTreeWidgetItem();
 	item->setText(0, DV::GetEncodingstr("3DµÈÎ»Í¼", ENCODING_GB2312));
 	items.insert(std::map<MsgType, QTreeWidgetItem*>::value_type(CONTOUR_3D, item));
+
+	item = new QTreeWidgetItem();
+	item->setText(0, DV::GetEncodingstr("3DÊ¸Á¿Í¼", ENCODING_GB2312));
+	items.insert(std::map<MsgType, QTreeWidgetItem*>::value_type(VECTOR_3D, item));
 
 	for (auto iter = items.begin(); iter != items.end(); iter++)
 	{
@@ -239,6 +245,48 @@ bool ControlTreeWidget::addVectorItem(const std::string& str)
 	QTreeWidgetItem* childItem = new QTreeWidgetItem;
 	childItem->setText(0, name);
 	auto item = items[VECTOR];
+	item->addChild(childItem);
+	return true;
+}
+
+bool ControlTreeWidget::addContour3DItem(const std::string& str)
+{
+	QString typeName, name, rank;
+	typeName = QString::fromStdString("CONTOUR3D");
+	if (!analysisType(str, typeName, name, rank))
+		return false;
+
+	QTreeWidgetItem* childItem = new QTreeWidgetItem;
+	childItem->setText(0, name);
+	auto item = items[CONTOUR_3D];
+	item->addChild(childItem);
+	return true;
+}
+
+bool ControlTreeWidget::addParticle3DItem(const std::string& str)
+{
+	QString typeName, name, rank;
+	typeName = QString::fromStdString("PHASESPACE3D");
+	if (!analysisType(str, typeName, name, rank))
+		return false;
+
+	QTreeWidgetItem* childItem = new QTreeWidgetItem;
+	childItem->setText(0, name);
+	auto item = items[PARTICLE_3D];
+	item->addChild(childItem);
+	return true;
+}
+
+bool ControlTreeWidget::addVector3DItem(const std::string& str)
+{
+	QString typeName, name, rank;
+	typeName = QString::fromStdString("VECTOR3D");
+	if (!analysisType(str, typeName, name, rank))
+		return false;
+
+	QTreeWidgetItem* childItem = new QTreeWidgetItem;
+	childItem->setText(0, name);
+	auto item = items[VECTOR_3D];
 	item->addChild(childItem);
 	return true;
 }

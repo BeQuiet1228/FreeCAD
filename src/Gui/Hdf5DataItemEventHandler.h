@@ -1,5 +1,8 @@
 #pragma once
 #include "ControlerItemListWidget.h"
+namespace DV3D {
+	class ControlerItem;
+}
 namespace Gui {
 	class HDF5DataItem;
 	class HDF5DataItemEventHander {
@@ -14,5 +17,8 @@ namespace Gui {
 	class HDF5DataItem3DDoubleClickEventHander :public HDF5DataItemEventHander{
 	public:
 		void trigger(HDF5DataItem* item) override;
+	private:
+		bool disposStructItem(HDF5DataItem* item);
+		void showView3D(DV3D::ControlerItem* controlerItem);
 	};
 }

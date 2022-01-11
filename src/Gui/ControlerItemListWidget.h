@@ -2,6 +2,7 @@
 #include <QWidget>
 #include <map>
 #include <QListWidgetItem>
+#include "DataVisualization/3D/controler.h"
 namespace Ui {
 	class ControlerItemListWidget;
 }
@@ -24,9 +25,12 @@ namespace Gui {
 		void addWidget(DV3D::ControlerItem* widget);
 		void clearWidget();
 
+		//¸ù¾Ý¿ØÖÆÆ÷ÒÆ³ýitem
+		void removeControlerItemWithControler(DV3D::Controler* controler);
 	private:
 		void addItemWidget(DV3D::ControlerItem* widget, QListWidgetItem* item);
-
+		//ÒÆ³ýitem
+		void removeControlerItem(DV3D::ControlerItem* controlerItem);
 	private:
 		std::map<DV3D::ControlerItem*, QListWidgetItem*> widgetMap;
 

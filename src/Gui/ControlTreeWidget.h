@@ -14,7 +14,8 @@ class ControlTreeWidget :public QTreeWidget {
 		VECTOR = 5,
 		RANGE,
 		PARTICLE_3D,
-		CONTOUR_3D=9
+		CONTOUR_3D,
+		VECTOR_3D
 	};
 	Q_OBJECT
 public:
@@ -41,6 +42,9 @@ private:
 	bool addObserveItem(const std::string& str);
 	bool addRangeItem(const std::string& str);
 	bool addVectorItem(const std::string& str);
+	bool addContour3DItem(const std::string& str);
+	bool addParticle3DItem(const std::string& str);
+	bool addVector3DItem(const std::string& str);
 	bool analysisType(const std::string& str,const QString& typeName ,QString& name, QString& rank);
 	//生成临时文件路径
 	QString makeFilePath(unsigned long threadID);

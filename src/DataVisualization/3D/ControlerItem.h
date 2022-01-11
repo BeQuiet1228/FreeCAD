@@ -26,6 +26,7 @@ namespace DV3D {
 
 		//Ìí¼Óaction
 		void addAction(std::shared_ptr<ControlerAction> action);
+		void setName(const QString& name);
 	private:
 		void initGui();
 	private:

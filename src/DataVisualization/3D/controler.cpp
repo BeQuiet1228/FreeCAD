@@ -63,12 +63,6 @@ void DV3D::Controler::oneWayUnbing()
 	widget3D = nullptr;
 }
 
-vtkSmartPointer<vtkActor> DV3D::Controler::getActor()
-{
-	assert(actorPipeline && "actorPipeline can not be nullptr!");
-	return actorPipeline->getActor();
-}
-
 bool DV3D::Controler::isBinding()
 {
 	return bindingState;
@@ -130,14 +124,14 @@ double DV3D::Controler::getTranparent()
 
 void DV3D::Controler::setEdgeVisible(const bool& b)
 {
-	auto ac = getActor();
+	auto ac = getActorPipeline()->getActor();
 	ac->GetProperty()->SetEdgeVisibility(b);
 	updateWidget3D();
 }
 
 bool DV3D::Controler::getEdgeVisible()
 {
-	auto ac = getActor();
+	auto ac = getActorPipeline()->getActor();
 	return ac->GetProperty()->GetEdgeVisibility();
 }
 
@@ -156,15 +150,5 @@ void DV3D::Controler::setClipEnable(const bool& b)
 bool DV3D::Controler::getClipEnable()
 {
 	return	getActorPipeline()->getClipperEnable();
-}
-
-void DV3D::Controler::setClipPlane(vtkSmartPointer<vtkPlane> palne)
-{
-	getActorPipeline()->setClipPlane(palne);
-}
-
-void DV3D::Controler::getClipPlane(vtkSmartPointer<vtkPlane>& palne)
-{
-	getActorPipeline()->getClipPlane(palne);
 }
 

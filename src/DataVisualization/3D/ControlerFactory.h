@@ -18,6 +18,7 @@ namespace DV3D {
 		static std::shared_ptr<Controler> CreatControler(Hdf5Data& h5data);
 		//创建结构图控制器
 		static std::shared_ptr<Controler> CreatStrucControler(Hdf5Data& h5data);
+		static std::shared_ptr<Controler> CreatStrucRotateControler(Hdf5Data& h5data);
 		//创建3d粒子图控制器
 		static std::shared_ptr<Controler> CreatParticle3dControler(Hdf5Data& h5data);
 		//创建等位图控制器

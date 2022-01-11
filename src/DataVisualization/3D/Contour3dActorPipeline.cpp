@@ -39,7 +39,7 @@ void DV3D::Contour3dActorPipline::connect()
 	normal->SetAutoOrientNormals(1);
 	normal->SetFeatureAngle(30);
 	normal->Update();
-	connectClipperToMapper(normal->GetOutput());
+	connectClipperToMapper(normal->GetOutputPort());
 	auto mp = getMapper();
 	mp->SetScalarRange(rang.valMin,rang.valMax);
 	mp->ScalarVisibilityOn();

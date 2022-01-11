@@ -234,19 +234,21 @@ void SmartContorl::runChipic()
 		return;
 	}
 
-	//如果还有未解析完的内核 则返回
-	if (!finishedIsVasible)
-		return;
-	finishedIsVasible = false;
-
-	auto iter = this->chipicDataWait.begin();
 	//已有足够多的chipic在运行则不操作
 	if (chipicDataRuning.size() >= chipicCount)
 		return;
+
+	//如果还有未解析完的内核 则返回
+	if (!finishedIsVasible)
+		return;
+
+	auto iter = this->chipicDataWait.begin();
 	//启动chipic
 	chipicManager->sendStartChipicMessage((*iter)->m3dPath.toStdString(), 1);
 	chipicDataRuning.insert(ChipicRunDataMap::value_type((*iter)->m3dPath, *iter));
 	chipicDataWait.erase(iter);
+	//设置为未解析完成状态
+	finishedIsVasible = false;
 	
 #else
 	auto iter = this->chipicDataWait.begin();
@@ -683,7 +685,7 @@ void SmartContorl::chipicErrorClose(unsigned long threadID)
 	chipicDataWait.push_back(chipicData);
 	chipicDataRuning.erase(dataIter);
 
-	finishedIsVasible = ~chipicData->IsAnalysis;
+	finishedIsVasible = !chipicData->IsAnalysis;
 	runChipic();
 
 

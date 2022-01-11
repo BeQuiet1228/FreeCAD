@@ -6,9 +6,12 @@
 #include "StructRender.h"
 #include <QDebug>
 #include "StructData.h"
+#include "QVector"
+#include "QPainterPath"
 namespace DV {
 	void chang2colormap(QPixmap& map, QColor& color);
 	QString line2icon[] = { ":/struct/C.png", ":/struct/a.png", ":/struct/s.png" };
+
 	Struct2DRenderer::Struct2DRenderer(std::shared_ptr<Struct2dData> data) :
 		Renderer(std::dynamic_pointer_cast<Data> (data)) {
 
@@ -37,6 +40,11 @@ namespace DV {
 		img.fill(qRgba(0.0, 0.0, 0.0, 0.0));
 		QPainter painter(&img);
 		painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+		/*
+			用于合并的画布和，画师
+		*/
+		QImage img1(getSize(), QImage::Format_ARGB32);
+		QPainter painter1(&img1);
 		//多边形绘制
 		std::vector<QImage> imgs;
 		std::map<int, std::map<int, std::vector<QPointF>>> map = d->GetAllinfo();
@@ -45,8 +53,8 @@ namespace DV {
 			//根据多边形的网格的编号绘制
 			for (auto iterpro = iter->second.begin(); iterpro != iter->second.end(); iterpro++)
 			{
-				auto imgit = createImg(iterpro, xr, yr, xScale, yScale);
-				painter.drawImage(0, 0, imgit);
+				createImg(iterpro, xr, yr, xScale, yScale,img1,painter1);
+				painter.drawImage(0, 0, img1);
 			}
 		}
 		//绘制线段
@@ -260,50 +268,25 @@ namespace DV {
 		A_pos = apos;
 		return dpos;
 	}
+	
 	/**
-	* @brief Struct2DRenderer::clipImg 对图像进行裁剪
-	* @param QImage & img
-	* @param QPolygonF & polyon 多边形数据
-	* @return void
-	* @time	2021/12/13
-	*/
-	void Struct2DRenderer::clipImg(QImage& img, QPolygonF& polyon)
-	{
-		QColor desAlpha(0, 0, 0, 0);
-		for (int w = 0; w < getSize().width(); ++w)
-		{
-			for (int h = 0; h < getSize().height(); ++h)
-			{
-				if (!polyon.containsPoint(QPointF(w, h), Qt::WindingFill))
-				{
-					img.setPixel(w, h, desAlpha.rgba());
-				}
-
-			}
-		}
-	}
-	/**
-	* @brief Struct2DRenderer::drawPolygons 绘制多边形
+	* @time	2022/01/05
+	* @brief DV::Struct2DRenderer::drawPolygons 绘制多边形
 	* @param QPainter & painter
-	* @param std::vector<QPointF> & points 多边形的顶点
+	* @param QPolygonF & innerpolyF 多边形数据
 	* @return void
-	* @time	2021/12/13
 	*/
-	void Struct2DRenderer::drawPolygons(
-		QPainter& painter, std::vector<QPointF>& points)
+	void Struct2DRenderer::drawPolygons(QPainter& painter, QPolygonF& innerpolyF)
 	{
 		QPainterPath painterPath;
-		auto iterpoint = points.begin();
-		painterPath.moveTo(*iterpoint); iterpoint++;
-		for (; iterpoint != points.end(); iterpoint++)
-			painterPath.lineTo(*iterpoint);
+		painterPath.addPolygon(innerpolyF);
 		painter.drawPath(painterPath);
 		QVector<QLineF> linex = GetCurLine_x();
 		QVector<QLineF> liney = GetCutLine_y();
 		painter.drawLines(linex);
 		painter.drawLines(liney);
-		//裁剪
 	}
+
 	/**
 	* @brief Struct2DRenderer::createImg 创建图像
 	* @param std::map<int
@@ -315,22 +298,23 @@ namespace DV {
 	* @return QT_NAMESPACE::QImage
 	* @time	2021/12/13
 	*/
-	QImage Struct2DRenderer::createImg(
+	void Struct2DRenderer::createImg(
 		std::map<int, std::vector<QPointF>>::iterator& it,
 		Data::Rang& xr,
 		Data::Rang& yr,
 		float& xScale,
-		float& yScale)
+		float& yScale,
+		QImage& img,
+		QPainter& painter
+		)
 	{
-		QImage img1(getSize(), QImage::Format_ARGB32);
-		img1.fill(qRgba(0.0, 0.0, 0.0, 0.0));
+		img.fill(qRgba(0.0, 0.0, 0.0, 0.0));
 		//获取画刷颜色
 		auto colorbrush = color_tab.find(it->first);
 		auto colorpen = color_pen.find(it->first);
 		if (colorbrush == color_tab.end() || colorpen == color_pen.end())
-			return img1;
-		//创建画师
-		QPainter painter(&img1);
+			return ;
+		//画师设置
 		painter.setPen(QPen(colorpen.value()));
 		painter.setBrush(QBrush(colorbrush.value()));
 		painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
@@ -346,14 +330,18 @@ namespace DV {
 			pen.setWidth(5);
 			painter.setPen(pen);
 			painter.drawLine(QLineF(*points.begin(), *(points.begin() + 1)));
-			return img1;
+			return;
 		}
-		QPolygonF polyF(QVector<QPointF>::fromStdVector(points));
+		//绘制多边形
+		QPolygonF innerpolyF(QVector<QPointF>::fromStdVector(points));
+		QPainterPath path;
+		path.addPolygon(innerpolyF);//添加多边形数据
+		painter.setClipPath(path);//将多边形数据裁剪出来
 		//绘制多边形	
-		drawPolygons(painter, points);
-		//裁剪其余部分
-		clipImg(img1, polyF);
-		return img1;
+		drawPolygons(painter, innerpolyF);
+		painter.save();
+		painter.restore();
+		return ;
 	}
 
 	/**
@@ -577,4 +565,5 @@ namespace DV {
 		}
 		map = QPixmap::fromImage(img);
 	}
-};
+}
+

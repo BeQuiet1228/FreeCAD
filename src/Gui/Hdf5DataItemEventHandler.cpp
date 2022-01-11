@@ -22,11 +22,45 @@ void Gui::HDF5DataItem3DDoubleClickEventHander::trigger(HDF5DataItem* item)
 {
 	assert(item && "item is nullptr!");
 
+	//单独处理特殊情况下的结构图
+	if (disposStructItem(item))
+		return;
+
 	auto controler = DV3D::ControlerFactory::CreatControler(item->getHdf5Data());
-	//auto controlerItem = DV3D::ControlerItemFactor::CreatControlerItem();
+	if (nullptr == controler)
+		return;
+	controler->setObjectName(item->getNmae().toStdString());
 	auto controlerItem = DV3D::ControlerItemFactor::CreatContour3dControlerItem();
 	controlerItem->setControler(controler);
+	controlerItem->setName(item->getNmae());
 
+	showView3D(controlerItem);
+}
+
+/**
+* @brief Gui::HDF5DataItem3DDoubleClickEventHander::disposStructItem 处理需要旋转得到的结构图
+* @param HDF5DataItem * item
+* @return bool
+*/
+bool Gui::HDF5DataItem3DDoubleClickEventHander::disposStructItem(HDF5DataItem* item)
+{
+	auto hdf5Data = item->getHdf5Data();
+	if (hdf5Data.name != "struct")
+		return false;
+	if (item->getNmae() !=  QString::fromLocal8Bit("Struct"))
+		return false;
+
+	auto controler = DV3D::ControlerFactory::CreatStrucRotateControler(item->getHdf5Data());
+	auto controlerItem = DV3D::ControlerItemFactor::CreatContour3dControlerItem();
+	controler->setObjectName(item->getNmae().toStdString());
+	controlerItem->setControler(controler);
+	controlerItem->setName(item->getNmae());
+
+	showView3D(controlerItem);
+}
+
+void Gui::HDF5DataItem3DDoubleClickEventHander::showView3D(DV3D::ControlerItem* controlerItem)
+{
 	auto doc = Gui::Application::Instance->activeDocument();
 	auto picDoc = dynamic_cast<DocumentPic*> (doc);
 
@@ -42,14 +76,17 @@ void Gui::HDF5DataItem3DDoubleClickEventHander::trigger(HDF5DataItem* item)
 			break;
 	}
 
+	auto mw = Gui::MainWindow::getInstance();
 	if (view3d == nullptr)
 	{
-		auto mw = Gui::MainWindow::getInstance();
 		view3d = new Gui::DataVisualizationView(picDoc);
 		mw->addWindow(view3d);
+		view3d->setWindowTitle(QString::fromLocal8Bit("3D_Plot"));
 	}
+	mw->setActiveWindow(view3d);
 
-	view3d->getWidget3D()->binding(controler.get());
+
+	view3d->addControler(controlerItem->getControler());
 
 	auto listWidget = getControlerListWidget();
 	if (!listWidget)

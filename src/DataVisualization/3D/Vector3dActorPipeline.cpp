@@ -27,7 +27,6 @@ void DV3D::Vector3dActorPipeline::update()
 void DV3D::Vector3dActorPipeline::connect()
 {
 	auto dataSet = getDataSet();
-
 	auto mp = getMapper();
 	auto range = dataSet->GetPointData()->GetScalars()->GetRange();
 	mp->SetScalarRange(range);
