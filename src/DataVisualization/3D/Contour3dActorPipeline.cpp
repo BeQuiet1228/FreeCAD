@@ -5,6 +5,7 @@
 #include "cassert"
 #include "../CustomConfig.h"
 #include "QString"
+
 DV3D::Contour3dActorPipline::Contour3dActorPipline() :contourSurfarCount(10), isInit(false)
 {
 	auto ac = vtkSmartPointer<vtkActor>::New();
@@ -16,6 +17,7 @@ DV3D::Contour3dActorPipline::Contour3dActorPipline() :contourSurfarCount(10), is
 	file = vtkSmartPointer<vtkContourFilter>::New();
 	normal = vtkSmartPointer<vtkPolyDataNormals>::New();
 	loadConfig();
+	lookupTable = vtkSmartPointer<vtkLookupTable>::New();
 }
 
 DV3D::Contour3dActorPipline::~Contour3dActorPipline()
@@ -32,6 +34,7 @@ void DV3D::Contour3dActorPipline::update()
 void DV3D::Contour3dActorPipline::connect()
 {
 	initFilter();
+	updataLookupTable();
 	normal->SetInputConnection(file->GetOutputPort());
 	normal->ComputeCellNormalsOff();
 	normal->ComputePointNormalsOn();
@@ -43,6 +46,7 @@ void DV3D::Contour3dActorPipline::connect()
 	auto mp = getMapper();
 	mp->SetScalarRange(rang.valMin,rang.valMax);
 	mp->ScalarVisibilityOn();
+	mp->SetLookupTable(lookupTable);
 	mp->Update();
 	auto ac = getActor();
 	ac->SetMapper(mp);
@@ -50,6 +54,7 @@ void DV3D::Contour3dActorPipline::connect()
 
 void DV3D::Contour3dActorPipline::loadConfig()
 {
+	std::vector <float>values;
 	DV::Config::GetInstance()->loadConfig();
 	auto Group = DV::Config::GetInstance()->getRootGroup();
 	auto contour3dGroup = Group.getGroup("contour3d");
@@ -62,6 +67,10 @@ void DV3D::Contour3dActorPipline::loadConfig()
 		values.push_back(atof(valueNumberGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("value").c_str()));
 		colors.push_back(getColors(valueNumberGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("color")));
 	}
+	/*
+		生成过度表
+	*/
+	colors = getColors(values, colors);
 }
 void DV3D::Contour3dActorPipline::setContourSurfarCount(const int& n)
 {
@@ -126,4 +135,28 @@ void DV3D::Contour3dActorPipline::initFilter()
 	file->SetComputeGradients(0);
 	file->Update();
 	isInit = true;
+}
+
+void DV3D::Contour3dActorPipline::updataLookupTable()
+{
+	auto dataSet = getDataSet();
+	auto rang = dataSet->GetPointData()->GetScalars()->GetRange();
+#if 0
+	lookupTable->SetTableRange(rang);
+	//设置色块
+	lookupTable->SetNumberOfTableValues(colors.size());
+	/*
+		获取起止颜色
+	*/
+	for (auto i=0;i<colors.size();++i)
+		lookupTable->SetTableValue(i,colors[i].r,colors[i].g, colors[i].b, colors[i].a);
+	lookupTable->Build();
+#endif
+	//使用颜色过度
+	lookupTable->SetTableRange(rang);
+	//colors=getColors(values,colors);
+	lookupTable->SetNumberOfTableValues(colors.size());
+	for (auto i=0;i<colors.size();++i)
+		lookupTable->SetTableValue(i, colors[i].r, colors[i].g, colors[i].b, colors[i].a);
+	lookupTable->Build();
 }

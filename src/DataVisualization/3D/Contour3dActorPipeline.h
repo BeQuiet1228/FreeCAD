@@ -4,10 +4,10 @@
 #include "vtkSmartPointer.h"
 #include "vtkPolyDataNormals.h"
 #include "vtkContourFilter.h"
+#include "vtkLookupTable.h"
 #include "UnifyXmlConfig3D.h"
 namespace DV3D
 {
-
 	using ContourValue = double;
 	struct ContourRang
 	{
@@ -29,9 +29,11 @@ namespace DV3D
 		double* getScalarRang();
 	protected:
 		void initFilter();
+		void updataLookupTable();
 	private:
 		vtkSmartPointer<vtkContourFilter> file;
 		vtkSmartPointer<vtkPolyDataNormals> normal;
+		vtkSmartPointer<vtkLookupTable> lookupTable;
 		//double scalarMin, scalarMax;
 		ContourRang rang;
 		int contourSurfarCount;//默认构造时，等值面的取值数量
@@ -39,7 +41,6 @@ namespace DV3D
 		/*
 			读取配置
 		*/
-		std::vector<float> values;
 		std::vector<ColorF> colors;
 	};
 };

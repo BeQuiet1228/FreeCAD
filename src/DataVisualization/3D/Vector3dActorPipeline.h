@@ -2,6 +2,7 @@
 #include "actorPipeline.h"
 #include "vtkArrowSource.h"
 #include "UnifyXmlConfig3D.h"
+#include "vtkLookupTable.h"
 namespace DV3D
 {
 	class Vector3dActorPipeline:public ActorPipemline,public UnifyXmlConfig3D
@@ -13,8 +14,9 @@ namespace DV3D
 		void update() override;
 		void connect() override;
 		void loadConfig();
+		void updataLookupTable();
 	private:
-		std::vector<float> values;
 		std::vector<ColorF> colorfs;
+		vtkSmartPointer<vtkLookupTable> lookupTable;
 	};
 }

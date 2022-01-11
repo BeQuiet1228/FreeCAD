@@ -1,5 +1,6 @@
 #pragma once
 #include "string"
+#include "vector"
 namespace DV3D
 {
 	/*
@@ -25,5 +26,9 @@ namespace DV3D
 			double a;
 		};
 		ColorF getColors(std::string colorStr);
+		/*
+			创建255个颜色过度表
+		*/
+		std::vector<ColorF> getColors(std::vector<float>&,std::vector<ColorF>&,int black=255);
 	};
 };
