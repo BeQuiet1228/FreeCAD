@@ -4,6 +4,7 @@
 #include "vtkSmartPointer.h"
 #include "vtkPolyDataNormals.h"
 #include "vtkContourFilter.h"
+#include "UnifyXmlConfig3D.h"
 namespace DV3D
 {
 
@@ -13,13 +14,14 @@ namespace DV3D
 		double valMin;
 		double valMax;
 	};
-	class  Contour3dActorPipline :public ActorPipemline {
+	class  Contour3dActorPipline :public ActorPipemline,public UnifyXmlConfig3D{
 	public:
 		Contour3dActorPipline();
 		~Contour3dActorPipline();
 	public:
 		void update() override;
 		void connect() override;
+		void loadConfig();
 		//设置取值面个数
 		void setContourSurfarCount(const int& n);
 		std::vector<ContourValue> getContourValues();
@@ -34,5 +36,10 @@ namespace DV3D
 		ContourRang rang;
 		int contourSurfarCount;//默认构造时，等值面的取值数量
 		bool isInit;//是否初始化的判断
+		/*
+			读取配置
+		*/
+		std::vector<float> values;
+		std::vector<ColorF> colors;
 	};
 };

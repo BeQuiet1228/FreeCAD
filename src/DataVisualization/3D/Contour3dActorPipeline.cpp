@@ -3,6 +3,8 @@
 #include "vtkPointData.h"
 #include "vtkCellData.h"
 #include "cassert"
+#include "../CustomConfig.h"
+#include "QString"
 DV3D::Contour3dActorPipline::Contour3dActorPipline() :contourSurfarCount(10), isInit(false)
 {
 	auto ac = vtkSmartPointer<vtkActor>::New();
@@ -13,6 +15,7 @@ DV3D::Contour3dActorPipline::Contour3dActorPipline() :contourSurfarCount(10), is
 	rang.valMax = 1.0f;
 	file = vtkSmartPointer<vtkContourFilter>::New();
 	normal = vtkSmartPointer<vtkPolyDataNormals>::New();
+	loadConfig();
 }
 
 DV3D::Contour3dActorPipline::~Contour3dActorPipline()
@@ -22,6 +25,7 @@ DV3D::Contour3dActorPipline::~Contour3dActorPipline()
 
 void DV3D::Contour3dActorPipline::update()
 {
+	loadConfig();
 	connect();
 }
 
@@ -44,6 +48,21 @@ void DV3D::Contour3dActorPipline::connect()
 	ac->SetMapper(mp);
 }
 
+void DV3D::Contour3dActorPipline::loadConfig()
+{
+	DV::Config::GetInstance()->loadConfig();
+	auto Group = DV::Config::GetInstance()->getRootGroup();
+	auto contour3dGroup = Group.getGroup("contour3d");
+	auto valueNumberGroup = contour3dGroup.getGroup("valueNumber");
+	auto valueNumber = atoi(valueNumberGroup.getValue("value").c_str());
+	values.clear(); values.reserve(valueNumber);
+	colors.clear(); colors.reserve(valueNumber);
+	for (auto index=0;index<valueNumber;++index)
+	{
+		values.push_back(atof(valueNumberGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("value").c_str()));
+		colors.push_back(getColors(valueNumberGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("color")));
+	}
+}
 void DV3D::Contour3dActorPipline::setContourSurfarCount(const int& n)
 {
 	contourSurfarCount = n;

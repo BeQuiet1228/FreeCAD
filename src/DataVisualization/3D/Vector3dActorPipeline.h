@@ -1,10 +1,10 @@
 #pragma once
 #include "actorPipeline.h"
 #include "vtkArrowSource.h"
-#include "vtkGlyph3D.h"
+#include "UnifyXmlConfig3D.h"
 namespace DV3D
 {
-	class Vector3dActorPipeline:public ActorPipemline
+	class Vector3dActorPipeline:public ActorPipemline,public UnifyXmlConfig3D
 	{
 	public:
 		Vector3dActorPipeline();
@@ -12,6 +12,9 @@ namespace DV3D
 	public:
 		void update() override;
 		void connect() override;
+		void loadConfig();
 	private:
+		std::vector<float> values;
+		std::vector<ColorF> colorfs;
 	};
 }
