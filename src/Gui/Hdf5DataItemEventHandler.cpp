@@ -27,6 +27,8 @@ void Gui::HDF5DataItem3DDoubleClickEventHander::trigger(HDF5DataItem* item)
 		return;
 
 	auto controler = DV3D::ControlerFactory::CreatControler(item->getHdf5Data());
+	if (nullptr == controler)
+		return;
 	controler->setObjectName(item->getNmae().toStdString());
 	auto controlerItem = DV3D::ControlerItemFactor::CreatContour3dControlerItem();
 	controlerItem->setControler(controler);

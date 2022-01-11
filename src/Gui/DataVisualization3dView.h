@@ -14,9 +14,11 @@ namespace Gui {
 		~DataVisualizationView() = default;
 
 		DV3D::Widget3D* getWidget3D();
-
+	public:
 		//添加控制器
 		void addControler(std::shared_ptr<DV3D::Controler> controler);
+		bool onMsg(const char* pMsg, const char** ppReturn) override;
+		bool onHasMsg(const char* pMsg) const override;
 	private:
 		void initGui();
 		//移除结构图

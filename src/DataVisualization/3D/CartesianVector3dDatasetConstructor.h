@@ -30,6 +30,7 @@ namespace DV3D
 		vtkIdType xGridSize, yGridSize, zGridSize;
 		vtkIdType xUnit, yUnit, zUnit;//矢量网格的合并方阵
 		double scaleFactor;//缩放因子
+		bool isNull;//数据是否为空
 	};
 
 

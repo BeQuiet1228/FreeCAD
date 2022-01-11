@@ -59,10 +59,10 @@ int main(int argc, char* argv[])
 	io.initHdf5Data();
 
 	auto datalist = io.hdf5DataList;
-#if 0
+#if 1
 	if (datalist.size() == 0)
 		return 0;
-	auto iter = datalist.begin()+3;
+	auto iter = datalist.begin()+2;
 	Widget3D* w3d = new Widget3D();
 
 	ControlerFactory controlerFactor;
@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 	item->setControler(contour3dContrler);
 	item->show();
 #endif
-#if 1
+#if 0
 	auto iter = datalist.begin();
 	ControlerFactory controlerFactory;
 	auto vector3dContrler = controlerFactory.CreatVector3dControler(*(iter+1));
