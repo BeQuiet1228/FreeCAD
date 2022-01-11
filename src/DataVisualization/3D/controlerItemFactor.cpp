@@ -35,6 +35,7 @@ DV3D::ControlerItem* DV3D::ControlerItemFactor::CreatContour3dControlerItem()
 */
 DV3D::ControlerItem* DV3D::ControlerItemFactor::AddSaveAction(ControlerItem* item, Hdf5Data& data, const QString& path /*=""*/)
 {
+	return item;
 	auto saveAction = std::make_shared<ControlerSave>();
 	saveAction->setHdf5Data(data);
 	saveAction->setPath(path);
