@@ -1,5 +1,6 @@
 #include "ControlerAction.h"
 #include "controler.h"
+#include <QFileDialog>
 void DV3D::ControlerVisible::active(std::shared_ptr<Controler> controler)
 {
 	if (getState() == ON)
@@ -77,4 +78,38 @@ void DV3D::ControlerClipPlan::showWidget(std::shared_ptr<Controler> controler)
 void DV3D::ControlerClipPlan::initState(std::shared_ptr<Controler> controler)
 {
 	on();
+}
+
+void DV3D::ControlerSave::active(std::shared_ptr<Controler> controler)
+{
+	auto fileName = QFileDialog::getSaveFileName(0,
+		"Save HDF5 Data", getPath(), "HDF5 Files (*.H5)");
+	if (fileName.isEmpty())
+		return;
+	hdf5data.save(fileName.toStdString());
+}
+
+void DV3D::ControlerSave::initState(std::shared_ptr<Controler> controler)
+{
+	on();
+}
+
+void DV3D::ControlerSave::setHdf5Data(const Hdf5Data& data)
+{
+	this->hdf5data = data;
+}
+
+Hdf5Data DV3D::ControlerSave::getHdf5Data()
+{
+	return hdf5data;
+}
+
+void DV3D::ControlerSave::setPath(const QString& pt)
+{
+	this->path = pt;
+}
+
+QString DV3D::ControlerSave::getPath()
+{
+	return path;
 }
