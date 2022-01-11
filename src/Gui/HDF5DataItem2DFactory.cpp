@@ -2,6 +2,7 @@
 #include "Transition/transition.h"
 #include "sstream"
 #include "HDF5DataItem2DDoubleClickEventHander.h"
+#include "Hdf5DataItemEventHandler.h"
 /**
 * @time	2021/12/20
 * @brief Gui::HDF5DataItem2DFactory::CreatHDF5Items ´´½¨item

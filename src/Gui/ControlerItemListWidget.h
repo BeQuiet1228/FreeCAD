@@ -2,13 +2,13 @@
 #include <QWidget>
 #include <map>
 #include <QListWidgetItem>
-#include "DataVisualization/3D/controler.h"
 namespace Ui {
 	class ControlerItemListWidget;
 }
 
 namespace DV3D {
 	class ControlerItem;
+	class Controler;
 }
 
 namespace Gui {
@@ -19,7 +19,7 @@ namespace Gui {
 		~ControlerItemListWidget() = default;
 
 	private:
-		::Ui::ControlerItemListWidget *ui;
+		Ui::ControlerItemListWidget *ui;
 
 	public:
 		void addWidget(DV3D::ControlerItem* widget);

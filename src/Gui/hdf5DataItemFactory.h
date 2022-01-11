@@ -3,8 +3,8 @@
 #include <HDF5Reader/hdf5io.h>
 #include "Hdf5DataItem.h"
 #include <memory>
-#include "Hdf5DataItemEventHandler.h"
 namespace Gui {
+	class HDF5DataItemEventHander;
 	class HDF5DataItemFactory {
 	public:
 		using HDF5DataItems = std::vector<HDF5DataItem*>;

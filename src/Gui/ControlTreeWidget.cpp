@@ -22,6 +22,7 @@
 #include "Gui/Application.h"
 #include "DataVisualization/C_encoding.h"
 #include "DocumentPic.h"
+#include "DataVisualizationTree.h"
 #include <HDF5Reader/hdf5io.h>
 ControlTreeWidget::ControlTreeWidget(QWidget* parent)
 	:QTreeWidget(parent),tempHdf5IO(nullptr)

@@ -3,6 +3,7 @@
 #include "ui_ControlerItemListWidget.h"
 #include "DockWindowManager.h"
 #include "DataVisualization/3D/ControlerItem.h"
+#include "DataVisualization/3D/controler.h"
 Gui::ControlerItemListWidget::ControlerItemListWidget(QWidget* parent /*= 0*/)
 	:QWidget(parent),ui(new Ui::ControlerItemListWidget())
 {

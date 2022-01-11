@@ -133,6 +133,7 @@
 #include "App/DocumentDataManager.h"
 #include "DataVisualization/C_encoding.h"
 #include "OpenFileConfig.h"
+#include "DataVisualizationTree.h"
 #if defined(Q_OS_WIN32)
 #define slots
 //#include <private/qmainwindowlayout_p.h>

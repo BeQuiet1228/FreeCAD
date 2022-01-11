@@ -1,7 +1,6 @@
 #include "DataVisualization3dView.h"
 #include "ControlerItemListWidget.h"
 #include "DataVisualization/3D/controler.h"
-#include "ControlerItemListWidget.h"
 Gui::DataVisualizationView::DataVisualizationView(DocumentPic* doc)
 	:MDIViewPIC(doc)
 {
