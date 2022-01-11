@@ -45,7 +45,7 @@ class ShowDialog(QtGui.QDialog):
             # self.ui.LineEdit_start_y.setText("0" + self.y_unit)
             # self.ui.LineEdit_end_x.setText("0" + self.x_unit)
             # self.ui.LineEdit_end_y.setText("0" + self.y_unit)
-            self.refreshCombox() 
+            self.refreshCombox()
             self.ui.ComboBox_Shadow.currentIndexChanged.connect(self.ComboBox_Shadow_clicked)
             self.ui.ComboBox_Shadow.currentIndexChanged.connect(self.ComboBox_Shadow_clicked_1)
 
@@ -74,9 +74,9 @@ class ShowDialog(QtGui.QDialog):
 
             # 初始化
             self.ComboBox_Shadow_clicked()
-            self.userNameBefore=self.ui.LineEdit_Name.text()  
+            self.userNameBefore = self.ui.LineEdit_Name.text()
             # 用于判断是否进行名称更新
-            self.flagUpdateItemName=False
+            self.flagUpdateItemName = False
 
         except:
             import traceback
@@ -117,7 +117,8 @@ class ShowDialog(QtGui.QDialog):
         try:
             # 名字
             self.ui.LineEdit_Name.setText(self.obj.Label)
-            self.ui.ComboBox_Shadow.setCurrentIndex(self.ui.ComboBox_Shadow.findText(str(self.obj.orthogonalProjectionPlane)))
+            self.ui.ComboBox_Shadow.setCurrentIndex(
+                self.ui.ComboBox_Shadow.findText(str(self.obj.orthogonalProjectionPlane)))
             self.ui.LineEdit_start_x.setText(self.obj.point1_X)
             self.ui.LineEdit_start_y.setText(self.obj.point1_Y)
             self.ui.LineEdit_end_x.setText(self.obj.point2_X)
@@ -126,24 +127,24 @@ class ShowDialog(QtGui.QDialog):
             # self.ui.radioButton_x.setChecked(self.obj.isCheckNormal1)
             # self.ui.radioButton_y.setChecked(self.obj.isCheckNormal2)
             # DX编辑框
-            self.ui.checkBox_x.setChecked(self.obj.isMarkX)  
+            self.ui.checkBox_x.setChecked(self.obj.isMarkX)
             self.checkBox_x_clicked()
             self.ui.checkBox_y.setChecked(self.obj.isMarkY)
             self.checkBox_y_clicked()
             self.ui.LineEdit_DX1.setText(self.obj.MarkX)
-            self.ui.LineEdit_DX2.setText(self.obj.MarkY)           
+            self.ui.LineEdit_DX2.setText(self.obj.MarkY)
             # 相对加速比
             self.ui.checkBox_vport.setChecked(self.obj.isCheckVPORT)
             self.ui.LineEdit_vport.setEnabled(self.obj.isCheckVPORT)
-            self.ui.LineEdit_vport.setText(self.obj.VPORT)            
+            self.ui.LineEdit_vport.setText(self.obj.VPORT)
             # 法向修正
             self.ui.checkBox_scale.setChecked(self.obj.isCheckSCALE)
             self.ui.LineEdit_scale.setEnabled(self.obj.isCheckSCALE)
             self.ui.LineEdit_scale.setText(self.obj.SCALE)
             # 输入场时间分布
             self.ui.checkBox_Ft.setChecked(self.obj.isCheckFT)
-            self.ui.LineEdit_Ft.setEnabled(self.obj.isCheckFT)             
-            self.ui.LineEdit_Ft.setText(self.obj.FT)      
+            self.ui.LineEdit_Ft.setEnabled(self.obj.isCheckFT)
+            self.ui.LineEdit_Ft.setText(self.obj.FT)
             # 空间分布2
             self.ui.checkBox_GE2.setChecked(self.obj.isCheckGE2)
             self.ui.LineEdit_GE2.setEnabled(self.obj.isCheckGE2)
@@ -186,16 +187,16 @@ class ShowDialog(QtGui.QDialog):
             if self.obj.isPositive is True:
                 self.ui.radioButton_forward.setChecked(True)
         except KeyError as reason:
-            Tools2D.sayz("!!!Error:KeyError,Maybe lack of key:%s"%str(reason))
+            Tools2D.sayz("!!!Error:KeyError,Maybe lack of key:%s" % str(reason))
 
     # 保存数据
-    def keepData(self): 
+    def keepData(self):
         try:
             # 名字
             Tools2D.setLabelToObj(self.obj, self.ui.LineEdit_Name.text())
             self.obj.orthogonalProjectionPlane = self.ui.ComboBox_Shadow.currentText()
-            # if self.ui.ComboBox_Shadow.currentIndex() == 0: 
-            #     DlgData.addData("isAppointArea",False)            
+            # if self.ui.ComboBox_Shadow.currentIndex() == 0:
+            #     DlgData.addData("isAppointArea",False)
             # else:
             #     DlgData.addData("isAppointArea",True)
             # DlgData.addData("Dlg_Type","Port_Type")
@@ -204,11 +205,11 @@ class ShowDialog(QtGui.QDialog):
             self.obj.point2_X = self.ui.LineEdit_end_x.text()
             self.obj.point2_Y = self.ui.LineEdit_end_y.text()
             # 法向选择
-            self.obj.isCheckNormal1 = self.ui.radioButton_x.isChecked()    
-            self.obj.isCheckNormal2 = not(self.obj.isCheckNormal1)     
+            self.obj.isCheckNormal1 = self.ui.radioButton_x.isChecked()
+            self.obj.isCheckNormal2 = not (self.obj.isCheckNormal1)
 
             # 正向反向选择
-            self.obj.isNegative = self.ui.radioButton_opposite.isChecked()           
+            self.obj.isNegative = self.ui.radioButton_opposite.isChecked()
             self.obj.isPositive = self.ui.radioButton_forward.isChecked()
 
             # DX编辑框
@@ -218,12 +219,12 @@ class ShowDialog(QtGui.QDialog):
             self.obj.MarkX = self.ui.LineEdit_DX1.text()
             self.obj.MarkY = self.ui.LineEdit_DX2.text()
             # 相对加速比
-            self.obj.isCheckVPORT = self.ui.checkBox_vport.isChecked()      
-            self.obj.VPORT = self.ui.LineEdit_vport.text()       
+            self.obj.isCheckVPORT = self.ui.checkBox_vport.isChecked()
+            self.obj.VPORT = self.ui.LineEdit_vport.text()
 
             # 法向修正
-            self.obj.isCheckSCALE = self.ui.checkBox_scale.isChecked()        
-            self.obj.SCALE = self.ui.LineEdit_scale.text()        
+            self.obj.isCheckSCALE = self.ui.checkBox_scale.isChecked()
+            self.obj.SCALE = self.ui.LineEdit_scale.text()
 
             # 输入场时间分布
             self.obj.isCheckFT = self.ui.checkBox_Ft.isChecked()
@@ -242,7 +243,7 @@ class ShowDialog(QtGui.QDialog):
             self.obj.normalization = self.ui.ComboBox_FT.currentText()
             # ObjectsTools.findObjByLabelWithoutOrderAndInvisible(self.ui.ComboBox_FT.currentText())
             # circuit输入时间
-            self.obj.isCircuit = self.ui.checkBox_circuit.isChecked()             
+            self.obj.isCircuit = self.ui.checkBox_circuit.isChecked()
             self.obj.circuit = self.ui.LineEdit_circuit.text()
             self.obj.observeName = self.ui.lineEdit_obs.text().replace(' ', '')
 
@@ -275,7 +276,7 @@ class ShowDialog(QtGui.QDialog):
             self.ui.ComboBox_FT.setEnabled(True)
             # 如果选择了投影线，则线的名字跟随投影线
             # self.ui.ComboBox_FT.setItemText(0, self.ui.ComboBox_Shadow.currentText())
-            
+
             # 正交投影面
             objName = self.ui.ComboBox_Shadow.currentText()
             if objName in self.defaultValue:
@@ -342,7 +343,7 @@ class ShowDialog(QtGui.QDialog):
         self.ui.checkBox_GE3.setText(u"空间分布.GE3(" + self.x + "," + self.y + ") = ")
 
     # 非均匀网格x
-    def checkBox_x_clicked(self): 
+    def checkBox_x_clicked(self):
         self.ui.LineEdit_DX1.setEnabled(self.ui.checkBox_x.isChecked())
 
     # 非均匀网格y
@@ -381,7 +382,6 @@ class ShowDialog(QtGui.QDialog):
         # self.ui.LineEdit_GE2.setEnabled(self.ui.checkBox_GE2.isChecked())
         self.ui.LineEdit_GE2.setEnabled(self.ui.checkBox_GE2.isChecked())
         # self.ciucuit_function()
-        
 
     # 空间分布2
     def checkBox_GE3_clicked(self):
@@ -420,7 +420,7 @@ class ShowDialog(QtGui.QDialog):
             self.ui.ComboBox_FT.setEnabled(False)
             self.LineEdit_Name_textChanged()
             # 设置ui坐标的可编辑状态
-            #Tools3D.setCoordEnabled(self.ui, ObjectTools.ObjectType.Area_Conformal)
+            # Tools3D.setCoordEnabled(self.ui, ObjectTools.ObjectType.Area_Conformal)
             # 如果选择未指定，则线的名字跟随波导的名字
             self.ui.ComboBox_FT.setItemText(0, self.ui.LineEdit_Name.text())
             self.ui.ComboBox_FT.setCurrentIndex(0)
@@ -436,5 +436,5 @@ class ShowDialog(QtGui.QDialog):
                 self.ui.ComboBox_FT.setItemText(0, self.ui.LineEdit_Name.text())
                 self.ui.ComboBox_FT.setCurrentIndex(tmp)
 
-   
+
 

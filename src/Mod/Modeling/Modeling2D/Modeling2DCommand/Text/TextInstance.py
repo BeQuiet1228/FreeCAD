@@ -66,9 +66,10 @@ class Text(Creator):
         FreeCADGui.doCommand("from Modeling.Modeling2D import Modeling2DCommand")
         self.commit(translate("draft", "Create Text"),
                     ['text = Draft.makeText('+tx+',point='+DraftVecUtils.toString(self.node[0])+')',
+                     'text.ViewObject.setEditorMode("DisplayMode",2)',
                      'Draft.autogroup(text)',
                      'Form = Modeling2DCommand.Text.TextDlgMain.ShowDialog(text, True)',
-                     'Form.show()'
+                     'Form.show()',
                      ])
 
         self.finish(cont=True)

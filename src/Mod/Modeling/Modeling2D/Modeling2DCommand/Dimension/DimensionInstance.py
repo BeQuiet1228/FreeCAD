@@ -51,7 +51,8 @@ class Dimension(DraftTools.Dimension):
                         'Draft.autogroup(dim)',
                         'import Modeling',
                         'Modeling.Modeling2D.Modeling2DCommand.Dimension.DimensionInstance.setSize(dim)',
-                        'Modeling.Modeling2D.Tools.InitDoc.addObjectToGroup_helper(dim, "AnnotationG", "注释")'
+                        'Modeling.Modeling2D.Tools.InitDoc.addObjectToGroup_helper(dim, "AnnotationG", "注释")',
+                         'dim.ViewObject.setEditorMode("DisplayMode", 2)'
                          ])
         if self.ui.continueMode:
             self.cont = self.node[2]
@@ -82,13 +83,16 @@ FreeCADGui.addCommand("CreateDimension2D", Dimension())
 
 
 def setSize(dim):
+    # 根据网格大小调整
+    gridObj = FreeCAD.ActiveDocument.DiyGrid
+    gridSize = min(gridObj.gridSizeX, gridObj.gridSizeY)
     # 箭头
     dim.ViewObject.ArrowType = u"Arrow"
     # 箭头大小
-    dim.ViewObject.ArrowSize = 0.001
+    dim.ViewObject.ArrowSize = gridSize/(2.0*1000)
     # 字体大小
-    dim.ViewObject.FontSize = 0.003
+    dim.ViewObject.FontSize = gridSize*2/1000.0
     # 线宽
-    dim.ViewObject.LineWidth = 1
+    dim.ViewObject.LineWidth = 1.0
     # 文本与线的距离
     dim.ViewObject.TextSpacing = 0.001

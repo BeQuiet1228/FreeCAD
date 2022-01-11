@@ -98,7 +98,11 @@ class ShowDialog(QtGui.QDialog):
         """
         设置字体大小以及行间距
         """
-        self.obj.ViewObject.FontSize = 0.005
+        # 根据网格调整大小
+        # 根据网格大小调整
+        gridObj = FreeCAD.ActiveDocument.DiyGrid
+        gridSize = min(gridObj.gridSizeX, gridObj.gridSizeY)
+        self.obj.ViewObject.FontSize = gridSize/(2.0*100)
         self.obj.ViewObject.LineSpacing = 1
 
     # 点击关闭对话框，删除创建的对象
