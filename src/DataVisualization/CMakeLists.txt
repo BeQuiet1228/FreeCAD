@@ -51,7 +51,7 @@ SET(MY_MOC_HDR RenderThread.h
 	phasorPlotAdapter.h
 	PlotAdapter.h
 	PlotAdapterNeedStruct.h
-	ColorBarWidget.h
+	#ColorBarWidget.h
 	#修改配置窗口
 	AxisConfigWidget.h
 	RangConfigWidget.h
@@ -160,6 +160,8 @@ SET(SRC main.cpp
 	PlotAdapter.h
 	PlotAdapterNeedStruct.h
 	PlotAdapterNeedStruct.cpp
+	ConfigFactory.h
+	ConfigFactory.cpp
 	)
 SET(SRC_TOOL 
 	ConfigWidget.h
@@ -184,8 +186,8 @@ SET(SRC_TOOL
 	SysInfo.cpp
 	ScalarTableItem.h
 	ScalarTableItem.cpp
-	ColorBarWidget.h
-	ColorBarWidget.cpp
+	#ColorBarWidget.h
+	#ColorBarWidget.cpp
 	structbutton.h
 	structbutton.cpp
 	)
