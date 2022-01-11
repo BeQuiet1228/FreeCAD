@@ -3,6 +3,13 @@
 #include <vtkProperty.h>
 #include "vtkPolyData.h"
 #include "../CustomConfig.h"
+
+DV3D::Particle3dActorPipeline::Particle3dActorPipeline()
+	:CartesianStructActorPipeline(),particleSize(1.0)
+{
+	loadConfig();
+}
+
 void DV3D::Particle3dActorPipeline::connect()
 {
 	CartesianStructActorPipeline::connect();
@@ -21,4 +28,10 @@ void DV3D::Particle3dActorPipeline::loadConfig()
 	colorf=getColors(colorStr);
 	auto particleSizeStr= particleGroup.getGroup("particleSize").getValue("value");
 	particleSize = atof(particleSizeStr.c_str());
+	/*
+		±‹√‚“Ï≥£«Èøˆ
+	*/
+	if (particleSize < 0.000001f)
+		particleSize = 1.0f;
+	return;
 }

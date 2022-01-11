@@ -37,6 +37,7 @@ void DV3D::PolarStructActorPipeline::connect() {
 
 	auto ac = getActor();
 	ac->SetMapper(mp);
+	ac->GetProperty()->SetColor(colorf.r,colorf.g,colorf.b);
 }
 
 void DV3D::PolarStructActorPipeline::loadConfig()
@@ -45,7 +46,7 @@ void DV3D::PolarStructActorPipeline::loadConfig()
 	auto Group = DV::Config::GetInstance()->getRootGroup();
 	auto structGroup = Group.getGroup("struct3d");
 	auto colorStr = structGroup.getGroup("color").getValue("value");
-	auto colorf = getColors(colorStr);
+	colorf = getColors(colorStr);
 	return;
 }
 
