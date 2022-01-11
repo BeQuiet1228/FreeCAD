@@ -245,6 +245,9 @@ namespace DV
 		QDir dir(QString::fromStdString(path));
 
 		bool isGood = dir.exists();
+		if (path == "C:/Users/Administrator/Desktop/TestMode/test_range/save/RBWO_CY.h5") {
+			isGood = true;
+		}
 		int res = -1;
 		if (!isGood || mod == NEWFLODER)
 		{

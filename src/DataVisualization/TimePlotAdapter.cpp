@@ -13,9 +13,9 @@ namespace DV {
 
 	}
 
-	TimeUndoRedoData::TimeUndoRedoData(int FunOfAlogrithm, std::vector<float> point, std::string Xtag, std::string Ytag, const Data::Rang& xr, const Data::Rang& yr)
+	TimeUndoRedoData::TimeUndoRedoData(int FunOfAlogrithm, Data::ValuesPtr point, std::string Xtag, std::string Ytag, const Data::Rang& xr, const Data::Rang& yr)
 		: FunOfAlogrithm(FunOfAlogrithm), point(point), Xtag(Xtag), Ytag(Ytag), UndoRedoData(xr, yr) {
-		
+
 	}
 
 
@@ -59,26 +59,18 @@ namespace DV {
 	*/
 	bool TimePlotAdapter::undo()
 	{
-		/*
-		根据不同的坐标标签采用不同的恢复
-		以后的功能可以仿照
-		*/
 		UndoRedoStack::DataPtr rd;
 		if (!this->URStack->undo(rd))
 			return false;
 		auto xr = rd->xr;
 		auto yr = rd->yr;
-		
-		std::shared_ptr<TimeUndoRedoData> Timerd = std::dynamic_pointer_cast<TimeUndoRedoData>(rd);
 
 		//通过对TimeUndoRedoData初始化构造的参数，可以适配以后的其他变换的undo和redo
-		*(Timedata->getPointsPtr()) = Timerd->point;
-		setMainRenderer(mainRenderer);
+		std::shared_ptr<TimeUndoRedoData> Timerd = std::dynamic_pointer_cast<TimeUndoRedoData>(rd);
+		Timedata->updatePoint(Timerd->point);
+		Timedata->updateData(InitData, Timerd->Xtag, Timerd->Ytag);
+		autoMaxRender();//重新渲染
 
-		//更新坐标Tag
-		Timedata->setXTag(Timerd->Xtag);
-		Timedata->setYTag(Timerd->Ytag);
-		Timedata->FunOfAlogrithm = InitData;//还原变换
 		emit updatePlot();
 
 		setRenderRange(xr.min, xr.max, yr.min, yr.max);
@@ -94,14 +86,10 @@ namespace DV {
 		auto yr = rd->yr;
 
 		std::shared_ptr<TimeUndoRedoData> Timerd = std::dynamic_pointer_cast<TimeUndoRedoData>(rd);
+		Timedata->updatePoint(Timerd->point);
+		Timedata->updateData(Timerd->FunOfAlogrithm, Timerd->Xtag, Timerd->Ytag);
+		autoMaxRender();//重新渲染
 
-		*(Timedata->getPointsPtr()) = Timerd->point;
-		setMainRenderer(mainRenderer);
-
-		//更新坐标Tag
-		Timedata->setXTag(Timerd->Xtag);
-		Timedata->setYTag(Timerd->Ytag);
-		Timedata->FunOfAlogrithm = Timerd->FunOfAlogrithm;//还原变换
 		emit updatePlot();
 
 		setRenderRange(xr.min, xr.max, yr.min, yr.max);
@@ -110,25 +98,23 @@ namespace DV {
 
 	//为action添加点击函数
 	void TimePlotAdapter::FourierTrigger() {
-		if (Timedata->FunOfAlogrithm == DataForFFT) {
+		if (Timedata->FunOfAlogrithm == TimeDataForFFT) {
 			errorDialog = new FourierDialog();
 			errorDialog->exec();
 			delete errorDialog;
 			return;
 		}
 
-		Data::Rang xr = getAxisBottomRange();
-		Timedata->dataToFFT(xr);//对数据进行处理
+		Data::Rang xrang = getAxisBottomRange();
+		Timedata->dataToFFT(xrang);//对数据进行处理
 
-		//重新渲染
-		setMainRenderer(mainRenderer);
-		Timedata->FunOfAlogrithm = DataForFFT;//更新FFT标识符
-		Timedata->setXTag("Frequency(Hz)");//更新坐标Tag
-		Timedata->setYTag("Watts\\GHz");
-
+		autoMaxRender();//重新渲染
 		dataIntoStack();//将操作入栈
 
 		emit updatePlot();
+		std::string path = "C:/Users/Administrator/Desktop/TestMode/test_range/save/RBWO_CY.h5";
+		
+		Timedata->saveAs(path);
 	}
 
 	//将操作压入栈
@@ -138,12 +124,13 @@ namespace DV {
 		URStack->push(CreateUndoRedoData(xr, yr));
 	}
 
-	//创建UndoRedoData数据
+	//创建UndoRedoData数据,更具需求建立适合的入栈数据
 	UndoRedoStack::DataPtr TimePlotAdapter::CreateUndoRedoData(const Data::Rang& xr, const Data::Rang& yr) {
-		std::vector<float> point = *(Timedata->getPointsPtr());
-		int FunOfAlogrithm = Timedata->FunOfAlogrithm;
+		Data::ValuesPtr point = Timedata->getPointsPtr();
+		int alogrithm = Timedata->FunOfAlogrithm;
 
-		UndoRedoStack::DataPtr unData(new TimeUndoRedoData(FunOfAlogrithm, point, Timedata->getXTag(), Timedata->getYTag(), xr, yr));
+		UndoRedoStack::DataPtr unData(new TimeUndoRedoData(alogrithm, point, Timedata->getXTag(), Timedata->getYTag(), xr, yr));
+
 		return unData;
 	}
 };

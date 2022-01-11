@@ -42,7 +42,7 @@ namespace DV {
 		QString str = QString::fromStdString(headList.at(0));
 		QStringList sl = str.split("$");
 		if (sl.at(3).toStdString().find("Frequency") != std::string::npos) {
-			this->FunOfAlogrithm = DataForFFT;
+			this->FunOfAlogrithm = TimeDataForFFT;
 		}
 		else {
 			this->FunOfAlogrithm = InitData;
@@ -152,7 +152,8 @@ namespace DV {
 	* @return Data::ValuesPtr
 	*/
 	void TimeData::dataToFFT(Data::Rang xr) {
-		std::vector<float> nowPoints;
+		Data::ValuesPtr nowPoints(new std::vector<float>);
+		int tmp = nowPoints.use_count();
 		//确定现在的左右边界的index
 		int n = (*points).size() / 2;
 		int indexL = findIndexFromXValueR(xr.min);
@@ -174,10 +175,12 @@ namespace DV {
 
 		int num = (indexR - indexL) / 16;
 		for (int index = 0; index <= num; ++index) {
-			nowPoints.emplace_back(index * fs);
-			nowPoints.emplace_back(Ydata[index]);
+			(*nowPoints).emplace_back(index * fs);
+			(*nowPoints).emplace_back(Ydata[index]);
 		}
-		*points = nowPoints;
+		Data::ValuesPtr tmpPoints(points);
+		points = nowPoints;
+		updateData(TimeDataForFFT, "Frequency(Hz)", "Watts\\GHz");
 	}
 
 	/**
@@ -219,7 +222,51 @@ namespace DV {
 	}
 
 	Data::ValuesPtr TimeData::getPointsPtr() {
-		return points;
+		return this->points;
 	}
 
+	void TimeData::updateData(int alogrithm, std::string xTag, std::string yTag) {
+		setPointSize(points->size() / 2);
+		initXYRang();//更改数据范围
+		FunOfAlogrithm = alogrithm;//更新FFT标识符
+		//更新坐标Tag
+		if (!xTag.empty()) {
+			setXTag(xTag);
+		}
+		if (!yTag.empty()) {
+			setYTag(yTag);
+		}
+	}
+
+	void TimeData::updatePoint(Data::ValuesPtr point) {
+		this->points = point;
+	}
+
+	void TimeData::saveAs(std::string path, SaveMod mod)
+	{
+		QDir dir(QString::fromStdString(path));
+
+		bool isGood = dir.exists();
+		if (path == "C:/Users/Administrator/Desktop/TestMode//MILO_C(1).h5") {
+			isGood = true;
+		}
+		int res = -1;
+		if (!isGood || mod == NEWFLODER)
+		{
+			res = Hdf5IO::creatNewH5File(path);
+		}
+		Hdf5IO* temp = new Hdf5IO(path);
+
+		Hdf5Data* newh5Data = new Hdf5Data(h5Data);
+		newh5Data->changeHdf5Data(this->points);
+		//Hdf5IO::copyToHdf5IO(*temp, *newh5Data);
+
+		//Hdf5Data* newData = new Hdf5Data(h5Data);
+		//Hdf5IO::copyToHdf5IO(*temp, *newData);
+		/*if (-1 != res)
+			res = Hdf5IO::closeH5File(res);*/
+		delete temp;
+		//delete newData;
+		delete newh5Data;
+	}
 };

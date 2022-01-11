@@ -16,15 +16,14 @@ namespace DV {
 	public:
 		PlotAdapter();
 		~PlotAdapter();
-		//Ö÷äÖÈ¾Æ÷
-		std::shared_ptr<Renderer> mainRenderer;
 
 	protected:
 		//äÖÈ¾¹ÜÀíÆ÷
 		std::shared_ptr<RenderThreadManager> renderManager;
 		//´ÓäÖÈ¾Æ÷
 		std::list<std::shared_ptr<Renderer>> subRenderers;
-		
+		//Ö÷äÖÈ¾Æ÷
+		std::shared_ptr<Renderer> mainRenderer;
 		//³·Ïú»Ö¸´Õ»
 		std::shared_ptr<UndoRedoStack> URStack;
 

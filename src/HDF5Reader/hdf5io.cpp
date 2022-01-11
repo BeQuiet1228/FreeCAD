@@ -493,14 +493,18 @@ DataSet Hdf5IO::copyDataSet(DataSet& dataset, Group& toGroup, const std::string&
 
 	hsize_t size[2];
 	dataSpace.getSimpleExtentDims(size, 0);
-	float* values(new float[size[0] * size[1]]);
+	float* values(new float[size[0] * size[1]]); 
 	dataset.read(values, PredType::NATIVE_FLOAT);
+	std::vector<float> ttt;
+	for (int i = 0; i < (size[0] * size[1]); ++i) {
+		ttt.emplace_back(values[i]);
+	}
+
 
 	DataSpace sapce(2, size);
 	DataType dataType(PredType::NATIVE_FLOAT);
 	DataSet toDataSet(toGroup.createDataSet(newDataSetName, dataType, dataSpace));
 	toDataSet.write(values, dataType);
-
 	delete[] values;
 
 	return toDataSet;
@@ -537,7 +541,7 @@ Hdf5Data Hdf5IO::copyToHdf5IO(Hdf5IO& hdf5IO, Hdf5Data& data)
 	Hdf5Data newH5data(hdf5IO.Hdf5File);
 
 	auto datalist = data.listDataSet;
-	for (int i = 0; i < datalist.size(); i++)
+	for (int i = 0; i < datalist.size(); i++) 
 	{
 		auto dataset = datalist.at(i);
 		std::string dataSetName = data.group.getObjnameByIdx(i);
@@ -964,4 +968,52 @@ std::vector<DataSet> Hdf5IO::getDataSetlist(Group group)
 		datasetlist.push_back(data);
 	}
 	return datasetlist;
+}
+
+void Hdf5Data::changeHdf5Data(std::shared_ptr<std::vector<float>> point) {
+	/*std::string groupName = "hello";
+	Group toGroup(hdf5File->createGroup(groupName));
+	Hdf5IO::copyGroup(group, toGroup);
+
+	Hdf5Data newH5data(hdf5IO.Hdf5File);
+
+	
+	newH5data.group = toGroup;
+	auto headlist = getHeadValue(toGroup);
+	newH5data.headList = headlist;
+	newH5data.init();*/
+
+	DataSet tmp = listDataSet.back();
+	DataType dataType(PredType::NATIVE_FLOAT);
+	hsize_t dimsf[2];
+	dimsf[0] = (*point).size() / 2;
+	dimsf[1] = 2;
+
+	float* values(new float[dimsf[0] * dimsf[1]]);
+	std::copy(point->begin(), point->end(), values);
+
+
+	std::string groupName = hdf5File->getObjnameByIdx(0);
+	Group tmpgroup = hdf5File->openGroup("Group_grid").openGroup("2D_observe");
+	Group newgroup = tmpgroup.createGroup("subGroup4");
+	Hdf5IO::copyGroup(group, newgroup);
+	
+	Attribute attr = newgroup.openAttribute(13);
+
+	hsize_t dims[1] = { 1 };
+	DataSpace attr_dataspace = DataSpace(1, dims);
+	DataType dataType_1(H5T_STRING, 128);
+	std::string value = "S.DA COMPONENT FFT";
+
+	attr.write(dataType_1, value);
+
+
+
+	DataSpace dataSpace(2, dimsf);
+	std::string newDataSetName = "datasetGrd";
+	DataSet& newDataSet(newgroup.createDataSet(newDataSetName.c_str(), dataType, dataSpace));
+	newDataSet.write(values, PredType::NATIVE_FLOAT);
+	
+	//listDataSet.pop_back();
+	//listDataSet.push_back(newDataSet);
 }

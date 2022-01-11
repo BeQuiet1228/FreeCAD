@@ -13,12 +13,12 @@ namespace DV {
 		根据需求导入参数
 		point记录每个节点的数据
 		*/
-		TimeUndoRedoData(int FunOfAlogrithm, std::vector<float> point, std::string Xtag, std::string Ytag, const Data::Rang& xr, const Data::Rang& yr);
+		TimeUndoRedoData(int FunOfAlogrithm, Data::ValuesPtr point, std::string Xtag, std::string Ytag, const Data::Rang& xr, const Data::Rang& yr);
 		TimeUndoRedoData() = default;
 
 		Data::Rang xr, yr;
 		std::string Xtag, Ytag;
-		std::vector<float> point;
+		Data::ValuesPtr point;
 		int FunOfAlogrithm;
 	};
 

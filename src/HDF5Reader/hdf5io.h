@@ -47,6 +47,7 @@ struct CONTROL_EXPORT Hdf5Data
 	bool initM3dStructInformation();
 	bool initM2dStructInformation();
 	void init();
+	void changeHdf5Data(std::shared_ptr<std::vector<float>> point);
 
 };
 
