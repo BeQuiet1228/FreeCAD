@@ -53,6 +53,8 @@ SET(SRC
 	DataVisualization3DExport.hpp
 	ClipPlaneWidget.h
 	ClipPlaneWidget.cpp
+	UnifyXmlConfig3D.h
+	UnifyXmlConfig3D.cpp
 	
 )
 SET( STRUCT_SRC

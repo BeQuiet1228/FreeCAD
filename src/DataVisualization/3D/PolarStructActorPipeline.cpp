@@ -3,6 +3,7 @@
 #include"vtkProperty.h"
 #include"vtk-7.0/vtkMapper.h"
 #include"vtkPolyDataNormals.h"
+#include "../CustomConfig.h"
 DV3D::PolarStructActorPipeline::PolarStructActorPipeline() {
 	auto ac = vtkSmartPointer<vtkActor>::New();
 	auto mp = vtkSmartPointer<vtkDataSetMapper>::New();

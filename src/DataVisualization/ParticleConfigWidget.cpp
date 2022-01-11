@@ -42,6 +42,7 @@ void DV::ParticleConfigWidget::saveConfig()
 
 void DV::ParticleConfigWidget::initUi()
 {
+	this->setWindowTitle(GetEncodingstr("Á£×ÓÍ¼",ENCODING_GB2312));
 	SETPERPORE(ui->partcleColor, btnClicked());
 }
 

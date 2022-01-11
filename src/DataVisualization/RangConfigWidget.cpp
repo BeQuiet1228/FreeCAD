@@ -46,6 +46,7 @@ void DV::RangConfigWidget::saveConfig()
 
 void DV::RangConfigWidget::initUi()
 {
+	this->setWindowTitle(GetEncodingstr("Ê±¼äÍ¼",ENCODING_GB2312));
 	SETPERPORE(ui->lineColor, btnClicked());
 }
 

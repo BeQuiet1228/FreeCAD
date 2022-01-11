@@ -51,6 +51,7 @@ void DV::VectorConfigWidget::saveConfig()
 
 void DV::VectorConfigWidget::initUi()
 {
+	this->setWindowTitle(GetEncodingstr("Ê¸Á¿Í¼", ENCODING_GB2312));
 	SETPERPORE(ui->vecColor, btnClicked());
 }
 

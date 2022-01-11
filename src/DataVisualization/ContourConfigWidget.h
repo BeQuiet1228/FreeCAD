@@ -23,6 +23,8 @@ namespace DV
 		void initUi();
 	protected Q_SLOTS:
 		void btnClicked();
+		void radioButton1(bool);
+		void radioButton2(bool);
 	private:
 		Ui::ContourConfigWidget* ui;
 		QBoxLayout* boxLayout;

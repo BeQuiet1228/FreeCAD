@@ -306,6 +306,9 @@ Gui::MDIView* Application::activeView(void) const
 */
 void Application::showPlotSettingDialog()
 {
+    /*
+        内部已经添加后处理二维相关的窗口
+    */
 	DV::ConfigWidget* configWidget = new DV::ConfigWidget();
     /*
         添加后处理3d的窗口
@@ -313,6 +316,7 @@ void Application::showPlotSettingDialog()
     auto widgets = DV3D::ControlerFactory::CreateConfigWidget();
     configWidget->addTabWidget(widgets);
 	configWidget->setAttribute(Qt::WA_DeleteOnClose);
+    configWidget->loadxmlConfig();
 	auto doc = Gui::Application::Instance->activeDocument();
 	if (doc)
 	{

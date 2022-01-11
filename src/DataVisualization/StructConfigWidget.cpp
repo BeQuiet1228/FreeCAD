@@ -1,7 +1,7 @@
 #include "StructConfigWidget.h"
 #include "structbutton.h"
 #include "ui_StructConfigWidget.h"
-
+#include "C_encoding.h"
 DV::StructConfigWidget::StructConfigWidget(QWidget* parent /*= nullptr*/)
 	:QWidget(parent), ui(new Ui::StructConfigWidget)
 {
@@ -65,6 +65,7 @@ void DV::StructConfigWidget::saveConfig()
 
 void DV::StructConfigWidget::initUi()
 {
+	this->setWindowTitle(GetEncodingstr("结构图", ENCODING_GB2312));
 	/*
 	设置属性
 	*/

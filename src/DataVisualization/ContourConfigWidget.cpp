@@ -74,11 +74,37 @@ void DV::ContourConfigWidget::loadConfig()
 
 void DV::ContourConfigWidget::saveConfig()
 {
-
+	Config::GetInstance()->loadConfig();
+	ConfigGroup Group = Config::GetInstance()->getRootGroup();
+	//等位图
+	auto contourGroup = Group.getGroup("contour");
+	ui->equivalent;//等值
+	ui->raidoOfequality;//等比
+	if (ui->ScaledColors->isChecked()) contourGroup.getGroup("lineMapColors").setSetting("value", "ScaleColors");
+	else contourGroup.getGroup("lineMapColors").setSetting("value", "FixedColors");
+	(ui->concheckBox->checkState() == Qt::Checked) ? (contourGroup.getGroup("AlisAttitude").setSetting("isAlis", "1")) : (contourGroup.getGroup("AlisAttitude").setSetting("isAlis", "0"));
+	if (ui->equivalent->isChecked()) contourGroup.getGroup("valueStyle").setSetting("value", "equivalent");
+	else contourGroup.getGroup("valueStyle").setSetting("value", "raidoOfequality");
+	//lineMapValue
+	//获取颜色
+	{
+		std::vector<float> vals;
+		vals = arrowCtrl->getValue();
+		auto levelGroup = contourGroup.getGroup("lineMapColorval");
+		levelGroup.setSetting("valueNumber", QString("%1").arg(vals.size()).toStdString());
+		std::vector<QColor> colors = mColorTab->GetColors(vals);
+		for (auto index = 0; index < vals.size(); index++)
+		{
+			levelGroup.getGroup(QString("level_%1").arg(index).toStdString()).setSetting("value", QString("%1").arg(vals[index]).toStdString());
+			levelGroup.getGroup(QString("level_%1").arg(index).toStdString()).setSetting("color", QColorToQstring(colors[index]).toStdString());
+		}
+	}
+	Config::GetInstance()->saveFile();
 }
 
 void DV::ContourConfigWidget::initUi()
 {
+	this->setWindowTitle(GetEncodingstr("等位图", ENCODING_GB2312));
 	boxLayout = new QBoxLayout(QBoxLayout::Direction::BottomToTop, ui->colorscale);
 	ui->colorscale->setLayout(boxLayout);
 	mColorTab = new ColorTab(ui->colorscale);
@@ -105,4 +131,21 @@ void DV::ContourConfigWidget::btnClicked()
 	else if (button == ui->endColorBtn)
 		arrowCtrl->SetEndColor(color);
 }
+
+void DV::ContourConfigWidget::radioButton1(bool flag)
+{
+	if (flag == true)
+	{
+		mColorTab->setColorStyle(0);
+	}
+}
+
+void DV::ContourConfigWidget::radioButton2(bool flag)
+{
+	if (flag == true)
+	{
+		mColorTab->setColorStyle(1);
+	}
+}
+
 #include "moc_ContourConfigWidget.cpp"

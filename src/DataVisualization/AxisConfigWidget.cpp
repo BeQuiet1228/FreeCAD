@@ -2,6 +2,7 @@
 #include "ui_AxisConfigWidget.h"
 #include "SysInfo.h"
 #include "CustomConfig.h"
+#include "C_encoding.h"
 DV::AxisConfigWidget::AxisConfigWidget(QWidget* parent/*=nullptr*/)
 	:QWidget(parent),ui(new Ui::AxisConfigWidget)
 {
@@ -78,6 +79,7 @@ void DV::AxisConfigWidget::saveConfig()
 
 void DV::AxisConfigWidget::initUi()
 {
+	this->setWindowTitle(GetEncodingstr("×ÛºÏ",ENCODING_GB2312));
 	/*
 		×ÖÌå
 	*/
