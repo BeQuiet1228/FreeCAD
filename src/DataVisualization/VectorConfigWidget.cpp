@@ -20,8 +20,8 @@ void DV::VectorConfigWidget::loadConfig()
 {
 	/*
 	*/
-	VectorXmlGroup vectorxmlgroup;
-	auto xmlinfo=vectorxmlgroup.loadXmlInfo();
+	XmlData::VectorXml xmlinfo;
+	XmlData::loadXmlInfo(xmlinfo);
 	setButtonColor(ui->vecColor, xmlinfo.vectorColor);
 	toComboxIndex(ui->vectorSize,QString::number(xmlinfo.vectorsize));
 	ui->veccheckBox->setCheckState(xmlinfo.AlisAttitude ? Qt::Checked : Qt::Unchecked);
@@ -34,13 +34,12 @@ void DV::VectorConfigWidget::saveConfig()
 	/*
 	·â×°
 	*/
-	VectorXmlGroup vectorxmlgroup;
-	VectorXmlGroup::VectorXml vecXml;
+	XmlData::VectorXml vecXml;
 	vecXml.vectorsize = (ui->vectorSize->itemText(ui->vectorSize->currentIndex())).toInt();
 	vecXml.vectorColor = getButtonColor(ui->vecColor);
 	vecXml.AlisAttitude =((ui->veccheckBox->checkState() == Qt::Checked) ? 1 : 0);
 	vecXml.disMode = ((ui->disMode->checkState() == Qt::Checked) ? 1 : 0);
-	vectorxmlgroup.saveXmlInfo(vecXml);
+	XmlData::saveXmlInfo(vecXml);
 }
 
 void DV::VectorConfigWidget::initUi()

@@ -3,9 +3,9 @@
 #include <vtkUnstructuredGridGeometryFilter.h>
 #include <vtkSmartPointer.h>
 #include <vtkPolyDataNormals.h>
-#include "UnifyXmlConfig3D.h"
+#include "XmlGroup3D.h"
 namespace DV3D {
-	class CartesianStructActorPipeline :public ActorPipemline, public UnifyXmlConfig3D {
+	class CartesianStructActorPipeline :public ActorPipemline{
 	public:
 		CartesianStructActorPipeline();
 		~CartesianStructActorPipeline();
@@ -14,6 +14,6 @@ namespace DV3D {
 		void connect() override;
 		virtual void loadConfig();
 	protected:
-		ColorF colorf;
+		XmlData::ColorF colorf;
 	};
 }

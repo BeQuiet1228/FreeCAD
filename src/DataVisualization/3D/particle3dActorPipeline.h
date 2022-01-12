@@ -1,6 +1,5 @@
 #pragma once
 #include "CartesianStructActorPipeline.h"
-#include "UnifyXmlConfig3D.h"
 namespace DV3D {
 	class Particle3dActorPipeline :public CartesianStructActorPipeline{
 	public:

@@ -17,35 +17,33 @@ DV::StructConfigWidget::~StructConfigWidget()
 
 void DV::StructConfigWidget::loadConfig()
 {
-	Config::GetInstance()->loadConfig();
-	auto Group = Config::GetInstance()->getRootGroup();
-	auto StructGroup = Group.getGroup("struct");
 	/*
 		读取属性
 	*/
-#define LOADCONFIGCOLOR(a,b,c)\
+	XmlData::StructXml xmlInfo;
+	XmlData::getXmlInfo(xmlInfo);
+#define LOADCONFIGCOLOR(a,c)\
 	{\
-	setButtonColor(c##Color, (b).getGroup(#a).getValue("value")); \
-	setButtonColor(c##lineColor, (b).getGroup(#a "LINE").getValue("value"));\
+setButtonColor(c##Color, xmlInfo.proPerty[#a]);\
+setButtonColor(c##lineColor, xmlInfo.proPerty[#a "LINE"]);\
 	}
-	LOADCONFIGCOLOR(DIOLECTRIC, StructGroup, ui->Diolectric, true);
-	LOADCONFIGCOLOR(DIELECTIRANDCONDUCTANCE, StructGroup, ui->dielectirAndconductance, true);
-	LOADCONFIGCOLOR(PERMEABILITY, StructGroup, ui->Permeability, true);
-	LOADCONFIGCOLOR(PERFECTCONDUCTOR, StructGroup, ui->PerfectConductor, true);
-	LOADCONFIGCOLOR(CONDUCTORNEW, StructGroup, ui->ConductorNew, true);
+	LOADCONFIGCOLOR(DIOLECTRIC,ui->Diolectric);
+	LOADCONFIGCOLOR(DIELECTIRANDCONDUCTANCE,ui->dielectirAndconductance);
+	LOADCONFIGCOLOR(PERMEABILITY,ui->Permeability);
+	LOADCONFIGCOLOR(PERFECTCONDUCTOR, ui->PerfectConductor);
+	LOADCONFIGCOLOR(CONDUCTORNEW, ui->ConductorNew);
 	//新增属性-20210521
-	LOADCONFIGCOLOR(FREESPACE, StructGroup, ui->Freespace, true);
-	LOADCONFIGCOLOR(FOIL, StructGroup, ui->FOIL, true);
-	LOADCONFIGCOLOR(VACUO, StructGroup, ui->Vacuo, true);
-#undef LOADCONFIGCOLOR(a,b,c)
+	LOADCONFIGCOLOR(FREESPACE, ui->Freespace);
+	LOADCONFIGCOLOR(FOIL, ui->FOIL);
+	LOADCONFIGCOLOR(VACUO,ui->Vacuo);
+#undef LOADCONFIGCOLOR(a,c)
 #define ADDLINECONFIGCOLOR(a,b)\
-	setButtonColor(b,StructGroup.getGroup(#a).getValue("value"));
+	setButtonColor(b,xmlInfo.proPerty[#a]);
 	ADDLINECONFIGCOLOR(PORT, ui->Port);
 	ADDLINECONFIGCOLOR(DRIVER, ui->Driver);
 	ADDLINECONFIGCOLOR(INDUCTOR, ui->Inductor);
 #undef ADDLINECONFIGCOLOR(a,b)
-	StructXmlGroup structXmlGroup;
-	auto xmlInfo = structXmlGroup.getXmlInfo();
+
 	//抗锯齿
 
 	ui->structcheckBox->setCheckState((xmlInfo.AlisAttitude) ? Qt::Checked : Qt::Unchecked);
@@ -55,12 +53,15 @@ void DV::StructConfigWidget::loadConfig()
 
 void DV::StructConfigWidget::saveConfig()
 {
-	Config::GetInstance()->loadConfig();
-	auto Group = Config::GetInstance()->getRootGroup();
-	auto StructGroup = Group.getGroup("struct");
+	/*
+	* 
+	*/
+	XmlData::StructXml xmlInfo;
+	xmlInfo.proPerty.clear();
 	for (auto iter = btnList.begin(); iter != btnList.end(); iter++)
-		saveData(StructGroup, *iter);
-	Config::GetInstance()->saveFile();
+		saveData(xmlInfo.proPerty, *iter);
+	xmlInfo.AlisAttitude=((ui->structcheckBox->checkState() == Qt::Checked) ? 1 : 0);
+	XmlData::saveXmlInfo(xmlInfo);
 }
 
 void DV::StructConfigWidget::initUi()
@@ -101,20 +102,20 @@ void DV::StructConfigWidget::initUi()
 #undef SETSTRUCTPERPORE(a,b,c) 
 }
 
-void DV::StructConfigWidget::saveData(ConfigGroup& group, StructButton* btn)
+void DV::StructConfigWidget::saveData(std::map<std::string, QColor>& group, StructButton* btn)
 {
 	bool isLine = false;
 	if (btn->GetStructType() == StructButton::LINE)
 		isLine = true;
-	std::string colorStr = getButtonColorstr(btn);
-
+	//std::string colorStr = getButtonColorstr(btn);
+	auto color = getButtonColor(btn);
 #define XX(a)\
 case (a):\
 	{\
 		if (!isLine)\
-			group.getGroup((#a + 14)).setSetting("value", colorStr); \
+			group.insert(std::pair<std::string,QColor>((#a+14),color));\
 		else\
-			group.getGroup((#a "LINE" + 14)).setSetting("value", colorStr);\
+			group.insert(std::pair<std::string,QColor>((#a "LINE" + 14),color));\
 	}\
 	break;
 	switch (btn->GetStructTexture())

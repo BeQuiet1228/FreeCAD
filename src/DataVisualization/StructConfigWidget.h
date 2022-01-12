@@ -2,6 +2,7 @@
 #include "QWidget"
 #include "ConfigUnify.h"
 #include "CustomConfig.h"
+#include "XmlGroup.h"
 namespace Ui
 {
 	class StructConfigWidget;
@@ -20,7 +21,7 @@ namespace DV
 		void saveConfig();
 	protected:
 		void initUi();
-		void saveData(ConfigGroup&,StructButton*);
+		void saveData(std::map<std::string,QColor>&,StructButton*);
 	protected Q_SLOTS:
 		void btnClicked();
 	private:

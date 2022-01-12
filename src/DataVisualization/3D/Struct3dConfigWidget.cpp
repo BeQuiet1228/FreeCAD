@@ -2,6 +2,7 @@
 #include "ui_Struct3dConfigWidget.h"
 #include "../CustomConfig.h"
 #include "../C_encoding.h"
+#include "XmlGroup3D.h"
 DV3D::Struct3dConfigWidget::Struct3dConfigWidget(QWidget* parent/*=nullptr*/)
 	:QWidget(parent), ui(new Ui::Struct3dConfigWidget)
 {
@@ -16,23 +17,16 @@ DV3D::Struct3dConfigWidget::~Struct3dConfigWidget()
 
 void DV3D::Struct3dConfigWidget::loadConfig()
 {
-	DV::Config::GetInstance()->loadConfig();
-	auto Group = DV::Config::GetInstance()->getRootGroup();
-	auto StructGroup = Group.getGroup("struct3d");
-	std::string structColor = StructGroup.getGroup("color").getValue("value");
-	setButtonColor(ui->btnColor, structColor);
+	XmlData::Struct3dXml xmlInfo;
+	XmlData::loadXmlInfo(xmlInfo);
+	setButtonColor(ui->btnColor,xmlInfo.color);
 }
 
 void DV3D::Struct3dConfigWidget::saveConfig()
 {
-	DV::Config::GetInstance()->loadConfig();
-	DV::ConfigGroup Group = DV::Config::GetInstance()->getRootGroup();
-	//结构图参数
-	auto StructGroup = Group.getGroup("struct3d");
-	//获取颜色
-	std::string colorStr = getButtonColorstr(ui->btnColor);
-	StructGroup.getGroup("color").setSetting("value", colorStr);
-	DV::Config::GetInstance()->saveFile();
+	XmlData::Struct3dXml xmlInfo;
+	xmlInfo.color = getButtonColor(ui->btnColor);
+	XmlData::saveXmlInfo(xmlInfo);
 }
 
 void DV3D::Struct3dConfigWidget::initUi()

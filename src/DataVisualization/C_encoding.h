@@ -5,6 +5,8 @@
 #include"qstring.h"
 #include"qcolor.h"
 #include "string"
+#include"vector"
+#include "CustomConfig.h"
 namespace DV {
 #define	ENCODING_GB2312 0x01u
 #define	ENCODING_UTF8	0x02u
@@ -12,5 +14,9 @@ namespace DV {
 	EXTERN_C DATA_VISUALIZATION_EXPORT QString  QColorToQstring(QColor&);
 	EXTERN_C DATA_VISUALIZATION_EXPORT QColor   QStringToQColor(QString colorstr);
 	EXTERN_C DATA_VISUALIZATION_EXPORT QColor   StringToQColor(std::string colorstr);
+	namespace XmlData
+	{
+			EXTERN_C DATA_VISUALIZATION_EXPORT ConfigGroup getGroup(std::vector<std::string>);
+	}
 };
 #endif

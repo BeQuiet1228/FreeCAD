@@ -5,7 +5,7 @@
 #include "vtkPolyDataNormals.h"
 #include "vtkContourFilter.h"
 #include "vtkLookupTable.h"
-#include "UnifyXmlConfig3D.h"
+#include "XmlGroup3D.h"
 namespace DV3D
 {
 	using ContourValue = double;
@@ -14,7 +14,7 @@ namespace DV3D
 		double valMin;
 		double valMax;
 	};
-	class  Contour3dActorPipline :public ActorPipemline,public UnifyXmlConfig3D{
+	class  Contour3dActorPipline :public ActorPipemline{
 	public:
 		Contour3dActorPipline();
 		~Contour3dActorPipline();
@@ -41,6 +41,6 @@ namespace DV3D
 		/*
 			∂¡»°≈‰÷√
 		*/
-		std::vector<ColorF> colors;
+		std::vector<XmlData::ColorF> colors;
 	};
 };

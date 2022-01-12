@@ -4,6 +4,7 @@
 #include"vtk-7.0/vtkMapper.h"
 #include <vtkPolyDataNormals.h>
 #include "../CustomConfig.h"
+#include "XmlGroup3D.h"
 DV3D::CartesianStructActorPipeline::CartesianStructActorPipeline()
 {
 	auto ac = vtkSmartPointer<vtkActor>::New();
@@ -40,11 +41,9 @@ void DV3D::CartesianStructActorPipeline::connect()
 
 void DV3D::CartesianStructActorPipeline::loadConfig()
 {
-	DV::Config::GetInstance()->loadConfig();
-	auto Group = DV::Config::GetInstance()->getRootGroup();
-	auto structGroup = Group.getGroup("struct3d");
-	auto colorStr = structGroup.getGroup("color").getValue("value");
-	colorf = getColors(colorStr);
+	XmlData::Struct3dXml xmlInfo;
+	XmlData::loadXmlInfo(xmlInfo);
+	colorf = XmlData::getColors(xmlInfo.color);
 	return;
 }
 

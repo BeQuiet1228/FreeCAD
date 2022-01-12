@@ -5,6 +5,7 @@
 #include "../Arrowctrl.h"
 #include "../ColorTab.h"
 #include "QPushButton"
+#include "XmlGroup3D.h"
 DV3D::Contour3dConfigWidget::Contour3dConfigWidget(QWidget* parent/*=nullptr*/)
 	:QWidget(parent), ui(new Ui::Contour3dConfigWidget)
 {
@@ -17,53 +18,25 @@ DV3D::Contour3dConfigWidget::~Contour3dConfigWidget()
 }
 void DV3D::Contour3dConfigWidget::loadConfig()
 {
-	DV::Config::GetInstance()->loadConfig();
-	auto Group = DV::Config::GetInstance()->getRootGroup();
-	auto contourGroup = Group.getGroup("contour3d");
-	auto valNumberGroup = contourGroup.getGroup("valueNumber");
-	unsigned int valNumber = atoi(valNumberGroup.getValue("value").c_str());
-	std::vector<float> vals;
-	std::vector<QColor> colors;
-	for (auto index = 0; index < valNumber; ++index)
+	XmlData::Contour3dXml xmlinf;
+	XmlData::loadXmlInfo(xmlinf);
+	if (!xmlinf.values.empty())
 	{
-		vals.push_back(atof(valNumberGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("value").c_str()));
-		colors.push_back(DV::QStringToQColor(QString::fromStdString(valNumberGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("color"))));
+		arrowCtrl->setvals(xmlinf.values,xmlinf.colors);
+		mColorTab->setColors(xmlinf.values, xmlinf.colors);
+		arrowCtrl->SetEndColor(*(xmlinf.colors.end() - 1));
+		arrowCtrl->SetFirstColor(*xmlinf.colors.begin());
+		setButtonColor(ui->firstColorBtn, *xmlinf.colors.begin());
+		setButtonColor(ui->endColorBtn, *(xmlinf.colors.end() - 1));
 	}
-	if (!vals.empty())
-	{
-		arrowCtrl->setvals(vals, colors);
-		mColorTab->setColors(vals, colors);
-		arrowCtrl->SetEndColor(*(colors.end() - 1));
-		arrowCtrl->SetFirstColor(*colors.begin());
-		setButtonColor(ui->firstColorBtn, *colors.begin());
-		setButtonColor(ui->endColorBtn, *(colors.end() - 1));
-	}
+
 }
 void DV3D::Contour3dConfigWidget::saveConfig()
 {
-	DV::Config::GetInstance()->loadConfig();
-	auto Group = DV::Config::GetInstance()->getRootGroup();
-	auto contourGroup = Group.getGroup("contour3d");
-	/*
-		3Œ¨µ»ŒªÕº
-	*/
-	std::vector<float> values = arrowCtrl->getValue();
-	std::vector<QColor> colors = mColorTab->GetColors(values);
-	auto valueNumberGroup = contourGroup.getGroup("valueNumber");
-	valueNumberGroup.
-		setSetting("value"
-			, QString("%1")
-			.arg(values.size())
-			.toStdString());
-	for (auto index = 0; index < values.size(); index++)
-	{
-		valueNumberGroup
-			.getGroup(QString("level_%1").arg(index).toStdString())
-			.setSetting("value", QString("%1").arg(values[index]).toStdString());
-		valueNumberGroup
-			.getGroup(QString("level_%1").arg(index).toStdString())
-			.setSetting("color", DV::QColorToQstring(colors[index]).toStdString());
-	}
+	XmlData::Contour3dXml xmlinfo;
+	xmlinfo.values = arrowCtrl->getValue();
+	xmlinfo.colors = mColorTab->GetColors(xmlinfo.values);
+	XmlData::saveXmlInfo(xmlinfo);
 }
 void DV3D::Contour3dConfigWidget::initUi()
 {

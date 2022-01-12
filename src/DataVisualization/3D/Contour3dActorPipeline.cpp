@@ -54,23 +54,25 @@ void DV3D::Contour3dActorPipline::connect()
 
 void DV3D::Contour3dActorPipline::loadConfig()
 {
-	std::vector <float>values;
-	DV::Config::GetInstance()->loadConfig();
-	auto Group = DV::Config::GetInstance()->getRootGroup();
-	auto contour3dGroup = Group.getGroup("contour3d");
-	auto valueNumberGroup = contour3dGroup.getGroup("valueNumber");
-	auto valueNumber = atoi(valueNumberGroup.getValue("value").c_str());
-	values.clear(); values.reserve(valueNumber);
-	colors.clear(); colors.reserve(valueNumber);
-	for (auto index=0;index<valueNumber;++index)
-	{
-		values.push_back(atof(valueNumberGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("value").c_str()));
-		colors.push_back(getColors(valueNumberGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("color")));
-	}
+	//std::vector <float>values;
+	//DV::Config::GetInstance()->loadConfig();
+	//auto Group = DV::Config::GetInstance()->getRootGroup();
+	//auto contour3dGroup = Group.getGroup("contour3d");
+	//auto valueNumberGroup = contour3dGroup.getGroup("valueNumber");
+	//auto valueNumber = atoi(valueNumberGroup.getValue("value").c_str());
+	//values.clear(); values.reserve(valueNumber);
+	//colors.clear(); colors.reserve(valueNumber);
+	//for (auto index=0;index<valueNumber;++index)
+	//{
+	//	values.push_back(atof(valueNumberGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("value").c_str()));
+	//	colors.push_back(getColors(valueNumberGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("color")));
+	//}
+	XmlData::Contour3dXml xmlinfo;
+	XmlData::loadXmlInfo(xmlinfo);
 	/*
 		生成过度表
 	*/
-	colors = getColors(values, colors);
+	colors = XmlData::getColors(xmlinfo.values, xmlinfo.colors);
 }
 void DV3D::Contour3dActorPipline::setContourSurfarCount(const int& n)
 {

@@ -1,22 +1,12 @@
 #pragma once
 #include "QColor"
-#include "CustomConfig.h"
 #include"string"
 #include "vector"
+#include "map"
 namespace DV
 {
-	class XmlGroup
+	namespace XmlData
 	{
-	public:
-		XmlGroup() = default;
-		~XmlGroup() = default;
-	protected:
-		//ConfigGroup getGroup(char*,...);
-		ConfigGroup getGroup(std::vector<std::string>);
-	};
-	class AxisXmlGroup :public XmlGroup
-	{
-	public:
 		struct AxisXml
 		{
 			int axisSize;
@@ -26,14 +16,6 @@ namespace DV
 			int infoShow;
 			QString font;
 		};
-		AxisXmlGroup() = default;
-		~AxisXmlGroup() = default;
-		void saveXmlInfo(AxisXml&);
-		AxisXml loadXmlInfo();
-	};
-	class VectorXmlGroup :public XmlGroup
-	{
-	public:
 		struct VectorXml
 		{
 			int vectorsize;
@@ -41,12 +23,6 @@ namespace DV
 			int AlisAttitude;
 			int disMode;
 		};
-		void saveXmlInfo(VectorXml&);
-		VectorXml loadXmlInfo();
-	};
-	class ContourXmlGroup :public XmlGroup
-	{
-	public:
 		struct ContourXml
 		{
 			std::string lineMapColors;
@@ -55,32 +31,26 @@ namespace DV
 			std::vector<float> values;
 			std::vector<QColor> colors;
 		};
-		void saveXmlInfo(ContourXml&);
-		ContourXml getXmlInfo();
-	};
-	class ParticleXmlGroup :public XmlGroup
-	{
-	public:
 		struct ParticleXml
 		{
 			int size;
 			QColor color;
 			int AlisAttitude;
 		};
-		void saveXmlInfo(ParticleXml&);
-		ParticleXml getXmlInfo();
-	};
-	class StructXmlGroup :public XmlGroup
-	{
-	public:
 		struct StructXml
 		{
-			std::vector<std::string> proPertyStr;
-			std::vector<QColor> proPertyCol;
+			std::map<std::string, QColor> proPerty;
 			int AlisAttitude;
-		}; 
+		};
+		void saveXmlInfo(AxisXml&);
+		void loadXmlInfo(AxisXml&);
+		void saveXmlInfo(VectorXml&);
+		void loadXmlInfo(VectorXml&);
+		void saveXmlInfo(ContourXml&);
+		void getXmlInfo(ContourXml&);
+		void saveXmlInfo(ParticleXml&);
+		void getXmlInfo(ParticleXml&);
 		void saveXmlInfo(StructXml&);
-		StructXml getXmlInfo();
+		void getXmlInfo(StructXml&);
 	};
-
 }

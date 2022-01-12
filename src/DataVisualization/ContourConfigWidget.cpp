@@ -24,8 +24,8 @@ void DV::ContourConfigWidget::loadConfig()
 	/*
 		
 	*/
-	ContourXmlGroup contourXmlGroup;
-	auto xmlinfo=contourXmlGroup.getXmlInfo();
+	XmlData::ContourXml xmlinfo;
+	XmlData::getXmlInfo(xmlinfo);
 	if(xmlinfo.lineMapColors=="ScaleColors")
 	{
 		ui->ScaledColors->setChecked(true);

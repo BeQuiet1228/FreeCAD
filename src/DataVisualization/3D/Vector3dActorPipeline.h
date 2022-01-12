@@ -1,11 +1,11 @@
 #pragma once
 #include "actorPipeline.h"
 #include "vtkArrowSource.h"
-#include "UnifyXmlConfig3D.h"
 #include "vtkLookupTable.h"
+#include "XmlGroup3D.h"
 namespace DV3D
 {
-	class Vector3dActorPipeline:public ActorPipemline,public UnifyXmlConfig3D
+	class Vector3dActorPipeline:public ActorPipemline
 	{
 	public:
 		Vector3dActorPipeline();
@@ -16,7 +16,7 @@ namespace DV3D
 		void loadConfig();
 		void updataLookupTable();
 	private:
-		std::vector<ColorF> colorfs;
+		std::vector<XmlData::ColorF> colorfs;
 		vtkSmartPointer<vtkLookupTable> lookupTable;
 	};
 }

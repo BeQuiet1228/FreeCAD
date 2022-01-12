@@ -9,6 +9,7 @@ DV::AxisConfigWidget::AxisConfigWidget(QWidget* parent/*=nullptr*/)
 {
 	ui->setupUi(this);
 	initUi();
+	loadConfig();
 }
 
 DV::AxisConfigWidget::~AxisConfigWidget()
@@ -18,8 +19,8 @@ DV::AxisConfigWidget::~AxisConfigWidget()
 
 void DV::AxisConfigWidget::loadConfig()
 {
-	AxisXmlGroup axisGroup;
-	auto xmlinfo = axisGroup.loadXmlInfo();
+	XmlData::AxisXml xmlinfo;
+	XmlData::loadXmlInfo(xmlinfo);
 	setButtonColor(ui->axisColor, xmlinfo.axisColor);
 	setButtonColor(ui->axisvalColor, xmlinfo.axisvalColor);
 	toComboxIndex(ui->fontSize, QString::number(xmlinfo.axisSize));
@@ -47,15 +48,14 @@ void DV::AxisConfigWidget::saveConfig()
 	/*
 		·â×°
 	*/
-	AxisXmlGroup group;
-	DV::AxisXmlGroup::AxisXml axisXml;
+	XmlData::AxisXml axisXml;
 	axisXml.axisColor = getButtonColor(ui->axisColor);
 	axisXml.axisSize = (ui->fontSize->itemText(ui->fontSize->currentIndex())).toInt();
 	axisXml.axisvalColor = getButtonColor(ui->axisvalColor);
 	axisXml.axisvalSize = (ui->axisvalSize->itemText(ui->axisvalSize->currentIndex())).toInt();
 	axisXml.infoShow = ((ui->infoshow->isChecked()) ? 1 : 0);
 	axisXml.font = ui->fontStyle->itemText(ui->fontStyle->currentIndex());
-	group.saveXmlInfo(axisXml);
+	XmlData::saveXmlInfo(axisXml);
 }
 
 void DV::AxisConfigWidget::initUi()

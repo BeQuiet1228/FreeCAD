@@ -41,20 +41,10 @@ void DV3D::Vector3dActorPipeline::connect()
 
 void DV3D::Vector3dActorPipeline::loadConfig()
 {
-
-	std::vector <float> values;
 	colorfs.clear();
-	DV::Config::GetInstance()->loadConfig();
-	auto group = DV::Config::GetInstance()->getRootGroup();
-	auto valueNumberGroup = group.getGroup("vector3d").getGroup("valueNumber");
-	int valueNumber =atoi(valueNumberGroup.getValue("value").c_str());
-	values.reserve(valueNumber); colorfs.reserve(valueNumber);
-	for (auto index = 0; index < valueNumber; ++index)
-	{
-		values.push_back(atof(valueNumberGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("value").c_str()));
-		colorfs.push_back(getColors(valueNumberGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("color")));
-	}
-	colorfs = getColors(values,colorfs);
+	XmlData::Vector3dXml xmlInfo;
+	XmlData::loadXmlInfo(xmlInfo);
+	colorfs = XmlData::getColors(xmlInfo.colorBar.values, xmlInfo.colorBar.colors);
 }
 
 void DV3D::Vector3dActorPipeline::updataLookupTable()

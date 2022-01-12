@@ -5,6 +5,7 @@
 #include "../Arrowctrl.h"
 #include "../ColorTab.h"
 #include "QPushButton"
+#include "XmlGroup3D.h"
 DV3D::Vector3dConfigWidget::Vector3dConfigWidget(QWidget* parent/*=nullptr*/)
 	:QWidget(parent),ui(new Ui::Vector3dConfigWidget)
 {
@@ -25,32 +26,19 @@ DV3D::Vector3dConfigWidget::~Vector3dConfigWidget()
 */
 void DV3D::Vector3dConfigWidget::loadConfig()
 {
-	DV::Config::GetInstance()->loadConfig();
-	auto Group = DV::Config::GetInstance()->getRootGroup();
-	auto vector3dGroup = Group.getGroup("vector3d");
-	std::string xGridIncStr = vector3dGroup.getGroup("XorRGridInc").getValue("valMax");
-	std::string yGridIncStr = vector3dGroup.getGroup("YorThetaGridInc").getValue("valMax");
-	std::string zGridIncStr = vector3dGroup.getGroup("ZGridInc").getValue("valMax");
-	ui->xGridInc->setText(QString::fromStdString(xGridIncStr));
-	ui->yGridInc->setText(QString::fromStdString(yGridIncStr));
-	ui->zGridInc->setText(QString::fromStdString(zGridIncStr));
-	auto valNumberGroup = vector3dGroup.getGroup("valueNumber");
-	unsigned int valNumber = atoi(valNumberGroup.getValue("value").c_str());
-	std::vector<float> vals;
-	std::vector<QColor> colors;
-	for (auto index=0;index<valNumber;++index)
+	XmlData::Vector3dXml xmlinfo;
+	XmlData::loadXmlInfo(xmlinfo);
+	ui->xGridInc->setText(QString::number(xmlinfo.XorRGridInc));
+	ui->yGridInc->setText(QString::number(xmlinfo.YorThetaGridInc));
+	ui->zGridInc->setText(QString::number(xmlinfo.ZGridInc));
+	if (!xmlinfo.colorBar.values.empty())
 	{
-		vals.push_back(atof(valNumberGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("value").c_str()));
-		colors.push_back(DV::QStringToQColor(QString::fromStdString(valNumberGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("color"))));
-	}
-	if (!vals.empty())
-	{
-		arrowCtrl->setvals(vals, colors);
-		mColorTab->setColors(vals, colors);
-		arrowCtrl->SetEndColor(*(colors.end() - 1));
-		arrowCtrl->SetFirstColor(*colors.begin());
-		setButtonColor(ui->firstColorBtn, *colors.begin());
-		setButtonColor(ui->endColorBtn,*(colors.end() - 1));
+		arrowCtrl->setvals(xmlinfo.colorBar.values,xmlinfo.colorBar.colors);
+		mColorTab->setColors(xmlinfo.colorBar.values, xmlinfo.colorBar.colors);
+		arrowCtrl->SetEndColor(*(xmlinfo.colorBar.colors.end() - 1));
+		arrowCtrl->SetFirstColor(*xmlinfo.colorBar.colors.begin());
+		setButtonColor(ui->firstColorBtn, *xmlinfo.colorBar.colors.begin());
+		setButtonColor(ui->endColorBtn, *(xmlinfo.colorBar.colors.end() - 1));
 	}
 }
 
@@ -62,28 +50,13 @@ void DV3D::Vector3dConfigWidget::loadConfig()
 */
 void DV3D::Vector3dConfigWidget::saveConfig()
 {
-	DV::Config::GetInstance()->loadConfig();
-	auto Group = DV::Config::GetInstance()->getRootGroup();
-	auto vector3dGroup = Group.getGroup("vector3d");
-	/*
-		3Î¬Ê¸Á¿Í¼
-	*/
-	vector3dGroup.getGroup("XorRGridInc").setSetting("valMax",ui->xGridInc->text().toStdString());
-	vector3dGroup.getGroup("YorThetaGridInc").setSetting("valMax", ui->yGridInc->text().toStdString());
-	vector3dGroup.getGroup("ZGridInc").setSetting("valMax", ui->zGridInc->text().toStdString());
-	std::vector<float> values = arrowCtrl->getValue();
-	std::vector<QColor> colors = mColorTab->GetColors(values);
-	auto valueNumber = vector3dGroup.getGroup("valueNumber");
-	valueNumber.setSetting("value",std::to_string(values.size()));
-	for (auto index = 0; index < values.size(); ++index)
-	{
-		valueNumber
-			.getGroup(QString("level_%1").arg(index).toStdString())
-			.setSetting("value", QString("%1").arg(values[index]).toStdString());
-		valueNumber
-			.getGroup(QString("level_%1").arg(index).toStdString())
-			.setSetting("color", DV::QColorToQstring(colors[index]).toStdString());
-	}
+	XmlData::Vector3dXml xmlinf;
+	xmlinf.XorRGridInc = ui->xGridInc->text().toInt();
+	xmlinf.YorThetaGridInc= ui->yGridInc->text().toInt();
+	xmlinf.ZGridInc= ui->zGridInc->text().toInt();
+	xmlinf.colorBar.values= arrowCtrl->getValue();
+	xmlinf.colorBar.colors= mColorTab->GetColors(xmlinf.colorBar.values);
+	XmlData::saveXmlInfo(xmlinf);
 }
 
 /**
