@@ -2,6 +2,7 @@
 #include "structbutton.h"
 #include "ui_StructConfigWidget.h"
 #include "C_encoding.h"
+#include "XmlGroup.h"
 DV::StructConfigWidget::StructConfigWidget(QWidget* parent /*= nullptr*/)
 	:QWidget(parent), ui(new Ui::StructConfigWidget)
 {
@@ -43,14 +44,13 @@ void DV::StructConfigWidget::loadConfig()
 	ADDLINECONFIGCOLOR(DRIVER, ui->Driver);
 	ADDLINECONFIGCOLOR(INDUCTOR, ui->Inductor);
 #undef ADDLINECONFIGCOLOR(a,b)
+	StructXmlGroup structXmlGroup;
+	auto xmlInfo = structXmlGroup.getXmlInfo();
 	//¿¹¾â³Ý
-	ui->structcheckBox
-		->setCheckState((
-			QString::fromStdString(
-				StructGroup
-				.getGroup("AlisAttitude")
-				.getValue("isAlis"))
-			.toInt() == 1) ? Qt::Checked : Qt::Unchecked);
+
+	ui->structcheckBox->setCheckState((xmlInfo.AlisAttitude) ? Qt::Checked : Qt::Unchecked);
+
+
 }
 
 void DV::StructConfigWidget::saveConfig()

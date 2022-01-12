@@ -28,6 +28,7 @@ namespace DV
 		QColor setButtonColor(QPushButton* button, std::string color);
 		QColor setButtonColor(QPushButton* button, QColor color);
 		std::string getButtonColorstr(QPushButton* button);
+		QColor getButtonColor(QPushButton* button);
 		void toComboxIndex(QComboBox* combox, QString& str);
 	};
 }

@@ -26,11 +26,12 @@ QColor DV::ConfigUnify::setButtonColor(QPushButton* button)
 		if (dlg.exec() == QColorDialog::Accepted)
 		{
 			QColor color = dlg.currentColor();
-			QPalette qpalette = button->palette();
+			/*QPalette qpalette = button->palette();
 			qpalette.setColor(QPalette::Button,color);
 			button->setPalette(qpalette);
-			button->setText(QString("#%1").arg(QColorToQstring(color)));
-			return color;
+			button->setText(QString("#%1").arg(QColorToQstring(color)));*/
+			return setButtonColor(button, color);
+			//return color;
 		}
 	}
 	return lastColor;
@@ -41,24 +42,30 @@ QColor DV::ConfigUnify::setButtonColor(QPushButton* button, QColor color)
 	QPalette qpalette = button->palette();
 	qpalette.setColor(QPalette::Button, color);
 	button->setPalette(qpalette);
-	button->setText(QColorToQstring(color));
+	button->setText(QString("#%1").arg(QColorToQstring(color)));
 	return color;
 }
 
 QColor DV::ConfigUnify::setButtonColor(QPushButton* button, std::string color)
 {
 	QColor rgba = QStringToQColor(QString::fromStdString(color));
-	QPalette qpalette = button->palette();
+	return setButtonColor(button, rgba);
+	/*QPalette qpalette = button->palette();
 	qpalette.setColor(QPalette::Button, rgba);
 	button->setPalette(qpalette);
 	button->setText(QString("#%1").arg(QString::fromStdString(color)));
-	return rgba;
+	return rgba;*/
 }
 std::string DV::ConfigUnify::getButtonColorstr(QPushButton* button)
 {
 	QColor lastColor = button->palette().button().color();
 	auto qstr=QColorToQstring(lastColor);
 	return qstr.toStdString();
+}
+
+QColor DV::ConfigUnify::getButtonColor(QPushButton* button)
+{
+	return button->palette().button().color();
 }
 
 void DV::ConfigUnify::toComboxIndex(QComboBox* combox, QString& str)

@@ -207,6 +207,8 @@ SET(CONFIGWIDGET_Srcs
 	StructConfigWidget.cpp
 	ParticleConfigWidget.h
 	ParticleConfigWidget.cpp
+	XmlGroup.h
+	XmlGroup.cpp
 	)
 #处理ui和qrc文件
 if (BUILD_QT5)
