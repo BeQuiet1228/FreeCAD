@@ -9,6 +9,8 @@ namespace DV {
 		UndoRedoData(const Data::Rang& xr, const Data::Rang& yr);
 		UndoRedoData() = default;
 		Data::Rang xr, yr;
+
+		virtual void printTmp();//暂时用于动态变换的需要而增加的虚函数
 	};
 	class UndoRedoStack {
 	public:
@@ -26,6 +28,6 @@ namespace DV {
 	private:
 		DataStack undoStack, redoStack;
 	private:
-		void clearStack(DataStack stack);
+		void clearStack(DataStack& stack);
 	};
 }

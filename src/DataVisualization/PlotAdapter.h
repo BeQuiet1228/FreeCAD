@@ -89,6 +89,7 @@ namespace DV {
 		//³·Ïú»Ö¸´²Ù×÷
 		virtual bool undo();
 		virtual bool redo();
+		virtual UndoRedoStack::DataPtr CreateUndoRedoData(const Data::Rang& xr, const Data::Rang& yr);
 	Q_SIGNALS:
 		void updatePlot();
 	};

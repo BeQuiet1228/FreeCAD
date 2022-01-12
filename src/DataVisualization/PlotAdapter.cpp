@@ -325,6 +325,12 @@ namespace DV {
 		return URStack;
 	}
 
+	UndoRedoStack::DataPtr PlotAdapter::CreateUndoRedoData(const Data::Rang& xr, const Data::Rang& yr) {
+		UndoRedoStack::DataPtr  URData(new UndoRedoData(xr, yr));
+		return URData;
+	}
+
+
 };
 
 
