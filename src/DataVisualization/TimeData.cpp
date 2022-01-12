@@ -257,16 +257,14 @@ namespace DV {
 		}
 		Hdf5IO* temp = new Hdf5IO(path);
 
-		Hdf5Data* newh5Data = new Hdf5Data(h5Data);
-		newh5Data->changeHdf5Data(this->points);
-		//Hdf5IO::copyToHdf5IO(*temp, *newh5Data);
+		
 
-		//Hdf5Data* newData = new Hdf5Data(h5Data);
-		//Hdf5IO::copyToHdf5IO(*temp, *newData);
+		Hdf5Data* newData = new Hdf5Data(h5Data);
+		Hdf5IO::copyToHdf5IO(*temp, *newData);
 		/*if (-1 != res)
 			res = Hdf5IO::closeH5File(res);*/
 		delete temp;
-		//delete newData;
-		delete newh5Data;
+
+		delete newData;
 	}
 };
