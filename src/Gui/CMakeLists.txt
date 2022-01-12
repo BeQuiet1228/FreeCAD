@@ -461,8 +461,6 @@ SET(FILE_FORMAT_SRC
 	PlotAdapterBase.cpp
 	Item3DDoubleClickEvent.cpp
 	Item3DDoubleClickEvent.h
-	ControlerItemListWidget.cpp
-	ControlerItemListWidget.h
 )
 SET(TREENODE_SRC
 	TreeNode.h
@@ -829,6 +827,36 @@ else()
     qt4_wrap_cpp(iis_MOC_SRCS ${iis_MOC_HDRS})
 endif()
 SOURCE_GROUP("Widget\\iisTaskPanel\\Mocs" FILES ${iis_MOC_SRCS})
+
+SET(DATA_VISUALIZATION_GUI_SRC
+	Hdf5DataItem.cpp
+	Hdf5DataItem.h
+	Hdf5DataItemEventHandler.cpp
+	Hdf5DataItemEventHandler.h
+	DataVisualizationTree.h
+	DataVisualizationTree.cpp
+	hdf5DataItemFactory.cpp
+	hdf5DataItemFactory.h
+	HDF5DataItem2DFactory.h
+	HDF5DataItem2DFactory.cpp
+	HDF5DataItem2DDoubleClickEventHander.h
+	HDF5DataItem2DDoubleClickEventHander.cpp
+	ControlerItemListWidget.cpp
+	ControlerItemListWidget.h
+)
+SET(DATA_VISUALIZATION_GUI_MOC_H
+	Hdf5DataItem.h
+	DataVisualizationTree.h
+	ControlerItemListWidget.h
+)
+
+if (BUILD_QT5)
+    qt5_wrap_cpp(DATA_VISUALIZATION_GUI_MOC_SRCS ${DATA_VISUALIZATION_GUI_MOC_H})
+else()
+    qt4_wrap_cpp(DATA_VISUALIZATION_GUI_MOC_SRCS ${DATA_VISUALIZATION_GUI_MOC_H})
+endif()
+source_group("DataVisualizationGUI" FILES ${DATA_VISUALIZATION_GUI_SRC} ${DATA_VISUALIZATION_GUI_MOC_SRCS})
+
 
 SET(qsintActionPanel_SRCS
     QSint/actionpanel/actionbox.cpp
@@ -1281,6 +1309,8 @@ SET(FreeCADGui_SRCS
 	${FILE_FORMAT_SRC}
 	${TREENODE_SRC}
 	${MDI_SRC}
+	${DATA_VISUALIZATION_GUI_SRC}
+	${DATA_VISUALIZATION_GUI_MOC_SRCS}
 )
 
 if(MSVC)

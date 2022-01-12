@@ -34,5 +34,4 @@ void DV3D::PolarStructActorPipeline::connect() {
 
 	auto ac = getActor();
 	ac->SetMapper(mp);
-	ac->GetProperty()->EdgeVisibilityOn();
 }

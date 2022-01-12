@@ -65,7 +65,7 @@ void DocumentManager::dataclear()
 	hdf5dataList.clear();
 }
 
-std::vector<Hdf5Data>& DocumentManager::gethdf5dataList()
+std::vector<Hdf5Data> DocumentManager::gethdf5dataList()
 {
 	return hdf5dataList;
 }

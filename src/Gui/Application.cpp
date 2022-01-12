@@ -297,42 +297,8 @@ Gui::MDIView* Application::activeView(void) const
         return NULL;
 }
 
-void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
-{
-    auto doc = dynamic_cast<DocumentPic*>(Gui::Application::Instance->activeDocument());
-    if (!doc)
-        return;
-    DocumentManager* documentmanager = dynamic_cast<DocumentManager*>(doc->getDocument());
-    if (!documentmanager)
-    {
-        std::cerr << "documentmanager==nullptr from   FreeCADGUI Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)" << std::endl;
-        return;
-    }
-    TreeViewCtrl* m_listTreeWidget = (Gui::MainWindow::getInstance()->mTreeWidget);
-    if (!m_listTreeWidget)
-    {
-        std::cerr << "ListTreeWidget ==nullptr from FreeCADGUI Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)" << std::endl;
-        return;
-    }
-    int index=documentmanager->saveHdf5Data(data);
-    m_listTreeWidget->showPlotfromData(data,index);
-}
-void Application::ToStruct(Hdf5Data data)
-{		
-    auto doc = Gui::Application::Instance->activeDocument();
-    if (doc)
-    {
-        DocumentManager* documentmanager = dynamic_cast<DocumentManager*>(doc->getDocument());
-        if (!documentmanager)
-        {
-            std::cerr << "documentmanager is null from Free void Application::ToStruct(Hdf5Data data)" << std::endl;
-            return;
-        }
-        int DataIndex = documentmanager->saveHdf5Data(data);
-        Gui::TreeViewCtrl* m_listTreeWidget = Gui::MainWindow::getInstance()->mTreeWidget;
-        m_listTreeWidget->createIteminfo(data,DataIndex);
-    }
-}
+
+
 /**
 * @brief  Gui::Application::showPlotSettingDialog œ‘ æ…Ë÷√¥∞ø⁄
 * @return void  

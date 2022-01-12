@@ -16,17 +16,22 @@ using namespace  H5;
 class Hdf5IO;
 using VectorF = std::vector<float>;
 
-struct CONTROL_EXPORT Hdf5Data
+class CONTROL_EXPORT Hdf5Data
 {
+public:
 	Hdf5Data(std::shared_ptr<H5File> h5){
 		this->hdf5File = h5;
 	}
 	Hdf5Data() = default;
+
+public:
 	enum CoordinateSystem{
 		CARTESIAN = 0,
 		CYLINDER,
 		POLAR
 	};
+
+public:
 	//数据分组对象
     Group group;
 	//头部信息
@@ -41,13 +46,15 @@ struct CONTROL_EXPORT Hdf5Data
 	std::string petName;
 	//坐标系类型
 	CoordinateSystem coordinateSystem;
+
+public:
+	void save(const std::string& path,bool newFIle = false);
 	//初始化基本信息
 	bool initInformation();
 	bool initPlanemation();
 	bool initM3dStructInformation();
 	bool initM2dStructInformation();
 	void init();
-	void changeHdf5Data(std::shared_ptr<std::vector<float>> point);
 
 };
 
@@ -124,4 +131,15 @@ private:
 	std::list<Group> getGrouplist(Group);
 	std::vector<DataSet> getDataSetlist(Group);
 	void digGroup(Group);
+};
+
+class CONTROL_EXPORT H5DataHead {
+public:
+	H5DataHead() = default;
+	~H5DataHead() = default;
+
+public:
+	//获取$分割的属性
+	static std::string  getAttributeForIndex(std::string str,int index);
+	
 };

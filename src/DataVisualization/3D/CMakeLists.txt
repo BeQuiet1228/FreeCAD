@@ -51,6 +51,9 @@ SET(SRC
 	controlerItemFactor.cpp
 	controlerItemFactor.h
 	DataVisualization3DExport.hpp
+	ClipPlaneWidget.h
+	ClipPlaneWidget.cpp
+	
 )
 SET( STRUCT_SRC
 	CartesianStructDataSetConstructor.cpp
@@ -68,8 +71,14 @@ SET( STRUCT_SRC
 	PolarStructActorPipeline.h
 	PolarStructActorPipeline.cpp
 )
-
-
+SET(VECTOR3D_SRC
+	CartesianVector3dDatasetConstructor.h
+	CartesianVector3dDatasetConstructor.cpp
+	CylinderVector3dDatasetConstructor.h
+	CylinderVector3dDatasetConstructor.cpp
+	Vector3dActorPipeline.h
+	Vector3dActorPipeline.cpp
+)
 SET(PARTICLE_SRC 
 	particle3dDataSetConstructor.cpp
 	particle3dDataSetConstructor.h
@@ -85,13 +94,31 @@ SET(CONTOUR_SRCS
 	PolarContourDataSetConstructor.h
 	PolarContourDataSetConstructor.cpp
 )
+SET(CONTOUR3D_SRCS
+	Contour3dataSetConstructor.cpp
+	Contour3dataSetConstructor.h
+	PolarContour3dDataSetConstructor.cpp
+	PolarContour3dDataSetConstructor.h
+	Contour3dActorPipeline.h
+	Contour3dActorPipeline.cpp
+	Contour3dControler.h
+	Contour3dControler.cpp
+	Contour3dControlerAction.h
+	Contour3dControlerAction.cpp
+	Contour3dControlerWidget.h
+	Contour3dControlerWidget.cpp
+)
 
 SET(UI_SRC
 	ControlerItem.ui
+	ClipPlaneWidget.ui
 	)
 
 SET(MY_MOC_HDR
 	ControlerItem.h
+	ClipPlaneWidget.h
+	Contour3dControlerWidget.h
+	#Contour3dControlerAction.h
 )
 SET(QRC_SRC
 	resource/rce.qrc
@@ -119,6 +146,8 @@ SET(DataVisualization3D_src
 	${Gui_QRC_SRCs}
 	${PARTICLE_SRC}
 	${CONTOUR_SRCS}
+	${CONTOUR3D_SRCS}
+	${VECTOR3D_SRC}
 	)
 
 	
@@ -129,10 +158,11 @@ source_group("moc" FILES ${MY_MOC_SRCS})
 source_group("resource" FILES ${Gui_QRC_SRCs} ${QRC_SRC})
 source_group("particle3d" FILES ${PARTICLE_SRC})
 source_group("contour" FILES ${CONTOUR_SRCS})
-	
+source_group("contour3d" FILES ${CONTOUR3D_SRCS})
+source_group("vector3d" FILES ${VECTOR3D_SRC})
+
 #add_executable(DataVisualization3D ${DataVisualization3D_src})
 add_definitions(-D_DATA_VISUALIZATION_3D)
-
 add_library(DataVisualization3D SHARED ${DataVisualization3D_src})
 #设置执行文件的输出目录
 set(DEBUG_MAIN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)

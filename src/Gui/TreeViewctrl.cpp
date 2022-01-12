@@ -217,7 +217,7 @@ namespace Gui {
 		hdf5Indexs[item] = node.index;
 		App::Document* doc = App::GetApplication().getActiveDocument();
 		DocumentManager* docM = dynamic_cast<DocumentManager*>(doc);
-		if (nullptr != docM)
+		if (nullptr != docM && structIndex!=-1)
 		{
 			auto h5dStruct = docM->gethdf5dataList()[structIndex];
 			funcPtr->setStructData(h5dStruct);

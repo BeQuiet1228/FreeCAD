@@ -38,6 +38,8 @@ namespace DV3D {
 		
 		//设置剪切面
 		void setClipPlane(vtkSmartPointer<vtkPlane> plane);
+		//获取剪切面
+		void getClipPlane(vtkSmartPointer<vtkPlane>& palne);
 	private:
 		//剪切面
 		vtkSmartPointer<vtkPlane> clipperPlane;

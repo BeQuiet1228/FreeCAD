@@ -198,12 +198,14 @@ namespace DV {
 	{
 		auto contourRd = getContourRender();
 		std::list<double> leves = contourRd->contourLevels().toStdList();
+		auto rangVal = contourRd->getValueRange();
 		//打开窗口
 		if (leves.empty())
 			return;
 		realTimewidget* mrealTimewidget = new realTimewidget();
 		mrealTimewidget->setModal(true);
-		mrealTimewidget->init(leves);
+		mrealTimewidget->setValRange(rangVal.min,rangVal.max);//传入数值区间
+		mrealTimewidget->loadConfigLevels(leves);
 		mrealTimewidget->resize(500, 300);
 		mrealTimewidget->show();
 		connect(mrealTimewidget, SIGNAL(GetListDouble(std::list<double>&)), this, SLOT(Getlevels(std::list<double>&)));

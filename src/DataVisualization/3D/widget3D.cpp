@@ -3,6 +3,9 @@
 #include <vtkCamera.h>
 #include <QVTKInteractor.h>
 #include <vtkInteractorStyleJoystickCamera.h>
+#include <vtkScalarsToColors.h>
+#include"vtkAxesActor.h"
+#include "actorPipeline.h"
 DV3D::Widget3D::Widget3D(QWidget* parent /*= 0*/)
 	:QWidget(parent)
 {
@@ -10,18 +13,22 @@ DV3D::Widget3D::Widget3D(QWidget* parent /*= 0*/)
 
 	viewer3d = new QVTKWidget(this);
 	viewer3d->GetRenderWindow()->AddRenderer(renderer);
-	
-	//viewer3d->GetInteractor()->SetInteractorStyle(vtkInteractorStyleJoystickCamera::New());
-	//viewer3d->GetRenderWindow()->GetInteractor()->Start();
 
 	renderer->SetBackground(0.529, 0.8078, 0.92157);
 	renderer->SetBackground2(1.0, 1.0, 1.0);
 	renderer->SetGradientBackground(1);
-// 	renderer->ResetCamera();
-// 	renderer->GetActiveCamera()->Elevation(60.0);
-// 	renderer->GetActiveCamera()->Azimuth(30.0);
-// 	renderer->GetActiveCamera()->Dolly(1.2);
 
+	//初始化颜色条
+	scalarBarActor = vtkSmartPointer<vtkScalarBarActor>::New();
+	scalarBarActor->SetNumberOfLabels(6);
+ 	scalarBarActor->SetMaximumWidthInPixels(120);
+ 	scalarBarActor->SetMaximumHeightInPixels(300);
+
+
+#if 0 //添加一个三维坐标系,用于判断方位
+	vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
+	renderer->AddActor(axes);
+#endif
 	initGUI();
 }
 
@@ -77,6 +84,35 @@ void DV3D::Widget3D::initGUI()
 	this->resize(500,500);
 }
 
+DV3D::Widget3D::ControlerActorMap DV3D::Widget3D::getControlerActorMap()
+{
+	return controlerActor;
+}
+
+
+/**
+* @brief DV3D::Widget3D::scalarBarOn 开始图例显示 使用控制器中的数据初始化图例颜色表
+* @param Controler * controler
+* @return bool 如果控制器中的数据没有开始标量显示则返回 false
+*/
+bool DV3D::Widget3D::scalarBarOn(Controler* controler)
+{
+	auto pipeline = controler->getActorPipeline();
+	auto mapper = pipeline->getMapper();
+	if (!mapper->GetScalarVisibility())
+		return false;
+
+	scalarBarActor->SetLookupTable(mapper->GetLookupTable());
+	renderer->AddActor(scalarBarActor);
+
+	return true;
+}
+
+void DV3D::Widget3D::scalarBarOff()
+{
+	renderer->RemoveActor(scalarBarActor);
+}
+
 /**
 * @brief DV3D::Widget3D::oneWayUnbing 取消控制器绑定，并移除对应的actor
 * @param Controler * controler
@@ -90,6 +126,7 @@ void DV3D::Widget3D::oneWayUnbing(Controler* controler)
 
 	renderer->RemoveActor(citer->second);
 	controlerActor.erase(citer);
+	reRender();
 }
 /**
 * @brief DV3D::Widget3D::oneWayBinding 将控制器绑定到widget，并为其绑定渲染器和渲染窗口
@@ -102,11 +139,14 @@ void DV3D::Widget3D::oneWayBinding(Controler* controler)
 	if (citer != controlerActor.end())
 		return;
 
-	auto actor = controler->getActor();
+	auto actor = controler->getActorPipeline()->getActor();
 	renderer->AddActor(actor);
+
 	
 	auto value = std::map<Controler*, vtkSmartPointer<vtkActor>>::value_type(controler, actor);
 	controlerActor.insert(value);
+
+	reRender();
 }
 
 /**
@@ -117,11 +157,12 @@ void DV3D::Widget3D::synchronousControlerActor()
 {
 	for (auto iter = controlerActor.begin(); iter != controlerActor.end(); iter++)
 	{
-		if (iter->second != iter->first->getActor())
+		auto actor = iter->first->getActorPipeline()->getActor();
+		if (iter->second != actor)
 		{
 			renderer->RemoveActor(iter->second);
-			renderer->AddActor(iter->first->getActor());
-			iter->second = iter->first->getActor();
+			renderer->AddActor(actor);
+			iter->second = actor;
 		}
 	}
 

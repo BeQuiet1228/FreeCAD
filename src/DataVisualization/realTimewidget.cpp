@@ -1,275 +1,419 @@
 #include "realTimewidget.h"
 #include "ui_realTimewidget.h"
-#include <QLineEdit>
-#include<math.h>
-namespace DV {
-#ifndef MAX64
-#define MAX64 (0x7fffffffffffffff)
-#endif
-
-	QString realTimewidget::valToQString(double val, int bit)
-	{
-		QString temp;
-		if (-1 == bit)
-			temp = QString("%1").arg(val);
-		else
-			temp = QString("%1").arg(val, 0, 'f', bit);
-		return temp;
-	}
-	/**
-	* @brief  realTimewidget::realTimewidget
-	* @param  QWidget * parent
-	* @return
-	*/
-	realTimewidget::realTimewidget(QWidget* parent) :QDialog(parent), ui(new Ui::realTimewidget)
-	{
-		ui->setupUi(this);
-		//curRow = -1;
-		//lastRow = -1;
-	}
-	/**
-	* @brief  realTimewidget::~realTimewidget
-	* @return
-	*/
-	realTimewidget::~realTimewidget()
-	{
-
-	}
-	/**
-	* @brief  realTimewidget::closeEvent 关闭事件
-	* @param  QCloseEvent * event
-	* @return void
-	*/
-	void realTimewidget::closeEvent(QCloseEvent* event)
-	{
-		//emit setcoloseEvent(true);
-		/*auto row=ui->tableWidget->rowCount();
-		std::vector<double> val;
-		val.clear();
-		for (auto index = 0; index < row; index++)
-		{
-			double curval = ui->tableWidget->item(index, 0)->text().toDouble();
-			if (curval > max || curval<min)
-			{
-				continue;
-			}
-			val.push_back(curval);
-		}
-		std::sort(val.begin(),val.end());
-		val.erase(std::unique(val.begin(),val.end()),val.end());
-		std::list<double> vallist;
-		for (auto iter=val.begin();iter!=val.end();iter++)
-		{
-			vallist.push_back(*iter);
-		}
-		emit GetListDouble(vallist);*/
-		//disconnect(this, 0);
-		QWidget::closeEvent(event);
-	}
-	/**
-	* @brief  realTimewidget::init 初始化
-	* @param  float min
-	* @param  float max
-	* @return void
-	*/
-	void realTimewidget::init(float rmin, float rmax)
-	{
-		min = rmin;
-		max = rmax;
-		this->setWindowTitle(QString("Rang:(%1~%2)").arg(min).arg(max));
-		//初始化
-		QStringList header;
-		header << "value:" << "Rang:";
-		ui->tableWidget->setColumnCount(2);
-		ui->tableWidget->setHorizontalHeaderLabels(header);
-		//ui->tableWidget->setShowGrid(false);
-		auto cloumcount = ui->tableWidget->rowCount();
-		for (int index = cloumcount; index >= 0; index--)
-		{
-			ui->tableWidget->removeRow(index);
-		}
-		//添加第一行
-		int rowFirst = ui->tableWidget->rowCount();
-		ui->tableWidget->insertRow(rowFirst);
-		float curval = (min + max) / 2;
-		ui->tableWidget->setItem(rowFirst, 0, new QTableWidgetItem(QString("%1").arg(valToQString(curval, GetdecimalBit(curval)))));
-		QTableWidgetItem* item = new QTableWidgetItem(QString("%1~%2").arg(valToQString(min, GetdecimalBit(min))).arg(valToQString(max, GetdecimalBit(max))));
-		item->setFlags(Qt::ItemIsEditable);
-		ui->tableWidget->setItem(rowFirst, 1, item);
-		ui->tableWidget->resizeColumnsToContents();
-		connect(ui->addBtn, SIGNAL(clicked()), this, SLOT(addClicked()));
-		connect(ui->deleteBtn, SIGNAL(clicked()), this, SLOT(deleteClicked()));
-		//connect(ui->tableWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
-		//connect(ui->tableWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
-	}
-
-	/**
-	* @brief  realTimewidget::addClicked 添加按钮
-	* @return void
-	*/
-	void realTimewidget::addClicked() {
-		int row = ui->tableWidget->rowCount();
-		if (row == 0)
-		{
-			ui->tableWidget->insertRow(row);
-			float curval = (min + max) / 2;
-			ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(valToQString(curval, GetdecimalBit(curval)))));
-		}
-		else
-		{
-			ui->tableWidget->insertRow(row);
-			float curval = ui->tableWidget->item(row - 1, 0)->text().toFloat();
-			ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(valToQString(curval, GetdecimalBit(curval)))));
-			//ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(curval)));
-		}
-		//QTableWidgetItem* item = new QTableWidgetItem(QString("%1~%2").arg(min,0,'f',GetdecimalBit(min)).arg(max,0,'f',GetdecimalBit(max)));
-		//item->setFlags(Qt::ItemIsEditable);
-		//ui->tableWidget->setItem(row, 1, item);
-	}
-
-	/**
-	* @brief  realTimewidget::deleteClicked 删除按钮
-	* @return void
-	*/
-	void realTimewidget::deleteClicked() {
-		int row = ui->tableWidget->rowCount();
-		ui->tableWidget->removeRow(row - 1);
-	}
-
-	/**
-	* @brief  realTimewidget::GetdecimalBit 获取小数位数
-	* @param  double & value
-	* @return int
-	*/
-	int realTimewidget::GetdecimalBit(float& value)
-	{
-		int valinter = static_cast<int>(value);
-		double fspace = abs(value - static_cast<float>(valinter));
-		unsigned __int32 index = 0;
-		while (fspace > 0.0f)
-		{
-			index++;
-			fspace *= 10;
-			valinter = static_cast<int> (fspace);
-			fspace = fspace - static_cast<float>(valinter);
-		}
-		return index;
-	}
-	/**
-	* @brief  realTimewidget::tableWidgetClicked tablewidget点击
-	* @param  QTableWidgetItem * item
-	* @return void
-	*/
-	void realTimewidget::tableWidgetClicked(QTableWidgetItem* item)
-	{
-		//curRow = ui->tableWidget->currentRow();
-		/*if (0 == curRow)
-			return;
-		if (lastRow != curRow&&lastRow!=-1)
-		{
-			float lastvalue = ui->tableWidget->item(lastRow,0)->text().toFloat();
-			if (lastvalue>max ||lastvalue<min)
-			{
-				float tempval = ui->tableWidget->item(lastRow-1,0)->text().toFloat();
-				ui->tableWidget->item(lastRow, 0)->setText(QString("%1").arg(tempval,0,'f',GetdecimalBit(tempval)));
-			}
-		}
-		lastRow = curRow;*/
-	}
-	/**
-	* @brief  realTimewidget::insertformatTableItem 插入控件
-	* @param  int row
-	* @return void
-	*/
-	void realTimewidget::insertformatTableItem()
-	{
-
-	}
-	void realTimewidget::BtnClicked()
-	{
-		if (sender() == ui->addBtn)
-		{
-			addClicked();
-		}
-		else if (sender() == ui->deleteBtn)
-		{
-			deleteClicked();
-		}
-		else if (sender() == ui->saveBtn)
-		{
-			auto row = ui->tableWidget->rowCount();
-			std::vector<double> val;
-			val.clear();
-			for (auto index = row - 1; index >= 0; index--)
-			{
-				double curval = ui->tableWidget->item(index, 0)->text().toDouble();
-				ui->tableWidget->removeRow(index);
-				if (curval > max || curval < min)
-				{
-					continue;
-				}
-				val.push_back(curval);
-			}
-			std::sort(val.begin(), val.end());
-			val.erase(std::unique(val.begin(), val.end()), val.end());
-			std::list<double> vallist;
-			for (auto iter = val.begin(); iter != val.end(); iter++) {
-				addTableItem(*iter);
-				vallist.push_back(*iter);
-			}
-			emit GetListDouble(vallist);
-		}
-	}
-	void realTimewidget::init(std::list<double>& leves)
-	{
-		min = max = *leves.begin();
-		for (auto iter = leves.begin(); iter != leves.end(); iter++)
-		{
-			if (min > *iter) min = *iter;
-			if (max < *iter) max = *iter;
-		}
-		this->setWindowTitle(QString("Rang:(%1~%2)").arg(min).arg(max));
-		QStringList header;
-		header << "levelval:" << "Rang:";
-		ui->tableWidget->setColumnCount(1);
-		ui->tableWidget->setHorizontalHeaderLabels(header);
-		//ui->tableWidget->setShowGrid(false);
-		ui->tableWidget->horizontalHeader()->setResizeMode(QHeaderView::ResizeMode::Stretch);
-		auto cloumcount = ui->tableWidget->rowCount();
-		for (int index = cloumcount; index >= 0; index--)	ui->tableWidget->removeRow(index);
-		for (auto iter = leves.begin(); iter != leves.end(); iter++)	addTableItem(*iter);
-		//添加
-		connect(ui->addBtn, SIGNAL(clicked()), this, SLOT(BtnClicked()));
-		connect(ui->deleteBtn, SIGNAL(clicked()), this, SLOT(BtnClicked()));
-		connect(ui->saveBtn, SIGNAL(clicked()), this, SLOT(BtnClicked()));
-		//connect(ui->tableWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
-		//connect(ui->tableWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(tableWidgetClicked(QTableWidgetItem*)));
-	}
-	void realTimewidget::addTableItem(double val)
-	{
-		int row = ui->tableWidget->rowCount();
-		ui->tableWidget->insertRow(row);
-		ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(valToQString(val, GetdecimalBit(val)))));
-		//ui->tableWidget->setItem(row, 0, new QTableWidgetItem(QString("%1").arg(val)));
-	}
-	int realTimewidget::GetdecimalBit(double& value)
-	{
-		double absvalue = abs(value);
-		double maxdouble = static_cast<double>(MAX64);
-		if (absvalue > maxdouble)return -1;
-		unsigned __int64 valinter = static_cast<unsigned __int64>(absvalue);
-		/*static_cast<unsigned __int64>(absvalue);*/
-		double fspace = abs(absvalue - static_cast<double>(valinter));
-		unsigned __int32 index = 0;
-		while (fspace > 0.0f)
-		{
-			index++;
-			fspace *= 10;
-			valinter = static_cast<unsigned __int64> (fspace);
-			fspace = fspace - static_cast<double>(valinter);
-		}
-		return index;
-	}
+#include "QHeaderView"
+#include "ScalarTableItem.h"
+#include "QMessageBox"
+#include "C_encoding.h"
+namespace DV
+{
+	QString compareValToQString(double& val1, double& val2);
+	int getBitInt(const double values);
+	int getBitDec(const double values);
 };
+DV::realTimewidget::realTimewidget(QWidget* parent/*=nullptr*/) :
+	QDialog(parent),
+	ui(new Ui::realTimewidget)
+{
+	ui->setupUi(this);
+	//初始化ui
+	QStringList header;
+	header << "levelval:";
+	//设置表头目
+	ui->tableWidget->setColumnCount(1);
+	ui->tableWidget->setHorizontalHeaderLabels(header);
+	ui->tableWidget->horizontalHeader()->setResizeMode(QHeaderView::ResizeMode::Stretch);
+	//
+	connect(ui->addBtn, SIGNAL(clicked()), this, SLOT(btnClicked()));
+	connect(ui->saveBtn, SIGNAL(clicked()), this, SLOT(btnClicked()));
+	connect(ui->deleteBtn, SIGNAL(clicked()), this, SLOT(btnClicked()));
+}
+DV::realTimewidget::~realTimewidget()
+{
 
+}
+/**
+* @time	2021/12/27
+* @brief DV::realTimewidget::loadConfigLevels 读取数据至表中
+* @param std::list<double> & leves
+* @return void
+*/
+void DV::realTimewidget::loadConfigLevels(std::list<double>& leves)
+{
+	leves.sort();
+	boolCellChangedConnect(false);
+	clearTableItem();
+	//min = *leves.begin();
+	//max = *leves.rbegin();
+	auto datas = getScalarDatas(leves);
+	for (auto iter = datas.begin(); iter != datas.end(); ++iter)
+		addTableItem(iter->valStr, iter->value);
+	boolCellChangedConnect(true);
+}
+
+
+/**
+* @time	2021/12/24
+* @brief DV::realTimewidget::getConfigLevels 获取等值线等级
+* @return std::list<double>
+*/
+
+std::list<double> DV::realTimewidget::getConfigLevels()
+{
+	int rowCount = ui->tableWidget->rowCount();
+	std::list<double> values;
+	for (int i = 0; i < rowCount; ++i)
+	{
+		ScalarTableItem* scalarItem = dynamic_cast<ScalarTableItem*>(ui->tableWidget->item(i, 0));
+		if (scalarItem != nullptr)
+			values.push_back(scalarItem->getValue());
+	}
+	return values;
+}
+
+
+/**
+* @time	2021/12/27
+* @brief DV::realTimewidget::setValRange 设置数值区间
+* @param double min
+* @param double max
+* @return void
+*/
+void DV::realTimewidget::setValRange(double min, double max)
+{
+	double* minValPtr, * maxValPtr;
+	if (min > max)
+	{
+		minValPtr = &max;
+		maxValPtr = &min;
+	}
+	else
+	{
+		minValPtr = &min;
+		maxValPtr = &max;
+	}
+	minVal = *minValPtr;
+	maxVal = *maxValPtr;
+	this->setWindowTitle(QString("value Rang:(%1,%2)").arg(minVal).arg(maxVal));
+}
+/**
+* @time	2021/12/27
+* @brief DV::realTimewidget::getScalarDatas 获取标尺数据类型
+* @param std::list<double> & value
+* @return std::list<DV::realTimewidget::ScalarItemData>
+*/
+std::list<DV::realTimewidget::ScalarItemData> DV::realTimewidget::getScalarDatas(std::list<double>& value)
+{
+	/*
+		将数据转换成字符串和数值，字符串用于展示，数值为实际数值
+	*/
+	std::list<ScalarItemData> datas;
+	value.sort();
+#if 1
+	auto iterLast = value.rbegin(); iterLast++;
+	double firstVal = 0.0f, secondVal = 0.0f;
+	//逆向比较数值
+	for (auto iter = value.rbegin(); iter != value.rend(); ++iter, ++iterLast)
+	{
+		if (iterLast == value.rend())
+			break;
+		ScalarItemData data;
+		/*
+		 有一种特殊情况，当正负两个数值比较大小时，无法获取到精确的有效位，因为始终满足非负>负数的情况
+		*/
+		if ((*iterLast) * (*iter) < 0.0f && *iter < secondVal)
+			data.valStr = compareValToQString(*iter, secondVal);
+		else
+			data.valStr = compareValToQString(*iter, *iterLast);
+		data.value = *iter;
+		datas.push_back(data);
+		firstVal = *iterLast;
+		secondVal = *iter;
+	}
+	//装入最后一个点
+	{
+		ScalarItemData data;
+		data.valStr = compareValToQString(firstVal, secondVal);
+		data.value = firstVal;
+		datas.push_back(data);
+	}
+	datas.sort();
+#endif
+#if 0
+	auto iterNext = value.begin(); iterNext++;
+	double endVal, lastVal;
+	for (auto iter = value.begin(); iter != value.end(); ++iter, ++iterNext)
+	{
+		if (iterNext == value.end())
+			break;
+		ScalarItemData data;
+		data.valStr = compareValToQString(*iter, *iterNext, *iter);
+		data.value = *iter;
+		datas.push_back(data);
+		endVal = *iterNext;
+		lastVal = *iter;
+	}
+	//装入最后一个点
+	{
+		ScalarItemData data;
+		data.valStr = compareValToQString(endVal, lastVal, endVal);
+		data.value = endVal;
+		datas.push_back(data);
+}
+#endif
+	return datas;
+}
+
+/**
+* @time	2021/12/24
+* @brief DV::realTimewidget::addTableItem 添加item
+* @param double val
+* @return void
+*/
+void DV::realTimewidget::addTableItem(double val)
+{
+	int row = ui->tableWidget->rowCount();
+	ui->tableWidget->insertRow(row);
+	ScalarTableItem* item = new ScalarTableItem(QString("%1").arg(val), val);
+	ui->tableWidget->setItem(row, 0, item);
+}
+/**
+* @time	2021/12/24
+* @brief DV::realTimewidget::clearTableItem 清空表格的内容
+* @return void
+*/
+void DV::realTimewidget::clearTableItem()
+{
+	auto row = ui->tableWidget->rowCount();
+	for (int i = row - 1; i >= 0; --i)
+		ui->tableWidget->removeRow(i);
+}
+
+
+/**
+* @time	2021/12/27
+* @brief DV::realTimewidget::boolCellChangedConnect 用于开启和关闭单元被编辑时是否需要关联到槽
+* @param bool
+* @return void
+*/
+void DV::realTimewidget::boolCellChangedConnect(bool b)
+{
+	/*
+		用于防止读取数据列表时，字符串信息，改变时调用单元改变时的槽函数，频繁修改val的值。
+	*/
+	(b) ?
+		(connect(ui->tableWidget, SIGNAL(cellChanged(int, int)), this, SLOT(slotCellChange(int, int)))) :
+		(disconnect(ui->tableWidget, SIGNAL(cellChanged(int, int)), this, SLOT(slotCellChange(int, int))));
+}
+
+
+/**
+* @time	2021/12/27
+* @brief DV::realTimewidget::addTableItem 添加item
+* @param QString
+* @param double
+* @return void
+*/
+void DV::realTimewidget::addTableItem(QString str, double val)
+{
+	/*
+		若val超出范围，直接返回，不添加该item
+	*/
+	if (val<minVal || val>maxVal)
+		return;
+	int row = ui->tableWidget->rowCount();
+	ui->tableWidget->insertRow(row);
+	ScalarTableItem* item = new ScalarTableItem(str, val);
+	ui->tableWidget->setItem(row, 0, item);
+}
+
+/**
+* @time	2021/12/24
+* @brief DV::realTimewidget::btnClicked 按钮点击事件
+* @return void
+*/
+void DV::realTimewidget::btnClicked()
+{
+	if (sender() == ui->saveBtn)
+	{
+		saveClicked();
+	}
+	else if (sender() == ui->addBtn)
+	{
+		addClicked();
+	}
+	else if (sender() == ui->deleteBtn)
+	{
+		deleteClicked();
+	}
+}
+
+
+/**
+* @time	2021/12/24
+* @brief DV::realTimewidget::addClicked 增加条目
+* @return void
+*/
+void DV::realTimewidget::addClicked()
+{
+	int row = ui->tableWidget->rowCount();
+	addTableItem((minVal + maxVal)/2);
+}
+
+
+/**
+* @time	2021/12/24
+* @brief DV::realTimewidget::deleteClicked 删除条目
+* @return void
+*/
+void DV::realTimewidget::deleteClicked()
+{
+	int currentRow = ui->tableWidget->currentRow();
+	int row = ui->tableWidget->rowCount();
+	if (currentRow<0 || currentRow>row - 1)
+		ui->tableWidget->removeRow(row - 1);
+	else
+		ui->tableWidget->removeRow(currentRow);
+}
+
+
+/**
+* @time	2021/12/24
+* @brief DV::realTimewidget::saveClicked 将数据进行整理，并触发信号
+* @return void
+*/
+void DV::realTimewidget::saveClicked()
+{
+	//取出数据
+	auto dataList = getConfigLevels();
+	loadConfigLevels(dataList);
+	emit sendConfigLevels(dataList);
+}
+
+/**
+* @time	2021/12/27
+* @brief DV::realTimewidget::slotCellChange
+* @param int r
+* @param int c
+* @return void
+*/
+void DV::realTimewidget::slotCellChange(int r, int c)
+{
+	ScalarTableItem* item = dynamic_cast<ScalarTableItem*>(ui->tableWidget->item(r, c));
+	if (item == nullptr)
+		return;
+	double val = item->text().toDouble();
+	//判断数值是否在数值区间内
+	if (val<minVal || val>maxVal)
+	{
+		/*
+			弹出窗口，警告数值超出范围
+		*/
+		QMessageBox box;
+		QString message = QString("value rang:(%1~%2)").arg(minVal).arg(maxVal);
+		box.setText(message);
+		box.exec();
+		//恢复到原本的数值
+		item->setText(QString("%1").arg(item->getValue()));
+		return;
+	}
+	item->setValue(val);
+}
+bool DV::realTimewidget::ScalarItemData::operator<(const ScalarItemData& that) const
+{
+	if (this->value < that.value)
+		return true;
+	return false;
+}
+/**
+* @time	2021/12/27
+* @brief DV::compareValToQString 比较两个数的有效位，并返回val1的字符串
+* @param double & val1
+* @param double & val2
+* @return QString
+*/
+QString DV::compareValToQString(double& val1, double& val2)
+{
+	const double callVal =val1;
+	double intervalVal = abs(val1 - val2);
+	if (0.0f == intervalVal)
+		return QString("%1").arg(callVal);
+	double* maxVal, * minVal;
+	if (val2 > val1) {
+		maxVal = &val2;
+		minVal = &val1;
+	}
+	else {
+		maxVal = &val1;
+		minVal = &val2;
+	}
+	//若插值大于1
+	if (intervalVal >= 1.0f)
+	{
+		//获取最大的位数
+		double intervalValDouble = intervalVal;
+		int index = getBitInt(intervalValDouble);
+		//获取整数部分的位数
+		int bitInt = getBitInt(callVal);
+		int keepBit = (bitInt - index > 0) ? (bitInt - index) : (1);
+		QString qstr = QString::number(callVal, 'E', keepBit);
+		std::string str = qstr.toStdString();
+		return qstr;
+	}
+	else
+	{
+		//获取最大位数
+		double intervalValDouble = intervalVal;
+		int intervalBit = getBitDec(intervalValDouble);
+		int valBit = getBitDec(callVal);
+		QString qstr = (
+			(abs(callVal) < 1.0f) ?
+			(QString::number(callVal, 'E', abs(intervalBit - valBit))) :
+			(QString::number(callVal, 'F', abs(intervalBit - valBit)))
+			);
+		std::string str = qstr.toStdString();
+		return qstr;
+	}
+}
+/**
+* @time	2021/12/27
+* @brief DV::getBitInt 获取数值整数部分最高位
+* @param const double value
+* @return int
+*/
+int DV::getBitInt(const double value)
+{
+	int index = 0;
+	//获取整数部分
+	double valuesInt = floor(abs(value));
+	while (valuesInt > 1.0f)
+	{
+		valuesInt = valuesInt / 10.0f;
+		index++;
+	}
+	return index;
+}
+
+/**
+* @time	2021/12/27
+* @brief DV::getBitDec 获取小数点后的非0位数
+* @param const double value
+* @return int
+*/
+int DV::getBitDec(const double value)
+{
+	int index = 0;
+	/*
+	如果传入的数值为0的情况，直接返回
+	*/
+	if (!(abs(value) > 0.0f))
+		return index;
+	//获取小鼠部分
+	double valueDec = abs(value);
+	while (valueDec < 1.0f)
+	{
+		valueDec = valueDec * 10.0f;
+		index++;
+	}
+	return index;
+}
 #include "moc_realTimewidget.cpp"

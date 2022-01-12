@@ -25,6 +25,7 @@ namespace DV {
 	Plot::Plot(QWidget* parent /*= 0*/)
 		:QWidget(parent)
 	{
+		CanvasItem::registerMetaTye();
 		setObjectName("visualizationPlot");
 		initData();
 		initGUI();

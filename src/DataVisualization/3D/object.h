@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
+#include "DataVisualization3DExport.hpp"
 namespace DV3D {
-	class Object {
+	class DATA_VISUALIZATION_3D_EXPORT Object {
 	public:
 		Object();
 		virtual ~Object();

@@ -34,7 +34,6 @@
 #include <QMdiArea>
 #include <QToolBar>
 #include <QDockWidget>
-//#include"DataVisualization/ListTreeWidget.h"
 
 class QMimeData;
 class QUrl;
@@ -57,6 +56,7 @@ class Document;
 class MacroManager;
 class MDIView;
 class TreeViewCtrl;
+class DataVisualizationTree;
 namespace DockWnd {
     class HelpView;
 } //namespace DockWnd
@@ -292,16 +292,13 @@ public:
 	MainWindowDef* mainWindowDef;
 	QDockWidget* contorlDockWidget;
     ControlTreeWidget* controlTreeWidget;
-	//新加的树控件
-	//ListTreeWidget* mTreeWidget;
-	Gui::TreeViewCtrl* mTreeWidget;
+	DataVisualizationTree* dataVisualizationTree;
 
 public:
 	void setContorlUI();
 	void showContorlUI();
 	void hideContorlUI();
 	void inintContorlUI();
-	void inittreeContor();
 	void addTitleAction(QAction* action);
     //显示和隐藏树控件
     void hideControlTree();
@@ -309,7 +306,6 @@ public:
     void hideVisualizationTree();
     void showVisualizationTree();
 	void ClearVisualizationTree();
-	//void DisplatPlot(Hdf5Data data,DocumentManager* ptr,int _type=0);
 };
 
 inline MainWindow* getMainWindow()

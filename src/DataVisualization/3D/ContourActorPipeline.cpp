@@ -4,6 +4,7 @@
 #include "vtkPointData.h"
 #include "vtkDataArray.h"
 #include "vtkLookupTable.h"
+#include"vtkProperty.h"
 namespace DV3D
 {
 	ContourActorPipeline::ContourActorPipeline()
@@ -29,5 +30,6 @@ namespace DV3D
 		mp->Update();
 		auto ac = getActor();
 		ac->SetMapper(mp);
+		//ac->GetProperty()->SetEdgeVisibility(1);
 	}
 }

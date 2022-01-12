@@ -47,7 +47,7 @@ vtkSmartPointer<vtkDataSet> DV3D::CylinderPlanConstruct::creatDataset()
 	//½øĞĞĞı×ª
 	vtkSmartPointer<vtkRotationalExtrusionFilter> filter = vtkSmartPointer<vtkRotationalExtrusionFilter>::New();
 	filter->SetInputData(triangle->GetOutput());
-	filter->SetResolution(72);
+	filter->SetResolution(22);
 	filter->SetAngle(360 / (thetaSize - 1));
 	filter->SetCapping(0);
 	filter->Update();

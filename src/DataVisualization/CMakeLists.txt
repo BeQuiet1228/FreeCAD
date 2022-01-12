@@ -173,6 +173,8 @@ SET(SRC_TOOL ConfigWidget.h
 	TLabel.cpp
 	SysInfo.h
 	SysInfo.cpp
+	ScalarTableItem.h
+	ScalarTableItem.cpp
 	)
 #处理ui和qrc文件
 if (BUILD_QT5)

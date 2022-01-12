@@ -176,7 +176,8 @@ SET(Document_CPP_SRCS
 	DocumentM3dMod.cpp
 	DocumentM2dMod.h
 	DocumentM2dMod.cpp
-	#DocumentDataManager.cpp
+	DocumentH5.cpp
+	DocumentH5.h
 	
 )
 

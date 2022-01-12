@@ -3,6 +3,7 @@
 #include <QString>
 #include <memory>
 #include <QToolButton>
+#include <QObject>
 namespace DV3D {
 	/*
 		按钮数据对象

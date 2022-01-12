@@ -43,13 +43,13 @@ namespace DV {
 		//qDebug("QwtScaleWidget:mouseDoubleClicked");
 		if (isColse)
 		{
-			this->scaleDraw();
-			realTimewidget* newwidget = new realTimewidget();
-			newwidget->init(min, max);
-			connect(newwidget, SIGNAL(setcoloseEvent(bool)), this, SLOT(setclose(bool)));
-			connect(newwidget, SIGNAL(GetListDouble(std::vector<double>&)), this, SLOT(GetListDoubleslot(std::vector<double>&)));
-			newwidget->show();
-			isColse = false;
+			//this->scaleDraw();
+			//realTimewidget* newwidget = new realTimewidget();
+			//newwidget->init(min, max);
+			//connect(newwidget, SIGNAL(setcoloseEvent(bool)), this, SLOT(setclose(bool)));
+			//connect(newwidget, SIGNAL(GetListDouble(std::vector<double>&)), this, SLOT(GetListDoubleslot(std::vector<double>&)));
+			//newwidget->show();
+			//isColse = false;
 		}
 	}
 	/**

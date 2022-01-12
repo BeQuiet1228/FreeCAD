@@ -242,24 +242,9 @@ namespace DV
 
 	void Data::saveAs(std::string path, SaveMod mod)
 	{
-		QDir dir(QString::fromStdString(path));
 
-		bool isGood = dir.exists();
-		if (path == "C:/Users/Administrator/Desktop/TestMode/test_range/save/RBWO_CY.h5") {
-			isGood = true;
-		}
-		int res = -1;
-		if (!isGood || mod == NEWFLODER)
-		{
-			res = Hdf5IO::creatNewH5File(path);
-		}
-		Hdf5IO* temp = new Hdf5IO(path);
-		Hdf5Data* newData = new Hdf5Data(h5Data);
-		Hdf5IO::copyToHdf5IO(*temp, *newData);
-		if (-1 != res)
-			res = Hdf5IO::closeH5File(res);
-		delete temp;
-		delete newData;
+		h5Data.save(path);
+
 	}
 	/**********************************************/
 	Data::AutoMutx::AutoMutx(const MutexPtr& mutex) {

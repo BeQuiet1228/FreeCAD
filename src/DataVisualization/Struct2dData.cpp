@@ -26,15 +26,19 @@ namespace DV {
 		Data::ValuesPtr IM1X = *it; it++;
 		Data::ValuesPtr IM2X = *it;
 		Rang xr, yr;
+
 		//x
 		auto itx = IM1X->begin(); itx++;//取第二个
-		xr.min = *itx;
+		xr.min =*itx;
+
 		itx = IM1X->end() - 1;
 		xr.max = *itx;
 		setXRang(xr);
 		//y
+
 		auto ity = IM2X->begin(); ity++;////取第二个
 		yr.min = *ity;
+
 		ity = IM2X->end() - 1;
 		yr.max = *ity;
 		setYRang(yr);

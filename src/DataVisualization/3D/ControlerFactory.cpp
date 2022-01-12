@@ -15,6 +15,13 @@
 #include "PolarContourDataSetConstructor.h"
 #include "ContourActorPipeline.h"
 #include "DataVisualization/ContourData.h"
+#include "Contour3dataSetConstructor.h"
+#include "PolarContour3dDataSetConstructor.h"
+#include "Contour3dActorPipeline.h"
+#include "CartesianVector3dDatasetConstructor.h"
+#include "CylinderVector3dDatasetConstructor.h"
+#include "Vector3dActorPipeline.h"
+#include"Contour3dControler.h"
 #include <cassert>
 
 std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatControler(Hdf5Data& h5data)
@@ -22,9 +29,15 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatControler(Hdf5Data
 	std::shared_ptr<Controler> controler;
 	if (h5data.name == "struct")
 		controler = CreatStrucControler(h5data);
-	if(h5data.name=="CONTOUR")
-		controler=CreatContourControler(h5data);
-	assert(controler && "controler is nullptr!");
+	if (h5data.name == "CONTOUR")
+		controler = CreatContourControler(h5data);
+	if (h5data.name == "PARTICLE3D")
+		controler = CreatParticle3dControler(h5data);
+	if (h5data.name == "CONTOUR3D")
+		controler = CreatContour3dControler(h5data);
+	if (h5data.name == "VECTOR3D")
+		controler = CreatVector3dControler(h5data);
+	//assert(controler && "controler is nullptr!");
 	return controler;
 }
 std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContourControler(Hdf5Data& h5data)
@@ -45,6 +58,53 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContourControler(H
 	controler->setActorPipeline(pipeline);
 	return controler;
 }
+
+std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContour3dControler(Hdf5Data& h5data)
+{
+	std::shared_ptr<Controler> controler;
+	std::shared_ptr<DataSetConstructorH5> constructor;
+	std::shared_ptr<ActorPipemline> pipeline;
+	if (Hdf5Data::CoordinateSystem::CARTESIAN == h5data.coordinateSystem)
+		constructor.reset(new Contour3dDatasetConstructor());
+	else
+		constructor.reset(new PolarContour3dDatasetConstructor());
+	constructor->setHdf5Data(h5data);
+	pipeline.reset(new  Contour3dActorPipline());
+	pipeline->setDataSet(constructor->creatDataset());
+	pipeline->connect();
+	controler.reset(new Contour3dControler());
+	controler->setActorPipeline(pipeline);
+	return controler;
+}
+
+
+/**
+* @time	2021/12/29
+* @brief DV3D::ControlerFactory::CreatVector3dControler
+* @param std::vector<Hdf5Data> & h5datas
+* @return std::shared_ptr<DV3D::Controler>
+*/
+std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatVector3dControler(Hdf5Data& h5data)
+{
+	std::shared_ptr<Controler> controler;
+	std::shared_ptr<DataSetConstructorH5> constructor;
+	std::shared_ptr<ActorPipemline> pipeline;
+	if (Hdf5Data::CoordinateSystem::CARTESIAN == h5data.coordinateSystem)
+		constructor.reset(new CartesianVector3dDatasetConstructor());
+	else
+		constructor.reset(new CylinderVector3dDatasetContructor());
+	constructor->setHdf5Data(h5data);
+	pipeline.reset(new Vector3dActorPipeline());
+	auto dataSet = constructor->creatDataset();
+	if (nullptr == dataSet)
+		return nullptr;
+	pipeline->setDataSet(constructor->creatDataset());
+	pipeline->connect();
+	controler.reset(new Controler());
+	controler->setActorPipeline(pipeline);
+	return controler;
+}
+
 std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucControler(Hdf5Data& h5data)
 {
 
@@ -59,26 +119,15 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucControler(Hdf
 	}
 	else if (Hdf5Data::CoordinateSystem::POLAR == h5data.coordinateSystem)
 	{
-		
-		if (findStringAttribute(h5data.headList.at(1)) > 20)
-		{
-			constructor.reset(new PolarStructDaraSetConstruct());
-			pipeline.reset(new CartesianStructActorPipeline());
-		}else {
-			constructor.reset(new PolarPlanConstruct());
-			pipeline.reset(new PolarStructActorPipeline);
-		}
+		constructor.reset(new PolarStructDaraSetConstruct());
+		pipeline.reset(new CartesianStructActorPipeline());
+
 	}
 	else if (Hdf5Data::CoordinateSystem::CYLINDER == h5data.coordinateSystem)
 	{
-		if (findStringAttribute(h5data.headList.at(2)) > 20)
-		{
-			constructor.reset(new CylinderStructDataSetConstructor());
-			pipeline.reset(new CartesianStructActorPipeline());
-		}else{
-			constructor.reset(new CylinderPlanConstruct());
-			pipeline.reset(new PolarStructActorPipeline());
-		}
+		constructor.reset(new CylinderStructDataSetConstructor());
+		pipeline.reset(new CartesianStructActorPipeline());
+
 	}else {
 		assert(true && "unknown coordinate system!");
 	}
@@ -87,7 +136,40 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucControler(Hdf
 	pipeline->connect();
 	controler.reset(new Controler());
 	controler->setActorPipeline(pipeline);
-	
+
+	return controler;
+}
+
+/**
+* @brief DV3D::ControlerFactory::CreatStrucRotateControler 创建通过旋转获得的结构图，仅支持圆柱坐标系和极坐标系
+* @param Hdf5Data & h5data
+* @return std::shared_ptr<DV3D::Controler> 构造失败返回nullptr
+*/
+std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucRotateControler(Hdf5Data& h5data)
+{
+
+	std::shared_ptr<Controler> controler;
+	std::shared_ptr<DataSetConstructorH5> constructor;
+	std::shared_ptr<ActorPipemline> pipeline(new PolarStructActorPipeline);
+
+	if (Hdf5Data::CoordinateSystem::CARTESIAN == h5data.coordinateSystem)
+	{
+		return nullptr;
+	}
+	else if (Hdf5Data::CoordinateSystem::POLAR == h5data.coordinateSystem)
+	{
+		constructor.reset(new PolarPlanConstruct());
+	}
+	else if (Hdf5Data::CoordinateSystem::CYLINDER == h5data.coordinateSystem)
+	{
+		constructor.reset(new CylinderPlanConstruct());
+	}
+
+	constructor->setHdf5Data(h5data);
+	pipeline->setDataSet(constructor->creatDataset());
+	pipeline->connect();
+	controler.reset(new Controler);
+	controler->setActorPipeline(pipeline);
 	return controler;
 }
 

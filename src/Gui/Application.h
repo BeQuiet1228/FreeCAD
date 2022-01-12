@@ -267,8 +267,6 @@ private:
 
 
 	public:
-		static void DisplatPlot(Hdf5Data data, int _type = 0);
-		static void ToStruct(Hdf5Data data);
 		static void showPlotSettingDialog();
 		void ToSubItemTree();
 		void GoToLine(int line);
