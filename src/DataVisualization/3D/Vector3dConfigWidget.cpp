@@ -97,12 +97,8 @@ void DV3D::Vector3dConfigWidget::initUi()
 		初始化相关参数
 	*/
 	this->setWindowTitle(DV::GetEncodingstr("3维矢量图", ENCODING_GB2312));
-	SetAllreRenderer(ui->firstColorBtn);
-	SetAllreRenderer(ui->endColorBtn);
-	connect(ui->firstColorBtn, SIGNAL(clicked()), this, SLOT(btnClicked()));
-	connect(ui->endColorBtn, SIGNAL(clicked()), this, SLOT(btnClicked()));
-	//mColorBarWidget = new DV::ColorBarWidget(ui->colorBar);
-	//mColorBarWidget->show();
+	SETPERPORE(ui->firstColorBtn, btnClicked());
+	SETPERPORE(ui->endColorBtn, btnClicked());
 	boxLayout = new QBoxLayout(QBoxLayout::Direction::BottomToTop, ui->colorBar);
 	mColorTab = new DV::ColorTab(ui->colorBar);
 	mColorTab->setColorStyle(1);

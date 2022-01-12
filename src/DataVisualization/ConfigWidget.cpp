@@ -8,6 +8,8 @@
 #include "CustomConfig.h"
 #include "C_encoding.h"
 #include "ConfigFactory.h"
+#include"qboxlayout.h"
+#include"QFormLayout"
 namespace DV {
 	/**
 	* @brief ConfigWidget::ConfigWidget
@@ -31,6 +33,10 @@ namespace DV {
 	*/
 	void ConfigWidget::initUI()
 	{
+		qformlayout = new QFormLayout(ui->mTab);
+		qformlayout->setSpacing(1);
+		ui->mTab->setLayout(qformlayout);
+		//qBoxLayout = new QBoxLayout(QBoxLayout::BottomToTop,ui->mTab);
 		auto widgets = ConfigPageFactory::CreateConfigWidget();
 		addTabWidget(widgets);
 		connect(ui->applicButtom,SIGNAL(clicked()),this,SLOT(btnClicked()));
@@ -45,10 +51,11 @@ namespace DV {
 		/*
 			三维模块
 		*/
-		auto tabCount = ui->mTab->count();
-		for (auto tabIndex = 0; tabIndex < tabCount; ++tabIndex)
+		//auto tabCount = ui->mTab->count();
+		auto widgetCount = qformlayout->count();
+		for (auto tabIndex = 0; tabIndex < widgetCount; ++tabIndex)
 		{
-			auto tabWidget = ui->mTab->widget(tabIndex);
+			auto tabWidget = qformlayout->itemAt(tabIndex)->widget();
 			ConfigUnify* configunify = dynamic_cast<ConfigUnify*>(tabWidget);
 			if (nullptr != configunify)
 				configunify->saveConfig();
@@ -79,10 +86,12 @@ namespace DV {
 		/*
 			三维模块
 		*/
-		auto tabCount=ui->mTab->count();
-		for (auto index=0;index<tabCount;++index)
+		//auto tabCount=ui->mTab->count();
+		auto widgetCount = qformlayout->count();
+		for (auto index=0;index< widgetCount;++index)
 		{
-			auto tabWidget = ui->mTab->widget(index);
+			//auto tabWidget = ui->mTab->widget(index);
+			auto tabWidget = qformlayout->itemAt(index)->widget();
 			ConfigUnify* configunify = dynamic_cast<ConfigUnify*>(tabWidget);
 			if (nullptr != configunify)
 				configunify->loadConfig();
@@ -163,7 +172,8 @@ namespace DV {
 		for (auto iter=widgets.begin();iter!=widgets.end();iter++)
 		{
 			(*iter)->setParent(this);
-			ui->mTab->addTab(*iter,(*iter)->windowTitle());
+			//ui->mTab->addTab(*iter,(*iter)->windowTitle());
+			qformlayout->addWidget(*iter);
 		}
 	}
 };

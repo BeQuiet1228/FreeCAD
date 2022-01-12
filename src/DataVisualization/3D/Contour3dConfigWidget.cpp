@@ -68,10 +68,8 @@ void DV3D::Contour3dConfigWidget::saveConfig()
 void DV3D::Contour3dConfigWidget::initUi()
 {
 	this->setWindowTitle(DV::GetEncodingstr("3Î¬µÈÎ»Í¼", ENCODING_GB2312));
-	SetAllreRenderer(ui->firstColorBtn);
-	SetAllreRenderer(ui->endColorBtn);
-	connect(ui->firstColorBtn, SIGNAL(clicked()), this, SLOT(btnClicked()));
-	connect(ui->endColorBtn, SIGNAL(clicked()), this, SLOT(btnClicked()));
+	SETPERPORE(ui->firstColorBtn, btnClicked());
+	SETPERPORE(ui->endColorBtn, btnClicked());
 	boxLayout = new QBoxLayout(QBoxLayout::Direction::BottomToTop, ui->colorBar);
 	mColorTab = new DV::ColorTab(ui->colorBar);
 	mColorTab->setColorStyle(1);

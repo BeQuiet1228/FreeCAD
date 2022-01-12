@@ -38,12 +38,11 @@ void DV3D::Struct3dConfigWidget::saveConfig()
 void DV3D::Struct3dConfigWidget::initUi()
 {
 	this->setWindowTitle(DV::GetEncodingstr("3ά�ṹͼ", ENCODING_GB2312));
-	SetAllreRenderer(ui->btnColor);
-	connect(ui->btnColor, SIGNAL(clicked()),this,SLOT(btnClicked()));
+	SETPERPORE(ui->btnColor, btnClicked());
 }
 
 void DV3D::Struct3dConfigWidget::btnClicked()
 {
-	auto button =dynamic_cast<QPushButton*>(sender());
+	auto button = dynamic_cast<QPushButton*>(sender());
 	setButtonColor(button);
 }

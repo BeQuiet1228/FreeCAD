@@ -7,6 +7,7 @@
 class QPushButton;
 //class QGridLayout;
 class QBoxLayout;
+class QFormLayout;
 class QwtScaleWidget;
 class QwtScaleEngine;
 class QwtLinearColorMap;
@@ -41,6 +42,8 @@ namespace DV {
 	private:
 		QwtScaleWidget* scaleWIdget;
 		QwtScaleEngine* scaleEngine;
+		//QBoxLayout* qBoxLayout;
+		QFormLayout* qformlayout;
 	private:
 		Ui::ConfigWidget* ui;
 	};

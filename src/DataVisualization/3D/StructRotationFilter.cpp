@@ -96,15 +96,17 @@ int StructRotationFilter::RequestData(
 	mesh->SetLines(input->GetLines());
 	mesh->SetPolys(input->GetPolys());
 	mesh->SetStrips(input->GetStrips());
+	vtkPolyData* outMesh = vtkPolyData::New();
 	if (input->GetPolys() || input->GetStrips())
 		mesh->BuildLinks();
-	output->SetPoints(newPts);
+	//output->SetPoints(newPts);
+	outMesh->SetPoints(newPts);
 	for (auto i = 1; i <= this->Resolution; ++i)
 	{
 		for (auto ptId = 0; ptId < numCell; ++ptId)
 		{
 			vtkIdType pNum, * cell;
-			input->GetCellPoints(ptId, pNum, cell);///
+			mesh->GetCellPoints(ptId, pNum, cell);///
 			if (pNum < 4)
 			{
 				vtkErrorMacro(<< "初始多边形少于4个点");
@@ -118,7 +120,7 @@ int StructRotationFilter::RequestData(
 				celldataDown.push_back(cell[ci]+i*Resolution);
 			}
 			celldataUp.insert(celldataUp.end(), celldataDown.begin(), celldataDown.end());
-			output->InsertNextCell(VTK_VOXEL,8,celldataUp.data());
+			outMesh->InsertNextCell(VTK_VOXEL,8,celldataUp.data());
 		}
 	}
 	return 1;
