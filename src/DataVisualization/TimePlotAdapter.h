@@ -30,6 +30,7 @@ namespace DV {
 
 	public Q_SLOTS:
 		void FourierTrigger();
+		void saveTrigger();
 
 	public:
 		std::list<QAction*> getActions() override;
@@ -40,6 +41,7 @@ namespace DV {
 
 	private:
 		QAction* Fourier;
+		QAction* saveButton;
 		QDialog* errorDialog;
 		std::shared_ptr<TimeData> Timedata;//初始和TimeData的关系，通过initTimeData在构造函数中被初始化
 

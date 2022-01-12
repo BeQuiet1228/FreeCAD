@@ -178,9 +178,9 @@ namespace DV {
 			(*nowPoints).emplace_back(index * fs);
 			(*nowPoints).emplace_back(Ydata[index]);
 		}
-		Data::ValuesPtr tmpPoints(points);
 		points = nowPoints;
 		updateData(TimeDataForFFT, "Frequency(Hz)", "Watts\\GHz");
+		addHeadlistStr(13, "FFT");
 	}
 
 	/**
@@ -229,17 +229,37 @@ namespace DV {
 		setPointSize(points->size() / 2);
 		initXYRang();//更改数据范围
 		FunOfAlogrithm = alogrithm;//更新FFT标识符
+
 		//更新坐标Tag
+		std::string initxTag = getXTag();
+		std::string inityTag = getYTag();
 		if (!xTag.empty()) {
 			setXTag(xTag);
 		}
 		if (!yTag.empty()) {
 			setYTag(yTag);
 		}
+
+		for (auto& sh : headList) {
+			auto index = sh.find(initxTag);
+			if (index != std::string::npos) 
+				sh.replace(index, initxTag.size(), getXTag());
+
+			index = sh.find(inityTag);
+			if (index != std::string::npos)
+				sh.replace(index, inityTag.size(), getYTag());
+		}
 	}
 
 	void TimeData::updatePoint(Data::ValuesPtr point) {
 		this->points = point;
+	}
+
+	//将当前的数据添加到h5文件中
+	void TimeData::addNewGroup() {
+		Hdf5Data* newh5Data = new Hdf5Data(h5Data);
+		newh5Data->addSubGroup("Group_grid", "2D_observe", this->points, headList);
+		delete newh5Data;
 	}
 
 	void TimeData::saveAs(std::string path, SaveMod mod)
@@ -255,16 +275,27 @@ namespace DV {
 		{
 			res = Hdf5IO::creatNewH5File(path);
 		}
+
 		Hdf5IO* temp = new Hdf5IO(path);
-
+		Hdf5Data* newh5Data = new Hdf5Data(h5Data);
+		Hdf5IO::addNewGroup(*temp, *newh5Data, this->points, headList);
 		
-
-		Hdf5Data* newData = new Hdf5Data(h5Data);
-		Hdf5IO::copyToHdf5IO(*temp, *newData);
-		/*if (-1 != res)
-			res = Hdf5IO::closeH5File(res);*/
+		if (-1 != res)
+			res = Hdf5IO::closeH5File(res);
 		delete temp;
+		delete newh5Data;
+	}
 
-		delete newData;
+	//生成新的headList
+	void TimeData::addHeadlistStr(int index, std::string str) {
+		if (headList.size() < index + 1)
+			return;
+
+		std::string& tmp = headList.at(index);
+		int i = tmp.size() - 1;
+		while (tmp[i] == ' ') {
+			--i;
+		}
+		tmp.insert(i + 1, " " + str);
 	}
 };

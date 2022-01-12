@@ -39,12 +39,14 @@ namespace DV {
 		//所有的点数据
 		void fft(std::vector<float>& initdata, float fs);
 		Data::ValuesPtr points;//显示的指针
+		void addHeadlistStr(int index, std::string str);
 
 	public:
 		//对数据points进行FFT变换生成新的数据
 		void dataToFFT(Data::Rang xr);
 		Data::ValuesPtr getPointsPtr();
 		void updatePoint(Data::ValuesPtr point);
+		void addNewGroup();
 		void saveAs(std::string path, SaveMod mod = PUSHBACK);
 
 	public:

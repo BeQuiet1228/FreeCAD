@@ -29,6 +29,7 @@ namespace DV {
 	TimePlotAdapter::~TimePlotAdapter()
 	{
 		delete this->Fourier;
+		delete this->saveButton;
 	}
 
 	void TimePlotAdapter::initAction() {
@@ -36,12 +37,18 @@ namespace DV {
 		Fourier->setIcon(QIcon(":/ActionIcon/contour_image_on.svg"));
 		Fourier->setText(QString::fromUtf8("Fourier"));
 		connect(Fourier, SIGNAL(triggered()), SLOT(FourierTrigger()));
+
+		saveButton = new QAction(this);
+		saveButton->setIcon(QIcon(":/ActionIcon/contour_image_on.svg"));
+		saveButton->setText(QString::fromUtf8("Save"));
+		connect(saveButton, SIGNAL(triggered()), SLOT(saveTrigger()));
 	}
 
 	std::list<QAction*> TimePlotAdapter::getActions()
 	{
 		std::list<QAction*> actions;
 		actions.push_back(Fourier);
+		actions.push_back(saveButton);
 		return actions;
 	}
 
@@ -99,9 +106,9 @@ namespace DV {
 	//为action添加点击函数
 	void TimePlotAdapter::FourierTrigger() {
 		if (Timedata->FunOfAlogrithm == TimeDataForFFT) {
-			errorDialog = new FourierDialog();
+			/*errorDialog = new FourierDialog();
 			errorDialog->exec();
-			delete errorDialog;
+			delete errorDialog;*/
 			return;
 		}
 
@@ -112,9 +119,11 @@ namespace DV {
 		dataIntoStack();//将操作入栈
 
 		emit updatePlot();
-		std::string path = "C:/Users/Administrator/Desktop/TestMode/test_range/save/RBWO_CY.h5";
-		
-		Timedata->saveAs(path);
+	}
+
+	//将当前的point数据添加到h5文件中
+	void TimePlotAdapter::saveTrigger() {
+		Timedata->addNewGroup();
 	}
 
 	//将操作压入栈

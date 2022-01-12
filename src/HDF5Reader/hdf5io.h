@@ -12,6 +12,7 @@
 #include <list>
 #include <map>
 #include <memory>
+
 using namespace  H5;
 class Hdf5IO;
 using VectorF = std::vector<float>;
@@ -56,6 +57,9 @@ public:
 	bool initM2dStructInformation();
 	void init();
 
+	void initAttrFromList(Group& newgroup, std::vector<std::string> List);
+	void addSubGroup(const std::string faterGroup, const std::string groupname, std::shared_ptr<VectorF> values, std::vector<std::string> HList);
+	void addNewGroup();
 };
 
 class CONTROL_EXPORT Hdf5IO
@@ -124,6 +128,9 @@ public:
 	static int creatNewH5File(const std::string& fileName);
 	static int openH5File(const std::string &fileName);
 	static int closeH5File(int H5id);
+
+	static Hdf5Data Hdf5IO::addNewGroup(Hdf5IO& hdf5IO, Hdf5Data& data, std::shared_ptr<VectorF> values, std::vector<std::string> HList);
+
 private:
 	//新增方法2021/6/30
 	void LoadH5Resource();

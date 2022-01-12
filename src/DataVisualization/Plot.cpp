@@ -430,7 +430,6 @@ namespace DV {
 
 		//½«²Ù×÷Ñ¹ÈëÕ»
 		auto URStack = adapter->getUndoRedoStack();
-		//UndoRedoStack::DataPtr unData(new UndoRedoData(xr, yr));
 		UndoRedoStack::DataPtr unData(adapter->CreateUndoRedoData(xr, yr));
 		URStack->push(unData);
 
