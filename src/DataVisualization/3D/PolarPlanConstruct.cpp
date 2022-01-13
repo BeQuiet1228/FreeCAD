@@ -35,6 +35,7 @@ vtkSmartPointer<vtkDataSet> DV3D::PolarPlanConstruct::creatDataset()
 			getPointId(thetaIndex - 1,	rIndex,			zIndex - 1),
 			getPointId(thetaIndex - 1,	rIndex,			zIndex),
 			getPointId(thetaIndex - 1,	rIndex - 1,		zIndex)
+
 		};
 		cellData->InsertNextCell(pointNum, cell.data());
 	}
@@ -53,13 +54,14 @@ vtkSmartPointer<vtkDataSet> DV3D::PolarPlanConstruct::creatDataset()
 	filter->Update();
 	//自动计算法向
 	vtkSmartPointer<vtkPolyDataNormals> normalfilter = vtkSmartPointer<vtkPolyDataNormals>::New();
+	normalfilter->SetInputData(filter->GetOutput());
 	normalfilter->SetComputePointNormals(1);
 	normalfilter->SetComputeCellNormals(0);
 	normalfilter->SetAutoOrientNormals(1);
 	normalfilter->SetSplitting(0);
 	normalfilter->Update();
 	auto ugrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
-	ugrid->DeepCopy(filter->GetOutput());
+	ugrid->DeepCopy(normalfilter->GetOutput());
 	return ugrid;
 #else
 	//vtkSmartPointer<StructRotationFilter> filter = vtkSmartPointer<StructRotationFilter>::New();

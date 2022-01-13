@@ -7,6 +7,7 @@
 #include "vtkCellData.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkSmartPointer.h"
+#include "vtkRotationalExtrusionFilter.h"
 double getTheta(double* x);
 void StructRotationFilter::SetInputPolyData(vtkSmartPointer<vtkPolyData> data)
 {
@@ -93,7 +94,12 @@ void StructRotationFilter::Updata()
 			newPts->InsertPoint(ptId + i * numPts, newX);
 		}
 	}
-
+	
+	//vtkSmartPointer<vtkRotationalExtrusionFilter> filter = vtkSmartPointer<vtkRotationalExtrusionFilter>::New();
+	//filter->SetInputData(polydata);
+	//filter->SetResolution(Resolution);
+	//filter->SetAngle(Angle);
+	//filter->Update();
 	/*
 		构建多面体
 	*/
@@ -107,10 +113,11 @@ void StructRotationFilter::Updata()
 	vtkPolyData* outMesh = vtkPolyData::New();
 	if (polydata->GetPolys() || polydata->GetStrips())
 		mesh->BuildLinks();
+	//ugrid->SetPoints(filter->GetOutput()->GetPoints());
 	ugrid->SetPoints(newPts);
 	for (auto i=1;i<=this->Resolution;++i)
 	{
-		for (auto ptId = 0; ptId < numCell; ++ptId)
+		for (auto ptId = 0; ptId < numCell/2; ++ptId)
 		{
 			vtkIdType pNum, * cell;
 			mesh->GetCellPoints(ptId,pNum,cell);
@@ -120,8 +127,8 @@ void StructRotationFilter::Updata()
 			std::vector<vtkIdType> celldataDown;
 			for (auto ci = 0; ci < pNum; ++ci)
 			{
-				celldataUp.push_back(cell[ci]+(i-1)*Resolution);
-				celldataDown.push_back(cell[ci]+i*Resolution);
+				celldataUp.push_back(cell[ci]+(i-1)*numPts);
+				celldataDown.push_back(cell[ci]+i*numPts);
 			}
 			celldataUp.insert(celldataUp.end(), celldataDown.begin(), celldataDown.end());
 			ugrid->InsertNextCell(VTK_VOXEL,celldataUp.size(),celldataUp.data());
