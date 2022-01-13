@@ -88,6 +88,7 @@ void DV3D::Vector3dConfigWidget::initUi()
 		mColorTab,
 		SLOT(changmoveColor(std::vector<float>&, std::vector<QColor>&, const QColor&, const QColor&)));
 	QFormLayout* layout = new QFormLayout;
+	layout->setSpacing(0);
 	ui->topWidget->setLayout(layout);
 	controlerConfigWidget = new ControlerConfigWidget(ui->topWidget);
 	controlerConfigWidget->setParentGroup("vector3d");
