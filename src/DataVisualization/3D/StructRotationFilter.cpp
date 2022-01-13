@@ -5,19 +5,23 @@
 #include "vtkMath.h"
 #include "vtkPointData.h"
 #include "vtkCellData.h"
-vtkStandardNewMacro(StructRotationFilter);
+#include "vtkUnstructuredGrid.h"
+#include "vtkSmartPointer.h"
 double getTheta(double* x);
-void StructRotationFilter::PrintSelf(ostream& os, vtkIndent indent)
+void StructRotationFilter::SetInputPolyData(vtkSmartPointer<vtkPolyData> data)
 {
-	this->Superclass::PrintSelf(os, indent);
-	os << indent << "Resolution: " << this->Resolution << "\n";
-	os << indent << "Angle: " << this->Angle << "\n";
+	polydata->DeepCopy(data);
 }
+
+
 
 StructRotationFilter::StructRotationFilter()
 {
 	Angle = 360.0;
 	Resolution = 12;
+	ugrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
+	polydata = vtkSmartPointer<vtkPolyData>::New();
+	isSuccess = false;
 }
 
 StructRotationFilter::~StructRotationFilter()
@@ -25,49 +29,52 @@ StructRotationFilter::~StructRotationFilter()
 
 }
 
-int StructRotationFilter::RequestData(
-	vtkInformation* vtkNotUsed(request),
-	vtkInformationVector** inputVector,
-	vtkInformationVector* outputVector)
+void StructRotationFilter::SetResolution(int val)
 {
-	//获取对象信息
-	vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
-	vtkInformation* outInfo = outputVector->GetInformationObject(0);
+	Resolution = val;
+}
 
-	vtkPolyData* input = vtkPolyData::SafeDownCast(
-		inInfo->Get(vtkDataObject::DATA_OBJECT()));
-	vtkPolyData* output = vtkPolyData::SafeDownCast(
-		outInfo->Get(vtkDataObject::DATA_OBJECT()));
+int StructRotationFilter::GetResolution()
+{
+	return Resolution;
+}
 
-	vtkIdType numPts, numCell;
-	vtkPointData* pd = input->GetPointData();
-	vtkCellData* cd = input->GetCellData();
-	vtkPoints* inPts=input->GetPoints();
-	vtkCellArray* polys=input->GetPolys();
+void StructRotationFilter::SetAngle(double val)
+{
+	Angle = val;
+}
+
+double StructRotationFilter::GetAngle()
+{
+	return Angle;
+}
+
+void StructRotationFilter::Updata()
+{
 	/*
-		计算点位
+	*	计算点位
 	*/
-	numPts = input->GetNumberOfPoints();
-	numCell = input->GetNumberOfCells();
-	if (numPts < 1 || numCell < 1)
-	{
-		vtkErrorMacro(<< "no data to extrude");
-		return 1;
-	}
+	auto numPts = polydata->GetNumberOfPoints();
+	auto numCell = polydata->GetNumberOfCells();
+	if (numPts < 1 || numPts < 1)
+		return;
 	/*
 		按z-axis旋转生成新的点
 	*/
-	vtkIdType newNumPts = numPts * (Resolution + 1);
+	auto angInvertal = vtkMath::RadiansFromDegrees(Angle) / Resolution;
+	auto newNumPts = numPts * (Resolution + 1);
 	vtkPoints* newPts = vtkPoints::New();
 	newPts->Allocate(newNumPts);
+	auto inpts = polydata->GetPoints();
 	double x[3], newX[3];
-	auto angInvertal = vtkMath::RadiansFromDegrees(Angle) / Resolution;
+	for (auto i = 0; i < numPts; ++i)
+		newPts->InsertPoint(i,inpts->GetPoint(i));
 	for (auto i = 1; i <= this->Resolution; ++i)
 	{
 		for (auto ptId = 0; ptId < numPts; ++ptId)
 		{
-			inPts->GetPoint(ptId, x);
-			//点位旋转 z-axis
+			inpts->GetPoint(ptId, x);
+			//点位旋转
 			auto radio = sqrt(x[0] * x[0] + x[1] * x[1]);
 			if (radio > 0.0)
 			{
@@ -86,45 +93,50 @@ int StructRotationFilter::RequestData(
 			newPts->InsertPoint(ptId + i * numPts, newX);
 		}
 	}
+
 	/*
 		构建多面体
 	*/
 	vtkPolyData* mesh;
 	mesh = vtkPolyData::New();
-	mesh->SetPoints(input->GetPoints());
-	mesh->SetVerts(input->GetVerts());
-	mesh->SetLines(input->GetLines());
-	mesh->SetPolys(input->GetPolys());
-	mesh->SetStrips(input->GetStrips());
+	mesh->SetPoints(polydata->GetPoints());
+	mesh->SetVerts(polydata->GetVerts());
+	mesh->SetLines(polydata->GetLines());
+	mesh->SetPolys(polydata->GetPolys());
+	mesh->SetStrips(polydata->GetStrips());
 	vtkPolyData* outMesh = vtkPolyData::New();
-	if (input->GetPolys() || input->GetStrips())
+	if (polydata->GetPolys() || polydata->GetStrips())
 		mesh->BuildLinks();
-	//output->SetPoints(newPts);
-	outMesh->SetPoints(newPts);
-	for (auto i = 1; i <= this->Resolution; ++i)
+	ugrid->SetPoints(newPts);
+	for (auto i=1;i<=this->Resolution;++i)
 	{
 		for (auto ptId = 0; ptId < numCell; ++ptId)
 		{
 			vtkIdType pNum, * cell;
-			mesh->GetCellPoints(ptId, pNum, cell);///
+			mesh->GetCellPoints(ptId,pNum,cell);
 			if (pNum < 4)
-			{
-				vtkErrorMacro(<< "初始多边形少于4个点");
-				return 0;
-			}
+				return;
 			std::vector<vtkIdType> celldataUp;
 			std::vector<vtkIdType> celldataDown;
-			for (auto ci=0;ci<pNum;++ci)
+			for (auto ci = 0; ci < pNum; ++ci)
 			{
-				celldataUp.push_back(cell[ci]+(i - 1)*Resolution);
+				celldataUp.push_back(cell[ci]+(i-1)*Resolution);
 				celldataDown.push_back(cell[ci]+i*Resolution);
 			}
 			celldataUp.insert(celldataUp.end(), celldataDown.begin(), celldataDown.end());
-			outMesh->InsertNextCell(VTK_VOXEL,8,celldataUp.data());
+			ugrid->InsertNextCell(VTK_VOXEL,celldataUp.size(),celldataUp.data());
 		}
 	}
-	return 1;
+	isSuccess = true;
 }
+
+vtkSmartPointer<vtkUnstructuredGrid> StructRotationFilter::getOuput()
+{
+	if (!isSuccess)
+		return nullptr;
+	return ugrid;
+}
+
 double getTheta(double* x)
 {
 	double theta = 0.0f;

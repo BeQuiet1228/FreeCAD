@@ -1,29 +1,41 @@
 #pragma once
 #include "vtkFiltersModelingModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-class StructRotationFilter :public vtkPolyDataAlgorithm
+#include "vtkUnstructuredGridAlgorithm.h"
+#include "vtkPolydata.h"
+#include "vtkSmartPointer.h"
+class StructRotationFilter
 {
 public:
-	vtkTypeMacro(StructRotationFilter, vtkPolyDataAlgorithm);
-	void PrintSelf(ostream& os, vtkIndent indent);
-	static StructRotationFilter* New();
+	StructRotationFilter();
+	~StructRotationFilter();
 	/*
 		设置平滑度
 	*/
-	vtkSetClampMacro(Resolution, int, 1, VTK_INT_MAX);
-	vtkGetMacro(Resolution, int);
+	void SetResolution(int);
+	int GetResolution();
 	/*
 		设置角度
 	*/
-	vtkSetMacro(Angle, double);
-	vtkGetMacro(Angle, double);
+	
+	void SetAngle(double);
+	double GetAngle();
+	/*
+		传入面数据
+	*/
+	void SetInputPolyData(vtkSmartPointer<vtkPolyData> data);
+	void Updata();
+	vtkSmartPointer<vtkUnstructuredGrid> getOuput();
 protected:
-	StructRotationFilter();
-	~StructRotationFilter();
-	int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*);
+	
+	//int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*);
 	double Angle;
 	int Resolution;
+	vtkSmartPointer<vtkPolyData> polydata;
+	vtkSmartPointer<vtkUnstructuredGrid> ugrid;
+	bool isSuccess;
 private:
 	StructRotationFilter(const StructRotationFilter&);
 	void operator=(const StructRotationFilter&);
+	
 };

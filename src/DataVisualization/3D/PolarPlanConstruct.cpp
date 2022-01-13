@@ -51,14 +51,6 @@ vtkSmartPointer<vtkDataSet> DV3D::PolarPlanConstruct::creatDataset()
 	filter->SetAngle(360 / (thetaSize - 1));
 	filter->SetCapping(0);
 	filter->Update();
-#else
-	vtkSmartPointer<StructRotationFilter> filter = vtkSmartPointer<StructRotationFilter>::New();
-	filter->SetInputData(polyData);
-	filter->SetResolution(22);
-	filter->SetAngle(360 / (thetaSize - 1));
-	filter->Update();
-#endif
-
 	//自动计算法向
 	vtkSmartPointer<vtkPolyDataNormals> normalfilter = vtkSmartPointer<vtkPolyDataNormals>::New();
 	normalfilter->SetComputePointNormals(1);
@@ -69,4 +61,16 @@ vtkSmartPointer<vtkDataSet> DV3D::PolarPlanConstruct::creatDataset()
 	auto ugrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
 	ugrid->DeepCopy(filter->GetOutput());
 	return ugrid;
+#else
+	//vtkSmartPointer<StructRotationFilter> filter = vtkSmartPointer<StructRotationFilter>::New();
+	//filter->SetInputData(polyData);
+	std::shared_ptr<StructRotationFilter> filter(new StructRotationFilter);
+	filter->SetInputPolyData(polyData);
+	filter->SetResolution(22);
+	filter->SetAngle(360 / (thetaSize - 1));
+	filter->Updata();
+	return filter->getOuput();
+#endif
+
+
 }
