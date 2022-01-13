@@ -67,6 +67,7 @@ DV3D::XmlData::ColorF DV3D::XmlData::getColors(QColor color)
 void DV3D::XmlData::loadXmlInfo(Struct3dXml& val)
 {
 	val.color = DV::StringToQColor(getGroup({ "struct3d","color" }).getValue("value"));
+	val.Rotation = atoi(getGroup({ "struct3d","rotation" }).getValue("value").c_str());
 	loadXmlInfo(val.controlerXml, "struct3d");
 }
 
@@ -112,14 +113,15 @@ void DV3D::XmlData::loadXmlInfo(Vector3dXml& val)
 
 void DV3D::XmlData::saveXmlInfo(Contour3dXml& val)
 {
-	getGroup({ "contour3d","valueNumber" }).setSetting("value", std::to_string(val.values.size()));
+	getGroup({ "contour3d","valueNumber" }).setSetting("value", std::to_string(val.colorbar.values.size()));
+	getGroup({ "contour3d" ,"rotation" }).setSetting("value", std::to_string(val.Rotation));
 	std::stringstream os;
-	for (auto index = 0; index < val.values.size(); ++index)
+	for (auto index = 0; index < val.colorbar.values.size(); ++index)
 	{
 		os.str("");
 		os << "level_" << index;
-		getGroup({ "contour3d","valueNumber",os.str() }).setSetting("value", std::to_string(val.values[index]));
-		getGroup({ "contour3d","valueNumber",os.str() }).setSetting("color", DV::QColorToQstring(val.colors[index]).toStdString());
+		getGroup({ "contour3d","valueNumber",os.str() }).setSetting("value", std::to_string(val.colorbar.values[index]));
+		getGroup({ "contour3d","valueNumber",os.str() }).setSetting("color", DV::QColorToQstring(val.colorbar.colors[index]).toStdString());
 	}
 	DV::Config::GetInstance()->saveFile();
 }
@@ -134,21 +136,23 @@ void DV3D::XmlData::loadXmlInfo(Particle3dXml& val)
 void DV3D::XmlData::saveXmlInfo(Struct3dXml& val)
 {
 	getGroup({ "struct3d","color" }).setSetting("value", DV::QColorToQstring(val.color).toStdString());
+	getGroup({ "struct3d","rotation" }).setSetting("value", std::to_string(val.Rotation));
 	DV::Config::GetInstance()->saveFile();
 }
 
 void DV3D::XmlData::loadXmlInfo(Contour3dXml& val)
 {
+	val.Rotation = atoi(getGroup({ "contour3d","rotation" }).getValue("value").c_str()); 
 	int size = atoi(getGroup({ "contour3d" ,"valueNumber" }).getValue("value").c_str());
-	val.colors.reserve(size);
-	val.values.reserve(size);
+	val.colorbar.colors.reserve(size);
+	val.colorbar.values.reserve(size);
 	std::stringstream is;
 	for (auto index = 0; index < size; ++index)
 	{
 		is.str("");
 		is << "level_" << index;
-		val.values.push_back(atof(getGroup({ "contour3d","valueNumber",is.str() }).getValue("value").c_str()));
-		val.colors.push_back(DV::StringToQColor(getGroup({ "contour3d","valueNumber",is.str() }).getValue("color")));
+		val.colorbar.values.push_back(atof(getGroup({ "contour3d","valueNumber",is.str() }).getValue("value").c_str()));
+		val.colorbar.colors.push_back(DV::StringToQColor(getGroup({ "contour3d","valueNumber",is.str() }).getValue("color")));
 	}
 	loadXmlInfo(val.controlerXml, "contour3d");
 }

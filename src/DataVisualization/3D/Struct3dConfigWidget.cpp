@@ -22,6 +22,7 @@ void DV3D::Struct3dConfigWidget::loadConfig()
 	XmlData::Struct3dXml xmlInfo;
 	XmlData::loadXmlInfo(xmlInfo);
 	setButtonColor(ui->btnColor,xmlInfo.color);
+	ui->rotationEdit->setText(QString::number(xmlInfo.Rotation));
 	controlerConfigWidget->loadConfig();
 }
 
@@ -29,6 +30,7 @@ void DV3D::Struct3dConfigWidget::saveConfig()
 {
 	XmlData::Struct3dXml xmlInfo;
 	xmlInfo.color = getButtonColor(ui->btnColor);
+	xmlInfo.Rotation = ui->rotationEdit->text().toInt();
 	XmlData::saveXmlInfo(xmlInfo);
 	controlerConfigWidget->saveConfig();
 }

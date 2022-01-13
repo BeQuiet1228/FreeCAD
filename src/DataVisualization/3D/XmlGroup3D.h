@@ -23,18 +23,24 @@ namespace DV3D
 			QVector3D centerPoint;
 			QVector3D normalPoint;
 		};
+		struct ColorBar3DXml
+		{
+			std::vector<float> values;
+			std::vector<QColor> colors;
+		};
 		/*
 			3维图保存数据
 		*/
 		struct  Struct3dXml
 		{
+			int Rotation;//插值的平滑度
 			QColor color;
 			ControlerXml controlerXml;
 		};
 		struct  Contour3dXml
 		{
-			std::vector<float> values;
-			std::vector<QColor> colors;
+			int Rotation;//插值的平滑度
+			ColorBar3DXml colorbar;
 			ControlerXml controlerXml;
 		};
 		struct Particle3dXml
@@ -47,7 +53,7 @@ namespace DV3D
 			int XorRGridInc;
 			int YorThetaGridInc;
 			int ZGridInc;
-			Contour3dXml colorBar;
+			ColorBar3DXml colorBar;
 			ControlerXml controlerXml;
 		};
 		

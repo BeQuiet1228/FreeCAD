@@ -72,7 +72,7 @@ void DV3D::Contour3dActorPipline::loadConfig()
 	/*
 		生成过度表
 	*/
-	colors = XmlData::getColors(xmlinfo.values, xmlinfo.colors);
+	colors = XmlData::getColors(xmlinfo.colorbar.values, xmlinfo.colorbar.colors);
 }
 void DV3D::Contour3dActorPipline::setContourSurfarCount(const int& n)
 {

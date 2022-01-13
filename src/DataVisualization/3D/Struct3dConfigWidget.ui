@@ -46,7 +46,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit">
+         <widget class="QLineEdit" name="rotationEdit">
           <property name="minimumSize">
            <size>
             <width>50</width>
