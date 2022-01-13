@@ -7,6 +7,7 @@
 #include <memory>
 #include <vtkAlgorithmOutput.h>
 #include <vtkPlane.h>
+#include "XmlGroup3D.h"
 namespace DV3D {
 	class Clipper;
 
@@ -42,6 +43,8 @@ namespace DV3D {
 		virtual void connect() = 0;
 		//设置剪切面
 		void setClipPlane(vtkSmartPointer<vtkPlane> plane);
+		//获取控制台参数
+		virtual XmlData::ControlerXml getControlerData() = 0;
 	protected:
 		//将剪切器数据连接到映射器
 		void connectClipperToMapper(vtkAlgorithmOutput* input);

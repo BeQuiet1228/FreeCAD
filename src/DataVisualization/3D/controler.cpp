@@ -79,6 +79,10 @@ void DV3D::Controler::updateWidget3D()
 void DV3D::Controler::setActorPipeline(std::shared_ptr<ActorPipemline> line)
 {
 	this->actorPipeline = line;
+	/*
+		设置控制台的默认状态
+	*/
+	setInitState(line->getControlerData());
 }
 
 std::shared_ptr<DV3D::ActorPipemline> DV3D::Controler::getActorPipeline()
@@ -150,5 +154,17 @@ void DV3D::Controler::setClipEnable(const bool& b)
 bool DV3D::Controler::getClipEnable()
 {
 	return	getActorPipeline()->getClipperEnable();
+}
+
+
+void DV3D::Controler::setInitState(XmlData::ControlerXml val)
+{
+	auto data = getActorPipeline()->getControlerData();
+	setEdgeVisible(data.gridEnable);
+	setClipEnable(data.clipEnable);
+	setTransparent(data.alpha);
+	vtkSmartPointer<vtkPlane> planF = vtkSmartPointer<vtkPlane>::New();
+	planF->SetOrigin(data.centerPoint.x(),data.centerPoint.y(),data.centerPoint.z());
+	planF->SetNormal(data.normalPoint.x(), data.normalPoint.y(), data.normalPoint.z());
 }
 

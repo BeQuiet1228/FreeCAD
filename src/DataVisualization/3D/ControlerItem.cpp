@@ -56,7 +56,6 @@ void DV3D::ControlerItem::initGui()
 	//绑定拖动条
 	connect(ui->horizontalSlider, SIGNAL(valueChanged(int)), this, SLOT(transParentSliderValueChange(int)));
 	ui->toolbarLayout->setAlignment(Qt::AlignLeft);
-
 	//创建是否可见按钮
 	visibleAction.reset(new ControlerVisible());
 	visibleAction->update(ui->toolButtonVisible);

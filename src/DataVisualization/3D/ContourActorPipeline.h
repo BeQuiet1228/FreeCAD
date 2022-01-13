@@ -10,6 +10,7 @@ namespace DV3D
 	public:
 		void update() override;
 		void connect() override;
+		XmlData::ControlerXml getControlerData();
 	private:
 	};
 }

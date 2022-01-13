@@ -5,7 +5,6 @@
 #include "vtkPolyDataNormals.h"
 #include "vtkContourFilter.h"
 #include "vtkLookupTable.h"
-#include "XmlGroup3D.h"
 namespace DV3D
 {
 	using ContourValue = double;
@@ -30,6 +29,7 @@ namespace DV3D
 	protected:
 		void initFilter();
 		void updataLookupTable();
+		XmlData::ControlerXml getControlerData();
 	private:
 		vtkSmartPointer<vtkContourFilter> file;
 		vtkSmartPointer<vtkPolyDataNormals> normal;

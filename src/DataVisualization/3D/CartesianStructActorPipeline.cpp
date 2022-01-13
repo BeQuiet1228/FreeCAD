@@ -39,6 +39,13 @@ void DV3D::CartesianStructActorPipeline::connect()
 	ac->GetProperty()->SetColor(colorf.r, colorf.g, colorf.b);
 }
 
+DV3D::XmlData::ControlerXml DV3D::CartesianStructActorPipeline::getControlerData()
+{
+	XmlData::Struct3dXml xmlinfo;
+	XmlData::loadXmlInfo(xmlinfo);
+	return xmlinfo.controlerXml;
+}
+
 void DV3D::CartesianStructActorPipeline::loadConfig()
 {
 	XmlData::Struct3dXml xmlInfo;

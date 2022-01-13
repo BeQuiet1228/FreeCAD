@@ -14,6 +14,7 @@ namespace DV3D
 	public:
 		void update() override;
 		void connect() override;
+		XmlData::ControlerXml getControlerData();
 	protected:
 		void loadConfig();
 	private:

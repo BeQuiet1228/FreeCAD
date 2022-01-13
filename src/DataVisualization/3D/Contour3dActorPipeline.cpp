@@ -162,3 +162,10 @@ void DV3D::Contour3dActorPipline::updataLookupTable()
 		lookupTable->SetTableValue(i, colors[i].r, colors[i].g, colors[i].b, colors[i].a);
 	lookupTable->Build();
 }
+
+DV3D::XmlData::ControlerXml DV3D::Contour3dActorPipline::getControlerData()
+{
+	XmlData::Contour3dXml xmlinf;
+	XmlData::loadXmlInfo(xmlinf);
+	return xmlinf.controlerXml;
+}

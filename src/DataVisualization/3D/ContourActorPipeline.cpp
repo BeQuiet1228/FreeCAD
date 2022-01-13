@@ -32,4 +32,16 @@ namespace DV3D
 		ac->SetMapper(mp);
 		//ac->GetProperty()->SetEdgeVisibility(1);
 	}
+
+	DV3D::XmlData::ControlerXml ContourActorPipeline::getControlerData()
+	{
+		XmlData::ControlerXml data;
+		data.centerPoint=QVector3D(0,0,0);
+		data.normalPoint = QVector3D(0.0, 0.0, 0.0);
+		data.alpha = 1.0;
+		data.clipEnable = 0;
+		data.gridEnable = 0;
+		return data;
+	}
+
 }

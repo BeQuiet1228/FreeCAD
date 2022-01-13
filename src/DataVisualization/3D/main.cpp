@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 {
 	//vtkOutputWindow::SetGlobalWarningDisplay(0);
 	QApplication a(argc, argv);
-#if 0
+#if 1
 	QFileDialog* fileDialog = new QFileDialog();
 	fileDialog->setWindowTitle("OpenFile");
 	fileDialog->setDirectory("D:/test");
