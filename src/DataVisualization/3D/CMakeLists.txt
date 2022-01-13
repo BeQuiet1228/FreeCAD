@@ -122,6 +122,8 @@ SET(CONFIGWIDGET_Srcs
 	Contour3dConfigWidget.cpp
 	Particle3dConfigWidget.h
 	Particle3dConfigWidget.cpp
+	ControlerConfigWidget.h
+	ControlerConfigWidget.cpp
 )
 SET(UI_SRC
 	ControlerItem.ui
@@ -130,6 +132,7 @@ SET(UI_SRC
 	Particle3dConfigWidget.ui
 	Contour3dConfigWidget.ui
 	Vector3dConfigWidget.ui
+	ControlerConfigWidget.ui
 	)
 
 SET(MY_MOC_HDR
@@ -142,6 +145,7 @@ SET(MY_MOC_HDR
 	Contour3dConfigWidget.h
 	Particle3dConfigWidget.h
 	#Contour3dControlerAction.h
+	ControlerConfigWidget.h
 )
 SET(QRC_SRC
 	resource/rce.qrc

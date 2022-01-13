@@ -1,6 +1,7 @@
 #pragma once
 #include <QWidget>
 #include "../ConfigUnify.h"
+
 namespace Ui
 {
 	class Contour3dConfigWidget;
@@ -13,6 +14,7 @@ namespace DV
 };
 namespace DV3D
 {
+	class ControlerConfigWidget;
 	class Contour3dConfigWidget :public QWidget,public DV::ConfigUnify
 	{
 		Q_OBJECT
@@ -28,6 +30,7 @@ namespace DV3D
 		void btnClicked();
 	private:
 		Ui::Contour3dConfigWidget* ui;
+		ControlerConfigWidget* controlerConfigWidget;
 		QBoxLayout* boxLayout;
 		DV::ColorTab* mColorTab;
 		DV::ArrowCtrl* arrowCtrl;

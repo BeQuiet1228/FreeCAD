@@ -7,6 +7,7 @@ namespace Ui
 }
 namespace DV3D
 {
+	class ControlerConfigWidget;
 	class Struct3dConfigWidget :public QWidget,public DV::ConfigUnify
 	{
 		Q_OBJECT
@@ -20,7 +21,8 @@ namespace DV3D
 		void initUi();
 	protected Q_SLOTS:
 		void btnClicked();
-	private:
+	private:	
+		ControlerConfigWidget* controlerConfigWidget;
 		Ui::Struct3dConfigWidget* ui;
 	};
 }

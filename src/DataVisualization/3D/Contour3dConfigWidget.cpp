@@ -6,6 +6,8 @@
 #include "../ColorTab.h"
 #include "QPushButton"
 #include "XmlGroup3D.h"
+#include "ControlerConfigWidget.h"
+#include "QFormLayout"
 DV3D::Contour3dConfigWidget::Contour3dConfigWidget(QWidget* parent/*=nullptr*/)
 	:QWidget(parent), ui(new Ui::Contour3dConfigWidget)
 {
@@ -29,7 +31,7 @@ void DV3D::Contour3dConfigWidget::loadConfig()
 		setButtonColor(ui->firstColorBtn, *xmlinf.colors.begin());
 		setButtonColor(ui->endColorBtn, *(xmlinf.colors.end() - 1));
 	}
-
+	controlerConfigWidget->loadConfig();
 }
 void DV3D::Contour3dConfigWidget::saveConfig()
 {
@@ -37,6 +39,7 @@ void DV3D::Contour3dConfigWidget::saveConfig()
 	xmlinfo.values = arrowCtrl->getValue();
 	xmlinfo.colors = mColorTab->GetColors(xmlinfo.values);
 	XmlData::saveXmlInfo(xmlinfo);
+	controlerConfigWidget->saveConfig();
 }
 void DV3D::Contour3dConfigWidget::initUi()
 {
@@ -54,7 +57,14 @@ void DV3D::Contour3dConfigWidget::initUi()
 		SIGNAL(changMoveColor(std::vector<float>&, std::vector<QColor>&, const QColor&, const QColor&)),
 		mColorTab,
 		SLOT(changmoveColor(std::vector<float>&, std::vector<QColor>&, const QColor&, const QColor&)));
-
+	/*
+	* Ìí¼Ó´°¿Ú
+	*/
+	QFormLayout* layout = new QFormLayout;
+	ui->topWidget->setLayout(layout);
+	controlerConfigWidget = new ControlerConfigWidget(ui->topWidget);
+	controlerConfigWidget->setParentGroup("contour3d");
+	layout->addWidget(controlerConfigWidget);
 }
 
 void DV3D::Contour3dConfigWidget::btnClicked()

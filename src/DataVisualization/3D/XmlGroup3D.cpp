@@ -66,7 +66,8 @@ DV3D::XmlData::ColorF DV3D::XmlData::getColors(QColor color)
 }
 void DV3D::XmlData::loadXmlInfo(Struct3dXml& val)
 {
-	val.color=DV::StringToQColor(getGroup({ "struct3d","color" }).getValue("value"));
+	val.color = DV::StringToQColor(getGroup({ "struct3d","color" }).getValue("value"));
+	loadXmlInfo(val.controlerXml, "struct3d");
 }
 
 void DV3D::XmlData::saveXmlInfo(Vector3dXml& val)
@@ -99,25 +100,26 @@ void DV3D::XmlData::loadXmlInfo(Vector3dXml& val)
 	val.ZGridInc = atoi(getGroup({ "vector3d","ZGridInc" }).getValue("valMax").c_str());
 	int size = atoi(getGroup({ "vector3d","valueNumber" }).getValue("value").c_str());
 	std::stringstream is;
-	for (auto index=0;index<size;++index)
+	for (auto index = 0; index < size; ++index)
 	{
 		is.str("");
 		is << "level_" << index;
 		val.colorBar.values.push_back(atof(getGroup({ "vector3d","valueNumber",is.str() }).getValue("value").c_str()));;
 		val.colorBar.colors.push_back(DV::StringToQColor(getGroup({ "vector3d","valueNumber",is.str() }).getValue("color")));
 	}
+	loadXmlInfo(val.controlerXml, "vector3d");
 }
 
 void DV3D::XmlData::saveXmlInfo(Contour3dXml& val)
 {
-	getGroup({ "contour3d","valueNumber" }).setSetting("value",std::to_string(val.values.size()));
+	getGroup({ "contour3d","valueNumber" }).setSetting("value", std::to_string(val.values.size()));
 	std::stringstream os;
 	for (auto index = 0; index < val.values.size(); ++index)
 	{
 		os.str("");
 		os << "level_" << index;
-		getGroup({ "contour3d","valueNumber",os.str()}).setSetting("value",std::to_string(val.values[index]));
-		getGroup({ "contour3d","valueNumber",os.str() }).setSetting("color",DV::QColorToQstring(val.colors[index]).toStdString());
+		getGroup({ "contour3d","valueNumber",os.str() }).setSetting("value", std::to_string(val.values[index]));
+		getGroup({ "contour3d","valueNumber",os.str() }).setSetting("color", DV::QColorToQstring(val.colors[index]).toStdString());
 	}
 	DV::Config::GetInstance()->saveFile();
 }
@@ -126,25 +128,59 @@ void DV3D::XmlData::loadXmlInfo(Particle3dXml& val)
 {
 	val.particleColor = DV::StringToQColor(getGroup({ "particle3d", "particleColor" }).getValue("value"));
 	val.particleSize = atof(getGroup({ "particle3d", "particleSize" }).getValue("value").c_str());
+	loadXmlInfo(val.controlerXml, "particle3d");
 }
 
 void DV3D::XmlData::saveXmlInfo(Struct3dXml& val)
 {
-	getGroup({ "struct3d","color" }).setSetting("value",DV::QColorToQstring(val.color).toStdString());
+	getGroup({ "struct3d","color" }).setSetting("value", DV::QColorToQstring(val.color).toStdString());
 	DV::Config::GetInstance()->saveFile();
 }
 
 void DV3D::XmlData::loadXmlInfo(Contour3dXml& val)
 {
-	int size=atoi(getGroup({ "contour3d" ,"valueNumber" }).getValue("value").c_str());
+	int size = atoi(getGroup({ "contour3d" ,"valueNumber" }).getValue("value").c_str());
 	val.colors.reserve(size);
 	val.values.reserve(size);
 	std::stringstream is;
-	for (auto index=0;index<size;++index)
+	for (auto index = 0; index < size; ++index)
 	{
 		is.str("");
 		is << "level_" << index;
 		val.values.push_back(atof(getGroup({ "contour3d","valueNumber",is.str() }).getValue("value").c_str()));
 		val.colors.push_back(DV::StringToQColor(getGroup({ "contour3d","valueNumber",is.str() }).getValue("color")));
 	}
+	loadXmlInfo(val.controlerXml, "contour3d");
+}
+void DV3D::XmlData::loadXmlInfo(ControlerXml& val, std::string parentGroup)
+{
+	//struct ControlerXml
+	//	{
+	//		float alpha;//0~1
+	//		bool clipEnable;//
+	//		QVector3D centerPoint
+	//		QVector3D normalPoint;
+	//	}
+	val.alpha = atof(getGroup({ parentGroup,"controler","alpha" }).getValue("value").c_str());
+	val.clipEnable = atoi(getGroup({ parentGroup,"controler","clipEnable" }).getValue("value").c_str());
+	val.gridEnable= atoi(getGroup({ parentGroup,"controler","gridEnable" }).getValue("value").c_str());
+	val.centerPoint.setX(atof(getGroup({ parentGroup,"controler","centerPoint" }).getValue("x_value").c_str()));
+	val.centerPoint.setY(atof(getGroup({ parentGroup,"controler","centerPoint" }).getValue("y_value").c_str()));
+	val.centerPoint.setZ(atof(getGroup({ parentGroup,"controler","centerPoint" }).getValue("z_value").c_str()));
+	val.normalPoint.setX(atof(getGroup({ parentGroup,"controler","normalPoint" }).getValue("x_value").c_str()));
+	val.normalPoint.setY(atof(getGroup({ parentGroup,"controler","normalPoint" }).getValue("y_value").c_str()));
+	val.normalPoint.setZ(atof(getGroup({ parentGroup,"controler","normalPoint" }).getValue("z_value").c_str()));
+}
+void DV3D::XmlData::saveXmlInfo(ControlerXml& val, std::string parentGroup)
+{
+	getGroup({ parentGroup,"controler","alpha" }).setSetting("value", std::to_string(val.alpha));
+	getGroup({ parentGroup,"controler","clipEnable" }).setSetting("value", std::to_string(val.clipEnable));
+	getGroup({ parentGroup,"controler","gridEnable" }).setSetting("value", std::to_string(val.gridEnable));
+	getGroup({ parentGroup,"controler","centerPoint" }).setSetting("x_value", std::to_string(val.centerPoint.x()));
+	getGroup({ parentGroup,"controler","centerPoint" }).setSetting("y_value", std::to_string(val.centerPoint.y()));
+	getGroup({ parentGroup,"controler","centerPoint" }).setSetting("z_value", std::to_string(val.centerPoint.z()));
+	getGroup({ parentGroup,"controler","normalPoint" }).setSetting("x_value", std::to_string(val.normalPoint.x()));
+	getGroup({ parentGroup,"controler","normalPoint" }).setSetting("y_value", std::to_string(val.normalPoint.y()));
+	getGroup({ parentGroup,"controler","normalPoint" }).setSetting("z_value", std::to_string(val.normalPoint.z()));
+	DV::Config::GetInstance()->saveFile();
 }

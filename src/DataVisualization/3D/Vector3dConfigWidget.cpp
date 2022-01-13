@@ -6,6 +6,8 @@
 #include "../ColorTab.h"
 #include "QPushButton"
 #include "XmlGroup3D.h"
+#include "ControlerConfigWidget.h"
+#include "QFormLayout"
 DV3D::Vector3dConfigWidget::Vector3dConfigWidget(QWidget* parent/*=nullptr*/)
 	:QWidget(parent),ui(new Ui::Vector3dConfigWidget)
 {
@@ -40,6 +42,7 @@ void DV3D::Vector3dConfigWidget::loadConfig()
 		setButtonColor(ui->firstColorBtn, *xmlinfo.colorBar.colors.begin());
 		setButtonColor(ui->endColorBtn, *(xmlinfo.colorBar.colors.end() - 1));
 	}
+	controlerConfigWidget->loadConfig();
 }
 
 
@@ -57,6 +60,7 @@ void DV3D::Vector3dConfigWidget::saveConfig()
 	xmlinf.colorBar.values= arrowCtrl->getValue();
 	xmlinf.colorBar.colors= mColorTab->GetColors(xmlinf.colorBar.values);
 	XmlData::saveXmlInfo(xmlinf);
+	controlerConfigWidget->saveConfig();
 }
 
 /**
@@ -83,6 +87,11 @@ void DV3D::Vector3dConfigWidget::initUi()
 		SIGNAL(changMoveColor(std::vector<float>&, std::vector<QColor>&, const QColor&, const QColor&)),
 		mColorTab,
 		SLOT(changmoveColor(std::vector<float>&, std::vector<QColor>&, const QColor&, const QColor&)));
+	QFormLayout* layout = new QFormLayout;
+	ui->topWidget->setLayout(layout);
+	controlerConfigWidget = new ControlerConfigWidget(ui->topWidget);
+	controlerConfigWidget->setParentGroup("vector3d");
+	layout->addWidget(controlerConfigWidget);
 }
 
 void DV3D::Vector3dConfigWidget::btnClicked()

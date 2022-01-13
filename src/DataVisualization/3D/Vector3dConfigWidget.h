@@ -13,6 +13,7 @@ namespace DV
 };
 namespace DV3D
 {
+	class ControlerConfigWidget;
 	class Vector3dConfigWidget :public QWidget, public DV::ConfigUnify
 	{
 		Q_OBJECT
@@ -28,6 +29,7 @@ namespace DV3D
 		void btnClicked();
 	private:
 		Ui::Vector3dConfigWidget* ui;
+		ControlerConfigWidget* controlerConfigWidget;
 		QBoxLayout* boxLayout;
 		DV::ColorTab* mColorTab;
 		DV::ArrowCtrl* arrowCtrl;

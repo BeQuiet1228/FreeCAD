@@ -95,12 +95,6 @@ void DV::XmlData::saveXmlInfo(ParticleXml& val)
 
 void DV::XmlData::getXmlInfo(ParticleXml& particleXml)
 {
-	/*<particle>
-		<size value = "1" / >
-		<color value = "FFFFAAFF" / >
-		<AlisAttitude isAlis = "0" / >
-		< / particle>*/
-
 	particleXml.size = atoi(getGroup({ "particle" ,"size" }).getValue("value").c_str());
 	particleXml.color = StringToQColor(getGroup({ "particle","color" }).getValue("value"));
 	particleXml.AlisAttitude = atoi(getGroup({ "particle","AlisAttitude" }).getValue("isAlis").c_str());
@@ -108,7 +102,6 @@ void DV::XmlData::getXmlInfo(ParticleXml& particleXml)
 
 void DV::XmlData::saveXmlInfo(StructXml& value)
 {
-
 	for (auto iter = value.proPerty.begin(); iter != value.proPerty.end(); iter++)
 		getGroup({ "struct",iter->first })
 		.setSetting("value", QColorToQstring(iter->second).toStdString());
@@ -118,29 +111,6 @@ void DV::XmlData::saveXmlInfo(StructXml& value)
 
 void DV::XmlData::getXmlInfo(StructXml& xmlinfo)
 {
-	/*<struct>
-				<CONDUCTORNEW value = "FFAAFFFF" / >
-				<DIELECTIRANDCONDUCTANCE value = "FFFF0000" / >
-				<DIOLECTRIC value = "FFAAAAFF" / >
-				<DRIVER value = "FFFF00FF" / >
-				<FOIL value = "FFAAAA00" / >
-				<FREESPACE value = "FF00AA00" / >
-				<INDUCTOR value = "FF55AAFF" / >
-				<PERFECTCONDUCTOR value = "FFFF0000" / >
-				<PERMEABILITY value = "FF0000FF" / >
-				<PORT value = "FFAA55FF" / >
-				<VACUO value = "7DFF007F" / >
-				<CONDUCTORNEWLINE value = "FFFFAA00" / >
-				<DIELECTIRANDCONDUCTANCELINE value = "FF2C1621" / >
-				<DIOLECTRICLINE value = "FF550000" / >
-				<FOILLINE value = "FF003E3E" / >
-				<FREESPACELINE value = "FF0A1E1E" / >
-				<PERFECTCONDUCTORLINE value = "FF55FFFF" / >
-				<PERMEABILITYLINE value = "FF002400" / >
-				<VACUOLINE value = "00FFFFFF" / >
-				<AlisAttitude isAlis = "1" / >
-				< / struct>*/
-
 	std::vector<std::string> is = {
 	 "CONDUCTORNEW",
 		 "DIELECTIRANDCONDUCTANCE",
