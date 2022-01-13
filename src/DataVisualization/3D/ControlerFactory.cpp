@@ -30,6 +30,7 @@
 #include "Contour3dConfigWidget.h"
 #include "Particle3dConfigWidget.h"
 #include "Vector3dConfigWidget.h"
+#include "XmlGroup3D.h"
 std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatControler(Hdf5Data& h5data)
 {
 	std::shared_ptr<Controler> controler;
@@ -62,6 +63,11 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContourControler(H
 	pipeline->connect();
 	controler.reset(new Controler());
 	controler->setActorPipeline(pipeline);
+	{
+		//XmlData::Contour3dXml xmlinf;
+		//XmlData::loadXmlInfo(xmlinf);
+		//controler->setInitState(xmlinf.controlerXml);
+	}
 	return controler;
 }
 
@@ -80,6 +86,11 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContour3dControler
 	pipeline->connect();
 	controler.reset(new Contour3dControler());
 	controler->setActorPipeline(pipeline);
+	{
+		XmlData::Contour3dXml xmlinf;
+		XmlData::loadXmlInfo(xmlinf);
+		controler->setInitState(xmlinf.controlerXml);
+	}
 	return controler;
 }
 
@@ -108,6 +119,11 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatVector3dControler(
 	pipeline->connect();
 	controler.reset(new Controler());
 	controler->setActorPipeline(pipeline);
+	{
+		XmlData::Vector3dXml xmlinf;
+		XmlData::loadXmlInfo(xmlinf);
+		controler->setInitState(xmlinf.controlerXml);
+	}
 	return controler;
 }
 
@@ -142,7 +158,12 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucControler(Hdf
 	pipeline->connect();
 	controler.reset(new Controler());
 	controler->setActorPipeline(pipeline);
-
+	{
+		XmlData::Struct3dXml xmlinf;
+		XmlData::loadXmlInfo(xmlinf);
+		controler->setInitState(xmlinf.controlerXml);
+	}
+	
 	return controler;
 }
 
@@ -192,8 +213,11 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatParticle3dControle
 	pipeline->connect();
 	controler.reset(new Controler());
 	controler->setActorPipeline(pipeline);
-
-
+	{
+		XmlData::Particle3dXml xmlinfo;
+		XmlData::loadXmlInfo(xmlinfo);
+		controler->setInitState(xmlinfo.controlerXml);
+	}
 	assert(controler && "controler is nullptr!");
 	return controler;
 }

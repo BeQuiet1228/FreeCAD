@@ -40,13 +40,6 @@ void DV3D::PolarStructActorPipeline::connect() {
 	ac->GetProperty()->SetColor(colorf.r,colorf.g,colorf.b);
 }
 
-DV3D::XmlData::ControlerXml DV3D::PolarStructActorPipeline::getControlerData()
-{
-	XmlData::Struct3dXml  xmlinfo;
-	XmlData::loadXmlInfo(xmlinfo);
-	return xmlinfo.controlerXml;
-}
-
 void DV3D::PolarStructActorPipeline::loadConfig()
 {
 	XmlData::Struct3dXml xmlInfo;

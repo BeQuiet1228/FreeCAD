@@ -12,7 +12,6 @@ namespace DV3D {
 	public:
 		void update() override;
 		void connect() override;
-		XmlData::ControlerXml getControlerData();
 		virtual void loadConfig();
 	protected:
 		XmlData::ColorF colorf;

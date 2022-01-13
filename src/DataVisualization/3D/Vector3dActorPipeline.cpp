@@ -39,13 +39,6 @@ void DV3D::Vector3dActorPipeline::connect()
 	ac->SetMapper(mp);
 }
 
-DV3D::XmlData::ControlerXml DV3D::Vector3dActorPipeline::getControlerData()
-{
-	XmlData::Vector3dXml xmlinfo;
-	XmlData::loadXmlInfo(xmlinfo);
-	return xmlinfo.controlerXml;
-}
-
 void DV3D::Vector3dActorPipeline::loadConfig()
 {
 	colorfs.clear();

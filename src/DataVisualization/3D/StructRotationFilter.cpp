@@ -115,23 +115,26 @@ void StructRotationFilter::Updata()
 		mesh->BuildLinks();
 	//ugrid->SetPoints(filter->GetOutput()->GetPoints());
 	ugrid->SetPoints(newPts);
-	for (auto i=1;i<=this->Resolution;++i)
+	for (auto i=1;i<=1;++i)
 	{
-		for (auto ptId = 0; ptId < numCell/2; ++ptId)
+		for (auto ptId = 0; ptId < 1; ++ptId)
 		{
 			vtkIdType pNum, * cell;
 			mesh->GetCellPoints(ptId,pNum,cell);
 			if (pNum < 4)
 				return;
-			std::vector<vtkIdType> celldataUp;
-			std::vector<vtkIdType> celldataDown;
+			//std::vector<vtkIdType> celldataUp;
+			//std::vector<vtkIdType> celldataDown;
+			std::vector<vtkIdType> cellData;
 			for (auto ci = 0; ci < pNum; ++ci)
 			{
-				celldataUp.push_back(cell[ci]+(i-1)*numPts);
-				celldataDown.push_back(cell[ci]+i*numPts);
+				cellData.push_back(cell[ci] + (i - 1) * numPts);
+				cellData.push_back(cell[ci] + i * numPts);
+				//celldataUp.push_back(cell[ci]+(i-1)*numPts);
+				//celldataDown.push_back(cell[ci]+i*numPts);
 			}
-			celldataUp.insert(celldataUp.end(), celldataDown.begin(), celldataDown.end());
-			ugrid->InsertNextCell(VTK_VOXEL,celldataUp.size(),celldataUp.data());
+			//celldataUp.insert(celldataUp.end(), celldataDown.begin(), celldataDown.end());
+			ugrid->InsertNextCell(VTK_VOXEL, cellData.size(), cellData.data());
 		}
 	}
 	isSuccess = true;

@@ -79,10 +79,6 @@ void DV3D::Controler::updateWidget3D()
 void DV3D::Controler::setActorPipeline(std::shared_ptr<ActorPipemline> line)
 {
 	this->actorPipeline = line;
-	/*
-		设置控制台的默认状态
-	*/
-	setInitState(line->getControlerData());
 }
 
 std::shared_ptr<DV3D::ActorPipemline> DV3D::Controler::getActorPipeline()
@@ -157,9 +153,8 @@ bool DV3D::Controler::getClipEnable()
 }
 
 
-void DV3D::Controler::setInitState(XmlData::ControlerXml val)
+void DV3D::Controler::setInitState(XmlData::ControlerXml data)
 {
-	auto data = getActorPipeline()->getControlerData();
 	setEdgeVisible(data.gridEnable);
 	setClipEnable(data.clipEnable);
 	setTransparent(data.alpha);
