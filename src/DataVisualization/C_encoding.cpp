@@ -44,6 +44,11 @@ namespace DV {
 	QColor QStringToQColor(QString colorstr)
 	{
 		std::string color = colorstr.toStdString();
+		return StringToQColor(color);
+	}
+
+	QColor StringToQColor(std::string color)
+	{
 		unsigned int colorR = 0, colorG = 0, colorB = 0, colorA = 0;
 		int len = color.length();
 		if (color.length() >= 8)
@@ -56,4 +61,5 @@ namespace DV {
 		QColor colorargb(colorR, colorG, colorB, colorA);
 		return colorargb;
 	}
+
 };

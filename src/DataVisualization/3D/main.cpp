@@ -40,14 +40,15 @@ VTK_MODULE_INIT(vtkRenderingOpenGL2)   //³õÊ¼»¯opengläÖÈ¾Æ÷
 VTK_MODULE_INIT(vtkRenderingFreeType)   //³õÊ¼»¯×ÖÌåäÖÈ¾Æ÷
 VTK_MODULE_INIT(vtkInteractionStyle)
 #endif //INIT_VTK_OPENGL_AND_FRNT
-
+#include "Vector3dConfigWidget.h"
+#include "Contour3dConfigWidget.h"
 using namespace DV3D;
 
 int main(int argc, char* argv[])
 {
 	//vtkOutputWindow::SetGlobalWarningDisplay(0);
 	QApplication a(argc, argv);
-
+#if 1
 	QFileDialog* fileDialog = new QFileDialog();
 	fileDialog->setWindowTitle("OpenFile");
 	fileDialog->setDirectory("D:/test");
@@ -64,20 +65,19 @@ int main(int argc, char* argv[])
 		return 0;
 	auto iter = datalist.begin()+2;
 	Widget3D* w3d = new Widget3D();
-
 	ControlerFactory controlerFactor;
 	//auto controler = controlerFactor.CreatParticle3dControler(paticle3d);
-	//auto structControler = controlerFactor.CreatStrucControler(*iter);
+	auto structControler = controlerFactor.CreatStrucControler(*iter);
 	//auto contourControler = controlerFactor.CreatContourControler(*iter);
-	auto contour3dContrler = controlerFactor.CreatContour3dControler(*(iter));
+	//auto contour3dContrler = controlerFactor.CreatContour3dControler(*(iter));
 	//w3d->binding(controler.get());
-	//w3d->binding(structControler.get());
+	w3d->binding(structControler.get());
 	//w3d->binding(contourControler.get());
-	w3d->binding(contour3dContrler.get());
+	//w3d->binding(contour3dContrler.get());
 	w3d->show();
 
 	auto item = ControlerItemFactor::CreatContour3dControlerItem();
-	item->setControler(contour3dContrler);
+	item->setControler(structControler);
 	item->show();
 #endif
 #if 0
@@ -93,5 +93,10 @@ int main(int argc, char* argv[])
 	item->setControler(structControler);
 	item->show();
 #endif
+#endif
+	//Vector3dConfigWidget* vector3dconfigwidget = new Vector3dConfigWidget();
+	//vector3dconfigwidget->show();
+	//Contour3dConfigWidget* contour3dconfigwidget = new Contour3dConfigWidget();
+	//contour3dconfigwidget->show();
 	return a.exec();
 }

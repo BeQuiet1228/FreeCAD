@@ -53,7 +53,8 @@ SET(SRC
 	DataVisualization3DExport.hpp
 	ClipPlaneWidget.h
 	ClipPlaneWidget.cpp
-	
+	XmlGroup3D.h
+	XmlGroup3D.cpp
 )
 SET( STRUCT_SRC
 	CartesianStructDataSetConstructor.cpp
@@ -108,17 +109,43 @@ SET(CONTOUR3D_SRCS
 	Contour3dControlerWidget.h
 	Contour3dControlerWidget.cpp
 )
-
+SET(FILTER_Srcs
+	StructRotationFilter.h
+	StructRotationFilter.cpp
+)
+SET(CONFIGWIDGET_Srcs
+	Struct3dConfigWidget.h
+	Struct3dConfigWidget.cpp
+	Vector3dConfigWidget.h
+	Vector3dConfigWidget.cpp
+	Contour3dConfigWidget.h
+	Contour3dConfigWidget.cpp
+	Particle3dConfigWidget.h
+	Particle3dConfigWidget.cpp
+	ControlerConfigWidget.h
+	ControlerConfigWidget.cpp
+)
 SET(UI_SRC
 	ControlerItem.ui
 	ClipPlaneWidget.ui
+	Struct3dConfigWidget.ui
+	Particle3dConfigWidget.ui
+	Contour3dConfigWidget.ui
+	Vector3dConfigWidget.ui
+	ControlerConfigWidget.ui
 	)
 
 SET(MY_MOC_HDR
 	ControlerItem.h
 	ClipPlaneWidget.h
 	Contour3dControlerWidget.h
+	#配置窗口
+	Struct3dConfigWidget.h
+	Vector3dConfigWidget.h
+	Contour3dConfigWidget.h
+	Particle3dConfigWidget.h
 	#Contour3dControlerAction.h
+	ControlerConfigWidget.h
 )
 SET(QRC_SRC
 	resource/rce.qrc
@@ -148,6 +175,8 @@ SET(DataVisualization3D_src
 	${CONTOUR_SRCS}
 	${CONTOUR3D_SRCS}
 	${VECTOR3D_SRC}
+	${FILTER_Srcs}
+	${CONFIGWIDGET_Srcs}
 	)
 
 	
@@ -160,6 +189,8 @@ source_group("particle3d" FILES ${PARTICLE_SRC})
 source_group("contour" FILES ${CONTOUR_SRCS})
 source_group("contour3d" FILES ${CONTOUR3D_SRCS})
 source_group("vector3d" FILES ${VECTOR3D_SRC})
+source_group("filter" FILES ${FILTER_Srcs})
+source_group("configwidget" FILES ${CONFIGWIDGET_Srcs})
 
 #add_executable(DataVisualization3D ${DataVisualization3D_src})
 add_definitions(-D_DATA_VISUALIZATION_3D)

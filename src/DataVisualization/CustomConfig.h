@@ -2,8 +2,9 @@
 #include <memory>
 #include <mutex>
 #include "xml/pugixml.hpp"
+#include "exportConfig.hpp"
 namespace DV {
-	class ConfigGroup {
+	class DATA_VISUALIZATION_EXPORT ConfigGroup {
 		friend class Config;
 	public:
 		~ConfigGroup() = default;
@@ -27,17 +28,10 @@ namespace DV {
 		pugi::xml_node node;
 	};
 
-	class Config {
+	class DATA_VISUALIZATION_EXPORT Config {
 	public:
 		~Config();
-		static std::shared_ptr<Config> GetInstance() {
-			static std::once_flag flag;
-			std::call_once(flag, [&]() {
-				instance.reset(new Config);
-				});
-
-			return instance;
-		}
+		static std::shared_ptr<Config> GetInstance();
 	private:
 		Config();
 		Config(const Config&) = delete;
@@ -58,8 +52,6 @@ namespace DV {
 		//载入配置文件
 		bool loadConfig();
 		//保存文件
-		void saveFile() {
-			xmlDocument->save_file("./DataVisualizationConfig.xml");
-		}
+		void saveFile();
 	};
 };

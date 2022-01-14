@@ -73,7 +73,6 @@ void DV3D::ActorPipemline::setClipPlane(vtkSmartPointer<vtkPlane> plane)
 {
 	clipper->setClipPlane(plane);
 }
-
 /**
 * @brief DV3D::ActorPipemline::connectClipperToMapper 将数据连接到剪切器，然后将剪切器的输出连接到映射器中。
 *  如果剪切器的状态为不可用，那么会直接把输入数据连接到映射器

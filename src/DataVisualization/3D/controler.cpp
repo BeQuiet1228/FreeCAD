@@ -152,3 +152,14 @@ bool DV3D::Controler::getClipEnable()
 	return	getActorPipeline()->getClipperEnable();
 }
 
+
+void DV3D::Controler::setInitState(XmlData::ControlerXml data)
+{
+	setEdgeVisible(data.gridEnable);
+	setClipEnable(data.clipEnable);
+	setTransparent(data.alpha);
+	vtkSmartPointer<vtkPlane> planF = vtkSmartPointer<vtkPlane>::New();
+	planF->SetOrigin(data.centerPoint.x(),data.centerPoint.y(),data.centerPoint.z());
+	planF->SetNormal(data.normalPoint.x(), data.normalPoint.y(), data.normalPoint.z());
+}
+
