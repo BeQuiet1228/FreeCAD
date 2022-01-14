@@ -18,7 +18,8 @@ namespace DV3D
 		void loadConfig();
 	private:
 		vtkSmartPointer<vtkUnstructuredGridGeometryFilter> filter;
-		XmlData::ColorF colorf;
+		//XmlData::ColorF colorf;
+		DV::XmlData::XmlColor colorf;
 	};
 }
 

@@ -41,6 +41,7 @@ namespace DV3D
 		/*
 			∂¡»°≈‰÷√
 		*/
-		std::vector<XmlData::ColorF> colors;
+		//std::vector<XmlData::ColorF> colors;
+		std::vector<DV::XmlData::XmlColor> colors;
 	};
 };

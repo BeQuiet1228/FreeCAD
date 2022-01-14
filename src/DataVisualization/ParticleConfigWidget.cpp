@@ -22,10 +22,10 @@ void DV::ParticleConfigWidget::loadConfig()
 
 	*/
 	XmlData::ParticleXml xmlinfo;
-	XmlData::getXmlInfo(xmlinfo);
-	setButtonColor(ui->partcleColor, xmlinfo.color);
-	ui->partcleEdit->setText(QString::number(xmlinfo.size));
-	ui->partclecheckBox->setCheckState(xmlinfo.AlisAttitude ? Qt::Checked : Qt::Unchecked);
+	xmlinfo.loadXml();
+	setButtonColor(ui->partcleColor, xmlinfo.color.value);
+	ui->partcleEdit->setText(QString::number(xmlinfo.size.value));
+	ui->partclecheckBox->setCheckState(xmlinfo.AlisAttitude.value ? Qt::Checked : Qt::Unchecked);
 }
 
 void DV::ParticleConfigWidget::saveConfig()
@@ -34,7 +34,7 @@ void DV::ParticleConfigWidget::saveConfig()
 	xmlinfo.size = ui->partcleEdit->text().toInt();
 	xmlinfo.color = getButtonColor(ui->partcleColor);
 	xmlinfo.AlisAttitude = ((ui->partclecheckBox->checkState() == Qt::Checked) ? 1 : 0);
-	XmlData::saveXmlInfo(xmlinfo);
+	xmlinfo.saveXml();
 }
 
 void DV::ParticleConfigWidget::initUi()

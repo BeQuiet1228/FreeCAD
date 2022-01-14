@@ -19,19 +19,19 @@ DV::AxisConfigWidget::~AxisConfigWidget()
 
 void DV::AxisConfigWidget::loadConfig()
 {
-	XmlData::AxisXml xmlinfo;
-	XmlData::loadXmlInfo(xmlinfo);
-	setButtonColor(ui->axisColor, xmlinfo.axisColor);
-	setButtonColor(ui->axisvalColor, xmlinfo.axisvalColor);
-	toComboxIndex(ui->fontSize, QString::number(xmlinfo.axisSize));
-	toComboxIndex(ui->axisvalSize, QString::number(xmlinfo.axisvalSize));
+	XmlData::AxisXml axisXml;
+	axisXml.loadXml();
+	setButtonColor(ui->axisColor, axisXml.axisColor.value);
+	setButtonColor(ui->axisvalColor, axisXml.axisvalColor.value);
+	toComboxIndex(ui->fontSize, QString::number(axisXml.axisSize.value));
+	toComboxIndex(ui->axisvalSize, QString::number(axisXml.axisvalSize.value));
 	for (auto i = 0; i < ui->fontStyle->count(); ++i)
-		if (ui->fontStyle->itemText(i) == xmlinfo.font)
+		if (ui->fontStyle->itemText(i) == axisXml.font.value)
 		{
 			ui->fontStyle->setCurrentIndex(i);
 			break;
 		}
-	if (xmlinfo.infoShow)
+	if (axisXml.infoShow.value)
 	{
 		ui->infoshow->setChecked(true);
 		ui->infohide->setChecked(false);
@@ -55,7 +55,7 @@ void DV::AxisConfigWidget::saveConfig()
 	axisXml.axisvalSize = (ui->axisvalSize->itemText(ui->axisvalSize->currentIndex())).toInt();
 	axisXml.infoShow = ((ui->infoshow->isChecked()) ? 1 : 0);
 	axisXml.font = ui->fontStyle->itemText(ui->fontStyle->currentIndex());
-	XmlData::saveXmlInfo(axisXml);
+	axisXml.saveXml();
 }
 
 void DV::AxisConfigWidget::initUi()

@@ -22,60 +22,58 @@ DV::ContourConfigWidget::~ContourConfigWidget()
 void DV::ContourConfigWidget::loadConfig()
 {
 	/*
-		
+
 	*/
 	XmlData::ContourXml xmlinfo;
-	XmlData::getXmlInfo(xmlinfo);
-	if(xmlinfo.lineMapColors=="ScaleColors")
+	xmlinfo.loadXml();
+	if (xmlinfo.lineMapColors.value == "ScaleColors")
 	{
 		ui->ScaledColors->setChecked(true);
 		ui->FixedColors->setChecked(false);
 		mColorTab->setColorStyle(1);
 	}
-	if(xmlinfo.valueStyle=="raidoOfequality")
+	if (xmlinfo.valueStyle.value == "raidoOfequality")
 	{
 		ui->raidoOfequality->setChecked(true);
 		ui->equivalent->setChecked(false);
 	}
-	if (!xmlinfo.values.empty())
+	std::vector<float> values = xmlinfo.colorBar.values.toVector();
+	std::vector<QColor> colors = xmlinfo.colorBar.colors.toVector();
+	if (xmlinfo.colorBar.values.Size() > 0)
 	{
-		arrowCtrl->setvals(xmlinfo.values, xmlinfo.colors);
-		mColorTab->setColors(xmlinfo.values, xmlinfo.colors);
-		setButtonColor(ui->firstColorBtn,*(xmlinfo.colors.begin()));
-		setButtonColor(ui->endColorBtn,*(xmlinfo.colors.end()-1));
-		arrowCtrl->SetEndColor(*(xmlinfo.colors.end() - 1));
-		arrowCtrl->SetFirstColor(*xmlinfo.colors.begin());
+		arrowCtrl->setvals(values, colors);
+		mColorTab->setColors(values, colors);
+		setButtonColor(ui->firstColorBtn, *(colors.begin()));
+		setButtonColor(ui->endColorBtn, *(colors.end() - 1));
+		arrowCtrl->SetEndColor(*(colors.end() - 1));
+		arrowCtrl->SetFirstColor(*colors.begin());
 	}
+
+	return;
 }
 
 void DV::ContourConfigWidget::saveConfig()
 {
-	Config::GetInstance()->loadConfig();
-	ConfigGroup Group = Config::GetInstance()->getRootGroup();
+	XmlData::ContourXml xmlinfo;
 	//等位图
-	auto contourGroup = Group.getGroup("contour");
 	ui->equivalent;//等值
 	ui->raidoOfequality;//等比
-	if (ui->ScaledColors->isChecked()) contourGroup.getGroup("lineMapColors").setSetting("value", "ScaleColors");
-	else contourGroup.getGroup("lineMapColors").setSetting("value", "FixedColors");
-	(ui->concheckBox->checkState() == Qt::Checked) ? (contourGroup.getGroup("AlisAttitude").setSetting("isAlis", "1")) : (contourGroup.getGroup("AlisAttitude").setSetting("isAlis", "0"));
-	if (ui->equivalent->isChecked()) contourGroup.getGroup("valueStyle").setSetting("value", "equivalent");
-	else contourGroup.getGroup("valueStyle").setSetting("value", "raidoOfequality");
-	//lineMapValue
+	if (ui->ScaledColors->isChecked())
+		xmlinfo.lineMapColors = QString("ScaleColors");
+	else
+		xmlinfo.lineMapColors = QString("FixedColors");
+	(ui->concheckBox->checkState() == Qt::Checked) ?
+		(xmlinfo.AlisAttitude = 1) : (xmlinfo.AlisAttitude = 0);
+	if (ui->equivalent->isChecked())
+		xmlinfo.valueStyle = QString("equivalent");
+	else
+		xmlinfo.valueStyle = QString("raidoOfequality");
 	//获取颜色
-	{
-		std::vector<float> vals;
-		vals = arrowCtrl->getValue();
-		auto levelGroup = contourGroup.getGroup("lineMapColorval");
-		levelGroup.setSetting("valueNumber", QString("%1").arg(vals.size()).toStdString());
-		std::vector<QColor> colors = mColorTab->GetColors(vals);
-		for (auto index = 0; index < vals.size(); index++)
-		{
-			levelGroup.getGroup(QString("level_%1").arg(index).toStdString()).setSetting("value", QString("%1").arg(vals[index]).toStdString());
-			levelGroup.getGroup(QString("level_%1").arg(index).toStdString()).setSetting("color", QColorToQstring(colors[index]).toStdString());
-		}
-	}
-	Config::GetInstance()->saveFile();
+	std::vector<float> vals;
+	vals = arrowCtrl->getValue();
+	xmlinfo.colorBar.values = vals;
+	xmlinfo.colorBar.colors = mColorTab->GetColors(vals);
+	xmlinfo.saveXml();
 }
 
 void DV::ContourConfigWidget::initUi()

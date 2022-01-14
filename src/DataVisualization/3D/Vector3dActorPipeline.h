@@ -16,7 +16,8 @@ namespace DV3D
 		void loadConfig();
 		void updataLookupTable();
 	private:
-		std::vector<XmlData::ColorF> colorfs;
+		//std::vector<XmlData::ColorF> colorfs;
+		std::vector <DV::XmlData::XmlColor > colorfs;
 		vtkSmartPointer<vtkLookupTable> lookupTable;
 	};
 }

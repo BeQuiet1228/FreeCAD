@@ -21,7 +21,7 @@ void DV::StructConfigWidget::loadConfig()
 		¶ÁÈ¡ÊôÐÔ
 	*/
 	XmlData::StructXml xmlInfo;
-	XmlData::getXmlInfo(xmlInfo);
+	xmlInfo.loadXml();
 #define LOADCONFIGCOLOR(a,c)\
 	{\
 setButtonColor(c##Color, xmlInfo.proPerty[#a]);\
@@ -46,22 +46,48 @@ setButtonColor(c##lineColor, xmlInfo.proPerty[#a "LINE"]);\
 
 	//¿¹¾â³Ý
 
-	ui->structcheckBox->setCheckState((xmlInfo.AlisAttitude) ? Qt::Checked : Qt::Unchecked);
+	ui->structcheckBox->setCheckState((xmlInfo.AlisAttitude.value) ? Qt::Checked : Qt::Unchecked);
 
 
 }
 
 void DV::StructConfigWidget::saveConfig()
 {
-	/*
-	* 
-	*/
 	XmlData::StructXml xmlInfo;
-	xmlInfo.proPerty.clear();
 	for (auto iter = btnList.begin(); iter != btnList.end(); iter++)
-		saveData(xmlInfo.proPerty, *iter);
+	{
+		bool isLine = false;
+		if ((*iter)->GetStructType() == StructButton::LINE)
+			isLine = true;
+		auto color = getButtonColor((*iter));
+#define XX(a)\
+case (a):\
+	{\
+		if (!isLine)\
+			xmlInfo.proPerty[(#a+14)]=color;\
+		else\
+			xmlInfo.proPerty[(#a "LINE" + 14)]=color;\
+	}\
+	break;
+		switch ((*iter)->GetStructTexture())
+		{
+			XX(StructButton::VACUO);
+			XX(StructButton::PERFECTCONDUCTOR);
+			XX(StructButton::CONDUCTORNEW);
+			XX(StructButton::DIOLECTRIC);
+			XX(StructButton::DIELECTIRANDCONDUCTANCE);
+			XX(StructButton::PERMEABILITY);
+			XX(StructButton::FREESPACE);
+			XX(StructButton::FOIL);
+			//Ïß¶Î
+			XX(StructButton::PORT);
+			XX(StructButton::DRIVER);
+			XX(StructButton::INDUCTOR);
+		}
+#undef XX(a)
+	}
 	xmlInfo.AlisAttitude=((ui->structcheckBox->checkState() == Qt::Checked) ? 1 : 0);
-	XmlData::saveXmlInfo(xmlInfo);
+	xmlInfo.saveXml();
 }
 
 void DV::StructConfigWidget::initUi()
@@ -101,41 +127,6 @@ void DV::StructConfigWidget::initUi()
 	SETSTRUCTPERPORE(ui->Driver, StructButton::BLACK, StructButton::DRIVER);
 #undef SETSTRUCTPERPORE(a,b,c) 
 }
-
-void DV::StructConfigWidget::saveData(std::map<std::string, QColor>& group, StructButton* btn)
-{
-	bool isLine = false;
-	if (btn->GetStructType() == StructButton::LINE)
-		isLine = true;
-	//std::string colorStr = getButtonColorstr(btn);
-	auto color = getButtonColor(btn);
-#define XX(a)\
-case (a):\
-	{\
-		if (!isLine)\
-			group.insert(std::pair<std::string,QColor>((#a+14),color));\
-		else\
-			group.insert(std::pair<std::string,QColor>((#a "LINE" + 14),color));\
-	}\
-	break;
-	switch (btn->GetStructTexture())
-	{
-		XX(StructButton::VACUO);
-		XX(StructButton::PERFECTCONDUCTOR);
-		XX(StructButton::CONDUCTORNEW);
-		XX(StructButton::DIOLECTRIC);
-		XX(StructButton::DIELECTIRANDCONDUCTANCE);
-		XX(StructButton::PERMEABILITY);
-		XX(StructButton::FREESPACE);
-		XX(StructButton::FOIL);
-		//Ïß¶Î
-		XX(StructButton::PORT);
-		XX(StructButton::DRIVER);
-		XX(StructButton::INDUCTOR);
-	}
-#undef XX(a)
-}
-
 void DV::StructConfigWidget::btnClicked()
 {
 	auto button = dynamic_cast<QPushButton*>(sender());

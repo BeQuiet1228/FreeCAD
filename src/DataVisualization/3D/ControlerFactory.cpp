@@ -88,7 +88,7 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContour3dControler
 	controler->setActorPipeline(pipeline);
 	{
 		XmlData::Contour3dXml xmlinf;
-		XmlData::loadXmlInfo(xmlinf);
+		xmlinf.loadXml();
 		controler->setInitState(xmlinf.controlerXml);
 	}
 	return controler;
