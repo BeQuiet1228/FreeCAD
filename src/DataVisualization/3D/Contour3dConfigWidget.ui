@@ -100,7 +100,7 @@
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>插值：</string>
+           <string>非直角坐标系Thea方向分辨率(越高平滑度越好)：</string>
           </property>
          </widget>
         </item>

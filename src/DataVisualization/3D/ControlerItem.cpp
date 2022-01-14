@@ -33,6 +33,7 @@ void DV3D::ControlerItem::setControler(std::shared_ptr<Controler> controler)
 		iter->second->initState(controler);
 		iter->second->update(iter->first);
 	}
+	ui->horizontalSlider->setValue(controler->getTranparent() * 100);
 }
 
 void DV3D::ControlerItem::addAction(std::shared_ptr<ControlerAction> action)

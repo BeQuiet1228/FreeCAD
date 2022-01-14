@@ -8,10 +8,10 @@ DV3D::ControlerItem* DV3D::ControlerItemFactor::CreatControlerItem()
 
 	std::shared_ptr<ControlerClipEnable> clip(new ControlerClipEnable());
 	std::shared_ptr<ControlerEdgeVisible> edge(new ControlerEdgeVisible());
-	//std::shared_ptr<ControlerClipPlan> controlerClipPlan(new ControlerClipPlan());
+	std::shared_ptr<ControlerClipPlan> controlerClipPlan(new ControlerClipPlan());
 	item->addAction(clip);
 	item->addAction(edge);
-	//item->addAction(controlerClipPlan);
+	item->addAction(controlerClipPlan);
 	
 	return item;
 }
@@ -27,6 +27,15 @@ DV3D::ControlerItem* DV3D::ControlerItemFactor::CreatContour3dControlerItem()
 }
 
 /**
+* @brief DV3D::ControlerItemFactor::CreatStructPlorRotateControlerItem 为特殊情况下旋转得出的结构图创建控制器界面
+* @return DV3D::ControlerItem*
+*/
+DV3D::ControlerItem* DV3D::ControlerItemFactor::CreatStructPlorRotateControlerItem()
+{
+	return new ControlerItem();
+}
+
+/**
 * @brief DV3D::ControlerItemFactor::AddSaveAction 为item添加一个保存按钮
 * @param ControlerItem * item item
 * @param Hdf5Data & data 要保存的HDF5数据
@@ -35,7 +44,6 @@ DV3D::ControlerItem* DV3D::ControlerItemFactor::CreatContour3dControlerItem()
 */
 DV3D::ControlerItem* DV3D::ControlerItemFactor::AddSaveAction(ControlerItem* item, Hdf5Data& data, const QString& path /*=""*/)
 {
-	return item;
 	auto saveAction = std::make_shared<ControlerSave>();
 	saveAction->setHdf5Data(data);
 	saveAction->setPath(path);
