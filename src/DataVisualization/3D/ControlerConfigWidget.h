@@ -1,6 +1,7 @@
 #pragma once
 #include <QWidget>
 #include "../ConfigUnify.h"
+#include"XmlGroup3D.h"
 namespace Ui
 {
 	class ControlerConfigWidget;
@@ -15,8 +16,9 @@ namespace DV3D
 		~ControlerConfigWidget();
 	public:
 		void initUi();
-		void loadConfig();
-		void saveConfig();
+		void loadConfig(XmlData::ControlerXml&);
+		void saveConfig(XmlData::ControlerXml&);
+
 		void setParentGroup(std::string);
 	protected Q_SLOTS:
 		void slotSliderChange(int);

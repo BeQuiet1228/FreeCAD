@@ -3,7 +3,7 @@
 #define POLAR_STRUCT_ACTOR_PIPELINE_H_
 #include"actorPipeline.h"
 #include"vtkUnstructuredGridGeometryFilter.h"
-#include "XmlGroup3D.h"
+#include"QColor"
 namespace DV3D
 {
 	class PolarStructActorPipeline:public ActorPipemline
@@ -19,7 +19,7 @@ namespace DV3D
 	private:
 		vtkSmartPointer<vtkUnstructuredGridGeometryFilter> filter;
 		//XmlData::ColorF colorf;
-		DV::XmlData::XmlColor colorf;
+		QColor colorf;
 	};
 }
 

@@ -14,11 +14,11 @@ namespace DV
 		/*
 			读取配置
 		*/
-		virtual void loadConfig() = 0;
+		virtual void loadConfig() {}
 		/*
 			保存配置
 		*/
-		virtual void saveConfig() = 0;
+		virtual void saveConfig() {}
 	protected:
 		/*
 			一些派生类通用的方法

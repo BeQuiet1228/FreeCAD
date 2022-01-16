@@ -2,7 +2,7 @@
 #include "actorPipeline.h"
 #include "vtkArrowSource.h"
 #include "vtkLookupTable.h"
-#include "XmlGroup3D.h"
+#include"QColor"
 namespace DV3D
 {
 	class Vector3dActorPipeline:public ActorPipemline
@@ -17,7 +17,7 @@ namespace DV3D
 		void updataLookupTable();
 	private:
 		//std::vector<XmlData::ColorF> colorfs;
-		std::vector <DV::XmlData::XmlColor > colorfs;
+		std::vector <QColor> colorfs;
 		vtkSmartPointer<vtkLookupTable> lookupTable;
 	};
 }

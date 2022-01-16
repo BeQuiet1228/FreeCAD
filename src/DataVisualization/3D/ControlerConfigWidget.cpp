@@ -26,10 +26,9 @@ void DV3D::ControlerConfigWidget::initUi()
 	ui->alphaSlider->setSingleStep(1);
 	connect(ui->alphaSlider, SIGNAL(valueChanged(int )),this,SLOT(slotSliderChange(int)));
 }
-void DV3D::ControlerConfigWidget::loadConfig()
+void DV3D::ControlerConfigWidget::loadConfig(XmlData::ControlerXml& xmlinfo)
 {
-	XmlData::ControlerXml xmlinfo;
-	XmlData::loadXmlInfo(xmlinfo,parentGroup);
+	xmlinfo.loadXml();
 	ui->centerX->setText(QString::number(xmlinfo.centerPoint.x()));
 	ui->centerY->setText(QString::number(xmlinfo.centerPoint.y()));
 	ui->centerZ->setText(QString::number(xmlinfo.centerPoint.z()));
@@ -37,14 +36,13 @@ void DV3D::ControlerConfigWidget::loadConfig()
 	ui->normalY->setText(QString::number(xmlinfo.normalPoint.y()));
 	ui->normalZ->setText(QString::number(xmlinfo.normalPoint.z()));
 
-	int per = xmlinfo.alpha * 100;
+	int per = xmlinfo.alpha.value * 100;
 	ui->alphaSlider->setValue(per);
-	ui->clipCheckBox->setCheckable(xmlinfo.clipEnable?Qt::Checked:Qt::Unchecked);
-	ui->gridCheckBox->setCheckState(xmlinfo.gridEnable?Qt::Checked:Qt::Unchecked);
+	ui->clipCheckBox->setCheckable(xmlinfo.clipEnable.value?Qt::Checked:Qt::Unchecked);
+	ui->gridCheckBox->setCheckState(xmlinfo.gridEnable.value?Qt::Checked:Qt::Unchecked);
 }
-void DV3D::ControlerConfigWidget::saveConfig()
+void DV3D::ControlerConfigWidget::saveConfig(XmlData::ControlerXml& xmlinfo)
 {
-	XmlData::ControlerXml xmlinfo;
 	xmlinfo.alpha = ui->alphaEdit->text().toDouble();
 	xmlinfo.clipEnable = (ui->clipCheckBox->checkState() == Qt::Checked ? 1 : 0);
 	xmlinfo.gridEnable = (ui->gridCheckBox->checkState() == Qt::Checked ? 1 : 0);
@@ -55,7 +53,8 @@ void DV3D::ControlerConfigWidget::saveConfig()
 	xmlinfo.normalPoint.setX(ui->normalX->text().toDouble());
 	xmlinfo.normalPoint.setY(ui->normalX->text().toDouble());
 	xmlinfo.normalPoint.setZ(ui->normalX->text().toDouble());
-	XmlData::saveXmlInfo(xmlinfo, parentGroup);
+	//XmlData::saveXmlInfo(xmlinfo, parentGroup);
+	xmlinfo.saveXml();
 }
 
 void DV3D::ControlerConfigWidget::setParentGroup(std::string val)

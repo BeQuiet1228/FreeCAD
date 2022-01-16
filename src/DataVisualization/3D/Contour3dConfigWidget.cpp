@@ -21,27 +21,29 @@ DV3D::Contour3dConfigWidget::~Contour3dConfigWidget()
 void DV3D::Contour3dConfigWidget::loadConfig()
 {
 	XmlData::Contour3dXml xmlinf;
-	XmlData::loadXmlInfo(xmlinf);
-	ui->rotationEdit->setText(QString::number(xmlinf.Rotation));
-	if (!xmlinf.colorbar.values.empty())
+	xmlinf.loadXml();
+	ui->rotationEdit->setText(QString::number(xmlinf.Rotation.value));
+	std::vector<float> values = xmlinf.colorbar.values.toVector();
+	std::vector<QColor> colors = xmlinf.colorbar.colors.toVector();
+	if (!values.empty())
 	{
-		arrowCtrl->setvals(xmlinf.colorbar.values,xmlinf.colorbar.colors);
-		mColorTab->setColors(xmlinf.colorbar.values, xmlinf.colorbar.colors);
-		arrowCtrl->SetEndColor(*(xmlinf.colorbar.colors.end() - 1));
-		arrowCtrl->SetFirstColor(*xmlinf.colorbar.colors.begin());
-		setButtonColor(ui->firstColorBtn, *xmlinf.colorbar.colors.begin());
-		setButtonColor(ui->endColorBtn, *(xmlinf.colorbar.colors.end() - 1));
+		arrowCtrl->setvals(values,colors);
+		mColorTab->setColors(values, colors);
+		arrowCtrl->SetEndColor(*(colors.end() - 1));
+		arrowCtrl->SetFirstColor(*colors.begin());
+		setButtonColor(ui->firstColorBtn, *colors.begin());
+		setButtonColor(ui->endColorBtn, *(colors.end() - 1));
 	}
-	controlerConfigWidget->loadConfig();
+	controlerConfigWidget->loadConfig(xmlinf.controlerXml);
 }
 void DV3D::Contour3dConfigWidget::saveConfig()
 {
 	XmlData::Contour3dXml xmlinfo;
 	xmlinfo.colorbar.values = arrowCtrl->getValue();
-	xmlinfo.colorbar.colors = mColorTab->GetColors(xmlinfo.colorbar.values);
+	xmlinfo.colorbar.colors = mColorTab->GetColors(xmlinfo.colorbar.values.toVector());
 	xmlinfo.Rotation = ui->rotationEdit->text().toInt();
-	XmlData::saveXmlInfo(xmlinfo);
-	controlerConfigWidget->saveConfig();
+	xmlinfo.saveXml();
+	controlerConfigWidget->saveConfig(xmlinfo.controlerXml);
 }
 void DV3D::Contour3dConfigWidget::initUi()
 {

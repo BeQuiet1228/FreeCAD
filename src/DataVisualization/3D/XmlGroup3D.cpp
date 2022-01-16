@@ -187,3 +187,36 @@ DV3D::XmlData::Vector3dXml::Vector3dXml()
 	push_back(&colorBar);
 	push_back(&controlerXml);
 }
+
+std::vector<QColor> DV3D::XmlData::getColors(std::vector<float>& values, std::vector<QColor>& colors, int black)
+{
+	std::vector<QColor> newColors;
+	newColors.reserve(black);
+	newColors.push_back(colors[0]);
+	auto index = 0;
+	for (auto i = 1; i < black; ++i)
+	{
+		/*
+			获取值的范围
+		*/
+		//auto index = 0;
+		while (i > values[index++] * black);
+		index--;
+		auto nextcolor = colors[index];
+		auto lastcolor = colors[index - 1];
+		auto nextvalue = values[index] * black;
+		auto lastvalue = values[index - 1] * black;
+		/*
+			开始计算颜色值
+		*/
+		//获取比例
+		auto step = (i - lastvalue) / (nextvalue - lastvalue);
+		QColor temp;
+		temp.setAlphaF((nextcolor.alphaF() - lastcolor.alphaF()) * step + lastcolor.alphaF());
+		temp.setRedF((nextcolor.redF() - lastcolor.redF()) * step + lastcolor.redF());
+		temp.setGreenF((nextcolor.greenF() - lastcolor.greenF()) * step + lastcolor.greenF());
+		temp.setBlueF((nextcolor.blueF() - lastcolor.blueF()) * step + lastcolor.blueF());
+		newColors.push_back(temp);
+	}
+	return newColors;
+}

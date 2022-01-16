@@ -3,6 +3,7 @@
 #include "vtkPolyDataMapper.h"
 #include "../CustomConfig.h"
 #include "QString"
+#include "XmlGroup3D.h"
 DV3D::Vector3dActorPipeline::Vector3dActorPipeline()
 {
 	auto ac = vtkSmartPointer<vtkActor>::New();
@@ -43,8 +44,10 @@ void DV3D::Vector3dActorPipeline::loadConfig()
 {
 	colorfs.clear();
 	XmlData::Vector3dXml xmlInfo;
-	XmlData::loadXmlInfo(xmlInfo);
-	colorfs = XmlData::getColors(xmlInfo.colorBar.values, xmlInfo.colorBar.colors);
+	xmlInfo.loadXml();
+	colorfs=XmlData::getColors(xmlInfo.colorBar.values.toVector()
+	,xmlInfo.colorBar.colors.toVector());
+	//colorfs = XmlData::getColors(xmlInfo.colorBar., xmlInfo.colorBar.colors);
 }
 
 void DV3D::Vector3dActorPipeline::updataLookupTable()
@@ -56,6 +59,10 @@ void DV3D::Vector3dActorPipeline::updataLookupTable()
 	//colors=getColors(values,colors);
 	lookupTable->SetNumberOfTableValues(colorfs.size());
 	for (auto i = 0; i < colorfs.size(); ++i)
-		lookupTable->SetTableValue(i, colorfs[i].r, colorfs[i].g, colorfs[i].b, colorfs[i].a);
+		lookupTable->SetTableValue(i
+			, colorfs[i].redF()
+			, colorfs[i].greenF()
+			, colorfs[i].blueF()
+			, colorfs[i].alphaF());
 	lookupTable->Build();
 }

@@ -29,20 +29,22 @@ DV3D::Vector3dConfigWidget::~Vector3dConfigWidget()
 void DV3D::Vector3dConfigWidget::loadConfig()
 {
 	XmlData::Vector3dXml xmlinfo;
-	XmlData::loadXmlInfo(xmlinfo);
-	ui->xGridInc->setText(QString::number(xmlinfo.XorRGridInc));
-	ui->yGridInc->setText(QString::number(xmlinfo.YorThetaGridInc));
-	ui->zGridInc->setText(QString::number(xmlinfo.ZGridInc));
-	if (!xmlinfo.colorBar.values.empty())
+	xmlinfo.loadXml();
+	ui->xGridInc->setText(QString::number(xmlinfo.XorRGridInc.value));
+	ui->yGridInc->setText(QString::number(xmlinfo.YorThetaGridInc.value));
+	ui->zGridInc->setText(QString::number(xmlinfo.ZGridInc.value));
+	std::vector<float> values = xmlinfo.colorBar.values.toVector();
+	std::vector<QColor> colors = xmlinfo.colorBar.colors.toVector();
+	if (!values.empty())
 	{
-		arrowCtrl->setvals(xmlinfo.colorBar.values,xmlinfo.colorBar.colors);
-		mColorTab->setColors(xmlinfo.colorBar.values, xmlinfo.colorBar.colors);
-		arrowCtrl->SetEndColor(*(xmlinfo.colorBar.colors.end() - 1));
-		arrowCtrl->SetFirstColor(*xmlinfo.colorBar.colors.begin());
-		setButtonColor(ui->firstColorBtn, *xmlinfo.colorBar.colors.begin());
-		setButtonColor(ui->endColorBtn, *(xmlinfo.colorBar.colors.end() - 1));
+		arrowCtrl->setvals(values,colors);
+		mColorTab->setColors(values, colors);
+		arrowCtrl->SetEndColor(*(colors.end() - 1));
+		arrowCtrl->SetFirstColor(*colors.begin());
+		setButtonColor(ui->firstColorBtn, *colors.begin());
+		setButtonColor(ui->endColorBtn, *(colors.end() - 1));
 	}
-	controlerConfigWidget->loadConfig();
+	controlerConfigWidget->loadConfig(xmlinfo.controlerXml);
 }
 
 
@@ -58,9 +60,9 @@ void DV3D::Vector3dConfigWidget::saveConfig()
 	xmlinf.YorThetaGridInc= ui->yGridInc->text().toInt();
 	xmlinf.ZGridInc= ui->zGridInc->text().toInt();
 	xmlinf.colorBar.values= arrowCtrl->getValue();
-	xmlinf.colorBar.colors= mColorTab->GetColors(xmlinf.colorBar.values);
-	XmlData::saveXmlInfo(xmlinf);
-	controlerConfigWidget->saveConfig();
+	xmlinf.colorBar.colors= mColorTab->GetColors(xmlinf.colorBar.values.toVector());
+	controlerConfigWidget->saveConfig(xmlinf.controlerXml);
+	xmlinf.saveXml();
 }
 
 /**

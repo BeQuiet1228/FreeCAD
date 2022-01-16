@@ -15,6 +15,7 @@ namespace DV3D {
 		virtual void loadConfig();
 	protected:
 		//XmlData::ColorF colorf;
-		DV::XmlData::XmlColor colof;
+		//DV::XmlData::XmlColor colof;
+		QColor colorf;
 	};
 }

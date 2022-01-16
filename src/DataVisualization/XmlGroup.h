@@ -44,6 +44,7 @@ a##(std::vector<std::string> va1,std::string va2):b(va1,va2){}
 		{
 		public:
 			XMLDATABIND(XmlColor, XmlObject);
+			XmlColor();
 			XmlColor& operator =(XmlColor& that);
 			void operator =(const QColor&);
 		public:
