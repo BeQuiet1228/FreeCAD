@@ -18,18 +18,18 @@ DV3D::Particle3dConfigWidget::~Particle3dConfigWidget()
 void DV3D::Particle3dConfigWidget::loadConfig()
 {
 	XmlData::Particle3dXml xmlinfo;
-	XmlData::loadXmlInfo(xmlinfo);
-	setButtonColor(ui->particleColor,xmlinfo.particleColor);
-	ui->particleSize->setText(QString::number(xmlinfo.particleSize));
-	controlerConfigWidget->loadConfig();
+	xmlinfo.loadXml();
+	setButtonColor(ui->particleColor,xmlinfo.particleColor.value);
+	ui->particleSize->setText(QString::number(xmlinfo.particleSize.value));
+	controlerConfigWidget->loadConfig(xmlinfo.controlerXml);
 }
 void DV3D::Particle3dConfigWidget::saveConfig()
 {
 	XmlData::Particle3dXml xmlInfo;
 	xmlInfo.particleColor = getButtonColor(ui->particleColor);
 	xmlInfo.particleSize = ui->particleSize->text().toDouble();
-	XmlData::saveXmlInfo(xmlInfo);
-	controlerConfigWidget->saveConfig();
+	xmlInfo.saveXml();
+	controlerConfigWidget->saveConfig(xmlInfo.controlerXml);
 }
 void DV3D::Particle3dConfigWidget::initUi()
 {

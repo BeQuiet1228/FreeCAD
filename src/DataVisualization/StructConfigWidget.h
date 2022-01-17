@@ -21,7 +21,6 @@ namespace DV
 		void saveConfig();
 	protected:
 		void initUi();
-		void saveData(std::map<std::string,QColor>&,StructButton*);
 	protected Q_SLOTS:
 		void btnClicked();
 	private:

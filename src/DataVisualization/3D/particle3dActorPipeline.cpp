@@ -15,16 +15,16 @@ void DV3D::Particle3dActorPipeline::connect()
 	CartesianStructActorPipeline::connect();
 	auto actor = getActor();
 	//actor->GetProperty()->SetColor(1, 0, 0);
-	actor->GetProperty()->SetColor(colorf.r, colorf.g, colorf.b);
+	actor->GetProperty()->SetColor(colorf.redF(), colorf.greenF(), colorf.blueF());
 	actor->GetProperty()->SetPointSize(particleSize);
 }
 
 void DV3D::Particle3dActorPipeline::loadConfig()
 {
 	XmlData::Particle3dXml xmlInfo;
-	XmlData::loadXmlInfo(xmlInfo);
-	colorf = XmlData::getColors(xmlInfo.particleColor);
-	particleSize = xmlInfo.particleSize;
+	xmlInfo.loadXml();
+	colorf = xmlInfo.particleColor.value;
+	particleSize = xmlInfo.particleSize.value;
 	if (particleSize < 0.000001f)
 		particleSize = 1.0f;
 	return;

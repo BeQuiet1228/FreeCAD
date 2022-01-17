@@ -3,7 +3,7 @@
 #include"vtkProperty.h"
 #include"vtk-7.0/vtkMapper.h"
 #include"vtkPolyDataNormals.h"
-#include "../CustomConfig.h"
+#include"XmlGroup3D.h"
 DV3D::PolarStructActorPipeline::PolarStructActorPipeline() {
 	auto ac = vtkSmartPointer<vtkActor>::New();
 	auto mp = vtkSmartPointer<vtkDataSetMapper>::New();
@@ -37,14 +37,14 @@ void DV3D::PolarStructActorPipeline::connect() {
 
 	auto ac = getActor();
 	ac->SetMapper(mp);
-	ac->GetProperty()->SetColor(colorf.r,colorf.g,colorf.b);
+	ac->GetProperty()->SetColor(colorf.redF(),colorf.greenF(),colorf.blueF());
 }
 
 void DV3D::PolarStructActorPipeline::loadConfig()
 {
 	XmlData::Struct3dXml xmlInfo;
-	XmlData::loadXmlInfo(xmlInfo);
-	colorf = XmlData::getColors(xmlInfo.color);
+	xmlInfo.loadXml();
+	colorf = xmlInfo.color.value;
 	return;
 }
 

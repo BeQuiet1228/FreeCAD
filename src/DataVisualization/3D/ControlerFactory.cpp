@@ -88,7 +88,7 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContour3dControler
 	controler->setActorPipeline(pipeline);
 	{
 		XmlData::Contour3dXml xmlinf;
-		XmlData::loadXmlInfo(xmlinf);
+		xmlinf.loadXml();
 		controler->setInitState(xmlinf.controlerXml);
 	}
 	return controler;
@@ -121,7 +121,7 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatVector3dControler(
 	controler->setActorPipeline(pipeline);
 	{
 		XmlData::Vector3dXml xmlinf;
-		XmlData::loadXmlInfo(xmlinf);
+		xmlinf.loadXml();
 		controler->setInitState(xmlinf.controlerXml);
 	}
 	return controler;
@@ -160,7 +160,7 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucControler(Hdf
 	controler->setActorPipeline(pipeline);
 	{
 		XmlData::Struct3dXml xmlinf;
-		XmlData::loadXmlInfo(xmlinf);
+		xmlinf.loadXml();
 		controler->setInitState(xmlinf.controlerXml);
 	}
 	
@@ -215,7 +215,7 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatParticle3dControle
 	controler->setActorPipeline(pipeline);
 	{
 		XmlData::Particle3dXml xmlinfo;
-		XmlData::loadXmlInfo(xmlinfo);
+		xmlinfo.loadXml();
 		controler->setInitState(xmlinfo.controlerXml);
 	}
 	assert(controler && "controler is nullptr!");

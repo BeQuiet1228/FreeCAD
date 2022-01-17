@@ -36,14 +36,14 @@ void DV3D::CartesianStructActorPipeline::connect()
 
 	auto ac = getActor();
 	ac->SetMapper(mp);
-	ac->GetProperty()->SetColor(colorf.r, colorf.g, colorf.b);
+	ac->GetProperty()->SetColor(colorf.redF(), colorf.greenF(), colorf.blueF());
 }
 
 void DV3D::CartesianStructActorPipeline::loadConfig()
 {
 	XmlData::Struct3dXml xmlInfo;
-	XmlData::loadXmlInfo(xmlInfo);
-	colorf = XmlData::getColors(xmlInfo.color);
+	xmlInfo.loadXml();
+	colorf = xmlInfo.color.value;
 	return;
 }
 

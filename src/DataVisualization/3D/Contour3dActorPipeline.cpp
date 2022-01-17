@@ -68,11 +68,12 @@ void DV3D::Contour3dActorPipline::loadConfig()
 	//	colors.push_back(getColors(valueNumberGroup.getGroup(QString("level_%1").arg(index).toStdString()).getValue("color")));
 	//}
 	XmlData::Contour3dXml xmlinfo;
-	XmlData::loadXmlInfo(xmlinfo);
+	xmlinfo.loadXml();
 	/*
 		生成过度表
 	*/
-	colors = XmlData::getColors(xmlinfo.colorbar.values, xmlinfo.colorbar.colors);
+	colors = XmlData::getColors(xmlinfo.colorbar.values.toVector()
+		, xmlinfo.colorbar.colors.toVector());
 }
 void DV3D::Contour3dActorPipline::setContourSurfarCount(const int& n)
 {
@@ -159,6 +160,10 @@ void DV3D::Contour3dActorPipline::updataLookupTable()
 	//colors=getColors(values,colors);
 	lookupTable->SetNumberOfTableValues(colors.size());
 	for (auto i=0;i<colors.size();++i)
-		lookupTable->SetTableValue(i, colors[i].r, colors[i].g, colors[i].b, colors[i].a);
+		lookupTable->SetTableValue(i
+			, colors[i].redF()
+			, colors[i].greenF()
+			, colors[i].blueF()
+			, colors[i].alphaF());
 	lookupTable->Build();
 }
