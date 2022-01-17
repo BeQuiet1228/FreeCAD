@@ -19,10 +19,8 @@ using VectorF = std::vector<float>;
 class CONTROL_EXPORT Hdf5Data
 {
 public:
-	Hdf5Data(std::shared_ptr<H5File> h5){
-		this->hdf5File = h5;
-	}
-	Hdf5Data() = default;
+	Hdf5Data(std::shared_ptr<H5File> h5);
+	Hdf5Data();
 
 public:
 	enum CoordinateSystem{
@@ -56,6 +54,9 @@ public:
 	bool initM2dStructInformation();
 	void init();
 
+private:
+	//初始化数据
+	void initData();
 };
 
 class CONTROL_EXPORT Hdf5IO
