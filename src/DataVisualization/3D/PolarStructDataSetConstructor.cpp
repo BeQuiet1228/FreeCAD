@@ -7,15 +7,36 @@
 #include"vtkCellArray.h"
 #include"vtkRotationalExtrusionFilter.h"
 #include"vtkFloatArray.h"
-DV3D::PolarStructDaraSetConstruct::PolarStructDaraSetConstruct() :rSize(0), thetaSize(0), zSize(0) {
+#define _USE_MATH_DEFINES
+#include"math.h"
+const float preciSion = 0.00001f;//精度
+
+DV3D::PolarStructDaraSetConstruct::PolarStructDaraSetConstruct() :rSize(0), thetaSize(0), zSize(0), isCir(false) {
 
 }
 DV3D::PolarStructDaraSetConstruct::~PolarStructDaraSetConstruct() {
 
 }
+/**
+* @brief DV3D::PolarStructDaraSetConstruct::isComCir 判断是否为闭关的圆
+* @param std::vector<float> & thetas
+* @return bool
+* @time	2021/12/15
+*/
+bool DV3D::PolarStructDaraSetConstruct::isComCir(std::vector<float>& thetas)
+{
+	//判断角度是否为一个封闭的圆
+	auto maxTheta = thetas.end() - 1;
+	auto minTheta = thetas.begin();
+	if (2 * M_PI - (*maxTheta) > -preciSion && 2 * M_PI - (*maxTheta) < preciSion &&
+		(*minTheta)>-preciSion && (*minTheta)< preciSion)
+		return true;
+	return false;
+}
 vtkSmartPointer<vtkDataSet> DV3D::PolarStructDaraSetConstruct::creatDataset() {
 	initPoints();
 	auto value = getPolarIndex();
+
 	auto ugrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
 	ugrid->Allocate(value.size() * 4);
 	//添加六面体
@@ -49,6 +70,7 @@ void DV3D::PolarStructDaraSetConstruct::initPoints() {
 	long long zs = grid[0].size();
 	long long rs = grid[1].size();
 	long long thetas = grid[2].size();
+	isCir = isComCir(grid[2]);
 	initGridsize(rs, thetas, zs);
 	//构建points
 	points = vtkSmartPointer<vtkPoints>::New();
@@ -67,7 +89,13 @@ void DV3D::PolarStructDaraSetConstruct::initPoints() {
 			}
 		}
 	}
+	return;
 }
+/**
+* @brief DV3D::PolarStructDaraSetConstruct::getPolarDatas 从H5数据中获取点云
+* @return DV3D::PolarDatas
+* @time	2021/12/15
+*/
 DV3D::PolarDatas DV3D::PolarStructDaraSetConstruct::getPolarDatas()
 {
 	auto h5d = getHdf5Data();
@@ -85,6 +113,11 @@ DV3D::PolarDatas DV3D::PolarStructDaraSetConstruct::getPolarDatas()
 	grid[1].swap(grid[2]);
 	return grid;
 }
+/**
+* @brief DV3D::PolarStructDaraSetConstruct::getPolarIndex 获取k矩阵网格数据
+* @return DV3D::PolarIndes
+* @time	2021/12/15
+*/
 DV3D::PolarIndes DV3D::PolarStructDaraSetConstruct::getPolarIndex()
 {
 	auto h5d = getHdf5Data();
@@ -117,5 +150,9 @@ void DV3D::PolarStructDaraSetConstruct::initGridsize(unsigned long long rs, unsi
 }
 long long DV3D::PolarStructDaraSetConstruct::getPointId(const long long& thetai, const long long& ri, const long long& zi)
 {
-	return zi * thetaSize * rSize + ri * thetaSize + thetai;
+	//考虑0.0rad和6.28..rad的S曲线的取值会有浮动,
+	//当theta取到6.28的时候修改pointid到0.0时
+	if (isCir && (thetai == thetaSize - 1))
+		return (zi * thetaSize * rSize + ri * thetaSize);
+	return (zi * thetaSize * rSize + ri * thetaSize + thetai);
 }
