@@ -23,6 +23,7 @@
 #include "Vector3dActorPipeline.h"
 #include"Contour3dControler.h"
 #include <cassert>
+#include <QDateTime>
 /*
 	≈‰÷√¥∞ø⁄
 */
@@ -33,6 +34,10 @@
 #include "XmlGroup3D.h"
 std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatControler(Hdf5Data& h5data)
 {
+#ifdef MY_DEBUG
+	qint64 d_time;
+	d_time = QDateTime::currentDateTime().toMSecsSinceEpoch();
+#endif
 	std::shared_ptr<Controler> controler;
 	if (h5data.name == "struct")
 		controler = CreatStrucControler(h5data);
@@ -45,6 +50,10 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatControler(Hdf5Data
 	if (h5data.name == "VECTOR3D")
 		controler = CreatVector3dControler(h5data);
 	//assert(controler && "controler is nullptr!");
+#ifdef MY_DEBUG
+	qint64 t = QDateTime::currentDateTime().toMSecsSinceEpoch() - d_time;
+	std::cerr << "Data construct time:" << t << "ms" << std::endl;
+#endif
 	return controler;
 }
 std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContourControler(Hdf5Data& h5data)
