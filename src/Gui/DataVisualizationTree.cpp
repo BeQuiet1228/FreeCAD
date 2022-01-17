@@ -8,6 +8,7 @@
 Gui::DataVisualizationTree::DataVisualizationTree(QWidget* parent/*= 0*/)
 	:QTreeView(parent),model(new QStandardItemModel)
 {
+	setHeaderHidden(true);
 	connect(this, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(itemDoubleClicked(QModelIndex)));
 	setModel(model);
 
