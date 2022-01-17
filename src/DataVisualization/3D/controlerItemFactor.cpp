@@ -52,3 +52,20 @@ DV3D::ControlerItem* DV3D::ControlerItemFactor::AddSaveAction(ControlerItem* ite
 	return item;
 }
 
+DV3D::ControlerItem* DV3D::ControlerItemFactor::CreatControlerItemForHdf5Name(const std::string& name)
+{
+	if (name == "struct")
+		return CreatControlerItem();
+	if (name == "CONTOUR")
+		return CreatContour3dControlerItem();
+	if (name == "PARTICLE3D")
+		return CreatControlerItem();
+	if (name == "CONTOUR3D")
+		return CreatContour3dControlerItem();
+	if (name == "VECTOR3D")
+		return CreatContour3dControlerItem();
+
+	return CreatControlerItem();
+}
+
+

@@ -31,7 +31,7 @@ void Gui::HDF5DataItem3DDoubleClickEventHander::trigger(HDF5DataItem* item)
 		controlerItem = DV3D::ControlerItemFactor::CreatStructPlorRotateControlerItem();
 	}else {
 		controler = DV3D::ControlerFactory::CreatControler(item->getHdf5Data());
-		controlerItem = DV3D::ControlerItemFactor::CreatContour3dControlerItem();
+		controlerItem = DV3D::ControlerItemFactor::CreatControlerItemForHdf5Name(item->getHdf5Data().name);
 	}
 	controler->setObjectName(item->getNmae().toStdString());
 
