@@ -21,6 +21,7 @@ void Gui::ControlerItemListWidget::addWidget(DV3D::ControlerItem* widget)
 void Gui::ControlerItemListWidget::clearWidget()
 {
 	ui->listWidget->clear();
+	widgetMap.clear();
 }
 
 void Gui::ControlerItemListWidget::removeControlerItemWithControler(DV3D::Controler* controler)

@@ -99,7 +99,7 @@ void Gui::DataVisualizationView::addControler(std::shared_ptr<DV3D::Controler> c
 
 bool Gui::DataVisualizationView::onMsg(const char* pMsg, const char** ppReturn)
 {
-	return getDocumengPic()->onHasMsg(pMsg);
+	return getDocumengPic()->onMsg(pMsg,ppReturn);
 }
 
 bool Gui::DataVisualizationView::onHasMsg(const char* pMsg) const
