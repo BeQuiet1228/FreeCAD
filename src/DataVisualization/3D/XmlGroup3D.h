@@ -78,7 +78,6 @@ namespace DV3D
 		/*
 			创建255个颜色过度表
 		*/
-		std::vector<DV::XmlData::XmlColor> getColors(std::vector<float>&, std::vector<DV::XmlData::XmlColor>&, int black = 255);
 		std::vector<QColor> getColors(std::vector<float>&, std::vector<QColor>&, int black = 255);
 	}
 };

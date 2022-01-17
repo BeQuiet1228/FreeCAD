@@ -144,7 +144,7 @@ DV3D::XmlData::Struct3dXml::Struct3dXml()
 	:
 	Rotation({"struct3d","rotation"},"value"),
 	color({"struct3d","color"},"value"),
-	controlerXml({"struct","controler"})
+	controlerXml({"struct3d","controler"})
 {
 	push_back(&Rotation);
 	push_back(&color);
