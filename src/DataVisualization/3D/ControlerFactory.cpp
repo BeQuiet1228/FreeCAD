@@ -197,6 +197,10 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucRotateControl
 	pipeline->connect();
 	controler.reset(new Controler);
 	controler->setActorPipeline(pipeline);
+	XmlData::Struct3dXml xmlinfo;
+	xmlinfo.loadXml();
+	//初始化控制台状态
+	controler->setInitState(xmlinfo.controlerXml);
 	return controler;
 }
 

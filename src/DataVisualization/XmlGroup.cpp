@@ -21,7 +21,7 @@ namespace DV
 		"PERFECTCONDUCTOR",
 		"PERMEABILITY",
 		"PORT",
-		"VACUO"
+		"VACUO",
 		"CONDUCTORNEWLINE",
 		"DIELECTIRANDCONDUCTANCELINE",
 		"DIOLECTRICLINE",
@@ -268,6 +268,7 @@ DV::XmlData::ContourXml::ContourXml()
 	push_back(&lineMapColors);
 	push_back(&AlisAttitude);
 	push_back(&colorBar);
+	push_back(&valueStyle);
 }
 
 DV::XmlData::ContourXml::~ContourXml()
@@ -478,20 +479,20 @@ void DV::XmlData::StructXml::loadXml()
 		结构图属性数据先暂时这样chuli
 	*/
 	proPerty.clear();
-	for (auto iter= strlist.begin();iter!=strlist.end();iter++)
+	for (auto iter = strlist.begin(); iter != strlist.end(); iter++)
 	{
-		XmlColor color({"struct",*iter},"value");
+		XmlColor color({ "struct",*iter }, "value");
 		color.loadXml();
-		proPerty.insert(std::pair<std::string, QColor>(*iter,color.value));
+		proPerty.insert(std::pair<std::string, QColor>(*iter, color.value));
 	}
 }
 
 void DV::XmlData::StructXml::saveXml()
 {
 	XmlStructObj::loadXml();
-	for (auto iter=proPerty.begin();iter!=proPerty.end();iter++)
+	for (auto iter = proPerty.begin(); iter != proPerty.end(); iter++)
 	{
-		XmlColor color({"struct",iter->first}, "value");
+		XmlColor color({ "struct",iter->first }, "value");
 		color = iter->second;
 		color.saveXml();
 	}
