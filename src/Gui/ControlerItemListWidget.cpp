@@ -3,6 +3,8 @@
 #include "ui_ControlerItemListWidget.h"
 #include "DockWindowManager.h"
 #include "DataVisualization/3D/ControlerItem.h"
+#include "DataVisualization/3D/controler.h"
+#include <list>
 Gui::ControlerItemListWidget::ControlerItemListWidget(QWidget* parent /*= 0*/)
 	:QWidget(parent),ui(new Ui::ControlerItemListWidget())
 {
@@ -19,17 +21,23 @@ void Gui::ControlerItemListWidget::addWidget(DV3D::ControlerItem* widget)
 void Gui::ControlerItemListWidget::clearWidget()
 {
 	ui->listWidget->clear();
+	widgetMap.clear();
 }
 
 void Gui::ControlerItemListWidget::removeControlerItemWithControler(DV3D::Controler* controler)
 {
+	std::list<DV3D::ControlerItem*> items;
 	for (auto iter = widgetMap.begin(); iter != widgetMap.end(); iter++)
 	{
 		auto controlerItem = iter->first;
 		if (controlerItem->getControler().get() != controler)
 			continue;
-		removeControlerItem(controlerItem);
-		return;
+		items.push_back(controlerItem);
+	}
+
+	for (auto item = items.begin(); item != items.end(); item++)
+	{
+		removeControlerItem(*item);
 	}
 }
 

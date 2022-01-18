@@ -10,6 +10,8 @@
 #include <vector>
 #include <array>
 #include <vtkPolyDataNormals.h>
+#include"QMessageBox"
+#include"../C_encoding.h"
 DV3D::Contour3dDatasetConstructor::Contour3dDatasetConstructor()
 : xGridSize(0),yGridSize(0),zGridSize(0)
 {
@@ -22,6 +24,18 @@ DV3D::Contour3dDatasetConstructor::~Contour3dDatasetConstructor() {
 
 vtkSmartPointer<vtkDataSet> DV3D::Contour3dDatasetConstructor::creatDataset() {
 	initPoints();
+	auto scalarRang = scalars->GetRange();
+	/*
+		判断范围是否为0,或者相同的情况
+	*/
+	if (abs(scalarRang[1] - scalarRang[0]) < 0.0000001f)
+	{
+		QMessageBox box;
+		QString message = DV::GetEncodingstr("绘制失败,所有的场值均相同=%1", ENCODING_GB2312).arg(scalarRang[0]);
+		box.setText(message);
+		box.exec();
+		return nullptr;
+	}
 	vtkSmartPointer<vtkStructuredGrid> grid = vtkSmartPointer<vtkStructuredGrid>::New();
 	grid->SetDimensions(xGridSize, yGridSize, zGridSize);
 	grid->SetPoints(points);

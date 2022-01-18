@@ -21,6 +21,8 @@ namespace Gui
 		HDF5DataItem* CreatVectorDataItem(Hdf5Data& data, HDF5DataItem* parentItem = nullptr);
 		HDF5DataItem* CreatObserveDataItem(Hdf5Data& data, HDF5DataItem* parentItem = nullptr);
 		HDF5DataItem* CreatObserveDataItem(std::vector<Hdf5Data>& datas);
+		HDF5DataItem* CreatRangDataItem(Hdf5Data& data, HDF5DataItem* parentItem = nullptr);
+		HDF5DataItem* CreatRangDataItem(std::vector<Hdf5Data>& datas);
 		void setStructData(Hdf5Data data);
 
 	public:

@@ -1,6 +1,7 @@
 #pragma once
 #include "ControlerItem.h"
 #include "DataVisualization3DExport.hpp"
+#include <HDF5Reader/hdf5io.h>
 namespace DV3D {
 	 class  DATA_VISUALIZATION_3D_EXPORT ControlerItemFactor {
 	public:
@@ -10,6 +11,9 @@ namespace DV3D {
 	public:
 		static ControlerItem* CreatControlerItem();
 		static ControlerItem* CreatContour3dControlerItem();
+		static ControlerItem* CreatStructPlorRotateControlerItem();
+		static ControlerItem* AddSaveAction(ControlerItem* item, Hdf5Data& data, const QString& path);
+		static ControlerItem* CreatControlerItemForHdf5Name(const std::string& name);
 
 	};
 }

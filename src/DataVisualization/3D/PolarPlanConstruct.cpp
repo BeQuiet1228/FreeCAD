@@ -8,6 +8,7 @@
 #include"array"
 #include"vtk-7.0/vtkTriangleFilter.h"
 #include"vtk-7.0/vtkPolyDataNormals.h"
+#include "StructRotationFilter.h"
 DV3D::PolarPlanConstruct::PolarPlanConstruct() :PolarStructDaraSetConstruct() {}
 DV3D::PolarPlanConstruct::~PolarPlanConstruct() {}
 vtkSmartPointer<vtkDataSet> DV3D::PolarPlanConstruct::creatDataset()
@@ -34,11 +35,13 @@ vtkSmartPointer<vtkDataSet> DV3D::PolarPlanConstruct::creatDataset()
 			getPointId(thetaIndex - 1,	rIndex,			zIndex - 1),
 			getPointId(thetaIndex - 1,	rIndex,			zIndex),
 			getPointId(thetaIndex - 1,	rIndex - 1,		zIndex)
+
 		};
 		cellData->InsertNextCell(pointNum, cell.data());
 	}
 	polyData->SetPoints(points);
 	polyData->SetPolys(cellData);
+#if 1
 	vtkSmartPointer<vtkTriangleFilter> triangle = vtkSmartPointer<vtkTriangleFilter>::New();
 	triangle->SetInputData(polyData);
 	triangle->Update();
@@ -51,12 +54,25 @@ vtkSmartPointer<vtkDataSet> DV3D::PolarPlanConstruct::creatDataset()
 	filter->Update();
 	//自动计算法向
 	vtkSmartPointer<vtkPolyDataNormals> normalfilter = vtkSmartPointer<vtkPolyDataNormals>::New();
+	normalfilter->SetInputData(filter->GetOutput());
 	normalfilter->SetComputePointNormals(1);
 	normalfilter->SetComputeCellNormals(0);
 	normalfilter->SetAutoOrientNormals(1);
 	normalfilter->SetSplitting(0);
 	normalfilter->Update();
 	auto ugrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
-	ugrid->DeepCopy(filter->GetOutput());
+	ugrid->DeepCopy(normalfilter->GetOutput());
 	return ugrid;
+#else
+	//vtkSmartPointer<StructRotationFilter> filter = vtkSmartPointer<StructRotationFilter>::New();
+	//filter->SetInputData(polyData);
+	std::shared_ptr<StructRotationFilter> filter(new StructRotationFilter);
+	filter->SetInputPolyData(polyData);
+	filter->SetResolution(22);
+	filter->SetAngle(360 / (thetaSize - 1));
+	filter->Updata();
+	return filter->getOuput();
+#endif
+
+
 }

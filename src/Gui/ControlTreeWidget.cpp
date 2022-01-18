@@ -22,11 +22,12 @@
 #include "Gui/Application.h"
 #include "DataVisualization/C_encoding.h"
 #include "DocumentPic.h"
+#include "DataVisualizationTree.h"
 #include <HDF5Reader/hdf5io.h>
 ControlTreeWidget::ControlTreeWidget(QWidget* parent)
 	:QTreeWidget(parent),tempHdf5IO(nullptr)
 {
-	QTreeWidget::setHeaderLabel(DV::GetEncodingstr(" ", ENCODING_GB2312));
+	QTreeWidget::setHeaderHidden(true);
 	initItem();
 	connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(itemDouble_clicke(QTreeWidgetItem*, int)));
 	

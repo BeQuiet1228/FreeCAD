@@ -269,8 +269,19 @@ namespace DV {
 		if (indexarrow == -1)
 			return;
 		//打开一个颜色窗口
-		QColor color = QColorDialog::getColor(Qt::black, this, "color", QColorDialog::ShowAlphaChannel);
-		QColor WhiteColor(Qt::white);
+		/*
+			先获取颜色
+		*/
+		QColor lastColor = mapColor[indexarrow];
+		//QColor color = QColorDialog::getColor(lastColor, this, "color", QColorDialog::ShowAlphaChannel);
+		QColorDialog dlg;
+		dlg.setOption(QColorDialog::ShowAlphaChannel);
+		dlg.setCurrentColor(lastColor);
+		if (dlg.exec() != QColorDialog::Accepted)
+			return;
+		QColor color = dlg.currentColor();
+		if (color == lastColor)
+			return;
 		QImage img = marrowmap[indexarrow].toImage();
 		for (int w = 0; w < img.width(); ++w)
 		{
@@ -287,6 +298,7 @@ namespace DV {
 		drawImage();
 		//改变颜色
 		setColorMap();
+		//QColor WhiteColor(Qt::white);
 	}
 	/**
 	* @brief  ArrowCtrl::initUI 初始化UI

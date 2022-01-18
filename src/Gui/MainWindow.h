@@ -34,8 +34,6 @@
 #include <QMdiArea>
 #include <QToolBar>
 #include <QDockWidget>
-#include "DataVisualizationTree.h"
-//#include"DataVisualization/ListTreeWidget.h"
 
 class QMimeData;
 class QUrl;
@@ -58,6 +56,7 @@ class Document;
 class MacroManager;
 class MDIView;
 class TreeViewCtrl;
+class DataVisualizationTree;
 namespace DockWnd {
     class HelpView;
 } //namespace DockWnd

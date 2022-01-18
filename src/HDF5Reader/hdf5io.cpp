@@ -3,6 +3,7 @@
 #include <QString>
 #include <QStringList>
 #include <QTextCodec>
+#include <QFile>
 Hdf5IO::Hdf5IO(std::string fileName)
 {
 	setFilePath(fileName);
@@ -659,6 +660,39 @@ bool Hdf5Data::initPlanemation()
 	return false;
 	
 }
+
+
+Hdf5Data::Hdf5Data(std::shared_ptr<H5File> h5)
+{
+	this->hdf5File = h5;
+	initData();
+}
+
+Hdf5Data::Hdf5Data()
+{
+	initData();
+}
+
+/**
+* @brief Hdf5Data::save 保存数据到路径
+* @param const std::string & path 路径
+* @param bool newFIle 是否覆盖文件
+* @return void
+*/
+void Hdf5Data::save(const std::string& path, bool newFIle /*= false*/)
+{
+	QFile file(QString::fromStdString(path));
+
+	if (!file.exists())
+		newFIle = true;
+
+	if (newFIle)
+		Hdf5IO::creatNewH5File(path);
+
+	Hdf5IO h5io(path);
+	Hdf5IO::copyToHdf5IO(h5io, *this);
+}
+
 /**
 * @brief Hdf5Data::initInformation 初始化通用数据信息
 * @return bool
@@ -771,13 +805,17 @@ void Hdf5Data::init()
 {
 	if (initInformation())
 		return;
-	if (initPlanemation())
-		return;
 	if (initM3dStructInformation())
 		return;
 	if (initM2dStructInformation())
 		return;
 }
+
+void Hdf5Data::initData()
+{
+	coordinateSystem = CARTESIAN;
+}
+
 /**
 * @brief Hdf5IO::creatNewH5File
 * @param const std::string & fileName
@@ -789,7 +827,9 @@ int Hdf5IO::creatNewH5File(const std::string& fileName){
 
 	QString temp = QString::fromUtf8(fileName.c_str());
 	std::string newPath = gbk->fromUnicode(temp).data();
-	return H5Fcreate(newPath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+	auto hid = H5Fcreate(newPath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+	H5Fclose(hid);
+	return hid;
 }
 /**
 * @brief Hdf5IO::openH5File

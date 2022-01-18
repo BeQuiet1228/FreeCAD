@@ -33,6 +33,7 @@ void DV3D::ControlerItem::setControler(std::shared_ptr<Controler> controler)
 		iter->second->initState(controler);
 		iter->second->update(iter->first);
 	}
+	ui->horizontalSlider->setValue(controler->getTranparent() * 100);
 }
 
 void DV3D::ControlerItem::addAction(std::shared_ptr<ControlerAction> action)
@@ -56,7 +57,6 @@ void DV3D::ControlerItem::initGui()
 	//绑定拖动条
 	connect(ui->horizontalSlider, SIGNAL(valueChanged(int)), this, SLOT(transParentSliderValueChange(int)));
 	ui->toolbarLayout->setAlignment(Qt::AlignLeft);
-
 	//创建是否可见按钮
 	visibleAction.reset(new ControlerVisible());
 	visibleAction->update(ui->toolButtonVisible);

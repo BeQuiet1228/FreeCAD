@@ -1,7 +1,6 @@
 #include "DataVisualization3dView.h"
 #include "ControlerItemListWidget.h"
 #include "DataVisualization/3D/controler.h"
-#include "ControlerItemListWidget.h"
 Gui::DataVisualizationView::DataVisualizationView(DocumentPic* doc)
 	:MDIViewPIC(doc)
 {
@@ -96,5 +95,15 @@ void Gui::DataVisualizationView::addControler(std::shared_ptr<DV3D::Controler> c
 
 	widget3d->scalarBarOn(controler.get());
 	widget3d->binding(controler.get());
+}
+
+bool Gui::DataVisualizationView::onMsg(const char* pMsg, const char** ppReturn)
+{
+	return getDocumengPic()->onMsg(pMsg,ppReturn);
+}
+
+bool Gui::DataVisualizationView::onHasMsg(const char* pMsg) const
+{
+	return getDocumengPic()->onHasMsg(pMsg);
 }
 

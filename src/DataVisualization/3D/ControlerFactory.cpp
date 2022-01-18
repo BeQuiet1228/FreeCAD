@@ -23,9 +23,21 @@
 #include "Vector3dActorPipeline.h"
 #include"Contour3dControler.h"
 #include <cassert>
-
+#include <QDateTime>
+/*
+	配置窗口
+*/
+#include "Struct3dConfigWidget.h"
+#include "Contour3dConfigWidget.h"
+#include "Particle3dConfigWidget.h"
+#include "Vector3dConfigWidget.h"
+#include "XmlGroup3D.h"
 std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatControler(Hdf5Data& h5data)
 {
+#ifdef MY_DEBUG
+	qint64 d_time;
+	d_time = QDateTime::currentDateTime().toMSecsSinceEpoch();
+#endif
 	std::shared_ptr<Controler> controler;
 	if (h5data.name == "struct")
 		controler = CreatStrucControler(h5data);
@@ -37,7 +49,11 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatControler(Hdf5Data
 		controler = CreatContour3dControler(h5data);
 	if (h5data.name == "VECTOR3D")
 		controler = CreatVector3dControler(h5data);
-	assert(controler && "controler is nullptr!");
+	//assert(controler && "controler is nullptr!");
+#ifdef MY_DEBUG
+	qint64 t = QDateTime::currentDateTime().toMSecsSinceEpoch() - d_time;
+	std::cerr << "Data construct time:" << t << "ms" << std::endl;
+#endif
 	return controler;
 }
 std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContourControler(Hdf5Data& h5data)
@@ -56,6 +72,11 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContourControler(H
 	pipeline->connect();
 	controler.reset(new Controler());
 	controler->setActorPipeline(pipeline);
+	{
+		//XmlData::Contour3dXml xmlinf;
+		//XmlData::loadXmlInfo(xmlinf);
+		//controler->setInitState(xmlinf.controlerXml);
+	}
 	return controler;
 }
 
@@ -74,6 +95,11 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContour3dControler
 	pipeline->connect();
 	controler.reset(new Contour3dControler());
 	controler->setActorPipeline(pipeline);
+	{
+		XmlData::Contour3dXml xmlinf;
+		xmlinf.loadXml();
+		controler->setInitState(xmlinf.controlerXml);
+	}
 	return controler;
 }
 
@@ -95,10 +121,18 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatVector3dControler(
 		constructor.reset(new CylinderVector3dDatasetContructor());
 	constructor->setHdf5Data(h5data);
 	pipeline.reset(new Vector3dActorPipeline());
+	auto dataSet = constructor->creatDataset();
+	if (nullptr == dataSet)
+		return nullptr;
 	pipeline->setDataSet(constructor->creatDataset());
 	pipeline->connect();
 	controler.reset(new Controler());
 	controler->setActorPipeline(pipeline);
+	{
+		XmlData::Vector3dXml xmlinf;
+		xmlinf.loadXml();
+		controler->setInitState(xmlinf.controlerXml);
+	}
 	return controler;
 }
 
@@ -133,7 +167,12 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucControler(Hdf
 	pipeline->connect();
 	controler.reset(new Controler());
 	controler->setActorPipeline(pipeline);
-
+	{
+		XmlData::Struct3dXml xmlinf;
+		xmlinf.loadXml();
+		controler->setInitState(xmlinf.controlerXml);
+	}
+	
 	return controler;
 }
 
@@ -167,6 +206,10 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatStrucRotateControl
 	pipeline->connect();
 	controler.reset(new Controler);
 	controler->setActorPipeline(pipeline);
+	XmlData::Struct3dXml xmlinfo;
+	xmlinfo.loadXml();
+	//初始化控制台状态
+	controler->setInitState(xmlinfo.controlerXml);
 	return controler;
 }
 
@@ -183,8 +226,11 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatParticle3dControle
 	pipeline->connect();
 	controler.reset(new Controler());
 	controler->setActorPipeline(pipeline);
-
-
+	{
+		XmlData::Particle3dXml xmlinfo;
+		xmlinfo.loadXml();
+		controler->setInitState(xmlinfo.controlerXml);
+	}
 	assert(controler && "controler is nullptr!");
 	return controler;
 }
@@ -210,5 +256,24 @@ int DV3D::ControlerFactory::findStringAttribute(const std::string& str)
 	}
 
 	return std::stoi(temp);
+}
+
+/**
+* @brief DV3D::ControlerFactory::CreateConfigWidget 创建配置窗口
+* @return std::vector<QWidget*>
+* @time	2022/01/10
+*/
+std::vector<QWidget*> DV3D::ControlerFactory::CreateConfigWidget()
+{
+	std::vector<QWidget*> widgets;
+	//Struct3dConfigWidget* struct3dConfigWidget = new Struct3dConfigWidget(); 
+	//Contour3dConfigWidget* contour3dConfigWidget = new Contour3dConfigWidget();
+	//Particle3dConfigWidget* particle3dConfigWidget = new Particle3dConfigWidget();
+	//Vector3dConfigWidget* vector3dConfigWidget = new Vector3dConfigWidget();
+	widgets.push_back(new Struct3dConfigWidget());
+	widgets.push_back(new Contour3dConfigWidget());
+	widgets.push_back(new Particle3dConfigWidget());
+	widgets.push_back(new Vector3dConfigWidget());
+	return widgets;
 }
 

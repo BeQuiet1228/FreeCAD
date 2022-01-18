@@ -14,6 +14,11 @@ namespace DV {
 		return true;
 	}
 
+	void Config::saveFile()
+	{
+		xmlDocument->save_file("./DataVisualizationConfig.xml");
+	}
+
 	Config::Config()
 	{
 		xmlDocument = new pugi::xml_document;
@@ -22,6 +27,15 @@ namespace DV {
 	Config::~Config()
 	{
 		delete xmlDocument;
+	}
+
+	std::shared_ptr<DV::Config> Config::GetInstance()
+	{
+		static std::once_flag flag;
+		std::call_once(flag, [&]() {
+			instance.reset(new Config);
+			});
+		return instance;
 	}
 
 	ConfigGroup::ConfigGroup()

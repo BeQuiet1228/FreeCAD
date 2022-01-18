@@ -2,6 +2,7 @@
 #include "Transition/transition.h"
 #include "sstream"
 #include "HDF5DataItem2DDoubleClickEventHander.h"
+#include "Hdf5DataItemEventHandler.h"
 /**
 * @time	2021/12/20
 * @brief Gui::HDF5DataItem2DFactory::CreatHDF5Items 创建item
@@ -28,6 +29,9 @@ Gui::HDF5DataItemFactory::HDF5DataItems Gui::HDF5DataItem2DFactory::CreatHDF5Ite
 	item = CreatObserveDataItem(datas);
 	if (item)
 		items.push_back(item);
+	item = CreatRangDataItem(datas);
+	if (item)
+		items.push_back(item);
 	return items;
 }
 
@@ -40,6 +44,71 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatHDF5Item(Hdf5Data& data)
 	if (its.size() <= 0)
 		return nullptr;
 	return *its.begin();
+}
+
+
+/**
+* @time	2022/01/06
+* @brief Gui::HDF5DataItem2DFactory::CreatRangDataItem 创建空间变化图的节点
+* @param Hdf5Data & data
+* @param HDF5DataItem * parentItem
+* @return Gui::HDF5DataItem*
+*/
+Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatRangDataItem(Hdf5Data& data, HDF5DataItem* parentItem /*= nullptr*/)
+{
+	if (nullptr == parentItem)
+	{
+		parentItem = new HDF5DataItem("空间变化图");
+	}
+	std::string typeNode, subNode;
+	{
+		std::stringstream ss, subss;
+		std::string art3 = getEffePartStr(data.headList[2]);
+		art3.erase(art3.find("-#"), art3.size());
+		ss << art3;
+		//观测类型
+		std::string art14 = data.headList[13];
+		//观测对象
+		art3 = getEffePartStr(data.headList[2]);
+		//观测时刻
+		std::string art12 = getEffePartStr(data.headList[11]);
+		{
+			art14.erase(0, art14.find("=") + 1);
+			art14.erase(art14.find(" "), art14.size());
+			art3.erase(0, art3.find("$") + 1);
+			art12.erase(0, art12.find("TIME") + 5);
+		}
+		subss << art14 << " " << art3 << " " << art12;
+		typeNode = ss.str();
+		subNode = subss.str();
+	}
+	//创建节点
+	auto typeNodeItem = new HDF5DataItem(typeNode.c_str());
+	auto subNodeItem = new HDF5DataItem(data, subNode.c_str());
+	itemSetHander(subNodeItem);
+	subNodeItem = typeNodeItem->addSubItem(subNodeItem);
+	typeNodeItem = parentItem->addSubItem(typeNodeItem);
+	return parentItem;
+}
+
+Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatRangDataItem(std::vector<Hdf5Data>& datas)
+{
+	auto item = new HDF5DataItem(gbkStdstringToQstring("空间变化图"));
+	for (auto iter = datas.begin(); iter != datas.end();)
+	{
+		if (iter->name != "RANGE")
+		{
+			iter++;
+			continue;
+		}
+		auto h5data = *iter;
+		iter = datas.erase(iter);
+		CreatRangDataItem(h5data, item);
+	}
+	if (item->rowCount() != 0)
+		return item;
+	delete item;
+	return nullptr;
 }
 
 /**
