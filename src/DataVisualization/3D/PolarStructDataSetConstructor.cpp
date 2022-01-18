@@ -152,7 +152,7 @@ long long DV3D::PolarStructDaraSetConstruct::getPointId(const long long& thetai,
 {
 	//考虑0.0rad和6.28..rad的S曲线的取值会有浮动,
 	//当theta取到6.28的时候修改pointid到0.0时
-	if (isCir && (thetai == thetaSize - 1))
-		return (zi * thetaSize * rSize + ri * thetaSize);
+	//if (isCir && (thetai == thetaSize - 1))
+	//	return (zi * thetaSize * rSize + ri * thetaSize);
 	return (zi * thetaSize * rSize + ri * thetaSize + thetai);
 }

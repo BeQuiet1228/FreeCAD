@@ -63,7 +63,12 @@ int main(int argc, char* argv[])
 #if 1
 	if (datalist.size() == 0)
 		return 0;
-	auto iter = datalist.begin()+2;
+	auto iter = datalist.begin();
+	for (; iter != datalist.end(); iter++)
+	{
+		if (iter->name == "struct")
+			break;
+	}
 	Widget3D* w3d = new Widget3D();
 	ControlerFactory controlerFactor;
 	//auto controler = controlerFactor.CreatParticle3dControler(paticle3d);
