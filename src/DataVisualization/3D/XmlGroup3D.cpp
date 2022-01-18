@@ -1,67 +1,6 @@
 #include "XmlGroup3D.h"
 #include "../C_encoding.h"
 #include "sstream"
-//DV3D::XmlData::ColorF DV3D::XmlData::getColors(std::string colorStr)
-//{
-//	ColorF colorf;
-//	int len = colorStr.length();
-//	unsigned int colorR = 0, colorG = 0, colorB = 0, colorA = 0;
-//	if (len >= 8)
-//	{
-//		colorA = stoi(colorStr.substr(0, 2), 0, 16);
-//		colorR = stoi(colorStr.substr(2, 2), 0, 16);
-//		colorG = stoi(colorStr.substr(4, 2), 0, 16);
-//		colorB = stoi(colorStr.substr(6, 2), 0, 16);
-//		colorf.a = colorA / 255.0;
-//		colorf.r = colorR / 255.0;
-//		colorf.g = colorG / 255.0;
-//		colorf.b = colorB / 255.0;
-//	}
-//	return colorf;
-//}
-
-//std::vector<DV3D::XmlData::ColorF> DV3D::XmlData::getColors(std::vector<float>& values, std::vector<QColor>& colors, int black /*= 255*/)
-//{
-//	std::vector<ColorF> newColors;
-//	newColors.reserve(black);
-//	newColors.push_back(getColors(colors[0]));
-//	auto index = 0;
-//	for (auto i = 1; i < black; ++i)
-//	{
-//		/*
-//			获取值的范围
-//		*/
-//		//auto index = 0;
-//		while (i > values[index++] * black);
-//		index--;
-//		auto nextcolor = getColors(colors[index]);
-//		auto lastcolor = getColors(colors[index - 1]);
-//		auto nextvalue = values[index] * black;
-//		auto lastvalue = values[index - 1] * black;
-//		/*
-//			开始计算颜色值
-//		*/
-//		//获取比例
-//		auto step = (i - lastvalue) / (nextvalue - lastvalue);
-//		ColorF temp;
-//		temp.r = (nextcolor.r - lastcolor.r) * step + lastcolor.r;
-//		temp.g = (nextcolor.g - lastcolor.g) * step + lastcolor.g;
-//		temp.b = (nextcolor.b - lastcolor.b) * step + lastcolor.b;
-//		temp.a = (nextcolor.a - lastcolor.a) * step + lastcolor.a;
-//		newColors.push_back(temp);
-//	}
-//	return newColors;
-//}
-//
-//DV3D::XmlData::ColorF DV3D::XmlData::getColors(QColor color)
-//{
-//	ColorF colorF;
-//	colorF.r = color.redF();
-//	colorF.g = color.greenF();
-//	colorF.b = color.blueF();
-//	colorF.a = color.alphaF();
-//	return colorF;
-//}
 /*
 	重新封装
 */
@@ -144,7 +83,7 @@ DV3D::XmlData::Struct3dXml::Struct3dXml()
 	:
 	Rotation({"struct3d","rotation"},"value"),
 	color({"struct3d","color"},"value"),
-	controlerXml({"struct","controler"})
+	controlerXml({"struct3d","controler"})
 {
 	push_back(&Rotation);
 	push_back(&color);

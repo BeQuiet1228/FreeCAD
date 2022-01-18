@@ -38,7 +38,7 @@ void DV3D::ControlerConfigWidget::loadConfig(XmlData::ControlerXml& xmlinfo)
 
 	int per = xmlinfo.alpha.value * 100;
 	ui->alphaSlider->setValue(per);
-	ui->clipCheckBox->setCheckable(xmlinfo.clipEnable.value?Qt::Checked:Qt::Unchecked);
+	ui->clipCheckBox->setCheckState(xmlinfo.clipEnable.value?Qt::Checked:Qt::Unchecked);
 	ui->gridCheckBox->setCheckState(xmlinfo.gridEnable.value?Qt::Checked:Qt::Unchecked);
 }
 void DV3D::ControlerConfigWidget::saveConfig(XmlData::ControlerXml& xmlinfo)
@@ -51,8 +51,8 @@ void DV3D::ControlerConfigWidget::saveConfig(XmlData::ControlerXml& xmlinfo)
 	xmlinfo.centerPoint.setZ(ui->centerZ->text().toDouble());
 
 	xmlinfo.normalPoint.setX(ui->normalX->text().toDouble());
-	xmlinfo.normalPoint.setY(ui->normalX->text().toDouble());
-	xmlinfo.normalPoint.setZ(ui->normalX->text().toDouble());
+	xmlinfo.normalPoint.setY(ui->normalY->text().toDouble());
+	xmlinfo.normalPoint.setZ(ui->normalZ->text().toDouble());
 	//XmlData::saveXmlInfo(xmlinfo, parentGroup);
 	xmlinfo.saveXml();
 }
