@@ -1082,6 +1082,9 @@ void Hdf5Data::initAttrFromList(Group& newgroup, std::vector<std::string> HList)
 	}
 }
 
+/**
+* @使用指定的容器数据搭建新的DataGroup
+*/
 Hdf5Data Hdf5IO::addNewGroup(Hdf5IO& hdf5IO, Hdf5Data& data, std::shared_ptr<VectorF> values, std::vector<std::string> HList)
 {
 	hsize_t dimsf[2];
@@ -1113,6 +1116,8 @@ Hdf5Data Hdf5IO::addNewGroup(Hdf5IO& hdf5IO, Hdf5Data& data, std::shared_ptr<Vec
 	auto headlist = getHeadValue(toGroup);
 	newH5data.headList = HList;
 	newH5data.init();
+
+	delete valuesptr;
 	
 	return newH5data;
 }

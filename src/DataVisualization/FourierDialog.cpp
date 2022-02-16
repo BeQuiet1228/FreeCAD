@@ -23,7 +23,7 @@ namespace DV {
 
     void FourierDialog::changeText(bool flag) {
         if (flag) {
-            ui->label_2->setText("save successfully, Visible after reopening");
+            ui->label_2->setText("save successfully, Visible after reopen");
         }
         else {
             ui->label_2->setText("Failed to save, data already exists");

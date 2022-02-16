@@ -59,7 +59,6 @@ public:
 
 	void initAttrFromList(Group& newgroup, std::vector<std::string> List);
 	void addSubGroup(const std::string faterGroup, const std::string groupname, std::shared_ptr<VectorF> values, std::vector<std::string> HList);
-	void addNewGroup();
 };
 
 class CONTROL_EXPORT Hdf5IO
