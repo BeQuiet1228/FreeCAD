@@ -1050,17 +1050,12 @@ void Hdf5Data::addSubGroup(const std::string faterGroup, const std::string group
 	Group newgroup = tmpgroup.createGroup(subGroupName);
 	initAttrFromList(newgroup, List);
 
-	//更改属性
-	int i = 0;
-	hsize_t dims[1] = { 1 };
-	DataSpace attr_dataspace = DataSpace(1, dims);
-	DataType dataType(H5T_STRING, 128);
-	
 	DataSpace dataSpace(2, dimsf);
 	std::string newDataSetName = "datasetGrd";
 	DataSet& newDataSet(newgroup.createDataSet(newDataSetName.c_str(), PredType::NATIVE_FLOAT, dataSpace));
 	newDataSet.write(valuesptr, PredType::NATIVE_FLOAT);
 
+	delete valuesptr;
 }
 
 /*

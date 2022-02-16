@@ -4,6 +4,7 @@
 #include <QSize>
 #include "FourierDialog.h"
 #include "TimeData.h"
+#include <QTextEdit>
 
 namespace DV {
 	class TimeUndoRedoData :public UndoRedoData{
@@ -42,7 +43,6 @@ namespace DV {
 	private:
 		QAction* Fourier;
 		QAction* saveButton;
-		QDialog* errorDialog;
 		std::shared_ptr<TimeData> Timedata;//初始和TimeData的关系，通过initTimeData在构造函数中被初始化
 
 	private:

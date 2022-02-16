@@ -105,10 +105,7 @@ namespace DV {
 
 	//为action添加点击函数
 	void TimePlotAdapter::FourierTrigger() {
-		if (Timedata->FunOfAlogrithm == TimeDataForFFT) {
-			/*errorDialog = new FourierDialog();
-			errorDialog->exec();
-			delete errorDialog;*/
+		if (Timedata->FunOfAlogrithm != InitData) {
 			return;
 		}
 
@@ -123,7 +120,10 @@ namespace DV {
 
 	//将当前的point数据添加到h5文件中
 	void TimePlotAdapter::saveTrigger() {
-		Timedata->addNewGroup();
+		bool isSave = Timedata->addNewGroup();
+		QDialog* saveDialog = new FourierDialog(isSave);
+		saveDialog->exec();
+		delete saveDialog;
 	}
 
 	//将操作压入栈

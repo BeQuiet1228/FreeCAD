@@ -13,7 +13,7 @@ namespace DV {
         Q_OBJECT
 
     public:
-        FourierDialog(QWidget* parent = nullptr);
+        FourierDialog(bool isSave, QWidget* parent = nullptr);
         ~FourierDialog();
 
     private Q_SLOTS:
@@ -21,6 +21,9 @@ namespace DV {
 
     private:
         Ui::FourierDialog* ui;
+
+    public:
+        void changeText(bool isSave);
     };
 };
 

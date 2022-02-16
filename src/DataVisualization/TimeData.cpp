@@ -153,7 +153,7 @@ namespace DV {
 	*/
 	void TimeData::dataToFFT(Data::Rang xr) {
 		Data::ValuesPtr nowPoints(new std::vector<float>);
-		int tmp = nowPoints.use_count();
+
 		//确定现在的左右边界的index
 		int n = (*points).size() / 2;
 		int indexL = findIndexFromXValueR(xr.min);
@@ -168,7 +168,7 @@ namespace DV {
 		
 		for (int index = indexL; index <= indexR; ++index) {
 			Xdata.emplace_back(points->at(index * 2));
-			Ydata.emplace_back(points->at(index * 2 + 1) * pow(10, 9));
+			Ydata.emplace_back(points->at(index * 2 + 1));
 		}
 
 		fft(Ydata, fs);//主要的FFT程序，对Y数据进行FFT变换
@@ -179,8 +179,8 @@ namespace DV {
 			(*nowPoints).emplace_back(Ydata[index]);
 		}
 		points = nowPoints;
-		updateData(TimeDataForFFT, "Frequency(Hz)", "Watts\\GHz");
 		addHeadlistStr(13, "FFT");
+		updateData(TimeDataForFFT, "Frequency(Hz)", getYTag());
 	}
 
 	/**
@@ -256,10 +256,16 @@ namespace DV {
 	}
 
 	//将当前的数据添加到h5文件中
-	void TimeData::addNewGroup() {
+	bool TimeData::addNewGroup() {
+		if (headList == h5Data.headList) {
+			return false;
+		}
+
 		Hdf5Data* newh5Data = new Hdf5Data(h5Data);
 		newh5Data->addSubGroup("Group_grid", "2D_observe", this->points, headList);
+
 		delete newh5Data;
+		return true;
 	}
 
 	void TimeData::saveAs(std::string path, SaveMod mod)
@@ -267,9 +273,6 @@ namespace DV {
 		QDir dir(QString::fromStdString(path));
 
 		bool isGood = dir.exists();
-		if (path == "C:/Users/Administrator/Desktop/TestMode//MILO_C(1).h5") {
-			isGood = true;
-		}
 		int res = -1;
 		if (!isGood || mod == NEWFLODER)
 		{
@@ -288,14 +291,19 @@ namespace DV {
 
 	//生成新的headList
 	void TimeData::addHeadlistStr(int index, std::string str) {
-		if (headList.size() < index + 1)
+		if (headList.size() < index + 1) {
+			std::cerr << "Not have this index of attribute" << std::endl;
 			return;
+		}
 
-		std::string& tmp = headList.at(index);
-		int i = tmp.size() - 1;
-		while (tmp[i] == ' ') {
+		std::string& headstr = headList.at(index);
+		Data::Rang XScope = getXRang();
+		std::string addStr = " " + str + " " + std::to_string(XScope.min) + " ~ " + std::to_string(XScope.max);
+
+		int i = headstr.size() - 1;
+		while (headstr[i] == ' ') {
 			--i;
 		}
-		tmp.insert(i + 1, " " + str);
+		headstr.insert(i + 1, addStr);
 	}
 };

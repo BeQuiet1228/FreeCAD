@@ -28,7 +28,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>当前已经进行FFT变换，不能再次进行！！！</string>
+         <string>        保存成功，重新打开后可见</string>
         </property>
        </widget>
       </item>
