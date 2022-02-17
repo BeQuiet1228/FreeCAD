@@ -618,6 +618,7 @@ void WorkbenchGroup::customEvent( QEvent* e )
 //接收工作台切换信号的槽
 void WorkbenchGroup::slotActivateWorkbench(const char* name)
 {
+    return;
     //根据名字找到Python端写好的Command
     //如果Python端修改了SwitchWorkbench中Command的名字，这里也要做出相应修改！
     CommandManager &cmgr=Application::Instance->commandManager();

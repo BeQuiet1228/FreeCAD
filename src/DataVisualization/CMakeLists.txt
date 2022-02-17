@@ -16,6 +16,7 @@ include_directories(
     ${PYCXX_INCLUDE_DIR}
 	./qwt
 	./qwt/polar
+	${FREECAD_LIBPACK_DIR}/include/fft
 )
 SET(QRC_SRC resource/rce.qrc)
 SET(UI_SRC 
@@ -28,6 +29,8 @@ VectorConfigWidget.ui
 ContourConfigWidget.ui
 StructConfigWidget.ui
 ParticleConfigWidget.ui
+##zhaozhou
+FourierDialog.ui
 )
 SET(MY_MOC_HDR RenderThread.h
 	RenderThreadManager.h
@@ -59,11 +62,18 @@ SET(MY_MOC_HDR RenderThread.h
 	ContourConfigWidget.h
 	StructConfigWidget.h
 	ParticleConfigWidget.h
+	##zhaozhou
+	TimePlotAdapter.h
+	FourierDialog.h
 	)
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
 	TimeRenderer.cpp
 	TimeRenderer.h
+	TimePlotAdapter.cpp
+	TimePlotAdapter.h
+	FourierDialog.h
+	FourierDialog.cpp
 )
 SET(CHAR_ENCODE C_encoding.cpp
 	C_encoding.h)
@@ -271,11 +281,7 @@ SOURCE_GROUP("uifile" FILES ${UI_SRC})
 SOURCE_GROUP("qrcfile" FILES ${QRC_SRC})
 SOURCE_GROUP("axis" FILES ${AXIS_SRC})
 SOURCE_GROUP("configWidget" FILES ${CONFIGWIDGET_Srcs})
-#增加包含目录
-include_directories(
-    ${CMAKE_CURRENT_BINARY_DIR}
-	
-)
+
 #增加外部库
 list(APPEND QT_LIB
     debug MSVCRTD.LIB
@@ -285,6 +291,9 @@ list(APPEND QT_LIB
 	qwt
 	HDF5Reader
 	qwt_polar
+	${FREECAD_LIBPACK_DIR}/lib/fft/libfftw3-3.lib
+	${FREECAD_LIBPACK_DIR}/lib/fft/libfftw3l-3.lib
+	${FREECAD_LIBPACK_DIR}/lib/fft/libfftw3f-3.lib
 	)
 if(VisualizationOf3DDLL)
 list(APPEND QT_LIB

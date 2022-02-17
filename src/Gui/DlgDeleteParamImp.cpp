@@ -23,7 +23,7 @@ DeleteParamDialog::DeleteParamDialog(std::vector<std::pair<std::string, std::str
 }
 
 DeleteParamDialog::~DeleteParamDialog() {
-
+    delete ui;
 }
 
 std::string DeleteParamDialog::getParamName() {

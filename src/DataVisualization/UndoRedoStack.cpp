@@ -6,6 +6,10 @@ DV::UndoRedoData::UndoRedoData(const Data::Rang& xr, const Data::Rang& yr)
 
 }
 
+void DV::UndoRedoData::printTmp() {
+
+}
+
 /**
 * @brief UndoRedoStack::undo 撤销之前的操作
 * @param DataPtr data 返回渲染范围
@@ -54,10 +58,11 @@ void DV::UndoRedoStack::clear()
 	clearStack(undoStack);
 }
 
-void DV::UndoRedoStack::clearStack(DataStack stack)
+void DV::UndoRedoStack::clearStack(DataStack& stack)
 {
 	while (!stack.empty())
 	{
 		stack.pop();
 	}
 }
+

@@ -9,5 +9,10 @@ namespace DV {
 
 	public:
 		virtual unsigned int findIndexFromXValueL(const float& x) override;
+		void dataToFFT(Data::Rang xr) override;
+		bool addNewGroup() override;
+
+	private:
+		std::string getNewXTag();
 	};
 };
