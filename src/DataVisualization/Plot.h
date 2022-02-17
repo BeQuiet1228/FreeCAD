@@ -110,6 +110,9 @@ namespace DV {
 		void initInformationLabelFont();
 		//更新按钮条
 		void updateToolbar();
+		//绑定与取消绑定画布的信号
+		void canvasConnect();
+		void canvasDisconnect();
 	public Q_SLOTS:
 		//重渲染
 		void reRender();

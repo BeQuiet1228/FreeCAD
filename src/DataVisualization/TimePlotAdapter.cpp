@@ -76,7 +76,7 @@ namespace DV {
 		std::shared_ptr<TimeUndoRedoData> Timerd = std::dynamic_pointer_cast<TimeUndoRedoData>(rd);
 		Timedata->updatePoint(Timerd->point);
 		Timedata->updateData(InitData, Timerd->Xtag, Timerd->Ytag);
-		autoMaxRender();//重新渲染
+		autoMaxRenderRange();//重新渲染
 
 		emit updatePlot();
 
@@ -95,7 +95,7 @@ namespace DV {
 		std::shared_ptr<TimeUndoRedoData> Timerd = std::dynamic_pointer_cast<TimeUndoRedoData>(rd);
 		Timedata->updatePoint(Timerd->point);
 		Timedata->updateData(Timerd->FunOfAlogrithm, Timerd->Xtag, Timerd->Ytag);
-		autoMaxRender();//重新渲染
+		autoMaxRenderRange();//重新渲染
 
 		emit updatePlot();
 
@@ -112,7 +112,7 @@ namespace DV {
 		Data::Rang xrang = getAxisBottomRange();
 		Timedata->dataToFFT(xrang);//对数据进行处理
 
-		autoMaxRender();//重新渲染
+		autoMaxRenderRange();//重新渲染
 		dataIntoStack();//将操作入栈
 
 		emit updatePlot();
