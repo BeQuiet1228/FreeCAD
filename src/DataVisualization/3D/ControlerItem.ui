@@ -90,6 +90,10 @@
          <property name="text">
           <string>关闭</string>
          </property>
+         <property name="icon">
+          <iconset resource="resource/rce.qrc">
+           <normaloff>:/action/close.svg</normaloff>:/action/close.svg</iconset>
+         </property>
         </widget>
        </item>
       </layout>

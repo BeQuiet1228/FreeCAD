@@ -1,6 +1,16 @@
 #include "ControlerAction.h"
 #include "controler.h"
 #include <QFileDialog>
+#include <QIcon>
+
+DV3D::ControlerVisible::ControlerVisible()
+{
+	QIcon on(":/action/show.svg");
+	QIcon off(":/action/hide.svg");
+	setOnIcon(on);
+	setOffIcon(off);
+}
+
 void DV3D::ControlerVisible::active(std::shared_ptr<Controler> controler)
 {
 	if (getState() == ON)
@@ -19,6 +29,14 @@ void DV3D::ControlerVisible::initState(std::shared_ptr<Controler> controler)
 		on();
 	else
 		off();
+}
+
+DV3D::ControlerEdgeVisible::ControlerEdgeVisible()
+{
+	QIcon on(":/action/grid_on.svg");
+	QIcon off(":/action/grid_off.svg");
+	setOnIcon(on);
+	setOffIcon(off);
 }
 
 void DV3D::ControlerEdgeVisible::active(std::shared_ptr<Controler> controler)
@@ -42,6 +60,14 @@ void DV3D::ControlerEdgeVisible::initState(std::shared_ptr<Controler> controler)
 		off();
 }
 
+DV3D::ControlerClipEnable::ControlerClipEnable()
+{
+	QIcon on(":/action/cliper_on.svg");
+	QIcon off(":/action/cliper_off.svg");
+	setOnIcon(on);
+	setOffIcon(off);
+}
+
 void DV3D::ControlerClipEnable::active(std::shared_ptr<Controler> controler)
 {
 	if (getState() == ON)
@@ -63,6 +89,12 @@ void DV3D::ControlerClipEnable::initState(std::shared_ptr<Controler> controler)
 		off();
 }
 
+DV3D::ControlerClipPlan::ControlerClipPlan()
+{
+	QIcon on(":/action/cliper_face_setting.svg");
+	setOnIcon(on);
+}
+
 void DV3D::ControlerClipPlan::active(std::shared_ptr<Controler> controler)
 {
 	showWidget(controler);
@@ -78,6 +110,12 @@ void DV3D::ControlerClipPlan::showWidget(std::shared_ptr<Controler> controler)
 void DV3D::ControlerClipPlan::initState(std::shared_ptr<Controler> controler)
 {
 	on();
+}
+
+DV3D::ControlerSave::ControlerSave()
+{
+	QIcon on(":/action/save-as.svg");
+	setOnIcon(on);
 }
 
 void DV3D::ControlerSave::active(std::shared_ptr<Controler> controler)
