@@ -57,8 +57,8 @@ public:
 	bool initM2dStructInformation();
 	void init();
 
-	void initGroupFromListValue(Group& newgroup, std::shared_ptr<VectorF> values, std::vector<std::string> List);
-	void addSubGroup(const std::string faterGroup, const std::string groupname, std::shared_ptr<VectorF> values, std::vector<std::string> HList);
+	void initHeadFromList(Group& newgroup, std::vector<std::string> List);
+	void initGroupFromValue(Group& newgroup, std::shared_ptr<VectorF> values);
 };
 
 class CONTROL_EXPORT Hdf5IO
