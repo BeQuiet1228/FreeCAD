@@ -5,8 +5,8 @@
 
 DV3D::ControlerVisible::ControlerVisible()
 {
-	QIcon on(":/action/show.svg");
-	QIcon off(":/action/hide.svg");
+	QIcon on(":/action/show.png");
+	QIcon off(":/action/hide.png");
 	setOnIcon(on);
 	setOffIcon(off);
 }
@@ -33,8 +33,8 @@ void DV3D::ControlerVisible::initState(std::shared_ptr<Controler> controler)
 
 DV3D::ControlerEdgeVisible::ControlerEdgeVisible()
 {
-	QIcon on(":/action/grid_on.svg");
-	QIcon off(":/action/grid_off.svg");
+	QIcon on(":/action/grid_on.png");
+	QIcon off(":/action/grid_off.png");
 	setOnIcon(on);
 	setOffIcon(off);
 }
@@ -62,8 +62,8 @@ void DV3D::ControlerEdgeVisible::initState(std::shared_ptr<Controler> controler)
 
 DV3D::ControlerClipEnable::ControlerClipEnable()
 {
-	QIcon on(":/action/cliper_on.svg");
-	QIcon off(":/action/cliper_off.svg");
+	QIcon on(":/action/cliper_on.png");
+	QIcon off(":/action/cliper_off.png");
 	setOnIcon(on);
 	setOffIcon(off);
 }
@@ -91,7 +91,7 @@ void DV3D::ControlerClipEnable::initState(std::shared_ptr<Controler> controler)
 
 DV3D::ControlerClipPlan::ControlerClipPlan()
 {
-	QIcon on(":/action/cliper_face_setting.svg");
+	QIcon on(":/action/cliper_face_setting.png");
 	setOnIcon(on);
 }
 
@@ -114,7 +114,7 @@ void DV3D::ControlerClipPlan::initState(std::shared_ptr<Controler> controler)
 
 DV3D::ControlerSave::ControlerSave()
 {
-	QIcon on(":/action/save-as.svg");
+	QIcon on(":/action/save-as.png");
 	setOnIcon(on);
 }
 

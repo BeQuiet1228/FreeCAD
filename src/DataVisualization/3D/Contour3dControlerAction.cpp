@@ -5,7 +5,7 @@
 
 DV3D::ControlerContourSurface::ControlerContourSurface()
 {
-	QIcon icon(":/action/contour_line_setting.svg");
+	QIcon icon(":/action/contour_line_setting.png");
 	setOnIcon(icon);
 }
 

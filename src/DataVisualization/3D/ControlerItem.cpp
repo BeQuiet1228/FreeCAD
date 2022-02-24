@@ -40,6 +40,8 @@ void DV3D::ControlerItem::setControler(std::shared_ptr<Controler> controler)
 void DV3D::ControlerItem::addAction(std::shared_ptr<ControlerAction> action)
 {
 	QToolButton* btn = new QToolButton(this);
+	btn->setFixedSize(32, 32);
+	btn->setIconSize(QSize(32,32));
 	connect(btn, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));
 	ui->toolbarLayout->addWidget(btn);
 
