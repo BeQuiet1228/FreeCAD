@@ -54,10 +54,6 @@ SET(TIME_SRC TimeData.h
 	TimeRenderer.h
 	TimePlotAdapter.cpp
 	TimePlotAdapter.h
-	FourierDialog.h
-	FourierDialog.cpp
-	TimeAlogithmData.cpp
-	TimeAlogithmData.h
 )
 SET(CHAR_ENCODE C_encoding.cpp
 	C_encoding.h)

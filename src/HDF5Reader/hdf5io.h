@@ -57,7 +57,7 @@ public:
 	bool initM2dStructInformation();
 	void init();
 
-	void initAttrFromList(Group& newgroup, std::vector<std::string> List);
+	void initGroupFromListValue(Group& newgroup, std::shared_ptr<VectorF> values, std::vector<std::string> List);
 	void addSubGroup(const std::string faterGroup, const std::string groupname, std::shared_ptr<VectorF> values, std::vector<std::string> HList);
 };
 
@@ -128,7 +128,8 @@ public:
 	static int openH5File(const std::string &fileName);
 	static int closeH5File(int H5id);
 
-	static Hdf5Data Hdf5IO::addNewGroup(Hdf5IO& hdf5IO, Hdf5Data& data, std::shared_ptr<VectorF> values, std::vector<std::string> HList);
+	static void Hdf5IO::addNewGroup(Hdf5IO& hdf5IO, Hdf5Data& data, std::shared_ptr<VectorF> values, std::vector<std::string> HList);
+	static void addSubGroup(Hdf5Data& data, Group group, std::shared_ptr<VectorF> values, std::vector<std::string> HList);
 
 private:
 	//新增方法2021/6/30
