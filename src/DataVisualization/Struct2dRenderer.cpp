@@ -40,6 +40,17 @@ namespace DV {
 		img.fill(qRgba(0.0, 0.0, 0.0, 0.0));
 		QPainter painter(&img);
 		painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+
+		/*
+		* 2022.2.25
+			由于介质是分网格输出的数据，所以可以直接画在主画布上。
+			由于之前的代码结构混乱，现在只能使用临时代码完成功能。
+		*/
+		auto colorbrush = color_tab.find(StructData::DIOLECTRIC);
+		auto colorpen = color_pen.find(StructData::DIOLECTRIC);
+		painter.setBrush(colorbrush.value());
+		painter.setPen(colorpen.value());
+
 		/*
 			用于合并的画布和，画师
 		*/
@@ -53,8 +64,25 @@ namespace DV {
 			//根据多边形的网格的编号绘制
 			for (auto iterpro = iter->second.begin(); iterpro != iter->second.end(); iterpro++)
 			{
-				createImg(iterpro, xr, yr, xScale, yScale,img1,painter1);
-				painter.drawImage(0, 0, img1);
+				//如果介质 那么直接画的主画布上
+				if (iterpro->first == 8)
+				{
+					auto points = iterpro->second;
+					for (auto iter = points.begin(); iter != points.end(); iter++)
+						transitionPoint(*iter, xScale, xr, yScale, yr);
+					//绘制多边形
+					QPolygonF innerpolyF(QVector<QPointF>::fromStdVector(points));
+					QPainterPath painterPath;
+					//绘制多边形
+					painterPath.addPolygon(innerpolyF);
+					painter.drawPath(painterPath);
+				}
+				else {
+					continue;
+					createImg(iterpro, xr, yr, xScale, yScale, img1, painter1);
+					painter.drawImage(0, 0, img1);
+				}
+				
 			}
 		}
 		//绘制线段
@@ -279,10 +307,12 @@ namespace DV {
 	void Struct2DRenderer::drawPolygons(QPainter& painter, QPolygonF& innerpolyF)
 	{
 		QPainterPath painterPath;
+		//绘制多边形
 		painterPath.addPolygon(innerpolyF);
 		painter.drawPath(painterPath);
 		QVector<QLineF> linex = GetCurLine_x();
 		QVector<QLineF> liney = GetCutLine_y();
+		//绘制网格
 		painter.drawLines(linex);
 		painter.drawLines(liney);
 	}
