@@ -42,16 +42,6 @@ namespace DV {
 		painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
 		/*
-		* 2022.2.25
-			由于介质是分网格输出的数据，所以可以直接画在主画布上。
-			由于之前的代码结构混乱，现在只能使用临时代码完成功能。
-		*/
-		auto colorbrush = color_tab.find(StructData::DIOLECTRIC);
-		auto colorpen = color_pen.find(StructData::DIOLECTRIC);
-		painter.setBrush(colorbrush.value());
-		painter.setPen(colorpen.value());
-
-		/*
 			用于合并的画布和，画师
 		*/
 		QImage img1(getSize(), QImage::Format_ARGB32);
@@ -64,9 +54,19 @@ namespace DV {
 			//根据多边形的网格的编号绘制
 			for (auto iterpro = iter->second.begin(); iterpro != iter->second.end(); iterpro++)
 			{
-				//如果介质 那么直接画的主画布上
-				if (iterpro->first == 8)
+				/*
+				 * 2022.2.25
+				 * 由于介质是分网格输出的数据，所以可以直接画在主画布上。
+				 * 由于之前的代码结构混乱，现在只能使用临时代码完成功能。
+				 */
+				//如果介质和新材料 那么直接画的主画布上
+				if ((iterpro->first&0xc) !=0)
 				{
+					auto colorbrush = color_tab.find(iterpro->first);
+					auto colorpen = color_pen.find(iterpro->first);
+					painter.setBrush(colorbrush.value());
+					painter.setPen(colorpen.value());
+
 					auto points = iterpro->second;
 					for (auto iter = points.begin(); iter != points.end(); iter++)
 						transitionPoint(*iter, xScale, xr, yScale, yr);
@@ -78,7 +78,6 @@ namespace DV {
 					painter.drawPath(painterPath);
 				}
 				else {
-					continue;
 					createImg(iterpro, xr, yr, xScale, yScale, img1, painter1);
 					painter.drawImage(0, 0, img1);
 				}
