@@ -21,6 +21,7 @@
 #include "ContourPlotAdapter.h"
 #include "TLabel.h"
 #include"CombAxis.h"
+#include <QApplication>
 namespace DV {
 	Plot::Plot(QWidget* parent /*= 0*/)
 		:QWidget(parent)
@@ -56,8 +57,14 @@ namespace DV {
 		clearFindPoint();
 		//创建坐标轴网格渲染任务
 		creatGridRenderTask();
+
+		//避免调整ui的时候触发重渲染
+		canvasDisconnect();
 		//更新信息显示label
-		//updateInformationLabel();
+		updateInformationLabel();
+		QApplication::processEvents(0, 1000);
+		canvasConnect();
+
 		adapter->reRender(this->canvas->size());
 	}
 
@@ -172,14 +179,20 @@ namespace DV {
 		if (!adapter)
 			return;
 
-		adapter->autoMaxRender();
+		adapter->autoMaxRenderRange();
+		
+		//避免调整ui时触发重渲染
+		canvasDisconnect();
 		updateAxis();
+		QApplication::processEvents(0, 1000);
+		canvasConnect();
+
 		reRender();
 
 		//清空撤销恢复栈，将新的操作压入
 		auto URStack = adapter->getUndoRedoStack();
 		URStack->clear();
-		UndoRedoStack::DataPtr  URData(new UndoRedoData(adapter->getAxisBottomRange(), adapter->getAxisLeftRange()));
+		UndoRedoStack::DataPtr URData(adapter->CreateUndoRedoData(adapter->getAxisBottomRange(), adapter->getAxisLeftRange()));
 		URStack->push(URData);
 	}
 
@@ -222,9 +235,8 @@ namespace DV {
 		this->setLayout(gridLayout);
 
 		canvas = new Canvas();
-		connect(canvas, SIGNAL(emitSelectRect(QRect)), this, SLOT(canvasSelectRect(QRect)));
-		connect(canvas, SIGNAL(emitSelectPoint(QPoint)), this, SLOT(canvasSelectPoint(QPoint)));
-		connect(canvas, SIGNAL(emitResize(QSize)), this, SLOT(canvasResize(QSize)));
+		canvasConnect();
+
 
 		AxisL = new CombAxis();
 		AxisL->setAxixStyle(Axisleft);
@@ -373,6 +385,17 @@ namespace DV {
 	}
 
 	/**
+	* @brief DV::Plot::canvasConnect 连接画布的信号
+	* @return void
+	*/
+	void Plot::canvasConnect()
+	{
+		connect(canvas, SIGNAL(emitSelectRect(QRect)), this, SLOT(canvasSelectRect(QRect)));
+		connect(canvas, SIGNAL(emitSelectPoint(QPoint)), this, SLOT(canvasSelectPoint(QPoint)));
+		connect(canvas, SIGNAL(emitResize(QSize)), this, SLOT(canvasResize(QSize)));
+	}
+
+	/**
 	* @brief Plot::renderFinished 渲染完成槽
 	* @return void
 	*/
@@ -430,7 +453,7 @@ namespace DV {
 
 		//将操作压入栈
 		auto URStack = adapter->getUndoRedoStack();
-		UndoRedoStack::DataPtr unData(new UndoRedoData(xr, yr));
+		UndoRedoStack::DataPtr unData(adapter->CreateUndoRedoData(xr, yr));
 		URStack->push(unData);
 
 		//设置渲染范围
@@ -520,7 +543,7 @@ namespace DV {
 	{
 		if (!adapter)
 			return;
-		adapter->reRender(size);
+		adapter->resize(size);
 	}
 	void Plot::loadconfig()
 	{
@@ -555,15 +578,36 @@ namespace DV {
 		setRatioDisplay(1, 1);
 	}
 
+	/**
+	* @brief DV::Plot::setAdapter 为图标设置一个适配器，并显示适配器的内容
+	* @param const std::shared_ptr < PlotAdapter> & adapter
+	* @return void
+	*/
 	void Plot::setAdapter(const std::shared_ptr < PlotAdapter>& adapter)
 	{
+		/*
+			2022.2.17更新
+			由于QT事件异步发送的原因，在调整界面上的ui时不会同步触发resizeEvent事件，最后导致多次触发重渲染机制。
+			故做以下调整：
+			1. resizeEvent 不会直接调用rerender函数，而是调用resize函数，判断size是否和之前一样。
+			2. 在调整ui之前取消canvas的信号连接，避免触发重渲染机制
+			3. 调整ui之后等待qt的事件处理，保证resizeEvent已经被触发之后再往下执行。
+			4. 重新连接canvas信号
+		*/
+
 		this->adapter = adapter;
 		adapter->initPlot(*this);
-
 		canvas->clearIteam();
-		autoMaxRender();
+		
+		//避免调整ui时触发重渲染
+		canvasDisconnect();
 		updateToolbar();
 		updateInformationLabel();
+		QApplication::processEvents(0, 1000);
+		canvasConnect();
+		autoMaxRender();
+		
+	
 	}
 
 	/**
@@ -628,6 +672,18 @@ namespace DV {
 		adapter->setAxisRightRange(min, max);
 		reRender();
 	}
+
+	/**
+	* @brief DV::Plot::canvasDisconnect 取消画布的信号连接
+	* @return void
+	*/
+	void Plot::canvasDisconnect()
+	{
+		disconnect(canvas, SIGNAL(emitSelectRect(QRect)), this, SLOT(canvasSelectRect(QRect)));
+		disconnect(canvas, SIGNAL(emitSelectPoint(QPoint)), this, SLOT(canvasSelectPoint(QPoint)));
+		disconnect(canvas, SIGNAL(emitResize(QSize)), this, SLOT(canvasResize(QSize)));
+	}
+
 };
 
 #include "moc_Plot.cpp"

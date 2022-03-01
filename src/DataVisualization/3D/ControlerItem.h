@@ -4,6 +4,7 @@
 #include <QToolButton>
 #include <map>
 #include "DataVisualization3DExport.hpp"
+#include <QResizeEvent>
 namespace Ui {
 	class ControlerItem ;
 }
@@ -27,8 +28,12 @@ namespace DV3D {
 		//Ìí¼Óaction
 		void addAction(std::shared_ptr<ControlerAction> action);
 		void setName(const QString& name);
+	protected:
+		void resizeEvent(QResizeEvent* event);
 	private:
 		void initGui();
+
+
 	private:
 		Ui::ControlerItem* ui;
 

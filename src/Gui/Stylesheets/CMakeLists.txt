@@ -6,6 +6,7 @@ SET(Stylesheets_Files
     "Light-blue.qss"
     "Light-green.qss"
     "Light-orange.qss"
+    "New_UI.qss"
 )
 
 # Find all the image files
@@ -19,6 +20,7 @@ ADD_CUSTOM_TARGET(Stylesheets_data ALL
 )
 
 fc_copy_sources(Stylesheets_data "${CMAKE_BINARY_DIR}/data/Gui/Stylesheets" ${Stylesheets_Files} ${Images_Files})
+message("lipuo")
 
 INSTALL(
     FILES

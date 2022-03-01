@@ -16,6 +16,8 @@ namespace DV3D {
 
 	class ControlerVisible :public ControlerAction {
 	public:
+		ControlerVisible();
+
 		void active(std::shared_ptr<Controler> controler) override;
 		void initState(std::shared_ptr<Controler> controler) override;
 	};
@@ -23,6 +25,8 @@ namespace DV3D {
 	class ControlerEdgeVisible :public ControlerAction {
 
 	public:
+		ControlerEdgeVisible();
+
 		void active(std::shared_ptr<Controler> controler) override;
 		void initState(std::shared_ptr<Controler> controler) override;
 	};
@@ -30,12 +34,15 @@ namespace DV3D {
 	class ControlerClipEnable :public ControlerAction {
 
 	public:
+		ControlerClipEnable();
+
 		void active(std::shared_ptr<Controler> controler) override;
 		void initState(std::shared_ptr<Controler> controler) override;
 	};
 	class ControlerClipPlan :public ControlerAction
 	{
 	public:
+		ControlerClipPlan();
 		void active(std::shared_ptr<Controler> controler) override;
 		virtual void initState(std::shared_ptr<Controler> controler) override;
 	private:
@@ -43,6 +50,8 @@ namespace DV3D {
 	};
 	class ControlerSave :public ControlerAction {
 	public:
+		ControlerSave();
+
 		void active(std::shared_ptr<Controler> controler) override;
 		void initState(std::shared_ptr<Controler> controler) override;
 		//set get

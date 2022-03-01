@@ -644,7 +644,6 @@ void WorkbenchGroup::slotActivateWorkbench(const char* name)
 //        modeling3DAction->setChecked(true);
 //    else if (strcmp(name, "VisualWorkbench") == 0)
 //        postProcessingAction->setChecked(true);
-
     //注：WorkbenchGroup中Modeling 3D工作台在_group中对应Action（由FreeCAD自动生成）的text是3D Modeling，但这里修改的是SwitchWorkbench中Command对应的Action
 }
 

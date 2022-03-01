@@ -20,9 +20,7 @@ DV3D::ControlerItem* DV3D::ControlerItemFactor::CreatContour3dControlerItem()
 {
 	ControlerItem* item = CreatControlerItem();
 	std::shared_ptr<ControlerContourSurface> contourSurface(new ControlerContourSurface());
-	std::shared_ptr<ControlerClipPlan> controlerClipPlan(new ControlerClipPlan());
 	item->addAction(contourSurface);
-	item->addAction(controlerClipPlan);
 	return item;
 }
 

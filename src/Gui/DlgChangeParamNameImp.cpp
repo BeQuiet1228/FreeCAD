@@ -27,7 +27,7 @@ ChangeParamNameDialog::ChangeParamNameDialog(std::vector<std::pair<std::string, 
 }
 
 ChangeParamNameDialog::~ChangeParamNameDialog() {
-
+    delete ui;
 }
 
 void ChangeParamNameDialog::slotOK() {

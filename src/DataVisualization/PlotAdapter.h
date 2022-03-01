@@ -17,8 +17,6 @@ namespace DV {
 		PlotAdapter();
 		~PlotAdapter();
 
-	public:
-
 	protected:
 		//渲染管理器
 		std::shared_ptr<RenderThreadManager> renderManager;
@@ -39,7 +37,7 @@ namespace DV {
 		//添加渲染器
 		void addRenderer(const std::list<std::shared_ptr<Renderer>>& listRender);
 		//以默认大小渲染
-		virtual void autoMaxRender();
+		virtual void autoMaxRenderRange();
 		//刷新网格线
 		void updateGridLine();
 		//取点渲染
@@ -60,6 +58,8 @@ namespace DV {
 		std::list<CanvasItem> takeResut();
 		//获取图表信息
 		QString getInformationTitile();
+		//改变大小
+		void resize(const QSize& size);
 
 		//虚函数接口
 	public:
@@ -89,6 +89,8 @@ namespace DV {
 		//撤销恢复操作
 		virtual bool undo();
 		virtual bool redo();
+		//创建UndoRedoData
+		virtual UndoRedoStack::DataPtr CreateUndoRedoData(const Data::Rang& xr, const Data::Rang& yr);
 	Q_SIGNALS:
 		void updatePlot();
 	};

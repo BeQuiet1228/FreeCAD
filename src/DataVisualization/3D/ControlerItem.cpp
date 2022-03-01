@@ -3,6 +3,7 @@
 #include <cassert>
 #include "ControlerAction.h"
 #include <iostream>
+#include <QSize>
 #include "controler.h"
 DV3D::ControlerItem::ControlerItem(QWidget* parent /*=0*/)
 	:QWidget(parent),ui(new Ui::ControlerItem())
@@ -39,6 +40,8 @@ void DV3D::ControlerItem::setControler(std::shared_ptr<Controler> controler)
 void DV3D::ControlerItem::addAction(std::shared_ptr<ControlerAction> action)
 {
 	QToolButton* btn = new QToolButton(this);
+	btn->setFixedSize(32, 32);
+	btn->setIconSize(QSize(32,32));
 	connect(btn, SIGNAL(clicked(bool)), this, SLOT(toolButtonClicked(bool)));
 	ui->toolbarLayout->addWidget(btn);
 
@@ -50,6 +53,17 @@ void DV3D::ControlerItem::addAction(std::shared_ptr<ControlerAction> action)
 void DV3D::ControlerItem::setName(const QString& name)
 {
 	ui->labelName->setText(name);
+}
+
+void DV3D::ControlerItem::resizeEvent(QResizeEvent* event)
+{
+	QWidget::resizeEvent(event);
+	
+	QSize size;
+	size.setHeight(this->size().height() - 18);
+	size.setWidth(size.height());
+	ui->toolButtonVisible->setIconSize(size);
+	ui->toolButtonVisible->setFixedSize(size);
 }
 
 void DV3D::ControlerItem::initGui()

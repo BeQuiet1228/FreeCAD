@@ -8,6 +8,8 @@ namespace DV3D
 	class ControlerContourSurface :public ControlerAction
 	{
 	public:
+		ControlerContourSurface();
+
 		void active(std::shared_ptr<Controler> controler) override;
 		virtual void initState(std::shared_ptr<Controler> controler) override;
 	private:

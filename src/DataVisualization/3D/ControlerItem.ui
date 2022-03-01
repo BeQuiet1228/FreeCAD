@@ -6,14 +6,29 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>204</width>
-    <height>73</height>
+    <width>228</width>
+    <height>59</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_3">
+   <property name="spacing">
+    <number>3</number>
+   </property>
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
    <item>
     <widget class="QToolButton" name="toolButtonVisible">
      <property name="sizePolicy">
@@ -22,6 +37,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <property name="text">
       <string>可见</string>
      </property>
@@ -29,8 +47,14 @@
    </item>
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="spacing">
+        <number>6</number>
+       </property>
        <item>
         <widget class="QLabel" name="labelName">
          <property name="sizePolicy">
@@ -52,11 +76,24 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="styleSheet">
+          <string notr="true">QSlider::groove:horizontal{
+	background-color: rgb(176, 176, 176);
+	height:8px;
+}
+
+QSlider::handle:horizontal{
+width:13px;
+margin-top:-3px;
+margin-bottom:-3px;
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:0.0454545, x2:0.505682, y2:1, stop:0 rgba(72, 182, 255, 255), stop:0.982955 rgba(71, 156, 213, 255), stop:1 rgba(255, 255, 255, 255));
+}</string>
+         </property>
          <property name="maximum">
           <number>100</number>
          </property>
          <property name="value">
-          <number>100</number>
+          <number>50</number>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -90,12 +127,20 @@
          <property name="text">
           <string>关闭</string>
          </property>
+         <property name="icon">
+          <iconset resource="resource/rce.qrc">
+           <normaloff>:/action/close.png</normaloff>:/action/close.png</iconset>
+         </property>
         </widget>
        </item>
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="toolbarLayout"/>
+      <layout class="QHBoxLayout" name="toolbarLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+      </layout>
      </item>
     </layout>
    </item>

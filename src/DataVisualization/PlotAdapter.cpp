@@ -23,7 +23,6 @@ namespace DV {
 
 		if (mainRenderer)
 		{
-			std::cerr << "reRender" << std::endl;
 			mainRenderer->setSize(size);
 			RenderTask task(mainRenderer);
 			renderManager->addTask(task);
@@ -73,7 +72,7 @@ namespace DV {
 		rd->dataInit();
 		rd->setDefaultRang();
 		mainRenderer = rd;
-		autoMaxRender();
+		autoMaxRenderRange();
 	}
 
 	/**
@@ -96,7 +95,7 @@ namespace DV {
 		setMainRenderer(mRedner);
 	}
 
-	void PlotAdapter::autoMaxRender()
+	void PlotAdapter::autoMaxRenderRange()
 	{
 		if (!mainRenderer)
 			return;
@@ -204,6 +203,20 @@ namespace DV {
 		if (!mainRenderer)
 			return "";
 		return GetEncodingstr(mainRenderer->getInformationTitile().c_str(), ENCODING_GB2312);
+	}
+
+	/**
+	* @brief DV::PlotAdapter::resize 改变画布大小时调用重渲染，在重渲染之前会判断新的画布大小和之前是否一致
+	* @param const QSize & size 
+	* @return void
+	*/
+	void PlotAdapter::resize(const QSize& size)
+	{
+		if (!mainRenderer)
+			return;
+		if (mainRenderer->getSize() == size)
+			return;
+		reRender(size);
 	}
 
 	std::string PlotAdapter::getXTag()
@@ -323,6 +336,11 @@ namespace DV {
 	std::shared_ptr<DV::UndoRedoStack> PlotAdapter::getUndoRedoStack()
 	{
 		return URStack;
+	}
+
+	UndoRedoStack::DataPtr PlotAdapter::CreateUndoRedoData(const Data::Rang& xr, const Data::Rang& yr) {
+		UndoRedoStack::DataPtr  URData(new UndoRedoData(xr, yr));
+		return URData;
 	}
 
 };
