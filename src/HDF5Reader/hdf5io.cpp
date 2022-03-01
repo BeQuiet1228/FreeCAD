@@ -667,6 +667,17 @@ bool Hdf5Data::initPlanemation()
 }
 
 
+Hdf5Data::Hdf5Data(std::shared_ptr<H5File> h5)
+{
+	this->hdf5File = h5;
+	initData();
+}
+
+Hdf5Data::Hdf5Data()
+{
+	initData();
+}
+
 /**
 * @brief Hdf5Data::save 保存数据到路径
 * @param const std::string & path 路径
@@ -799,13 +810,17 @@ void Hdf5Data::init()
 {
 	if (initInformation())
 		return;
-	if (initPlanemation())
-		return;
 	if (initM3dStructInformation())
 		return;
 	if (initM2dStructInformation())
 		return;
 }
+
+void Hdf5Data::initData()
+{
+	coordinateSystem = CARTESIAN;
+}
+
 /**
 * @brief Hdf5IO::creatNewH5File
 * @param const std::string & fileName

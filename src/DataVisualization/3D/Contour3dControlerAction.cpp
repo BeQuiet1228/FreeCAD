@@ -1,7 +1,13 @@
 #include "Contour3dControlerAction.h"
 #include "Contour3dControler.h"
 #include "Contour3dControlerWidget.h"
+#include <QIcon>
 
+DV3D::ControlerContourSurface::ControlerContourSurface()
+{
+	QIcon icon(":/action/contour_line_setting.png");
+	setOnIcon(icon);
+}
 
 void DV3D::ControlerContourSurface::active(std::shared_ptr<Controler> controler)
 {

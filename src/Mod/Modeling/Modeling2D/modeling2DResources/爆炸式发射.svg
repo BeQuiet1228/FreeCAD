@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>爆炸式发射</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#BFFEDA" offset="0%"></stop>
+            <stop stop-color="#47DB87" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="图标输出" transform="translate(-295.000000, -886.000000)">
+            <g id="爆炸式发射" transform="translate(295.000000, 886.000000)">
+                <circle id="Oval-Copy" stroke="#1A1A1A" stroke-width="0.5" fill="#E7E7E7" cx="3" cy="9" r="1"></circle>
+                <line x1="8.3551548" y1="8.69104075" x2="5" y2="5" id="Path-5" stroke="#1A1A1A" stroke-width="0.25"></line>
+                <line x1="8.22634483" y1="8.87910208" x2="10.8495949" y2="4.63653157" id="Path-5-Copy" stroke="#1A1A1A" stroke-width="0.25"></line>
+                <line x1="8.59807964" y1="7.33039889" x2="8.31037496" y2="5.35120057" id="Path-5-Copy" stroke="#1A1A1A" stroke-width="0.25"></line>
+                <line x1="8.8048975" y1="9.4684983" x2="9.26850102" y2="11.1149858" id="Path-5-Copy-2" stroke="#1A1A1A" stroke-width="0.25"></line>
+                <line x1="7.7561111" y1="8.59442583" x2="6.05584557" y2="8.40748647" id="Path-5-Copy-2" stroke="#1A1A1A" stroke-width="0.25"></line>
+                <line x1="11.0590583" y1="9.31989863" x2="9.45452267" y2="8.7271807" id="Path-5-Copy-3" stroke="#1A1A1A" stroke-width="0.25"></line>
+                <line x1="8.35186262" y1="8.48330696" x2="13.1638124" y2="7.16953957" id="Path-5-Copy" stroke="#1A1A1A" stroke-width="0.25"></line>
+                <line x1="8.14568978" y1="7.92348052" x2="11.3699852" y2="11.729366" id="Path-5-Copy" stroke="#1A1A1A" stroke-width="0.25"></line>
+                <line x1="8.75517783" y1="8.19696898" x2="7.15353218" y2="12.9209056" id="Path-5-Copy" stroke="#1A1A1A" stroke-width="0.25"></line>
+                <line x1="8.60219053" y1="8.53854319" x2="4.09147838" y2="10.6679378" id="Path-5-Copy" stroke="#1A1A1A" stroke-width="0.25"></line>
+                <circle id="Oval-Copy-5" stroke="#1A1A1A" stroke-width="0.5" fill="#E7E7E7" cx="14" cy="13" r="1"></circle>
+                <circle id="Oval-Copy-3" stroke="#1A1A1A" stroke-width="0.5" fill="#E7E7E7" cx="14.5" cy="3.5" r="1"></circle>
+                <circle id="Oval-Copy-7" stroke="#1A1A1A" stroke-width="0.5" fill="#E7E7E7" cx="2.5" cy="13.5" r="1"></circle>
+                <circle id="Oval-Copy-4" stroke="#1A1A1A" stroke-width="0.5" fill="#E7E7E7" cx="13.5" cy="9.5" r="1"></circle>
+                <circle id="Oval-Copy-6" stroke="#1A1A1A" stroke-width="0.5" fill="#E7E7E7" cx="3.5" cy="2.5" r="1"></circle>
+                <circle id="Oval-Copy-2" stroke="#1A1A1A" stroke-width="0.5" fill="#E7E7E7" cx="9.5" cy="2.5" r="1.5"></circle>
+                <circle id="Oval-Copy-8" stroke="#1A1A1A" stroke-width="0.5" fill="#E7E7E7" cx="6.5" cy="13.5" r="1.5"></circle>
+                <circle id="Oval" fill="url(#linearGradient-1)" cx="8.5" cy="8.5" r="1.5"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

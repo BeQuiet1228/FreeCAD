@@ -1,4 +1,6 @@
 sys.path.append(Dir + '/Modeling3D/')
+sys.path.append(Dir)
+import FreeCADGui
 class Modeling3DWorkbench(Workbench):
     "3D Modeling workbench object"
     def __init__(self):
@@ -15,4 +17,4 @@ class Modeling3DWorkbench(Workbench):
 
         Modeling3DGui.LoadAll(self)
 
-Gui.addWorkbench(Modeling3DWorkbench())
+# FreeCADGui.addWorkbench(Modeling3DWorkbench())

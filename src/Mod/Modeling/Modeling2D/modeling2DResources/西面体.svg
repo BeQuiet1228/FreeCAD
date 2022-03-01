@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>西面体</title>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="图标输出" transform="translate(-443.000000, -668.000000)">
+            <g id="西面体" transform="translate(443.000000, 668.000000)">
+                <path d="M13.1961524,11 C13.1268832,10.9402009 11.4836392,9.94020093 8.26642024,8 L13.1961524,5.06588858 C13.2654216,9.08176193 13.2654216,11.0597991 13.1961524,11 Z" id="Path-34" fill="#2776B7"></path>
+                <polygon id="Path-33" fill="#1D4C73" points="13.1961524 11 8 8 8 14"></polygon>
+                <polygon id="Path-11" fill="#76B6EB" points="2.85463909 5.06588858 7.92316366 8 8 14 2.85463909 11"></polygon>
+                <polygon id="Path-10" fill="#8CCBFF" points="2.85463909 5.06588858 8 8 12.9916882 5.06588858 8 2"></polygon>
+                <polygon id="Polygon" stroke="#1A1A1A" stroke-width="0.5" points="8 2 13.1961524 5 13.1961524 11 8 14 2.80384758 11 2.80384758 5"></polygon>
+                <polyline id="Path-8" stroke="#1A1A1A" stroke-width="0.5" points="12.9916882 5.06588858 8 8 2.85463909 5.06588858"></polyline>
+                <line x1="8" y1="8" x2="8" y2="13.8206028" id="Path-9" stroke="#1A1A1A" stroke-width="0.5"></line>
+                <line x1="13.1961524" y1="11" x2="8.26642024" y2="8.00038809" id="Path-32" stroke="#1A1A1A" stroke-width="0.5"></line>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -25,12 +25,15 @@ void Gui::HDF5DataItem3DDoubleClickEventHander::trigger(HDF5DataItem* item)
 
 	//单独处理特殊情况下的结构图
 	auto controler = creatStructControler(item);
-
-	if(!controler)
+	DV3D::ControlerItem *controlerItem;
+	if (controler)
+	{
+		controlerItem = DV3D::ControlerItemFactor::CreatStructPlorRotateControlerItem();
+	}else {
 		controler = DV3D::ControlerFactory::CreatControler(item->getHdf5Data());
-
+		controlerItem = DV3D::ControlerItemFactor::CreatControlerItemForHdf5Name(item->getHdf5Data().name);
+	}
 	controler->setObjectName(item->getNmae().toStdString());
-	auto controlerItem = DV3D::ControlerItemFactor::CreatContour3dControlerItem();
 
 	//添加一个save按钮 ，并且传入工程路径作为路径选择的文件浏览器起始路径
 	auto workPath = Gui::FileDialog::getWorkingDirectory();

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>热致发射</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#BFFEDA" offset="0%"></stop>
+            <stop stop-color="#4BDC8A" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="图标输出" transform="translate(-443.000000, -886.000000)" stroke="#1A1A1A" stroke-width="0.5">
+            <g id="热致发射" transform="translate(443.000000, 886.000000)">
+                <circle id="Oval-Copy-8" fill="#E7E7E7" cx="12.5" cy="14.5" r="1"></circle>
+                <circle id="Oval-Copy-9" fill="#E7E7E7" cx="12" cy="11" r="1"></circle>
+                <circle id="Oval-Copy-14" fill="#E7E7E7" cx="4" cy="14" r="1"></circle>
+                <circle id="Oval-Copy-13" fill="#E7E7E7" cx="8.5" cy="13.5" r="1"></circle>
+                <circle id="Oval-Copy-12" fill="#E7E7E7" cx="14.5" cy="4.5" r="1"></circle>
+                <circle id="Oval-Copy-16" fill="#E7E7E7" cx="12.5" cy="1.5" r="1"></circle>
+                <circle id="Oval-Copy-17" fill="#E7E7E7" cx="14.5" cy="9.5" r="1"></circle>
+                <circle id="Oval-Copy-10" fill="url(#linearGradient-1)" cx="6" cy="6" r="2"></circle>
+                <g id="Group" transform="translate(0.595255, 0.989674)" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5.40474517" y1="0" x2="5.40474517" y2="2.01032594" id="Path-20"></line>
+                    <line x1="8.53610767" y1="1.5079847" x2="8.53610767" y2="3.51831064" id="Path-20" transform="translate(8.536108, 2.513148) rotate(51.000000) translate(-8.536108, -2.513148) "></line>
+                    <line x1="9.30949034" y1="4.89639557" x2="9.30949034" y2="6.90672151" id="Path-20" transform="translate(9.309490, 5.901559) rotate(103.000000) translate(-9.309490, -5.901559) "></line>
+                    <line x1="7.14252026" y1="7.61369011" x2="7.14252026" y2="9.62401605" id="Path-20" transform="translate(7.142520, 8.618853) rotate(154.000000) translate(-7.142520, -8.618853) "></line>
+                    <line x1="3.66697009" y1="7.61369011" x2="3.66697009" y2="9.62401605" id="Path-20" transform="translate(3.666970, 8.618853) rotate(206.000000) translate(-3.666970, -8.618853) "></line>
+                    <line x1="1.5" y1="4.89639557" x2="1.5" y2="6.90672151" id="Path-20" transform="translate(1.500000, 5.901559) rotate(257.000000) translate(-1.500000, -5.901559) "></line>
+                    <line x1="2.27338267" y1="1.5079847" x2="2.27338267" y2="3.51831064" id="Path-20" transform="translate(2.273383, 2.513148) rotate(309.000000) translate(-2.273383, -2.513148) "></line>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -30,7 +30,7 @@ vtkSmartPointer<vtkDataSet> DV3D::CartesianStructDataSetConstructor::creatDatase
 
 	auto ugrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
 	ugrid->SetPoints(points);
-	ugrid->Allocate(value.size());
+	//ugrid->Allocate(value.size());
 	//添加六面体网格
 	for (auto iter = value.begin(); iter != value.end(); iter++)
 	{
@@ -93,8 +93,8 @@ void DV3D::CartesianStructDataSetConstructor::initPoints()
 
 	//获取所有顶点 循环顺序为z -> y -> x
 	//这里的顺序会影响到getPointID中获取点索引的方式
-	points = vtkPoints::New();
-	points->Allocate(xs * ys * zs);
+	points = vtkSmartPointer<vtkPoints>::New();
+	//points->Allocate(xs * ys * zs);
 	int pointId = 0;
 	double temp[3] = {0,0,0};
 	for (auto z = grid[2].begin(); z != grid[2].end(); z++)

@@ -387,20 +387,20 @@ PyObject* Application::sChipicOpen(PyObject * /*self*/, PyObject *args, PyObject
 	transform(suffix.begin(), suffix.end(), suffix.begin(), ::tolower);
 	if (strcmp(suffix.c_str(), ".fcstd") == 0)
 	{
-		//ÏÖÔÚÒÑ´æÔÚ´ò¿ªÎÄµµ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Ú´ï¿½ï¿½Äµï¿½
 		if (Gui::Application::Instance->activeDocument())
 		{
-			//¹Ø±ÕËùÓÐ
+			//ï¿½Ø±ï¿½ï¿½ï¿½ï¿½ï¿½
 			//Gui::doCommand
 		}
 		Gui::Application::Instance->open(EncodedName.c_str(), "FreeCAD");
 	}
 	else if (strcmp(suffix.c_str(), ".m3d") == 0)
 	{
-		//ÏÖÔÚÒÑ´æÔÚ´ò¿ªÎÄµµ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Ú´ï¿½ï¿½Äµï¿½
 		if (Gui::Application::Instance->activeDocument())
 		{
-			//¹Ø±ÕËùÓÐ
+			//ï¿½Ø±ï¿½ï¿½ï¿½ï¿½ï¿½
 			//Gui::getMainWindow()->closeAllWindows();
 		}
 		Gui::Application::Instance->open(EncodedName.c_str(), "importM3D");

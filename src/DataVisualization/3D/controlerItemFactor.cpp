@@ -8,10 +8,10 @@ DV3D::ControlerItem* DV3D::ControlerItemFactor::CreatControlerItem()
 
 	std::shared_ptr<ControlerClipEnable> clip(new ControlerClipEnable());
 	std::shared_ptr<ControlerEdgeVisible> edge(new ControlerEdgeVisible());
-	//std::shared_ptr<ControlerClipPlan> controlerClipPlan(new ControlerClipPlan());
+	std::shared_ptr<ControlerClipPlan> controlerClipPlan(new ControlerClipPlan());
 	item->addAction(clip);
 	item->addAction(edge);
-	//item->addAction(controlerClipPlan);
+	item->addAction(controlerClipPlan);
 	
 	return item;
 }
@@ -20,10 +20,17 @@ DV3D::ControlerItem* DV3D::ControlerItemFactor::CreatContour3dControlerItem()
 {
 	ControlerItem* item = CreatControlerItem();
 	std::shared_ptr<ControlerContourSurface> contourSurface(new ControlerContourSurface());
-	std::shared_ptr<ControlerClipPlan> controlerClipPlan(new ControlerClipPlan());
 	item->addAction(contourSurface);
-	item->addAction(controlerClipPlan);
 	return item;
+}
+
+/**
+* @brief DV3D::ControlerItemFactor::CreatStructPlorRotateControlerItem 为特殊情况下旋转得出的结构图创建控制器界面
+* @return DV3D::ControlerItem*
+*/
+DV3D::ControlerItem* DV3D::ControlerItemFactor::CreatStructPlorRotateControlerItem()
+{
+	return new ControlerItem();
 }
 
 /**
@@ -35,7 +42,6 @@ DV3D::ControlerItem* DV3D::ControlerItemFactor::CreatContour3dControlerItem()
 */
 DV3D::ControlerItem* DV3D::ControlerItemFactor::AddSaveAction(ControlerItem* item, Hdf5Data& data, const QString& path /*=""*/)
 {
-	return item;
 	auto saveAction = std::make_shared<ControlerSave>();
 	saveAction->setHdf5Data(data);
 	saveAction->setPath(path);
@@ -43,4 +49,21 @@ DV3D::ControlerItem* DV3D::ControlerItemFactor::AddSaveAction(ControlerItem* ite
 
 	return item;
 }
+
+DV3D::ControlerItem* DV3D::ControlerItemFactor::CreatControlerItemForHdf5Name(const std::string& name)
+{
+	if (name == "struct")
+		return CreatControlerItem();
+	if (name == "CONTOUR")
+		return CreatContour3dControlerItem();
+	if (name == "PARTICLE3D")
+		return CreatControlerItem();
+	if (name == "CONTOUR3D")
+		return CreatContour3dControlerItem();
+	if (name == "VECTOR3D")
+		return CreatContour3dControlerItem();
+
+	return CreatControlerItem();
+}
+
 

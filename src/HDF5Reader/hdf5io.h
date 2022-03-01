@@ -20,10 +20,8 @@ using VectorF = std::vector<float>;
 class CONTROL_EXPORT Hdf5Data
 {
 public:
-	Hdf5Data(std::shared_ptr<H5File> h5){
-		this->hdf5File = h5;
-	}
-	Hdf5Data() = default;
+	Hdf5Data(std::shared_ptr<H5File> h5);
+	Hdf5Data();
 
 public:
 	enum CoordinateSystem{
@@ -59,6 +57,10 @@ public:
 
 	void initHeadFromList(Group& newgroup, std::vector<std::string> List);
 	void initGroupFromValue(Group& newgroup, std::shared_ptr<VectorF> values);
+
+private:
+	//初始化数据
+	void initData();
 };
 
 class CONTROL_EXPORT Hdf5IO

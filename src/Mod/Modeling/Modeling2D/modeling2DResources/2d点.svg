@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>2d点</title>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="图标输出" transform="translate(-248.000000, -562.000000)" stroke="#1A1A1A" stroke-width="0.5">
+            <g id="2d点" transform="translate(248.000000, 562.000000)">
+                <rect id="Rectangle" x="4" y="4" width="8" height="8"></rect>
+                <circle id="Oval" fill="#297CC0" cx="12" cy="4" r="1"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

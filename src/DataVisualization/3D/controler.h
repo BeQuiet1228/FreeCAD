@@ -2,6 +2,7 @@
 #include "object.h"
 #include <memory>
 #include "DataVisualization3DExport.hpp"
+#include "XmlGroup3D.h"
 namespace DV3D {
 	class ActorPipemline;
 	class Widget3D;
@@ -44,6 +45,8 @@ namespace DV3D {
 		//设置剪切
 		void setClipEnable(const bool& b);
 		bool getClipEnable();
+		//初始化状态
+		void setInitState(XmlData::ControlerXml);
 	private:
 		//单向绑定
 		void oneWayBinding(Widget3D* widget3D);

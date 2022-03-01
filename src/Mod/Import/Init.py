@@ -33,7 +33,23 @@
 #FreeCAD.addExportType("IGES files (*.iges *.igs)","ImportGui")
 FreeCAD.addImportType("PLMXML files (*.plmxml)","PlmXmlParser")
 FreeCAD.addImportType("STEPZ Zip File Type (*.stpZ *.stpz)","stepZ") 
-FreeCAD.addExportType("STEPZ zip File Type (*.stpZ *.stpz)","stepZ") 
+FreeCAD.addExportType("STEPZ zip File Type (*.stpZ *.stpz)","stepZ")
+
+# start: add import type hdf5 add by chenjian
+FreeCAD.addImportType("HDF5 File(*.h5)", "importHDF5")
+# end: add import type hdf5 add by chenjian
+
+# start: add import type m3d add by maxin
+FreeCAD.addImportType("M3D File(*.m3d)", "importM3D")
+# end: add import type m3d add by maxin
+
+# start: add export type m3d add by maxin
+FreeCAD.addExportType("M3D File(*.m3d)", "importM3D")
+# end: add export type m3d add by maxin
+
+# start: add import type m3d add by wzn
+FreeCAD.addImportType("OBJ File(*.obj)", "importOBJ2")
+# end: add import type m3d add by wzn
 
 # Add initial parameters value if they are not set
 

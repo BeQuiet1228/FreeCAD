@@ -1,0 +1,189 @@
+
+ #ribbonTabWidget QTabWidget::tab-bar {
+      left: 10px; /* move to the right by 5px */
+  }
+
+  /* Style the tab using the tab sub-control. Note that
+      it reads QTabBar _not_ QTabWidget */
+#ribbonTabWidget   QTabBar::tab {
+      background-color: #000000;
+      font: 75 12pt "微软雅黑";
+      color: #FFFFFF;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      min-width: 20ex;
+	  min-height:7ex;
+      padding-right:10px;
+	  padding-left:10px;
+	  padding-top:5px;
+	  padding-bottom:5px;
+      margin-right:10px;
+
+  }
+
+ #ribbonTabWidget  QTabBar::tab:selected, QTabBar::tab:hover {
+    background-color: #bdc1c4;
+  }
+
+ #ribbonTabWidget  QTabBar::tab:!selected {
+     /* margin-top: 2px; /* make non-selected tabs look smaller */
+  }
+
+  /* make use of negative margins for overlapping tabs */
+ #ribbonTabWidget  QTabBar::tab:selected {
+	background-color: #bdc1c4;
+	color:#000000
+  }
+QTabWidget::pane { /* The tab widget frame */ 
+	background: qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0.506, stop:0 rgba(206, 207, 208, 255), stop:1 rgba(178, 179, 180, 255));
+    position: absolute;
+   }
+#ribbonTabWidget QStackedWidget#qt_tabwidget_stackedwidget {
+	border-width:0px;
+	margins:0px;
+	background-color: #bdc1c4;
+ }
+#PICRibbonTabContent {
+	background-color: rgba(0,0,0,0);
+}
+#PICRibbonButtonGroup{
+	border: solid;
+    border-right-width:3px;
+	border-color:qlineargradient(spread:pad, x1:0, y1:1, x2:1, y2:1, stop:0.3125 rgba(151, 151, 151, 255), stop:0.681818 rgba(236, 236, 236, 255));
+	background-color: rgba(0,0,0,0);
+	margin-top:5px;
+	margin-bottom:5px;
+}
+#labelTitle{
+	color:#ffffff;
+}
+#ToolbarWidget,
+#titleBar{
+	background-color:#000000;
+}
+QToolBar{
+	background-color:rgba(0,0,0,0);
+	border-width:0px;
+}
+
+#WindowDef{
+	background-color:#000000;
+}
+#widgetTab{
+	background-color:#000000;
+}
+#btMini,#btMaxShow,#btClose{
+	background-color:rgba(0,0,0,0);
+	border-width:0px;
+}
+QMainWindow{
+	background-color:#ffffff;
+}
+#labelGroupName{
+	font: 75 9pt "微软雅黑";
+}
+#PICRibbonButtonGroup QToolButton{
+	font: 9pt "微软雅黑";
+	font-weight: 400;
+	color: #000000;
+	line-height: 7px;
+
+}
+#PICRibbonButtonGroup QToolButton:hover{ /* only for MenuButtonPopup */     
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+stop:0 #faf2c1,stop:1 #fed375);
+	border-radius: 2px;
+	border: 1px solid #C59337;
+
+  }
+  
+ 
+/**********************************运行信息框-按钮**************************/
+#ContorlButtonBar{
+    background:rgb(255,255,255);
+}
+
+#ContorlButtonBar QToolButton{
+    border:2px solid rgb(214,218,219);
+    border-radius:7px;
+    height:50px;
+    width:160px;
+    padding:2px 4px;
+    background:center,rgb(224,226,225);
+
+}
+
+#ContorlButtonBar QToolButton:hover{
+    color:rgb(255, 255, 255);
+    border:2px solid rgb(157,157,159);
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop:0 rgb(226,236,241),
+                            stop: 0.3 rgb(160,160,160),
+                              stop: 1 rgb(120,120,120));
+}
+
+#ContorlButtonBar QToolButton:pressed
+{
+    border:2px solid rgb(245,219,184);
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop:0 rgb(250,235,176),
+                        stop: 0.3 rgb(250,230,142),
+                          stop: 1 rgb(251,212,117));
+}
+
+/******************************运行信息框-标签及进度条**********************************/
+#ControlDockWidget{
+	border: solid;
+    border-width:1px;
+	border-color:gray;
+}
+#Form{
+    background:white;
+}
+
+#Form QLabel {
+    font-family: "Microsoft YaHei";
+    font-size: 12px;
+    color: rgb(152,154,153);
+    font-style: normal;
+    font-weight: normal;
+    text-align: left;
+    padding: 0px;
+}
+
+#progressBarIterationCount {
+    border:1px solid rgb(214,218,219);
+    background:rgb(222,223,223);
+    text-align:center;
+    border-radius:3px;
+}
+
+#progressBarIterationCount::chunk{
+    border-top-left-radius:3px;
+    border-bottom-left-radius:3px;
+    background:qlineargradient(spread:pad,x1:0,y1:0,x2:1,y2:0,stop:0 red,stop:1 rgb(6,176,37));
+}
+
+#PlotToolbar{
+		background-color: #bdc1c4;
+		margin-top:20;
+}
+
+#ControlerItem QToolButton{
+	border: solid;
+    border-right-width:0px;
+}
+#toolButtonVisible{
+	mini-width:64px;
+	mini-height:64px;
+}
+
+#ControlerItem QSlider::groove:horizontal{
+	background-color: rgb(176, 176, 176);
+	height:8px;
+}
+
+#ControlerItem QSlider::handle:horizontal{
+	width:13px;
+	margin-top:-3px;
+	margin-bottom:-3px;
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:0.0454545, x2:0.505682, y2:1, stop:0 rgba(72, 182, 255, 255), stop:0.982955 rgba(71, 156, 213, 255), stop:1 rgba(255, 255, 255, 255));
+}

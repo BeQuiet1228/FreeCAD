@@ -23,10 +23,12 @@ namespace DV3D {
 		virtual PolarDatas getPolarDatas();
 		virtual PolarIndes getPolarIndex();
 		void initGridsize(unsigned long long rSize, unsigned long long thetaSize, unsigned long long zSize);
+		bool isComCir(std::vector<float>& thetas);
 	protected:
 		vtkSmartPointer<vtkPoints> points;
 		//Íø¸ñ´óÐ¡
 		unsigned long long rSize, thetaSize, zSize;
+		bool isCir;
 	};
 
 };

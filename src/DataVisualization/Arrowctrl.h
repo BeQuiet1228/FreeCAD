@@ -4,10 +4,11 @@
 #include <QWidget>
 #include <QPointF>
 #include <mutex>
+#include "exportConfig.hpp"
 class QAction;
 class QMenu;
 namespace DV {
-	class ArrowCtrl :public QWidget
+	class DATA_VISUALIZATION_EXPORT ArrowCtrl :public QWidget
 	{
 		Q_OBJECT
 	public:

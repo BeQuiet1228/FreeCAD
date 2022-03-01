@@ -34,6 +34,7 @@ namespace DV {
 		//坐标的个数
 		int posxSize;
 		int posySize;
+		//依次分别为 -多边形编号 -多边形属性 -多边形点集
 		std::map<int, std::map<int, std::vector<QPointF>>> allinfo;
 		std::map<int, std::map<int, std::vector<QPointF>>> lineinfo;
 		//全部点位，(包括多边型内部的网格点)

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>投影线</title>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="图标输出" transform="translate(-295.000000, -562.000000)" stroke-width="0.5">
+            <g id="投影线" transform="translate(295.000000, 562.000000)">
+                <line x1="5.5" y1="12.7894286" x2="12.2090552" y2="8.43184" id="Path-47" stroke="#4F4F4F"></line>
+                <line x1="5.5" y1="3" x2="5.5" y2="13" id="Path-46" stroke="#1A1A1A"></line>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -9,6 +9,7 @@ SET(Arch_SRCS
     ArchWall.py
     importIFC.py
     importIFClegacy.py
+	importGBXML.py
     Arch.py
     ArchBuilding.py
     ArchFloor.py
@@ -60,7 +61,10 @@ ADD_CUSTOM_TARGET(Arch ALL
 
 fc_copy_sources(Arch "${CMAKE_BINARY_DIR}/Mod/Arch" ${Arch_SRCS})
 fc_copy_sources(Arch "${CMAKE_BINARY_DIR}/Mod/Arch/Dice3DS" ${Dice3DS_SRCS})
-
+#复制文件
+File(COPY "Presets" DESTINATION ${CMAKE_BINARY_DIR}/Mod/Arch)
+File(COPY "Dice3DS" DESTINATION ${CMAKE_BINARY_DIR}/Mod/Arch)
+File(COPY "Resources" DESTINATION ${CMAKE_BINARY_DIR}/Mod/Arch)
 fc_target_copy_resource(Arch
     ${CMAKE_SOURCE_DIR}/src/Mod/Arch
     ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_DATADIR}/Mod/Arch

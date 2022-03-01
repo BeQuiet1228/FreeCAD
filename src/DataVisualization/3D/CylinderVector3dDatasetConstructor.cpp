@@ -13,7 +13,7 @@ DV3D::CylinderVector3dDatasetContructor::CylinderVector3dDatasetContructor()
 }
 
 DV3D::CylinderVector3dDatasetContructor::CylinderVector3dDatasetContructor(vtkIdType zunit, vtkIdType thetaunit, vtkIdType runit)
-	: CartesianVector3dDatasetConstructor(zunit,thetaunit,runit)
+	: CartesianVector3dDatasetConstructor(zunit, thetaunit, runit)
 {
 
 }
@@ -32,9 +32,9 @@ DV3D::CylinderVector3dDatasetContructor::~CylinderVector3dDatasetContructor()
 * @return void
 */
 void DV3D::CylinderVector3dDatasetContructor::generatePolyData(
-	std::vector<vtkPoint3d>& datas, 
-	std::vector<float>& rList, 
-	std::vector<float>& thetaList, 
+	std::vector<vtkPoint3d>& datas,
+	std::vector<float>& rList,
+	std::vector<float>& thetaList,
 	std::vector<float>& zList)
 {
 	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
@@ -45,13 +45,13 @@ void DV3D::CylinderVector3dDatasetContructor::generatePolyData(
 	vector->SetNumberOfComponents(3); //vector->SetName("Vector");
 	double scalarMax = 0.0f;
 	/*
-		按合并计算每个方向的步长
+		按合并计算每个方向的间隔
 	*/
 	//单位转换
-	auto thetaGridSize = yGridSize, rGridSize = xGridSize, thetaUnit =yUnit,rUnit=xUnit;
+	auto thetaGridSize = yGridSize, rGridSize = xGridSize, thetaUnit = yUnit, rUnit = xUnit;
 
 	auto zSize = (zGridSize % zUnit > 0) ? (zGridSize / zUnit + 1) : (zGridSize / zUnit);
-	auto thetaSize = (thetaGridSize% thetaUnit > 0) ? (thetaGridSize / thetaUnit + 1) : (thetaGridSize / thetaUnit);
+	auto thetaSize = (thetaGridSize % thetaUnit > 0) ? (thetaGridSize / thetaUnit + 1) : (thetaGridSize / thetaUnit);
 	auto rSize = (rGridSize % rUnit > 0) ? (rGridSize / rUnit + 1) : (rGridSize / rUnit);
 	/*
 		构建数据
@@ -71,9 +71,9 @@ void DV3D::CylinderVector3dDatasetContructor::generatePolyData(
 				vectorPoint = vectorPoint.normalized();
 				vector->InsertNextTuple3(vectorPoint.x(), vectorPoint.y(), vectorPoint.z());
 				{
-					auto x = rList[ri*rUnit] * cos(thetaList[thetai*thetaUnit]);
-					auto y = rList[ri*rUnit] * sin(thetaList[thetai*thetaUnit]);
-					auto z = zList[zi*zUnit];
+					auto x = rList[ri * rUnit] * cos(thetaList[thetai * thetaUnit]);
+					auto y = rList[ri * rUnit] * sin(thetaList[thetai * thetaUnit]);
+					auto z = zList[zi * zUnit];
 					points->InsertNextPoint(x, y, z);
 					normal->InsertNextTuple3(1.0, 1.0, 1.0);
 				}
@@ -86,9 +86,9 @@ void DV3D::CylinderVector3dDatasetContructor::generatePolyData(
 	polyData->GetPointData()->SetVectors(vector);
 	polyData->GetPointData()->SetNormals(normal);
 	//计算缩放因子
-	double scaleFactorX = (rList[rGridSize - 1] - rList[0]) / (rGridSize/rUnit);
+	double scaleFactorX = (rList[rGridSize - 1] - rList[0]) / (rGridSize / rUnit);
 	double scaleFactorY = scaleFactorX;
-	double scaleFactorZ = (zList[zGridSize - 1] - zList[0]) / (zGridSize/zUnit);
+	double scaleFactorZ = (zList[zGridSize - 1] - zList[0]) / (zGridSize / zUnit);
 	scaleFactor = sqrt(scaleFactorX * scaleFactorX + scaleFactorY * scaleFactorY + scaleFactorZ * scaleFactorZ);
 	scaleFactor /= scalarMax;
 }
@@ -115,7 +115,7 @@ DV3D::vtkPoint3d DV3D::CylinderVector3dDatasetContructor::getMergeVector(
 	vtkIdType thetai,
 	vtkIdType ri)
 {
-	auto thetaUnit = yUnit, rUnit=xUnit;
+	auto thetaUnit = yUnit, rUnit = xUnit;
 	vtkPoint3d vectorPoint(0.0, 0.0, 0.0);
 	for (auto zUniti = 0; zUniti < zUnit; ++zUniti)
 		for (auto thetaUniti = 0; thetaUniti < thetaUnit; ++thetaUniti)

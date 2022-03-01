@@ -5,6 +5,7 @@ IF (BUILD_GUI)
 ENDIF (BUILD_GUI)
 
 SET(Draft_SRCS
+	__init__.py
     Init.py
     InitGui.py
     Draft.py
@@ -50,5 +51,5 @@ SET(DraftGuiIcon_SVG
 )
 
 fc_copy_sources(Draft "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_DATADIR}/Mod/Draft" ${DraftGuiIcon_SVG})
-
+File(COPY "Resources" DESTINATION ${CMAKE_BINARY_DIR}/Mod/Draft)
 INSTALL(FILES ${DraftGuiIcon_SVG} DESTINATION "${CMAKE_INSTALL_DATADIR}/Mod/Draft/Resources/icons")

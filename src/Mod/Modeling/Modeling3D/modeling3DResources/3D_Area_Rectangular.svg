@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>矩形面</title>
+    <defs>
+        <linearGradient x1="8.67768595%" y1="0%" x2="91.322314%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#EEEEEE" offset="0.0409746503%"></stop>
+            <stop stop-color="#C2C2C2" offset="100%"></stop>
+        </linearGradient>
+        <path d="M13,7.59198747 L13,13.0833333 C13,13.5895944 12.5522847,14 12,14 L4,14 C3.44771525,14 3,13.5895944 3,13.0833333 L3,3.91666667 C3,3.41040565 3.44771525,3 4,3 L8.01142896,3 L12,3 C12.5522847,3 13,3.44771525 13,4 L13,7.59198747 L13,7.59198747 Z" id="path-2"></path>
+        <filter x="-7.5%" y="-6.8%" width="115.0%" height="113.6%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="1" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 1 0" type="matrix" in="shadowInnerInner1" result="shadowMatrixInner1"></feColorMatrix>
+            <feOffset dx="-1" dy="-1" in="SourceAlpha" result="shadowOffsetInner2"></feOffset>
+            <feComposite in="shadowOffsetInner2" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner2"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.2 0" type="matrix" in="shadowInnerInner2" result="shadowMatrixInner2"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner2"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="图标输出" transform="translate(-340.000000, -457.000000)">
+            <g id="Path" transform="translate(340.000000, 457.000000)">
+                <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
+                <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                <use stroke="#1A1A1A" stroke-width="0.5" xlink:href="#path-2"></use>
+            </g>
+        </g>
+    </g>
+</svg>

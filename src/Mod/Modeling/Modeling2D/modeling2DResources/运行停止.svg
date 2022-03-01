@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>运行停止</title>
+    <defs>
+        <path d="M13,11 L13,13.25 C13,13.6642136 12.5522847,14 12,14 L4,14 C3.44771525,14 3,13.6642136 3,13.25 L3,11 L3,11" id="path-1"></path>
+        <filter x="-7.5%" y="-16.7%" width="115.0%" height="141.7%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="-1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.3 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+        <path d="M5.62137922,3 L10.3786208,3 C10.8331198,3 11.2304553,3.3064963 11.3458517,3.74610187 L13.25,11 L13.25,11 L2.75,11 L4.65414826,3.74610187 C4.76954472,3.3064963 5.16688016,3 5.62137922,3 Z" id="path-3"></path>
+        <filter x="-4.8%" y="-6.2%" width="109.5%" height="112.5%" filterUnits="objectBoundingBox" id="filter-4">
+            <feOffset dx="1" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 1 0" type="matrix" in="shadowInnerInner1" result="shadowMatrixInner1"></feColorMatrix>
+            <feOffset dx="-1" dy="-1" in="SourceAlpha" result="shadowOffsetInner2"></feOffset>
+            <feComposite in="shadowOffsetInner2" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner2"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.2 0" type="matrix" in="shadowInnerInner2" result="shadowMatrixInner2"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner2"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="图标输出" transform="translate(-522.000000, -78.000000)">
+            <g id="运行停止" transform="translate(522.000000, 78.000000)">
+                <g id="路径">
+                    <use fill="#999999" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                    <use stroke="#1A1A1A" stroke-width="0.5" xlink:href="#path-1"></use>
+                </g>
+                <g id="矩形">
+                    <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-3"></use>
+                    <use fill="black" fill-opacity="1" filter="url(#filter-4)" xlink:href="#path-3"></use>
+                    <path stroke="#1A1A1A" stroke-width="0.5" d="M10.3786208,3.25 L12.9259052,10.75 L3.07409481,10.75 L4.895956,3.8095764 L10.3786208,3.25 Z" stroke-linejoin="square"></path>
+                </g>
+                <line x1="7.00372869" y1="5.92645264" x2="6.62974964" y2="8.58904474" id="路径-7" stroke="#1A1A1A" stroke-linecap="round"></line>
+                <line x1="9.36563388" y1="5.92365057" x2="9.5292081" y2="8.60933061" id="路径-7备份" stroke="#1A1A1A" stroke-linecap="round"></line>
+            </g>
+        </g>
+    </g>
+</svg>

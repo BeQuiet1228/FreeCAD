@@ -1,4 +1,3 @@
-
 SET(Test_SRCS
     __init__.py
     Init.py
@@ -13,6 +12,8 @@ SET(Test_SRCS
     unittestgui.py
     InitGui.py
     testmakeWireString.py
+	testPathArraySel.py
+	testPathArray.py
 )
 SOURCE_GROUP("" FILES ${Test_SRCS})
 

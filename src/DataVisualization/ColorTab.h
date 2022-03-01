@@ -2,10 +2,11 @@
 #ifndef COLORTAB_H_
 #define COLORTAB_H_
 #include <QWidget>
+#include"exportConfig.hpp"
 class QwtScaleWidget;
 class QwtScaleEngine;
 namespace DV {
-	class ColorTab :public QWidget
+	class DATA_VISUALIZATION_EXPORT ColorTab :public QWidget
 	{
 		Q_OBJECT
 	public:
