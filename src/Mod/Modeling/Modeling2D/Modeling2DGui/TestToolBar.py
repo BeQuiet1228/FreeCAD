@@ -70,11 +70,11 @@ def Load(workbench):
     # workbench.appendToolbar('工程设置',paramList)
     workbench.appendToolbar('约束工具', cmdSnapList)
 
-    vcmdlst = ["Vis_Grid",
-                  "Vis_Labels",
-                  "Vis_Series",
-                  "Vis_Point",
-                  "Vis_Axes",
-                  "Vis_Geometric_Ratio",
-                  "Vis_Struct_grid"]
-    workbench.appendToolbar('后处理',vcmdlst)
+    # vcmdlst = ["Vis_Grid",
+    #               "Vis_Labels",
+    #               "Vis_Series",
+    #               "Vis_Point",
+    #               "Vis_Axes",
+    #               "Vis_Geometric_Ratio",
+    #               "Vis_Struct_grid"]
+    # workbench.appendToolbar('后处理',vcmdlst)
