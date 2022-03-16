@@ -152,6 +152,9 @@ std::vector<Gui::HDF5DataItem*> Gui::HDF5DataItem::getSubItems()
 */
 bool Gui::HDF5DataItem::mergeItem(HDF5DataItem* item)
 {
+	//文件类型不能合并
+	if (this->type() == FILE || item->type() == FILE)
+		return false;
 	if ((*this) != (*item))
 		return false;
 	//将所有的子节点添加到当前节点下
