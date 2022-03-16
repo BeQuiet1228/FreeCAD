@@ -153,7 +153,6 @@ endif(BUILD_TUX)
 
 #新添加路径
 add_subdirectory(Communication)
-#add_subdirectory(Control) 丢弃
 add_subdirectory(ErrorFunction)
 add_subdirectory(File)
 add_subdirectory(Modeling)
@@ -161,6 +160,6 @@ add_subdirectory(NetWork)
 add_subdirectory(Physics)
 add_subdirectory(ProjectSetting)
 add_subdirectory(TemplatePyMod)
+
 add_subdirectory(DynamicData)
-#add_subdirectory(M3DFileEditor)
 add_subdirectory(Model3D)
