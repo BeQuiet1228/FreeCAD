@@ -157,6 +157,7 @@
 #include <windows.h>
 #include <string>
 #include <cstring>
+#include "FunctionShape/FunctionShape.h"
 
 #ifdef FCUseFreeType
 #  include "FT2FC.h"
@@ -1813,9 +1814,15 @@ namespace Part {
 					Base::Vector3d vec = static_cast<Base::VectorPy*>(pDir)->value();
 					d.SetCoord(vec.x, vec.y, vec.z);
 				}
-				BRepPrimAPI_MakeSphere mkSphere(gp_Ax2(p, d), radius, angle1*(M_PI / 180), angle2*(M_PI / 180), angle3*(M_PI / 180));
-				TopoDS_Shape shape = mkSphere.Shape();
-				return Py::asObject(new TopoShapeSolidPy(new TopoShape(shape)));
+
+				//测试代码
+// 				BRepPrimAPI_MakeSphere mkSphere(gp_Ax2(p, d), radius, angle1*(M_PI / 180), angle2*(M_PI / 180), angle3*(M_PI / 180));
+// 				TopoDS_Shape shape = mkSphere.Shape();
+				FS::FunctionShape fs;
+				fs.buildShape();
+
+
+				return Py::asObject(new TopoShapeSolidPy(new TopoShape(fs.getShape())));
 			}
 			catch (Standard_DomainError) {
 				throw Py::Exception(PartExceptionOCCDomainError, "creation of sphere failed");
