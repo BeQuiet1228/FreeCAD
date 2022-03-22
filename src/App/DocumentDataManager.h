@@ -26,13 +26,9 @@ public:
 	//载入文本
 	bool loadFile(const QString& filePath);
 	bool loadFile(const std::string& FilePath);
-	bool bindTreeContrue(ListTreeWidget* ptr,Plot* plotptr);
-	int ToStructHdf5(Hdf5Data data);
-	void DisplatPlot(Hdf5Data data,int _type=0);
-	void _ToRenderer(std::string name,int index);
-	//清空数据
-	void restoreH5Data();
+	int saveHdf5Data(Hdf5Data data);
+	std::vector<Hdf5Data> gethdf5dataList();
 protected:
-	DataSourceManage* m_DataSourceManage;
+	std::vector<Hdf5Data> hdf5dataList;
 };
 #endif

@@ -15,6 +15,8 @@
 #include "app/DocumentM3dText.h"
 #include <FileDialog.h>
 #include "MDIView.h"
+#include "DataVisualization3dView.h"
+#include "ControlerItemListWidget.h"
 DocumentPic::DocumentPic(App::Document* pcDocument, Gui::Application* app)
 	:Gui::Document(pcDocument,app)
 {
@@ -75,6 +77,7 @@ void DocumentPic::releaseH5Object()
 	auto mw = Gui::MainWindow::getInstance();
 	auto view = mw->windows();
 
+	//移除图表窗口
 	for (auto iter = view.begin(); iter != view.end(); iter++)
 	{
 		auto plot = dynamic_cast<Gui::PlotMDIView*>(*iter);
@@ -82,8 +85,18 @@ void DocumentPic::releaseH5Object()
 		{
 			mw->removeWindow(plot);
 		}
+
+		auto plot3d = dynamic_cast<Gui::DataVisualizationView*>(*iter);
+		if (plot3d)
+		{
+			mw->removeWindow(plot3d);
+		}
 			
 	}
+	//移除3d显示列表窗口
+	auto controlerList = Gui::getControlerListWidget();
+	if (controlerList)
+		controlerList->clearWidget();
 
 	auto doc = getAppDocument();
 	if (doc == nullptr)
@@ -94,7 +107,7 @@ void DocumentPic::releaseH5Object()
 		return;
 
 
-	dataDoc->restoreH5Data();
+	dataDoc->dataclear();
 }
 
 /**
@@ -125,21 +138,7 @@ std::string DocumentPic::getTextPath()
 
 void DocumentPic::openH5File(const std::string& path)
 {
-	auto appDoc = getAppDocument();
-	if (appDoc == nullptr)
-		return ;
-	DocumentManager* docm = dynamic_cast<DocumentManager*>(appDoc);
-	if (!docm)
-		return;
-	//此处增加树控件和documentManager的绑定
-	ListTreeWidget* mlisttreewidget = dynamic_cast<ListTreeWidget*>(Gui::MainWindow::getInstance()->mTreeWidget);
-	if (!mlisttreewidget)
-	{
-		std::cerr << "ListTreeWidget is nullptr from Gui void DocumentPic::openH5File(const std::string& path)" << std::endl;
-		return;
-	}
-	docm->bindTreeContrue(mlisttreewidget, nullptr);
-	docm->loadFile(path);
+
 }
 
 void DocumentPic::runChipic()
@@ -153,6 +152,8 @@ void DocumentPic::runChipic()
 	*/
 	if (!control->hasChipicRuning())
 	{
+		//运行之前先保存文档
+		save();
 		//设置主界面上的ui
 		mw->setContorlUI();
 		//设置运行路
@@ -178,6 +179,7 @@ void DocumentPic::paralleRunChipic()
 {
 	auto mw = Gui::MainWindow::getInstance();
 	mw->setContorlUI();
+	this->releaseH5Object();
 	auto contorl = ContorlInterface::GetInstance();
 	contorl->setM3dPath(getTextPath());
 	contorl->buttonClicked(1);

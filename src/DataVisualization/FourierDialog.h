@@ -1,0 +1,30 @@
+#ifndef FOURIERDIALOG_H
+#define FOURIERDIALOG_H
+
+#include <QDialog>
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class FourierDialog; }
+QT_END_NAMESPACE
+
+namespace DV {
+    class FourierDialog : public QDialog
+    {
+        Q_OBJECT
+
+    public:
+        FourierDialog(bool isSave, QWidget* parent = nullptr);
+        ~FourierDialog();
+
+    private Q_SLOTS:
+        void slotOk();
+
+    private:
+        Ui::FourierDialog* ui;
+
+    public:
+        void changeText(bool isSave);
+    };
+};
+
+#endif 

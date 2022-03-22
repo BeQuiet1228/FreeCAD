@@ -4,6 +4,7 @@
 #include <QTreeWidgetItem>
 #include <vector>
 #include <QTimer>
+#include <map>
 class ControlTreeWidget :public QTreeWidget {
 	enum MsgType {
 		NONE = 0,
@@ -12,6 +13,9 @@ class ControlTreeWidget :public QTreeWidget {
 		OBSERVE,
 		VECTOR = 5,
 		RANGE,
+		PARTICLE_3D,
+		CONTOUR_3D,
+		VECTOR_3D
 	};
 	Q_OBJECT
 public:
@@ -29,9 +33,8 @@ public:
 	//清除数据
 	void clear();
 private:
-	QTreeWidgetItem* contourItem,*phaseSpaceItem,*observeItem,*rangeItem,*vectorItem;
 	const unsigned int itemCount = 5;
-	std::vector<QTreeWidgetItem*> items;
+	std::map<MsgType,QTreeWidgetItem*> items;
 
 private:
 	bool addContourItem(const std::string& str);
@@ -39,9 +42,15 @@ private:
 	bool addObserveItem(const std::string& str);
 	bool addRangeItem(const std::string& str);
 	bool addVectorItem(const std::string& str);
+	bool addContour3DItem(const std::string& str);
+	bool addParticle3DItem(const std::string& str);
+	bool addVector3DItem(const std::string& str);
 	bool analysisType(const std::string& str,const QString& typeName ,QString& name, QString& rank);
 	//生成临时文件路径
 	QString makeFilePath(unsigned long threadID);
+	//初始化3d粒子图观测和三维等位图观测
+	void initParticle3DItem();
+	void initContour3DItem();
 public Q_SLOTS :
 	void itemDouble_clicke(QTreeWidgetItem* item, int column);
 	//控制模块解析完成

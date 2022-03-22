@@ -9,11 +9,7 @@
 #include "Gui/PlotMDIView.h"
 #include "Gui/MainWindow.h"
 #include "Gui/Application.h"
-/**
-* @brief DocumentManager::loadFile 加载h5文件
-* @param const QString& filePath 传入路径
-* @return bool
-*/
+
 bool DocumentManager::loadFile(const QString& filePath)
 {
 	std::string _filePath = filePath.toStdString();
@@ -21,45 +17,27 @@ bool DocumentManager::loadFile(const QString& filePath)
 	return true;
 }
 
-bool DocumentManager::loadFile(const std::string& FilePath)
-{
-	m_DataSourceManage->loadhdffile(FilePath);
-	return true;
-}
 
 /**
-* @brief DocumentManager::bindTreeContrue 绑定控制控件
-* @param ListTreeWidget* ptr
-* @param Plot* plotptr
+* @time	2021/12/02
+* @brief DocumentManager::loadFile 读取文件，并保存数据
+* @param const std::string & FilePath
 * @return bool
 */
-bool DocumentManager::bindTreeContrue(ListTreeWidget* ptr,Plot* plotptr)
+bool DocumentManager::loadFile(const std::string& FilePath)
 {
-	if (ptr||plotptr)
-	{
-		m_DataSourceManage->init(ptr,plotptr);
-		return true;
-	}
-	return false;
+	Hdf5IO io(FilePath);
+	io.initHdf5Data();
+	hdf5dataList = io.hdf5DataList;
+	return true;
 }
-/**
-* @brief DocumentManager::DocumentManager 构造函数
-*/
 DocumentManager::DocumentManager(){
 	//构造数据管理
-	CanvasItem::registerMetaTye();
-	m_DataSourceManage = new DataSourceManage();
+	DV::CanvasItem::registerMetaTye();
 	classID = 5;
 }
-/**
-* @brief DocumentManager::~DocumentManager 析构函数
-*/
 DocumentManager::~DocumentManager(){
-	if (m_DataSourceManage)
-	{
-		delete m_DataSourceManage;
-		m_DataSourceManage = nullptr;
-	}
+	hdf5dataList.clear();
 }
 /**
 * @brief DocumentManager::Save
@@ -77,47 +55,6 @@ void DocumentManager::Save(Base::Writer &write) const
 bool DocumentManager::save(){
 	return true;
 }
-/**
-* @brief DocumentManager::ToStructHdf5 传入结构图数据
-* @param Hdf5Data data
-* @return int
-*/
-int DocumentManager::ToStructHdf5(Hdf5Data data){
-	if (m_DataSourceManage)
-		return m_DataSourceManage->initStructData(data);
-	else
-		return -1;
-}
-/**
-* @brief DocumentManager::DisplatPlot 送显
-* @param Hdf5Data data
-* @param int _type
-* @return void
-*/
-void DocumentManager::DisplatPlot(Hdf5Data data, int _type)
-{ 
-	m_DataSourceManage->DisPlayPlot(data, _type);
-}
-/**
-* @brief DocumentManager::_ToRenderer 送显
-* @param std::string name
-* @param int index
-* @return void 
-*/
-void DocumentManager::_ToRenderer(std::string name, int index)
-{
-	if (m_DataSourceManage)
-		m_DataSourceManage->tranfromRenderer(name,index);
-}
-/**
-* @brief DocumentManager::restoreH5Data 释放h5数据
-* @return void
-*/
-void DocumentManager::restoreH5Data()
-{
-	delete m_DataSourceManage;
-	m_DataSourceManage = new DataSourceManage;
-}
 
 /**
 * @brief  DocumentManager::dataclear 删除数据
@@ -125,6 +62,22 @@ void DocumentManager::restoreH5Data()
 */
 void DocumentManager::dataclear()
 {
-	if (m_DataSourceManage)
-		m_DataSourceManage->DataClear();
+	hdf5dataList.clear();
+}
+
+std::vector<Hdf5Data> DocumentManager::gethdf5dataList()
+{
+	return hdf5dataList;
+}
+
+/**
+* @time	2021/12/02
+* @brief DocumentManager::saveHdf5Data 直接传入数据时，保存数据。
+* @param Hdf5Data data
+* @return int
+*/
+int DocumentManager::saveHdf5Data(Hdf5Data data)
+{
+	hdf5dataList.push_back(data);
+	return hdf5dataList.size() - 1;
 }

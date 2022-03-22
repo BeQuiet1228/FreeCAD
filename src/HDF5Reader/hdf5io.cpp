@@ -3,6 +3,7 @@
 #include <QString>
 #include <QStringList>
 #include <QTextCodec>
+#include <QFile>
 Hdf5IO::Hdf5IO(std::string fileName)
 {
 	setFilePath(fileName);
@@ -493,14 +494,18 @@ DataSet Hdf5IO::copyDataSet(DataSet& dataset, Group& toGroup, const std::string&
 
 	hsize_t size[2];
 	dataSpace.getSimpleExtentDims(size, 0);
-	float* values(new float[size[0] * size[1]]);
+	float* values(new float[size[0] * size[1]]); 
 	dataset.read(values, PredType::NATIVE_FLOAT);
+	std::vector<float> ttt;
+	for (int i = 0; i < (size[0] * size[1]); ++i) {
+		ttt.emplace_back(values[i]);
+	}
+
 
 	DataSpace sapce(2, size);
 	DataType dataType(PredType::NATIVE_FLOAT);
 	DataSet toDataSet(toGroup.createDataSet(newDataSetName, dataType, dataSpace));
 	toDataSet.write(values, dataType);
-
 	delete[] values;
 
 	return toDataSet;
@@ -519,6 +524,7 @@ void Hdf5IO::copyGroup(Group& group, Group& toGroup)
 		DataSpace attr_dataspace = DataSpace(1, dims);
 		DataType dataType(H5T_STRING,128);
 
+		std::string tmmm = attr.getName();
 		Attribute toAttr = toGroup.createAttribute(attr.getName(), dataType,attr_dataspace);
 		std::string value;
 		attr.read(attr.getStrType(), value);
@@ -537,7 +543,7 @@ Hdf5Data Hdf5IO::copyToHdf5IO(Hdf5IO& hdf5IO, Hdf5Data& data)
 	Hdf5Data newH5data(hdf5IO.Hdf5File);
 
 	auto datalist = data.listDataSet;
-	for (int i = 0; i < datalist.size(); i++)
+	for (int i = 0; i < datalist.size(); i++) 
 	{
 		auto dataset = datalist.at(i);
 		std::string dataSetName = data.group.getObjnameByIdx(i);
@@ -659,6 +665,39 @@ bool Hdf5Data::initPlanemation()
 	return false;
 	
 }
+
+
+Hdf5Data::Hdf5Data(std::shared_ptr<H5File> h5)
+{
+	this->hdf5File = h5;
+	initData();
+}
+
+Hdf5Data::Hdf5Data()
+{
+	initData();
+}
+
+/**
+* @brief Hdf5Data::save 保存数据到路径
+* @param const std::string & path 路径
+* @param bool newFIle 是否覆盖文件
+* @return void
+*/
+void Hdf5Data::save(const std::string& path, bool newFIle /*= false*/)
+{
+	QFile file(QString::fromStdString(path));
+
+	if (!file.exists())
+		newFIle = true;
+
+	if (newFIle)
+		Hdf5IO::creatNewH5File(path);
+
+	Hdf5IO h5io(path);
+	Hdf5IO::copyToHdf5IO(h5io, *this);
+}
+
 /**
 * @brief Hdf5Data::initInformation 初始化通用数据信息
 * @return bool
@@ -703,7 +742,7 @@ bool Hdf5Data::initInformation()
 
 bool Hdf5Data::initM3dStructInformation()
 {
-	if (headList.size() < 4)
+	if (headList.size() < 4 && listDataSet.size()!= 4)
 		return false;
 	QString str = QString::fromStdString(headList.at(3));
 	str = str.simplified();
@@ -734,7 +773,7 @@ bool Hdf5Data::initM3dStructInformation()
 
 bool Hdf5Data::initM2dStructInformation()
 {
-	if (headList.size() < 4)
+	if (headList.size() < 3 && listDataSet.size() != 3)
 		return false;
 	QString str = QString::fromStdString(headList.at(2));
 	str = str.simplified();
@@ -759,7 +798,7 @@ bool Hdf5Data::initM2dStructInformation()
 	if (sl.at(2) != "STRUCTRUE")
 		return false;
 
-	name = "struct";
+	name = "struct2d";
 	return true;
 }
 
@@ -771,13 +810,17 @@ void Hdf5Data::init()
 {
 	if (initInformation())
 		return;
-	if (initPlanemation())
-		return;
 	if (initM3dStructInformation())
 		return;
 	if (initM2dStructInformation())
 		return;
 }
+
+void Hdf5Data::initData()
+{
+	coordinateSystem = CARTESIAN;
+}
+
 /**
 * @brief Hdf5IO::creatNewH5File
 * @param const std::string & fileName
@@ -789,7 +832,9 @@ int Hdf5IO::creatNewH5File(const std::string& fileName){
 
 	QString temp = QString::fromUtf8(fileName.c_str());
 	std::string newPath = gbk->fromUnicode(temp).data();
-	return H5Fcreate(newPath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+	auto hid = H5Fcreate(newPath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+	H5Fclose(hid);
+	return hid;
 }
 /**
 * @brief Hdf5IO::openH5File
@@ -965,3 +1010,131 @@ std::vector<DataSet> Hdf5IO::getDataSetlist(Group group)
 	}
 	return datasetlist;
 }
+
+
+/**
+* @brief H5DataHead::getAttributeForIndex 获取头部信息中使用$符号分割的信息
+* @param std::string str
+* @param int index
+* @return std::string
+*/
+std::string H5DataHead::getAttributeForIndex(std::string str, int index)
+{
+	if (str.size() <= 0)
+		return "";
+
+	std::vector <std::string> attributes;
+	attributes.push_back("");
+	int attributeIndex = 0;
+	for (auto iter = str.begin(); iter != str.end(); iter++)
+	{
+		if (*iter == '$')
+		{
+			attributeIndex++;
+			attributes.push_back("");
+			continue;
+		}
+		attributes[attributeIndex] += *iter;
+	}
+
+	if (index > attributeIndex)
+		return attributes.at(attributeIndex);
+	return attributes.at(index);
+}
+
+//添加子组
+void Hdf5Data::addSubGroup(const std::string faterGroup, const std::string groupname, std::shared_ptr<VectorF> values, std::vector<std::string> List) {
+	hsize_t dimsf[2];
+	dimsf[0] = (*values).size() / 2;
+	dimsf[1] = 2;
+
+	float* valuesptr(new float[dimsf[0] * dimsf[1]]);
+	std::copy(values->begin(), values->end(), valuesptr);
+
+	Group tmpgroup;
+	try {
+		tmpgroup = hdf5File->openGroup(faterGroup).openGroup(groupname);
+	}
+	catch(...){
+		std::cerr << "open group fail" << std::endl;
+	}
+
+	//添加subGroup
+	int num = tmpgroup.getNumObjs() + 1;
+	std::string subGroupName = "subGroup" + std::to_string(num);
+	Group newgroup = tmpgroup.createGroup(subGroupName);
+	initAttrFromList(newgroup, List);
+
+	DataSpace dataSpace(2, dimsf);
+	std::string newDataSetName = "datasetGrd";
+	DataSet& newDataSet(newgroup.createDataSet(newDataSetName.c_str(), PredType::NATIVE_FLOAT, dataSpace));
+	newDataSet.write(valuesptr, PredType::NATIVE_FLOAT);
+
+	delete valuesptr;
+}
+
+/*
+通过vector初始group的属性
+*/
+void Hdf5Data::initAttrFromList(Group& newgroup, std::vector<std::string> HList) {
+	unsigned int attrSpace = 128;
+
+	int atCount = HList.size();
+	hsize_t dims[1] = { 1 };
+	DataSpace attr_dataspace = DataSpace(1, dims);
+	DataType dataType(H5T_STRING, 128);
+	for (int i = 0; i < atCount; i++)
+	{
+		Attribute attr = group.openAttribute(i);
+
+		Attribute toAttr = newgroup.createAttribute(attr.getName(), dataType, attr_dataspace);
+		QString str = QString::fromStdString(HList.at(i));
+		QStringList sl = str.split("=");
+		if (sl.size() < 2)
+			return;
+		str = sl.at(1);
+		toAttr.write(dataType, str.toStdString());
+	}
+}
+
+/**
+* @使用指定的容器数据搭建新的DataGroup
+*/
+Hdf5Data Hdf5IO::addNewGroup(Hdf5IO& hdf5IO, Hdf5Data& data, std::shared_ptr<VectorF> values, std::vector<std::string> HList)
+{
+	hsize_t dimsf[2];
+	dimsf[0] = (*values).size() / 2;
+	dimsf[1] = 2;
+
+	float* valuesptr(new float[dimsf[0] * dimsf[1]]);
+	std::copy(values->begin(), values->end(), valuesptr);
+
+	//新的Group
+	int groupSize = hdf5IO.Hdf5File->getNumObjs();
+	std::string groupName = "DataGroup" + QString::number(groupSize).toStdString();
+	Group toGroup(hdf5IO.Hdf5File->createGroup(groupName));
+	data.initAttrFromList(toGroup, HList);
+
+	Hdf5Data newH5data(hdf5IO.Hdf5File);
+
+	int i = 0;
+	hsize_t dims[1] = { 1 };
+	DataSpace attr_dataspace = DataSpace(1, dims);
+	DataType dataType(H5T_STRING, 128);
+
+	DataSpace dataSpace(2, dimsf);
+	std::string newDataSetName = "datasetGrd";
+	DataSet& newDataSet(toGroup.createDataSet(newDataSetName.c_str(), PredType::NATIVE_FLOAT, dataSpace));
+	newDataSet.write(valuesptr, PredType::NATIVE_FLOAT);
+
+	newH5data.group = toGroup;
+	auto headlist = getHeadValue(toGroup);
+	newH5data.headList = HList;
+	newH5data.init();
+
+	delete valuesptr;
+	
+	return newH5data;
+}
+
+

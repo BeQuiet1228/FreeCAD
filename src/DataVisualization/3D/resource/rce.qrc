@@ -1,0 +1,26 @@
+<RCC>
+  <qresource prefix="action">
+    <file>save-as.png</file>
+    <file>cliper_face_setting.png</file>
+    <file>cliper_off.png</file>
+    <file>cliper_on.png</file>
+    <file>close.png</file>
+    <file>contour_line_setting.png</file>
+    <file>grid_off.png</file>
+    <file>grid_on.png</file>
+    <file>hide.png</file>
+    <file>show.png</file>
+    <file>save-as.svg</file>
+    <file>cliper_face_setting.svg</file>
+    <file>cliper_off.svg</file>
+    <file>cliper_on.svg</file>
+    <file>close.svg</file>
+    <file>contour_line_setting.svg</file>
+    <file>grid_off.svg</file>
+    <file>grid_on.svg</file>
+    <file>hide.svg</file>
+    <file>show.svg</file>
+    <file>off.svg</file>
+    <file>on.svg</file>
+  </qresource>
+</RCC>

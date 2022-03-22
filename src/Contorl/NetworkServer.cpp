@@ -79,6 +79,10 @@ void NetworkServer::startListene()
 			<< server->serverError() << std::endl;
 #endif // MY_LOG
 
+	}else {
+#ifdef MY_LOG
+		std::cerr << "NetworkServer::startListene, listen is succeed!";
+#endif // MY_LOG
 	}
 }
 
@@ -577,7 +581,7 @@ bool NetworkServer::disposeH5FileMessage(const std::string& json)
 	//是否为结果图消息
 	bool resultBool = (winMessage.Msg == 209 && winMessage.wParam != -1000 && winMessage.lParam != -1000);
 	//是否为计算完成消息
-	bool finished = (winMessage.Msg == 208 && winMessage.wParam == 200 && winMessage.lParam == 0);
+	bool finished = (winMessage.Msg == 300 && winMessage.wParam == 200 && winMessage.lParam == 0);
 	//如果不为以上类型 处理失败
 	if (!(structBool || resultBool || finished))
 		return false;
@@ -626,7 +630,6 @@ bool NetworkServer::disposeH5FileMessage(const std::string& json)
 	if (finished)
 	{
 		closeChipic(winMessage.threadId);
-		return true;
 	}
 
 	//发送看图消息

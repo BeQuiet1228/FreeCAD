@@ -176,7 +176,8 @@ SET(Document_CPP_SRCS
 	DocumentM3dMod.cpp
 	DocumentM2dMod.h
 	DocumentM2dMod.cpp
-	DocumentDataManager.cpp
+	DocumentH5.cpp
+	DocumentH5.h
 	
 )
 
@@ -216,12 +217,14 @@ SET(Document_HPP_SRCS
     MaterialObject.h
     MergeDocuments.h
     TextDocument.h
-	DocumentDataManager.h
+	#DocumentDataManager.h
 	
 )
 SET(Document_Manager_SRC
 	DocumentDataManager.h
 	DocumentDataManager.cpp
+	#PlotAdapterBase.h
+	#PlotAdapterBase.cpp
 	)
 SET(Document_SRCS
     ${Document_CPP_SRCS}
@@ -293,6 +296,7 @@ SET(FreeCADApp_SRCS
     ${FreeCADApp_CPP_SRCS}
     ${FreeCADApp_HPP_SRCS}
     ${FreeCADApp_XML_SRCS}
+	${Document_Manager_SRC}
     FreeCADInit.py
     FreeCADTest.py
     PreCompiled.cpp

@@ -1,5 +1,6 @@
 #添加子文件目录
 add_subdirectory(qwt)
+add_subdirectory(3D)
 #设置项目名称
 project(DataVisualization)
 #引入头文件
@@ -15,11 +16,21 @@ include_directories(
     ${PYCXX_INCLUDE_DIR}
 	./qwt
 	./qwt/polar
+	${FREECAD_LIBPACK_DIR}/include/fft
 )
 SET(QRC_SRC resource/rce.qrc)
 SET(UI_SRC 
 ConfigWidget.ui
 realTimewidget.ui
+#新加
+AxisConfigWidget.ui
+RangConfigWidget.ui
+VectorConfigWidget.ui
+ContourConfigWidget.ui
+StructConfigWidget.ui
+ParticleConfigWidget.ui
+##zhaozhou
+FourierDialog.ui
 )
 SET(MY_MOC_HDR RenderThread.h
 	RenderThreadManager.h
@@ -43,11 +54,26 @@ SET(MY_MOC_HDR RenderThread.h
 	phasorPlotAdapter.h
 	PlotAdapter.h
 	PlotAdapterNeedStruct.h
+	#ColorBarWidget.h
+	#修改配置窗口
+	AxisConfigWidget.h
+	RangConfigWidget.h
+	VectorConfigWidget.h
+	ContourConfigWidget.h
+	StructConfigWidget.h
+	ParticleConfigWidget.h
+	##zhaozhou
+	TimePlotAdapter.h
+	FourierDialog.h
 	)
 SET(TIME_SRC TimeData.h
 	TimeData.cpp
 	TimeRenderer.cpp
 	TimeRenderer.h
+	TimePlotAdapter.cpp
+	TimePlotAdapter.h
+	FourierDialog.h
+	FourierDialog.cpp
 )
 SET(CHAR_ENCODE C_encoding.cpp
 	C_encoding.h)
@@ -103,8 +129,9 @@ SET(CONFIG_SRC CustomConfig.cpp
 
 SET(LISTTREE_SRC ListTreeWidget.h
 	ListTreeWidget.cpp
-	Dataresource.h
-	Dataresource.cpp)
+	#Dataresource.h
+	#Dataresource.cpp
+	)
 SET(AXIS_SRC
 	Axis.cpp
 	Axis.h
@@ -143,9 +170,16 @@ SET(SRC main.cpp
 	PlotAdapter.h
 	PlotAdapterNeedStruct.h
 	PlotAdapterNeedStruct.cpp
+	ConfigFactory.h
+	ConfigFactory.cpp
+	UndoRedoStack.cpp
+	UndoRedoStack.h
 	)
-SET(SRC_TOOL ConfigWidget.h
+SET(SRC_TOOL 
+	ConfigWidget.h
 	ConfigWidget.cpp
+	ConfigUnify.h
+	ConfigUnify.cpp
 	Arrowctrl.h
 	Arrowctrl.cpp
 	ColorTab.cpp
@@ -162,6 +196,29 @@ SET(SRC_TOOL ConfigWidget.h
 	TLabel.cpp
 	SysInfo.h
 	SysInfo.cpp
+	ScalarTableItem.h
+	ScalarTableItem.cpp
+	#ColorBarWidget.h
+	#ColorBarWidget.cpp
+	structbutton.h
+	structbutton.cpp
+	)
+	
+SET(CONFIGWIDGET_Srcs
+	AxisConfigWidget.h
+	AxisConfigWidget.cpp
+	RangConfigWidget.h
+	RangConfigWidget.cpp
+	VectorConfigWidget.h
+	VectorConfigWidget.cpp
+	ContourConfigWidget.h
+	ContourConfigWidget.cpp
+	StructConfigWidget.h
+	StructConfigWidget.cpp
+	ParticleConfigWidget.h
+	ParticleConfigWidget.cpp
+	XmlGroup.h
+	XmlGroup.cpp
 	)
 #处理ui和qrc文件
 if (BUILD_QT5)
@@ -189,6 +246,7 @@ SET(DataVisualization_src
 	${SRC_TOOL}
 	${Gui_QRC_SRCS}
 	${AXIS_SRC}
+	${CONFIGWIDGET_Srcs}
 	)
 add_definitions( -D_DATA_VISUALIZATION_)
 if(DataVisualizationDll)
@@ -222,11 +280,8 @@ SOURCE_GROUP("tool" FILES ${SRC_TOOL})
 SOURCE_GROUP("uifile" FILES ${UI_SRC})
 SOURCE_GROUP("qrcfile" FILES ${QRC_SRC})
 SOURCE_GROUP("axis" FILES ${AXIS_SRC})
-#增加包含目录
-include_directories(
-    ${CMAKE_CURRENT_BINARY_DIR}
-	
-)
+SOURCE_GROUP("configWidget" FILES ${CONFIGWIDGET_Srcs})
+
 #增加外部库
 list(APPEND QT_LIB
     debug MSVCRTD.LIB
@@ -236,10 +291,13 @@ list(APPEND QT_LIB
 	qwt
 	HDF5Reader
 	qwt_polar
+	${FREECAD_LIBPACK_DIR}/lib/fft/libfftw3-3.lib
+	${FREECAD_LIBPACK_DIR}/lib/fft/libfftw3l-3.lib
+	${FREECAD_LIBPACK_DIR}/lib/fft/libfftw3f-3.lib
 	)
 if(VisualizationOf3DDLL)
 list(APPEND QT_LIB
-	VisualizationOf3D
+	#VisualizationOf3D
 	)
 endif()
 

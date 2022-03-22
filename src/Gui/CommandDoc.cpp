@@ -1896,8 +1896,6 @@ void StdCmdRunM3d::activated(int iMsg)
     auto mw = MainWindow::getInstance();
     mw->inintContorlUI();
 
-	//调用保存
-	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
     getGuiApplication()->sendMsgToActiveView("RunChipic");
 	
 #if 0  //新的结构将运行代码放入了主窗口，所以这里的代码暂时不需要

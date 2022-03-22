@@ -136,6 +136,9 @@
 #include "DocumentPic.h"
 #include "DataVisualization/ConfigWidget.h"
 #include "DataVisualizationWorkbench.h"
+#include"DataVisualization/ListTreeWidget.h"
+#include"TreeViewctrl.h"
+#include "DataVisualization/3D/ControlerFactory.h"
 using namespace Gui;
 using namespace Gui::DockWnd;
 using namespace std;
@@ -295,70 +298,25 @@ Gui::MDIView* Application::activeView(void) const
         return NULL;
 }
 
-void Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)
-{
-	auto doc = dynamic_cast<DocumentPic*>(Gui::Application::Instance->activeDocument());
-    if (!doc)
-        return;
-	std::list<Gui::MDIView*> list = doc->getMDIViews();
-	Gui::PlotMDIView* ptr = nullptr;
-	DocumentManager* documentmanager = dynamic_cast<DocumentManager*>(doc->getDocument());
-	if (!documentmanager)
-	{
-		std::cerr << "documentmanager==nullptr from   FreeCADGUI Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)"<<std::endl;
-		return;
-	}
-	ListTreeWidget* m_listTreeWidget = dynamic_cast<ListTreeWidget*>(Gui::MainWindow::getInstance()->mTreeWidget);
-	if (!m_listTreeWidget)
-	{
-		std::cerr << "ListTreeWidget ==nullptr from FreeCADGUI Application::DisplatPlot(Hdf5Data data, int _type /*= 0*/)" << std::endl;
-		return;
-	}
-	for each (Gui::MDIView* var in list)
-	{
-		ptr = dynamic_cast<Gui::PlotMDIView*> (var);
-		if (ptr)break;
-	}
-	if (ptr != nullptr)
-	{
-		documentmanager->bindTreeContrue(m_listTreeWidget,ptr->GetViewPtr());
-	}
-	else
-	{
-		/*Gui::PlotMDIView* plot */
-		ptr= new Gui::PlotMDIView(doc);
-		Gui::MainWindow::getInstance()->addWindow(ptr);
-		documentmanager->bindTreeContrue(m_listTreeWidget,ptr->GetViewPtr());
-	}
-	documentmanager->DisplatPlot(data, _type);
-	//保证当前页面为活动页
-	MainWindow::getInstance()->setActiveWindow(ptr);
-}
-void Application::ToStruct(Hdf5Data data)
-{
-	auto doc = Gui::Application::Instance->activeDocument();
-	if (doc)
-	{
-		DocumentManager* documentmanager = dynamic_cast<DocumentManager*>(doc->getDocument());
-		if (!documentmanager)
-		{
-			std::cerr << "documentmanager is null from Free void Application::ToStruct(Hdf5Data data)" << std::endl;
-			return;
-		}
-		int structindex=documentmanager->ToStructHdf5(data);
-		Gui::TreeViewCtrl* m_lisTreeWidget = Gui::MainWindow::getInstance()->mTreeWidget;
-		m_lisTreeWidget->toStructh5df(data, structindex);
-	}
-		
-}
+
+
 /**
 * @brief  Gui::Application::showPlotSettingDialog 显示设置窗口
 * @return void  
 */
 void Application::showPlotSettingDialog()
 {
-	ConfigWidget* configWidget = new ConfigWidget();
+    /*
+        内部已经添加后处理二维相关的窗口
+    */
+	DV::ConfigWidget* configWidget = new DV::ConfigWidget();
+    /*
+        添加后处理3d的窗口
+    */
+    auto widgets = DV3D::ControlerFactory::CreateConfigWidget();
+    configWidget->addTabWidget(widgets);
 	configWidget->setAttribute(Qt::WA_DeleteOnClose);
+    configWidget->loadxmlConfig();
 	auto doc = Gui::Application::Instance->activeDocument();
 	if (doc)
 	{
