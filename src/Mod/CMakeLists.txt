@@ -160,6 +160,6 @@ add_subdirectory(NetWork)
 add_subdirectory(Physics)
 add_subdirectory(ProjectSetting)
 add_subdirectory(TemplatePyMod)
-
+add_subdirectory(Visualization)
 add_subdirectory(DynamicData)
 add_subdirectory(Model3D)
