@@ -1,4 +1,0 @@
-import FoilCommand
-import FoilDialogMain
-import FoilInstance
-import FoilDialog

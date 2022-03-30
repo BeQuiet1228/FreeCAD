@@ -1,2 +1,0 @@
-import CreatePolygonal
-import PolygonalCommand

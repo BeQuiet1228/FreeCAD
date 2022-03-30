@@ -7,9 +7,6 @@ if(BUILD_COMPLETE)
   add_subdirectory(Complete)
 endif(BUILD_COMPLETE)
 
-if(BUILD_TEST)
-  add_subdirectory(Test)
-endif(BUILD_TEST)
 
 if(BUILD_PARTCHIPIC)
   add_subdirectory(PartChipic)

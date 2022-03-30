@@ -62,7 +62,7 @@ class ClipCommand:
             dlg.raise_()
 
     def GetResources(self):
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Modeling/Modeling3D/Modeling3DResources/_Operation_Clip.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Model3D/Resources3D/Model/_Operation_Clip.svg"
         # IconPath=""
         MenuText = QtCore.QT_TRANSLATE_NOOP(
             'Clip',

@@ -1,2 +1,0 @@
-import CreatePoint
-import PointCommand

@@ -1,2 +1,0 @@
-import CreateTetrahedron
-import TetrahedronCommand

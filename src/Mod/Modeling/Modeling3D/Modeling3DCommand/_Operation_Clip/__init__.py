@@ -1,3 +1,0 @@
-
-import ClipCommand
-import Command

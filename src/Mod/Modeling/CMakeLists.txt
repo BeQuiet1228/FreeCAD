@@ -2,7 +2,6 @@ SET(Sourcse_Srcs
 Common
 MathMod
 Modeling2D
-Modeling3D
 InitGui.py
 __init__.py
 )

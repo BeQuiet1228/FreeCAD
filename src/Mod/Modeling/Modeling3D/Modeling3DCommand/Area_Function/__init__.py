@@ -1,3 +1,0 @@
-import CreateAreaFunction
-import AreaFunctionCommand
-import AreaFunctionDlgMain
