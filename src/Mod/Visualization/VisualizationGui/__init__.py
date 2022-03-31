@@ -1,2 +1,0 @@
-import TreeStructPal
-import plotTree

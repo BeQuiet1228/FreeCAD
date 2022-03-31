@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 
-import VisualizationGui.loading as loading
 import FreeCAD
 import FreeCADGui
 # import data_pb2
@@ -56,7 +55,7 @@ class LoadingWidget(QtGui.QDialog):
     def __init__(self, parent=None):
         QtGui.QDialog.__init__(self, parent)
         self._stop_import = True
-        self.ui = loading.LoadingDialog.Ui_Dialog_loading()
+        # self.ui = loading.LoadingDialog.Ui_Dialog_loading()
         self.ui.setupUi(self)
         qMovie = QtGui.QMovie()
         picPath = IconCommonPath + "/loading.gif"
@@ -106,7 +105,7 @@ def buildTree(filePath):
     import VisualizationResult as showResult
     showResult.showResultTree(filePath)
     # 激活后处理工作台
-    FreeCADGui.activateWorkbench("VisualWorkbench")
+    # FreeCADGui.activateWorkbench("VisualWorkbench")
 
 # def buildTree_protobuf(target, filePath):
 #     closeDialog()

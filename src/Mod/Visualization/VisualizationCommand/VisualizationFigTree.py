@@ -7,7 +7,6 @@ import os
 import FreeCAD
 import FreeCADGui
 import vPlot
-import VisualizationGui
 import VisualizationResult
 import VisualizationPlot
 import subprocess

@@ -13,7 +13,6 @@ from pylab import *
 
 import FreeCAD
 import FreeCADGui
-import VisualizationGui
 import VisualizationPlot
 import vPlot
 import data_pb2

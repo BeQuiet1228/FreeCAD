@@ -14,7 +14,6 @@ import subprocess
 
 import FreeCAD
 import FreeCADGui
-import VisualizationGui
 import VisualizationPlot
 import vPlot
 

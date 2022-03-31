@@ -122,20 +122,20 @@ def getMdiArea():
             return c
     return None
 
-def getPlot():
-    """ Return the selected Plot document if exist. """
-    # Get active tab
-    mdi = getMdiArea()
-    if not mdi:
-        return None
-    sub = mdi.activeSubWindow()
-    if not sub:
-        return None
-    # Explore childrens looking for Plot class
-    for i in sub.children():
-        if i.metaObject().className() == "Plot":
-            return i
-    return None
+# def getPlot():
+#     """ Return the selected Plot document if exist. """
+#     # Get active tab
+#     mdi = getMdiArea()
+#     if not mdi:
+#         return None
+#     sub = mdi.activeSubWindow()
+#     if not sub:
+#         return None
+#     # Explore childrens looking for Plot class
+#     for i in sub.children():
+#         if i.metaObject().className() == "Plot":
+#             return i
+#     return None
 
 # 将控制部分等比显示得图存在LIST中
 def saveFigToList(fig):
@@ -472,59 +472,59 @@ def delNavigationToolbar():
     plt.mpl_toolbar.deleteLater()
     plt.mpl_toolbar = None
 
-# 等位图
-def contour_plot(cutA, cutB, x_lable, y_lable, system, time, component,
-                 range_start, range_end, range_min, range_max, step, a, b, c, tag, isRatio):
-    plt = getPlot()
-    if not plt:
-        plt, flag = figure(False)
-
-    return plt.contour_plot(cutA, cutB, x_lable, y_lable, system, time, component,
-                                range_start, range_end, range_min, range_max, step, a, b, c, tag, isRatio)
-
-# 时间变化图
-def observe_plot(x_lable, y_lable, type, range_min, range_max, x, y):
-    plt = getPlot()
-    if not plt:
-        plt, flag = figure(False)
-    return plt.observe_plot(x_lable, y_lable, type, range_min, range_max, x, y)
-
-# 相空间图
-def phasespace_plot(cutA, cutB, x_label, y_label, particle, time, x, y,z=None):
-    plt = getPlot()
-    if not plt:
-        plt, flag = figure(False)
-    plt.phasespace_plot(cutA, cutB, x_label, y_label, particle, time, x, y,None,z)
-
-# 空间变化图
-def range_plot(x_label, y_label, time, component, range_min, range_max, x, y):
-    plt = getPlot()
-    if not plt:
-        plt, flag = figure(False)
-    return plt.range_plot(x_label, y_label, time, component, range_min, range_max, x, y)
-
-# 矢量图
-def vector_plot(cutA, cutB, x_label, y_label, component, time,cut_position, max_vector, a, b, c):
-    plt = getPlot()
-    if not plt:
-        plt, flag = figure(False)
-    return plt.vector_plot(cutA, cutB, x_label, y_label, component, time, cut_position, max_vector, a, b, c)
-
-# 三维等位图
-def contour_3D(x_lable, y_lable, system,time, component,
-                 range_start, range_end, range_min, range_max, step, a, b, c):
-    plt = getPlot()
-    if not plt:
-        plt, flag = figure(False)
-    return plt.contour_3D(x_lable, y_lable,system, time, component,
-                            range_start, range_end, range_min, range_max, step, a, b, c)
-
-# 剖面结构图
-def cut_plot(ab, abAll,figName, baseDataPath, cutpos, system, isExchange):
-    plt = getPlot()
-    if not plt:
-        plt, flag = figure(False)
-    return plt.cut_plot(ab, abAll, figName, baseDataPath, cutpos, system, isExchange)
+# # 等位图
+# def contour_plot(cutA, cutB, x_lable, y_lable, system, time, component,
+#                  range_start, range_end, range_min, range_max, step, a, b, c, tag, isRatio):
+#     plt = getPlot()
+#     if not plt:
+#         plt, flag = figure(False)
+#
+#     return plt.contour_plot(cutA, cutB, x_lable, y_lable, system, time, component,
+#                                 range_start, range_end, range_min, range_max, step, a, b, c, tag, isRatio)
+#
+# # 时间变化图
+# def observe_plot(x_lable, y_lable, type, range_min, range_max, x, y):
+#     plt = getPlot()
+#     if not plt:
+#         plt, flag = figure(False)
+#     return plt.observe_plot(x_lable, y_lable, type, range_min, range_max, x, y)
+#
+# # 相空间图
+# def phasespace_plot(cutA, cutB, x_label, y_label, particle, time, x, y,z=None):
+#     plt = getPlot()
+#     if not plt:
+#         plt, flag = figure(False)
+#     plt.phasespace_plot(cutA, cutB, x_label, y_label, particle, time, x, y,None,z)
+#
+# # 空间变化图
+# def range_plot(x_label, y_label, time, component, range_min, range_max, x, y):
+#     plt = getPlot()
+#     if not plt:
+#         plt, flag = figure(False)
+#     return plt.range_plot(x_label, y_label, time, component, range_min, range_max, x, y)
+#
+# # 矢量图
+# def vector_plot(cutA, cutB, x_label, y_label, component, time,cut_position, max_vector, a, b, c):
+#     plt = getPlot()
+#     if not plt:
+#         plt, flag = figure(False)
+#     return plt.vector_plot(cutA, cutB, x_label, y_label, component, time, cut_position, max_vector, a, b, c)
+#
+# # 三维等位图
+# def contour_3D(x_lable, y_lable, system,time, component,
+#                  range_start, range_end, range_min, range_max, step, a, b, c):
+#     plt = getPlot()
+#     if not plt:
+#         plt, flag = figure(False)
+#     return plt.contour_3D(x_lable, y_lable,system, time, component,
+#                             range_start, range_end, range_min, range_max, step, a, b, c)
+#
+# # 剖面结构图
+# def cut_plot(ab, abAll,figName, baseDataPath, cutpos, system, isExchange):
+#     plt = getPlot()
+#     if not plt:
+#         plt, flag = figure(False)
+#     return plt.cut_plot(ab, abAll, figName, baseDataPath, cutpos, system, isExchange)
 
 class Line():
     def __init__(self, axes, x, y, name):
