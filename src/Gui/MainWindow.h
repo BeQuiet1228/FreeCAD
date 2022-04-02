@@ -306,6 +306,7 @@ public:
     void hideVisualizationTree();
     void showVisualizationTree();
 	void ClearVisualizationTree();
+    void ClearControlTree();
 };
 
 inline MainWindow* getMainWindow()

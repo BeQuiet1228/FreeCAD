@@ -392,6 +392,11 @@ void MainWindow::ClearVisualizationTree()
     dataVisualizationTree->clear();
 }
 
+void MainWindow::ClearControlTree()
+{
+    controlTreeWidget->clear();
+}
+
 } // namespace Gui
 
 

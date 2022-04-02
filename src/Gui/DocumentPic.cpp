@@ -77,6 +77,9 @@ void DocumentPic::releaseH5Object()
 	auto mw = Gui::MainWindow::getInstance();
 	auto view = mw->windows();
 
+	//清理数据文件
+	mw->ClearVisualizationTree();
+	mw->ClearControlTree();
 	//移除图表窗口
 	for (auto iter = view.begin(); iter != view.end(); iter++)
 	{
