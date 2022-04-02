@@ -90,8 +90,12 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatContour3dControler
 	else
 		constructor.reset(new PolarContour3dDatasetConstructor());
 	constructor->setHdf5Data(h5data);
+
+	auto dataset = constructor->creatDataset();
+	if (!dataset)
+		return nullptr;
 	pipeline.reset(new  Contour3dActorPipline());
-	pipeline->setDataSet(constructor->creatDataset());
+	pipeline->setDataSet(dataset);
 	pipeline->connect();
 	controler.reset(new Contour3dControler());
 	controler->setActorPipeline(pipeline);
@@ -124,7 +128,7 @@ std::shared_ptr<DV3D::Controler> DV3D::ControlerFactory::CreatVector3dControler(
 	auto dataSet = constructor->creatDataset();
 	if (nullptr == dataSet)
 		return nullptr;
-	pipeline->setDataSet(constructor->creatDataset());
+	pipeline->setDataSet(dataSet);
 	pipeline->connect();
 	controler.reset(new Controler());
 	controler->setActorPipeline(pipeline);
