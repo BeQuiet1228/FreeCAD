@@ -132,6 +132,7 @@ void Chipic::sendMessage(const UINT& type, const WPARAM& wParam, const LPARAM& l
 */
 void Chipic::closeChipic()
 {
+	sendMessage(0, 0, 0);
 	auto msg = MessageTransition::creatCloseChipicJsonMessage(threadID);
 	auto sender = MessageSender::GetInstance();
 	sender->sendJsonMessage(msg);
