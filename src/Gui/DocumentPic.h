@@ -38,6 +38,12 @@ public:
 	virtual bool onHasMsg(const char* pMsg) const ;
 };
 
+class Document2DPic :public DocumentPic {
+public:
+	Document2DPic(App::Document* pcDocument, Gui::Application* app);
+	virtual bool onHasMsg(const char* pMsg) const override;
+};
+
 class DocumentText :public DocumentPic {
 
 public:
@@ -48,6 +54,12 @@ public:
 	void saveAs() override;
 
 	void initMDIView();
+
+};
+class DocumentText2D :public DocumentText {
+public:
+	DocumentText2D(App::Document* pcDocument, Gui::Application* app);
+	virtual bool onHasMsg(const char* pMsg) const override;
 
 };
 
