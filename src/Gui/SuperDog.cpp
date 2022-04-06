@@ -1,0 +1,14 @@
+#include "SuperDog.h"
+#include "dog_api.h"
+#include <string>
+const std::string key = "CT+WdDURIiXuXNJTKVkRpaGxwz6lEfRqJchyW311Tmg7Bag/yFmZpcZmdpnoxouHte6i3XnNyvtMIljvEUpcqvCtb9ASXQb0jAzEFUF06/yWIYKUBFSXhld0I5Nf+rgTGMhPDu0hirDGTLYaT9C7kXe+ztxsA8NHQ6LPO5MROZki8WS9cN1rA+VapFbeuziqkLZ8vrJZRKTOkQwE2TRSodWOoeenn01fFH5nbPumwPazLMl8PClMBSNkLHOD2OB0D1oQ25UTAVjerV5deNUPFe8xV0cOrZ7DD4iWWBtq7UWpNhSyoOZNV6OJqNiNRZ+oJjZn0mRX7Jev2L4LRjZRffbP6kNS2xYzZdKh+zOes4l/d6Uov3bs/uI2sTuQEWnZEoUlPegLOtZ0wb59JZGgL/PPbCEtLZrwykci7bXtsGFVlLyhSubZwIIfoE2BEYJNrNYOl9oibtrpLda7rH9gZEMc5bFrN0Is6JG8QNTB0pzPweBUfrmQHPSpFE3KDIk4/wUc8vNW3W+/t/14yX7nNBB/pCmSvmbZVVMreoRyPIaQyAwfhWsAGrXYSwo92y5DUYpWLMshpfloL/MeHU6AeDV5/sV4Wc4TwO5PRM472grYK8vsWIevITnpB7iE5ZqLgpqrOZWWEeiZREJpCO48uy4PldcqvMsk9bG/+43a/pXurVjZNMRSP0e9ArxSNxQPjep0TTmhisIpQ5lsWKRhBQvvS1pN015gXR77icIzZ9K+GQpuhGdNk5ZAJUNagNnOGpLpGYLYZBrvUjMTni/CcinFO0vAxrnB6Wdd48Lxli/JYz01vL/mwOkMNMaWqvKTtBbDBoNtIv4jji7QZy3KdwotrQDIFMpHNWeCe2MK9JVbvQH3Yd86mpWVZ4K+bb1Emlv5Ibt9KyNFMXIfAsmmBz4hOrR0ijjAHxA0k+q+StxU3ptUy0pepTDWKyENkxIy218AQaL84AQijBJWD9pABg==";
+
+bool Gui::SuperDog::login()
+{
+	dog_handle_t handle;
+	auto code = dog_login(1,key.c_str(), &handle);
+	if (code == DOG_STATUS_OK)
+		return true;
+	return false;
+}
+

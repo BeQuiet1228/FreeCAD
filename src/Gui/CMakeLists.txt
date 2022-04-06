@@ -1,6 +1,6 @@
 #add_subdirectory(Icons)
 add_subdirectory(Stylesheets)
-
+add_definitions(-DSUPER_DOG)
 if(WIN32)
 add_definitions(-DFCGui -DQIIS_MAKEDLL -DQSINT_MAKEDLL -DOVR_OS_WIN32 -DQUARTER_INTERNAL -DQUARTER_MAKE_DLL -DCOIN_DLL)
 endif(WIN32)
@@ -844,6 +844,8 @@ SET(DATA_VISUALIZATION_GUI_SRC
 	HDF5DataItem2DDoubleClickEventHander.cpp
 	ControlerItemListWidget.cpp
 	ControlerItemListWidget.h
+	SuperDog.h
+	SuperDog.cpp
 )
 SET(DATA_VISUALIZATION_GUI_MOC_H
 	Hdf5DataItem.h

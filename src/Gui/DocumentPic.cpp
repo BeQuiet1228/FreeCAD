@@ -17,6 +17,7 @@
 #include "MDIView.h"
 #include "DataVisualization3dView.h"
 #include "ControlerItemListWidget.h"
+#include "SuperDog.h"
 DocumentPic::DocumentPic(App::Document* pcDocument, Gui::Application* app)
 	:Gui::Document(pcDocument,app)
 {
@@ -275,24 +276,40 @@ bool DocumentPic::onHasMsg(const char* pMsg) const
 	else if (strcmp("SaveAs", pMsg) == 0) {
 		return true;
 	}else if (strcmp("RunChipic", pMsg) == 0) {
+#ifdef SUPER_DOG
+		if (!Gui::SuperDog::login())
+			return false;
+#endif // SUPER_DOG
 		auto control = ContorlInterface::GetInstance();
 		if (control->hasAutoChipicRuning())
 			return false;
 		return true;
 	}
 	else if (strcmp("ParalleRunChipic", pMsg) == 0) {
+#ifdef SUPER_DOG
+		if (!Gui::SuperDog::login())
+			return false;
+#endif // SUPER_DOG
 		auto control = ContorlInterface::GetInstance();
 		if (control->hasChipicRuning())
 			return false;
 		return true;
 	}
 	else if (strcmp("showPSOView", pMsg) == 0) {
+#ifdef SUPER_DOG
+		if (!Gui::SuperDog::login())
+			return false;
+#endif // SUPER_DOG
 		auto control = ContorlInterface::GetInstance();
 		if (control->hasChipicRuning())
 			return false;
 		return true;
 	}
 	else if (strcmp("showProcessingBatchView", pMsg) == 0) {
+#ifdef SUPER_DOG
+		if (!Gui::SuperDog::login())
+			return false;
+#endif // SUPER_DOG
 		auto control = ContorlInterface::GetInstance();
 		if (control->hasChipicRuning())
 			return false;
