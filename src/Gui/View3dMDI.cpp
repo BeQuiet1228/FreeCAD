@@ -26,9 +26,11 @@ bool View3dMDI::onHasMsg(const char* pMsg) const
 {
 	if (View3DInventor::onHasMsg(pMsg))
 		return true;
-	if (onHasMsgChipic(pMsg))
-		return true;
-	return false;
+
+	auto doc = dynamic_cast<DocumentPic*>(getGuiDocument());
+	if (!doc)
+		return false;
+	return doc->onHasMsg(pMsg);
 }
 
 bool View3dMDI::onMsgChipic(const char* pMsg, const char** ppReturn, Gui::Document* doc)
