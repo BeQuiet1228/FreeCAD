@@ -342,64 +342,7 @@ class DocumentObservers(object):
                     obj.Order=numOfObjects
                     pass
     # 文档关闭，关闭物理设置与任务控制面板
-    def slotDeletedDocument(self,doc):
-        #移除所有的监听
-        # FreeCAD.removeAllDocumentObserver()
-        import os
-        import shutil
-        if (os.path.exists(FreeCAD.clientUserDir())):
-            pass
-            # shutil.rmtree(FreeCAD.clientUserDir())
-        import Physics
-        Physics.PhysicsCommand.BoundPalMain.BoundSettingTreeClose()
-        Physics.PhysicsCommand.ObservePalMain.ObserveSettingTreeClose()
 
-        try:
-
-            # import Visualization.vPlot
-            import Visualization.VisualizationCommand.VisualizationTree
-            import Visualization.VisualizationCommand.VisualizationFigTree
-            # 清除保存的plot对象
-            # FreeCAD.Console.PrintMessage("Wrong\n")
-
-            Visualization.VisualizationCommand.VisualizationTree.cloePlotTree()
-            # FreeCAD.Console.PrintMessage("Wrong2\n")
-            Visualization.VisualizationCommand.VisualizationFigTree.showfigTree()
-            # FreeCAD.Console.PrintMessage("Wrong3\n")
-            # Visualization.vPlot.clear()
-            # FreeCAD.Console.PrintMessage("vPlot\n")
-        except:
-            FreeCAD.Console.PrintMessage("Wrong in DocumentTool.slotDeletedDocument\n")
-    # # # 时间监听刷新模型
-    # def slotRecomputedDocument(self,doc):
-    # def recomputeObj(self,obj,prop):
-    # def slotRecomputedObject(self,obj):
-    #     Gui.SendMsgToActiveView("ViewFit")
-    #     pass
-        # if obj.TypeId=="App::DocumentObjectGroup":
-        # FreeCAD.Console.PrintMessage("slotRecomputedDocument "+str(obj.Name)+" prop"+"\n")
-        # if self.flagRecompute:
-        #     self.flagRecompute=False
-        #     FreeCAD.Console.PrintMessage("slot "+str(obj.Name))
-        #     # ObjectsTools.reComputeBooleanBySubVacuo()
-        #     # FreeCAD.ActiveDocument.recompute()
-        #     FreeCAD.Console.PrintMessage("\nEND\n")
-        #     self.flagRecompute=True
-        # else:
-        #     FreeCAD.Console.PrintError("FALSE\n")
-    #     if self.flagRecomputing or self.flagRecompute:
-    #         return
-    #     else:
-    #         FreeCAD.Console.PrintMessage("Start\n")
-    #         self.flagRecompute=True
-# class AfterReBuildByM3dObserver(object):
-#     def __init__(self):
-#         Gui.SendMsgToActiveView("ViewFit")
-#         pass
-#     def slotRecomputedObject(self,obj):
-#         FreeCAD.Console.PrintError("recompute: "+str(obj.Name)+"\n")
-#         Gui.SendMsgToActiveView("ViewFit")
-#         FreeCAD.Console.PrintError("viewFile\n")
 
 #用于更新做布尔运算的最小order
 def updateBooleanOrder(obj,prop,flagMsg):
@@ -675,11 +618,8 @@ def closeAll():
 
         import Visualization.VisualizationCommand.VisualizationTree
         FreeCAD.Console.PrintMessage("VisualizationTree\n")
-        import Visualization.VisualizationCommand.VisualizationFigTree
-        FreeCAD.Console.PrintMessage("VisualizationFigTree\n")
         Visualization.VisualizationCommand.VisualizationTree.cloePlotTree()
         FreeCAD.Console.PrintMessage("cloePlot\n")
-        Visualization.VisualizationCommand.VisualizationFigTree.showfigTree()
         FreeCAD.Console.PrintMessage("show\n")
         closeTab()
         FreeCAD.Console.PrintMessage("closeTab\n")
