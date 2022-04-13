@@ -4,8 +4,7 @@ import FreeCAD as App
 import FreeCAD
 import Part
 import math
-from Model3D.Tools import Tools3D, ObjectTools, InitDoc3D
-from Modeling.Modeling2D.Tools import Tools2D, ToolsUI
+from Modeling.Modeling2D.Tools import Tools2D, ToolsUI, InitDoc
 
 class AreaFillet:
     def __init__(self, obj):
@@ -34,15 +33,15 @@ class AreaFillet:
         arc_point2 = arc_list[1]
         arc_point3 = arc_list[2]
         arc_center = arc_list[3]
-        Tools3D.sayz("arc_point1=" + str(arc_point1))
-        Tools3D.sayz("arc_point2=" + str(arc_point2))
-        Tools3D.sayz("arc_point3=" + str(arc_point3))
-        Tools3D.sayz("arc_center1=" + str(arc_center))
+        Tools2D.sayz("arc_point1=" + str(arc_point1))
+        Tools2D.sayz("arc_point2=" + str(arc_point2))
+        Tools2D.sayz("arc_point3=" + str(arc_point3))
+        Tools2D.sayz("arc_center1=" + str(arc_center))
         right_vec = arc_point1.sub(arc_center)
         left_vec = arc_point3.sub(arc_center)
-        Tools3D.sayz("right_vec=" + str(right_vec))
-        Tools3D.sayz("left_vec=" + str(left_vec))
-        Tools3D.sayz("arc_center2=" + str(arc_center))
+        Tools2D.sayz("right_vec=" + str(right_vec))
+        Tools2D.sayz("left_vec=" + str(left_vec))
+        Tools2D.sayz("arc_center2=" + str(arc_center))
         start_angle = math.atan2(right_vec.y, right_vec.x)
         end_angle = math.atan2(left_vec.y, left_vec.x)
         if end_angle < 0:
@@ -68,17 +67,17 @@ class AreaFillet:
         ToolsUI.setAngleToObj(fillet, "StartAngle", fillet.user_startAngle)
         ToolsUI.setAngleToObj(fillet, "EndAngle", fillet.user_endAngle)
 
-        Tools3D.sayz("fillet.Radius =" + str(fillet.Radius))
-        Tools3D.sayz("fillet.Point1X=" + str(fillet.Point1X))
-        Tools3D.sayz("fillet.Point1Y=" + str(fillet.Point1Y))
-        Tools3D.sayz("fillet.Point2X=" + str(fillet.Point2X))
-        Tools3D.sayz("fillet.Point2Y=" + str(fillet.Point2Y))
-        Tools3D.sayz("fillet.StartAngle=" + str(fillet.StartAngle))
-        Tools3D.sayz("fillet.EndAngle=" + str(fillet.EndAngle))
+        Tools2D.sayz("fillet.Radius =" + str(fillet.Radius))
+        Tools2D.sayz("fillet.Point1X=" + str(fillet.Point1X))
+        Tools2D.sayz("fillet.Point1Y=" + str(fillet.Point1Y))
+        Tools2D.sayz("fillet.Point2X=" + str(fillet.Point2X))
+        Tools2D.sayz("fillet.Point2Y=" + str(fillet.Point2Y))
+        Tools2D.sayz("fillet.StartAngle=" + str(fillet.StartAngle))
+        Tools2D.sayz("fillet.EndAngle=" + str(fillet.EndAngle))
         fillet.recompute()
 
         arc = Part.Edge(Part.Arc(arc_point1, arc_point2, arc_point3))
-        Tools3D.sayz("p3=" + str(p2))
+        Tools2D.sayz("p3=" + str(p2))
         line_left = Part.Edge(Part.LineSegment(arc_point1, p2))
         line_right = Part.Edge(Part.LineSegment(arc_point3, p2))
         w = Part.Wire([line_left, arc, line_right])
@@ -87,7 +86,7 @@ class AreaFillet:
 
 class GetProperty:
     def __init__(self, obj):
-        obj.addProperty("App::PropertyString", "Type").Type = ObjectTools.ObjectType.Area_Function
+        obj.addProperty("App::PropertyString", "Type").Type = "AreaFunction"
 
         obj.addProperty("App::PropertyDistance", "Point1X").Point1X = 0
         obj.addProperty("App::PropertyDistance", "Point1Y").Point1Y = 0
@@ -97,18 +96,18 @@ class GetProperty:
         obj.addProperty("App::PropertyDistance", "Point3Y").Point3Y = 0
         obj.addProperty("App::PropertyDistance", "Radius").Radius = 0.05
 
-        Tools3D.addCommonProperty(obj)
-        Tools3D.addAttributeToObject(obj)
-        Tools3D.addHelperProperty(obj, 2)
+        Tools2D.addCommonProperty(obj)
+        Tools2D.addAttributeToObject(obj)
+        Tools2D.addHelperProperty(obj, 2)
         # Tools3D.getHelperValue(obj)
 
 
 def getObject():
     FreeCAD.ActiveDocument.openTransaction('CreateAreaFunction_3D')
-    obj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", ObjectTools.ObjectType.Area_Function)
-    InitDoc3D.addObjectToGroup_helper(obj, "AreaG", "面")
+    obj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", "AreaFunction")
+    InitDoc3D.addObjectToGroup(obj)
     AreaFillet(obj)
-    Tools3D.ViewProvider(obj.ViewObject)
+    Tools2D.ViewProvider(obj.ViewObject)
     FreeCAD.ActiveDocument.commitTransaction()
     return obj
 

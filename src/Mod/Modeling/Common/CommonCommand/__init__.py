@@ -1,2 +1,4 @@
 import NewDocument
 import OtherToolbarCommand
+import DisplayDlgCommand
+import DisplayDlgMain

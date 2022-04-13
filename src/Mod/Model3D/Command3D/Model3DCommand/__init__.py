@@ -22,7 +22,6 @@ import Vol_Parallelepipedal
 import Vol_Function
 import Vol_Helical
 import Area_Polygonal
-import DoubleClickShowDialog
 import Boolen
 import Object_Array
 import Draft_Extruded

@@ -1,11 +1,141 @@
 # encoding:utf-8
-import math
-import FreeCADGui
 import FreeCAD
-import Part
-from Model3D.Tools import Tools3D, ObjectTools, ExpressionTools3D, InitDoc3D
-from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain, BaseDialog
+import FreeCADGui
+from Model3D.Tools import ObjectTools
+from Modeling.Common.Tools import ObjectsTools
+from Modeling.Modeling2D.Tools import Tools2D
 
+
+def slotDoubleClicked():
+    """
+    该函数为树结构双击时间所连接的槽函数，负责打开被双击物体的Dialog
+    信号相关代码在C++
+    """
+    if FreeCAD.ActiveDocument.Comment == "2D":
+        getSelectionObj2D()
+    # 3D新版本
+    else:
+        new_getSelectionObj3D()
+
+
+def getSelectionObj2D():
+    obj = FreeCADGui.Selection.getSelection()
+    if len(obj) == 0:
+        pass
+    elif len(obj) == 1:
+        from Modeling.Modeling2D import Modeling2DCommand
+        # 只有有Type属性的obj才有对应的Dialog，除了Annotation
+        if 'Type' in obj[0].PropertiesList:
+            Form = None
+            # 变量
+            if obj[0].Type == Tools2D.ObjectType.Variable:
+                pass
+            # 体
+            elif obj[0].Type == Tools2D.ObjectType.Point:
+                Form = Modeling2DCommand.Point.PointDlgMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.Line:
+                Form = Modeling2DCommand.Line.LineDlgMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.LineConformal:
+                Form = Modeling2DCommand.LineConformal.LineConformalDlgMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.AreaPolygonal:
+                Form = Modeling2DCommand.Wire.WireDlgMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.AreaCircular:
+                Form = Modeling2DCommand.Circular.CircularDlgMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.AreaConformal:
+                Form = Modeling2DCommand.AreaConformal.AreaConformalDlgMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.Rectangle:
+                Form = Modeling2DCommand.Rectangle.RectangleDlgMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.Sector:
+                Form = Modeling2DCommand.Sector.SectorDlgMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.Fillet:
+                Form = Modeling2DCommand.Fillet.FilletDlgMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.AreaFunction:
+                Form = Modeling2DCommand.AreaFunction.AreaFunctionDlgMain.ShowDialog(obj[0])
+            # 边界设置
+            elif obj[0].Type == Tools2D.ObjectType.SOLE:
+                pass
+            elif obj[0].Type == Tools2D.ObjectType.DRIV:
+                Form = Modeling2DCommand.Driv.DrivDialogMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.FOIL:
+                Form = Modeling2DCommand.Foil.FoilDialogMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.IND:
+                Form = Modeling2DCommand.Inductor.IndDialogMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.PORT:
+                Form = Modeling2DCommand.Port.PortDialogMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.FREE:
+                Form = Modeling2DCommand.FreeSpace.FreeDialogMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.SYMT:
+                Form = Modeling2DCommand.Symtry.SymtryDialogMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.MARK:
+                Form = Modeling2DCommand.Mark.MarkDialogMain.ShowDialog(obj[0])
+            # 发射处理
+            elif obj[0].Type == Tools2D.ObjectType.BEAM:
+                Form = Modeling2DCommand.Beam.BeamDialogMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.EXPS:
+                Form = Modeling2DCommand.Exps.ExpsDialogMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.GYRO:
+                Form = Modeling2DCommand.Gyro.GyroDialogMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.POPU:
+                Form = Modeling2DCommand.Popu.PopuDialogMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.FELD:
+                Form = Modeling2DCommand.Feld.FeldDialogMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.THER:
+                Form = Modeling2DCommand.Ther.TherDialogMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.SECD:
+                Form = Modeling2DCommand.Secd.SecdDialogMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.IONI:
+                Form = Modeling2DCommand.Ioni.IoniDlgMain.ShowDialog(obj[0])
+            # 观测设置
+            elif obj[0].Type == Tools2D.ObjectType.CNTR:
+                Form = Modeling2DCommand.Cntr.CntrDlgMain.ShowDialog(obj[0])
+                pass
+            elif obj[0].Type == Tools2D.ObjectType.Vector:
+                Form = Modeling2DCommand.Vector.VectorDlgMain.ShowDialog(obj[0])
+                pass
+            elif obj[0].Type == Tools2D.ObjectType.PhasSpace:
+                Form = Modeling2DCommand.PhasSpace.PhasSpaceDlgMain.ShowDialog(obj[0])
+                pass
+            elif obj[0].Type == Tools2D.ObjectType.AreaRan:
+                Form = Modeling2DCommand.AreaRan.AreaRanDlgMain.ShowDialog(obj[0])
+                pass
+            elif obj[0].Type == Tools2D.ObjectType.Observe:
+                Form = Modeling2DCommand.Observe.ObserveDlgMain.ShowDialog(obj[0])
+                pass
+            # 定时器
+            elif obj[0].Type == Tools2D.ObjectType.DefaultTimer:
+                Form = Modeling2DCommand.DefTimer.DefTimerDlgMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.Timer:
+                Form = Modeling2DCommand.CustomTimer.CustomTimerDlgMain.ShowDialog(obj[0])
+            # 新材料
+            elif obj[0].Type == Tools2D.ObjectType.NewMaterial:
+                Form = Modeling2DCommand.NewMaterial.NewMaterialDlgMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.NewParticle:
+                Form = Modeling2DCommand.ParticleDefine.ParticleDefineDlgMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.MarcoParticle:
+                Form = Modeling2DCommand.MacroParticle.MarcoParticleDlgMain.ShowDialog(obj[0])
+            # 工程设置
+            elif obj[0].Type == Tools2D.ObjectType.Info:
+                Form = Modeling2DCommand.ModelInfo.ModelInfoDialogMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.Simu:
+                Form = Modeling2DCommand.NetStepSetting.NetStepSettingDialogMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.TimeDomain:
+                Form = Modeling2DCommand.TimeDomainSetting.TimeDomainSettingDlgMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.DataProcess:
+                Form = Modeling2DCommand.DataExportSetting.DataExportSettingDlgMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.RunOptions:
+                Form = Modeling2DCommand.RunProcessingOptions.RunProcessingOptionsDlgMain.ShowDialog(obj[0])
+            elif obj[0].Type == Tools2D.ObjectType.FieldSetting:
+                Form = Modeling2DCommand.FiledSetting.FiledSettingDialogMain.ShowDialog(obj[0])
+            if Form is not None:
+                # Form.show()
+                Form.exec_()
+        else:
+            if obj[0].TypeId == 'App::Annotation':
+                Form = Modeling2DCommand.Text.TextDlgMain.ShowDialog(obj[0])
+                Form.exec_()
+    else:
+        # 如果被选中数量大于一个，则不显示Dialog
+        pass
 
 def new_getSelectionObj3D():
     """

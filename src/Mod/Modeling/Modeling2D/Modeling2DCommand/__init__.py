@@ -28,8 +28,6 @@ import ParticleDefine
 import MacroParticle
 import DefTimer
 import CustomTimer
-import DisplayDialog
-import SingleClickObj
 
 import Rectangle
 import RegularPolygon

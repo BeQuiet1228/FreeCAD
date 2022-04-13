@@ -17,13 +17,13 @@ class SingleClickCommand:
 
     def GetResources(self):
         #为了方便此处不修改，用不到
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Modeling/Modeling3D/Modeling3DResources/3D_Vol_Annular.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Model3D/Resources3D/3D_Vol_Annular.svg"
         MenuText = QtCore.QT_TRANSLATE_NOOP(
-            'Annular',
-            'Create a new Annular')
+            'SingleClickTheObj',
+            'add Single Click')
         ToolTip = QtCore.QT_TRANSLATE_NOOP(
-            'Annular',
-            'Create a new Annular instance on top of the hull geometry')
+            'SingleClickTheObj',
+            'add Single Click')
         return {'Pixmap': IconPath,
                 'MenuText': MenuText,
                 'ToolTip': ToolTip}
@@ -178,13 +178,13 @@ class SingleClickParaCommand:
 
     def GetResources(self):
         #为了方便此处不修改，用不到
-        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Modeling/Modeling3D/Modeling3DResources/3D_Vol_Annular.svg"
+        IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Model3D/Resources3D/3D_Vol_Annular.svg"
         MenuText = QtCore.QT_TRANSLATE_NOOP(
-            'Annular',
-            'Create a new Annular')
+            'SingleClickTheObj',
+            'add Single Click')
         ToolTip = QtCore.QT_TRANSLATE_NOOP(
-            'Annular',
-            'Create a new Annular instance on top of the hull geometry')
+            'SingleClickTheObj',
+            'add Single Click')
         return {'Pixmap': IconPath,
                 'MenuText': MenuText,
                 'ToolTip': ToolTip}
