@@ -3,10 +3,10 @@ require "math"
 --初始化
 overvarName={};
 overvar={};
-variateCount=0;
+variateCount=1;
 function init()
 cppPrint("init_start");
-for i=0,variateCount-1,1 
+for i=1,variateCount -1,1 
 do 
 	addVariate(overvarName[i],overvar[i]);
 end
@@ -27,9 +27,9 @@ function addVarMod1(name,max,mini,stepsize)
 	overvarName[variateCount]=name;
 	local interval=(max-mini)/(stepsize-1);
 	local lval={};
-	for i=0,stepsize-1,1
+	for i=1,stepsize,1
 	do
-		lval[i]=mini+interval*i;
+		lval[i]=mini+interval*(i-1);
 	end
 	overvar[variateCount]=lval;
 	variateCount=variateCount+1;
