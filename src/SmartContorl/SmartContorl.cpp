@@ -8,6 +8,7 @@ extern "C"{
 #include "LuaCInterface.h"
 #include "Contorl/ContorlInterface.h"
 #include "Contorl/Chipic.h"
+#include "OptimizeCurse.h"
 #include <QFile>
 #include <QTextIStream>
 #include "SmartContorlData.h"
@@ -25,12 +26,8 @@ QString gbkStdstringToQstring(const std::string& str)
 }
 
 SmartContorl::SmartContorl()
-	:makeRunDataType(CONBINATION)
+	:makeRunDataType(CONBINATION),optimizeCurse(nullptr)
 {
-	lua_state = luaL_newstate();
-	luaL_openlibs(lua_state);
-	//注册lua函数
-	registerLuaFunction(lua_state);
 	//获取chipicmanager管理对象
 	chipicManager = ContorlInterface::GetInstance()->getChipicManager();
 	//链接计算完成槽
@@ -38,152 +35,12 @@ SmartContorl::SmartContorl()
 	connect(chipicManager, SIGNAL(chipicStartFinished(unsigned long)), this, SLOT(chipicStartFinished(unsigned long)));
 	connect(chipicManager, SIGNAL(chipicAnalysisFinished(unsigned long)), this, SLOT(chipicAnalysisFinished(unsigned long)));
 	connect(chipicManager, SIGNAL(chipicErrorClose(unsigned long)), this, SLOT(chipicErrorClose(unsigned long)));
-	//测试使用代码
-	/*ChipicRunDataPtr data;
-	data.reset(new ChipicRunData);
-	data->h5FilePath = "E:\\lingshiwenjianjia\\MILO_C\\MILO_C.h5";
-	chipicDataFinish.push_back(data);*/
+
 }
 
 SmartContorl::~SmartContorl()
 {
-	lua_close(lua_state);
-}
-
-/**
-* @brief SmartContorl::luaInit 调用lua脚本中的初始化函数
-* @return void
-*/
-void SmartContorl::luaInit()
-{
-	int callBack = getLuaErrorCallBackFunction();
-	callLuaFunction("init");
-#if 0
-	//获取方法
-	lua_State* L = luaL_newstate();
-	if (!L)
-		return;
-	luaL_openlibs(L);
-	int ret = luaL_dofile(L,"C://Users//DELL//Desktop//test.lua");
-	int res=lua_getglobal(L,"init");
-	//压入参数
-	std::string name = "RAA";
-	double max = 0.5;
-	double min = 0.1;
-	int count = 3;
-	std::string s1=lua_pushstring(L,name.c_str());
-	lua_pushnumber(L,max);
-	lua_pushnumber(L,min);
-	lua_pushnumber(L,count);
-	if ((res = lua_pcall(L, 4, 0,0))!=0)//参数数量,参数返回值，错误输出函数
-	{
-		printf("err %s\n",lua_tostring(lua_state,-1));
-		lua_pop(lua_state, 1);//若有错误则弹出
-		printf("top = %d \n", lua_gettop(lua_state));
-	}
-	lua_close(L);
-#endif
-#if 0
-	int res = lua_getglobal(lua_state,"init2");
-	//获取变量
-	std::string name = "RCC";
-	double max = 0.5;
-	double min = 0.1;
-	int count = 3;
-	std::string s1 = lua_pushstring(lua_state, name.c_str());
-	lua_pushnumber(lua_state, max);
-	lua_pushnumber(lua_state, min);
-	lua_pushnumber(lua_state, count);
-	if ((res = lua_pcall(lua_state, 4, 0, 0)) != 0)//参数数量,参数返回值，错误输出函数
-	{
-		printf("err %s\n", lua_tostring(lua_state, -1));
-		lua_pop(lua_state, 1);//若有错误则弹出
-		printf("top = %d \n", lua_gettop(lua_state));
-	}
-#endif
-}
-//void SmartContorl::luaInit(std::string _name, double _max, double _min, int _count)
-//{
-//	int res = lua_getglobal(lua_state, "init2");
-//	//获取变量
-//	std::string name = _name;
-//	double max = _max;
-//	double min = _min;
-//	int count = _count;
-//	std::string s1 = lua_pushstring(lua_state, name.c_str());
-//	lua_pushnumber(lua_state, max);
-//	lua_pushnumber(lua_state, min);
-//	lua_pushnumber(lua_state, count);
-//	if ((res = lua_pcall(lua_state, 4, 0, 0)) != 0)//参数数量,参数返回值，错误输出函数
-//	{
-//		printf("err %s\n", lua_tostring(lua_state, -1));
-//		lua_pop(lua_state, 1);//若有错误则弹出
-//		printf("top = %d \n", lua_gettop(lua_state));
-//	}
-//}
-/**
-* @brief SmartContorl::luaResultDataFilter 调用lua脚本中的结果筛选函数
-* @return bool
-*/
-bool SmartContorl::luaResultDataFilter()
-{
-	callLuaFunction("resultDataFilter",0,1);
-	bool re = false;
-	if (lua_gettop(lua_state) != 0)
-	{
-		re = lua_toboolean(lua_state, -1);
-	}
-
-	return re;
-}
-
-/**
-* @brief SmartContorl::luaResultExpcet 调用lua脚本中的运算结果比对函数
-* @return bool true 说明结果达到预期
-*/
-bool SmartContorl::luaResultExpcet()
-{
-	callLuaFunction("resultExpcet", 0, 1);
-	bool re = false;
-	if (lua_gettop(lua_state) != 0)
-	{
-		re = lua_toboolean(lua_state,-1);
-	}
-#ifdef MY_DEBUG
-	std::cerr << "SmartContorl::luaResultExpcet() re :" << re << std::endl;
-#endif // MY_DEBUG
-
-	return re;
-}
-
-/**
-* @brief SmartContorl::luaOptimize 调用lua脚本中的参数优化函数
-* @return void
-*/
-void SmartContorl::luaOptimize()
-{
-	callLuaFunction("optimize");
-}
-
-/**
-* @brief SmartContorl::luaLoadFromString 以字符串的形式载入lua脚本
-* @param const std::string & lua lua脚本字符串
-* @return void
-*/
-void SmartContorl::luaLoadFromString(const std::string& lua)
-{
-	std::cout << lua << std::endl;
-	luaL_dostring(lua_state,lua.c_str());
-}
-
-/**
-* @brief SmartContorl::luaLoadFromFile 以文件路径的形式载入lua脚本
-* @param const std::string & filePath lua脚本文件路径
-* @return void
-*/
-void SmartContorl::luaLoadFromFile(const std::string& filePath)
-{
-	luaL_dofile(lua_state, filePath.c_str());
+	delete optimizeCurse;
 }
 
 /**
@@ -276,7 +133,7 @@ void SmartContorl::runChipic()
 void SmartContorl::dataOptimize()
 {
 	//运算结果数据筛选
-	bool ok = this->luaResultDataFilter();
+	bool ok = optimizeCurse->resultDataFilter(this);
 	//清理h5对象 这个暂时放在这里，后续应当写到lua脚本中
 	SmartContorlData::GetInstance()->clearH5Object();
 	//如果结果数据筛选失败，那么给出提示
@@ -287,7 +144,7 @@ void SmartContorl::dataOptimize()
 // 		msgBox->setWindowTitle(QString::fromLocal8Bit("提示"));
 // 		msgBox->setText(QString::fromLocal8Bit("优化结果数据筛选失败，请检查输出H5文件格式是否正确！"));
 // 		msgBox->show();
-		callLuaFunction("init");
+		optimizeCurse->init(this);
 		//运行优化之后的参数
 		this->makeRunData();
 		this->runChipic();
@@ -297,14 +154,14 @@ void SmartContorl::dataOptimize()
 	//清空完成运算数据
 	//this->clearFinishData();
 	//判断数据是否符合预期，符合则结束运行
-	if (this->luaResultExpcet())
+	if (optimizeCurse->resultExpcet(this))
 	{
 		runing = false;
 		return;
 	}
 		
 	//调用优化算法对参数进行优化
-	this->luaOptimize();
+	optimizeCurse->optimize(this);
 	//运行优化之后的参数
 	this->makeRunData();
 	this->runChipic();
@@ -399,7 +256,7 @@ void SmartContorl::printLog(const std::string& log)
 {
 	emit smartContorlLog(log);
 }
-void SmartContorl::run(const QString& lua)
+void SmartContorl::run()
 {
 	//如果已有其他chipic在运行则返回
 	if (controlModIsRuning())
@@ -409,8 +266,7 @@ void SmartContorl::run(const QString& lua)
 
 	runing = true;
 	finishedIsVasible = true;
-	this->luaLoadFromString(lua.toStdString());
-	this->luaInit();
+	this->optimizeCurse->init(this);
 	this->makeRunData();
 	this->initDataFile();
 	this->runChipic();
@@ -461,6 +317,49 @@ void SmartContorl::saveCurrentData()
 	file.close();
 }
 
+int SmartContorl::getHistorySize()
+{
+	return historyDatas.size();
+}
+
+void SmartContorl::addVariate(const Variate& v)
+{
+	this->variates.push_back(v);
+}
+
+void SmartContorl::setM3dPath(const QString& s)
+{
+	this->m3dPath = s;
+	fileMaker.setM3dPath(s);
+}
+
+void SmartContorl::setM3dPath(const std::string s)
+{
+	this->m3dPath = QString::fromStdString(s);
+	fileMaker.setM3dPath(m3dPath);
+}
+
+ChipicResultGetter SmartContorl::getResult()
+{
+	ChipicResultGetter result(chipicDataFinish);
+	return result;
+}
+
+std::vector<SmartContorl::HistoryData> SmartContorl::getHistoryDatas()
+{
+	return historyDatas;
+}
+
+void SmartContorl::setRunDataMakeType(const MakeRunDataType& type)
+{
+	this->makeRunDataType = type;
+}
+
+QString SmartContorl::getM3dPath()
+{
+	return m3dPath;
+}
+
 void SmartContorl::stop()
 {
 	runing = false;
@@ -494,48 +393,7 @@ void SmartContorl::stop()
 	//设置管理器运行模式
 	chipicManager->setRunType(ChipicManager::MANUAL);
 }
-/**
-* @brief SmartContorl::getLuaErrorCallBackFunction 将错误处理函数放入栈中，并返回再栈中位置
-* @return int
-*/
-int SmartContorl::getLuaErrorCallBackFunction()
-{
-	lua_pushcfunction(lua_state, pcallErrorCallBack);
-	int callBack = lua_gettop(lua_state);
 
-	return callBack;
-}
-
-void SmartContorl::printLuaError(const int& error)
-{
-	if (error != 0)
-	{
-		int t = lua_type(lua_state, -1);
-		if (t != 4)
-			return;
-		std::string str = lua_tostring(lua_state, -1);
-		std::cerr << str << std::endl;
-		lua_pop(lua_state, -1);
-	}
-}
-
-/**
-* @brief SmartContorl::callLuaFunction 调用一个lua函数
-* @param const std::string & functionName 函数名
-* @param const int & paramCount 参数个数
-* @param const int & returnCount 返回值个数
-* @return void
-*/
-void SmartContorl::callLuaFunction(const std::string& functionName, const int& paramCount, const int& returnCount)
-{
-	int callBack = getLuaErrorCallBackFunction();
-	//获取方法init
-	lua_getglobal(lua_state, functionName.c_str());
-	//传人参数
-
-	int erro = lua_pcall(lua_state, paramCount, returnCount, callBack);
-	printLuaError(erro);
-}
 
 /**
 * @brief SmartContorl::controlModIsRuning 判断control模块是否已经在运行其他的东西
@@ -767,4 +625,17 @@ bool SmartContorl::saveResultFormIndex(int index, std::string str)
 		bool ok=QFile::copy(saveH5Path, dstFileName);
 	}
 }
+
+OptimizeCurse* SmartContorl::getOptimizeCurse()
+{
+	return optimizeCurse;
+}
+
+
+void SmartContorl::setOptimizeCurse(OptimizeCurse* op)
+{
+	delete optimizeCurse;
+	this->optimizeCurse = op;
+}
+
 #include "moc_SmartContorl.cpp"

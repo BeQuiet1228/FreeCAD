@@ -174,6 +174,8 @@ SET(SmartContorl_src
 	VariateChart.cpp
 	VariableStorer.cpp
 	VariableStorer.h
+	OptimizeCurse.cpp
+	OptimizeCurse.h
 	${CALC_SRC}
 	${UI_SRC}
 	${JSON_SRC}

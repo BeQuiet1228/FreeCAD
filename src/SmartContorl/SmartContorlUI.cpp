@@ -14,6 +14,7 @@
 #include "qcustomplot.h"
 #include "VariateChart.h"
 #include "xml/pugixml.hpp"
+#include "OptimizeCurse.h"
 #include <QTextCodec>
 #include <QScrollBar>
 #include <QTextCursor>
@@ -78,13 +79,11 @@ void SmartContorlUI::on_pushButton_clicked()
 {
 	auto str = replaceVariate();
 	smartContorl->chipicCount = this->ui->spinBoxRunCount->value();
-	smartContorl->run(str);
+	auto optimize = new OptimizeCurseLua();
+	optimize->luaLoadFromString(str.toStdString());
+	smartContorl->setOptimizeCurse(optimize);
+	smartContorl->run();
 	smartContorl->setRunDataMakeType(SmartContorl::CONBINATION);
-	//int count = this->ui->spinBoxCount->value();
-	//for (auto iter=variateDatas.begin();iter!=variateDatas.end();iter++)
-	//{
-	//	smartContorl->luaInit((*iter)->name.toStdString(),(*iter)->max,(*iter)->mini,count);
-	//}
 	saveParameterXml();
 }
 
@@ -97,29 +96,29 @@ void SmartContorlUI::on_pushButton_2_clicked()
 //载入按钮
 void SmartContorlUI::on_pushButton_3_clicked()
 {
-	auto  str = ui->textEdit->toPlainText();
-
-	smartContorl->luaLoadFromString(str.toStdString());
+// 	auto  str = ui->textEdit->toPlainText();
+// 
+// 	smartContorl->luaLoadFromString(str.toStdString());
 }
 //初始化按钮
 void SmartContorlUI::on_pushButton_4_clicked()
 {
-	smartContorl->luaInit();
+/*	smartContorl->luaInit();*/
 }
 //数据筛选按钮
 void SmartContorlUI::on_pushButton_5_clicked()
 {
-	smartContorl->luaResultDataFilter();
+/*	smartContorl->luaResultDataFilter();*/
 }
 //预期对比按钮
 void SmartContorlUI::on_pushButton_6_clicked()
 {
-	smartContorl->luaResultExpcet();
+/*	smartContorl->luaResultExpcet();*/
 }
 //参数优化
 void SmartContorlUI::on_pushButton_7_clicked()
 {
-	smartContorl->luaOptimize();
+/*	smartContorl->luaOptimize();*/
 }
 
 void SmartContorlUI::on_pushButton_8_clicked()

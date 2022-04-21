@@ -36,6 +36,7 @@ struct VariateData
 namespace Ui{
 	class SmartContorlUI;
 }
+class OptimizeCurseLua;
 class SMARTCONTORL_EXPORT SmartContorlUI:public QDialog{
 	Q_OBJECT
 public:
