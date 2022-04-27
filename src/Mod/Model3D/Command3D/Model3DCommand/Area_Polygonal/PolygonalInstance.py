@@ -27,9 +27,6 @@ class CreatePolygonal:
         for i in temp_list:
             if re.match(r'Point\d\d', i, re.I):
                 temp_10.append(i)
-                # ve = getattr(fp, i)
-                # curPoint = Tools3D.pointToRecVec(ve)
-                # drawPoints.append(curPoint)
 
         for i in temp_list:
             if i not in temp_10:

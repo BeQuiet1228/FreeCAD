@@ -63,9 +63,7 @@ class ShowDialog(QtGui.QDialog):
                     getattr(self.ui, "label_Z" + str(i)).setText("Z")
                 except:
                     FreeCAD.Console.PrintError("label_" + str(i) + " Wrong\n")
-                    # self.ui.label_X.setText("R")
-            # self.ui.label_Y.setText("Theta")
-            # self.ui.label_Z.setText("Z")
+
             self.ui.checkBox_UniformX.setText("R")
             self.ui.checkBox_UniformY.setText("Theta")
             self.ui.checkBox_UniformZ.setText("Z")
@@ -174,89 +172,7 @@ class ShowDialog(QtGui.QDialog):
                     self.end = 1
                     Tools3D.sayz("参数读取错误")
 
-                # if "'i'" in ptn1X:i
-                #     ptn1X.replace("\'i\'", str(i)).replace(" ", "")
-                #     a=getPropertyValue(ptn1X)
-                # else:
-                #     Tools3D.setPlaceToObj(self.obj, "Helper1", ptn1X)
-                #     a=self.obj.Helper1
-                #
-                # ptn1Y= str(self.ui.lineEdit_Conformal_Ptn1Y.text())
-                # if "'i'" in ptn1Y:
-                #     ptn1Y.replace("\'i\'", str(i)).replace(" ", "")
-                #     b = getPropertyValue(ptn1Y)
-                # else:
-                #     Tools3D.setPlaceToObj(self.obj, "Helper1", ptn1Y)
-                #     b = self.obj.Helper1
-                #
-                # ptn1Z = str(self.ui.lineEdit_Conformal_Ptn1Z.text())
-                # if "'i'" in ptn1X:
-                #     ptn1Z.replace("\'i\'", str(i)).replace(" ", "")
-                #     c = getPropertyValue(ptn1Z)
-                # else:
-                #     Tools3D.setPlaceToObj(self.obj, "Helper1", ptn1Z)
-                #     c = self.obj.Helper1
-                #
-                # ptn2X = str(self.ui.lineEdit_Conformal_Ptn2X.text())
-                # if "'i'" in ptn2X:
-                #     ptn2X.replace("\'i\'", str(i)).replace(" ", "")
-                #     d = getPropertyValue(ptn2X)
-                # else:
-                #     Tools3D.setPlaceToObj(self.obj, "Helper1", ptn2X)
-                #     d = self.obj.Helper1
-                #
-                # ptn2Y = str(self.ui.lineEdit_Conformal_Ptn2Y.text())
-                # if "'i'" in ptn2Y:
-                #     ptn1Y.replace("\'i\'", str(i)).replace(" ", "")
-                #     e = getPropertyValue(ptn2Y)
-                # else:
-                #     Tools3D.setPlaceToObj(self.obj, "Helper1", ptn2Y)
-                #     e = self.obj.Helper1
-                #
-                # ptn2Z = str(self.ui.lineEdit_Conformal_Ptn2Z.text())
-                # if "'i'" in ptn2Z:
-                #     ptn2Z.replace("\'i\'", str(i)).replace(" ", "")
-                #     f = getPropertyValue(ptn2Z)
-                # else:
-                #     Tools3D.setPlaceToObj(self.obj, "Helper1", ptn2Z)
-                #     f = self.obj.Helper1
 
-                # 保留方案 待处理非参数输入
-                # if self.currentCoordinate == FreeCAD.ActiveDocument.CoordinateSystem == "Rectangular" \
-                #         or self.currentCoordinate == FreeCAD.ActiveDocument.CoordinateSystem == "Polar":
-                #     ptn1X = str(self.ui.lineEdit_Conformal_Ptn1X.text()).replace("\'i\'", str(i)).replace(" ", "")
-                #     ptn1Y = str(self.ui.lineEdit_Conformal_Ptn1Y.text()).replace("\'i\'", str(i)).replace(" ", "")
-                #     ptn1Z = str(self.ui.lineEdit_Conformal_Ptn1Z.text()).replace("\'i\'", str(i)).replace(" ", "")
-                #     ptn2X = str(self.ui.lineEdit_Conformal_Ptn2X.text()).replace("\'i\'", str(i)).replace(" ", "")
-                #     ptn2Y = str(self.ui.lineEdit_Conformal_Ptn2Y.text()).replace("\'i\'", str(i)).replace(" ", "")
-                #     ptn2Z = str(self.ui.lineEdit_Conformal_Ptn2Z.text()).replace("\'i\'", str(i)).replace(" ", "")
-                # else:
-                #     # 问题应该是这里
-                #     ptn1X = str(self.ui.lineEdit_Conformal_Ptn1X.text()).replace("\'i\'", str(i)).replace(" ", "")
-                #     ptn1Y = str(self.ui.lineEdit_Conformal_Ptn1Y.text()).replace("\'i\'", str(i)).replace(" ", "")
-                #     ptn1Z = str(self.ui.lineEdit_Conformal_Ptn1Z.text()).replace("\'i\'", str(i)).replace(" ", "")
-                #     ptn2X = str(self.ui.lineEdit_Conformal_Ptn2X.text()).replace("\'i\'", str(i)).replace(" ", "")
-                #     ptn2Y = str(self.ui.lineEdit_Conformal_Ptn2Y.text()).replace("\'i\'", str(i)).replace(" ", "")
-                #     ptn2Z = str(self.ui.lineEdit_Conformal_Ptn2Z.text()).replace("\'i\'", str(i)).replace(" ", "")
-                # try:
-                #     is_exist = (ptn1X in param.PropertiesList) \
-                #         and (ptn1Y in param.PropertiesList) \
-                #         and (ptn1Z in param.PropertiesList) and (ptn2X in param.PropertiesList) \
-                #            and (ptn2Y in param.PropertiesList) \
-                #            and (ptn2Z in param.PropertiesList)
-                #     # if not bool(is_exist):
-                #     #     raise Exception("param is not exist")
-                #     temp_shape = ArrayInstance.drawComformal(getPropertyValue(ptn1X),
-                #                                      getPropertyValue(ptn1Y),
-                #                                      getPropertyValue(ptn1Z),
-                #                                      getPropertyValue(ptn2X),
-                #                                      getPropertyValue(ptn2Y),
-                #                                              getPropertyValue(ptn2Z))
-                #     objsList.append(temp_shape)
-                # except:
-                #     self.end = 1
-                #     # QtGui.QMessageBox.information(None, "", "参数设置错误,无法绘制模型，请检查参数正确性。")
-                #     Tools3D.sayz("参数读取错误")
         # 环形体
         elif self.ui.comboBox_type.currentIndex() == 1:
             self.baseObjData.append(str(self.ui.lineEdit_Annular_Ptn1X.text()).replace(" ", ""))
@@ -316,41 +232,6 @@ class ShowDialog(QtGui.QDialog):
                     self.end = 1
                     Tools3D.sayz("参数读取错误")
 
-                # ptn1X = str(self.ui.lineEdit_Annular_Ptn1X.text()).replace("\'i\'", str(i)).replace(" ", "")
-                # ptn1Y = str(self.ui.lineEdit_Annular_Ptn1Y.text()).replace("\'i\'", str(i)).replace(" ", "")
-                # ptn1Z = str(self.ui.lineEdit_Annular_Ptn1Z.text()).replace("\'i\'", str(i)).replace(" ", "")
-                # ptn2X = str(self.ui.lineEdit_Annular_Ptn2X.text()).replace("\'i\'", str(i)).replace(" ", "")
-                # ptn2Y = str(self.ui.lineEdit_Annular_Ptn2Y.text()).replace("\'i\'", str(i)).replace(" ", "")
-                # ptn2Z = str(self.ui.lineEdit_Annular_Ptn2Z.text()).replace("\'i\'", str(i)).replace(" ", "")
-                # radI = str(self.ui.lineEdit_Annular_RadInner.text()).replace("\'i\'", str(i)).replace(" ", "")
-                # radO = str(self.ui.lineEdit_Annular_RadOuter.text()).replace("\'i\'", str(i)).replace(" ", "")
-                # try:
-                #     # ptn_str_list = [ptn1X, ptn1Y, ptn1Z, ptnR]
-                #     # 是否存在变量
-                #     is_exist = (ptn1X in param.PropertiesList) \
-                #            and (ptn1Y in param.PropertiesList) \
-                #            and (ptn1Z in param.PropertiesList) \
-                #            and (ptn2X in param.PropertiesList) \
-                #            and (ptn2Y in param.PropertiesList) \
-                #            and (ptn2Z in param.PropertiesList) \
-                #            and (radI in param.PropertiesList) \
-                #            and (radO in param.PropertiesList)
-                #
-                #     # if not bool(is_exist):
-                #     #     raise Exception("param is not exist")
-                #     temp_shape = ArrayInstance.drawAnnular(getPropertyValue(ptn1X),
-                #                                         getPropertyValue(ptn1Y),
-                #                                         getPropertyValue(ptn1Z),
-                #                                         getPropertyValue(ptn2X),
-                #                                         getPropertyValue(ptn2Y),
-                #                                         getPropertyValue(ptn2Z),
-                #                                         getPropertyValue(radI),
-                #                                         getPropertyValue(radO))
-                #     objsList.append(temp_shape)
-                # except:
-                #     self.end = 1
-                #     Tools3D.sayz("参数读取错误")
-
         #圆柱体
         elif self.ui.comboBox_type.currentIndex() == 2:
             self.baseObjData.append(str(self.ui.lineEdit_Cylinder_Ptn1X.text()).replace(" ", ""))
@@ -370,13 +251,6 @@ class ShowDialog(QtGui.QDialog):
                 ptn2Z = str(self.ui.lineEdit_Cylinder_Ptn2Z.text())
                 rad = str(self.ui.lineEdit_Cylinder_Rad.text())
                 try:
-                    # ptn1X = str(self.ui.lineEdit_Cylinder_Ptn1X.text())
-                    # ptn1Y = str(self.ui.lineEdit_Cylinder_Ptn1Y.text())
-                    # ptn1Z = str(self.ui.lineEdit_Cylinder_Ptn1Z.text())
-                    # ptn2X = str(self.ui.lineEdit_Cylinder_Ptn2X.text())
-                    # ptn2Y = str(self.ui.lineEdit_Cylinder_Ptn2Y.text())
-                    # ptn2Z = str(self.ui.lineEdit_Cylinder_Ptn2Z.text())
-                    # rad = str(self.ui.lineEdit_Cylinder_Rad.text())
                     if self.currentCoordinate == FreeCAD.ActiveDocument.CoordinateSystem == "Rectangular":
                         temp_shape = ArrayInstance.drawCylinder(getTheValue(self, ptn1X, i),
                                                                getTheValue(self, ptn1Y, i),
@@ -413,42 +287,7 @@ class ShowDialog(QtGui.QDialog):
                     Tools3D.sayz("参数读取错误")
 
 
-            # for i in range(i_start, i_end + 1):
-            #     ptn1X = str(self.ui.lineEdit_Cylinder_Ptn1X.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #     ptn1Y = str(self.ui.lineEdit_Cylinder_Ptn1Y.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #     ptn1Z = str(self.ui.lineEdit_Cylinder_Ptn1Z.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #     ptn2X = str(self.ui.lineEdit_Cylinder_Ptn2X.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #     ptn2Y = str(self.ui.lineEdit_Cylinder_Ptn2Y.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #     ptn2Z = str(self.ui.lineEdit_Cylinder_Ptn2Z.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #     rad = str(self.ui.lineEdit_Cylinder_Rad.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #
-            #     try:
-            #         # ptn_str_list = [ptn1X, ptn1Y, ptn1Z, ptnR]
-            #         # 是否存在变量
-            #         is_exist = (ptn1X in param.PropertiesList) \
-            #                    and (ptn1Y in param.PropertiesList) \
-            #                    and (ptn1Z in param.PropertiesList) \
-            #                    and (ptn2X in param.PropertiesList) \
-            #                    and (ptn2Y in param.PropertiesList) \
-            #                    and (ptn2Z in param.PropertiesList) \
-            #                    and (rad in param.PropertiesList)
-            #
-            #         if not bool(is_exist):
-            #             raise Exception("param is not exist")
-            #
-            #         temp_shape = ArrayInstance.drawCylinder(getPropertyValue(ptn1X),
-            #                                                  getPropertyValue(ptn1Y),
-            #                                                  getPropertyValue(ptn1Z),
-            #                                                  getPropertyValue(ptn2X),
-            #                                                 getPropertyValue(ptn2Y),
-            #                                                 getPropertyValue(ptn2Z),
-            #                                                 getPropertyValue(rad))
-            #         objsList.append(temp_shape)
-            #     except:
-            #         self.end = 1
-            #         Tools3D.sayz("参数读取错误")
-
-        #            圆台体
+        #圆台体
         elif self.ui.comboBox_type.currentIndex() == 3:
             self.baseObjData.append(str(self.ui.lineEdit_Cone_Ptn1X.text()).replace(" ", ""))
             self.baseObjData.append(str(self.ui.lineEdit_Cone_Ptn1Y.text()).replace(" ", ""))
@@ -507,42 +346,6 @@ class ShowDialog(QtGui.QDialog):
                     self.end = 1
                     Tools3D.sayz("参数读取错误")
 
-            # for i in range(i_start, i_end + 1):
-            #     ptn1X = str(self.ui.lineEdit_Cone_Ptn1X.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #     ptn1Y = str(self.ui.lineEdit_Cone_Ptn1Y.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #     ptn1Z = str(self.ui.lineEdit_Cone_Ptn1Z.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #     ptn2X = str(self.ui.lineEdit_Cone_Ptn2X.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #     ptn2Y = str(self.ui.lineEdit_Cone_Ptn2Y.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #     ptn2Z = str(self.ui.lineEdit_Cone_Ptn2Z.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #     radI = str(self.ui.lineEdit_Cone_RadBott.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #     radO = str(self.ui.lineEdit_Cone_RadUp.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #     try:
-            #         # ptn_str_list = [ptn1X, ptn1Y, ptn1Z, ptnR]
-            #         # 是否存在变量
-            #         is_exist = (ptn1X in param.PropertiesList) \
-            #                    and (ptn1Y in param.PropertiesList) \
-            #                    and (ptn1Z in param.PropertiesList) \
-            #                    and (ptn2X in param.PropertiesList) \
-            #                    and (ptn2Y in param.PropertiesList) \
-            #                    and (ptn2Z in param.PropertiesList) \
-            #                    and (radI in param.PropertiesList) \
-            #                    and (radO in param.PropertiesList)
-            #
-            #         if not bool(is_exist):
-            #             raise Exception("param is not exist")
-            #         temp_shape = ArrayInstance.drawSpecialCone(getPropertyValue(ptn1X),
-            #                                                getPropertyValue(ptn1Y),
-            #                                                getPropertyValue(ptn1Z),
-            #                                                getPropertyValue(ptn2X),
-            #                                                getPropertyValue(ptn2Y),
-            #                                                getPropertyValue(ptn2Z),
-            #                                                getPropertyValue(radI),
-            #                                                getPropertyValue(radO))
-            #         objsList.append(temp_shape)
-            #     except:
-            #         self.end = 1
-            #         Tools3D.sayz("参数读取错误")
-
 
         elif self.ui.comboBox_type.currentIndex() == 4:
             self.baseObjData.append(str(self.ui.lineEdit_Spherical_Ptn1X.text()).replace(" ", ""))
@@ -579,28 +382,6 @@ class ShowDialog(QtGui.QDialog):
                     self.end = 1
                     Tools3D.sayz("参数读取错误")
 
-            # for i in range(i_start, i_end + 1):
-            #     ptn1X = str(self.ui.lineEdit_Spherical_Ptn1X.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #     ptn1Y = str(self.ui.lineEdit_Spherical_Ptn1Y.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #     ptn1Z = str(self.ui.lineEdit_Spherical_Ptn1Z.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #     ptnR = str(self.ui.lineEdit_Spherical_Radius_3.text()).replace("\'i\'", str(i)).replace(" ", "")
-            #     try:
-            #         # ptn_str_list = [ptn1X, ptn1Y, ptn1Z, ptnR]
-            #         # 是否存在变量
-            #         is_exist = (ptn1X in param.PropertiesList) \
-            #               and (ptn1Y in param.PropertiesList) \
-            #               and (ptn1Z in param.PropertiesList) \
-            #               and (ptnR in param.PropertiesList)
-            #         if not bool(is_exist):
-            #             raise Exception("param is not exist")
-            #         temp_shape = ArrayInstance.drawSpherical(getPropertyValue(ptn1X),
-            #                                                  getPropertyValue(ptn1Y),
-            #                                                  getPropertyValue(ptn1Z),
-            #                                                  getPropertyValue(ptnR))
-            #         objsList.append(temp_shape)
-            #     except:
-            #         Tools3D.sayz("参数读取错误")
-            #         self.end = 1
         elif self.ui.comboBox_type.currentIndex() == 5:
             self.baseObjData.append(str(self.ui.lineEdit_Annular_Ptn1X_2.text()).replace(" ", ""))
             self.baseObjData.append(str(self.ui.lineEdit_Annular_Ptn1Y_2.text()).replace(" ", ""))
@@ -690,11 +471,8 @@ class ShowDialog(QtGui.QDialog):
                     Tools3D.sayz("参数读取错误")
 
         if len(objsList) != 0:
-            # FreeCAD.ActiveDocument.openTransaction("Array")
-            # obj = self.obj
             self.obj.BaseObjType = self.baseObjType
             self.obj.BaseObjData = self.baseObjData
-            # self.obj.Shapes = objsList
             objs = objsList
             theFirstShape = None
             otherShapes = []
@@ -713,7 +491,6 @@ class ShowDialog(QtGui.QDialog):
         self.obj.isMarkY = self.ui.checkBox_UniformY.isChecked()
         self.obj.isMarkZ = self.ui.checkBox_UniformZ.isChecked()
         self.obj.recompute()
-            # QtGui.QMessageBox.information(None, "", "参数设置错误,无法绘制模型，请检查参数正确性。")
 
     def slotComboBox(self):
         # 正投影体
@@ -998,16 +775,6 @@ class ShowDialog(QtGui.QDialog):
             else:
                 self.ui.tabWidget.setTabEnabled(i, False)
 
-    # def setValue(self,obj,paramName,paramValue):
-    #     # paramObj=ObjectsTools.getParamObj()
-    #     # result=UnitTools.getTypeOfPossiblePropertyName(paramObj,"",paramValue,isParamObjSelf=False)
-    #     # FreeCAD.Console.PrintMessage("value: "+str(result)+"\n")
-    #     # if result[0]!=""and result[1]!=UnitTools.SupportUnitType.STRING:
-    #     #     obj.setExpression(paramName,result[0])
-    #     result=paramValue
-    #     obj.setExpression(paramName, result)
-    #     pass
-
     def slotOK(self):
         # self.keepData()
         self.setInfoToObj()
@@ -1040,59 +807,16 @@ class ShowDialog(QtGui.QDialog):
                 FreeCAD.ActiveDocument.removeObject(self.obj.Label)
 
 
-# class PropertiesOfObj:
-#     class Conformal:
-#         Point1X = "Point1X"
-#         Point1Y = "Point1Y"
-#         Point1Z = "Point1Z"
-#         Point2X = "Point2X"
-#         Point2Y = "Point2Y"
-#         Point2Z = "Point2Z"
-#         Vol_Conformal={"Point1X":"App::PropertyDistance",
-#                     "Point1Y":"App::PropertyDistance",
-#                        "Point1Z": "App::PropertyDistance",
-#                        "Point2X":"App::PropertyDistance",
-#                        "Point2Y":"App::PropertyDistance",
-#         "Point2Z":"App::PropertyDistance"}
-#
-#     class Cylinder:
-#         Point1="Point1"
-#         Point2="Point2"
-#         Radius="Radius"
-#         Vol_Cylinder={"Point1":"App::PropertyVectorDistance",
-#                     "Point2":"App::PropertyVectorDistance",
-#                     "Radius":"App::PropertyLength"}
-#ExpressionTools3D.processingLengthExpression(name)
-#     class Annular:
-#         Point_1="Point_1"
-#         Point_2="Point_2"
-#         RadiusInside="RadiusInside"
-#         RadiusOutside="RadiusOutside"
-#         Vol_Annular={"Point_1":"App::PropertyVectorDistance",\
-#                     "Point_2":"App::PropertyVectorDistance",\
-#                     "RadiusInside":"App::PropertyLength",\
-#                     "RadiusOutside":"App::PropertyLength"}
-
-
 def getPropertyValue(name):
     try:
-        # danlist = ["m", "cm", "mm", "deg", "rad"]
-        # if name.isdigit():
-        #     return float(name)
-        # # elif any(a in name for a in danlist):
-        # #     return ExpressionTools3D.processingLengthExpression(name)
-        # else:
-        #     pass
         param = FreeCAD.ActiveDocument.getObject("Param")
         t = param.getTypeIdOfProperty(name)
-        # FreeCAD.Console.PrintMessage("Change property: " + str(name) + "\n")
         if t == "App::PropertyFloat":
             return getattr(param, name)
         elif t == "App::PropertyDistance":
             return getattr(getattr(param, name), "Value")
         elif t == "App::PropertyAngle":
             return getattr(getattr(param, name), "Value")
-            # return getattr(param, name)
         else:
             raise Exception("error with param type")
     except:
@@ -1108,10 +832,6 @@ def getTheValue(self, name, i):
         Tools3D.setPlaceToObj(self.obj, "Helper1", name)
         FreeCAD.Console.PrintMessage("Change property: " + str(self.obj.Helper1.Value) + "\n")
         return self.obj.Helper1.Value
-    # a = name.replace("\'i\'", str(i)).replace(" ", "")
-    # Tools3D.setPlaceToObj(self.obj, "Helper1", a)
-    # FreeCAD.Console.PrintMessage("Change property: " + str(self.obj.Helper1.Value) + "\n")
-    # return self.obj.Helper1.Value
 
 
 def getOtherValue(self, name, i):
@@ -1123,12 +843,3 @@ def getOtherValue(self, name, i):
         Tools3D.setPlaceToObj(self.obj, "Helper2", name)
         FreeCAD.Console.PrintMessage("Change property: " + str(self.obj.Helper2) + "\n")
         return self.obj.Helper2.Value
-    # a = name.replace("\'i\'", str(i)).replace(" ", "")
-    # Tools3D.setPlaceToObj(self.obj, "Helper2", a)
-    # FreeCAD.Console.PrintMessage("Change property: " + str(self.obj.Helper2.Value) + "\n")
-    # return self.obj.Helper2.Value
-    # if (name == "ptn1Y" and FreeCAD.ActiveDocument.CoordinateSystem == "Polar") or (
-    #         name == "ptn2Y" and FreeCAD.ActiveDocument.CoordinateSystem == "Polar") or (
-    #         name == "ptn1Z" and FreeCAD.ActiveDocument.CoordinateSystem == "Cylindrical") or (
-    #         # name == "ptn2Z" and FreeCAD.ActiveDocument.CoordinateSystem == "Cylindrical"):
-

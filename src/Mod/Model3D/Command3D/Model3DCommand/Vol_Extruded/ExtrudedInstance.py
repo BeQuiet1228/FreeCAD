@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import FreeCAD
-import FreeCADGui
 from Model3D.Tools import Tools3D, ObjectTools, InitDoc3D
-import Part, math
-from FreeCAD import Base
+import Part
 
 
 class CreateExtruded:
@@ -26,8 +24,6 @@ class CreateExtruded:
                 return
             path = Part.Wire(objLine.Shape)
             fp.Shape = path.makePipeShell([objArea.Shape.Wires[0]],True,True)
-            # shape1=path.makePipeShell([objArea.Shape.Wires[0]],True,True)
-            # shape2=objArea.Shape
         except :
             Tools3D.sayz("ExtrudedInstance failed\n")
 

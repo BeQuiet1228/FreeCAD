@@ -2,8 +2,6 @@
 import traceback
 import AreaRanDialog
 import AreaRanInstance
-from PySide import QtGui
-import FreeCAD
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
 from Model3D.Tools import Tools3D, ObjectTools
 
@@ -216,7 +214,6 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
 
     def ComboBox_Shadow_clicked(self):
         try:
-            # ObjectsTools.findObjByLabelWithoutOrderAndVisible(self.ui.ComboBox_Shadow.currentIndex())
             # 未选择
             if self.ui.ComboBox_Shadow.currentIndex() == 0:
                 Tools3D.setCoordEnabled(self.ui, ObjectTools.ObjectType.Line_Conformal)

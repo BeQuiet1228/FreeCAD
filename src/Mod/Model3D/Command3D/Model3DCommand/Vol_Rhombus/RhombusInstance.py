@@ -1,5 +1,4 @@
 # -*- coding: utf8 -*-
-import FreeCADGui
 import FreeCAD
 import Part
 from Model3D.Tools import Tools3D, ObjectTools, InitDoc3D

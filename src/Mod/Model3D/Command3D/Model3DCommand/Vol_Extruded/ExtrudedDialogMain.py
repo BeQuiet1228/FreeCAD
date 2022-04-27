@@ -2,7 +2,6 @@
 from PySide import QtGui
 import FreeCAD
 from Model3D.Tools import ObjectTools
-import FreeCADGui
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain, BaseDialog
 import ExtrudedWidget
 

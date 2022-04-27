@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import FreeCAD
-import FreeCADGui
 import Part
 from Model3D.Tools import Tools3D, ObjectTools, InitDoc3D
 
@@ -10,8 +9,6 @@ class CreateCylinder:
         obj.Proxy = self
 
     def onChanged(self, fp, prop):
-        # if prop == "Point2X":
-        #     Tools3D.sayz(str(fp.Label)+"的属性值改变了"+str(prop))
         pass
 
     def execute(self, fp):

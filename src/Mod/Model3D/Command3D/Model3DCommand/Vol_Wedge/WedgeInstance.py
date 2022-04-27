@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import FreeCAD
-import FreeCADGui
 import Part
 from Model3D.Tools import Tools3D, ObjectTools, InitDoc3D
 
@@ -73,59 +72,6 @@ class CreateWedge:
             fp.Shape = Part.makeSolid(Shape1)
         except:
             Tools3D.sayz("Redraw Wedge Failed!")
-
-            # 56可以与12平行，也可以与14平行，前提是5这个点必须在1点所对应的位置 @ lzg
-            # if not ObjectsTools.isFourPointsOnTheSamePlane([point1,point2,point5,point6]):
-            #     DocumentTools.errorMessage(QtGui.QApplication.translate(
-            #                             "ObjectsTools",
-            #                             "Point_1,Point_2,Point_5,Point_6   cnn't on the same plane.",
-            #                             None))
-            # if not ObjectsTools.isFourPointsOnTheSamePlane([point5,point6,point3,point4]):
-            #     DocumentTools.errorMessage(QtGui.QApplication.translate(
-            #                             "ObjectsTools",
-            #                             "Point_3,Point_4,Point_5,Point_6   cnn't on the same plane.",
-            #                             None))
-
-        #     if ObjectTools.isFourPointsOnTheSamePlane([point1, point2, point5, point6]):
-        #         buttom_wire_left_bottom = Part.makePolygon([point1, point2, point4, point1])
-        #         buttom_wire_right_top = Part.makePolygon([point2, point3, point4, point2])
-        #         left_wire = Part.makePolygon([point1, point4, point5, point1])
-        #         right_wire = Part.makePolygon([point2, point3, point6, point2])
-        #         front_wire_left_bottom = Part.makePolygon([point1, point2, point5, point1])
-        #         front_wire_right_top = Part.makePolygon([point2, point6, point5, point2])
-        #         back_wire_left_bottom = Part.makePolygon([point3, point5, point4, point3])
-        #         back_wire_right_top = Part.makePolygon([point3, point6, point5, point3])
-        #     else:
-        #         # 构造56和14在同一平面的Wedge
-        #         buttom_wire_left_bottom = Part.makePolygon([point1, point2, point4, point1])
-        #         buttom_wire_right_top = Part.makePolygon([point2, point3, point4, point2])
-        #         left_wire = Part.makePolygon([point1, point2, point5, point1])
-        #         right_wire = Part.makePolygon([point4, point3, point6, point4])
-        #         front_wire_left_bottom = Part.makePolygon([point2, point5, point6, point2])
-        #         front_wire_right_top = Part.makePolygon([point2, point6, point3, point2])
-        #         back_wire_left_bottom = Part.makePolygon([point1, point5, point6, point1])
-        #         back_wire_right_top = Part.makePolygon([point1, point4, point6, point1])
-        #
-        #     bottom_face_left_bottom = Part.makeFace(buttom_wire_left_bottom, "Part::FaceMakerExtrusion")
-        #     buttom_face_right_top = Part.makeFace(buttom_wire_right_top, "Part::FaceMakerExtrusion")
-        #     right_face = Part.makeFace(right_wire, "Part::FaceMakerExtrusion")
-        #     left_face = Part.makeFace(left_wire, "Part::FaceMakerExtrusion")
-        #     front_face_left_bottom = Part.makeFace(front_wire_left_bottom, "Part::FaceMakerExtrusion")
-        #     front_face_right_top = Part.makeFace(front_wire_right_top, "Part::FaceMakerExtrusion")
-        #     back_face_left_bottom = Part.makeFace(back_wire_left_bottom, "Part::FaceMakerExtrusion")
-        #     back_face_right_top = Part.makeFace(back_wire_right_top, "Part::FaceMakerExtrusion")
-        #     '''Every three points make up a face'''
-        #     Shape1 = Part.makeShell([back_face_right_top,
-        #                                 back_face_left_bottom,
-        #                                 bottom_face_left_bottom,
-        #                                 buttom_face_right_top,
-        #                                 right_face,
-        #                                 left_face,
-        #                                 front_face_left_bottom,
-        #                                 front_face_right_top])
-        #     fp.Shape = Part.makeSolid(Shape1)
-        # except:
-        #     Tools3D.sayz("Redraw Wedge Failed!")
 
 
 class Wedge:

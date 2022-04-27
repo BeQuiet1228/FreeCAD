@@ -71,8 +71,6 @@ else:
     def QT_TRANSLATE_NOOP(ctxt, txt):
         return txt
 
-
-    # print("FreeCAD Gui not present. Draft module will have some features disabled.")
     gui = False
 
 
@@ -620,19 +618,7 @@ def loadTexture(filename, size=None):
         from PySide import QtGui, QtSvg
         try:
             p = QtGui.QImage(filename)
-            # buggy - TODO: allow to use resolutions
-            # if size and (".svg" in filename.lower()):
-            #    # this is a pattern, not a texture
-            #    if isinstance(size,int):
-            #        size = (size,size)
-            #    svgr = QtSvg.QSvgRenderer(filename)
-            #    p = QtGui.QImage(size[0],size[1],QtGui.QImage.Format_ARGB32)
-            #    pa = QtGui.QPainter()
-            #    pa.begin(p)
-            #    svgr.render(pa)
-            #    pa.end()
-            # else:
-            #    p = QtGui.QImage(filename)
+
             size = coin.SbVec2s(p.width(), p.height())
             buffersize = p.byteCount()
             numcomponents = int(float(buffersize) / (size[0] * size[1]))
@@ -643,7 +629,6 @@ def loadTexture(filename, size=None):
             bytes = ""
 
             for y in range(height):
-                # line = width*numcomponents*(height-(y));
                 for x in range(width):
                     rgb = p.pixel(x, y)
                     if numcomponents == 1:
@@ -660,7 +645,6 @@ def loadTexture(filename, size=None):
                         bytes = bytes + chr(QtGui.qGreen(rgb))
                         bytes = bytes + chr(QtGui.qBlue(rgb))
                         bytes = bytes + chr(QtGui.qAlpha(rgb))
-                    # line += numcomponents
 
             img.setValue(size, numcomponents, bytes)
         except:
@@ -896,8 +880,7 @@ def makeWire(pointslist, closed=False, placement=None, face=None, support=None):
         pointslist = nlist
     if len(pointslist) == 0:
         print("Invalid input points: ", pointslist)
-    # print(pointslist)
-    # print(closed)
+
     if placement: typecheck([(placement, FreeCAD.Placement)], "makeWire")
     # 源码
     # if len(pointslist) == 2: fname = "Line"

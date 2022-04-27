@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 import traceback
-import FreeCAD
-import FreeCADGui
-from PySide import QtGui
 import DefTimerDialog
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
 from Model3D.Tools import Tools3D

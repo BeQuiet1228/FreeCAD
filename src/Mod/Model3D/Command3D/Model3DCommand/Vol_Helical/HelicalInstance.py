@@ -10,8 +10,6 @@ from Model3D.Tools import Tools3D, ObjectTools, InitDoc3D
 class VolHelical:
     def __init__(self, obj):
         obj.Proxy = self
-        # self.flagPlacement = True
-        # self.placementBefore = obj.Placement
 
     def onChanged(self, fp, prop):
         pass
@@ -87,7 +85,6 @@ class VolHelical:
                 rectPoint4 = FreeCAD.Vector(fp.RadiusInside.Value, 0, fp.Width / 2)
 
                 recWire = Part.makePolygon([rectPoint1, rectPoint2, rectPoint3, rectPoint4, rectPoint1])
-                # recFace = Part.makeFace(recWire, "Part::FaceMakerBullseye")
 
                 # 矩形沿路径扫掠管道，创建螺旋体
                 fp.Shape = path.makePipeShell([recWire], True, True)
@@ -98,22 +95,6 @@ class VolHelical:
                 rot = rot2.multiply(rot1)
                 fp.Placement.Rotation = rot
                 fp.Placement.move(pointBase)
-
-                # if self.flagPlacement:
-                #     self.flagPlacement = False
-                #     tempPlacementBefore = self.placementBefore
-                #
-                #     # 矩形沿路径扫掠管道，创建螺旋体
-                #     fp.Shape = path.makePipeShell([recWire], True, True)
-                #
-                #     # 旋转，使得螺旋体以StartPoint为起始点
-                #     rot1 = FreeCAD.Rotation(FreeCAD.Vector(0, 0, 1), angle)
-                #     rot2 = rot.inverted()
-                #     rot = rot2.multiply(rot1)
-                #     fp.Placement.Rotation = rot
-                #     fp.Placement.move(pointBase)
-                #     self.placementBefore = tempPlacementBefore
-                #     self.flagPlacement = True
 
                 return
             except:

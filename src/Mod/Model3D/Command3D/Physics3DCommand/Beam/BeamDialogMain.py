@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import FreeCADGui
-import FreeCAD
 from Model3D.Tools import Tools3D, ObjectTools
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
 import BeamDialog

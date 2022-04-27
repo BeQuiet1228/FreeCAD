@@ -1,5 +1,4 @@
 # -*- coding: utf8 -*-
-import FreeCADGui
 import FreeCAD
 import Part
 import PartChipic
@@ -20,16 +19,6 @@ class VolFunction:
         minY = min(fp.Point1Y.Value, fp.Point2Y.Value)
         maxZ = max(fp.Point1Z.Value, fp.Point2Z.Value)
         minZ = min(fp.Point1Z.Value, fp.Point2Z.Value)
-
-        # point1 = Tools3D.transToRecVector(fp.Point1X.Value, fp.Point1Y.Value, fp.Point1Z.Value)
-        # point2 = Tools3D.transToRecVector(fp.Point2X.Value, fp.Point2Y.Value, fp.Point2Z.Value)
-        #
-        # maxX = max(point1.x, point2.x)
-        # minX = min(point1.x, point2.x)
-        # maxY = max(point1.y, point2.y)
-        # minY = min(point1.y, point2.y)
-        # maxZ = max(point1.z, point2.z)
-        # minZ = min(point1.z, point2.z)
 
         sys = FreeCAD.ActiveDocument.CoordinateSystem
 

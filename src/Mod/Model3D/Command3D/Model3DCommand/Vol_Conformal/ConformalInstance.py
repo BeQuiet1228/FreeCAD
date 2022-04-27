@@ -1,7 +1,5 @@
 # -*- coding: utf8 -*-
 import math
-
-import FreeCADGui
 import FreeCAD
 import Part
 from Model3D.Tools import Tools3D, ObjectTools, InitDoc3D
@@ -127,36 +125,6 @@ class VolComformal:
                     h_path = Part.Wire(h)
                     fp.Shape = h_path.makePipe(face)
 
-
-                    # 老3D建模方法
-                    # tempP1 = Tools3D.transToRecVector(fp.Point1X.Value, fp.Point1Y.Value, fp.Point1Z.Value)
-                    # tempP2 = Tools3D.transToRecVector(fp.Point2X.Value, fp.Point1Y.Value, fp.Point1Z.Value)
-                    # tempP3 = Tools3D.transToRecVector(fp.Point2X.Value, fp.Point1Y.Value, fp.Point2Z.Value)
-                    # tempP4 = Tools3D.transToRecVector(fp.Point1X.Value, fp.Point1Y.Value, fp.Point2Z.Value)
-                    #
-                    # if tempP1 == tempP4:
-                    #     # tempP4=tempP4.add(FreeCAD.Vector(0,0,0.01))
-                    #     fp.Shape = getArcObj(fp.Point1, fp.Point2)
-                    #
-                    # line2 = Part.makeLine(tempP1, tempP4)
-                    # shapeCir = getArcObj(FreeCAD.Vector(fp.Point1X.Value, fp.Point1Y.Value, fp.Point2Z.Value),
-                    #                      FreeCAD.Vector(fp.Point2X.Value, fp.Point2Y.Value, fp.Point2Z.Value))
-                    # path = Part.Wire(line2)
-                    # fp.Shape = path.makePipe(shapeCir)
-
-
-                    # 在起始位置处创建轮廓矩形rectangle，并生成矩形面rectangleFace
-                    # point_inner_start = FreeCAD.Vector(minRadius * math.cos(theta_start),
-                    #                                    minRadius * math.sin(theta_start), h_bottom)
-                    #
-                    # rectangle = Part.makePolygon([point_inner_start,
-                    #                               point_outer_start,
-                    #                               point_outer_start.add(normalVec),
-                    #                               point_inner_start.add(normalVec),
-                    #                               point_inner_start])
-                    # # 矩形面沿路径弧扫掠，生成一个环形区域体
-                    # rectangleFace = Part.makeFace([Part.Wire(rectangle)], "Part::FaceMakerBullseye")
-                    # fp.Shape = path.makePipe(rectangleFace)
                     return
 
             else:

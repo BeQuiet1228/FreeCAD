@@ -83,12 +83,6 @@ class Array:
             obj.addProperty("App::PropertyStringList", "BaseObjData", "Object of a ParamArray", "").BaseObjData =["rli'i'", "theta_i'i'", "zli'i'", "rlf'i'", "theta_f'i'", "zlf'i'"]
         else:
             obj.addProperty("App::PropertyStringList", "BaseObjData", "Object of a ParamArray", "").BaseObjData =["zli'i'", "rli'i'", "theta_i'i'", "zlf'i'", "rlf'i'", "theta_f'i'"]
-        # obj.addProperty("App::PropertyStringList", "BaseObjData", "Object of a ParamArray", "").BaseObjData =["xli'i'", "yli'i'", "zli'i'", "xlf'i'", "ylf'i'", "zlf'i'"]
-        # obj.addProperty("App::PropertyLinkList", "Shapes", "", "").Shapes =[]
-        # obj.addProperty("App::PropertyString", "BaseObjType", "Object of a ParamArray", "Type of a BaseObj", 0, True,
-        #                 False)
-        # obj.addProperty("App::PropertyStringList", "BaseObjData", "Object of a ParamArray", "Type of a BaseObj", 0, True,
-        #                 False)
         obj.addProperty("App::PropertyInteger", "IFrom", "Object of a ParamArray", "start i").IFrom = 1
         obj.addProperty("App::PropertyInteger", "ITo", "Object of a ParamArray", "end i").ITo = 2
         obj.addProperty("App::PropertyDistance", "Helper1").Helper1 = 0
@@ -207,12 +201,6 @@ def drawComformal(p1, p2, p3, p4, p5, p6):
                 arcShape = arc.toShape()
                 path = Part.Wire(arcShape)
 
-                # new_建弧path
-                # arc = Part.makeCircle(maxRadius, o_bottom, normalVec, angle_start, angle_end)
-                # # arcShape = arc.toShape()
-                # path = Part.Wire(arc)
-
-                # new_建模
                 # 生成底面上环形扇面
                 R = Part.makeLine(point_inner_start, point_outer_start)
                 face = path.makePipe(R)
@@ -239,9 +227,7 @@ def drawCylinder(p1, p2, p3, p4, p5, p6, radius):
                 return Part.makeCylinder(radius, height, point1, normal, 360)
             else:
                 return None
-                # 如果point1和point2坐标相等，图形为圆，法向默认为Z轴
-                # circle = Part.makeCircle(radius, point1, FreeCAD.Vector(0, 0, 1))
-                # return Part.makeFace([Part.Wire([circle])], "Part::FaceMakerBullseye")
+
     except:
         Tools3D.sayz("Redraw Cylinder Failed!")
 
@@ -392,16 +378,6 @@ def drawAnnularSection(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, radius
                     h = Part.makeLine(RCenter, RCenter + normalVec)
                     h_path = Part.Wire(h)
                     return h_path.makePipe(face)
-
-                    # 创建轮廓矩形rectangle，并生成矩形面rectangleFace
-                    # rectangle = Part.makePolygon([Vector_start_OuterIntersection,
-                    #                               Vector_start_InnerIntersection,
-                    #                               Vector_Top_start_InnerIntersection,
-                    #                               Vector_Top_start_OuterIntersection,
-                    #                               Vector_start_OuterIntersection])
-                    # rectangleFace = Part.makeFace([Part.Wire(rectangle)], "Part::FaceMakerBullseye")
-                    # fp.Shape = path.makePipe(rectangleFace)
-
 
             except:
                 Tools3D.sayz("Redraw Annular_Section Failed!")

@@ -37,11 +37,8 @@ class Clip(QtGui.QDockWidget):
         self.ui.doubleSpinBox_Y.valueChanged.connect(self.diryChange)
         self.ui.doubleSpinBox_Z.valueChanged.connect(self.dirzChange)
 
-        # self.ui.checkBox_showCutFace.set
         # 先隐藏模型
         self.hideObjects()
-        # self.ui.radioButton_outline.
-        # init value
         self.ui.doubleSpinBox_X.setValue(1.0)
         self.ui.doubleSpinBox_Y.setValue(0.0)
         self.ui.doubleSpinBox_Z.setValue(1.0)
@@ -89,10 +86,7 @@ class Clip(QtGui.QDockWidget):
             c = Part.makeCircle(r, Base.Vector(x, y, z),
                                 Base.Vector(self.xdir, self.ydir, self.zdir))
             f = Part.Face(Part.Wire(c))
-            # FreeCAD.Console.PrintMessage("r:"+str(r)+"x:"+str(x)+"y:"+str(y)+"z:"+str(z)+"xdir:"+str(self.xdir)+"ydir:"+str(self.ydir)+"zdir:"+str(self.zdir)+"\n")
-            # Part.show(f)
             # 测试
-            # Part.show(f)
             l = list()  # list for cross-section parts
             n = 0
             for p in self.oblist:  # stupid Python list has no length function
@@ -115,7 +109,6 @@ class Clip(QtGui.QDockWidget):
                 # cut shape cross-section
                 # extrude our cross-ection disc into a cylinder
                 # 这里注释了
-                # cyl = f.extrude(Base.Vector(self.xdir, self.ydir, self.zdir))
                 self.cs.Shape = f.extrude(Base.Vector(self.xdir, self.ydir, self.zdir))
                 something = 2
 
@@ -145,10 +138,6 @@ class Clip(QtGui.QDockWidget):
                 FreeCAD.ActiveDocument.removeObject(feature.Name)
                 FreeCAD.ActiveDocument.recompute()
                 '''
-                # import PartGui
-                # FreeCAD.Console.PrintMessage("运行到这了吗\n")
-                # PartGui.customBoolean(self.beBooleanObj, cyl, self.cs, 1)
-                # FreeCAD.Console.PrintMessage("走到这了吗\n")
                 self.baseobj = FreeCAD.ActiveDocument.ResultShape
                 self.copyBaseObj = self.baseobj.Shape
 
@@ -202,7 +191,6 @@ class Clip(QtGui.QDockWidget):
         self.axisY = self.ui.doubleSpinBox_Y.value()
         self.axisZ = self.ui.doubleSpinBox_Z.value()
 
-        # mp(str(self.axisX)+" "+str(self.axisY)+" "+str(self.axisZ))
         ldir = 0.0
         if self.axisX != 0.0:
             ldir = (self.xmax - self.xmin) / abs(self.axisX)
@@ -213,7 +201,6 @@ class Clip(QtGui.QDockWidget):
         self.xdir = self.axisX * ldir
         self.ydir = self.axisY * ldir
         self.zdir = self.axisZ * ldir
-        # mp(str(self.xdir)+" "+str(self.ydir)+" "+str(self.zdir))
 
     def dirxChange(self, val):
         self.axisX = val
@@ -238,7 +225,6 @@ class Clip(QtGui.QDockWidget):
         try:
 
             FreeCAD.ActiveDocument.removeObject(self.cs.Name)
-            # FreeCAD.ActiveDocument.removeObject(self.cs)
         except Exception:
             None
 
@@ -273,11 +259,6 @@ class Clip(QtGui.QDockWidget):
                 self.oblist.append(FreeCAD.ActiveDocument.ResultShape)
                 if obj.TypeId == 'Part::FeaturePython' and obj.ViewObject.Visibility and hasattr(obj, "Order"):
                     self.oblist.append(obj)
-                    # # 体
-                    # if hasattr(obj,"Attribute"):
-                    #     self.oblist.append(obj)
-                    # else:
-                    #     obj.ViewObject.Visibility = False
                 if hasattr(obj, "Attribute") and \
                         (getattr(obj, "Attribute") != "NotDefine" or (
                                 getattr(obj, "Attribute") == "NotDefine" and obj.ViewObject.Visibility)):
@@ -296,10 +277,7 @@ class Clip(QtGui.QDockWidget):
             self.ymax = -1000.0
             self.zmin = 1000.0
             self.zmax = -1000.0
-            #            n = 0
-            #            for p in self.oblist: # stupid Python list has no length function
-            #                n = n + 1
-            ############################# Skip the <group object> ########################         # add
+
             b0 = []
             for x0 in self.oblist:
                 if str(x0) != "<group object>":

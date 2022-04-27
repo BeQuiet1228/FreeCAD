@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 import PointWidget
 from PySide import QtGui
-import FreeCAD
-import Part
-import FreeCADGui
-import traceback
 from Model3D.Tools import Tools3D
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain, BaseDialog
 
@@ -63,8 +59,6 @@ class ShowDialog(BaseDialogMain.BaseModelDialog):
         Tools3D.setPlaceToObj(self.obj, "Point2Z", self.pointWidget.ui.lineEdit_point2z.text())
         Tools3D.setPlaceToObj(self.obj, "Radius_Bottom", self.pointWidget.ui.lineEdit_radiusBottom.text())
         Tools3D.setPlaceToObj(self.obj, "Radius_Top", self.pointWidget.ui.lineEdit_radiusTop.text())
-        # self.obj.Radius_Bottom = self.pointWidget.ui.lineEdit_radiusBottom.text()
-        # self.obj.Radius_Top = self.pointWidget.ui.lineEdit_radiusTop.text()
         self.obj.recompute()
 
     def slotOk(self):

@@ -2,7 +2,7 @@
 import FreeCAD
 import FreeCADGui
 from PySide import QtCore
-from Model3D.Tools import ObjectTools, Tools3D
+from Model3D.Tools import ObjectTools
 
 
 class SingleClickCommand:

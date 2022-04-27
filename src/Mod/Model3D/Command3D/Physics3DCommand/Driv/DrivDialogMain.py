@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import DrivDialog
-from PySide import QtGui
-import FreeCAD
 from Model3D.Tools import Tools3D, ObjectTools
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
 
@@ -150,12 +148,6 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
         self.ui.comboBox.addItem(u"未指定")
         Orthogonal_list = ObjectTools.getLabelsByType(obj_type)
         Orthogonal_list.append("OSYS$AREA")
-        # if obj_type == ObjectTools.ObjectType.Area_Conformal:
-        #     Orthogonal_list.append("OSYS$AREA")
-            # Orthogonal_list.append("OSYS$MIDPLANE2")
-            # Orthogonal_list.append("OSYS$MIDPLANE3")
-        # if obj_type == Tools2D.ObjectType.LineConformal:
-        #     Orthogonal_list.append("OSYS$VOLUME")
         for i in Orthogonal_list:
             self.ui.comboBox.addItem(i)
 
@@ -238,21 +230,6 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
                 else:
                     Tools3D.setModelCoordinate(self.ui, objName)
                 Tools3D.setIsEdit(self.ui, False)
-
-    # # x法向修改时，修改起点即修改终点
-    # def LineEdit_start_x_textChanged(self):
-    #     if not self.ui.LineEdit_end_x.isEnabled():
-    #         self.ui.LineEdit_end_x.setText(self.ui.LineEdit_start_x.text())
-    #
-    # # y法向修改时，修改起点即修改终点
-    # def LineEdit_start_y_textChanged(self):
-    #     if not self.ui.LineEdit_end_y.isEnabled():
-    #         self.ui.LineEdit_end_y.setText(self.ui.LineEdit_start_y.text())
-    #
-    # # z法向修改时，修改起点即修改终点
-    # def LineEdit_start_z_textChanged(self):
-    #     if not self.ui.LineEdit_end_z.isEnabled():
-    #         self.ui.LineEdit_end_z.setText(self.ui.LineEdit_start_z.text())
 
 
 

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from PySide import QtGui
 import FreeCAD
-import Part
 import FreeCADGui
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain, BaseDialog
 from Model3D.Tools import Tools3D
@@ -107,9 +106,6 @@ class ShowDialog(BaseDialogMain.BaseModelDialog):
 
     def judgePoint(self):
         coordinate = FreeCAD.ActiveDocument.CoordinateSystem
-        # point1 = Tools3D.transToRecVector(self.obj.Point1X.Value, self.obj.Point1Y.Value, self.obj.Point1Z.Value)
-        # point2 = Tools3D.transToRecVector(self.obj.Point2X.Value, self.obj.Point2Y.Value, self.obj.Point2Z.Value)
-        # point3 = Tools3D.transToRecVector(self.obj.Point3X.Value, self.obj.Point3Y.Value, self.obj.Point3Z.Value)
         if self.obj.Normal == coord[coordinate][0]:
             if self.obj.Point1Y == self.obj.Point2Y or self.obj.Point1Z == self.obj.Point2Z:
                 return True

@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import FreeCAD
-import FreeCADGui
 from Model3D.Tools import Tools3D, ObjectTools, InitDoc3D
 import Part
-import math
 from FreeCAD import Base
 
 
@@ -62,12 +60,6 @@ class CreateTetrahedron:
             left_face = Part.Face(left_wire)
             Shape1 = Part.makeShell([front_face, bottom_face, right_face, left_face])
             fp.Shape = Part.makeSolid(Shape1)
-            # bottom_face = Part.makeFace(buttom_wire, "Part::FaceMakerExtrusion")
-            # front_face = Part.makeFace(front_wire, "Part::FaceMakerExtrusion")
-            # right_face = Part.makeFace(right_wire, "Part::FaceMakerExtrusion")
-            # left_face = Part.makeFace(left_wire, "Part::FaceMakerExtrusion")
-            # 每个面都划分为三角形
-            # fp.Shape = Part.makeShell([front_face, bottom_face, right_face, left_face])
         except:
             Tools3D.sayz("Redraw Tetrahedron Failed!")
 

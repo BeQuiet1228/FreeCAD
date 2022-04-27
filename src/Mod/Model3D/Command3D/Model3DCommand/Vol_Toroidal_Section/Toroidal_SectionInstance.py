@@ -1,6 +1,4 @@
 # -*- coding: utf8 -*-
-
-import FreeCADGui
 import FreeCAD
 import Part
 import math

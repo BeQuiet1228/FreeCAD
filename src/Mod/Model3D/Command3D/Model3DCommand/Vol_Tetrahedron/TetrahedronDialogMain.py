@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 import PointWidget
 from PySide import QtGui
-import FreeCAD
-import Part
-import FreeCADGui
-import traceback
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain, BaseDialog
 from Model3D.Tools import Tools3D, ObjectTools
 
