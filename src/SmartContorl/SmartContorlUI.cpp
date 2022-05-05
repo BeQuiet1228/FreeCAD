@@ -18,6 +18,7 @@
 #include <QTextCodec>
 #include <QScrollBar>
 #include <QTextCursor>
+#include "GeneticAlgorithm.h"
 SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	:QDialog(parent), ui(new Ui::SmartContorlUI)
 {
@@ -29,7 +30,7 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 
 #ifdef SMART_EXE
 	//std::string m3dPath = "E:/test/test.m3d";
-	std::string m3dPath = "D:/wdtProject/test/test.m3d";
+	std::string m3dPath = "D:/test/match.m3d";
 	smartContorl->setM3dPath(m3dPath);
 	loadParameterXml();
 #else
@@ -79,7 +80,19 @@ void SmartContorlUI::on_pushButton_clicked()
 {
 	auto str = replaceVariate();
 	smartContorl->chipicCount = this->ui->spinBoxRunCount->value();
-	auto optimize = new OptimizeCurseLua();
+	auto optimize = new GeneticAlgorithm();
+	//auto optimize = new OptimizeCurseLua();
+
+	//添加变量
+	for each (auto var in variateDatas)
+	{
+		OPtimizeVariate v;
+		v.name = var->name;
+		v.min = var->mini;
+		v.max = var->max;
+		optimize->optimizeVariates.push_back(v);
+	}
+
 	optimize->luaLoadFromString(str.toStdString());
 	smartContorl->setOptimizeCurse(optimize);
 	smartContorl->run();
@@ -361,9 +374,9 @@ QString SmartContorlUI::replaceVariate()
 	QString text;
 #ifdef SMART_EXE
 	{
-		QFile file(QString::fromLocal8Bit("E:/工作/优化算法/脚本.lua"));
+		QFile file(QString::fromLocal8Bit("D:/script/script.lua"));
 		file.open(QIODevice::ReadOnly);
-		text = file.readAll();
+		text = QString::fromUtf8(file.readAll());
 		file.close();
 	}
 #else

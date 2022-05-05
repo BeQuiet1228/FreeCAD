@@ -176,6 +176,8 @@ SET(SmartContorl_src
 	VariableStorer.h
 	OptimizeCurse.cpp
 	OptimizeCurse.h
+	GeneticAlgorithm.cpp
+	GeneticAlgorithm.h
 	${CALC_SRC}
 	${UI_SRC}
 	${JSON_SRC}

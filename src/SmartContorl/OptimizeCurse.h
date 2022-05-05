@@ -1,5 +1,11 @@
 #pragma once
 #include "SmartContorl.h"
+#include <vector>
+struct OPtimizeVariate
+{
+	QString name;
+	double max, min;
+};
 
 class OptimizeCurse {
 public:
@@ -11,6 +17,8 @@ public:
 	virtual bool resultDataFilter(SmartContorl* smarControl) = 0;
 	virtual bool resultExpcet(SmartContorl* smartControl) = 0;
 	virtual void optimize(SmartContorl* smartCOntrol) = 0;
+
+	std::vector<OPtimizeVariate> optimizeVariates;
 };
 
 class OptimizeCurseLua :public OptimizeCurse{
@@ -36,7 +44,7 @@ private:
 	//调用一个lua函数
 	void callLuaFunction(const std::string& functionName, const int& paramCount = 0, const int& returnCount = 0);
 
-private:
+protected:
 	//lua虚拟机
 	lua_State* lua_state;
 };

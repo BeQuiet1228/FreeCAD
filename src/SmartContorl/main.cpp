@@ -1,5 +1,7 @@
 #include <qwidget.h>
 #include <QApplication>
+#include <QFile>
+#include "GeneticAlgorithm.h"
 #include "SmartContorlUI.h"
 //#include "FileMaker.h"
 //#include "qcustomplot.h"
@@ -7,8 +9,19 @@
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
-	//SmartContorlUI ui;
-	smartCalc ui;
-	ui.show();
+// 	QWidget w;
+// 	w.show();
+
+// 	GeneticAlgorithm g;
+// 	g.test();
+
+	SmartContorlUI w;
+	w.show();
+
+// 	QFile file("testdsadas.tt");
+// 	file.open(QIODevice::ReadWrite);
+// 	file.close();
+
+
 	return a.exec();
 }
