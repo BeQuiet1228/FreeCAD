@@ -60,6 +60,22 @@ std::vector<QString> Variate::getValues()
 	return v;
 }
 
+void Variate::autoValue()
+{
+	for (auto iter = values.begin(); iter != values.end(); iter++)
+	{
+		while (*iter < min || *iter >max)
+		{
+			if (*iter < min)
+			{
+				*iter = min + (min - *iter);
+			}else {
+				*iter = max - (*iter - max);
+			}
+		}
+	}
+}
+
 std::vector<QString> Variate::combinationStringForVariates(std::vector<Variate>& variates)
 {
 	std::vector<QString> m3d;

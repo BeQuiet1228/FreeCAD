@@ -7,6 +7,7 @@ extern "C" {
 #include <random>
 #include <iostream>
 #include <QString>
+#include <list>
 GeneticAlgorithm::GeneticAlgorithm()
 {
 
@@ -47,6 +48,71 @@ std::vector<int> GeneticAlgorithm::getIndexsForRular(std::vector<float> rular)
 	return indexs;
 }
 
+/**
+* 使用随机算法获取交叉池中个体的索引
+* @brief GeneticAlgorithm::getCrossPool
+* @return std::vector<int>
+*/
+std::vector<int> GeneticAlgorithm::getCrossPool(SmartContorl* smartControl)
+{
+#if 0  //轮盘赌算法
+	std::vector<float> functionValue = getCurrentFs(smartControl);
+	std::vector<float> rular = generatRular(functionValue);
+	auto indexs = getIndexsForRular(rular);
+	return indexs;
+#else  //锦标赛算法
+	int excpectFMod = getExcpectMod();
+	std::vector<float> functionValue = getCurrentFs(smartControl);
+	std::list<int> listIndex;
+	for(int i = 0;i < functionValue.size();i++)
+	{
+		listIndex.push_back(i);
+	}
+	std::vector<int> indexs;
+	while (listIndex.size()!=0) {
+		float probability = 1.0 / listIndex.size();
+		int index1, index2;
+		for (auto iter = listIndex.begin(); iter != listIndex.end();)
+		{
+			if (getRandom0To1() < probability)
+			{
+				index1 = *iter;
+				listIndex.erase(iter);
+				break;
+			}
+			iter++;
+			if (iter == listIndex.end())
+				iter = listIndex.begin();
+		}
+		if(listIndex.size() == 0)
+			break;
+		probability = 1.0 / listIndex.size();
+		for (auto iter = listIndex.begin(); iter != listIndex.end();)
+		{
+			if (getRandom0To1() < probability)
+			{
+				index2 = *iter;
+				listIndex.erase(iter);
+				break;
+			}
+			iter++;
+			if (iter == listIndex.end())
+				iter = listIndex.begin();
+		}
+	
+		if (excpectFMod == 0)
+		{
+			int index = functionValue[index1] < functionValue[index2] ? index1 : index2;
+			indexs.push_back(index);
+		}else {
+			int index = functionValue[index1] > functionValue[index2] ? index1 : index2;
+			indexs.push_back(index);
+		}
+	}
+	return indexs;
+#endif
+}
+
 std::vector<float> GeneticAlgorithm::getVariate(QString str)
 {
 	std::vector<float> variates;
@@ -74,50 +140,109 @@ float GeneticAlgorithm::getRandom0To1()
 	return distribution(rd) / MaxRandom;
 }
 
-void GeneticAlgorithm::optimize(SmartContorl* smartCOntrol)
+/**
+* 获取用户设定的目标函数值
+* @brief GeneticAlgorithm::getExcpectF
+* @return double
+*/
+double GeneticAlgorithm::getExcpectF()
 {
 	//获取目标F值，以及目标类型
 	lua_getglobal(lua_state, "excpectF");
-	double excpectF = lua_tonumber(lua_state,-1);
+	double excpectF = lua_tonumber(lua_state, -1);
+	return excpectF;
+}
+
+/**
+* 获取用户设置的目标函数类型
+* @brief GeneticAlgorithm::getExcpectMod
+* @return int
+*/
+int GeneticAlgorithm::getExcpectMod()
+{
 	lua_getglobal(lua_state, "excpectMod");
 	int excpectFMod = lua_tointeger(lua_state, -1);
-	
-	auto historyDatas = smartCOntrol->getHistoryDatas();
-	if (historyDatas.size() <= 0)
-		return;
-	SmartContorl::HistoryData  history = *historyDatas.rbegin();
-	
+	return excpectFMod;
+}
+
+/**
+* 生成β值
+* @brief GeneticAlgorithm::getBeta
+* @return double
+*/
+double GeneticAlgorithm::getBeta()
+{
+	float beta;
+	float r = getRandom0To1();
+	if (r <= 0.5) {
+		beta = pow((2 * r), 0.5);
+	}
+	else {
+		beta = pow((2 - 2 * r), -0.5);
+	}
+	return beta;
+}
+
+std::vector<float> GeneticAlgorithm::getCurrentFs(SmartContorl* smartControl)
+{
+	double excpectF = getExcpectF();
+	int excpectFMod = getExcpectMod();
 	std::vector<float> functionValue;
+	auto historyDatas = smartControl->getHistoryDatas();
+	if (historyDatas.size() <= 0)
+		return std::vector<float>();
+	SmartContorl::HistoryData  history = *historyDatas.rbegin();
 
 	for (auto iter = history.datas.begin(); iter != history.datas.end(); iter++)
 	{
-		 float f = (*iter)->resultData->getValue(0);
+		float f = (*iter)->resultData->getValue(0);
 
-		 //如果为接近目标，则修改f的值为越大越好
-		 if (excpectFMod == 0)
-		 {
-			 f = abs(excpectF - f);
-			 f = excpectF - f;
-		 }
+		//如果为接近目标，则修改f的值为越小越好
+		if (excpectFMod == 0)
+		{
+			f = abs(excpectF - f);
+			//f = excpectF - f;
+		}
 
-		 functionValue.push_back(f);
+		functionValue.push_back(f);
 	}
-	int count = functionValue.size();
+
+	return functionValue;
+}
+
+std::vector<float> GeneticAlgorithm::generatRular(std::vector<float> targetValues)
+{
+	int count = targetValues.size();
 	std::vector<float> rular;
 	rular.push_back(0);
 	double addValue = 0;
-	for (auto iter = functionValue.begin(); iter != functionValue.end(); iter++)
+	int excpectFMod = getExcpectMod();
+	for (auto iter = targetValues.begin(); iter != targetValues.end(); iter++)
 	{
 		addValue += *iter;
 	}
-	for (auto iter = functionValue.begin(); iter != functionValue.end(); iter++)
+	for (auto iter = targetValues.begin(); iter != targetValues.end(); iter++)
 	{
-		rular.push_back(*iter / addValue +(*rular.rbegin()));
+		//如果目标类型为接近预期，那么将命中几率翻转
+		if(excpectFMod != 0)
+			rular.push_back(*iter / addValue + (*rular.rbegin()));
+		else {
+			rular.push_back((1 - *iter / addValue) + (*rular.rbegin()));
+		}
 	}
 
-	auto indexs = getIndexsForRular(rular);
+	return rular;
+}
 
-	
+void GeneticAlgorithm::optimize(SmartContorl* smartControl)
+{
+	auto historyDatas = smartControl->getHistoryDatas();
+	if (historyDatas.size() <= 0)
+		return ;
+	SmartContorl::HistoryData  history = *historyDatas.rbegin();
+
+	auto indexs = getCrossPool(smartControl);
+	int count = history.datas.size();
 	std::vector<Variate> Variates = history.variates;
 	for (auto iter = Variates.begin(); iter != Variates.end(); iter++) {
 		iter->values.clear();
@@ -133,23 +258,23 @@ void GeneticAlgorithm::optimize(SmartContorl* smartCOntrol)
 		int p2 = indexs[distribution(rd)];
 
 		//跳过重复抽取的
-// 		if(p1 == p2)
-// 			continue;
-// 		bool ok = true;
-// 		for (auto i = 0; i < pool1.size(); i++)
-// 		{
-// 			if (pool1[i] == p1 && pool2[i] == p2) {
-// 				ok = false;
-// 				break;
-// 			}
-// 			if (pool1[i] == p2 && pool2[i] == p1) {
-// 				ok = false;
-// 				break;
-// 			}
-// 
-// 		}
-// 		if(!ok)
-// 			continue;
+		if(p1 == p2)
+			continue;
+		bool ok = true;
+		for (auto i = 0; i < pool1.size(); i++)
+		{
+			if (pool1[i] == p1 && pool2[i] == p2) {
+				ok = false;
+				break;
+			}
+			if (pool1[i] == p2 && pool2[i] == p1) {
+				ok = false;
+				break;
+			}
+
+		}
+		if(!ok)
+			continue;
 		pool1.push_back(p1);
 		pool2.push_back(p2);
 
@@ -160,15 +285,7 @@ void GeneticAlgorithm::optimize(SmartContorl* smartCOntrol)
 		auto vars2 = getVariate(variate2);
 
 		//使用随机数生成一个β值
-		float beta;
-		{
-			float r = getRandom0To1();
-			if (r <= 0.5) {
-				beta = pow((2 * r), 0.5);
-			}else {
-				beta = pow((2 - 2 * r), -0.5);
-			}
-		}
+		float beta = getBeta();
 
 		if (vars1.size() != vars2.size())
 		{
@@ -207,7 +324,7 @@ void GeneticAlgorithm::optimize(SmartContorl* smartCOntrol)
 				if (getRandom0To1() < hitRata)
 				{
 					double u = getRandom0To1();
-					double n = 0.2;
+					double n = 0.5;
 					double temp;
 					if (u <= 0.5) {
 						temp = pow(2 * u + (1-2*u)*(1-(Variates[i].values[j] - var.min)/(var.max - var.min)), n) - 1;
@@ -222,7 +339,17 @@ void GeneticAlgorithm::optimize(SmartContorl* smartCOntrol)
 
 	for each (auto  v in Variates)
 	{
-		smartCOntrol->addVariate(v);
+		for each (auto var in optimizeVariates)
+		{
+			if (v.name == var.name)
+			{
+				v.max = var.max;
+				v.min = var.min;
+				v.autoValue();
+			}
+		}
+
+		smartControl->addVariate(v);
 	}
 
 }
