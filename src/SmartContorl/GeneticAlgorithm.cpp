@@ -9,6 +9,7 @@ extern "C" {
 #include <QString>
 #include <list>
 GeneticAlgorithm::GeneticAlgorithm()
+	:mutationProbabilityRange(0.5),mutationProbability(0.35)
 {
 
 }
@@ -314,7 +315,7 @@ void GeneticAlgorithm::optimize(SmartContorl* smartControl)
 
 	//变异
 	{
-		const double hitRata = 0.5;
+		const double hitRata = mutationProbability;
 
 		for (int i = 0;i < Variates.size();i++)
 		{
@@ -324,7 +325,7 @@ void GeneticAlgorithm::optimize(SmartContorl* smartControl)
 				if (getRandom0To1() < hitRata)
 				{
 					double u = getRandom0To1();
-					double n = 0.5;
+					double n = mutationProbabilityRange;
 					double temp;
 					if (u <= 0.5) {
 						temp = pow(2 * u + (1-2*u)*(1-(Variates[i].values[j] - var.min)/(var.max - var.min)), n) - 1;
@@ -352,6 +353,48 @@ void GeneticAlgorithm::optimize(SmartContorl* smartControl)
 		smartControl->addVariate(v);
 	}
 
+}
+
+void GeneticAlgorithm::setMutationProbability(const double& probability)
+{
+	if (probability >= 1)
+	{ 
+		this->mutationProbability = 1;
+		return;
+	}
+		
+	if (probability <= 0)
+	{
+		this->mutationProbability = 0;
+		return;
+	}
+	this->mutationProbability = probability;
+}
+
+double GeneticAlgorithm::getMutationProbability()
+{
+	return mutationProbability;
+}
+
+void GeneticAlgorithm::setMutationProbabilityRange(const double& range)
+{
+	if (range >= 1)
+	{
+		this->mutationProbabilityRange = 1;
+		return;
+	}
+
+	if (range <= 0)
+	{
+		this->mutationProbabilityRange = 0;
+		return;
+	}
+	this->mutationProbability = range;
+}
+
+double GeneticAlgorithm::getMutationProbabilityRange()
+{
+	return mutationProbabilityRange;
 }
 
 //完成所有的单元测试

@@ -3,6 +3,7 @@
 #include <QFile>
 #include "GeneticAlgorithm.h"
 #include "SmartContorlUI.h"
+#include "GeneticAlgorithmUI.h"
 //#include "FileMaker.h"
 //#include "qcustomplot.h"
 #include"smartCalc.h"
@@ -15,7 +16,7 @@ int main(int argc, char *argv[])
 // 	GeneticAlgorithm g;
 // 	g.test();
 
-	SmartContorlUI w;
+	GeneticAlgorithmUI w;
 	w.show();
 
 // 	QFile file("testdsadas.tt");

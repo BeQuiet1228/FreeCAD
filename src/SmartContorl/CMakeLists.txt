@@ -19,6 +19,7 @@ SET(UI_SRC
 	VariateItemWidget.ui
 	VariateInputDialog.ui
 	smartCalc.ui
+	GeneticAlgorithm.ui
 )
 SET(QRC_SRC
 
@@ -118,7 +119,7 @@ SET(MY_MOC_HDR
 	smartDialog.h
 	VariateitemWidget2.h
 	VariateitemDialog.h
-	
+	GeneticAlgorithmUI.h
 )
 SET(MY_MOC_SRC
 	SmartContorlUI.cpp
@@ -178,6 +179,12 @@ SET(SmartContorl_src
 	OptimizeCurse.h
 	GeneticAlgorithm.cpp
 	GeneticAlgorithm.h
+	MultipleTargetGeneticAlgorithm.cpp
+	MultipleTargetGeneticAlgorithm.h
+	Target.cpp
+	Target.h
+	GeneticAlgorithmUI.cpp
+	GeneticAlgorithmUI.h
 	${CALC_SRC}
 	${UI_SRC}
 	${JSON_SRC}

@@ -1,5 +1,5 @@
-#include "SmartContorlUI.h"
-#include "ui_SmartContorlUI.h"
+#include "GeneticAlgorithmUI.h"
+#include "ui_GeneticAlgorithm.h"
 #include "iostream"
 #include "VariateAnalysis.h"
 #include "FileMaker.h"
@@ -19,8 +19,8 @@
 #include <QScrollBar>
 #include <QTextCursor>
 #include "GeneticAlgorithm.h"
-SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
-	:QDialog(parent), ui(new Ui::SmartContorlUI)
+GeneticAlgorithmUI::GeneticAlgorithmUI(QWidget * parent /*= 0*/)
+	:QDialog(parent), ui(new Ui::GeneticAlgorithmUI)
 {
 	ui->setupUi(this);
 
@@ -42,14 +42,7 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	this->setModal(true);
 	setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint);
 
-	//隐藏测试控件
-	this->ui->pushButton_3->hide();
-	this->ui->pushButton_4->hide();
-	this->ui->pushButton_5->hide();
-	this->ui->pushButton_6->hide();
-	this->ui->pushButton_7->hide();
-	this->ui->textEdit->hide();
-
+	ui->textEdit->hide();
 
 	//设置F输入规则
 	{
@@ -59,7 +52,7 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	}
 }
 
-SmartContorlUI::~SmartContorlUI()
+GeneticAlgorithmUI::~GeneticAlgorithmUI()
 {
 	smartContorl->stop();
 	auto data = SmartContorlData::GetInstance();
@@ -67,16 +60,16 @@ SmartContorlUI::~SmartContorlUI()
 }
 
 /**
-* @brief SmartContorlUI::setTextPath 设置优化算法的运行路径
+* @brief GeneticAlgorithmUI::setTextPath 设置优化算法的运行路径
 * @param const std::string & path
 * @return void
 */
-void SmartContorlUI::setTextPath(const std::string& path)
+void GeneticAlgorithmUI::setTextPath(const std::string& path)
 {
 	smartContorl->setM3dPath(path);
 }
 
-void SmartContorlUI::on_pushButton_clicked()
+void GeneticAlgorithmUI::on_pushButton_clicked()
 {
 	auto str = replaceVariate();
 	smartContorl->chipicCount = this->ui->spinBoxRunCount->value();
@@ -92,7 +85,8 @@ void SmartContorlUI::on_pushButton_clicked()
 		v.max = var->max;
 		optimize->optimizeVariates.push_back(v);
 	}
-
+	optimize->setMutationProbability(ui->lineEditMutationProbability->text().toDouble());
+	optimize->setMutationProbabilityRange(ui->lineEditMutationProbabilityRange->text().toDouble());
 	optimize->luaLoadFromString(str.toStdString());
 	smartContorl->setOptimizeCurse(optimize);
 	smartContorl->run();
@@ -100,46 +94,14 @@ void SmartContorlUI::on_pushButton_clicked()
 	saveParameterXml();
 }
 
-void SmartContorlUI::on_pushButton_2_clicked()
+void GeneticAlgorithmUI::on_pushButton_2_clicked()
 {
 	smartContorl->stop();
 	auto data = SmartContorlData::GetInstance();
 	data->clear();
 }
-//载入按钮
-void SmartContorlUI::on_pushButton_3_clicked()
-{
-// 	auto  str = ui->textEdit->toPlainText();
-// 
-// 	smartContorl->luaLoadFromString(str.toStdString());
-}
-//初始化按钮
-void SmartContorlUI::on_pushButton_4_clicked()
-{
-/*	smartContorl->luaInit();*/
-}
-//数据筛选按钮
-void SmartContorlUI::on_pushButton_5_clicked()
-{
-/*	smartContorl->luaResultDataFilter();*/
-}
-//预期对比按钮
-void SmartContorlUI::on_pushButton_6_clicked()
-{
-/*	smartContorl->luaResultExpcet();*/
-}
-//参数优化
-void SmartContorlUI::on_pushButton_7_clicked()
-{
-/*	smartContorl->luaOptimize();*/
-}
 
-void SmartContorlUI::on_pushButton_8_clicked()
-{
-
-}
-
-void SmartContorlUI::on_pushButtonF_clicked()
+void GeneticAlgorithmUI::on_pushButtonF_clicked()
 {
 	auto histroy = SmartContorlData::GetInstance()->smartContorl->getHistoryDatas();
 	if (histroy.size() < 1)
@@ -181,7 +143,7 @@ void SmartContorlUI::on_pushButtonF_clicked()
 
 }
 
-void SmartContorlUI::on_pushButtonAddVariate_clicked()
+void GeneticAlgorithmUI::on_pushButtonAddVariate_clicked()
 {
 	std::cout << "add" << std::endl;
 	VariateInputDialog d;
@@ -203,7 +165,7 @@ void SmartContorlUI::on_pushButtonAddVariate_clicked()
 	}
 }
 
-void SmartContorlUI::on_pushButtonDeleteVariate_clicked()
+void GeneticAlgorithmUI::on_pushButtonDeleteVariate_clicked()
 {
 	auto items = this->ui->listWidgetVariate->selectedItems();
 	if (items.size() < 1)
@@ -221,7 +183,7 @@ void SmartContorlUI::on_pushButtonDeleteVariate_clicked()
 	}
 }
 
-void SmartContorlUI::chipicStartFinished(unsigned long threadID)
+void GeneticAlgorithmUI::chipicStartFinished(unsigned long threadID)
 {
 	auto contorl = ContorlInterface::GetInstance();
 	auto manager = contorl->getChipicManager();
@@ -252,7 +214,7 @@ void SmartContorlUI::chipicStartFinished(unsigned long threadID)
 
 }
 
-void SmartContorlUI::chipicWorkFinished(unsigned long threadID)
+void GeneticAlgorithmUI::chipicWorkFinished(unsigned long threadID)
 {
 	//寻找到对应的ui 然后释放掉
 	auto iter = itemMap.find(threadID);
@@ -286,13 +248,13 @@ void SmartContorlUI::chipicWorkFinished(unsigned long threadID)
 
 }
 
-void SmartContorlUI::addListWidgetItem(QListWidgetItem *item, QWidget *widget)
+void GeneticAlgorithmUI::addListWidgetItem(QListWidgetItem *item, QWidget *widget)
 {
 	ui->listWidget->addItem(item);
 	ui->listWidget->setItemWidget(item, widget);
 }
 
-void SmartContorlUI::pringLuaLog(std::string str)
+void GeneticAlgorithmUI::pringLuaLog(std::string str)
 {
 	auto temp = QString::fromUtf8(str.c_str());
 	auto text = this->ui->plainTextEdit->toPlainText();
@@ -301,7 +263,7 @@ void SmartContorlUI::pringLuaLog(std::string str)
 	ui->plainTextEdit->moveCursor(QTextCursor::End);
 }
 
-void SmartContorlUI::on_pushButtonVariateMax_clicked()
+void GeneticAlgorithmUI::on_pushButtonVariateMax_clicked()
 {
 	auto histroy = SmartContorlData::GetInstance()->smartContorl->getHistoryDatas();
 	if (histroy.size() < 1)
@@ -349,7 +311,7 @@ void SmartContorlUI::on_pushButtonVariateMax_clicked()
 	chart->setAttribute(Qt::WA_DeleteOnClose);
 }
 
-void SmartContorlUI::on_comboBoxExcpcet_currentIndexChanged(int index)
+void GeneticAlgorithmUI::on_comboBoxExcpcet_currentIndexChanged(int index)
 {
 	if (index == 0)
 		this->ui->widgetAccuracy->show();
@@ -359,7 +321,7 @@ void SmartContorlUI::on_comboBoxExcpcet_currentIndexChanged(int index)
 }
 
 //暂时全写再这儿 日后再改
-QString SmartContorlUI::replaceVariate()
+QString GeneticAlgorithmUI::replaceVariate()
 {
 	//添加参数
 	int count = this->ui->spinBoxCount->value();
@@ -396,11 +358,11 @@ QString SmartContorlUI::replaceVariate()
 	config += temp;
 	temp = QString("excpectF = %1;\n").arg(this->ui->lineEditMaxF->text().toLongLong());
 	config += temp;
-	temp = QString("omiga = %1;\n").arg(this->ui->lineEditOmega->text().toDouble());
+	temp = QString("omiga = %1;\n").arg(0.0);
 	config += temp;
-	temp = QString("c1 = %1;\n").arg(this->ui->lineEditC1->text().toDouble());
+	temp = QString("c1 = %1;\n").arg(0.0);
 	config += temp;
-	temp = QString("c2 = %1;\n").arg(this->ui->lineEditC2->text().toDouble());
+	temp = QString("c2 = %1;\n").arg(0.0);
 	config += temp;
 	temp = QString("fmod = %1;\n").arg(this->ui->comboBoxF->currentIndex());
 	config += temp;
@@ -412,10 +374,7 @@ QString SmartContorlUI::replaceVariate()
 	config += temp;
 
 	//是否按照上次优化数据计息
-	if (this->ui->checkBoxContinue->checkState() == Qt::Checked)
-		config += "continue = true;\n";
-	else
-		config += "continue = false;\n";
+	config += "continue = false;\n";
 
 	text = config + text;
 
@@ -430,7 +389,7 @@ QString SmartContorlUI::replaceVariate()
 	return text;
 }
 
-void SmartContorlUI::saveParameterXml()
+void GeneticAlgorithmUI::saveParameterXml()
 {
 	pugi::xml_document doc;
 	auto parNode = doc.append_child("Parameter");
@@ -445,10 +404,10 @@ void SmartContorlUI::saveParameterXml()
 	configNode.append_attribute("F") = ui->lineEditMaxF->text().toLongLong();
 	configNode.append_attribute("ExcpectMod") = ui->comboBoxExcpcet->currentIndex();
 	configNode.append_attribute("Accuracy") = ui->lineEditAccuracy->text().toStdString().c_str();
-	configNode.append_attribute("C1") = ui->lineEditC1->text().toStdString().c_str();
-	configNode.append_attribute("C2") = ui->lineEditC2->text().toStdString().c_str();
-	configNode.append_attribute("Omega") = ui->lineEditOmega->text().toStdString().c_str();
-	configNode.append_attribute("Continue") = ui->checkBoxContinue->checkState();
+	configNode.append_attribute("C1") = "0.0";
+	configNode.append_attribute("C2") = "0.0";
+	configNode.append_attribute("Omega") = "0.0";
+	configNode.append_attribute("Continue") = "false";
 
 	for (auto i = variateDatas.begin(); i != variateDatas.end(); i++)
 	{
@@ -468,7 +427,7 @@ void SmartContorlUI::saveParameterXml()
 	
 }
 
-void SmartContorlUI::loadParameterXml()
+void GeneticAlgorithmUI::loadParameterXml()
 {
 	pugi::xml_document document;
 	auto path = smartContorl->getM3dPath();
@@ -493,10 +452,6 @@ void SmartContorlUI::loadParameterXml()
 	ui->lineEditMaxF->setText(QString::number(configNode.attribute("F").as_llong()));
 	ui->comboBoxExcpcet->setCurrentIndex(configNode.attribute("ExcpectMod").as_int());
 	ui->lineEditAccuracy->setText(QString::number(configNode.attribute("Accuracy").as_double()));
-	ui->lineEditC1->setText(QString::number(configNode.attribute("C1").as_double()));
-	ui->lineEditC2->setText(QString::number(configNode.attribute("C2").as_double()));
-	ui->lineEditOmega->setText(QString::number(configNode.attribute("Omega").as_double()));
-	ui->checkBoxContinue->setCheckState(Qt::CheckState(configNode.attribute("Continue").as_int()));
 	for (auto iter = parNode.begin(); iter != parNode.end(); iter++)
 	{
 		std::shared_ptr<VariateData> data;
@@ -518,15 +473,15 @@ void SmartContorlUI::loadParameterXml()
 	}
 }
 
-void SmartContorlUI::closeEvent(QCloseEvent *event)
+void GeneticAlgorithmUI::closeEvent(QCloseEvent *event)
 {
 	smartContorl->stop();
 	auto data = SmartContorlData::GetInstance();
 	data->clear();
 	QDialog::closeEvent(event);
 }
-bool SmartContorlUI::getRunning()
+bool GeneticAlgorithmUI::getRunning()
 {
 	return smartContorl->runing;
 }
-#include "moc_SmartContorlUI.cpp"
+#include "moc_GeneticAlgorithmUI.cpp"
