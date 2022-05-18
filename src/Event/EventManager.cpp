@@ -6,26 +6,26 @@ EV::EventManager::EventManager()
 	connect(QApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(appQuit()));
 }
 
-void EV::EventManager::registerSender(EventSender* sender)
+void EV::EventManager::registerRecevier(EventRecevier* recevier)
 {
-	if (sender->isRegister)
+	if (recevier->isRegister)
 		return;
-	sender->isRegister = true;
-	senders.push_back(sender);
+	recevier->isRegister = true;
+	receviers.push_back(recevier);
 }
 
-void EV::EventManager::removeSender(EventSender* sender)
+void EV::EventManager::removeRecevier(EventRecevier* recevier)
 {
-	if (!sender->isRegister)
+	if (!recevier->isRegister)
 		return;
-	for (auto iter = senders.begin(); iter != senders.end(); iter++)
+	for (auto iter = receviers.begin(); iter != receviers.end(); iter++)
 	{
-		if(*iter != sender)
+		if(*iter != recevier)
 			continue;
-		senders.erase(iter);
+		receviers.erase(iter);
 		break;
 	}
-	sender->isRegister = false;
+	recevier->isRegister = false;
 }
 
 std::shared_ptr<EV::EventManager> EV::EventManager::instance;
@@ -50,23 +50,33 @@ std::shared_ptr<EV::EventManager> EV::EventManager::GetInstance()
 	return instance;
 }
 
-void EV::EventManager::postEvent(QEvent* event)
+void EV::EventManager::postEvent(Event* event)
 {
 	auto manager = GetInstance();
-	for (auto s : manager->senders)
+	for (auto s : manager->receviers)
 	{
-		if(!s->hasEvent(event->type()))
+		if(!s->hasEvent(event))
 			continue;
 		s->postEvent(event);
 	}
 }
 
-EV::EventSender::EventSender()
+EV::EventRecevier::EventRecevier()
 {
-	EventManager::GetInstance()->registerSender(this);
+	EventManager::GetInstance()->registerRecevier(this);
 }
 
-EV::EventSender::~EventSender()
+EV::EventRecevier::~EventRecevier()
 {
-	EventManager::GetInstance()->removeSender(this);
+	EventManager::GetInstance()->removeRecevier(this);
+}
+
+EV::Event::Event()
+{
+
+}
+
+EV::Event::~Event()
+{
+
 }

@@ -171,6 +171,7 @@ list(APPEND QT_LIB
     debug MSVCPRTD.LIB
     optimized MSVCRT.LIB
     optimized MSVCPRT.LIB
+	Event
     #Rpcrt4.lib
     #version.lib
 	)
