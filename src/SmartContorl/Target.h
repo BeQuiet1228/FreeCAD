@@ -21,7 +21,10 @@ class TargetComprisonApproach :public TargetComprison{
 public:
 	TargetComprisonApproach();
 public:
+	//目标函数值
 	double expect;
+	//接近误差，需要errorRange/100 得到精度范围
+	int errorRange;
 	virtual bool comparison(const double& par1, const double& par2) override;
 };
 
@@ -37,6 +40,7 @@ public:
 	virtual bool comparison(const double& par1, const double& par2);
 
 	void setTargetComprison(TargetComprison* com);
+	TargetComprison* getTargetComprison();
 protected:
 	virtual std::vector<float> getH5DataValue(const std::string& filePath)=0;
 	Hdf5Data getH5Data(const std::string& filePath);
@@ -54,6 +58,8 @@ public:
 public:
 	virtual std::vector<float> getH5DataValue(const std::string& filePath);
 	void setTimesRange(const double& min, const double& max);
+	double getMaxTime();
+	double getMinTime();
 protected:
 	double timesMin, timesMax;
 };
@@ -72,3 +78,4 @@ class TargetTimeMean :public TargetTime {
 public:
 	virtual double getTagetValue(const std::string& filePath);
 };
+

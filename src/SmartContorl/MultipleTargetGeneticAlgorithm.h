@@ -22,6 +22,8 @@ public:
 	virtual bool resultDataFilter(SmartContorl* smarControl) override;
 	virtual bool resultExpcet(SmartContorl* smartControl)override;
 
+	void addTarget(Target* target);
+
 protected:
 	virtual std::vector<int> getCrossPool(SmartContorl* smartControl) override;
 

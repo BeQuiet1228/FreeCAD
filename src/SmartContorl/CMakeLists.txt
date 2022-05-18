@@ -1,18 +1,6 @@
 #设置项目名称
 project(SmartContorl)
 
-
-#设置预定义
-#编译服务器端
-#SET(contorl_service)
-#以exe形式编译客户端
-#SET(contorl_client_exe)
-#以动态链接库的形式编译客户端
-#SET(contorl_client_dll)
-
-
-
-
 #源文件
 SET(UI_SRC
 	SmartContorlUI.ui
@@ -20,6 +8,8 @@ SET(UI_SRC
 	VariateInputDialog.ui
 	smartCalc.ui
 	GeneticAlgorithm.ui
+	MultipleTargetGeneticAlgorithm.ui
+	TargetItem.ui
 )
 SET(QRC_SRC
 
@@ -120,6 +110,8 @@ SET(MY_MOC_HDR
 	VariateitemWidget2.h
 	VariateitemDialog.h
 	GeneticAlgorithmUI.h
+	MultipleTargetGeneticAlgorithmUI.h
+	TargetItem.h
 )
 SET(MY_MOC_SRC
 	SmartContorlUI.cpp
@@ -154,7 +146,7 @@ else()
     QT4_ADD_RESOURCES(Gui_QRC_SRCS ${QRC_SRC})
     QT4_WRAP_UI(Gui_UIC_HDRS ${UI_SRC})
 endif()
-SET(SmartContorl_src
+SET (SRC 
 	main.cpp
 	VariateAnalysis.h
 	VariateAnalysis.cpp
@@ -185,6 +177,12 @@ SET(SmartContorl_src
 	Target.h
 	GeneticAlgorithmUI.cpp
 	GeneticAlgorithmUI.h
+	MultipleTargetGeneticAlgorithmUI.cpp
+	MultipleTargetGeneticAlgorithmUI.h
+	TargetItem.cpp
+	TargetItem.h)
+SET(SmartContorl_src
+	${SRC}
 	${CALC_SRC}
 	${UI_SRC}
 	${JSON_SRC}
@@ -277,3 +275,4 @@ SOURCE_GROUP("Network" FILES ${NETWORK_SRC})
 SOURCE_GROUP("lua" FILES ${LUA_SRC})
 SOURCE_GROUP("xml" FILES ${XML_SRC})
 SOURCE_GROUP("calc" FILES ${CALC_SRC})
+SOURCE_GROUP("src" FILES ${SRC})

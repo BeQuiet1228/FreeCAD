@@ -56,6 +56,11 @@ bool MultipleTargetGeneticAlgorithm::resultExpcet(SmartContorl* smartControl)
 
 }
 
+void MultipleTargetGeneticAlgorithm::addTarget(Target* target)
+{
+	targets.push_back(target);
+}
+
 std::vector<int> MultipleTargetGeneticAlgorithm::getCrossPool(SmartContorl* smartControl)
 {
 	auto tempLists = currentTargetLists;

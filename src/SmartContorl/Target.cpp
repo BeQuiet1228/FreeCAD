@@ -28,6 +28,11 @@ void Target::setTargetComprison(TargetComprison* com)
 	this->targetComprison = com;
 }
 
+TargetComprison* Target::getTargetComprison()
+{
+	return targetComprison;
+}
+
 /**
 * 获取数据集 根据设定的数据别名
 * @brief Targer::getH5Data 
@@ -87,6 +92,16 @@ void TargetTime::setTimesRange(const double& min, const double& max)
 {
 	this->timesMax = max;
 	this->timesMin = min;
+}
+
+double TargetTime::getMaxTime()
+{
+	return timesMax;
+}
+
+double TargetTime::getMinTime()
+{
+	return timesMin;
 }
 
 double TargetTimeMax::getTagetValue(const std::string& filePath)
