@@ -4,6 +4,8 @@
 #include <vector>
 #include <QTextIStream>
 #include <QTextCursor>
+#include <iostream>
+#include <QTextDocumentFragment>
 M3dEditor::M3dEditor(QWidget* parent /*= 0*/)
 	:CodeEditor(parent)
 {
@@ -18,6 +20,21 @@ M3dEditor::~M3dEditor()
 {
 
 
+}
+
+void M3dEditor::keyPressEvent(QKeyEvent* event)
+{
+	QTextCursor cursor = this->textCursor();
+
+	//选中时添加或者取消注释
+	if (cursor.hasSelection() && event->key() == Qt::Key_Slash)
+	{
+		selectionAnnotation();
+	}
+	else
+	{
+		CodeEditor::keyPressEvent(event);
+	}
 }
 
 /**
@@ -37,6 +54,68 @@ void M3dEditor::gotoLine(const int& num)
 	cursor.setPosition(pos);
 	this->setTextCursor(cursor);
 	this->centerCursor();
+}
+
+void M3dEditor::selectionAnnotation()
+{
+	QTextCursor cursor = this->textCursor();
+	QString text = cursor.selection().toPlainText();
+	std::string str = text.toStdString();
+	auto index = text.indexOf("\n");
+	QStringList list = text.split("\n");
+	std::cerr << list.size() << std::endl;
+	bool ok = true;
+	//判断是否已经为注释块
+	for (auto iter = list.begin(); iter != list.end(); iter++)
+	{
+		if (iter->size() == 0)
+			continue;
+		if (iter->at(0) != '!')
+		{
+			ok = false;
+			break;
+		}
+	}
+	//如果已经为注释块，那么取消注释
+	//否则增加注释
+	QString newText;
+	if (ok)
+	{
+		for (auto iter = list.begin(); iter != list.end(); iter++)
+		{
+			//如果不是最后一行，则添加换行符
+			QString r = '\n';
+			if (iter + 1 == list.end())
+				r = "";
+			if (iter->size() == 0)
+			{
+				newText += r;
+				continue;
+			}
+			//不取左边的感叹号
+			auto temp = iter->right(iter->size() - 1);
+			newText += temp + r;
+		}
+	}
+	else {
+		for (auto iter = list.begin(); iter != list.end(); iter++)
+		{
+			//如果不是最后一行，则添加换行符
+			QString r = '\n';
+			if (iter + 1 == list.end())
+				r = "";
+			if (iter->size() == 0)
+			{
+				newText += r;
+				continue;
+			}
+			//在开端位置增加感叹号
+			newText += "!" + *iter + r;
+		}
+	}
+	//插入新的文本
+	cursor.insertText(newText);
+	setTextCursor(cursor);
 }
 
 M3dCommadAnalysis::M3dCommadAnalysis()
