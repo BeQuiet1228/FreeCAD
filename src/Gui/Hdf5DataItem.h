@@ -53,6 +53,8 @@ namespace Gui {
 		//重写运算符
 		bool operator==(const HDF5DataItem& item);
 		bool operator!=(const HDF5DataItem & item);
+		bool operator>(const HDF5DataItem& item);
+		bool operator<(const HDF5DataItem& item);
 	public:
 		void deleteQlistQStandardItem(QList<QStandardItem*> listItem);
 		//从一个list中拿走第一个并转换类型
