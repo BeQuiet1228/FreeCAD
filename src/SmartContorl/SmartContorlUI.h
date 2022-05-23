@@ -50,8 +50,6 @@ public:
 	bool getRunning();
 private:
 	Ui::SmartContorlUI *ui;
-	//组合之后的文件信息
-	std::deque<FileMaker::M3dData> m3dDatas;
 	//信息栏
 	std::map<unsigned long, QListWidgetItem*> itemMap;
 	//文件生成器

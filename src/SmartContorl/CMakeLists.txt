@@ -11,6 +11,10 @@ SET(UI_SRC
 	MultipleTargetGeneticAlgorithm.ui
 	TargetItem.ui
 )
+SET(GUI_CPP_SRC
+	ListChipicWidget.cpp
+	ListChipicWidget.h
+	)
 SET(QRC_SRC
 
 )
@@ -112,6 +116,7 @@ SET(MY_MOC_HDR
 	GeneticAlgorithmUI.h
 	MultipleTargetGeneticAlgorithmUI.h
 	TargetItem.h
+	ListChipicWidget.h
 )
 SET(MY_MOC_SRC
 	SmartContorlUI.cpp
@@ -181,6 +186,8 @@ SET (SRC
 	MultipleTargetGeneticAlgorithmUI.h
 	TargetItem.cpp
 	TargetItem.h)
+
+
 SET(SmartContorl_src
 	${SRC}
 	${CALC_SRC}
@@ -192,6 +199,7 @@ SET(SmartContorl_src
 	${NETWORK_SRC}
 	${LUA_SRC}
 	${XML_SRC}
+	${GUI_CPP_SRC}
 )
 #设置编译生成文件类型
 #add_executable(Contorl ${Contorl_src}) # 生成可执行文件
@@ -276,3 +284,4 @@ SOURCE_GROUP("lua" FILES ${LUA_SRC})
 SOURCE_GROUP("xml" FILES ${XML_SRC})
 SOURCE_GROUP("calc" FILES ${CALC_SRC})
 SOURCE_GROUP("src" FILES ${SRC})
+SOURCE_GROUP("GUI" FILES ${GUI_CPP_SRC})

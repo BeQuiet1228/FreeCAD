@@ -240,15 +240,6 @@ void SmartContorlUI::chipicStartFinished(unsigned long threadID)
 	auto m3dPath = manager->getM3dpathForThreadID(threadID);
 	pathMap.insert(std::map<unsigned long, QString>::value_type(threadID, m3dPath));
 
-	if (manager->chipicMap.size() < 8)
-	{
-		if (m3dDatas.size() <= 0)
-			return;
-		auto data = m3dDatas.front();
-		m3dDatas.pop_front();
-		manager->sendStartChipicMessage(data.m3dPath.toStdString(), 1);
-	}
-
 
 }
 
@@ -275,14 +266,6 @@ void SmartContorlUI::chipicWorkFinished(unsigned long threadID)
 		fileMaker.cutFile(m3dpath, fileMaker.filePath);
 	}
 
-	if (manager->chipicMap.size() < 8)
-	{
-		if (m3dDatas.size() <= 0)
-			return;
-		auto data = m3dDatas.front();
-		m3dDatas.pop_front();
-		manager->sendStartChipicMessage(data.m3dPath.toStdString(), 1);
-	}
 
 }
 
