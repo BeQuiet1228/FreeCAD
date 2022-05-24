@@ -60,10 +60,7 @@ void M3dEditor::selectionAnnotation()
 {
 	QTextCursor cursor = this->textCursor();
 	QString text = cursor.selection().toPlainText();
-	std::string str = text.toStdString();
-	auto index = text.indexOf("\n");
 	QStringList list = text.split("\n");
-	std::cerr << list.size() << std::endl;
 	bool ok = true;
 	//判断是否已经为注释块
 	for (auto iter = list.begin(); iter != list.end(); iter++)
