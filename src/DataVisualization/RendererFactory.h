@@ -13,6 +13,7 @@ namespace DV {
 	class Renderer;
 	class ContourRender;
 	class PlotAdapter;
+	class TimeData;
 	using RendererPtr = std::shared_ptr<Renderer>;
 	using Renderers = std::list<RendererPtr>;
 	using DataPtr = std::shared_ptr<Data>;
@@ -43,6 +44,9 @@ namespace DV {
 		static RendererPtr creatStructRender(Hdf5Data h5d, DirectionType type = X_Y);
 		static RendererPtr creatStructRender(Hdf5Data h5d, STRUCTTYPE md, const _3DPointf& start, const _3DPointf& end);
 		static RendererPtr creatVectorRender(Hdf5Data h5d);
+		//创建一个多个时间图一起显示的适配器
+		static Renderers creatMultipleTimeRenderers(std::list<std::shared_ptr<TimeData>> timeDatas);
+		static PlotAdapterPtr creatMultipleTimeAdapter(Renderers renderers);
 
 		//寻找结构图
 		static int  findStructDataIndex(const std::vector<Hdf5Data>& datas);

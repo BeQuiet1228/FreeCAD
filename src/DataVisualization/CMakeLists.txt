@@ -77,6 +77,12 @@ SET(TIME_SRC TimeData.h
 	TimeMultiplePlotAdapter.h
 	TimeMultiplePlotAdapter.cpp
 )
+SET(CURVE_SRC
+	CurveData.cpp
+	CurveData.h
+)
+
+
 SET(CHAR_ENCODE C_encoding.cpp
 	C_encoding.h)
 
@@ -249,6 +255,7 @@ SET(DataVisualization_src
 	${Gui_QRC_SRCS}
 	${AXIS_SRC}
 	${CONFIGWIDGET_Srcs}
+	${CURVE_SRC}
 	)
 add_definitions( -D_DATA_VISUALIZATION_)
 if(DataVisualizationDll)
@@ -283,6 +290,7 @@ SOURCE_GROUP("uifile" FILES ${UI_SRC})
 SOURCE_GROUP("qrcfile" FILES ${QRC_SRC})
 SOURCE_GROUP("axis" FILES ${AXIS_SRC})
 SOURCE_GROUP("configWidget" FILES ${CONFIGWIDGET_Srcs})
+SOURCE_GROUP("curve" FILES ${CURVE_SRC})
 
 #增加外部库
 list(APPEND QT_LIB

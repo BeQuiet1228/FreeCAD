@@ -19,6 +19,7 @@
 #include "ContourPlotAdapter.h"
 #include "phasorPlotAdapter.h"
 #include "TimePlotAdapter.h"
+#include "TimeMultiplePlotAdapter.h"
 #include <iostream>
 namespace DV {
 	RendererFactory::RendererFactory(Hdf5Data h5d)
@@ -232,6 +233,22 @@ namespace DV {
 		std::shared_ptr<phasorData> r(new phasorData(h5d));
 		phasorRenderer* rd = new phasorRenderer(r);
 		return RendererPtr(rd);
+	}
+
+	Renderers RendererFactory::creatMultipleTimeRenderers(std::list<std::shared_ptr<DV::TimeData>> timeDatas)
+	{
+		Renderers renderers;
+		for (auto iter = timeDatas.begin(); iter != timeDatas.end(); iter++) {
+			std::shared_ptr<TimeRenderer> renderer(new TimeRenderer(*iter));
+			renderers.push_back(renderer);
+		}
+		return renderers;
+	}
+
+	DV::PlotAdapterPtr RendererFactory::creatMultipleTimeAdapter(Renderers renderers)
+	{
+		std::shared_ptr<TimeMultiplePlotAdapter> adapter(new TimeMultiplePlotAdapter(renderers));
+		return adapter;
 	}
 
 	/**

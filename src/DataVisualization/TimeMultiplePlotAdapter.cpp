@@ -10,6 +10,12 @@ QPointF findPoint(const QPointF& point, std::shared_ptr<DV::TimeRenderer> timeRe
 	return timeRender->findPoint(point);
 }
 
+DV::TimeMultiplePlotAdapter::TimeMultiplePlotAdapter(std::list<std::shared_ptr<Renderer>> renders)
+	:TimePlotAdapter(renders)
+{
+
+}
+
 /**
 * 实现多个时间图同时显示时的点查找功能
 * @brief DV::TimeMultiplePlotAdapter::findPointRender
