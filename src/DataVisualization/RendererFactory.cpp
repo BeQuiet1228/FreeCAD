@@ -20,6 +20,7 @@
 #include "phasorPlotAdapter.h"
 #include "TimePlotAdapter.h"
 #include "TimeMultiplePlotAdapter.h"
+#include "CurveData.h"
 #include <iostream>
 namespace DV {
 	RendererFactory::RendererFactory(Hdf5Data h5d)
@@ -233,6 +234,19 @@ namespace DV {
 		std::shared_ptr<phasorData> r(new phasorData(h5d));
 		phasorRenderer* rd = new phasorRenderer(r);
 		return RendererPtr(rd);
+	}
+
+	std::list<std::shared_ptr<DV::TimeData>> RendererFactory::creatMultipleCurveData(std::vector<Data::ValuesPtr> listValues)
+	{
+		std::list<std::shared_ptr<TimeData>> listTimeData;
+		for (auto iter = listValues.begin(); iter != listValues.end(); iter++)
+		{
+			CurveData* data = new CurveData();
+			data->setPoints(*iter);
+			std::shared_ptr<TimeData> timeData(data);
+			listTimeData.push_back(timeData);
+		}
+		return listTimeData;
 	}
 
 	Renderers RendererFactory::creatMultipleTimeRenderers(std::list<std::shared_ptr<DV::TimeData>> timeDatas)

@@ -15,6 +15,9 @@
 #include "VariateChart.h"
 #include "xml/pugixml.hpp"
 #include "OptimizeCurse.h"
+#include "DataVisualization/Data.h"
+#include "DataVisualization/Plot.h"
+#include "DataVisualization/RendererFactory.h"
 #include <QTextCodec>
 #include <QScrollBar>
 #include <QTextCursor>
@@ -302,7 +305,7 @@ void SmartContorlUI::on_pushButtonVariateMax_clicked()
 			selectIndex = indexs.begin()->row();
 	}
 
-
+#if 0
 	QVector<QVector<double>> values;
 	QVector<double> keys;
 	int key = 1;
@@ -330,6 +333,36 @@ void SmartContorlUI::on_pushButtonVariateMax_clicked()
 	chart->setDatas(keys, values, variates.begin()->name);
 	chart->show();
 	chart->setAttribute(Qt::WA_DeleteOnClose);
+#else
+	std::vector<DV::Data::ValuesPtr> listValues;
+	listValues.reserve(valueCount);
+
+	for (int i = 0; i < valueCount; i++)
+	{
+		DV::Data::ValuesPtr valuePtr(new DV::Data::Values());
+		listValues.push_back(valuePtr);
+	}
+
+	int temp = 1;
+	for (auto historyIter = histroy.begin(); historyIter != histroy.end(); historyIter++)
+	{
+		auto historyValues = historyIter->variates.at(selectIndex).values;
+		for (int i = 0; i < historyValues.size(); i++)
+		{
+			listValues[i]->push_back(temp);
+			listValues[i]->push_back(historyValues[i]);
+		}
+		temp++;
+	}
+	
+	auto curveDatas = DV::RendererFactory::creatMultipleCurveData(listValues);
+	auto renderers = DV::RendererFactory::creatMultipleTimeRenderers(curveDatas);
+	auto adapter = DV::RendererFactory::creatMultipleTimeAdapter(renderers);
+	DV::Plot *plot = new DV::Plot();
+	plot->setAdapter(adapter);
+	plot->setAttribute(Qt::WA_DeleteOnClose);
+	plot->show();
+#endif
 }
 
 void SmartContorlUI::on_comboBoxExcpcet_currentIndexChanged(int index)

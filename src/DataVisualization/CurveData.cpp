@@ -16,8 +16,15 @@ bool DV::CurveData::loadPoint()
 	return true;
 }
 
+std::string DV::CurveData::getInformationTitle()
+{
+	return "";
+}
+
 void DV::CurveData::setPoints(Data::ValuesPtr points)
 {
 	this->points = points;
+	setPointSize(points->size() / 2);
+	initXYRang();
 }
 

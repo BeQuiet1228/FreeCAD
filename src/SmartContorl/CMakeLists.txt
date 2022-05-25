@@ -234,6 +234,7 @@ list(APPEND QT_LIB
     optimized MSVCPRT.LIB
 	HDF5Reader
 	Editor
+	DataVisualization
 	)
 if(contorl_client_dll)
 list(APPEND QT_LIB

@@ -46,6 +46,7 @@ void DV::TimeMultiplePlotAdapter::findPointRender(const float& x, const float& y
 	for (auto iter = renderers.begin(); iter != renderers.end(); iter++)
 	{
 		QFuture<QPointF> futuer = QtConcurrent::run(findPoint, point, *iter);
+		futuers.push_back(futuer);
 	}
 	bool isFinished = false;
 	while (!isFinished)
