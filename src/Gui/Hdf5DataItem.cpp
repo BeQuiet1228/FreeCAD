@@ -12,7 +12,7 @@ Gui::HDF5DataItem::HDF5DataItem(const Hdf5Data& h5data, const QString& name, con
 	:QStandardItem(QIcon(IconPath[type]),name)
 {
 	this->hdf5data = h5data;
-	this->name = name;
+	setName(name);
 	this->itemType = type;
 	setEditable(false);
 }
@@ -20,7 +20,7 @@ Gui::HDF5DataItem::HDF5DataItem(const Hdf5Data& h5data, const QString& name, con
 Gui::HDF5DataItem::HDF5DataItem(const HDF5DataItem& item)
 	:QStandardItem(item)
 {
-	this->name = item.name;
+	setName(item.name);
 	this->itemType = item.itemType;
 	this->hdf5data = item.hdf5data;
 	this->doubleClickEventHander = item.doubleClickEventHander;
@@ -36,7 +36,7 @@ Gui::HDF5DataItem::HDF5DataItem(const HDF5DataItem& item)
 Gui::HDF5DataItem::HDF5DataItem(const QString& name, const ItemType& type /*= FOLDER*/)
 	:QStandardItem(QIcon(IconPath[type]), name)
 {
-	this->name = name;
+	setName(name);
 	this->itemType = type;
 	setEditable(false);
 }
@@ -164,7 +164,6 @@ bool Gui::HDF5DataItem::mergeItem(HDF5DataItem* item)
 		auto item = getHDF5DataItemFromQListItem(listItem);
 		addSubItem(item);
 	}
-
 	delete item;
 	return true;
 }
@@ -184,6 +183,20 @@ bool Gui::HDF5DataItem::mergeItem(QStandardItem* item, HDF5DataItem* h5item)
 		return false;
 
 	return temp->mergeItem(h5item);
+}
+
+bool Gui::HDF5DataItem::operator>(const HDF5DataItem& item)
+{
+	if (this->name > item.name)
+		return true;
+	return false;
+}
+
+bool Gui::HDF5DataItem::operator<(const HDF5DataItem& item)
+{
+	if (this->name < item.name)
+		return true;
+	return false;
 }
 
 /**

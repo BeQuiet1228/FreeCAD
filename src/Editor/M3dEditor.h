@@ -61,10 +61,15 @@ public:
 	M3dEditor(QWidget* parent = 0);
 	~M3dEditor();
 
+protected:
+	void keyPressEvent(QKeyEvent* event);
+
 public:
 	Cmds getCmds();
 	//跳转到指定行
 	void gotoLine(const int& num);
+	//为选中字符添加注释
+	void selectionAnnotation();
 private:
 	M3dCommadAnalysis analysis;
 };

@@ -5,6 +5,9 @@
 #include "HDF5DataItem2DDoubleClickEventHander.h"
 #include "Hdf5DataItem.h"
 #include <QStandardItem>
+
+#define  ITEM_SORT 1
+
 Gui::DataVisualizationTree::DataVisualizationTree(QWidget* parent/*= 0*/)
 	:QTreeView(parent),model(new QStandardItemModel)
 {
@@ -36,10 +39,19 @@ Gui::HDF5DataItem* Gui::DataVisualizationTree::addHDF5DataItem(HDF5DataItem* ite
 	{
 		HDF5DataItem* hdf5Item = dynamic_cast<HDF5DataItem*>(model->item(row));
 		if (hdf5Item->mergeItem(item))
+		{
+#if ITEM_SORT
+			hdf5Item->sortChildren(0);
+#endif // ITEM_SORT
 			return hdf5Item;
+		}
 	}
 
 	model->appendRow(item);
+#if ITEM_SORT
+	item->sortChildren(0);
+#endif // ITEM_SORT
+	
 	return item;
 }
 
