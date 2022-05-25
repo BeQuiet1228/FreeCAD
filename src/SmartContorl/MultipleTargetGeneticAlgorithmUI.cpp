@@ -1,5 +1,5 @@
-#include "SmartContorlUI.h"
-#include "ui_SmartContorlUI.h"
+#include "MultipleTargetGeneticAlgorithmUI.h"
+#include "ui_MultipleTargetGeneticAlgorithm.h"
 #include "iostream"
 #include "VariateAnalysis.h"
 #include "FileMaker.h"
@@ -18,9 +18,11 @@
 #include <QTextCodec>
 #include <QScrollBar>
 #include <QTextCursor>
-#include "GeneticAlgorithm.h"
-SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
-	:QDialog(parent), ui(new Ui::SmartContorlUI)
+#include "MultipleTargetGeneticAlgorithm.h"
+#include "TargetItem.h"
+#include <QListWidgetItem>
+MultipleTargetGeneticAlgorithmUI::MultipleTargetGeneticAlgorithmUI(QWidget* parent /*= 0*/)
+	:QDialog(parent), ui(new Ui::MultipleTargetGeneticAlgorithmUI)
 {
 	ui->setupUi(this);
 
@@ -42,24 +44,10 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	this->setModal(true);
 	setWindowFlags(Qt::Dialog | Qt::WindowMinimizeButtonHint);
 
-	//隐藏测试控件
-	this->ui->pushButton_3->hide();
-	this->ui->pushButton_4->hide();
-	this->ui->pushButton_5->hide();
-	this->ui->pushButton_6->hide();
-	this->ui->pushButton_7->hide();
-	this->ui->textEdit->hide();
-
-
-	//设置F输入规则
-	{
-		QRegExp rx("-?[0-9e]{0,19}$");
-		QRegExpValidator* validator = new QRegExpValidator(rx, this);
-		ui->lineEditMaxF->setValidator(validator);
-	}
+	ui->textEdit->hide();
 }
 
-SmartContorlUI::~SmartContorlUI()
+MultipleTargetGeneticAlgorithmUI::~MultipleTargetGeneticAlgorithmUI()
 {
 	smartContorl->stop();
 	auto data = SmartContorlData::GetInstance();
@@ -67,20 +55,20 @@ SmartContorlUI::~SmartContorlUI()
 }
 
 /**
-* @brief SmartContorlUI::setTextPath 设置优化算法的运行路径
+* @brief MultipleTargetGeneticAlgorithmUI::setTextPath 设置优化算法的运行路径
 * @param const std::string & path
 * @return void
 */
-void SmartContorlUI::setTextPath(const std::string& path)
+void MultipleTargetGeneticAlgorithmUI::setTextPath(const std::string& path)
 {
 	smartContorl->setM3dPath(path);
 }
 
-void SmartContorlUI::on_pushButton_clicked()
+void MultipleTargetGeneticAlgorithmUI::on_pushButton_clicked()
 {
 	auto str = replaceVariate();
 	smartContorl->chipicCount = this->ui->spinBoxRunCount->value();
-	auto optimize = new GeneticAlgorithm();
+	auto optimize = new MultipleTargetGeneticAlgorithm();
 	//auto optimize = new OptimizeCurseLua();
 
 	//添加变量
@@ -92,7 +80,18 @@ void SmartContorlUI::on_pushButton_clicked()
 		v.max = var->max;
 		optimize->optimizeVariates.push_back(v);
 	}
-
+	//添加目标函数
+	auto listWidget = ui->listWidgetTarget;
+	int targetCount = listWidget->count();
+	for (int i = 0; i < targetCount; i++)
+	{
+		auto item = listWidget->item(i);
+		auto widget = listWidget->itemWidget(item);
+		TargetItem* targetItem = dynamic_cast<TargetItem*>(widget);
+		optimize->addTarget(targetItem->GenerateTarget());
+	}
+	optimize->setMutationProbability(ui->lineEditMutationProbability->text().toDouble());
+	optimize->setMutationProbabilityRange(ui->lineEditMutationProbabilityRange->text().toDouble());
 	optimize->luaLoadFromString(str.toStdString());
 	smartContorl->setOptimizeCurse(optimize);
 	smartContorl->run();
@@ -100,46 +99,14 @@ void SmartContorlUI::on_pushButton_clicked()
 	saveParameterXml();
 }
 
-void SmartContorlUI::on_pushButton_2_clicked()
+void MultipleTargetGeneticAlgorithmUI::on_pushButton_2_clicked()
 {
 	smartContorl->stop();
 	auto data = SmartContorlData::GetInstance();
 	data->clear();
 }
-//载入按钮
-void SmartContorlUI::on_pushButton_3_clicked()
-{
-// 	auto  str = ui->textEdit->toPlainText();
-// 
-// 	smartContorl->luaLoadFromString(str.toStdString());
-}
-//初始化按钮
-void SmartContorlUI::on_pushButton_4_clicked()
-{
-/*	smartContorl->luaInit();*/
-}
-//数据筛选按钮
-void SmartContorlUI::on_pushButton_5_clicked()
-{
-/*	smartContorl->luaResultDataFilter();*/
-}
-//预期对比按钮
-void SmartContorlUI::on_pushButton_6_clicked()
-{
-/*	smartContorl->luaResultExpcet();*/
-}
-//参数优化
-void SmartContorlUI::on_pushButton_7_clicked()
-{
-/*	smartContorl->luaOptimize();*/
-}
 
-void SmartContorlUI::on_pushButton_8_clicked()
-{
-
-}
-
-void SmartContorlUI::on_pushButtonF_clicked()
+void MultipleTargetGeneticAlgorithmUI::on_pushButtonF_clicked()
 {
 	auto histroy = SmartContorlData::GetInstance()->smartContorl->getHistoryDatas();
 	if (histroy.size() < 1)
@@ -150,7 +117,7 @@ void SmartContorlUI::on_pushButtonF_clicked()
 	auto valueCount = variates.begin()->values.size();
 
 
- 
+
 	QVector<QVector<double>> values;
 	QVector<double> keys;
 	int key = 1;
@@ -181,7 +148,7 @@ void SmartContorlUI::on_pushButtonF_clicked()
 
 }
 
-void SmartContorlUI::on_pushButtonAddVariate_clicked()
+void MultipleTargetGeneticAlgorithmUI::on_pushButtonAddVariate_clicked()
 {
 	std::cout << "add" << std::endl;
 	VariateInputDialog d;
@@ -195,7 +162,7 @@ void SmartContorlUI::on_pushButtonAddVariate_clicked()
 		data->widget = new VariateItemWidget();
 		data->widget->setData(data);
 		variateDatas.push_back(data);
-		
+
 		this->ui->listWidgetVariate->addItem(data->item);
 		auto size = data->widget->size();
 		data->item->setSizeHint(size);
@@ -203,7 +170,7 @@ void SmartContorlUI::on_pushButtonAddVariate_clicked()
 	}
 }
 
-void SmartContorlUI::on_pushButtonDeleteVariate_clicked()
+void MultipleTargetGeneticAlgorithmUI::on_pushButtonDeleteVariate_clicked()
 {
 	auto items = this->ui->listWidgetVariate->selectedItems();
 	if (items.size() < 1)
@@ -221,7 +188,31 @@ void SmartContorlUI::on_pushButtonDeleteVariate_clicked()
 	}
 }
 
-void SmartContorlUI::chipicStartFinished(unsigned long threadID)
+void MultipleTargetGeneticAlgorithmUI::on_pushButtonAddTarget_clicked()
+{
+	auto listWidget = ui->listWidgetTarget;
+	TargetItem *target = new TargetItem(listWidget);
+	QListWidgetItem *item = new QListWidgetItem(listWidget);
+	item->setSizeHint(QSize(listWidget->width(), 300));
+	listWidget->setItemWidget(item, target);
+}
+
+void MultipleTargetGeneticAlgorithmUI::on_pushButtonDeleteTarget_clicked()
+{
+	auto listWidget = ui->listWidgetTarget;
+	auto items = listWidget->selectedItems();
+	for (auto iter = items.begin(); iter != items.end(); iter++)
+	{
+		int index = listWidget->row(*iter);
+		auto widget = listWidget->itemWidget(*iter);
+		auto item = listWidget->takeItem(index);
+
+		delete widget;
+		delete item;
+	}
+}
+
+void MultipleTargetGeneticAlgorithmUI::chipicStartFinished(unsigned long threadID)
 {
 	auto contorl = ContorlInterface::GetInstance();
 	auto manager = contorl->getChipicManager();
@@ -240,10 +231,19 @@ void SmartContorlUI::chipicStartFinished(unsigned long threadID)
 	auto m3dPath = manager->getM3dpathForThreadID(threadID);
 	pathMap.insert(std::map<unsigned long, QString>::value_type(threadID, m3dPath));
 
+	if (manager->chipicMap.size() < 8)
+	{
+		if (m3dDatas.size() <= 0)
+			return;
+		auto data = m3dDatas.front();
+		m3dDatas.pop_front();
+		manager->sendStartChipicMessage(data.m3dPath.toStdString(), 1);
+	}
+
 
 }
 
-void SmartContorlUI::chipicWorkFinished(unsigned long threadID)
+void MultipleTargetGeneticAlgorithmUI::chipicWorkFinished(unsigned long threadID)
 {
 	//寻找到对应的ui 然后释放掉
 	auto iter = itemMap.find(threadID);
@@ -266,16 +266,24 @@ void SmartContorlUI::chipicWorkFinished(unsigned long threadID)
 		fileMaker.cutFile(m3dpath, fileMaker.filePath);
 	}
 
+	if (manager->chipicMap.size() < 8)
+	{
+		if (m3dDatas.size() <= 0)
+			return;
+		auto data = m3dDatas.front();
+		m3dDatas.pop_front();
+		manager->sendStartChipicMessage(data.m3dPath.toStdString(), 1);
+	}
 
 }
 
-void SmartContorlUI::addListWidgetItem(QListWidgetItem *item, QWidget *widget)
+void MultipleTargetGeneticAlgorithmUI::addListWidgetItem(QListWidgetItem* item, QWidget* widget)
 {
 	ui->listWidget->addItem(item);
 	ui->listWidget->setItemWidget(item, widget);
 }
 
-void SmartContorlUI::pringLuaLog(std::string str)
+void MultipleTargetGeneticAlgorithmUI::pringLuaLog(std::string str)
 {
 	auto temp = QString::fromUtf8(str.c_str());
 	auto text = this->ui->plainTextEdit->toPlainText();
@@ -284,7 +292,7 @@ void SmartContorlUI::pringLuaLog(std::string str)
 	ui->plainTextEdit->moveCursor(QTextCursor::End);
 }
 
-void SmartContorlUI::on_pushButtonVariateMax_clicked()
+void MultipleTargetGeneticAlgorithmUI::on_pushButtonVariateMax_clicked()
 {
 	auto histroy = SmartContorlData::GetInstance()->smartContorl->getHistoryDatas();
 	if (histroy.size() < 1)
@@ -332,17 +340,9 @@ void SmartContorlUI::on_pushButtonVariateMax_clicked()
 	chart->setAttribute(Qt::WA_DeleteOnClose);
 }
 
-void SmartContorlUI::on_comboBoxExcpcet_currentIndexChanged(int index)
-{
-	if (index == 0)
-		this->ui->widgetAccuracy->show();
-	else{
-		this->ui->widgetAccuracy->hide();
-	}
-}
 
 //暂时全写再这儿 日后再改
-QString SmartContorlUI::replaceVariate()
+QString MultipleTargetGeneticAlgorithmUI::replaceVariate()
 {
 	//添加参数
 	int count = this->ui->spinBoxCount->value();
@@ -366,39 +366,36 @@ QString SmartContorlUI::replaceVariate()
 	text = this->ui->textEdit->toPlainText();
 #endif // SMART_EXE
 
-	
+
 	text += vars;
 
 	//添加配置
 	QString config = "";
-	temp = QString("observeName = \"%1\";\n").arg(this->ui->lineEditName->text());
+	temp = QString("observeName = \"%1\";\n").arg("test");
 	config += temp;
-	temp = QString("maxTime = %1;\n").arg(this->ui->lineEditMaxTime->text().toInt());
+	temp = QString("maxTime = %1;\n").arg(0);
 	config += temp;
-	temp = QString("miniTime = %1;\n").arg(this->ui->lineEditMiniTime->text().toInt());
+	temp = QString("miniTime = %1;\n").arg(0);
 	config += temp;
-	temp = QString("excpectF = %1;\n").arg(this->ui->lineEditMaxF->text().toLongLong());
+	temp = QString("excpectF = %1;\n").arg(0);
 	config += temp;
-	temp = QString("omiga = %1;\n").arg(this->ui->lineEditOmega->text().toDouble());
+	temp = QString("omiga = %1;\n").arg(0.0);
 	config += temp;
-	temp = QString("c1 = %1;\n").arg(this->ui->lineEditC1->text().toDouble());
+	temp = QString("c1 = %1;\n").arg(0.0);
 	config += temp;
-	temp = QString("c2 = %1;\n").arg(this->ui->lineEditC2->text().toDouble());
+	temp = QString("c2 = %1;\n").arg(0.0);
 	config += temp;
-	temp = QString("fmod = %1;\n").arg(this->ui->comboBoxF->currentIndex());
+	temp = QString("fmod = %1;\n").arg(0);
 	config += temp;
-	temp = QString("excpectMod = %1;\n").arg(this->ui->comboBoxExcpcet->currentIndex());
+	temp = QString("excpectMod = %1;\n").arg(0);
 	config += temp;
-	temp = QString("optimizeMaxCount = %1;\n").arg(this->ui->spinBoxOptimizeCount->value());
+	temp = QString("optimizeMaxCount = %1;\n").arg(0);
 	config += temp;
-	temp = QString("accuracy = %1/100;\n").arg(this->ui->lineEditAccuracy->text());
+	temp = QString("accuracy = %1/100;\n").arg(0);
 	config += temp;
 
 	//是否按照上次优化数据计息
-	if (this->ui->checkBoxContinue->checkState() == Qt::Checked)
-		config += "continue = true;\n";
-	else
-		config += "continue = false;\n";
+	config += "continue = false;\n";
 
 	text = config + text;
 
@@ -413,25 +410,46 @@ QString SmartContorlUI::replaceVariate()
 	return text;
 }
 
-void SmartContorlUI::saveParameterXml()
+void MultipleTargetGeneticAlgorithmUI::saveParameterXml()
 {
 	pugi::xml_document doc;
-	auto parNode = doc.append_child("Parameter");
-	auto configNode = doc.append_child("Config");
-	configNode.append_attribute("OptimizeCount") = ui->spinBoxOptimizeCount->value();
+	auto path = smartContorl->getM3dPath();
+	path = path.left(path.length() - 4) + ".cc";
+	auto gbk = QTextCodec::codecForName("gb2312");
+
+	std::string ret = gbk->fromUnicode(path).data();
+	auto result = doc.load_file(ret.c_str());
+	pugi::xml_node root;
+	if (!result)
+	{
+		doc.reset();
+		root = doc.append_child("MultipleTargetGeneticAlgorithm");
+	}
+	else {
+		doc.remove_child("MultipleTargetGeneticAlgorithm");
+		root = doc.append_child("MultipleTargetGeneticAlgorithm");
+	}
+
+
+	auto parNode = root.append_child("Parameter");
+	auto configNode = root.append_child("Config");
+	auto targetNode = root.append_child("Target");
+// 	configNode.append_attribute("OptimizeCount") = ui->spinBoxOptimizeCount->value();
 	configNode.append_attribute("RunCount") = ui->spinBoxCount->value();
 	configNode.append_attribute("RunMaxCount") = ui->spinBoxRunCount->value();
-	configNode.append_attribute("ObserveName") = ui->lineEditName->text().toStdString().c_str();
-	configNode.append_attribute("MaxTime") = ui->lineEditMaxTime->text().toDouble();
-	configNode.append_attribute("MiniTime") = ui->lineEditMiniTime->text().toDouble();
-	configNode.append_attribute("FModIndex") = ui->comboBoxF->currentIndex();
-	configNode.append_attribute("F") = ui->lineEditMaxF->text().toLongLong();
-	configNode.append_attribute("ExcpectMod") = ui->comboBoxExcpcet->currentIndex();
-	configNode.append_attribute("Accuracy") = ui->lineEditAccuracy->text().toStdString().c_str();
-	configNode.append_attribute("C1") = ui->lineEditC1->text().toStdString().c_str();
-	configNode.append_attribute("C2") = ui->lineEditC2->text().toStdString().c_str();
-	configNode.append_attribute("Omega") = ui->lineEditOmega->text().toStdString().c_str();
-	configNode.append_attribute("Continue") = ui->checkBoxContinue->checkState();
+
+	auto listWidget = ui->listWidgetTarget;
+	int itemsCount =listWidget->count();
+	for (int i = 0; i < itemsCount; i++)
+	{
+		QString name = QString("Target%1").arg(i);
+		auto node = targetNode.append_child(name.toStdString().c_str());
+		auto item = listWidget->item(i);
+		auto widget = listWidget->itemWidget(item);
+		
+		TargetItem* targetItem = dynamic_cast<TargetItem*>(widget);
+		targetItem->saveXml(node);
+	}
 
 	for (auto i = variateDatas.begin(); i != variateDatas.end(); i++)
 	{
@@ -441,17 +459,11 @@ void SmartContorlUI::saveParameterXml()
 		node.append_attribute("Max") = max.c_str();
 		node.append_attribute("Mini") = mini.c_str();
 	}
-	auto path = smartContorl->getM3dPath();
-	path = path.left(path.length() - 4) + ".cc";
-	auto gbk = QTextCodec::codecForName("gb2312");
 
-	std::string ret = gbk->fromUnicode(path).data();
 	doc.save_file(ret.c_str());
-
-	
 }
 
-void SmartContorlUI::loadParameterXml()
+void MultipleTargetGeneticAlgorithmUI::loadParameterXml()
 {
 	pugi::xml_document document;
 	auto path = smartContorl->getM3dPath();
@@ -462,24 +474,32 @@ void SmartContorlUI::loadParameterXml()
 	auto result = document.load_file(ret.c_str());
 	if (!result)
 		return;
-	auto parNode = document.child("Parameter");
-	auto configNode = document.child("Config");
+	pugi::xml_node root = document.child("MultipleTargetGeneticAlgorithm");
+	if (root.empty())
+		return;
+
+	auto parNode = root.child("Parameter");
+	auto configNode = root.child("Config");
+	auto targetNode = root.child("Target");
+
+	auto listWidget = ui->listWidgetTarget;
+	for (auto iter = targetNode.begin(); iter != targetNode.end(); iter++)
+	{
+		TargetItem* targetItem = new TargetItem(listWidget);
+		targetItem->loadXml(*iter);
+
+		QListWidgetItem* item = new QListWidgetItem(listWidget);
+		item->setSizeHint(QSize(listWidget->width(), 300));
+		listWidget->setItemWidget(item, targetItem);
+	}
 
 
-	ui->spinBoxOptimizeCount->setValue(configNode.attribute("OptimizeCount").as_int());
+// 
+// 	ui->spinBoxOptimizeCount->setValue(configNode.attribute("OptimizeCount").as_int());
 	ui->spinBoxRunCount->setValue(configNode.attribute("RunMaxCount").as_int());
 	ui->spinBoxCount->setValue(configNode.attribute("RunCount").as_int());
-	ui->lineEditName->setText(QString::fromStdString(configNode.attribute("ObserveName").as_string()));
-	ui->lineEditMaxTime->setText(QString::number(configNode.attribute("MaxTime").as_double()));
-	ui->lineEditMiniTime->setText(QString::number(configNode.attribute("MiniTime").as_double()));
-	ui->comboBoxF->setCurrentIndex(configNode.attribute("FModIndex").as_int());
-	ui->lineEditMaxF->setText(QString::number(configNode.attribute("F").as_llong()));
-	ui->comboBoxExcpcet->setCurrentIndex(configNode.attribute("ExcpectMod").as_int());
-	ui->lineEditAccuracy->setText(QString::number(configNode.attribute("Accuracy").as_double()));
-	ui->lineEditC1->setText(QString::number(configNode.attribute("C1").as_double()));
-	ui->lineEditC2->setText(QString::number(configNode.attribute("C2").as_double()));
-	ui->lineEditOmega->setText(QString::number(configNode.attribute("Omega").as_double()));
-	ui->checkBoxContinue->setCheckState(Qt::CheckState(configNode.attribute("Continue").as_int()));
+
+
 	for (auto iter = parNode.begin(); iter != parNode.end(); iter++)
 	{
 		std::shared_ptr<VariateData> data;
@@ -501,15 +521,15 @@ void SmartContorlUI::loadParameterXml()
 	}
 }
 
-void SmartContorlUI::closeEvent(QCloseEvent *event)
+void MultipleTargetGeneticAlgorithmUI::closeEvent(QCloseEvent* event)
 {
 	smartContorl->stop();
 	auto data = SmartContorlData::GetInstance();
 	data->clear();
 	QDialog::closeEvent(event);
 }
-bool SmartContorlUI::getRunning()
+bool MultipleTargetGeneticAlgorithmUI::getRunning()
 {
 	return smartContorl->runing;
 }
-#include "moc_SmartContorlUI.cpp"
+#include "moc_MultipleTargetGeneticAlgorithmUI.cpp"

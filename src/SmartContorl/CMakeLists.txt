@@ -1,25 +1,20 @@
 #设置项目名称
 project(SmartContorl)
 
-
-#设置预定义
-#编译服务器端
-#SET(contorl_service)
-#以exe形式编译客户端
-#SET(contorl_client_exe)
-#以动态链接库的形式编译客户端
-#SET(contorl_client_dll)
-
-
-
-
 #源文件
 SET(UI_SRC
 	SmartContorlUI.ui
 	VariateItemWidget.ui
 	VariateInputDialog.ui
 	smartCalc.ui
+	GeneticAlgorithm.ui
+	MultipleTargetGeneticAlgorithm.ui
+	TargetItem.ui
 )
+SET(GUI_CPP_SRC
+	ListChipicWidget.cpp
+	ListChipicWidget.h
+	)
 SET(QRC_SRC
 
 )
@@ -118,7 +113,10 @@ SET(MY_MOC_HDR
 	smartDialog.h
 	VariateitemWidget2.h
 	VariateitemDialog.h
-	
+	GeneticAlgorithmUI.h
+	MultipleTargetGeneticAlgorithmUI.h
+	TargetItem.h
+	ListChipicWidget.h
 )
 SET(MY_MOC_SRC
 	SmartContorlUI.cpp
@@ -153,7 +151,7 @@ else()
     QT4_ADD_RESOURCES(Gui_QRC_SRCS ${QRC_SRC})
     QT4_WRAP_UI(Gui_UIC_HDRS ${UI_SRC})
 endif()
-SET(SmartContorl_src
+SET (SRC 
 	main.cpp
 	VariateAnalysis.h
 	VariateAnalysis.cpp
@@ -174,6 +172,24 @@ SET(SmartContorl_src
 	VariateChart.cpp
 	VariableStorer.cpp
 	VariableStorer.h
+	OptimizeCurse.cpp
+	OptimizeCurse.h
+	GeneticAlgorithm.cpp
+	GeneticAlgorithm.h
+	MultipleTargetGeneticAlgorithm.cpp
+	MultipleTargetGeneticAlgorithm.h
+	Target.cpp
+	Target.h
+	GeneticAlgorithmUI.cpp
+	GeneticAlgorithmUI.h
+	MultipleTargetGeneticAlgorithmUI.cpp
+	MultipleTargetGeneticAlgorithmUI.h
+	TargetItem.cpp
+	TargetItem.h)
+
+
+SET(SmartContorl_src
+	${SRC}
 	${CALC_SRC}
 	${UI_SRC}
 	${JSON_SRC}
@@ -183,6 +199,7 @@ SET(SmartContorl_src
 	${NETWORK_SRC}
 	${LUA_SRC}
 	${XML_SRC}
+	${GUI_CPP_SRC}
 )
 #设置编译生成文件类型
 #add_executable(Contorl ${Contorl_src}) # 生成可执行文件
@@ -266,3 +283,5 @@ SOURCE_GROUP("Network" FILES ${NETWORK_SRC})
 SOURCE_GROUP("lua" FILES ${LUA_SRC})
 SOURCE_GROUP("xml" FILES ${XML_SRC})
 SOURCE_GROUP("calc" FILES ${CALC_SRC})
+SOURCE_GROUP("src" FILES ${SRC})
+SOURCE_GROUP("GUI" FILES ${GUI_CPP_SRC})
