@@ -53,7 +53,7 @@ TargetTime* TargetItem::GenerateTarget()
 	else if (ui->comboBoxF->currentIndex() == 0) {
 		target = new TargetTimeMax();
 	}
-	else if (ui->comboBoxF->currentIndex() == 0) {
+	else if (ui->comboBoxF->currentIndex() == 2) {
 		target = new TargetTimeMean();
 	}
 

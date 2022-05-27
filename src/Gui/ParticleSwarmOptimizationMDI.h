@@ -24,6 +24,16 @@ public:
 
 };
 
+class MultipleTargetGeneticAlgorithmView :public ParticleSwarmOptimizationMDI {
+public:
+	MultipleTargetGeneticAlgorithmView(DocumentPic* pcDocument, QWidget* parent = 0);
+	~MultipleTargetGeneticAlgorithmView();
+public:
+	//初始化优化模块
+	void init(const std::string& path);
+
+};
+
 class ProcessingBatchView :public AlgorMDIInter {
 public:
 	ProcessingBatchView(DocumentPic* pcDocument, QWidget* parent = 0);

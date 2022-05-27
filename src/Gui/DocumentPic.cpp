@@ -247,6 +247,23 @@ void DocumentPic::showGeneticAlgorithmView()
 	mw->addWindow(mdi);
 }
 
+void DocumentPic::showMultipleTargetGeneticAlgorithmView()
+{
+	auto mw = Gui::MainWindow::getInstance();
+	auto views = this->getMDIViews();
+	for (auto iter = views.begin(); iter != views.end(); iter++)
+	{
+		auto psoView = dynamic_cast<MultipleTargetGeneticAlgorithmView*> (*iter);
+		if (!psoView)
+			continue;
+		mw->setActiveWindow(psoView);
+		return;
+	}
+	MultipleTargetGeneticAlgorithmView* mdi = new MultipleTargetGeneticAlgorithmView(this);
+	mdi->init(getTextPath());
+	mw->addWindow(mdi);
+}
+
 void DocumentPic::save()
 {
 	Document::save();
@@ -288,6 +305,10 @@ bool DocumentPic::onMsg(const char* pMsg, const char** ppReturn)
 	}
 	else if (strcmp("showGeneticAlgorithm", pMsg) == 0) {
 		this->showGeneticAlgorithmView();
+		return true;
+	}
+	else if (strcmp("showMultipleTargetGeneticAlgorithm", pMsg) == 0) {
+		this->showMultipleTargetGeneticAlgorithmView();
 		return true;
 	}
 
@@ -343,6 +364,16 @@ bool DocumentPic::onHasMsg(const char* pMsg) const
 		return true;
 	}
 	else if (strcmp("showGeneticAlgorithm", pMsg) == 0) {
+#ifdef SUPER_DOG
+		if (!Gui::SuperDog::login())
+			return false;
+#endif // SUPER_DOG
+		auto control = ContorlInterface::GetInstance();
+		if (control->hasChipicRuning())
+			return false;
+		return true;
+	}
+	else if (strcmp("showMultipleTargetGeneticAlgorithm", pMsg) == 0) {
 #ifdef SUPER_DOG
 		if (!Gui::SuperDog::login())
 			return false;

@@ -193,7 +193,7 @@ void MultipleTargetGeneticAlgorithmUI::on_pushButtonAddTarget_clicked()
 	auto listWidget = ui->listWidgetTarget;
 	TargetItem *target = new TargetItem(listWidget);
 	QListWidgetItem *item = new QListWidgetItem(listWidget);
-	item->setSizeHint(QSize(listWidget->width(), 300));
+	item->setSizeHint(target->size());
 	listWidget->setItemWidget(item, target);
 }
 
@@ -210,6 +210,54 @@ void MultipleTargetGeneticAlgorithmUI::on_pushButtonDeleteTarget_clicked()
 		delete widget;
 		delete item;
 	}
+}
+
+void MultipleTargetGeneticAlgorithmUI::on_pushButtonTargetChart_clicked()
+{
+	//获取被选中的目标索引
+	int selectIndex = 0;
+	{
+		auto indexs = this->ui->listWidgetTarget->selectionModel()->selectedIndexes();
+		if (indexs.size() != 0)
+			selectIndex = indexs.begin()->row();
+	}
+
+	auto histroy = SmartContorlData::GetInstance()->smartContorl->getHistoryDatas();
+	if (histroy.size() < 1)
+		return;
+	auto variates = histroy.begin()->variates;
+	if (variates.size() < 1)
+		return;
+	auto valueCount = variates.begin()->values.size();
+
+
+	QVector<QVector<double>> values;
+	QVector<double> keys;
+	int key = 1;
+	for (int i = 0; i < valueCount; i++)
+	{
+		QVector<double> v;
+		values.push_back(v);
+	}
+
+	for (auto historyIter = histroy.begin(); historyIter != histroy.end(); historyIter++)
+	{
+		auto historyValues = historyIter->datas;
+		auto vIter = values.begin();
+		auto hIter = historyValues.begin();
+		for (; vIter != values.end() && hIter != historyValues.end();
+			vIter++, hIter++)
+		{
+			vIter->push_back((*hIter)->resultData->getValue(selectIndex));
+		}
+		keys.push_back(key);
+		key++;
+	}
+	auto chart = new VariateChart;
+	chart->setAttribute(Qt::WA_DeleteOnClose);
+	chart->clearGraph();
+	chart->setDatas(keys, values, "F");
+	chart->show();
 }
 
 void MultipleTargetGeneticAlgorithmUI::chipicStartFinished(unsigned long threadID)
@@ -489,7 +537,7 @@ void MultipleTargetGeneticAlgorithmUI::loadParameterXml()
 		targetItem->loadXml(*iter);
 
 		QListWidgetItem* item = new QListWidgetItem(listWidget);
-		item->setSizeHint(QSize(listWidget->width(), 300));
+		item->setSizeHint(targetItem->size());
 		listWidget->setItemWidget(item, targetItem);
 	}
 

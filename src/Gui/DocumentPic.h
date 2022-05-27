@@ -30,6 +30,8 @@ public:
 	void showProcessingBatchView();
 	//显示遗传算法窗口
 	void showGeneticAlgorithmView();
+	//显示多目标遗传算法
+	void showMultipleTargetGeneticAlgorithmView();
 
 	//保存与另存为
 	virtual void save();

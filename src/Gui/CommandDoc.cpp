@@ -2214,6 +2214,31 @@ bool StdCmdGeneticAlgorithm::isActive(void)
 {
 	return getGuiApplication()->sendHasMsgToActiveView("showGeneticAlgorithm");
 }
+
+DEF_STD_CMD_A(StdCmdMultipleTargetGeneticAlgorithm);
+
+StdCmdMultipleTargetGeneticAlgorithm::StdCmdMultipleTargetGeneticAlgorithm()
+	: Command("Std_Multiple_TargetGenetic_Algorithm")
+{
+	// setting the
+	sGroup = QT_TR_NOOP("File");
+	sMenuText = QT_TR_NOOP("MultipleTargetGeneticAlgorithm");
+	sToolTipText = QT_TR_NOOP("MultipleTargetGeneticAlgorithm");
+	sWhatsThis = "Std_Paralle_Run";
+	sStatusTip = QT_TR_NOOP("SmartContorl");
+	sPixmap = "smartContorl";
+}
+
+void StdCmdMultipleTargetGeneticAlgorithm::activated(int iMsg)
+{
+	Q_UNUSED(iMsg);
+	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
+	getGuiApplication()->sendMsgToActiveView("showMultipleTargetGeneticAlgorithm");
+}
+bool StdCmdMultipleTargetGeneticAlgorithm::isActive(void)
+{
+	return getGuiApplication()->sendHasMsgToActiveView("showMultipleTargetGeneticAlgorithm");
+}
 /*添加组件*/
 DEF_STD_CMD_A(StdCmdSmartCalc);
 StdCmdSmartCalc::StdCmdSmartCalc()
@@ -2467,6 +2492,7 @@ void CreateDocCommands(void)
     //rcCmdMgr.addCommand(new StdCmdDataVisualizationPlotDisplayGridMod);
     rcCmdMgr.addCommand(new StdCmdSmartCalc());
     rcCmdMgr.addCommand(new StdCmdGeneticAlgorithm());
+    rcCmdMgr.addCommand(new StdCmdMultipleTargetGeneticAlgorithm());
 
     rcCmdMgr.addCommand(new StdCmdSave());
     rcCmdMgr.addCommand(new StdCmdSaveAs());

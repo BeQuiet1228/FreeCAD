@@ -3,6 +3,7 @@
 #include "SmartContorlUI.h"
 #include "smartCalc.h"
 #include "GeneticAlgorithmUI.h"
+#include "MultipleTargetGeneticAlgorithmUI.h"
 void SmartContorlInterface::init(){
 
 	auto contorl = ContorlInterface::GetInstance();
@@ -60,6 +61,14 @@ QWidget* SmartContorlInterface::createCalcWidget(const std::string& path)
 QWidget* SmartContorlInterface::creatGeneticAlgorithmUI(const std::string& path)
 {
 	auto contorlUi = new GeneticAlgorithmUI();
+	contorlUi->setTextPath(path);
+	contorlUi->loadParameterXml();
+	return contorlUi;
+}
+
+QWidget* SmartContorlInterface::creatMultipleGeneticAlgorithmUI(const std::string& path)
+{
+	auto contorlUi = new MultipleTargetGeneticAlgorithmUI();
 	contorlUi->setTextPath(path);
 	contorlUi->loadParameterXml();
 	return contorlUi;
