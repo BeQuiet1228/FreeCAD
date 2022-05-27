@@ -2,6 +2,7 @@
 #include "Contorl\ContorlInterface.h"
 #include "SmartContorlUI.h"
 #include "smartCalc.h"
+#include "GeneticAlgorithmUI.h"
 void SmartContorlInterface::init(){
 
 	auto contorl = ContorlInterface::GetInstance();
@@ -54,6 +55,14 @@ QWidget* SmartContorlInterface::createCalcWidget(const std::string& path)
 	calc->show();
 	calc->setAttribute(Qt::WA_DeleteOnClose);
 	return calc;
+}
+
+QWidget* SmartContorlInterface::creatGeneticAlgorithmUI(const std::string& path)
+{
+	auto contorlUi = new GeneticAlgorithmUI();
+	contorlUi->setTextPath(path);
+	contorlUi->loadParameterXml();
+	return contorlUi;
 }
 
 #include "moc_SmartContorlInterface.cpp"

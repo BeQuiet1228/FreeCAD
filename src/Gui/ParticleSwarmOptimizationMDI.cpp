@@ -5,7 +5,7 @@
 //#include "SmartContorl/smartCalc.h"
 //#include "SmartContorl/SmartContorl.h"
 #include "SmartContorl/SmartContorlUI.h"
-#include "SmartContorl/smartCalc.h"s
+#include "SmartContorl/smartCalc.h"
 ParticleSwarmOptimizationMDI::ParticleSwarmOptimizationMDI(DocumentPic* pcDocument, QWidget* parent)
 	:AlgorMDIInter(pcDocument,parent), smartControlWidget(nullptr)
 {
@@ -58,3 +58,26 @@ bool ProcessingBatchView::isClose()
 	bool ok = saveWidget->getRunning();
 	return (!ok);
 }
+
+
+GeneticAlgorithmView::GeneticAlgorithmView(DocumentPic* pcDocument, QWidget* parent /*= 0*/)
+	: ParticleSwarmOptimizationMDI(pcDocument, parent)
+{
+	setWindowTitle(gbkStdstringToQstring("ÒÅ´«Ëã·¨"));
+}
+
+GeneticAlgorithmView::~GeneticAlgorithmView()
+{
+
+}
+
+void GeneticAlgorithmView::init(const std::string& path)
+{
+	QWidget* w = SmartContorlInterface::creatGeneticAlgorithmUI(path);
+	setCentralWidget(w);
+	if (nullptr != w)
+	{
+		smartControlWidget = w;
+	}
+}
+

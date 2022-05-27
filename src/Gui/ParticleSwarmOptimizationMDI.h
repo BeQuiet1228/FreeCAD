@@ -14,6 +14,16 @@ public:
 	QWidget* smartControlWidget;
 };
 
+class GeneticAlgorithmView :public ParticleSwarmOptimizationMDI {
+public:
+	GeneticAlgorithmView(DocumentPic* pcDocument, QWidget* parent = 0);
+	~GeneticAlgorithmView();
+public:
+	//初始化优化模块
+	void init(const std::string& path);
+
+};
+
 class ProcessingBatchView :public AlgorMDIInter {
 public:
 	ProcessingBatchView(DocumentPic* pcDocument, QWidget* parent = 0);
