@@ -2,7 +2,7 @@
 #include "DataInformationGetter.h"
 namespace DV {
 	ParticleData::ParticleData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
-		:DirData(h5Data, mod), isLoadPoint(false)
+		:DirData(h5Data, mod), isLoadPoint(false),typeSize(0)
 	{
 
 	}
@@ -104,6 +104,18 @@ namespace DV {
 
 		isLoadPoint = true;
 
+		//载入粒子颜色信息
+		 std::vector<std::string> headList =  this->h5Data.headList;
+		 if (headList.size() < 5)
+			 return true;
+		 QString str(headList[4].c_str());
+		 str = str.split("=").at(1);
+		 auto list = str.split(" ");
+		 if (list.size() < 2)
+			 return true;
+		 typeSize = list.at(0).toInt();
+		 for (int i = 1; i < list.size(); i++)
+			 typeColors.push_back(list[i].toStdString());
 		return true;
 	}
 

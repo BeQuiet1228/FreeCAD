@@ -43,7 +43,8 @@ namespace DV {
 		virtual void restorDeriveData() {};
 	public:
 		std::vector<Particle> particles;
-
+		int typeSize;
+		std::vector<std::string> typeColors;
 	private:
 		//是否已经载入点数据
 		bool isLoadPoint;
