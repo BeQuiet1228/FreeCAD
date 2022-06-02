@@ -99,43 +99,9 @@ class FileView(PySide.QtGui.QWidget):
 
     def updateM3dFile(self):
         pass
-        # # 获得m3d的util
-        # fileUtil = File.FileCommand.M3DFile.M3DFileUtil.M3DFileUtil()
-        # # 获得最近的m3d字符串
-        # text = fileUtil.getLatestM3DFileStr()
-        # # 进行文本的更新
-        # self.ui.textEdit.setText(text)
-        # # self.updateText(str)
-        # # 写文件
-        # fileUtil.writeToFile(isRefresh=True)
 
     def showEvent(self, event):
         pass
-        # # 对于一个m3d文件显示界面，测试可知，添加->显示->前一个窗口activate三个操作后，showEvent被调用了三次
-        # # 之后显示该界面调用一次showEvent, 切换到别的界面时又调用一次showEvent
-        # # 通过showNum来获得刚好显示界面的shoeEvent，以避免频繁刷新
-        #
-        # self.showNum = self.showNum + 1
-        #
-        # if self.showNum > 3:
-        #     # 表示已经新建完m3d文件的显示界面
-        #     if self.showNum == 4:
-        #         # 表示切换m3d的显示界面
-        #
-        #         # 获得m3d的util
-        #         fileUtil = File.FileCommand.M3DFile.M3DFileUtil.M3DFileUtil()
-        #         # 获得最近的m3d字符串
-        #         # App.Console.PrintError('\n进入更新showevent函数\n')
-        #         str = fileUtil.getLatestM3DFileStr()
-        #         # 进行文本的更新
-        #         self.ui.textEdit.setText(str)
-        #         # self.updateText(str)
-        #         # 写文件
-        #         fileUtil.writeToFile(isRefresh=True)
-        #
-        #     else:
-        #         # 表示切换到其余的界面，重新将showNum置为等待切换的状态
-        #         self.showNum = 3
 
     def setTitle(self, src):
         # 更换窗口的名字

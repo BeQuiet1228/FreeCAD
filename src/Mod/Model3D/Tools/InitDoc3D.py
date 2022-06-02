@@ -48,19 +48,6 @@ def initGroup():
     model_list.append(createInitGroup("Cylinder", "圆柱体"))
     model_list.append(createInitGroup("SpecialCone", "圆锥体"))
     model_list.append(createInitGroup("Spherical", "球体"))
-    # model_list.append(createInitGroup("Annular_Section", "环形区域体"))
-    # model_list.append(createInitGroup("Extruded", "挤出体"))
-    # model_list.append(createInitGroup("Function", "函数体"))
-    # model_list.append(createInitGroup("Revolution", "旋转体"))
-    # model_list.append(createInitGroup("Helical", "螺旋体"))
-    # model_list.append(createInitGroup("Parallelepipedal", "平行六面体"))
-    # model_list.append(createInitGroup("Pyramid", "金字塔体"))
-    # model_list.append(createInitGroup("Rhombus", "菱形体"))
-    # model_list.append(createInitGroup("Tetrahedron", "四面体"))
-    # model_list.append(createInitGroup("Toroidal_Section", "半圆环体"))
-    # model_list.append(createInitGroup("Wedge", "楔形体"))
-    # model_list.append(createInitGroup("Array", "阵列体"))
-    # model_list.append(createInitGroup("Draft", "草图"))
 
     # 边界设置二级目录
     bound_list = []
@@ -78,7 +65,6 @@ def initGroup():
     obs_list.append(createInitGroup("TimeObs", "时间观测"))
     obs_list.append(createInitGroup("VectorObs", "矢量观测"))
     obs_list.append(createInitGroup("ParticleObs", "粒子观测"))
-    # obs_list.append(createInitGroup("ControlObs", "控制观测"))
     obs_list.append(createInitGroup("AreaObs", "空间观测"))
     obs_list.append(createInitGroup("DefaultTimer", "默认定时器"))
     obs_list.append(createInitGroup("CustomTimer", "新建定时器"))
@@ -303,12 +289,6 @@ class DocumentObservers(object):
         if hasattr(obj, "Type") and obj.Type == ObjectTools.ObjectType.Vol_Array and \
                 obj.isSetEnabled and hasattr(obj, "BaseType"):
             FreeCAD.ActiveDocument.removeObject(obj.BaseType)
-        # 把obj删除同时把他的分组删除
-        # obj_list = ["Vol_Toroidal_Section", "Vol_Parallelepipedal", "Vol_Annular_Section", "Vol_Function",
-        #             "Vol_Pyramid", "Vol_Wedge", "Vol_Rhombus", "Vol_Extruded", "Vol_Tetrahedron", "Vol_Helical",
-        #             "Vol_Revolution", "Vol_Draft_Revolution", "Vol_Draft_Revolution", "Vol_Array", "Vol_ParamArray"]
-        # if len(obj.InList) and hasattr(obj.InList[0], "Group") and len(obj.InList[0].Group) == 1 and obj.Type in obj_list:
-        #     FreeCAD.ActiveDocument.removeObject(obj.InList[0].Name)
 
     def slotChangedObject(self, obj, prop):
         if prop == "Type":
@@ -318,20 +298,3 @@ class DocumentObservers(object):
 
         import json
         FreeCAD.ActiveDocument.License = json.dumps('True')
-
-    # 文档关闭，关闭物理设置与任务控制面板
-    # def slotDeletedDocument(self, doc):
-    #     # 移除所有的监听
-    #     # FreeCAD.removeAllDocumentObserver()
-    #     import os
-    #     if os.path.exists(FreeCAD.clientUserDir()):
-    #         pass
-        # try:
-        #     import Visualization.VisualizationCommand.VisualizationTree
-        #     import Visualization.VisualizationCommand.VisualizationFigTree
-        #     # 清除保存的plot对象
-        #     Visualization.VisualizationCommand.VisualizationTree.cloePlotTree()
-        #     Visualization.VisualizationCommand.VisualizationFigTree.showfigTree()
-        # except:
-        #     FreeCAD.Console.PrintError("Wrong in DocumentTool.slotDeletedDocument\n")
-

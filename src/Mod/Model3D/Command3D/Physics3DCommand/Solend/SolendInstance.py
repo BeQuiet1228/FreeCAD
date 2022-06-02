@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 import FreeCAD
-from Model3D.Tools import Tools3D, ObjectTools, InitDoc3D
+from Model3D.Tools import ObjectTools, InitDoc3D
 
 
 class Solend(object):
@@ -15,7 +15,6 @@ class Solend(object):
     def __setProperty(self):
 
         # 此处type通过一个枚举类来进行赋值
-        # self.obj.addProperty("App::PropertyString", "Type").Type = ObjectTools.ObjectType.SOLEND
         self.obj.addProperty("App::PropertyString", "Type").Type = ObjectTools.ObjectType.SOLE
         # stringList是一个列表，类型箔片会有很多指定类型
         self.obj.addProperty("App::PropertyString", "uniformParam").uniformParam = "None"

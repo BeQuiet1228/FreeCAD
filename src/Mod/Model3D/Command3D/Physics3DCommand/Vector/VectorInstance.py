@@ -15,7 +15,6 @@ class Vector(object):
         # 此处type通过一个枚举类来进行赋值
         self.obj.addProperty("App::PropertyString", "Type").Type = ObjectTools.ObjectType.Vector
         # stringList是一个列表，正交投影面会有很多指定面
-        # self.obj.addProperty("App::PropertyString", "orthogonalProjectionLine").orthogonalProjectionLine = "未指定"
         self.obj.addProperty("App::PropertyString", "orthogonalProjectionPlane").orthogonalProjectionPlane = "未指定"
         # 有多种观测场，所以用StringList
         self.obj.addProperty("App::PropertyString", "observationField1").observationField1 = "E1"

@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 import traceback
 import PhasSpaceDialog
-from PySide import QtGui
-import FreeCAD
-import FreeCADGui
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
 from Model3D.Tools import Tools3D, ObjectTools
 

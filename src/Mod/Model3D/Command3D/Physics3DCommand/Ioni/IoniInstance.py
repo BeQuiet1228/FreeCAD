@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import FreeCAD
-from Model3D.Tools import Tools3D, ObjectTools, InitDoc3D
+from Model3D.Tools import ObjectTools, InitDoc3D
 
 
 class Ioni(object):

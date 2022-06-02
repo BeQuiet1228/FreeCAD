@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import FreeCAD
-import FreeCADGui
 from Model3D.Tools.ObjectTools import ObjectType
 from Model3D.Tools import ObjectTools
 

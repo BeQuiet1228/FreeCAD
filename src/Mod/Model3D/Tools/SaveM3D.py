@@ -43,10 +43,8 @@ class InitWhenOpenFcStd3d:
             # 如果当前工程没有对应的M3D显示界面则创建一个新的
             FreeCADGui.runCommand("CreateM3D")
 
-            # Modeling.Modeling2D.Modeling2DCommand.Grid.GridCommand.showGrid()
             FreeCADGui.ActiveDocument.ActiveView.setAxisCross(True)
             showAllObjs()
-            # FreeCADGui.runCommand("AdjustView")
         except:
             FreeCAD.Console.PrintError("初始化文件失败\n")
 

@@ -530,20 +530,6 @@ def setPlaceToObj(obj, attr, place_str="0"):
         obj.setExpression(attr, None)
         obj.setExpression(attr, place)
         obj.setExpression(attr, place)
-        # sayz(str(getattr(obj, attr))+"22222222222222")
-        # sayz(attr + ":\t" + str(place) + "\tvalue:\t" + str(getattr(obj, attr)))
-        # else:
-        #     # 像”Point.x“这样的attr并不可以被setattr()直接赋值，需要attr拆分赋值
-        #     obj.setExpression(attr, None)
-        #     if '.' not in attr:
-        #         setattr(obj, attr, place)
-        #     else:
-        #         attr_list = attr.split('.')
-        #         # 这里暂时仅处理长度为2的情况
-        #         if len(attr_list) == 2:
-        #             setattr(getattr(obj, attr_list[0]), attr_list[1], place)
-        #         else:
-        #             raise Exception("赋值出现异常，异常位置:ToolsUI.py")
     except:
         sayz(obj.Label + "--属性：  " + attr + "   坐标:   " + str(place))
         sayz(traceback.format_exc())
@@ -801,10 +787,6 @@ def getHelperValueWithPoly(obj):
         setattr(obj, "user_point" + str(i + 1) + "_y", str(pos[1].getValueAs(length)) + length)
         setattr(obj, "user_point" + str(i + 1) + "_z", str(pos[2].getValueAs(length)) + length)
 
-        # setattr(obj, "user_point" + str(i + 1) + "_z", str(pos[2]) + "m")
-        # setattr(obj, "user_point" + str(i + 1) + "_x", str(pos[0]) + "m")
-        # setattr(obj, "user_point" + str(i + 1) + "_y", str(pos[1]) + "m")
-        # setattr(obj, "user_point" + str(i + 1) + "_z", str(pos[2]) + "m")
 
 def getHelperValueWith(obj):
         length = ExpressionTools3D.currentLengthUnits()
@@ -879,16 +861,13 @@ def pointToRecVec(vec):
     """
     coordinateType = FreeCAD.ActiveDocument.CoordinateSystem
     if coordinateType == 'Rectangular':
-        # point格式：(X,Y,Z)
         return vec
     elif coordinateType == 'Polar':
-        # point格式：(R,θ,Z)
         pX = vec.x * math.cos(vec.y * math.pi / 180.0)
         pY = vec.x * math.sin(vec.y * math.pi / 180.0)
         pZ = vec.z
         return FreeCAD.Vector(pX, pY, pZ)
     elif coordinateType == 'Cylindrical':
-        # point格式：(Z,R,θ)
         pX = vec.y * math.cos(vec.z * math.pi / 180.0)
         pY = vec.y * math.sin(vec.z * math.pi / 180.0)
         pZ = vec.x
@@ -903,11 +882,6 @@ def setLineEditsCompleter(lineEdits):
     '''
     for lineEdit in lineEdits:
         lineEdit.setcompleterlist(getParamsList())
-        # completer=QCompleter()
-        # lineEdit.setCompleter(completer)
-        # model=QStringListModel()
-        # model.setStringList(getParamsList())
-        # completer.setModel(model)
 
 
 def getParamsList():
@@ -928,11 +902,9 @@ def getAllLineEdits(ui):
     @brief:获得UI中的所有LineEdit控件对象list
     '''
     lineEdits=[]
-    # sayz(str(dir(ui)))
     for attr in dir(ui):
         if isinstance(getattr(ui, attr), Completer.AutoCompleteEdit):
             lineEdits.append(getattr(ui,attr))
-    # sayz("补全长度：\t" + str(len(lineEdits)))
     return lineEdits
 
 

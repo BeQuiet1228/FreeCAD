@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import FreeCADGui
 import FreeCAD
-from Model3D.Tools import Tools3D,ObjectTools
-from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
+from Model3D.Tools import Tools3D
 import ModelingInfoDialog
 from PySide import QtGui
 import traceback

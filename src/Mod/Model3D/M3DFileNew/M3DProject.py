@@ -43,12 +43,6 @@ def ModelingInfo(obj):
     return temp_m3d
 
 
-# def Parameter():
-#     temp_m3d_p = ""
-#
-#     return temp_m3d_p
-
-
 def NetStepSetting(obj):
     """
     工作区间设置

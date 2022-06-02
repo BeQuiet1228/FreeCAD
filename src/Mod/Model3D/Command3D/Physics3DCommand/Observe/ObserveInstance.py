@@ -18,7 +18,6 @@ class Observe(object):
         # 观测类型有多种，用StringList
         self.obj.addProperty("App::PropertyString", "ObservationType").ObservationType = "时间观测点"
         # 根据观测类型选择对应的点，线，面
-        # self.obj.addProperty("App::PropertyString", "optionType").optionType = "未指定"
         self.obj.addProperty("App::PropertyString", "orthogonalProjectionPlane").orthogonalProjectionPlane = "未指定"
         self.obj.addProperty("App::PropertyString", "alias").alias = ""
         self.obj.addProperty("App::PropertyBool", "isField").isField = True

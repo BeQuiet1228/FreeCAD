@@ -23,5 +23,3 @@
 # *                                                                         *
 # ***************************************************************************/
 
-# FreeCAD.addImportType("My own format (*.own)", "importOwn")
-# FreeCAD.addExportType("My own format (*.own)", "importOwn")

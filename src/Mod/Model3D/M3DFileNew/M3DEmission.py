@@ -1,6 +1,5 @@
 # encoding:utf-8
 # 此文件包括：束发射，爆炸式发射，回旋发射，粒子设置，强场发射，热致发射，二次发射，气体电离
-import FreeCAD
 import M3DShare
 from Model3D.Tools import Tools3D
 

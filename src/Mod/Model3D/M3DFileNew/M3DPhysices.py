@@ -1,6 +1,6 @@
 # encoding:utf-8
 # 此文件存放波导端口、吸收边界、对称边界、螺旋线圈、空间电流源、箔片、电感、新型材料定义、宏粒子合并、新型粒子定义、MARK
-import M3DObject, M3DShare
+import M3DShare
 import FreeCAD
 from Model3D.Tools import Tools3D, ObjectTools
 
@@ -31,20 +31,6 @@ def Port(obj):
     functionParameters = M3DShare.getCoodinateParaWithPort()
     if obj.orthogonalProjectionPlane == "未指定":
         portName = obj.Label
-        # temp_m3d += "AREA"+blankSpace+obj.Label + blankSpace+"CONFORMAL"+blankSpace
-        # 这里判断一下，起点和终点。把数值大的当作终点
-        # temp = ""
-        # if obj.isCheckNormal1:
-        #     temp += obj.point1_Y.replace(' ', '') + "-" + obj.point2_Y.replace(' ', '')
-        # else:
-        #     temp += obj.point1_X.replace(' ', '') + "-" + obj.point2_X.replace(' ', '')
-        # obj.setExpression("helper", temp)
-        # if float(obj.helper) >= 0:
-        #     temp_m3d += newLine + tab + obj.point2_X + comma + obj.point2_Y
-        #     temp_m3d += newLine + tab + obj.point1_X + comma + obj.point1_Y
-        # else:
-        #     temp_m3d += newLine + tab + obj.point1_X + comma + obj.point1_Y
-        #     temp_m3d += newLine + tab + obj.point2_X + comma + obj.point2_Y
         point1_x_value = str(obj.point1_X).replace(' ', '')
         point1_y_value = str(obj.point1_Y).replace(' ', '')
         point1_z_value = str(obj.point1_Z).replace(' ', '')
@@ -58,16 +44,12 @@ def Port(obj):
         temp2 = ""
         temp3 = ""
         # 判断起点和终点
-        # helper1 = int(obj.point1_X) - int(obj.point2_X)
-        # helper2 = int(obj.point1_Y) - int(obj.point2_Y)
-        # helper3 = int(obj.point1_Y) - int(obj.point2_Y)
         temp1 += obj.point1_X.replace(' ', '') + "-" + obj.point2_X.replace(' ', '')
         temp2 += obj.point1_Y.replace(' ', '') + "-" + obj.point2_Y.replace(' ', '')
         temp3 += obj.point1_Z.replace(' ', '') + "-" + obj.point2_Z.replace(' ', '')
         obj.setExpression("helper1", temp1)
         obj.setExpression("helper2", temp2)
         obj.setExpression("helper3", temp3)
-        # coodinate = FreeCAD.ActiveDocument.CoordinateSystem
 
         if obj.isCheckNormal1:
             if obj.helper2.Value <= 0 and obj.helper3.Value <= 0:
@@ -116,9 +98,6 @@ def Port(obj):
                 temp_m3d += newLine + tab + point1_x_value + comma + point1_y_value + comma + point1_z_value + semicolon + newLine
             else:
                 Tools3D.sayz(u"请输入正确的坐标值")
-        # temp_m3d += M3DShare.PointCoordinates().point1(obj)
-        # temp_m3d += M3DShare.PointCoordinates().point2(obj)
-        # temp_m3d += semicolon+newLine
         temp_m3d_mark += M3DShare.Mark(obj)
     else:
         portName = obj.orthogonalProjectionPlane
@@ -172,7 +151,6 @@ def Port(obj):
                                                                                                        '') + comma + obj.point1_Z
                             temp_m3d += newLine + tab + obj.point2_X + comma + str(obj.helper0/2).replace(' ',
                                                                                                        '') + comma + obj.point2_Z
-                    # elif coodinate == u"Cylinder":
                     else:
                         if obj.isCheckNormal1:
                             temp_m3d += newLine + tab + obj.point1_X + comma + obj.point1_Y + comma + str(obj.helper0/2).replace(
@@ -228,7 +206,6 @@ def Port(obj):
                                                                                                         '') + comma + obj.point1_Z
                         temp_m3d += newLine + tab + obj.point2_X + comma + str(obj.helper0 / 2).replace(' ',
                                                                                                         '') + comma + obj.point2_Z
-                # elif coodinate == u"Cylinder":
                 else:
                     if obj.isCheckNormal1:
                         temp_m3d += newLine + tab + obj.point1_X + comma + obj.point1_Y + comma + str(
@@ -250,9 +227,6 @@ def Port(obj):
                         temp_m3d += newLine + tab + str(obj.helper / 2).replace(' ',
                                                                                 '') + comma + obj.point2_Y + comma + obj.point2_Z
                 temp_m3d += semicolon + newLine
-            # temp_m2d += M2dObject.PointCoordinates().point1(obj)
-            # temp_m2d += M2dObject.PointCoordinates().point2(obj)
-            # temp_m3d += semicolon + newLine
             temp_m3d_nor += newLine+tab+"NORMALIZATION"+blankSpace+"VOLTAGE"+blankSpace+obj.normalization
         if obj.isCircuit:
             temp_m3d_cir += newLine + tab + "CIRCUIT" + blankSpace + obj.circuit+blankSpace+portName\
@@ -284,11 +258,6 @@ def Port(obj):
             temp_m3d_pap += "FUNCTION"+blankSpace+portName+".GE3"+functionParameters+obj.GE3+semicolon+newLine
             if obj.isCheckFT and (obj.isCheckGE1 == False):
                 temp_m3d_FT += blankSpace + "E3" + blankSpace + portName + ".GE3"
-            #     Tools3D.sayz("运行的是哪一个222")
-            # elif obj.isCheckFT and obj.isCheckGE1:
-            #     temp_m3d_FT += newLine + tab + "INCOMING" + blankSpace + portName + ".F" + blankSpace + "FUNCTION"
-            #     temp_m3d_FT += blankSpace + "E3" + blankSpace + portName + ".GE3"
-            #     Tools3D.sayz("运行的是哪一个22233333")
     elif obj.isCheckNormal3 == True:
         if obj.isCheckGE2:
             temp_m3d_pap += "FUNCTION" + blankSpace + portName + ".GE1" + functionParameters + obj.GE2 + semicolon + newLine
@@ -299,21 +268,10 @@ def Port(obj):
             temp_m3d_pap += "FUNCTION" + blankSpace + portName + ".GE2" + functionParameters + obj.GE3 + semicolon + newLine
             if obj.isCheckFT and (obj.isCheckGE1 == False):
                 temp_m3d_FT += blankSpace + "E2" + blankSpace + portName + ".GE2"
-            # elif obj.isCheckFT and obj.isCheckGE1:
-            #     temp_m3d_FT += newLine + tab + "INCOMING" + blankSpace + portName + ".F" + blankSpace + "FUNCTION"
-            #     temp_m3d_FT += blankSpace + "E2" + blankSpace + portName + ".GE2"
     else:
         print("法向选取有误")
         temp_m3d_pap += "法向选取有误"
 
-    # if obj.isCheckGE3:
-    #     temp_m3d_pap += "FUNCTION" + blankSpace+portName + ".GE3" + functionParameters + obj.GE3 + semicolon+newLine
-    #     if obj.isCheckFT:
-    #         if obj.isCheckGE2 == True or obj.isCheckGE1 == True:
-    #             temp_m3d_FT += blankSpace+"E3"+blankSpace+portName+".GE3"
-    #         else:
-    #             temp_m3d_FT += newLine + tab + "INCOMING" + blankSpace + portName + ".F" + blankSpace + "FUNCTION"
-    #             temp_m3d_FT += blankSpace + "E3" + blankSpace + portName + ".GE3"
     if obj.isCheckLapras:
         if obj.isCheckFT:
             temp_m3d_FT += newLine + tab + "INCOMING" + blankSpace + portName + ".F" + blankSpace + "LAPLACIAN" + blankSpace + str(obj.laprasNumbers)
@@ -496,15 +454,6 @@ def Driv(obj):
 
     if obj.sourceType == "点电流源":
         objname = "POINT"
-        # if obj.assignSource == "未指定":
-        #     temp_m3d += "POINT"+blankSpace+obj.Label+blankSpace+obj.point1_X+blankSpace+obj.point1_Y+semicolon+newLine
-        #     temp_m3d_pap += "FUNCTION" + blankSpace + obj.Label + functionParameters + obj.function + semicolon + newLine
-        #     temp_m3d_pap += "DRIVER" + blankSpace + obj.electricCurrentDensity + blankSpace + obj.Label + \
-        #                     ".JFUNC" + blankSpace + obj.Label + semicolon + newLine
-        # else:
-        #     temp_m3d_pap += "FUNCTION" + blankSpace + obj.Label + functionParameters + obj.function + semicolon + newLine
-        #     temp_m3d_pap += "DRIVER" + blankSpace + obj.electricCurrentDensity + blankSpace + obj.Label + ".JFUNC" \
-        #                 + blankSpace + obj.assignSource + semicolon + newLine
     elif obj.sourceType == "线电流源":
         objname = "LINE"
     elif obj.sourceType == "面电流源":

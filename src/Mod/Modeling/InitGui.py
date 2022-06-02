@@ -1,4 +1,6 @@
 import sys
+from DraftTools import translate
+
 with open(Dir + '/Common/Init.py', 'r') as f1:
     s1 = f1.read()
     exec(s1)

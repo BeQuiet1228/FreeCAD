@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import traceback
 import ObserveDialog
-from PySide import QtGui
-import FreeCAD
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
 from Model3D.Tools import Tools3D, ObjectTools
 
@@ -21,8 +19,6 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
         """
         self.default_point_list = []
         self.default_line_list = []
-        # self.default_plane_list = []
-        # self.default_volume_list = []
         self.default_plane_list = ["OSYS$MIDPLANE1", "OSYS$MIDPLANE2", "OSYS$MIDPLANE3"]
         self.default_volume_list = ["OSYS$VOLUME"]
         # 列表的初始化
@@ -207,7 +203,6 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             self.ui.cb_optionType.addItem("未指定")
             Orthogonal_list = []
             ComboBox_list = []
-            # objName = self.ui.cb_optionType.currentText()
             # 时间观测点
             if self.ui.cb_observationType.currentIndex() == 0:
                 Orthogonal_list = ObjectTools.getLabelsByType(ObjectTools.ObjectType.Point)

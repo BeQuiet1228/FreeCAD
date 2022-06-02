@@ -411,14 +411,10 @@ def initResultIbj(doc):
     obj.addProperty("Part::PropertyShapeHistory","History","","")
     obj.ViewObject.Proxy = 0
     FreeCADGui.getDocument(doc.Name).getObject(obj.Name).DisplayMode = u"Shaded"
-    # Gui.getDocument(doc.Name).getObject(obj.Name).Transparency=100
-    # Gui.getDocument(doc.Name).getObject(obj.Name).Selectable = False
-    # Gui.ActiveDocument.getObject(obj.Name).Visibility = False
     doc.recompute()
 
     obj.setEditorMode('Placement', 2)
     doc.recompute()
-    # FreeCADGui.ActiveDocument.getObject("ResultShape").Transparency = 95
     return obj
 
 
@@ -426,17 +422,11 @@ def parseExpressionStr(expressionStr):
     '''
     将表达式中带有参数的值转化为具体的值
     '''
-    # paramObj=ObjectsTools.getParamObj()
-    # propertyList=paramObj.PropertiesList
     paramObj = FreeCAD.ActiveDocument.Param
     propertyList = paramObj.PropertiesList
     propertyList = [i for i in propertyList if i not in ['DynamicData', 'ExpressionEngine', 'Label', 'Proxy', 'Type']]
     resultExpressionStr = expressionStr
     for propertyItem in propertyList:
-        # resultExpressionStr=re.sub("\\b"+propertyItem+"\\b",
-        #                             UnitTools.getDataOfDefauleUnit(str(getattr(paramObj,propertyItem))),
-        #                             resultExpressionStr,
-        #                             flags=re.IGNORECASE)
         if hasattr(getattr(paramObj, propertyItem), "Value"):
             resultExpressionStr = re.sub("\\b" + propertyItem + "\\b",
                                          str(getattr(paramObj, propertyItem).Value),

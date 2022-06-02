@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import NetStepSettingDialog
-from PySide import QtGui
-import FreeCAD
 import traceback
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
 from Model3D.Tools import Tools3D

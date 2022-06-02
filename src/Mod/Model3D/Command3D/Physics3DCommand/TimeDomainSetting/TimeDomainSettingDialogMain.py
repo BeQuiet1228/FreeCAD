@@ -3,7 +3,7 @@ import traceback
 import FreeCAD
 import FreeCADGui
 import PySide
-from PySide import QtGui, QtCore
+from PySide import QtGui
 from Model3D.Command3D.Physics3DCommand.TimeDomainSetting import TimeDomainSettingDialog
 from Model3D.Tools import Tools3D
 
@@ -47,9 +47,6 @@ class ShowDialog(QtGui.QDialog):
         self.close()
         FreeCADGui.runCommand("CreateM3D_new")
 
-    # def pushBtn_Cancel(self):
-    #     self.close()
-
     def loadData(self):
         try:
             # 计算时间
@@ -67,13 +64,6 @@ class ShowDialog(QtGui.QDialog):
             self.ui.lineEdit_setting_stride.setText(self.obj.setStep)
             # 粒子计算设置
             self.ui.checkBox_setting_chargeContinuity.setChecked(self.obj.isSetAlgorithm)
-
-            # # 宏粒子合并
-            # self.ui.checkBox_part.setChecked(self.obj.isMacroParticle)
-            # self.ui.comboBox.setCurrentIndex(
-            #     self.ui.comboBox.findText(self.obj.particleType))
-            # self.ui.lineEdit_every.setText(self.obj.every)
-            # self.ui.lineEdit_max.setText(self.obj.max)
 
             try:
                 # 粒子计算时间步间隔
@@ -111,12 +101,6 @@ class ShowDialog(QtGui.QDialog):
             self.obj.isRelativistic = self.ui.radioButton_re.isChecked()
             self.obj.isNonrelativistic = self.ui.radioButton_nonre.isChecked()
 
-            # # 宏粒子合并
-            # self.obj.isMacroParticle = self.ui.checkBox_part.isChecked()
-            # self.obj.particleType = self.ui.comboBox.currentText()
-            # self.obj.every = self.ui.lineEdit_every.text().replace(" ", "")
-            # self.obj.max = self.ui.lineEdit_max.text().replace(" ", "")
-
         except KeyError as reason:
             Tools3D.sayz("KeyError:" + str(reason))
         else:
@@ -148,40 +132,3 @@ class ShowDialog(QtGui.QDialog):
         else:
             self.ui.radioButton_re.setChecked(False)
             self.ui.radioButton_nonre.setChecked(True)
-
-    # def hideUpPart(self):
-    #     self.setWindowTitle(u"宏粒子合并")
-    #     # 隐藏上半部分
-    #     self.ui.label.hide()
-    #     self.ui.lineEdit_compute_time.hide()
-    #     self.ui.label_3.hide()
-    #     self.ui.groupBox_WorkSpace_X.hide()
-    #     self.ui.groupBox_WorkSpace_Y.hide()
-    #     # 显示下半部分
-    #     self.ui.checkBox_part.show()
-    #     self.ui.lineEdit_max.show()
-    #     self.ui.label_5.show()
-    #     self.ui.label_4.show()
-    #     self.ui.lineEdit_every.show()
-    #     self.ui.comboBox.show()
-    #     self.ui.label_6.show()
-    #     self.ui.pushButton_ok.show()
-    #
-    # def hideBelowPart(self):
-    #     self.setWindowTitle(u"时域计算设置")
-    #     # 显示上半部分
-    #     self.ui.label.show()
-    #     self.ui.lineEdit_compute_time.show()
-    #     self.ui.label_3.show()
-    #     self.ui.groupBox_WorkSpace_X.show()
-    #     self.ui.groupBox_WorkSpace_Y.show()
-    #     # 隐藏下半部分
-    #     self.ui.groupBox_WorkSpace_Y_2.hide()
-    #     self.ui.checkBox_part.hide()
-    #     self.ui.lineEdit_max.hide()
-    #     self.ui.label_5.hide()
-    #     self.ui.label_4.hide()
-    #     self.ui.lineEdit_every.hide()
-    #     self.ui.comboBox.hide()
-    #     self.ui.label_6.hide()
-    #     self.ui.pushButton_ok.show()

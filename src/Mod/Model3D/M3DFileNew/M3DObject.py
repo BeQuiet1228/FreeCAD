@@ -25,7 +25,6 @@ def Point(obj):
     point1_z_value = str(obj.user_point1_z).replace(' ', '')
     temp_m3d += "POINT" + blankSpace + obj.Label + blankSpace + point1_x_value + blankSpace + point1_y_value \
                 + blankSpace + point1_z_value + semicolon + newLine
-    # temp_m3d += Mark(obj)
     return temp_m3d, temp_m3d_pap
 
 
@@ -81,11 +80,6 @@ def ShareAttribute(obj):
     elif obj.Attribute == Attribute.Conductor:
         temp_m3d_pap += "CONDUCTOR" + blankSpace + obj.Label + semicolon + newLine
     elif obj.Attribute == Attribute.Custom:
-        # 如果不存在自定义属性，添加该属性
-        # if not hasattr(obj, "C_SIGMA"):
-        #     Tools2D.completionProperties(obj)
-        # # # 属性的ui没做下拉框，先生成一下简单的m2d。等做了属性的ui,再打开后续的代码
-        # temp_m2d_pap += "CUSTOM" + blankSpace + obj.Label + semicolon + newLine
         if obj.C_SIGMA == "Isotropy":
             temp_m3d_pap += "CONDUCTANCE" + blankSpace + obj.Label + blankSpace + obj.SIGMA1 + semicolon + newLine
         elif obj.C_SIGMA == "Anisotropy":
@@ -149,7 +143,6 @@ def Line(obj):
     temp_m3d += "LINE" + blankSpace + obj.Label + blankSpace + "OBLIQUE"
     temp_m3d += CoordinatesToObject(obj)
     temp_m3d += semicolon + newLine
-    # temp_m3d += Mark(obj)
     return temp_m3d, temp_m3d_pap
 
 
@@ -172,7 +165,6 @@ def LineConformal(obj):
             temp = obj.Point1X - obj.Point2X
         elif obj.Normal == "Y" or obj.Normal == "y":
             temp = obj.Point1Y - obj.Point2Y
-        # elif obj.normal == "Z" or obj.normal == "z":
         else:
             temp = obj.Point1Z - obj.Point2Z
     elif coodinate == u"Polar":
@@ -180,7 +172,6 @@ def LineConformal(obj):
             temp = obj.Point1X - obj.Point2X
         elif obj.Normal == "Theta":
             temp = obj.Point1Y - obj.Point2Y
-        # elif obj.normal == "Z" or obj.normal == "z":
         else:
             temp = obj.Point1Z - obj.Point2Z
     else:
@@ -188,7 +179,6 @@ def LineConformal(obj):
             temp = obj.Point1X - obj.Point2X
         elif obj.Normal == "R" or obj.Normal == "r":
             temp = obj.Point1Y - obj.Point2Y
-        # elif obj.normal == "Z" or obj.normal == "z":
         else:
             temp = obj.Point1Z - obj.Point2Z
 
@@ -198,10 +188,7 @@ def LineConformal(obj):
     else:
         temp_m3d += newLine + tab + point1_x_value + comma + point1_y_value + comma + point1_z_value
         temp_m3d += newLine + tab + point2_x_value + comma + point2_y_value + comma + point2_z_value
-    # temp_m2d += M2dObject.PointCoordinates().point1(obj)
-    # temp_m2d += M2dObject.PointCoordinates().point2(obj)
     temp_m3d += semicolon + newLine
-    # temp_m3d += Mark(obj)
     return temp_m3d, temp_m3d_pap
 
 
@@ -277,7 +264,6 @@ def AreaComformal(obj):
 
     else:
         Tools3D.sayz("选取法向错误")
-    # temp_m3d += Mark(obj)
     return temp_m3d, temp_m3d_pap
 
 
@@ -357,7 +343,6 @@ def Rectangle(obj):
             temp_m3d += newLine + tab + point1_x_value + comma + point1_y_value + comma + point1_z_value + semicolon + newLine
         else:
             Tools3D.sayz(u"请输入正确的坐标值")
-    # temp_m3d += Mark(obj)
     return temp_m3d, temp_m3d_pap
 
 
@@ -374,7 +359,6 @@ def AreaPolygonal(obj):
         temp_m3d += newLine + tab
     temp_m3d += getattr(obj, "user_point1_x").replace(' ', '') + comma + getattr(obj, "user_point1_y").replace(' ', '') \
                 + comma + getattr(obj, "user_point1_z").replace(' ', '') + semicolon + newLine
-    # temp_m3d += Mark(obj)
     return temp_m3d, temp_m3d_pap
 
 
@@ -387,7 +371,6 @@ def AreaFunction(obj):
     temp_m3d += newLine + tab + obj.Expression
     temp_m3d += newLine + tab + Precison_value
     temp_m3d += semicolon + newLine
-    # temp_m3d += Mark(obj)
     return temp_m3d, temp_m3d_pap
 
 
@@ -484,9 +467,6 @@ def VolToroidal_Section(obj):
         point4_y_value = str(obj.user_point4_y).replace(' ', '')
         point4_z_value = str(obj.user_point4_z).replace(' ', '')
         temp_m3d += newLine + tab + point4_x_value + comma + point4_y_value + comma + point4_z_value
-    # temp_m3d += CoordinatesToObject(obj)
-    # temp_m3d += newLine + tab + point3_x_value + comma + point3_y_value + comma + point3_z_value
-    # temp_m3d += newLine + tab + point4_x_value + comma + point4_y_value + comma + point4_z_value
     temp_m3d += semicolon + newLine
     temp_m3d += Mark(obj)
     temp_m3d_pap += ShareAttribute(obj)
@@ -550,8 +530,6 @@ def VolParallelepipedal(obj):
 
     temp_m3d += "VOLUME" + blankSpace + obj.Label + blankSpace + "PARALLELEPIPEDAL"
     temp_m3d += CoordinatesToObject(obj)
-    # temp_m3d += newLine + tab + point3_x_value + comma + point3_y_value + comma + point3_z_value
-    # temp_m3d += newLine + tab + point4_x_value + comma + point4_y_value + comma + point4_z_value
     temp_m3d += semicolon + newLine
     temp_m3d += Mark(obj)
     temp_m3d_pap += ShareAttribute(obj)
@@ -563,9 +541,6 @@ def VolPyramid(obj):
     temp_m3d_pap = ""
     temp_m3d += "VOLUME" + blankSpace + obj.Label + blankSpace + "ANNULAR"
     temp_m3d += CoordinatesToObject(obj)
-    # temp_m3d += newLine + tab + point3_x_value + comma + point3_y_value + comma + point3_z_value
-    # temp_m3d += newLine + tab + point4_x_value + comma + point4_y_value + comma + point4_z_value
-    # temp_m3d += newLine + tab + point5_x_value + comma + point5_y_value + comma + point5_z_value
     temp_m3d += semicolon + newLine
     temp_m3d += Mark(obj)
     temp_m3d_pap += ShareAttribute(obj)
@@ -746,7 +721,6 @@ def ParamArray(obj):
                    + comma + list[11] + comma + list[12] + comma + list[13] + semicolon + newLine
     else:
         pass
-    # basedata=list[0]+list[1]+list[2]+list[3]+list[4]+list[5]
     temp_m3d += basedata
     if obj.isMarkX:
         temp_m3d += "MARK" + blankSpace + obj.Label + "'i'" + blankSpace + "X1"
@@ -779,12 +753,6 @@ def VolDraft_Extrude(obj):
     curCoordinate = FreeCAD.ActiveDocument.CoordinateSystem
     baseAreaObj = ObjectTools.getObjByLabel(obj.Area)
     if hasattr(baseAreaObj, "Normal"):
-        # point1_x = str(baseAreaObj.Point1X).replace(' ', '')
-        # point1_y = str(baseAreaObj.Point1Y).replace(' ', '')
-        # point1_z = str(baseAreaObj.Point1Z).replace(' ', '')
-        # point2_x = str(baseAreaObj.Point2X).replace(' ', '')
-        # point2_y = str(baseAreaObj.Point2Y).replace(' ', '')
-        # point2_z = str(baseAreaObj.Point2Z).replace(' ', '')
         point1_x = str(baseAreaObj.user_point1_x).replace(' ', '')
         point1_y = str(baseAreaObj.user_point1_y).replace(' ', '')
         point1_z = str(baseAreaObj.user_point1_z).replace(' ', '')

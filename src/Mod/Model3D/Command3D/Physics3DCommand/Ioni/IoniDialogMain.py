@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import IoniDialog
 import traceback
-import FreeCAD
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
 from Model3D.Tools import Tools3D
 

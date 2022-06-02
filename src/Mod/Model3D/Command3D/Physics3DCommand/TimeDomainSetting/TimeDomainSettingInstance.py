@@ -31,12 +31,6 @@ class TimeDomainSetting(object):
         if not hasattr(self.obj, "Project"):
             self.obj.addProperty("App::PropertyString", "Project")
 
-        # 宏粒子合并对应属性
-        # self.obj.addProperty("App::PropertyBool", "isMacroParticle").isMacroParticle = False
-        # self.obj.addProperty("App::PropertyString", "particleType").particleType = "ALL"
-        # self.obj.addProperty("App::PropertyString", "every").every = "1"
-        # self.obj.addProperty("App::PropertyString", "max").max = "50000"
-
 
 def getObject():
     timeDomainSettingIns = TimeDomainSetting()

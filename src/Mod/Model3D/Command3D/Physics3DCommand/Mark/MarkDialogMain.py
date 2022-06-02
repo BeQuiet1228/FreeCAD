@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-import FreeCADGui
-import FreeCAD
-from Model3D.Tools import Tools3D,ObjectTools
+from Model3D.Tools import Tools3D, ObjectTools
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
 import MarkDialog
 
@@ -20,13 +18,6 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
         """
         try:
             # 获取当前坐标系及坐标系单位
-            # coord = Tools3D.getCoordinate()
-            # self.x = coord[0]
-            # self.y = coord[1]
-            # self.z = coord[2]
-            # self.x_unit = coord[3]
-            # self.y_unit = coord[4]
-            # self.z_unit = coord[5]
             self.refreshCombox()
 
         except:
@@ -57,8 +48,6 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
         从对话框读取数据，设置obj的属性值
         """
         try:
-            # self.obj.orthogonalProjectionPlane = self.ui.ComboBox_uniformParam.currentText()
-
             # Mark对象
             self.obj.markObject = self.ui.comboBox_obj.currentText()
             # Mark方向

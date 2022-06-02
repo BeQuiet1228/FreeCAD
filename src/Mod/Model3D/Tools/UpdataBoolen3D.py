@@ -28,25 +28,6 @@ class UpdateBoolean:
     @staticmethod
     def boolean(obj_list):
         startTime = time.time()
-        # if len(obj_list) == 0:
-        #     hideAllModels()
-        #     return
-        # for i in obj_list:
-        #     if i.Shape is None:
-        #         Tools3D.sayz("存在shape为None的体:  " + str(i.Label))
-        # basObj = obj_list[0].Shape
-        # for obj in obj_list:
-        #     # 部分模型数据出现错误时回到是isValid()抛出异常，需要提前判断当前Shape是否为空
-        #     if obj.Shape.isNull():
-        #         Tools3D.sayz(obj.Label + "的Shape存在问题，将其剔除布尔运算，请检查该模型")
-        #         continue
-        #     if not obj.Shape.isValid():
-        #         Tools3D.sayz(obj.Label + "的Shape存在问题，将其剔除布尔运算，请检查该模型")
-        #         continue
-        #     if obj.Attribute == ObjectTools.Attribute.Conductor or obj.Attribute == ObjectTools.Attribute.Custom:
-        #         basObj = UpdateBoolean.fuse(basObj, obj.Shape)
-        #     elif obj.Attribute == ObjectTools.Attribute.Vacuo or obj.Attribute == ObjectTools.Attribute.Void:
-        #         basObj = UpdateBoolean.cut(basObj, obj.Shape)
         if len(obj_list) == 0:
             hideAllModels()
             FreeCAD.ActiveDocument.ResultShape.ViewObject.Visibility = False

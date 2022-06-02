@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-import FreeCADGui
-import FreeCAD
-from Model3D.Tools import Tools3D,ObjectTools
+from Model3D.Tools import Tools3D
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
 import SolendDialog
 
@@ -30,10 +28,6 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             self.y_unit = coord[4]
             self.z_unit = coord[5]
 
-            # 根据坐标系初始化面板
-            # self.ui.checkBox_x.setText(self.x)
-            # self.ui.checkBox_y.setText(self.y)
-            # self.ui.checkBox_z.setText(self.z)
             self.ui.checkBox_x.clicked.connect(self.checkBox_x_clicked)
             self.ui.checkBox_y.clicked.connect(self.checkBox_y_clicked)
             self.ui.checkBox_z.clicked.connect(self.checkBox_z_clicked)
@@ -116,8 +110,6 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
         从对话框读取数据，设置obj的属性值
         """
         try:
-            # self.obj.orthogonalProjectionPlane = self.ui.ComboBox_uniformParam.currentText()
-
             self.obj.coreR = self.ui.LineEdit_CenterR.text()
             self.obj.coreZ = self.ui.LineEdit_CenterZ.text()
             self.obj.uniformParam = self.ui.ComboBox_uniformParam.currentText()
@@ -143,20 +135,6 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
 
     def setPrivateInfoToObj(self):
         pass
-
-    # def LineEdit_start_x_textChanged(self):
-    #     if not self.ui.LineEdit_end_x.isEnabled():
-    #         self.ui.LineEdit_end_x.setText(self.ui.LineEdit_start_x.text())
-    #
-    # # y法向修改时，修改起点即修改终点
-    # def LineEdit_start_y_textChanged(self):
-    #     if not self.ui.LineEdit_end_y.isEnabled():
-    #         self.ui.LineEdit_end_y.setText(self.ui.LineEdit_start_y.text())
-    #
-    # # z法向修改时，修改起点即修改终点
-    # def LineEdit_start_z_textChanged(self):
-    #     if not self.ui.LineEdit_end_z.isEnabled():
-    #         self.ui.LineEdit_end_z.setText(self.ui.LineEdit_start_z.text())
 
     def checkBox_x_clicked(self):
         if self.ui.checkBox_x.isChecked():

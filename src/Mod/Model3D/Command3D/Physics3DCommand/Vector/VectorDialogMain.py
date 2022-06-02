@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import traceback
 import VectorDialog
-import FreeCAD
-import FreeCADGui
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
 from Model3D.Tools import Tools3D, ObjectTools
 
@@ -83,7 +81,6 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
 
     def setInfoToObj(self):
         try:
-            # Tools3D.setLabelToObj(self.obj, self.ui.le_name.text())
             self.obj.Label = Tools3D.setLabel(self.ui.le_name.text())
             self.obj.orthogonalProjectionPlane = self.ui.ComboBox_Shadow.currentText()
             Tools3D.getUICoordinate(self.obj, self.ui)

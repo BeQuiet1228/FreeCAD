@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import FreeCADGui
 import FreeCAD
 from Model3D.Tools import Tools3D, ObjectTools
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
@@ -22,7 +21,6 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             #代码补全
             self.defaultValue = ["OSYS$MIDPLANE1","OSYS$MIDPLANE2","OSYS$MIDPLANE3"]
             # 这段代码暂时注释
-            # CompleterTools.setLineEditsCompleter(CompleterTools.getAllLineEdits(self.ui))
             self.ui.radioButton_forward.setChecked(True)
             # 获取当前坐标系及坐标系单位
             Tools3D.switchPointLabel(self.ui)

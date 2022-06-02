@@ -1,7 +1,5 @@
 # encoding:utf-8
 # 此文件存放等位图、矢量图、空间图、相空间图、时间图的m3d
-
-import FreeCAD
 import M3DShare
 
 blankSpace = " "
