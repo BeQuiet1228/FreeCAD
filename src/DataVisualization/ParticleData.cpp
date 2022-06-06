@@ -53,6 +53,28 @@ namespace DV {
 	*/
 	bool ParticleData::loadPointHard()
 	{
+		//载入粒子颜色信息
+		do {
+			std::vector<std::string> headList = this->h5Data.headList;
+			if (headList.size() < 5)
+				break;
+			QString str(headList[4].c_str());
+			str = str.simplified();
+			str = str.split("=").at(1);
+			auto list = str.split(" ");
+			if (list.size() < 2)
+				break;
+			typeSize = list.at(0).toInt();
+			typeColors.clear();
+			for (int i = 1; i < list.size(); i++)
+				typeColors.push_back(list[i].toStdString());
+			//判断是否重新
+			if(particleDisplaySwitch.size() != 0)
+				break;
+			for (int i = 0; i < typeSize; i++)
+				particleDisplaySwitch.push_back(true);
+		} while (0);
+
 		//载入原始数据
 		Data::ListValuesPtr listValues;
 		bool ok = autoModGetSourceData(listValues);
@@ -81,6 +103,7 @@ namespace DV {
 			setYTag(ytag);
 		}
 		//获取粒子数据
+		particles.clear();
 		Particle p;
 		Data::ValuesPtr values = *(listValues->begin());
 		for (unsigned int i = 2; i < values->size(); i = i + 3)
@@ -88,6 +111,13 @@ namespace DV {
 			p.d2 = values->at(i - yIndex);
 			p.d1 = values->at(i - xIndex);
 			p.type = values->at(i);
+
+			//新增
+			// 如果没有开启该类型粒子的显示，则不载入这个粒子的信息
+			//
+			if(!particleDisplaySwitch[p.type - 1])
+			continue;
+
 			particles.push_back(p);
 		}
 
@@ -104,18 +134,6 @@ namespace DV {
 
 		isLoadPoint = true;
 
-		//载入粒子颜色信息
-		 std::vector<std::string> headList =  this->h5Data.headList;
-		 if (headList.size() < 5)
-			 return true;
-		 QString str(headList[4].c_str());
-		 str = str.split("=").at(1);
-		 auto list = str.split(" ");
-		 if (list.size() < 2)
-			 return true;
-		 typeSize = list.at(0).toInt();
-		 for (int i = 1; i < list.size(); i++)
-			 typeColors.push_back(list[i].toStdString());
 		return true;
 	}
 
@@ -154,6 +172,28 @@ namespace DV {
 		title += DataInformationGetter::getObserveObejct(headList.at(2)) + end;
 
 		return title;
+	}
+
+	void ParticleData::setDisplayParticle(const int& index, const bool& b /*= true*/)
+	{
+		//防止越界调用
+		if (index < 0)
+			return;
+		if (index >= particleDisplaySwitch.size())
+			return;
+
+		particleDisplaySwitch[index] = b;
+	}
+
+	bool ParticleData::getDisplayParticle(const int& index)
+	{
+		//防止越界调用
+		if (index < 0)
+			return false;
+		if (index >= particleDisplaySwitch.size())
+			return false;
+
+		return particleDisplaySwitch[index];
 	}
 
 	/**

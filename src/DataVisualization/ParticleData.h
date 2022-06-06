@@ -38,17 +38,23 @@ namespace DV {
 		Particle getParticleHard(const unsigned int& index);
 		//获取图表信息
 		std::string getInformationTitle() override;
+		//设置粒子显示与否
+		void setDisplayParticle(const int& index,const bool& b = true);
+		bool getDisplayParticle(const int& index);
 	protected:
 		bool initXYRang() override;
 		virtual void restorDeriveData() {};
 	public:
 		std::vector<Particle> particles;
+		//粒子种类数量
 		int typeSize;
+		//粒子颜色
 		std::vector<std::string> typeColors;
 	private:
 		//是否已经载入点数据
 		bool isLoadPoint;
-
+		//粒子显示开关
+		std::vector<bool> particleDisplaySwitch;
 	private:
 		//数据转换
 		void transitionData();

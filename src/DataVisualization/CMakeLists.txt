@@ -54,6 +54,7 @@ SET(MY_MOC_HDR RenderThread.h
 	phasorPlotAdapter.h
 	PlotAdapter.h
 	PlotAdapterNeedStruct.h
+	ParticleAdapter.h
 	#ColorBarWidget.h
 	#修改配置窗口
 	AxisConfigWidget.h
@@ -82,6 +83,8 @@ SET(PARTICLE_SRC ParticleData.h
 	ParticleData.cpp
 	ParticleRenderer.h
 	ParticleRenderer.cpp
+	ParticleAdapter.cpp
+	ParticleAdapter.h
 )
 
 SET(STRUCT_SRC 
