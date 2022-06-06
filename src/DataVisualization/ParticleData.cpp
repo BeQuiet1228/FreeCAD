@@ -69,11 +69,15 @@ namespace DV {
 			for (int i = 1; i < list.size(); i++)
 				typeColors.push_back(list[i].toStdString());
 			//判断是否重新
-			if(particleDisplaySwitch.size() != 0)
+			if(particleDisplaySwitch.size() == typeSize)
 				break;
 			for (int i = 0; i < typeSize; i++)
 				particleDisplaySwitch.push_back(true);
 		} while (0);
+
+		//如果是老数据，typesize会为零，为了后面载入时不会越界，那么需要增加几个开关
+		for (int i = 0; i < 10; i++)
+			particleDisplaySwitch.push_back(true);
 
 		//载入原始数据
 		Data::ListValuesPtr listValues;
