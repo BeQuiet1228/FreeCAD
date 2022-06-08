@@ -236,6 +236,23 @@ namespace DV {
 		return RendererPtr(rd);
 	}
 
+	/**
+	* 生成一个带参数的曲线图
+	* @brief DV::RendererFactory::creatCurveData
+	* @param Data::ValuesPtr values
+	* @param std::map<QString
+	* @param std::vector<double>> par
+	* @return std::shared_ptr<DV::CurveData>
+	*/
+	std::shared_ptr<DV::CurveData> RendererFactory::creatCurveData(Data::ValuesPtr values, std::map<QString, std::vector<double>> par)
+	{
+		auto data = new CurveData();
+		data->setPoints(values);
+		data->setParValues(par);
+
+		return std::shared_ptr<CurveData>(data);
+	}
+
 	std::list<std::shared_ptr<DV::TimeData>> RendererFactory::creatMultipleCurveData(std::vector<Data::ValuesPtr> listValues)
 	{
 		std::list<std::shared_ptr<TimeData>> listTimeData;

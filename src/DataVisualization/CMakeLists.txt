@@ -80,6 +80,8 @@ SET(TIME_SRC TimeData.h
 SET(CURVE_SRC
 	CurveData.cpp
 	CurveData.h
+	CurveRenderer.cpp
+	CurveRenderer.h
 )
 
 

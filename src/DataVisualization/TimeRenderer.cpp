@@ -126,6 +126,7 @@ namespace DV {
 		std::map<QString, float> list;
 		list["X"] = point.x();
 		list["Y"] = point.y();
+
 		displayPointInformation(&painter, &tPoint, list);
 		setImage(img);
 		return true;

@@ -21,7 +21,7 @@ namespace DV {
 		virtual QPointF findPoint(const QPointF& point);
 		virtual QPointF findPoint(const QPointF& point, std::shared_ptr<TimeData> timeData);
 		double getDistance(const QPointF& point1, const QPointF& point2);
-	private:
+	protected:
 		//将数据坐标转换为图片上的坐标
 		float transitionX(const float& x, const float& xScale, const Data::Rang& xr);
 		float transitionY(const float& y, const float& yScale, const Data::Rang& yr);
@@ -29,7 +29,7 @@ namespace DV {
 		void transitionPoint(QPointF& point, const float& xScale, const Data::Rang& xr, const float& yScale, Data::Rang& yr);
 		//绘制显示信息---目前没有使用，重新实现在Renderer中的通用方法--暂时保留
 		void drawDisplayPoint(QPainter& painter, const QPointF& position, const QPointF& d);
-	private:
+	protected:
 		//新增--画笔大小,颜色
 		unsigned __int32 pensize;
 		QColor penColor;
