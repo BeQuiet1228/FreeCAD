@@ -111,7 +111,7 @@ double TargetTimeMax::getTagetValue(const std::string& filePath)
 	if (value.size() < 2)
 		return 0.0;
 	float max = value[1];
-	for (int i = 1; i < value.size(); i++) {
+	for (int i = 1; i < value.size(); i = i+2) {
 		if(value.at(i-1)<timesMin)
 			continue;
 		if(value.at(i-1)>timesMax)
@@ -129,7 +129,7 @@ double TargetTimeMin::getTagetValue(const std::string& filePath)
 	if (value.size() < 2)
 		return 0.0;
 	float min = value[1];
-	for (int i = 1; i < value.size(); i++) {
+	for (int i = 1; i < value.size(); i = i + 2) {
 		if (value.at(i - 1) < timesMin)
 			continue;
 		if (value.at(i - 1) > timesMax)
@@ -148,7 +148,7 @@ double TargetTimeMean::getTagetValue(const std::string& filePath)
 		return 0.0;
 	double addValue = 0.0;
 	int valueCount = 0;
-	for (int i = 1; i < value.size(); i++) {
+	for (int i = 1; i < value.size(); i= i + 2) {
 		if (value.at(i - 1) < timesMin)
 			continue;
 		if (value.at(i - 1) > timesMax)

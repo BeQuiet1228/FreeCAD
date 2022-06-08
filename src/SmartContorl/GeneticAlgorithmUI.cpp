@@ -408,7 +408,8 @@ void GeneticAlgorithmUI::saveParameterXml()
 	configNode.append_attribute("C2") = "0.0";
 	configNode.append_attribute("Omega") = "0.0";
 	configNode.append_attribute("Continue") = "false";
-
+	configNode.append_attribute("MutationProbability") = ui->lineEditMutationProbability->text().toStdString().c_str();
+	configNode.append_attribute("MutationProbabilityRange") = ui->lineEditMutationProbabilityRange->text().toStdString().c_str();
 	for (auto i = variateDatas.begin(); i != variateDatas.end(); i++)
 	{
 		auto node = parNode.append_child((*i)->name.toStdString().c_str());
@@ -452,6 +453,8 @@ void GeneticAlgorithmUI::loadParameterXml()
 	ui->lineEditMaxF->setText(QString::number(configNode.attribute("F").as_llong()));
 	ui->comboBoxExcpcet->setCurrentIndex(configNode.attribute("ExcpectMod").as_int());
 	ui->lineEditAccuracy->setText(QString::number(configNode.attribute("Accuracy").as_double()));
+	ui->lineEditMutationProbability->setText(QString::number(configNode.attribute("MutationProbability").as_double(0.35)));
+	ui->lineEditMutationProbabilityRange->setText(QString::number(configNode.attribute("MutationProbabilityRange").as_double(0.5)));
 	for (auto iter = parNode.begin(); iter != parNode.end(); iter++)
 	{
 		std::shared_ptr<VariateData> data;

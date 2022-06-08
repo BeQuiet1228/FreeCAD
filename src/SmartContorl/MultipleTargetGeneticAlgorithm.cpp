@@ -15,11 +15,13 @@ MultipleTargetGeneticAlgorithm::~MultipleTargetGeneticAlgorithm()
 
 bool MultipleTargetGeneticAlgorithm::resultDataFilter(SmartContorl* smarControl)
 {
+	//清理数据 并将数据保存到历史
+	smarControl->clearFinishData();
 	//生成目标值
 	std::vector<SmartContorl::HistoryData> historyDatas = smarControl->getHistoryDatas();
 	if (historyDatas.size() < 1)
 		return false;
-	auto historyData = *historyDatas.begin();
+	auto historyData = *historyDatas.rbegin();
 	ChipicRunDatas runDatas = historyData.datas;
 	std::list<TargetList> targetLists;
 	for each (auto runData in runDatas) {
@@ -29,13 +31,15 @@ bool MultipleTargetGeneticAlgorithm::resultDataFilter(SmartContorl* smarControl)
 		for each (auto  target in targets)
 		{
 			double v = target->getTagetValue(hdf5Path);
+#if 1 // 兼容之前的数据格式，临时实现查看目标趋势的功能
+			runData->resultData->addValue(v);
+#endif
 			targetList.TargetValues.push_back(v);
 		}
 		targetLists.push_back(targetList);
 	}
 	currentTargetLists = targetLists;
 	historyTargetList.push_back(currentTargetLists);
-
 }
 
 
@@ -77,10 +81,12 @@ std::vector<int> MultipleTargetGeneticAlgorithm::getCrossPool(SmartContorl* smar
 
 		for each (auto t in list)
 		{
-			for (auto iter = tempLists.begin(); iter != tempLists.end();iter++)
+			for (auto iter = tempLists.begin(); iter != tempLists.end();)
 			{
 				if (iter->rank == t.rank)
-					tempLists.erase(iter);
+					iter = tempLists.erase(iter);
+				else
+					iter++;
 			}
 			indexs.push_back(t.rank);
 			if (indexs.size() >= currentTargetLists.size() / 2)
@@ -89,6 +95,7 @@ std::vector<int> MultipleTargetGeneticAlgorithm::getCrossPool(SmartContorl* smar
 
 	}
 
+	return indexs;
 }
 
 MultipleTargetGeneticAlgorithm::TargetLayer MultipleTargetGeneticAlgorithm::generateTargetListLayer(std::list<TargetList> targetLists)

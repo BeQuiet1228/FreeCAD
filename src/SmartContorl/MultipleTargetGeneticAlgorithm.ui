@@ -222,6 +222,13 @@
         <item>
          <widget class="QListWidget" name="listWidgetTarget"/>
         </item>
+        <item>
+         <widget class="QPushButton" name="pushButtonTargetChart">
+          <property name="text">
+           <string>查看目标变化趋势</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>
