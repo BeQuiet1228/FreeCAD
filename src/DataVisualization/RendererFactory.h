@@ -14,6 +14,7 @@ namespace DV {
 	class ContourRender;
 	class PlotAdapter;
 	class TimeData;
+	class CurveData;
 	using RendererPtr = std::shared_ptr<Renderer>;
 	using Renderers = std::list<RendererPtr>;
 	using DataPtr = std::shared_ptr<Data>;
@@ -45,6 +46,7 @@ namespace DV {
 		static RendererPtr creatStructRender(Hdf5Data h5d, STRUCTTYPE md, const _3DPointf& start, const _3DPointf& end);
 		static RendererPtr creatVectorRender(Hdf5Data h5d);
 		//创建一个多个时间图一起显示的适配器
+		static std::shared_ptr<CurveData> creatCurveData(Data::ValuesPtr values,std::map<QString,std::vector<double>> par);
 		static std::list<std::shared_ptr<TimeData>> creatMultipleCurveData(std::vector<Data::ValuesPtr> listValues);
 		static Renderers creatMultipleTimeRenderers(std::list<std::shared_ptr<TimeData>> timeDatas);
 		static PlotAdapterPtr creatMultipleTimeAdapter(Renderers renderers);
