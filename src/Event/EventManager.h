@@ -2,7 +2,6 @@
 #include <mutex>
 #include <memory>
 #include <QObject>
-#include <QEvent>
 #include <vector>
 
 #ifdef _EVENT_
@@ -12,21 +11,29 @@
 #endif 
 
 namespace EV {
-	class EVENT_EXPORT EventSender {
+	class EVENT_EXPORT Event {
+	public:
+		Event();
+		virtual ~Event();
+	public:
+		virtual std::string getType() = 0;
+	};
+
+	class EVENT_EXPORT EventRecevier {
 		friend class EventManager;
 	public:
-		EventSender();
-		~EventSender();
+		EventRecevier();
+		virtual ~EventRecevier();
 		
-		virtual void postEvent(QEvent* event) = 0;
-		virtual bool hasEvent(const QEvent::Type& type) = 0;
+		virtual void postEvent(Event* event) = 0;
+		virtual bool hasEvent(Event* event) = 0;
 	private:
 		bool isRegister;
 	};
 
 
 	class EVENT_EXPORT EventManager :QObject{
-		friend class EventSender;
+		friend class EventRecevier;
 		Q_OBJECT
 	public:
 		~EventManager();
@@ -34,14 +41,14 @@ namespace EV {
 		EventManager operator=(const EventManager&) = delete;
 
 		static std::shared_ptr<EventManager> GetInstance();
-		static void postEvent(QEvent* event);
+		static void postEvent(Event* event);
 	private:
 		EventManager();
-		void registerSender(EventSender* sender);
-		void removeSender(EventSender* sender);
+		void registerRecevier(EventRecevier* recevier);
+		void removeRecevier(EventRecevier* recevier);
 	private:
 		static std::shared_ptr<EventManager> instance;
-		std::vector<EventSender*> senders;
+		std::vector<EventRecevier*> receviers;
 	public Q_SLOTS:
 		void appQuit();
 	};
