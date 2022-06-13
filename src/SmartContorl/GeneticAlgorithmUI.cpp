@@ -392,8 +392,25 @@ QString GeneticAlgorithmUI::replaceVariate()
 void GeneticAlgorithmUI::saveParameterXml()
 {
 	pugi::xml_document doc;
-	auto parNode = doc.append_child("Parameter");
-	auto configNode = doc.append_child("Config");
+	auto path = smartContorl->getM3dPath();
+	path = path.left(path.length() - 4) + ".cc";
+	auto gbk = QTextCodec::codecForName("gb2312");
+
+	std::string ret = gbk->fromUnicode(path).data();
+	auto result = doc.load_file(ret.c_str());
+	pugi::xml_node root;
+	if (!result)
+	{
+		doc.reset();
+		root = doc.append_child("GeneticAlgorithm");
+	}
+	else {
+		doc.remove_child("GeneticAlgorithm");
+		root = doc.append_child("GeneticAlgorithm");
+	}
+
+	auto parNode = root.append_child("Parameter");
+	auto configNode = root.append_child("Config");
 	configNode.append_attribute("OptimizeCount") = ui->spinBoxOptimizeCount->value();
 	configNode.append_attribute("RunCount") = ui->spinBoxCount->value();
 	configNode.append_attribute("RunMaxCount") = ui->spinBoxRunCount->value();
@@ -418,14 +435,7 @@ void GeneticAlgorithmUI::saveParameterXml()
 		node.append_attribute("Max") = max.c_str();
 		node.append_attribute("Mini") = mini.c_str();
 	}
-	auto path = smartContorl->getM3dPath();
-	path = path.left(path.length() - 4) + ".cc";
-	auto gbk = QTextCodec::codecForName("gb2312");
-
-	std::string ret = gbk->fromUnicode(path).data();
 	doc.save_file(ret.c_str());
-
-	
 }
 
 void GeneticAlgorithmUI::loadParameterXml()
@@ -439,8 +449,12 @@ void GeneticAlgorithmUI::loadParameterXml()
 	auto result = document.load_file(ret.c_str());
 	if (!result)
 		return;
-	auto parNode = document.child("Parameter");
-	auto configNode = document.child("Config");
+	pugi::xml_node root = document.child("GeneticAlgorithm");
+	if (root.empty())
+		return;
+
+	auto parNode = root.child("Parameter");
+	auto configNode = root.child("Config");
 
 
 	ui->spinBoxOptimizeCount->setValue(configNode.attribute("OptimizeCount").as_int());

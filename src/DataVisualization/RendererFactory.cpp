@@ -21,6 +21,7 @@
 #include "TimePlotAdapter.h"
 #include "TimeMultiplePlotAdapter.h"
 #include "CurveData.h"
+#include "CurveRenderer.h"
 #include <iostream>
 namespace DV {
 	RendererFactory::RendererFactory(Hdf5Data h5d)
@@ -251,6 +252,21 @@ namespace DV {
 		data->setParValues(par);
 
 		return std::shared_ptr<CurveData>(data);
+	}
+
+	std::shared_ptr<DV::CurveData> RendererFactory::creatCurveData(Data::ValuesPtr values)
+	{
+		return creatCurveData(values, std::map<QString, std::vector<double>>());
+	}
+
+	Renderers RendererFactory::creatMultipleCurveRenderers(std::list<std::shared_ptr<CurveData>> timeDatas)
+	{
+		Renderers renderers;
+		for (auto iter = timeDatas.begin(); iter != timeDatas.end(); iter++) {
+			std::shared_ptr<TimeRenderer> renderer(new CurveRenderer(*iter));
+			renderers.push_back(renderer);
+		}
+		return renderers;
 	}
 
 	std::list<std::shared_ptr<DV::TimeData>> RendererFactory::creatMultipleCurveData(std::vector<Data::ValuesPtr> listValues)

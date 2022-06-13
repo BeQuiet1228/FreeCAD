@@ -188,15 +188,15 @@ QPointF DV::CurveRenderer::findPoint(const QPointF& point, int& index)
 
 		//寻找区域中的点
 		QPointF p;
-		for (int index = startIndex; index < endIndex; index++)
+		for (int i = startIndex; i < endIndex; i++)
 		{
-			p = timeData->getPoint(index);
+			p = timeData->getPoint(i);
 			float y = (p.y() - yr.min) * yScale;
 			if (y > yMin && y < yMax)
 			{
 				PointIndex pi;
 				pi.point = p;
-				pi, index = index;
+				pi.index = i;
 				points.push_back(pi);
 			}
 				
