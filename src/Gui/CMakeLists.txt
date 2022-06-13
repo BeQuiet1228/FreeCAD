@@ -56,6 +56,7 @@ if(MSVC)
 		 Editor
          transition
 		 DataVisualization3D
+		 Event
 		 ${FREECAD_LIBPACK_DIR}/lib/superDog/dog_windows_x64_3160985.lib
     )
 	if(contorl_client_dll)

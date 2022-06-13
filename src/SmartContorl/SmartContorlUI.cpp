@@ -22,6 +22,8 @@
 #include <QScrollBar>
 #include <QTextCursor>
 #include "GeneticAlgorithm.h"
+#include "ChartEvent.h"
+#include "Event/EventManager.h"
 SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	:QDialog(parent), ui(new Ui::SmartContorlUI)
 {
@@ -241,11 +243,10 @@ void SmartContorlUI::on_pushButtonF_clicked()
 
 	auto renderers = DV::RendererFactory::creatMultipleCurveRenderers(dataList);
 	auto adapter = DV::RendererFactory::creatMultipleTimeAdapter(renderers);
-	DV::Plot* plot = new DV::Plot();
-	plot->setAdapter(adapter);
-	plot->setAttribute(Qt::WA_DeleteOnClose);
-	plot->show();
-
+	
+	ChartEvent* event = new ChartEvent();
+	event->setAdapter(adapter);
+	EV::EventManager::postEvent(event);
 #endif
 
 }
@@ -460,10 +461,10 @@ void SmartContorlUI::on_pushButtonVariateMax_clicked()
 	
 	auto renderers = DV::RendererFactory::creatMultipleCurveRenderers(dataList);
 	auto adapter = DV::RendererFactory::creatMultipleTimeAdapter(renderers);
-	DV::Plot *plot = new DV::Plot();
-	plot->setAdapter(adapter);
-	plot->setAttribute(Qt::WA_DeleteOnClose);
-	plot->show();
+
+	ChartEvent* event = new ChartEvent();
+	event->setAdapter(adapter);
+	EV::EventManager::postEvent(event);
 #endif
 }
 

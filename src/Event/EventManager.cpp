@@ -59,16 +59,21 @@ void EV::EventManager::postEvent(Event* event)
 			continue;
 		s->postEvent(event);
 	}
+	delete event;
 }
 
 EV::EventRecevier::EventRecevier()
+	:isRegister(false)
 {
 	EventManager::GetInstance()->registerRecevier(this);
 }
 
 EV::EventRecevier::~EventRecevier()
 {
-	EventManager::GetInstance()->removeRecevier(this);
+	auto manager = EventManager::GetInstance();
+	if (!manager)
+		return;
+	manager->removeRecevier(this);
 }
 
 EV::Event::Event()

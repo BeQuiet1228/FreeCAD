@@ -185,7 +185,10 @@ SET (SRC
 	MultipleTargetGeneticAlgorithmUI.cpp
 	MultipleTargetGeneticAlgorithmUI.h
 	TargetItem.cpp
-	TargetItem.h)
+	TargetItem.h
+	ChartEvent.cpp
+	ChartEvent.h
+	)
 
 
 SET(SmartContorl_src
@@ -235,6 +238,7 @@ list(APPEND QT_LIB
 	HDF5Reader
 	Editor
 	DataVisualization
+	Event
 	)
 if(contorl_client_dll)
 list(APPEND QT_LIB
