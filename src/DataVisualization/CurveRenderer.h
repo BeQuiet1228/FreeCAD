@@ -12,6 +12,7 @@ namespace DV {
 		virtual void dataInit() override;
 		virtual bool drawImage() override;
 		virtual bool drawPointImage() override;
+		void  loadconfig() override;
 		//get set
 		void setPointColor(const QColor& color);
 		QColor getPointColor();

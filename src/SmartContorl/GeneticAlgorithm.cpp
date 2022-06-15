@@ -179,7 +179,7 @@ double GeneticAlgorithm::getBeta()
 		beta = pow((2 * r), 0.5);
 	}
 	else {
-		beta = pow((2 - 2 * r), -0.5);
+		beta = pow((2 - 2 * r), 0.5);
 	}
 	return beta;
 }
@@ -300,6 +300,10 @@ void GeneticAlgorithm::optimize(SmartContorl* smartControl)
 			{
 				float var1 = ((1 - beta) * vars1[i] + (1 + beta) * vars2[i]) / 2;
 				float var2 = ((1 + beta) * vars1[i] + (1 - beta) * vars2[i]) / 2;
+				if (var1 != var1 || var2 != var2)
+					std::cerr << "nan" << std::endl;
+				if(var2 < 0||var1 < 0)
+					std::cerr << "nan" << std::endl;
 				newVars1.push_back(var1);
 				newVars2.push_back(var2);
 			}
@@ -332,6 +336,8 @@ void GeneticAlgorithm::optimize(SmartContorl* smartControl)
 					}else {
 						temp = 1 - pow(2 * (1 - u) + 2 * (u - 0.5) * (1 - (var.max - Variates[i].values[j]) / (var.max - var.min)),n);
 					}
+					if (temp != temp)
+						std::cerr << std::endl;
 					Variates[i].values[j] = Variates[i].values[j] + temp * (var.max - var.min);
 				}
 			}

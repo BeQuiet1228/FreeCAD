@@ -21,6 +21,8 @@ namespace DV {
 		virtual QPointF findPoint(const QPointF& point);
 		virtual QPointF findPoint(const QPointF& point, std::shared_ptr<TimeData> timeData);
 		double getDistance(const QPointF& point1, const QPointF& point2);
+		//设置画笔颜色
+		void setColor(const QColor& color);
 	protected:
 		//将数据坐标转换为图片上的坐标
 		float transitionX(const float& x, const float& xScale, const Data::Rang& xr);

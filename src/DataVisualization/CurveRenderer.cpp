@@ -121,6 +121,11 @@ bool DV::CurveRenderer::drawPointImage()
 	return true;
 }
 
+void DV::CurveRenderer::loadconfig()
+{
+
+}
+
 void DV::CurveRenderer::setPointColor(const QColor& color)
 {
 	pointColor = color;

@@ -82,3 +82,8 @@ void DV::TimeMultiplePlotAdapter::findPointRender(const float& x, const float& y
 	renderManager->start();
 }
 
+std::list<QAction*> DV::TimeMultiplePlotAdapter::getActions()
+{
+	return std::list<QAction*>();
+}
+

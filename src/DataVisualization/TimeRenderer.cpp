@@ -358,6 +358,11 @@ namespace DV {
 		return d;
 	}
 
+	void TimeRenderer::setColor(const QColor& color)
+	{
+		penColor = color;
+	}
+
 	/**
 	* @brief TimeRenderer::drawDisplayPoint 在画布中显示点的信息
 	* @param QPainter & painter 绘制器

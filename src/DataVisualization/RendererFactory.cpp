@@ -22,6 +22,7 @@
 #include "TimeMultiplePlotAdapter.h"
 #include "CurveData.h"
 #include "CurveRenderer.h"
+#include <QColor>
 #include <iostream>
 namespace DV {
 	RendererFactory::RendererFactory(Hdf5Data h5d)
@@ -262,9 +263,17 @@ namespace DV {
 	Renderers RendererFactory::creatMultipleCurveRenderers(std::list<std::shared_ptr<CurveData>> timeDatas)
 	{
 		Renderers renderers;
+		//临时添加颜色方案
+		Qt::GlobalColor color = Qt::red;
 		for (auto iter = timeDatas.begin(); iter != timeDatas.end(); iter++) {
 			std::shared_ptr<TimeRenderer> renderer(new CurveRenderer(*iter));
+			renderer->setColor(QColor(color));
 			renderers.push_back(renderer);
+
+			//交替使用默认颜色
+			color = Qt::GlobalColor(color + 1);
+			if (color == Qt::transparent)
+				color = Qt::red;
 		}
 		return renderers;
 	}

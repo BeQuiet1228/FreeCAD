@@ -19,6 +19,9 @@
 #include <QScrollBar>
 #include <QTextCursor>
 #include "GeneticAlgorithm.h"
+#include "ChartEvent.h"
+#include "Event/EventManager.h"
+#include "DataVisualization/RendererFactory.h"
 GeneticAlgorithmUI::GeneticAlgorithmUI(QWidget * parent /*= 0*/)
 	:QDialog(parent), ui(new Ui::GeneticAlgorithmUI)
 {
@@ -106,13 +109,14 @@ void GeneticAlgorithmUI::on_pushButtonF_clicked()
 	auto histroy = SmartContorlData::GetInstance()->smartContorl->getHistoryDatas();
 	if (histroy.size() < 1)
 		return;
+#if 0
 	auto variates = histroy.begin()->variates;
 	if (variates.size() < 1)
 		return;
 	auto valueCount = variates.begin()->values.size();
 
 
- 
+
 	QVector<QVector<double>> values;
 	QVector<double> keys;
 	int key = 1;
@@ -140,6 +144,67 @@ void GeneticAlgorithmUI::on_pushButtonF_clicked()
 	chart->clearGraph();
 	chart->setDatas(keys, values, "F");
 	chart->show();
+#else
+	auto valueCount = histroy.begin()->datas.size();
+
+	std::vector<DV::Data::ValuesPtr> listValues;
+	listValues.reserve(valueCount);
+
+	for (int i = 0; i < valueCount; i++)
+	{
+		DV::Data::ValuesPtr valuePtr(new DV::Data::Values());
+		listValues.push_back(valuePtr);
+	}
+
+	std::vector<std::map<QString, std::vector<double>>> parValues;
+	for (int i = 0; i < valueCount; i++)
+	{
+		std::map<QString, std::vector<double>> parValue;
+		for (auto iter = histroy.begin()->variates.begin(); iter != histroy.begin()->variates.end(); iter++)
+		{
+			parValue[iter->name] = std::vector<double>();
+		}
+		parValues.push_back(parValue);
+	}
+
+
+	int temp = 1;
+	for (auto historyIter = histroy.begin(); historyIter != histroy.end(); historyIter++)
+	{
+		auto datas = historyIter->datas;
+		for (int i = 0; i < datas.size(); i++)
+		{
+			auto f = datas[i]->resultData->getValue(0);
+			listValues[i]->push_back(temp);
+			listValues[i]->push_back(f);
+		}
+		auto varuates = historyIter->variates;
+		for (auto iter = varuates.begin(); iter != varuates.end(); iter++)
+		{
+			int count = iter->values.size();
+			for (int i = 0; i < count; i++)
+			{
+				parValues[i][iter->name].push_back(iter->values[i]);
+			}
+		}
+
+		temp++;
+	}
+
+	std::list<std::shared_ptr<DV::CurveData>> dataList;
+	for (int i = 0; i < valueCount; i++)
+	{
+		auto curveData = DV::RendererFactory::creatCurveData(listValues[i], parValues[i]);
+		dataList.push_back(curveData);
+	}
+
+	auto renderers = DV::RendererFactory::creatMultipleCurveRenderers(dataList);
+	auto adapter = DV::RendererFactory::creatMultipleTimeAdapter(renderers);
+
+	ChartEvent* event = new ChartEvent();
+	event->setAdapter(adapter);
+	EV::EventManager::postEvent(event);
+#endif
 
 }
 
@@ -281,7 +346,7 @@ void GeneticAlgorithmUI::on_pushButtonVariateMax_clicked()
 			selectIndex = indexs.begin()->row();
 	}
 
-
+#if 0
 	QVector<QVector<double>> values;
 	QVector<double> keys;
 	int key = 1;
@@ -309,6 +374,70 @@ void GeneticAlgorithmUI::on_pushButtonVariateMax_clicked()
 	chart->setDatas(keys, values, variates.begin()->name);
 	chart->show();
 	chart->setAttribute(Qt::WA_DeleteOnClose);
+#else
+	std::vector<DV::Data::ValuesPtr> listValues;
+	listValues.reserve(valueCount);
+
+	for (int i = 0; i < valueCount; i++)
+	{
+		DV::Data::ValuesPtr valuePtr(new DV::Data::Values());
+		listValues.push_back(valuePtr);
+	}
+
+	std::vector<std::map<QString, std::vector<double>>> parValues;
+	for (int i = 0; i < valueCount; i++)
+	{
+		auto parV = std::map<QString, std::vector<double>>();
+		for (int j = 0; j < variates.size(); j++)
+		{
+			if (j == selectIndex)
+				continue;
+			parV[variates[j].name] = std::vector<double>();
+		}
+		parV["F"] = std::vector<double>();
+		parValues.push_back(parV);
+	}
+	int temp = 1;
+	for (auto historyIter = histroy.begin(); historyIter != histroy.end(); historyIter++)
+	{
+		auto historyValues = historyIter->variates.at(selectIndex).values;
+		for (int i = 0; i < historyValues.size(); i++)
+		{
+			listValues[i]->push_back(temp);
+			listValues[i]->push_back(historyValues[i]);
+		}
+		temp++;
+		for (int index = 0; index < historyIter->variates.size(); index++)
+		{
+			if (index == selectIndex)
+				continue;
+			auto values = historyIter->variates.at(index).values;
+			for (int i = 0; i < values.size(); i++)
+			{
+				parValues[i][historyIter->variates[index].name].push_back(values.at(i));
+			}
+		}
+
+		for (int index = 0; index < historyIter->datas.size(); index++)
+		{
+			parValues[index]["F"].push_back(historyIter->datas[index]->resultData->getValue(0));
+		}
+	}
+
+	std::list<std::shared_ptr<DV::CurveData>> dataList;
+	for (int i = 0; i < listValues.size(); i++)
+	{
+		auto curveData = DV::RendererFactory::creatCurveData(listValues[i], parValues[i]);
+		dataList.push_back(curveData);
+	}
+
+	auto renderers = DV::RendererFactory::creatMultipleCurveRenderers(dataList);
+	auto adapter = DV::RendererFactory::creatMultipleTimeAdapter(renderers);
+
+	ChartEvent* event = new ChartEvent();
+	event->setAdapter(adapter);
+	EV::EventManager::postEvent(event);
+#endif
 }
 
 void GeneticAlgorithmUI::on_comboBoxExcpcet_currentIndexChanged(int index)
