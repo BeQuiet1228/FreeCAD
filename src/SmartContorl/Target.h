@@ -79,3 +79,13 @@ public:
 	virtual double getTagetValue(const std::string& filePath);
 };
 
+class TargetFrequency :public Target {
+public:
+	virtual double getTagetValue(const std::string& filePath) override;
+	void setFrequencyRange(const double& max, const double& min);
+	double getMaxFrequency();
+	double getMinFrequency();
+	std::vector<float> getH5DataValue(const std::string& filePath);
+private:
+	double maxFrequency, minFrequency;
+};

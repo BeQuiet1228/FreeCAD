@@ -9,7 +9,9 @@ SET(UI_SRC
 	smartCalc.ui
 	GeneticAlgorithm.ui
 	MultipleTargetGeneticAlgorithm.ui
-	TargetItem.ui
+	TimeTargetItemUI.ui
+	FrequencyTargetItemUI.ui
+	DialogTargetSelect.ui
 )
 SET(GUI_CPP_SRC
 	ListChipicWidget.cpp
@@ -115,8 +117,9 @@ SET(MY_MOC_HDR
 	VariateitemDialog.h
 	GeneticAlgorithmUI.h
 	MultipleTargetGeneticAlgorithmUI.h
-	TargetItem.h
+	TimeTargetItemUI.h
 	ListChipicWidget.h
+	DialogTargetSelect.h
 )
 SET(MY_MOC_SRC
 	SmartContorlUI.cpp
@@ -184,10 +187,16 @@ SET (SRC
 	GeneticAlgorithmUI.h
 	MultipleTargetGeneticAlgorithmUI.cpp
 	MultipleTargetGeneticAlgorithmUI.h
-	TargetItem.cpp
-	TargetItem.h
+	TimeTargetItemUI.cpp
+	TimeTargetItemUI.h
 	ChartEvent.cpp
 	ChartEvent.h
+	TargetItem.cpp
+	TargetItem.h
+	FrequencyTargetItemUI.cpp
+	FrequencyTargetItemUI.h
+	DialogTargetSelect.cpp
+	DialogTargetSelect.h
 	)
 
 

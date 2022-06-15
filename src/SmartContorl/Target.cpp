@@ -179,3 +179,88 @@ bool TargetComprisonApproach::comparison(const double& par1, const double& par2)
 		return true;
 	return false;
 }
+
+double TargetFrequency::getTagetValue(const std::string& filePath)
+{
+	std::vector<float> value = getH5DataValue(filePath);
+
+	if (value.size() < 2)
+		return 0.0;
+	double f1 = value[0];
+	double e1 = value[1];
+	for (int i = 1; i < value.size(); i = i + 2) {
+		if (e1 < value[i])
+		{
+			e1 = value[i];
+			f1 = value[i - 1];
+		}
+	}
+
+	double f2 = 0;
+	double e2 = 0;
+	{
+		int i = 1;
+		for (; i < value.size(); i = i + 2) {
+			if (value.at(i - 1) < minFrequency)
+				continue;
+			break;
+		}
+		if (i >= value.size())
+			return 0.0;
+		e2 = value[i];
+		f2 = value[i - 1];
+		for (; i < value.size(); i = i + 2) {
+			if (value.at(i - 1) > maxFrequency)
+				break;
+			if (e2 < value[i])
+			{
+				e2 = value[i];
+				f2 = value[i - 1];
+			}
+		}
+	}
+
+	double temp = exp(-abs(f1 - f2));
+	double add = 0;
+
+	for (int i = 1; i < value.size(); i = i + 2) {
+		add = add + (e1 - value[i ]);
+	}
+	return add * temp;
+}
+
+void TargetFrequency::setFrequencyRange(const double& max, const double& min)
+{
+	maxFrequency = max;
+	minFrequency = minFrequency;
+}
+
+double TargetFrequency::getMaxFrequency()
+{
+	return maxFrequency;
+}
+
+double TargetFrequency::getMinFrequency()
+{
+	return minFrequency;
+}
+
+std::vector<float> TargetFrequency::getH5DataValue(const std::string& filePath)
+{
+	Hdf5Data data = getH5Data(filePath);
+	if (data.listDataSet.size() != 1)
+	{
+		std::cerr << "TargetFrequency::getH5DataValue data is not Observe!" << std::endl;
+		return std::vector<float>();
+	}
+
+	DataSet dataSet = data.listDataSet[0];
+	std::vector<float> values;
+	if (Hdf5IO::getValue(dataSet, values)) {
+		return values;
+	}
+	else {
+		std::cerr << "TargetFrequency::getH5DataValue Hdf5IO::getValue failde!" << std::endl;
+		return std::vector<float>();
+	}
+}

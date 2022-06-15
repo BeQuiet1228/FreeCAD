@@ -19,12 +19,14 @@
 #include <QScrollBar>
 #include <QTextCursor>
 #include "MultipleTargetGeneticAlgorithm.h"
-#include "TargetItem.h"
+#include "TimeTargetItemUI.h"
 #include <QListWidgetItem>
 #include "DataVisualization/RendererFactory.h"
 #include "GeneticAlgorithm.h"
 #include "ChartEvent.h"
 #include "Event/EventManager.h"
+#include "DialogTargetSelect.h"
+#include "FrequencyTargetItemUI.h"
 MultipleTargetGeneticAlgorithmUI::MultipleTargetGeneticAlgorithmUI(QWidget* parent /*= 0*/)
 	:QDialog(parent), ui(new Ui::MultipleTargetGeneticAlgorithmUI)
 {
@@ -194,11 +196,21 @@ void MultipleTargetGeneticAlgorithmUI::on_pushButtonDeleteVariate_clicked()
 
 void MultipleTargetGeneticAlgorithmUI::on_pushButtonAddTarget_clicked()
 {
+	DialogTargetSelect diaglog;
+	diaglog.exec();
 	auto listWidget = ui->listWidgetTarget;
-	TargetItem *target = new TargetItem(listWidget);
+	QWidget* widget;
+	if (diaglog.index == 0)
+	{
+		widget = new TimeTargetItemUI(listWidget);;
+	}
+	else {
+		widget = new FrequencyTargetItemUI(listWidget);
+	}
+	
 	QListWidgetItem *item = new QListWidgetItem(listWidget);
-	item->setSizeHint(target->size());
-	listWidget->setItemWidget(item, target);
+	item->setSizeHint(widget->size());
+	listWidget->setItemWidget(item, widget);
 }
 
 void MultipleTargetGeneticAlgorithmUI::on_pushButtonDeleteTarget_clicked()
@@ -644,12 +656,23 @@ void MultipleTargetGeneticAlgorithmUI::loadParameterXml()
 	auto listWidget = ui->listWidgetTarget;
 	for (auto iter = targetNode.begin(); iter != targetNode.end(); iter++)
 	{
-		TargetItem* targetItem = new TargetItem(listWidget);
+		std::string id = iter->attribute("ID").as_string();
+		TargetItem* targetItem;
+		if (id == "TimeTarget")
+			targetItem = new TimeTargetItemUI(listWidget);
+		else
+			targetItem = new FrequencyTargetItemUI(listWidget);
 		targetItem->loadXml(*iter);
 
+		auto widget = dynamic_cast<QWidget*>(targetItem);
+		if (!widget)
+		{
+			delete targetItem;
+			continue;
+		}
 		QListWidgetItem* item = new QListWidgetItem(listWidget);
-		item->setSizeHint(targetItem->size());
-		listWidget->setItemWidget(item, targetItem);
+		item->setSizeHint(widget->size());
+		listWidget->setItemWidget(item, widget);
 	}
 
 

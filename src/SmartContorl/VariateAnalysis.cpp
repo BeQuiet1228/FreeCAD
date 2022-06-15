@@ -54,8 +54,6 @@ std::vector<QString> Variate::getValues()
 	for (auto i = this->values.begin(); i != this->values.end(); i++)
 	{
 		std::string str = QString::number(*i).toStdString();
-		if (str == "nan")
-			std::cerr << std::endl;
 		QString temp = this->name + "=" + QString::number(*i) + ";\n";
 		v.push_back(temp);
 	}
