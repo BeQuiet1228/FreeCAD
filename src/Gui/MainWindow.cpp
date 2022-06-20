@@ -392,6 +392,11 @@ void MainWindow::ClearVisualizationTree()
     dataVisualizationTree->clear();
 }
 
+void MainWindow::setTabTooltip(const QString& tip)
+{
+    d->mdiArea->setToolTip(tip);
+}
+
 } // namespace Gui
 
 

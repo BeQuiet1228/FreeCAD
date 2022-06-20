@@ -76,13 +76,13 @@ public:
      */
     App::Document* newDocument(const char * Name=0l, const char * UserName=0l);
 	//新建一个文本编辑器工程
-	App::Document* newDocument(Document* doc,const char * Name = 0l, const char * UserName = 0l);
-	App::Document* newDocumentM3dText(const char * Name = 0l, const char * UserName = 0l);
+    App::Document* newDocument(Document* doc, const char* Name = 0l, const char* UserName = 0l);
+	App::Document* newDocumentM3dText(const std::string& path, const char * Name = 0l, const char * UserName = 0l);
 	//DocumentManager* newDocumentM3dText(const char * Name = 0l, const char * UserName = 0l);
-	App::Document* newDocumentM2dText(const char * Name = 0l, const char * UserName = 0l);
-	App::Document* newDocumentM3dMode(const char * Name = 0l, const char * UserName = 0l);
-	App::Document* newDocumentM2dMod(const char * Name = 0l, const char * UserName = 0l);
-	App::Document* newDocumentH5(const char * Name = 0l, const char * UserName = 0l);
+	App::Document* newDocumentM2dText(const std::string& path, const char * Name = 0l, const char * UserName = 0l);
+	App::Document* newDocumentM3dMode(const std::string& path, const char * Name = 0l, const char * UserName = 0l);
+	App::Document* newDocumentM2dMod(const std::string& path, const char * Name = 0l, const char * UserName = 0l);
+	App::Document* newDocumentH5(const std::string& path, const char * Name = 0l, const char * UserName = 0l);
     /// Closes the document \a name and removes it from the application.
     bool closeDocument(const char* name);
     /// find a unique document name

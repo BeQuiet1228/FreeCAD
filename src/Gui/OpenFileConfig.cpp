@@ -109,7 +109,7 @@ void FileFormatM3DText::open(const QStringList& fileList)
 	{
 		QDir dir(*i);
 		QString fileName = dir.dirName();
-		App::Document* doc = App::GetApplication().newDocumentM3dText(fileName.toUtf8(), "");
+		App::Document* doc = App::GetApplication().newDocumentM3dText(i->toUtf8().data(),fileName.toUtf8(), "");
 		openOnce(*i,doc);
 		Gui::FileDialog::setWorkingDirectory(QString(*i).remove(fileName));
 	}
@@ -151,7 +151,7 @@ void FileFormatM2DText::open(const QStringList& fileList)
 	{
 		QDir dir(*i);
 		QString fileName = dir.dirName();
-		App::Document* doc = App::GetApplication().newDocumentM2dText(fileName.toUtf8(), "");
+		App::Document* doc = App::GetApplication().newDocumentM2dText(i->toUtf8().data(), fileName.toUtf8(), "");
 		openOnce(*i, doc);
 		Gui::FileDialog::setWorkingDirectory(QString(*i).remove(fileName));
 	}
