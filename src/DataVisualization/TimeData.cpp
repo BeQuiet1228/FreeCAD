@@ -141,6 +141,13 @@ namespace DV {
 			else if (yr.min > temp)
 				yr.min = temp;
 		}
+		//如果y轴范围太小，则将数据置于中心
+		if (abs(yr.min - yr.max) < 1e-6)
+		{
+			yr.min -= 100;
+			yr.max += 100;
+		}
+
 		setXRang(xr);
 		setYRang(yr);
 		return true;
