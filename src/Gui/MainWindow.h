@@ -306,7 +306,6 @@ public:
     void hideVisualizationTree();
     void showVisualizationTree();
 	void ClearVisualizationTree();
-    void setTabTooltip(const QString& tip);
 };
 
 inline MainWindow* getMainWindow()

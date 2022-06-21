@@ -21,8 +21,7 @@
 DocumentPic::DocumentPic(App::Document* pcDocument, Gui::Application* app)
 	:Gui::Document(pcDocument,app)
 {
-	auto mainWindow = Gui::MainWindow::getInstance();
-	mainWindow->setToolTip(QString::fromStdString(pcDocument->FileName.getStrValue()));
+
 }
 
 /**
