@@ -151,6 +151,13 @@
     </message>
 </context>
 <context>
+    <name>ControlerItemListWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">窗体</translation>
+    </message>
+</context>
+<context>
     <name>DeleteDialog</name>
     <message>
         <source>Dialog</source>
@@ -165,11 +172,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>delete param name：</source>
+        <source>cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>cancel</source>
+        <source>delete param：</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -199,23 +206,35 @@
 <context>
     <name>DlgChangeNameDialog</name>
     <message>
-        <source>DlgChangeNameDialog</source>
+        <source>ReplaceDialog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>取消</source>
+        <source>查找内容：</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>确定</source>
+        <source>替换为：</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>名字不符合规范：</source>
+        <source>替换</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>修改后的名字：</source>
+        <source>全部替换 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>上一处</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>下一处</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>关闭</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6013,6 +6032,21 @@ Be aware the point where you click matters.</source>
     </message>
 </context>
 <context>
+    <name>StdCmdGeneticAlgorithm</name>
+    <message>
+        <source>File</source>
+        <translation type="unfinished">文件</translation>
+    </message>
+    <message>
+        <source>GeneticAlgorithm</source>
+        <translation type="unfinished">遗传算法</translation>
+    </message>
+    <message>
+        <source>SmartContorl</source>
+        <translation type="unfinished">优化算法</translation>
+    </message>
+</context>
+<context>
     <name>StdCmdGroup</name>
     <message>
         <source>Structure</source>
@@ -6209,6 +6243,21 @@ Be aware the point where you click matters.</source>
     <message>
         <source>Cannot merge project with itself.</source>
         <translation>不能合并项目本身.</translation>
+    </message>
+</context>
+<context>
+    <name>StdCmdMultipleTargetGeneticAlgorithm</name>
+    <message>
+        <source>File</source>
+        <translation type="unfinished">文件</translation>
+    </message>
+    <message>
+        <source>MultipleTargetGeneticAlgorithm</source>
+        <translation type="unfinished">多目标遗传算法</translation>
+    </message>
+    <message>
+        <source>SmartContorl</source>
+        <translation type="unfinished">优化算法</translation>
     </message>
 </context>
 <context>
@@ -6816,6 +6865,10 @@ Be aware the point where you click matters.</source>
     <message>
         <source>SmartCalc</source>
         <translation type="unfinished">批处理</translation>
+    </message>
+    <message>
+        <source>SmartContorl</source>
+        <translation type="unfinished">优化算法</translation>
     </message>
 </context>
 <context>
@@ -7623,6 +7676,12 @@ Are you sure you want to continue?
         <translation>以下，参考对象可能会损坏。 你确定要继续吗？
 
 </translation>
+    </message>
+    <message>
+        <source>The following objects will fail. Please Cancel 
+
+</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
