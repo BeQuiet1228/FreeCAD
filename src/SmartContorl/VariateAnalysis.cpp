@@ -53,11 +53,28 @@ std::vector<QString> Variate::getValues()
 	std::vector<QString> v;
 	for (auto i = this->values.begin(); i != this->values.end(); i++)
 	{
+		std::string str = QString::number(*i).toStdString();
 		QString temp = this->name + "=" + QString::number(*i) + ";\n";
 		v.push_back(temp);
 	}
 
 	return v;
+}
+
+void Variate::autoValue()
+{
+	for (auto iter = values.begin(); iter != values.end(); iter++)
+	{
+		while (*iter < min || *iter >max)
+		{
+			if (*iter < min)
+			{
+				*iter = min + (min - *iter);
+			}else {
+				*iter = max - (*iter - max);
+			}
+		}
+	}
 }
 
 std::vector<QString> Variate::combinationStringForVariates(std::vector<Variate>& variates)

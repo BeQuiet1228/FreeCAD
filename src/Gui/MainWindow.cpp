@@ -134,6 +134,7 @@
 #include "DataVisualization/C_encoding.h"
 #include "OpenFileConfig.h"
 #include "DataVisualizationTree.h"
+#include "SmartContorl/ChartEvent.h"
 #if defined(Q_OS_WIN32)
 #define slots
 //#include <private/qmainwindowlayout_p.h>
@@ -390,6 +391,43 @@ void MainWindow::showVisualizationTree()
 void MainWindow::ClearVisualizationTree()
 {
     dataVisualizationTree->clear();
+}
+
+bool MainWindow::hasEvent(EV::Event* event)
+{
+    if (event->getType() == "ChartEvent")
+        return true;
+    return false;
+}
+
+void MainWindow::postEvent(EV::Event* event)
+{
+    if (event->getType() == "ChartEvent")
+    {
+        auto e = dynamic_cast<ChartEvent*>(event);
+        if (!e)
+            return;
+        auto adapter = e->getAdaopter();
+        if (!adapter)
+            return;
+		//ªÒ»°Plot
+		auto guidoc = dynamic_cast<DocumentPic*>(Gui::Application::Instance->activeDocument());
+		assert(guidoc && "guidoc == nullptr!");//ÃÌº”∂œ—‘
+		std::list<Gui::MDIView*> list = guidoc->getMDIViews();
+		Gui::PlotMDIView* ptr = nullptr;
+		for each (Gui::MDIView * var in list)
+		{
+			ptr = dynamic_cast<Gui::PlotMDIView*>(var);
+			if (ptr) break;
+		}
+		if (nullptr == ptr)
+		{
+			ptr = new Gui::PlotMDIView(guidoc);
+			addWindow(ptr);
+		}
+		setActiveWindow(ptr);
+		ptr->setAdapter(adapter);
+    }
 }
 
 

@@ -126,6 +126,7 @@ namespace DV {
 		std::map<QString, float> list;
 		list["X"] = point.x();
 		list["Y"] = point.y();
+
 		displayPointInformation(&painter, &tPoint, list);
 		setImage(img);
 		return true;
@@ -240,6 +241,24 @@ namespace DV {
 	*/
 	QPointF TimeRenderer::findPoint(const QPointF& point)
 	{
+		return findPoint(point, std::dynamic_pointer_cast<TimeData>(data));
+	}
+
+	/**
+	* @brief DV::TimeRenderer::findPoint 根据屏幕坐标寻找数据中最近的点
+	* @param const QPointF & point	屏幕坐标
+	* @param std::shared_ptr<TimeData> timeData 数据
+	* @return QPointF 数据中最近的点
+	*/
+	QPointF TimeRenderer::findPoint(const QPointF& point, std::shared_ptr<TimeData> timeData)
+	{
+		if (!timeData)
+		{
+#ifdef MY_DEBUG
+			std::cerr << "TimeRenderer::findPoint td is nullptr" << std::endl;
+#endif
+			return QPointF(0, 0);
+		}
 		//获取屏幕与数据的比例
 		float xScale, yScale;
 		getTransitionScale(xScale, yScale);
@@ -274,25 +293,15 @@ namespace DV {
 			if (yMin < 0)
 				yMin = 0;
 
-
-			//获取数据对象
-			auto td = std::dynamic_pointer_cast<TimeData>(data);
-			if (!td)
-			{
-#ifdef MY_DEBUG
-				std::cerr << "TimeRenderer::findPoint td is nullptr" << std::endl;
-#endif
-				break;
-			}
 			//获取数据索引的边界点
-			int startIndex = td->findIndexFromXValueL(xMin / xScale + xr.min);
-			int endIndex = td->findIndexFromXValueR(xMax / xScale + xr.min);
+			int startIndex = timeData->findIndexFromXValueL(xMin / xScale + xr.min);
+			int endIndex = timeData->findIndexFromXValueR(xMax / xScale + xr.min);
 
 			//寻找区域中的点
 			QPointF p;
 			for (int index = startIndex; index < endIndex; index++)
 			{
-				p = td->getPoint(index);
+				p = timeData->getPoint(index);
 				float y = (p.y() - yr.min) * yScale;
 				if (y > yMin && y < yMax)
 					points.push_back(p);
@@ -324,7 +333,34 @@ namespace DV {
 			}
 		}
 		return temp;
+	}
 
+	/**
+	* 获取数据点与屏幕坐标点的距离，距离单位为像素
+	* @brief DV::TimeRenderer::getDistance
+	* @param const QPointF & point1 数据点
+	* @param const QPointF & point2 屏幕坐标点
+	* @return double 距离
+	*/
+	double TimeRenderer::getDistance(const QPointF& point1, const QPointF& point2)
+	{
+		//获取屏幕与数据的比例
+		float xScale, yScale;
+		getTransitionScale(xScale, yScale);
+		auto xr = getXRang();
+		auto yr = getYRang();
+
+		float x = (point1.x() - xr.min) * xScale;
+		float y = (point1.y() - yr.min) * yScale;
+		float xDistance = abs(point2.x() - x);
+		float yDistance = abs(point2.y() - y);
+		double d = sqrt(pow(xDistance, 2) + pow(yDistance, 2));
+		return d;
+	}
+
+	void TimeRenderer::setColor(const QColor& color)
+	{
+		penColor = color;
 	}
 
 	/**

@@ -5,7 +5,7 @@
 //#include "SmartContorl/smartCalc.h"
 //#include "SmartContorl/SmartContorl.h"
 #include "SmartContorl/SmartContorlUI.h"
-#include "SmartContorl/smartCalc.h"s
+#include "SmartContorl/smartCalc.h"
 ParticleSwarmOptimizationMDI::ParticleSwarmOptimizationMDI(DocumentPic* pcDocument, QWidget* parent)
 	:AlgorMDIInter(pcDocument,parent), smartControlWidget(nullptr)
 {
@@ -57,4 +57,47 @@ bool ProcessingBatchView::isClose()
 		return true;
 	bool ok = saveWidget->getRunning();
 	return (!ok);
+}
+
+
+GeneticAlgorithmView::GeneticAlgorithmView(DocumentPic* pcDocument, QWidget* parent /*= 0*/)
+	: ParticleSwarmOptimizationMDI(pcDocument, parent)
+{
+	setWindowTitle(gbkStdstringToQstring("遗传算法"));
+}
+
+GeneticAlgorithmView::~GeneticAlgorithmView()
+{
+
+}
+
+void GeneticAlgorithmView::init(const std::string& path)
+{
+	QWidget* w = SmartContorlInterface::creatGeneticAlgorithmUI(path);
+	setCentralWidget(w);
+	if (nullptr != w)
+	{
+		smartControlWidget = w;
+	}
+}
+
+MultipleTargetGeneticAlgorithmView::MultipleTargetGeneticAlgorithmView(DocumentPic* pcDocument, QWidget* parent /*= 0*/)
+	: ParticleSwarmOptimizationMDI(pcDocument, parent)
+{
+	setWindowTitle(gbkStdstringToQstring("多目标遗传算法"));
+}
+
+MultipleTargetGeneticAlgorithmView::~MultipleTargetGeneticAlgorithmView()
+{
+	
+}
+
+void MultipleTargetGeneticAlgorithmView::init(const std::string& path)
+{
+	QWidget* w = SmartContorlInterface::creatMultipleGeneticAlgorithmUI(path);
+	setCentralWidget(w);
+	if (nullptr != w)
+	{
+		smartControlWidget = w;
+	}
 }

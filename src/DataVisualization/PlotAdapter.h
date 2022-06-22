@@ -40,8 +40,6 @@ namespace DV {
 		virtual void autoMaxRenderRange();
 		//刷新网格线
 		void updateGridLine();
-		//取点渲染
-		void findPointRender(const float& x, const float& y);
 		//载入配置
 		void loadConfig();
 		//存储主渲染器的数据
@@ -81,6 +79,8 @@ namespace DV {
 		virtual void setRenderXRange(const float& min, const float& max);
 		virtual void setRenderYRange(const float& min, const float& max);
 		virtual void setAxisRightRange(const float& min, const float& max);
+		//取点渲染
+		virtual void findPointRender(const float& x, const float& y);
 		//重渲染
 		virtual void reRender(const QSize& size);
 		//获取坐标轴标签

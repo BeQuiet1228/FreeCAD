@@ -14,6 +14,7 @@
 #include<QDebug>
 #include"VariateitemWidget2.h"
 #include"smartDialog.h"
+#include "OptimizeCurse.h"
 void SplitString(const std::string& s, std::vector<std::string>& v, const std::string& c);
 smartCalc::smartCalc(QWidget* parent) :QDialog(parent),ui(new Ui::smartCalc)
 {
@@ -143,7 +144,10 @@ void smartCalc::run(bool)
 {
 	auto str = replaceVariate();
 	smartContorl->chipicCount = this->ui->spinBoxRunCount->value();
-	smartContorl->run(str);
+	auto optimize = new OptimizeCurseLua();
+	optimize->luaLoadFromString(str.toStdString());
+	smartContorl->setOptimizeCurse(optimize);
+	smartContorl->run();
 	saveParameterXml();
 }
 void smartCalc::loadParameterXml()

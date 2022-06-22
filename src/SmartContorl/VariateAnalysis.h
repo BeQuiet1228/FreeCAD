@@ -11,8 +11,12 @@ public:
 	QString name;
 	//变量值
 	std::vector<double> values;
+	//最大最小值
+	double max, min;
 	//获取变量所有的值
 	std::vector<QString> getValues();
+	//整理值，限制参数值超出范围
+	void autoValue();
 	//把变量成对的组合起来
 	static std::vector<QString> combinationStringForVariates(std::vector<Variate>& variates);
 	//把两个变量成对的组合起来

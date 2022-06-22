@@ -34,6 +34,7 @@
 #include <QMdiArea>
 #include <QToolBar>
 #include <QDockWidget>
+#include "Event/EventManager.h"
 
 class QMimeData;
 class QUrl;
@@ -67,7 +68,7 @@ namespace DockWnd {
  * a status bar and mainly a workspace for the MDI windows.
  * @author Werner Mayer
  */
-class GuiExport MainWindow : public QMainWindow
+class GuiExport MainWindow : public QMainWindow,EV::EventRecevier
 {
     Q_OBJECT
  
@@ -306,6 +307,9 @@ public:
     void hideVisualizationTree();
     void showVisualizationTree();
 	void ClearVisualizationTree();
+public:
+    void postEvent(EV::Event* event) override;
+    bool hasEvent(EV::Event* event) override;
 };
 
 inline MainWindow* getMainWindow()

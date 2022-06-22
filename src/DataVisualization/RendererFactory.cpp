@@ -20,6 +20,10 @@
 #include "phasorPlotAdapter.h"
 #include "TimePlotAdapter.h"
 #include "ParticleAdapter.h"
+#include "TimeMultiplePlotAdapter.h"
+#include "CurveData.h"
+#include "CurveRenderer.h"
+#include <QColor>
 #include <iostream>
 namespace DV {
 	RendererFactory::RendererFactory(Hdf5Data h5d)
@@ -233,6 +237,75 @@ namespace DV {
 		std::shared_ptr<phasorData> r(new phasorData(h5d));
 		phasorRenderer* rd = new phasorRenderer(r);
 		return RendererPtr(rd);
+	}
+
+	/**
+	* 生成一个带参数的曲线图
+	* @brief DV::RendererFactory::creatCurveData
+	* @param Data::ValuesPtr values
+	* @param std::map<QString
+	* @param std::vector<double>> par
+	* @return std::shared_ptr<DV::CurveData>
+	*/
+	std::shared_ptr<DV::CurveData> RendererFactory::creatCurveData(Data::ValuesPtr values, std::map<QString, std::vector<double>> par)
+	{
+		auto data = new CurveData();
+		data->setPoints(values);
+		data->setParValues(par);
+
+		return std::shared_ptr<CurveData>(data);
+	}
+
+	std::shared_ptr<DV::CurveData> RendererFactory::creatCurveData(Data::ValuesPtr values)
+	{
+		return creatCurveData(values, std::map<QString, std::vector<double>>());
+	}
+
+	Renderers RendererFactory::creatMultipleCurveRenderers(std::list<std::shared_ptr<CurveData>> timeDatas)
+	{
+		Renderers renderers;
+		//临时添加颜色方案
+		Qt::GlobalColor color = Qt::red;
+		for (auto iter = timeDatas.begin(); iter != timeDatas.end(); iter++) {
+			std::shared_ptr<TimeRenderer> renderer(new CurveRenderer(*iter));
+			renderer->setColor(QColor(color));
+			renderers.push_back(renderer);
+
+			//交替使用默认颜色
+			color = Qt::GlobalColor(color + 1);
+			if (color == Qt::transparent)
+				color = Qt::red;
+		}
+		return renderers;
+	}
+
+	std::list<std::shared_ptr<DV::TimeData>> RendererFactory::creatMultipleCurveData(std::vector<Data::ValuesPtr> listValues)
+	{
+		std::list<std::shared_ptr<TimeData>> listTimeData;
+		for (auto iter = listValues.begin(); iter != listValues.end(); iter++)
+		{
+			CurveData* data = new CurveData();
+			data->setPoints(*iter);
+			std::shared_ptr<TimeData> timeData(data);
+			listTimeData.push_back(timeData);
+		}
+		return listTimeData;
+	}
+
+	Renderers RendererFactory::creatMultipleTimeRenderers(std::list<std::shared_ptr<DV::TimeData>> timeDatas)
+	{
+		Renderers renderers;
+		for (auto iter = timeDatas.begin(); iter != timeDatas.end(); iter++) {
+			std::shared_ptr<TimeRenderer> renderer(new TimeRenderer(*iter));
+			renderers.push_back(renderer);
+		}
+		return renderers;
+	}
+
+	DV::PlotAdapterPtr RendererFactory::creatMultipleTimeAdapter(Renderers renderers)
+	{
+		std::shared_ptr<TimeMultiplePlotAdapter> adapter(new TimeMultiplePlotAdapter(renderers));
+		return adapter;
 	}
 
 	/**

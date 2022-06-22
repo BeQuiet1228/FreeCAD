@@ -225,6 +225,45 @@ void DocumentPic::showProcessingBatchView()
 	mw->addWindow(mdi);
 }
 
+void DocumentPic::showGeneticAlgorithmView()
+{
+	/*
+	*	判断主窗口中是否已经含有优化算法窗口。
+	*	如果已经含有则将窗口置为活动。
+	*	如果不含有则增加。
+	*/
+	auto mw = Gui::MainWindow::getInstance();
+	auto views = this->getMDIViews();
+	for (auto iter = views.begin(); iter != views.end(); iter++)
+	{
+		auto psoView = dynamic_cast<GeneticAlgorithmView*> (*iter);
+		if (!psoView)
+			continue;
+		mw->setActiveWindow(psoView);
+		return;
+	}
+	GeneticAlgorithmView* mdi = new GeneticAlgorithmView(this);
+	mdi->init(getTextPath());
+	mw->addWindow(mdi);
+}
+
+void DocumentPic::showMultipleTargetGeneticAlgorithmView()
+{
+	auto mw = Gui::MainWindow::getInstance();
+	auto views = this->getMDIViews();
+	for (auto iter = views.begin(); iter != views.end(); iter++)
+	{
+		auto psoView = dynamic_cast<MultipleTargetGeneticAlgorithmView*> (*iter);
+		if (!psoView)
+			continue;
+		mw->setActiveWindow(psoView);
+		return;
+	}
+	MultipleTargetGeneticAlgorithmView* mdi = new MultipleTargetGeneticAlgorithmView(this);
+	mdi->init(getTextPath());
+	mw->addWindow(mdi);
+}
+
 void DocumentPic::save()
 {
 	Document::save();
@@ -264,6 +303,15 @@ bool DocumentPic::onMsg(const char* pMsg, const char** ppReturn)
 		this->showProcessingBatchView();
 		return true;
 	}
+	else if (strcmp("showGeneticAlgorithm", pMsg) == 0) {
+		this->showGeneticAlgorithmView();
+		return true;
+	}
+	else if (strcmp("showMultipleTargetGeneticAlgorithm", pMsg) == 0) {
+		this->showMultipleTargetGeneticAlgorithmView();
+		return true;
+	}
+
 
 	return false;
 }
@@ -306,6 +354,26 @@ bool DocumentPic::onHasMsg(const char* pMsg) const
 		return true;
 	}
 	else if (strcmp("showProcessingBatchView", pMsg) == 0) {
+#ifdef SUPER_DOG
+		if (!Gui::SuperDog::login())
+			return false;
+#endif // SUPER_DOG
+		auto control = ContorlInterface::GetInstance();
+		if (control->hasChipicRuning())
+			return false;
+		return true;
+	}
+	else if (strcmp("showGeneticAlgorithm", pMsg) == 0) {
+#ifdef SUPER_DOG
+		if (!Gui::SuperDog::login())
+			return false;
+#endif // SUPER_DOG
+		auto control = ContorlInterface::GetInstance();
+		if (control->hasChipicRuning())
+			return false;
+		return true;
+	}
+	else if (strcmp("showMultipleTargetGeneticAlgorithm", pMsg) == 0) {
 #ifdef SUPER_DOG
 		if (!Gui::SuperDog::login())
 			return false;
