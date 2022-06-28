@@ -171,3 +171,9 @@ INSTALL(
     DESTINATION
         Mod/Path/PathScripts/post
 )
+SET(Sources_Srcs
+DemoParts
+PathScripts
+utils
+)
+FILE(COPY ${Sources_Srcs} DESTINATION ${CMAKE_BINARY_DIR}/Mod/Path)

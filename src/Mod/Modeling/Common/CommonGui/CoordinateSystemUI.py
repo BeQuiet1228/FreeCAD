@@ -24,7 +24,7 @@ class CoordinateSystemDialog(QtGui.QDialog):
 		layout=QtGui.QVBoxLayout()
 
 		# radio buttons
-		self.rectangularRadioButton = QtGui.QRadioButton(codec.toUnicode("Rectangular"),self)
+		self.rectangularRadioButton = QtGui.QRadioButton(codec.toUnicode("Cartesian"),self)
 		self.rectangularRadioButton.clicked.connect(self.onrectangularRadioButton)
 		layout.addWidget(self.rectangularRadioButton)
 		self.rectangularRadioButton.setChecked(True)
@@ -45,6 +45,16 @@ class CoordinateSystemDialog(QtGui.QDialog):
 		self.creat2DButton = QtGui.QPushButton(codec.toUnicode('Create 2D Document'), self)
 		self.creat2DButton.clicked.connect(self.onCreat2D)
 		layout.addWidget(self.creat2DButton)
+
+		self.creat3DTextButton = QtGui.QPushButton(codec.toUnicode('Create 3D Text Edit'), self)
+		self.creat3DTextButton.clicked.connect(self.onCreat3DTextEdit)
+		layout.addWidget(self.creat3DTextButton)
+
+		self.creat2DTextButton = QtGui.QPushButton(codec.toUnicode('Create 2D Text Edit'), self)
+		self.creat2DTextButton.clicked.connect(self.onCreat2DTextEdit)
+		layout.addWidget(self.creat2DTextButton)
+
+		
 		# cancel button
 		self.cancelButton = QtGui.QPushButton(codec.toUnicode('Cancel'), self)
 		self.cancelButton.clicked.connect(self.onCancel)
@@ -58,10 +68,15 @@ class CoordinateSystemDialog(QtGui.QDialog):
 	
 	def onrectangularRadioButton(self):
 		self.CoordinateSystem = 'Rectangular'
+		self.creat2DButton.setEnabled(True)
+
 	def onpolarRadioButton(self):
 		self.CoordinateSystem = 'Polar'
+		self.creat2DButton.setEnabled(False)
+
 	def oncylindricalRadioButton(self):
 		self.CoordinateSystem = 'Cylindrical'
+		self.creat2DButton.setEnabled(True)
 
 	def onCancel(self):
 		self.Result			= "Cancelled"
@@ -72,6 +87,12 @@ class CoordinateSystemDialog(QtGui.QDialog):
 
 	def onCreat2D(self):
 		self.Result = "2D"
+		self.close()
+	def onCreat3DTextEdit(self):
+		self.Result = "3DText"
+		self.close()
+	def onCreat2DTextEdit(self):
+		self.Result = "2DText"
 		self.close()
 
 # code ***********************************************************************************

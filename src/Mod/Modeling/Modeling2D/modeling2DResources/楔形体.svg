@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>楔形体</title>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="图标输出" transform="translate(-295.000000, -668.000000)">
+            <g id="楔形体" transform="translate(295.000000, 668.000000)">
+                <g id="Group" transform="translate(2.500000, 2.500000)">
+                    <polygon id="Path-31" fill="#76B6EB" transform="translate(8.191480, 4.967056) rotate(-180.000000) translate(-8.191480, -4.967056) " points="11 9.18204157e-14 9.09984899 9.18376486e-14 5.38296097 6.80772698 10.882961 9.93411213"></polygon>
+                    <polygon id="Path-31-Copy" fill="#3F81B8" transform="translate(2.750000, 5.278533) scale(-1, 1) rotate(-180.000000) translate(-2.750000, -5.278533) " points="5.5 1.38170357e-13 3.84215755 0.499511376 0 7.43068127 5.5 10.5570664"></polygon>
+                    <polyline id="Path" stroke="#191919" stroke-width="0.55" transform="translate(5.500000, 4.967056) rotate(-180.000000) translate(-5.500000, -4.967056) " points="7.31382189 7.81597009e-15 11 6.80772698 5.47480065 9.93411213 0 6.80772698 3.71688802 4.68958206e-14"></polyline>
+                    <line x1="5.5" y1="9.9" x2="5.5" y2="0" id="Path-30" stroke="#191919" stroke-width="0.55"></line>
+                    <polygon id="Rectangle" stroke="#191919" stroke-width="0.55" fill="#8CCBFF" stroke-linejoin="round" transform="translate(5.536726, 9.934112) rotate(-45.000000) translate(-5.536726, -9.934112) " points="4.22819109 8.62557704 6.02394994 9.39494971 6.84526127 11.2426472 4.98389191 10.4350077"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

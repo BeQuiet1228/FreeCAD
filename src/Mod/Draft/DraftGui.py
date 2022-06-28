@@ -38,6 +38,9 @@ __url__ = ["http://www.freecadweb.org"]
 This is the GUI part of the Draft module.
 Report to Draft.py for info
 '''
+def sayz(msg):
+    FreeCAD.Console.PrintMessage(msg)
+    FreeCAD.Console.PrintMessage("\n")
 
 import FreeCAD, FreeCADGui, os, Draft, sys, DraftVecUtils, math
 
@@ -101,9 +104,10 @@ class todo:
     itinerary = []
     commitlist = []
     afteritinerary = []
-    
+    sayz("todo")
     @staticmethod
     def doTasks():
+        sayz("doTasks")
         # print("debug: doing delayed tasks: commitlist: ",todo.commitlist," itinerary: ",todo.itinerary)
         for f, arg in todo.itinerary:
             try:
@@ -125,8 +129,10 @@ class todo:
                 try:
                     name = str(name)
                     FreeCAD.ActiveDocument.openTransaction(name)
+                    sayz("func: "+str(func))
                     if isinstance(func,list):
                         for l in func:
+                            sayz("l: "+str(l))
                             FreeCADGui.doCommand(l)
                     else:
                         func()
@@ -134,10 +140,12 @@ class todo:
                 except:
                     wrn = "[Draft.todo.commit] Unexpected error:", sys.exc_info()[0], "in ", f, "(", arg, ")"
                     FreeCAD.Console.PrintWarning (wrn)
+            sayz("end do commit")
+            todo.commitlist = []
             # restack Draft screen widgets after creation
             if hasattr(FreeCADGui,"Snapper"):
                 FreeCADGui.Snapper.restack()
-        todo.commitlist = []
+        
         for f, arg in todo.afteritinerary:
             try:
                 # print("debug: executing",f)
@@ -159,8 +167,12 @@ class todo:
 
     @staticmethod
     def delayCommit (cl):
+        FreeCAD.Console.PrintMessage("delayCommit ")
+        FreeCAD.Console.PrintMessage(cl)
+        FreeCAD.Console.PrintMessage("delayCommit end\n")
+
         # print("debug: delaying commit",cl)
-        QtCore.QTimer.singleShot(0, todo.doTasks)
+        QtCore.QTimer.singleShot(500, todo.doTasks)
         todo.commitlist = cl
 
     @staticmethod

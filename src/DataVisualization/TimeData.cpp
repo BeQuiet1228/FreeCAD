@@ -155,8 +155,8 @@ namespace DV {
 	}
 
 	/**
-	* @brief TimeData::getPoints 获取Points指针
-	* @return Data::ValuesPtr
+	* @brief TimeData::dataToFFT FFT算法
+	* @return 
 	*/
 	void TimeData::dataToFFT(Data::Rang xr) {
 		Data::ValuesPtr nowPoints(new std::vector<float>);
@@ -167,6 +167,7 @@ namespace DV {
 		int indexR = findIndexFromXValueL(xr.max);
 		indexL = indexL == 1 ? 0 : indexL;//由于函数会自动加一，但是在索引为0时，找不到左值，所以会在findIndexFromXValueL中韩慧0，在通过findIndexFromXValueR进行加1
 		indexR = indexR == n ? n - 1 : indexR;//由于函数findIndexFromXValueL在index大于n时会返回n，但时points中最大索引为n-1
+		Data::Rang XScope(points->at(indexL * 2), points->at(indexR * 2));
 		float fs = 1 / ((points->at(indexR * 2) - points->at(indexL * 2)) * pow(10, -9));//采样频率间隔为时间采样的倒数
 
 		//将X和Y轴的数据分别做处理
@@ -186,7 +187,7 @@ namespace DV {
 			(*nowPoints).emplace_back(Ydata[index]);
 		}
 		points = nowPoints;
-		addHeadlistStr(13, "FFT");
+		addHeadlistStr(13, XScope, "FFT");
 		updateData(TimeDataForFFT, "Frequency(Hz)", getYTag());
 	}
 
@@ -268,10 +269,16 @@ namespace DV {
 			return false;
 		}
 
-		Hdf5Data* newh5Data = new Hdf5Data(h5Data);
-		newh5Data->addSubGroup("Group_grid", "2D_observe", this->points, headList);
+		Group tmpgroup;
+		try {
+			tmpgroup = h5Data.hdf5File->openGroup("Group_grid").openGroup("2D_observe");
+		}
+		catch (...) {
+			std::cerr << "open group fail" << std::endl;
+		}
 
-		delete newh5Data;
+		Hdf5IO::addSubGroup(h5Data, tmpgroup, this->points, headList);
+
 		return true;
 	}
 
@@ -288,6 +295,8 @@ namespace DV {
 
 		Hdf5IO* temp = new Hdf5IO(path);
 		Hdf5Data* newh5Data = new Hdf5Data(h5Data);
+		int groupSize = newh5Data->group.getNumObjs();
+		std::string groupName = "DataGroup" + QString::number(groupSize).toStdString();
 		Hdf5IO::addNewGroup(*temp, *newh5Data, this->points, headList);
 		
 		if (-1 != res)
@@ -297,14 +306,14 @@ namespace DV {
 	}
 
 	//生成新的headList
-	void TimeData::addHeadlistStr(int index, std::string str) {
+	void TimeData::addHeadlistStr(int index, Data::Rang XScope, std::string str) {
 		if (headList.size() < index + 1) {
 			std::cerr << "Not have this index of attribute" << std::endl;
 			return;
 		}
 
-		std::string& headstr = headList.at(index);
-		Data::Rang XScope = getXRang();
+		std::string& headstr = headList.at(index); 
+		
 		std::string addStr = " " + str + " " + std::to_string(XScope.min) + " ~ " + std::to_string(XScope.max);
 
 		int i = headstr.size() - 1;

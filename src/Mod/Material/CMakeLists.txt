@@ -83,3 +83,9 @@ INSTALL(
         ${CMAKE_INSTALL_DATADIR}/Mod/Material
     FILES_MATCHING PATTERN "*.FCMat*"
 )
+SET(Sources_Srcs
+FluidMaterial
+Resources
+StandardMaterial
+)
+File(COPY ${Sources_Srcs} DESTINATION ${CMAKE_BINARY_DIR}/Mod/Material)

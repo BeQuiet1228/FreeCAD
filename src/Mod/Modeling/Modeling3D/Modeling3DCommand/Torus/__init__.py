@@ -1,2 +1,0 @@
-import CreateTorus
-import TorusCommand

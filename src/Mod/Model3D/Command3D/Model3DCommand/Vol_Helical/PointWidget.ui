@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>514</width>
+    <height>222</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="1" column="7" colspan="3">
+      <widget class="QLineEdit" name="lineEdit_point_basez"/>
+     </item>
+     <item row="0" column="4">
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_x2">
+       <property name="text">
+        <string>X</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="0" column="1">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="0" column="8">
+      <widget class="QLabel" name="label_z2">
+       <property name="text">
+        <string>Z</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="5">
+      <widget class="QLabel" name="label_y2">
+       <property name="text">
+        <string>Y</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Base Point:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="6">
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="0" column="9">
+      <spacer name="horizontalSpacer_6">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="0" column="7">
+      <spacer name="horizontalSpacer_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="2" column="4" colspan="3">
+      <widget class="QLineEdit" name="lineEdit_point_topy"/>
+     </item>
+     <item row="1" column="1" colspan="3">
+      <widget class="QLineEdit" name="lineEdit_point_basex"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Top Point:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" colspan="3">
+      <widget class="QLineEdit" name="lineEdit_point_topx"/>
+     </item>
+     <item row="1" column="4" colspan="3">
+      <widget class="QLineEdit" name="lineEdit_point_basey"/>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Radius_inside:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="7" colspan="3">
+      <widget class="QLineEdit" name="lineEdit_point_topz"/>
+     </item>
+     <item row="4" column="1" colspan="3">
+      <widget class="QLineEdit" name="lineEdit_radius_inside"/>
+     </item>
+     <item row="3" column="1" colspan="3">
+      <widget class="QLineEdit" name="lineEdit_point_startx"/>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Width:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Start Point:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Pitch:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Radius_out:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="4" colspan="3">
+      <widget class="QLineEdit" name="lineEdit_point_starty"/>
+     </item>
+     <item row="3" column="7" colspan="3">
+      <widget class="QLineEdit" name="lineEdit_point_startz"/>
+     </item>
+     <item row="5" column="1" colspan="3">
+      <widget class="QLineEdit" name="lineEdit_radius_out"/>
+     </item>
+     <item row="6" column="1" colspan="3">
+      <widget class="QLineEdit" name="lineEdit_pitch"/>
+     </item>
+     <item row="7" column="1" colspan="3">
+      <widget class="QLineEdit" name="lineEdit_width"/>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>lineEdit_point_basex</tabstop>
+  <tabstop>lineEdit_point_basey</tabstop>
+  <tabstop>lineEdit_point_basez</tabstop>
+  <tabstop>lineEdit_point_topx</tabstop>
+  <tabstop>lineEdit_point_topy</tabstop>
+  <tabstop>lineEdit_point_topz</tabstop>
+  <tabstop>lineEdit_point_startx</tabstop>
+  <tabstop>lineEdit_point_starty</tabstop>
+  <tabstop>lineEdit_point_startz</tabstop>
+  <tabstop>lineEdit_radius_inside</tabstop>
+  <tabstop>lineEdit_radius_out</tabstop>
+  <tabstop>lineEdit_pitch</tabstop>
+  <tabstop>lineEdit_width</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

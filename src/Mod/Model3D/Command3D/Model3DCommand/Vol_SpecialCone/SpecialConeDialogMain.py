@@ -1,0 +1,86 @@
+# -*- coding: utf-8 -*-
+import PointWidget
+from PySide import QtGui
+from Model3D.Tools import Tools3D
+from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain, BaseDialog
+
+
+class ShowPointWidget(QtGui.QWidget):
+    def __init__(self, parent=None):
+        QtGui.QWidget.__init__(self, parent)
+        self.ui = PointWidget.Ui_Form()
+        self.ui.setupUi(self)
+
+
+class ShowDialog(BaseDialogMain.BaseModelDialog):
+    def __init__(self, obj, isNew=False, parent=None):
+        QtGui.QDialog.__init__(self, parent)
+        self.ui = BaseDialog.Ui_Dialog()
+        self.ui.setupUi(self)
+
+        self.pointWidget = ShowPointWidget()
+        self.setCompleter(self.pointWidget.ui)
+        self.customAttribute = BaseDialogMain.CustomShowWidget()
+        self.setModal(False)
+        self.obj = obj
+        self.ui.gridLayout_object.addWidget(self.pointWidget)
+        self.initDialog()
+        self.loadCommonData()
+        self.loadCustomData()
+        self.getInfoFromObj()
+        self.isNew = isNew
+        self.isKeepData = False
+        Tools3D.switchPointLabel_Model(self.pointWidget.ui)
+
+    def getInfoFromObj(self):
+        self.pointWidget.ui.lineEdit_point2y.setText(str(self.obj.user_point2_y).replace(' ', ''))
+        self.pointWidget.ui.lineEdit_point1x.setText(str(self.obj.user_point1_x).replace(' ', ''))
+        self.pointWidget.ui.lineEdit_point1y.setText(str(self.obj.user_point1_y).replace(' ', ''))
+        self.pointWidget.ui.lineEdit_point1z.setText(str(self.obj.user_point1_z).replace(' ', ''))
+        self.pointWidget.ui.lineEdit_point2x.setText(str(self.obj.user_point2_x).replace(' ', ''))
+        self.pointWidget.ui.lineEdit_point2z.setText(str(self.obj.user_point2_z).replace(' ', ''))
+        self.pointWidget.ui.lineEdit_radiusBottom.setText(str(self.obj.user_radius1).replace(' ', ''))
+        self.pointWidget.ui.lineEdit_radiusTop.setText(str(self.obj.user_radius2).replace(' ', ''))
+
+    def setInfoToObj(self):
+        self.obj.user_point1_x = self.pointWidget.ui.lineEdit_point1x.text().replace(' ', '')
+        self.obj.user_point1_y = self.pointWidget.ui.lineEdit_point1y.text().replace(' ', '')
+        self.obj.user_point1_z = self.pointWidget.ui.lineEdit_point1z.text().replace(' ', '')
+        self.obj.user_point2_x = self.pointWidget.ui.lineEdit_point2x.text().replace(' ', '')
+        self.obj.user_point2_y = self.pointWidget.ui.lineEdit_point2y.text().replace(' ', '')
+        self.obj.user_point2_z = self.pointWidget.ui.lineEdit_point2z.text().replace(' ', '')
+        self.obj.user_radius1 = self.pointWidget.ui.lineEdit_radiusBottom.text()
+        self.obj.user_radius2 = self.pointWidget.ui.lineEdit_radiusTop.text()
+        Tools3D.setPlaceToObj(self.obj, "Point1X", self.pointWidget.ui.lineEdit_point1x.text())
+        Tools3D.setPlaceToObj(self.obj, "Point1Y", self.pointWidget.ui.lineEdit_point1y.text())
+        Tools3D.setPlaceToObj(self.obj, "Point1Z", self.pointWidget.ui.lineEdit_point1z.text())
+        Tools3D.setPlaceToObj(self.obj, "Point2X", self.pointWidget.ui.lineEdit_point2x.text())
+        Tools3D.setPlaceToObj(self.obj, "Point2Y", self.pointWidget.ui.lineEdit_point2y.text())
+        Tools3D.setPlaceToObj(self.obj, "Point2Z", self.pointWidget.ui.lineEdit_point2z.text())
+        Tools3D.setPlaceToObj(self.obj, "Radius_Bottom", self.pointWidget.ui.lineEdit_radiusBottom.text())
+        Tools3D.setPlaceToObj(self.obj, "Radius_Top", self.pointWidget.ui.lineEdit_radiusTop.text())
+        self.obj.recompute()
+
+    def slotOk(self):
+        self.setInfoToObj()
+        # 判断输入坐标是否符合模型的要求
+        judge = self.judgePoint()
+        if judge:
+            QtGui.QMessageBox.information(None, "", "无法有效绘制圆台体，请检查输入数据。")
+        else:
+            self.isKeepData = True
+            self.close()
+
+    def judgePoint(self):
+        point1 = Tools3D.transToRecVector(self.obj.Point1X.Value, self.obj.Point1Y.Value, self.obj.Point1Z.Value)
+        point2 = Tools3D.transToRecVector(self.obj.Point2X.Value, self.obj.Point2Y.Value, self.obj.Point2Z.Value)
+        vector = point2 - point1
+        height = point1.distanceToPoint(point2)
+        if height == 0:
+            return True
+        elif self.obj.Radius_Bottom == 0 and self.obj.Radius_Top == 0:
+            return True
+        elif self.obj.Radius_Bottom < 0 or self.obj.Radius_Top < 0:
+            return True
+        else:
+            return False

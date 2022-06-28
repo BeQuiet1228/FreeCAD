@@ -40,6 +40,7 @@ namespace DV {
 		int indexR = findIndexFromXValueL(xr.max);
 		indexL = indexL == 1 ? 0 : indexL;//由于函数会自动加一，但是在索引为0时，找不到左值，所以会在findIndexFromXValueL中韩慧0，在通过findIndexFromXValueR进行加1
 		indexR = indexR == n ? n - 1 : indexR;//由于函数findIndexFromXValueL在index大于n时会返回n，但时points中最大索引为n-1
+		Data::Rang XScope(points->at(indexL * 2), points->at(indexR * 2));
 		float rangStep = 1 / ((points->at(indexR * 2) - points->at(indexL * 2)));//采样频率间隔为时间采样的倒数
 
 		//将X和Y轴的数据分别做处理
@@ -60,7 +61,7 @@ namespace DV {
 		}
 		points = nowPoints;
 		updateData(InterspaceDataFFT, getNewXTag(), getYTag());
-		addHeadlistStr(11, "FFT");
+		addHeadlistStr(11, XScope, "FFT");
 	}
 
 	std::string InterspaceData::getNewXTag() {
@@ -88,9 +89,16 @@ namespace DV {
 			return false;
 		}
 
-		Hdf5Data* newh5Data = new Hdf5Data(h5Data);
-		newh5Data->addSubGroup("Group_grid", "2D_rangers", this->points, headList);
-		delete newh5Data;
+		Group tmpgroup;
+		try {
+			tmpgroup = h5Data.hdf5File->openGroup("Group_grid").openGroup("2D_rangers");
+		}
+		catch (...) {
+			std::cerr << "open group fail" << std::endl;
+		}
+
+		Hdf5IO::addSubGroup(h5Data, tmpgroup, this->points, headList);
+
 		return true;
 	}
 	

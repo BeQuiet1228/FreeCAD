@@ -1,0 +1,36 @@
+SET(DynamicData_Srcs
+./dynamicdatawb_locator.py
+./Init.py
+./InitGui.py
+./LICENSE
+./README.md
+./Resources/icons/AddProperty.png
+./Resources/icons/AddProperty.svg
+./Resources/icons/CopyProperty.png
+./Resources/icons/CreateObject.png
+./Resources/icons/CreateObject.svg
+./Resources/icons/dd-bg.png
+./Resources/icons/DynamicDataLogo.png
+./Resources/icons/ImportNamedConstraints.png
+./Resources/icons/RemoveProperty.png
+./Resources/icons/RemoveProperty.svg
+./Resources/icons/Settings.png
+./Resources/media/add_property_scr.png
+./Resources/media/add_property_scr2.png
+./Resources/media/copy_property_scr.png
+./Resources/media/dd_constraint_reference_scr.png
+./Resources/media/example.gif
+./Resources/media/example_vid.webm
+./Resources/media/list_example_scr.png
+./Resources/media/remove_property_scr.png
+./__init__.py
+./DynamicDataCmd.py
+)
+add_custom_target(DynamicData ALL SOURCES ${DynamicData_Srcs})
+fc_copy_sources(DynamicData "${CMAKE_BINARY_DIR}/Mod/DynamicData" ${DynamicData_Srcs})
+install(
+	FILES
+	${DynamicData_Srcs}
+	DESTINATION
+	Mod/DynamicData
+)

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>布尔运算</title>
+    <defs>
+        <linearGradient x1="50%" y1="0.557255245%" x2="50%" y2="97.0388986%" id="linearGradient-1">
+            <stop stop-color="#ADADAD" offset="0%"></stop>
+            <stop stop-color="#A0A0A0" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#ACEFC9" offset="0%"></stop>
+            <stop stop-color="#51DE8E" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="图标输出" transform="translate(-625.000000, -947.000000)" stroke="#1A1A1A" stroke-width="0.5">
+            <g id="布尔运算" transform="translate(625.000000, 947.000000)">
+                <circle id="Oval-Copy" fill="url(#linearGradient-1)" cx="9.5" cy="9.5" r="4.5"></circle>
+                <circle id="Oval" fill="url(#linearGradient-2)" cx="6.5" cy="6.5" r="4.5"></circle>
+                <path d="M9.5,5 C9.95459786,5 10.3934515,5.06740902 10.8071106,5.19277675 C10.932591,5.6065485 11,6.04540214 11,6.5 C11,8.98528137 8.98528137,11 6.5,11 C6.04540214,11 5.6065485,10.932591 5.19288941,10.8072232 C5.06740902,10.3934515 5,9.95459786 5,9.5 C5,7.01471863 7.01471863,5 9.5,5 Z" id="Combined-Shape" fill="#FFFFFF"></path>
+            </g>
+        </g>
+    </g>
+</svg>

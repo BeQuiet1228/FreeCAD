@@ -8,8 +8,6 @@ class FileWorkbench(Workbench):
         self.__class__.MenuText = "Files"
         self.__class__.ToolTip = "File workbench"
 
-    import FileCommand.FileActions
-
     def Initialize(self):
         cmdlst = ["File_SaveAs",
                   "File_Recent",
@@ -17,4 +15,4 @@ class FileWorkbench(Workbench):
                   "App_Exit"]
         self.appendToolbar("Files", cmdlst)
 
-# Gui.addWorkbench(FileWorkbench())
+#Gui.addWorkbench(FileWorkbench())

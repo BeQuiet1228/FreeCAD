@@ -41,7 +41,7 @@ namespace DV {
 	protected:
 		//所有的点数据
 		void fft(std::vector<float>& initdata, float fs);
-		void addHeadlistStr(int index, std::string str);
+		void addHeadlistStr(int index, Data::Rang XScope, std::string str);
 
 	public:
 		//对数据points进行FFT变换生成新的数据

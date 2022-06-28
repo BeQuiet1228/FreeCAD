@@ -1,0 +1,3 @@
+import ClipCommand
+import ClipDialog
+import ClipDialogMain
