@@ -2,6 +2,7 @@
 #include <QTreeView>
 #include <QStandardItemModel>
 #include <vector>
+#include <QSortFilterProxyModel>
 #include "Hdf5DataItem.h"
 #include "hdf5DataItemFactory.h"
 
@@ -9,6 +10,19 @@ namespace OriginUI {
 	class InputLineEdit;
 }
 namespace Gui {
+
+	class SortFilterProxyModel : public QSortFilterProxyModel
+	{
+		Q_OBJECT
+	public:
+		SortFilterProxyModel(QObject* parent = nullptr);
+		virtual ~SortFilterProxyModel();
+
+	private:
+		virtual bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const;
+	};
+
+
 	class DataVisualizationTree :public QWidget{
 		Q_OBJECT
 	public:
@@ -34,6 +48,7 @@ namespace Gui {
 	private:
 		//item mod
 		QStandardItemModel* model;
+		QSortFilterProxyModel* filterModel;
 		//¹¤³§
 		std::vector<std::shared_ptr<HDF5DataItemFactory>> factorys;
 		//Ê÷¿Ø¼þ
@@ -42,6 +57,8 @@ namespace Gui {
 		OriginUI::InputLineEdit* searchLineEdit;
 	public Q_SLOTS:
 		void itemDoubleClicked(const QModelIndex& index);
+		void searchButtonClicked(bool);
+		void cancelButtonClicked(bool);
 		
 	};
 }

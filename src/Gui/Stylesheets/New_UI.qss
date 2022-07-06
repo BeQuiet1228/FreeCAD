@@ -187,3 +187,25 @@ stop:0 #faf2c1,stop:1 #fed375);
 	margin-bottom:-3px;
 	background-color: qlineargradient(spread:pad, x1:0.5, y1:0.0454545, x2:0.505682, y2:1, stop:0 rgba(72, 182, 255, 255), stop:0.982955 rgba(71, 156, 213, 255), stop:1 rgba(255, 255, 255, 255));
 }
+
+OriginUI--InputLineEdit{
+	padding-left:10px;
+	padding-right:10px;
+}
+OriginUI--InputLineEdit QLineEdit{
+	border: none;
+	background-color: rgba(100, 100, 100,50);
+	font: 12pt "华文中宋";
+	padding-left:5px;
+	padding-right:5px;
+}
+OriginUI--InputLineEdit QToolButton{
+	border: none;
+	background-color: rgba(100, 100, 100,50);
+	padding-left:5px;
+	padding-right:5px;
+}
+OriginUI--InputLineEdit QToolButton:pressed{
+	padding-right:3px;
+	padding-bottom:-3px;
+}

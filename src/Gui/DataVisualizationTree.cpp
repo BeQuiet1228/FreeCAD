@@ -7,6 +7,10 @@
 #include "InputLineEdit.h"
 #include <QVBoxLayout>
 #include <QStandardItem>
+#include <QToolButton>
+#include <QLineEdit>
+#include <QRegExp>
+#include <QStandardItem>
 
 
 #define  ITEM_SORT 1
@@ -19,12 +23,23 @@ Gui::DataVisualizationTree::DataVisualizationTree(QWidget* parent/*= 0*/)
 	searchLineEdit = new OriginUI::InputLineEdit(this);
 	auto vLayout = new QVBoxLayout(this);
 	setLayout(vLayout);
-	vLayout->addWidget(treeView);
 	vLayout->addWidget(searchLineEdit);
+	vLayout->addWidget(treeView);
+	vLayout->setSpacing(0);
+	vLayout->setMargin(0);
+
+	searchLineEdit->setOkIcon(QIcon(":/icons/document-find.svg"));
+	searchLineEdit->setCancelIcon(QIcon(":/icons/window_close.svg"));
 
 	treeView->setHeaderHidden(true);
 	connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(itemDoubleClicked(QModelIndex)));
-	treeView->setModel(model);
+	connect(searchLineEdit->getOkButton(), SIGNAL(clicked(bool)), this, SLOT(searchButtonClicked(bool)));
+	connect(searchLineEdit->getCancelButton(), SIGNAL(clicked(bool)), this, SLOT(cancelButtonClicked(bool)));
+
+	filterModel = new SortFilterProxyModel(this);
+	filterModel->setSourceModel(model);
+
+	treeView->setModel(filterModel);
 
 	initFactorys();
 }
@@ -202,9 +217,59 @@ std::vector<Gui::HDF5DataItem*> Gui::DataVisualizationTree::creatHdf5DataItem(Hd
 
 void Gui::DataVisualizationTree::itemDoubleClicked(const QModelIndex& index)
 {
-	auto item = dynamic_cast<HDF5DataItem*>(model->itemFromIndex(index));
+	auto item = dynamic_cast<HDF5DataItem*>(model->itemFromIndex(filterModel->mapToSource(index)));
 	assert(item);
 
 	item->triggerDoubleClickEvent();
 }
 
+
+void Gui::DataVisualizationTree::searchButtonClicked(bool)
+{
+	auto word = searchLineEdit->getLineEdit()->text();
+	if (word.isEmpty())
+		return;
+	QRegExp exp(word,Qt::CaseInsensitive, QRegExp::RegExp);
+	filterModel->setFilterRegExp(exp);
+	treeView->expandAll();
+}
+
+void Gui::DataVisualizationTree::cancelButtonClicked(bool)
+{
+	searchLineEdit->getLineEdit()->clear();
+	filterModel->setFilterRegExp(QRegExp());
+}
+
+Gui::SortFilterProxyModel::SortFilterProxyModel(QObject* parent /*= nullptr*/)
+	:QSortFilterProxyModel(parent)
+{
+
+}
+
+Gui::SortFilterProxyModel::~SortFilterProxyModel()
+{
+
+}
+
+bool Gui::SortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const
+{
+	if (filterRegExp().isEmpty() == false)
+	{
+		QModelIndex source_index = sourceModel()->index(source_row, this->filterKeyColumn(), source_parent);
+		if (source_index.isValid())
+		{
+			/*
+				如果不是最终的节点，则判断节点下是否有可显示的子节点，如果有才显示。
+			*/
+			QStandardItemModel* srcModel = dynamic_cast<QStandardItemModel*>(sourceModel());
+			if (!srcModel)
+				return true;
+			if (srcModel->itemFromIndex(source_index)->rowCount() != 0)
+				return true;
+			return QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
+		}
+	}
+
+	return QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
+
+}
