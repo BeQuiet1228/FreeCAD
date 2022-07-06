@@ -206,34 +206,44 @@ namespace DV {
 
 		Grid grid;
 
+		/*
+			2022.7.5 更新
+			之前判断索引数据大于取点数据时，使用该索引，这个逻辑会导致最前面的一个点永远无法取到。
+			修改为判断大于之后，在判断前后的距离，取最近的距离
+		*/
 		//获取宽度索引
 		for (; w < width; w++)
 		{
 			grid = grids.at(w);
-			if (grid.x > x)
-			{
+			if (grid.x < x)
+				continue;
+			if(w == 0)
 				break;
-			}
+			auto agrid = grids.at(w - 1);
+			w = abs(grid.x - x) < abs(agrid.x - x) ? w : w - 1;
+			break;
 		}
 		//获取高度索引
 		for (; h < height - 1; h++)
 		{
 			grid = grids.at(h * width);
-			if (grid.y > y)
-			{
+			if (grid.y < y)
+				continue;
+			if(h == 0)
 				break;
-			}
+			auto agrid = grids.at((h - 1)*width);
+			h = abs(grid.y - y) < abs(agrid.y - y) ? h : h - 1;
+			break;
 		}
 
 		int index = w + h * width;
-#ifdef MY_DEBUG
 		if (index >= grids.size())
 		{
 			std::cerr << "ContourData::findGrid index out of range" << std::endl;
 			Grid g;
 			return g;
 		}
-#endif
+
 		return grids.at(index);
 	}
 
