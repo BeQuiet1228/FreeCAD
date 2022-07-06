@@ -4,8 +4,12 @@
 #include <vector>
 #include "Hdf5DataItem.h"
 #include "hdf5DataItemFactory.h"
+
+namespace OriginUI {
+	class InputLineEdit;
+}
 namespace Gui {
-	class DataVisualizationTree :public QTreeView{
+	class DataVisualizationTree :public QWidget{
 		Q_OBJECT
 	public:
 		DataVisualizationTree(QWidget* parent= 0);
@@ -32,6 +36,10 @@ namespace Gui {
 		QStandardItemModel* model;
 		//¹¤³§
 		std::vector<std::shared_ptr<HDF5DataItemFactory>> factorys;
+		//Ê÷¿Ø¼þ
+		QTreeView* treeView;
+		//ËÑË÷¿ò
+		OriginUI::InputLineEdit* searchLineEdit;
 	public Q_SLOTS:
 		void itemDoubleClicked(const QModelIndex& index);
 		

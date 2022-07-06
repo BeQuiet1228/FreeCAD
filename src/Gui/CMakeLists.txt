@@ -847,11 +847,14 @@ SET(DATA_VISUALIZATION_GUI_SRC
 	ControlerItemListWidget.h
 	SuperDog.h
 	SuperDog.cpp
+	InputLineEdit.cpp
+	InputLineEdit.h
 )
 SET(DATA_VISUALIZATION_GUI_MOC_H
 	Hdf5DataItem.h
 	DataVisualizationTree.h
 	ControlerItemListWidget.h
+	InputLineEdit.h
 )
 
 if (BUILD_QT5)

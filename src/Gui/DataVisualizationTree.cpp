@@ -4,16 +4,27 @@
 #include "Hdf5DataItemEventHandler.h"
 #include "HDF5DataItem2DDoubleClickEventHander.h"
 #include "Hdf5DataItem.h"
+#include "InputLineEdit.h"
+#include <QVBoxLayout>
 #include <QStandardItem>
+
 
 #define  ITEM_SORT 1
 
 Gui::DataVisualizationTree::DataVisualizationTree(QWidget* parent/*= 0*/)
-	:QTreeView(parent),model(new QStandardItemModel)
+	:QWidget(parent),model(new QStandardItemModel)
 {
-	setHeaderHidden(true);
-	connect(this, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(itemDoubleClicked(QModelIndex)));
-	setModel(model);
+	//³õÊ¼»¯ui
+	treeView = new QTreeView(this);
+	searchLineEdit = new OriginUI::InputLineEdit(this);
+	auto vLayout = new QVBoxLayout(this);
+	setLayout(vLayout);
+	vLayout->addWidget(treeView);
+	vLayout->addWidget(searchLineEdit);
+
+	treeView->setHeaderHidden(true);
+	connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(itemDoubleClicked(QModelIndex)));
+	treeView->setModel(model);
 
 	initFactorys();
 }
