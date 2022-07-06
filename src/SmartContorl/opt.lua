@@ -47,7 +47,7 @@ function addVarMod2(name,lvar)
 	end
 	overvarName[variateCount]=name;
 	local lval={};
-	lval[0]=lvar;
+	lval[1]=lvar;
 	overvar[variateCount]=lval;
 	variateCount=variateCount+1;
 end
