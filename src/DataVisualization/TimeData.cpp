@@ -142,7 +142,7 @@ namespace DV {
 				yr.min = temp;
 		}
 		//如果y轴范围太小，则将数据置于中心
-		if (abs(yr.min - yr.max) < 1e-6)
+		if (abs(yr.min - yr.max) < 1e-36)
 		{
 			yr.min -= 100;
 			yr.max += 100;
