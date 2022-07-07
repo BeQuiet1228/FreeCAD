@@ -219,12 +219,17 @@ double TargetFrequency::getTagetValue(const std::string& filePath)
 			}
 		}
 	}
-
+	/*
+	* 2022 .7.7
+		f1 f2 将单位转换为GHz 否则差值过大时，temp容易出现零值
+	*/
+	f1 = f1 * 1e-9;
+	f2 = f2 * 1e-9;
 	double temp = exp(-abs(f1 - f2));
 	double add = 0;
 
-	for (int i = 1; i < value.size(); i = i + 2) {
-		add = add + (e1 - value[i ]);
+	for (int i = 1; i < value.size() - 2; i = i + 2) {
+		add = add + ((1- value[i]/e1) * (value[i + 1] - value[i - 1]));
 	}
 	return add * temp;
 }
@@ -232,7 +237,7 @@ double TargetFrequency::getTagetValue(const std::string& filePath)
 void TargetFrequency::setFrequencyRange(const double& max, const double& min)
 {
 	maxFrequency = max;
-	minFrequency = minFrequency;
+	minFrequency = min;
 }
 
 double TargetFrequency::getMaxFrequency()
