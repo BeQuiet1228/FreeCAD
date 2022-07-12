@@ -1,5 +1,8 @@
 body {
     background: #basecolor;
+	background-repeat:no-repeat;
+	background-position:center;
+	background-size:cover;
     color: #textcolor;
     font-family: Arial, Helvetica, Sans;
     font-size: 11px;

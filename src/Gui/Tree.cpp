@@ -745,6 +745,7 @@ void TreeWidget::slotNewDocument(const Gui::Document& Doc)
 	  DocumentItem* item = new DocumentItem(&Doc, this->rootItem);
 	  this->expandItem(item);
 	  item->setIcon(0, *documentPixmap);
+      item->setToolTip( 0,QString::fromStdString(Doc.getDocument()->FileName.getStrValue()));
 	  //qDebug() << QString::fromUtf8(Doc.getDocument()->Label.getValue());
 	  DocumentMap[ &Doc ] = item;
 	  item->setText(0, QString::fromUtf8(Doc.getDocument()->Label.getValue()));
@@ -771,6 +772,7 @@ void TreeWidget::slotRelabelDocument(const Gui::Document& Doc)
     std::map<const Gui::Document*, DocumentItem*>::iterator it = DocumentMap.find(&Doc);
     if (it != DocumentMap.end()) {
         it->second->setText(0, QString::fromUtf8(Doc.getDocument()->Label.getValue()));
+        it->second->setToolTip(0, QString::fromStdString(Doc.getDocument()->FileName.getStrValue()));
     }
 }
 

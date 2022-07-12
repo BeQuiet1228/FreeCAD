@@ -24,4 +24,8 @@ INSTALL(
     PATTERN "Makefile*" EXCLUDE
     PATTERN "*.pdf" EXCLUDE
 )
+SET(Sources_Srcs
+Lib
+)
+File(COPY ${Sources_Srcs} DESTINATION ${CMAKE_BINARY_DIR}/Mod/Robot)
 

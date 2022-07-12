@@ -109,3 +109,7 @@ SET(ImageGuiIcon_SVG
 fc_copy_sources(ImageGui "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_DATADIR}/Mod/Image" ${ImageGuiIcon_SVG})
 
 INSTALL(FILES ${ImageGuiIcon_SVG} DESTINATION "${CMAKE_INSTALL_DATADIR}/Mod/Image/Resources/icons")
+SET(Sources_Srcs
+	Resources
+)
+File(COPY ${Sources_Srcs} DESTINATION ${CMAKE_BINARY_DIR}/Mod/Image)

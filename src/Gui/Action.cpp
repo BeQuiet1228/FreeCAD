@@ -618,33 +618,32 @@ void WorkbenchGroup::customEvent( QEvent* e )
 //接收工作台切换信号的槽
 void WorkbenchGroup::slotActivateWorkbench(const char* name)
 {
-    return;
-    //根据名字找到Python端写好的Command
-    //如果Python端修改了SwitchWorkbench中Command的名字，这里也要做出相应修改！
-    CommandManager &cmgr=Application::Instance->commandManager();
-    Command *modeling2DCommand = cmgr.getCommandByName("Modeling 2D");
-    Command *modeling3DCommand = cmgr.getCommandByName("Modeling 3D");
-    Command *postProcessingCommand = cmgr.getCommandByName("Post Processing");
-    Action *modeling2DAction = modeling2DCommand->getAction();
-    Action *modeling3DAction = modeling3DCommand->getAction();
-    Action *postProcessingAction = postProcessingCommand->getAction();
-
-    if (!modeling3DAction || !modeling2DAction || !postProcessingAction)
-        return;
-
-    modeling2DAction->setChecked(false);
-    modeling3DAction->setChecked(false);
-    postProcessingAction->setChecked(false);
-
-    //通过其它方式切换工作台时，五个工作台切换按钮的状态也会相应改变
-    //如果Python端修改了工作台的名字，这里也要做出相应修改！
-    if (strcmp(name, "Modeling2DWorkbench") == 0)
-        modeling2DAction->setChecked(true);
-    else if (strcmp(name, "Modeling3DWorkbench") == 0)
-        modeling3DAction->setChecked(true);
-    else if (strcmp(name, "VisualWorkbench") == 0)
-        postProcessingAction->setChecked(true);
-
+//    //根据名字找到Python端写好的Command
+//    //如果Python端修改了SwitchWorkbench中Command的名字，这里也要做出相应修改！
+//    CommandManager &cmgr=Application::Instance->commandManager();
+//    Command *modeling2DCommand = cmgr.getCommandByName("Modeling 2D");
+//    Command *modeling3DCommand = cmgr.getCommandByName("Modeling 3D");
+//    Command *postProcessingCommand = cmgr.getCommandByName("Post Processing");
+////    Action *modeling2DAction = modeling2DCommand->getAction();
+//    Action *modeling3DAction = modeling3DCommand->getAction();
+//    Action *postProcessingAction = postProcessingCommand->getAction();
+//
+//    if (!modeling3DAction /*|| !modeling2DAction*/ || !postProcessingAction)
+//        return;
+//
+//    //modeling2DAction->setChecked(false);
+//    modeling3DAction->setChecked(false);
+//    postProcessingAction->setChecked(false);
+//
+//    //通过其它方式切换工作台时，五个工作台切换按钮的状态也会相应改变
+//    //如果Python端修改了工作台的名字，这里也要做出相应修改！
+//
+//    /*if (strcmp(name, "Modeling2DWorkbench") == 0)
+//        modeling2DAction->setChecked(true);*/
+//    /*else*/ if (strcmp(name, "Modeling3DWorkbench") == 0)
+//        modeling3DAction->setChecked(true);
+//    else if (strcmp(name, "VisualWorkbench") == 0)
+//        postProcessingAction->setChecked(true);
     //注：WorkbenchGroup中Modeling 3D工作台在_group中对应Action（由FreeCAD自动生成）的text是3D Modeling，但这里修改的是SwitchWorkbench中Command对应的Action
 }
 

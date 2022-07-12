@@ -7,6 +7,7 @@
 #include "Plot.h"
 #include "TimeRenderer.h"
 #include <qcoreapplication.h>
+#include <qmessagebox.h>
 
 namespace DV {
 	TimeUndoRedoData::TimeUndoRedoData(const Data::Rang& xr, const Data::Rang& yr) :UndoRedoData(xr, yr), point(NULL) {
@@ -121,9 +122,14 @@ namespace DV {
 	//将当前的point数据添加到h5文件中
 	void TimePlotAdapter::saveTrigger() {
 		bool isSave = Timedata->addNewGroup();
-		QDialog* saveDialog = new FourierDialog(isSave);
-		saveDialog->exec();
-		delete saveDialog;
+		if (isSave) {
+			QMessageBox message(QMessageBox::Information, "OK", "save successfully, Visible after reopen");
+			message.exec();
+		}
+		else {
+			QMessageBox message(QMessageBox::Warning, "Error", "Failed to save, data already exists");
+			message.exec();
+		}
 	}
 
 	//将操作压入栈

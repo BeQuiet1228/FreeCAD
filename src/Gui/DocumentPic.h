@@ -28,6 +28,10 @@ public:
 	void showParticleSwarmOptimizationView();
 	//显示批处理窗口
 	void showProcessingBatchView();
+	//显示遗传算法窗口
+	void showGeneticAlgorithmView();
+	//显示多目标遗传算法
+	void showMultipleTargetGeneticAlgorithmView();
 
 	//保存与另存为
 	virtual void save();
@@ -36,6 +40,12 @@ public:
 	//处理一些通用消息
 	virtual bool onMsg(const char* pMsg, const char** ppReturn);
 	virtual bool onHasMsg(const char* pMsg) const ;
+};
+
+class Document2DPic :public DocumentPic {
+public:
+	Document2DPic(App::Document* pcDocument, Gui::Application* app);
+	virtual bool onHasMsg(const char* pMsg) const override;
 };
 
 class DocumentText :public DocumentPic {
@@ -48,6 +58,12 @@ public:
 	void saveAs() override;
 
 	void initMDIView();
+
+};
+class DocumentText2D :public DocumentText {
+public:
+	DocumentText2D(App::Document* pcDocument, Gui::Application* app);
+	virtual bool onHasMsg(const char* pMsg) const override;
 
 };
 

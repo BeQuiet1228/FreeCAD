@@ -19,7 +19,7 @@ namespace DV {
 	void AxisLable::initUI()
 	{
 		//×îÐ¡Öµ
-		QRegExp rx("^(-?|\\d)(\\d+)?(\\.\\d+)?$");
+		QRegExp rx("^([\\+|-]?\\d+(.{0}|.\\d+))[Ee]{1}([\\+|-]?\\d+)$");
 		QValidator* validator = new QRegExpValidator(rx, this);
 		minLineedit = new QLineEdit();
 		minLineedit->setValidator(validator);

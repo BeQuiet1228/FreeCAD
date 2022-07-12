@@ -42,6 +42,7 @@ namespace DV {
 		startIndex = d->findIndexFromXValueL(xr.min);
 		endIndex = d->findIndexFromXValueL(xr.max);
 
+
 		//新建画布 画笔
 		QImage img(getSize(), QImage::Format_ARGB32);
 		img.fill(qRgba(0, 0, 0, 0));
@@ -51,13 +52,28 @@ namespace DV {
 		painter.setPen(pen);
 		painter.setRenderHint(QPainter::Antialiasing, isAA);
 		ParticleData::Particle p;
-		for (int index = startIndex + 1; index < endIndex; index++)
+		
+		//兼容之前没有区分颜色之前的粒子种类图
+		if (pens.size() > 1)
 		{
-			p = d->particles.at(index);
-			p.x = transitionDataToScreen(p.x, xScale, xr);
-			p.y = transitionDataToScreen(p.y, yScale, yr);
-			painter.drawPoint(p.x, p.y);
+			for (int index = startIndex + 1; index < endIndex; index++)
+			{
+				p = d->particles.at(index);
+				painter.setPen(pens[p.type - 1]);
+				p.x = transitionDataToScreen(p.x, xScale, xr);
+				p.y = transitionDataToScreen(p.y, yScale, yr);
+				painter.drawPoint(p.x, p.y);
+			}
+		}else {
+			for (int index = startIndex + 1; index < endIndex; index++)
+			{
+				p = d->particles.at(index);
+				p.x = transitionDataToScreen(p.x, xScale, xr);
+				p.y = transitionDataToScreen(p.y, yScale, yr);
+				painter.drawPoint(p.x, p.y);
+			}
 		}
+
 		//因为qpainter的屏幕坐标系原点在左上角，所以需要翻转图片才能得到我们想要的结果
 		auto nImg = img.mirrored(false, true);
 #ifdef MY_DEBUG
@@ -87,6 +103,30 @@ namespace DV {
 		if (!pData)
 			return;
 		pData->loadPoint();
+		
+		//根据数据生成画笔
+		auto data = std::dynamic_pointer_cast<ParticleData>(getData());
+		for (int i = 0; i < data->typeSize; i++)
+		{
+			QPen pen(particleColor);
+			pen.setWidth(particleSize);
+			pens.push_back(pen);
+		}
+
+		std::vector<std::string> &typeColors = data->typeColors;
+		for (auto i = 0; i < typeColors.size(); i++)
+		{
+			if (typeColors[i] == "RED")
+			{
+				QPen pen(QColor(255, 0, 0));
+				pen.setWidth(particleSize);
+				pens[i] = pen;
+			}else if (typeColors[i] == "BLUE") {
+				QPen pen(QColor(0, 0, 255));
+				pen.setWidth(particleSize);
+				pens[i] = pen;
+			}
+		}
 	}
 
 	/**
@@ -292,6 +332,7 @@ namespace DV {
 		particleColor = QStringToQColor(QString::fromStdString(particleGroup.getGroup("color").getValue("value")));
 		particleSize = atoi(particleGroup.getGroup("size").getValue("value").c_str());
 		isAA = atoi(particleGroup.getGroup("AlisAttitude").getValue("isAlis").c_str());
+
 	}
 
 	/**

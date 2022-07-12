@@ -7,15 +7,12 @@ if(BUILD_COMPLETE)
   add_subdirectory(Complete)
 endif(BUILD_COMPLETE)
 
-if(BUILD_TEST)
-  add_subdirectory(Test)
-endif(BUILD_TEST)
 
 if(BUILD_PARTCHIPIC)
   add_subdirectory(PartChipic)
 endif(BUILD_PARTCHIPIC)
 
-#add_subdirectory(TemplatePyMod)
+
 
 if(BUILD_IMAGE)
   add_subdirectory(Image)
@@ -98,17 +95,17 @@ if(BUILD_ARCH)
   add_subdirectory(Arch)
 endif(BUILD_ARCH)
 
-if(BUILD_ASSEMBLY)
-  add_subdirectory(Assembly)
-endif(BUILD_ASSEMBLY)
+#if(BUILD_ASSEMBLY)
+#  add_subdirectory(Assembly)
+#endif(BUILD_ASSEMBLY)
 
 if(BUILD_FEM)
     add_subdirectory(Fem)
 endif(BUILD_FEM)
 
-if(BUILD_SANDBOX)
-    add_subdirectory(Sandbox)
-endif(BUILD_SANDBOX)
+#if(BUILD_SANDBOX)
+#    add_subdirectory(Sandbox)
+#endif(BUILD_SANDBOX)
 
 if(BUILD_SHIP)
   add_subdirectory(Ship)
@@ -150,3 +147,14 @@ endif(BUILD_ADDONMGR)
 if(BUILD_TUX)
     add_subdirectory(Tux)
 endif(BUILD_TUX)
+
+#新添加路径
+add_subdirectory(Communication)
+add_subdirectory(ErrorFunction)
+add_subdirectory(File)
+add_subdirectory(Modeling)
+add_subdirectory(NetWork)
+add_subdirectory(Physics)
+add_subdirectory(ProjectSetting)
+add_subdirectory(DynamicData)
+add_subdirectory(Model3D)

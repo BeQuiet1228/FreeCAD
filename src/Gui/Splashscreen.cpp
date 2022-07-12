@@ -52,7 +52,8 @@
 #include <CXX/WrapPython.h>
 #include <App/Application.h>
 #include <Gui/MainWindow.h>
-
+#include <Transition/transition.h>
+#include "SuperDog.h"
 
 using namespace Gui;
 using namespace Gui::Dialog;
@@ -460,6 +461,14 @@ void AboutDialog::setupLabels()
     QString build  = QString::fromLatin1(config["BuildRevision"].c_str());
     QString disda  = QString::fromLatin1(config["BuildRevisionDate"].c_str());
     QString mturl  = QString::fromLatin1(config["MaintainerUrl"].c_str());
+
+    if (SuperDog::login())
+        ui->labelBuildState->setText(gbkStdstringToQstring("有效许可"));
+    else
+    {
+        ui->labelBuildState->setText(gbkStdstringToQstring("无效许可"));
+    }
+
 
 	//隐藏freecad的作者信息
 	/* QString author = ui->labelAuthor->text();

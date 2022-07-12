@@ -122,7 +122,8 @@ def getInfo(filename):
                     html += '<img src=file://'
                     html += thumbfile + '><br/>'
         else:
-            print ("not a freecad file: "+os.path.splitext(filename)[1].upper())
+            #  print ("not a freecad file: "+os.path.splitext(filename)[1].upper())
+            pass
     else:
         html += "<p>" + text41 + "</p>"
     return html

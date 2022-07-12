@@ -1,2 +1,0 @@
-import CreatePyramid
-import PyramidCommand

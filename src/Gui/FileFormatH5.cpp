@@ -30,7 +30,7 @@ void FileFormatH5::open(const QStringList& fileList)
 	{
 		QDir dir(*i);
 		QString filename = dir.dirName();
-		App::Document* doc = App::GetApplication().newDocumentH5(filename.toUtf8(), "");
+		App::Document* doc = App::GetApplication().newDocumentH5(i->toUtf8().data(),filename.toUtf8(), "");
 		this->openOnce(*i,doc);
 		Gui::FileDialog::setWorkingDirectory(QString(*i).remove(filename));
 	}

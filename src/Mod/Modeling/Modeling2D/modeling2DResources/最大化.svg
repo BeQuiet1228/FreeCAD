@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>打开log文件 copy 3</title>
+    <defs>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#DCDCDC" offset="0%"></stop>
+            <stop stop-color="#C9C9C9" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#DCDCDC" offset="0%"></stop>
+            <stop stop-color="#C1C1C1" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.9">
+        <g id="图标输出" transform="translate(-388.000000, -122.000000)">
+            <g id="打开log文件-copy-3" transform="translate(388.000000, 122.000000)">
+                <g id="Group"></g>
+                <rect id="Rectangle" stroke="#191919" stroke-width="0.5" fill="url(#linearGradient-1)" x="3" y="3" width="6" height="6"></rect>
+                <rect id="Rectangle-Copy" stroke="#191919" stroke-width="0.5" fill="url(#linearGradient-2)" x="7" y="7" width="6" height="6"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

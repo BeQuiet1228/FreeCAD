@@ -1,0 +1,945 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>GeneticAlgorithmUI</class>
+ <widget class="QWidget" name="GeneticAlgorithmUI">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1220</width>
+    <height>976</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QWidget" name="widget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>300</height>
+      </size>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_12">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_14">
+          <item>
+           <widget class="QLabel" name="label_17">
+            <property name="text">
+             <string>单次运行个数</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBoxRunCount">
+            <property name="value">
+             <number>3</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>种群个数</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBoxCount">
+            <property name="value">
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QPushButton" name="pushButtonAddVariate">
+            <property name="text">
+             <string>添加变量</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonDeleteVariate">
+            <property name="text">
+             <string>删除变量</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QListWidget" name="listWidgetVariate"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButtonVariateMax">
+          <property name="text">
+           <string>查看变量趋势图</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>数据筛选设置</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_15">
+             <item>
+              <widget class="QLabel" name="label_16">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>最大优化次数:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBoxOptimizeCount">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximum">
+                <number>10000</number>
+               </property>
+               <property name="value">
+                <number>200</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>观测对象名称:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditName">
+               <property name="text">
+                <string>test</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <item>
+              <widget class="QLabel" name="label_4">
+               <property name="text">
+                <string>筛选数据最小时间:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditMiniTime">
+               <property name="text">
+                <string>4</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_12">
+               <property name="text">
+                <string>ns</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item>
+              <widget class="QLabel" name="label_3">
+               <property name="text">
+                <string>筛选数据最大时间:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditMaxTime">
+               <property name="text">
+                <string>15</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_13">
+               <property name="text">
+                <string>ns</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <item>
+              <widget class="QLabel" name="label_5">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>F=  </string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="comboBoxF">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <item>
+                <property name="text">
+                 <string>最大值</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>最小值</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>平均值</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>PavExp(-|Pmax/Pav-2k|)</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <item>
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>F预期值:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditMaxF">
+               <property name="text">
+                <string>500000</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_13">
+             <item>
+              <widget class="QLabel" name="label_11">
+               <property name="text">
+                <string>预期模式:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="comboBoxExcpcet">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <item>
+                <property name="text">
+                 <string>接近预期</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>大于预期</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QWidget" name="widgetAccuracy" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_16">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="label_14">
+                <property name="text">
+                 <string>接近预期精度：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="lineEditAccuracy">
+                <property name="text">
+                 <string>2</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_15">
+                <property name="text">
+                 <string>（按百分比输入1=1%）</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="title">
+              <string>遗传算法参数设置</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_18">
+                <item>
+                 <widget class="QLabel" name="label_18">
+                  <property name="text">
+                   <string>变异几率(0~1)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="lineEditMutationProbability">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>0.35</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_19">
+                <item>
+                 <widget class="QLabel" name="label_19">
+                  <property name="text">
+                   <string>变异步长(0~1)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="lineEditMutationProbabilityRange">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>0.5</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonF">
+             <property name="text">
+              <string>查看F趋势图</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>运行输出</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPlainTextEdit" name="plainTextEdit">
+          <property name="styleSheet">
+           <string notr="true">font: 12pt &quot;微软雅黑&quot;;</string>
+          </property>
+          <property name="plainText">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="CodeEditor" name="textEdit">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="plainText">
+      <string>require &quot;math&quot;
+--声明一个参数容器
+variates = {};
+variateCount = 0;
+pgtF = 0;
+--pgtf 是否初始化
+pgtFInit = true;
+pitF = 0;
+valueCount = 0;
+--获取F得定义
+function getF(minif,maxf,avf)
+	if(fmod == 0)
+	then
+		return maxf;
+	end
+	if(fmod == 1)
+	then
+		return minif
+	end
+	if(fmod == 2)
+	then
+		return avf;
+	end
+	if(fmod == 3)
+	then
+		return avf*math.exp(-math.abs(maxf/avf - 2));
+	end
+end
+
+--保存运行参数
+function saveVarToFile()
+	creatVarableFileObject();
+	addFileVariable(&quot;pgtF&quot;,pgtF,&quot;n&quot;);
+	local i = 1;
+	while(i &lt; variateCount + 1)
+	do
+		var = variates[i];
+		addFileVariable(&quot;var&quot;..i..&quot;.name&quot;,var.name,&quot;s&quot;);
+		addFileVariable(&quot;var&quot;..i..&quot;.max&quot;,var.max,&quot;n&quot;);
+		addFileVariable(&quot;var&quot;..i..&quot;.mini&quot;,var.mini,&quot;n&quot;);
+		addFileVariable(&quot;var&quot;..i..&quot;.pgt&quot;,var.pgt,&quot;n&quot;);
+
+		local index = 1;
+		while(index &lt; valueCount + 1)
+		do
+			addFileVariable(&quot;var&quot;..i..&quot;.variate&quot;..index,var.variate[index],&quot;n&quot;)
+			addFileVariable(&quot;var&quot;..i..&quot;.vit&quot;..index,var.vit[index],&quot;n&quot;);
+			addFileVariable(&quot;var&quot;..i..&quot;.pit&quot;..index,var.pit[index],&quot;n&quot;);
+			addFileVariable(&quot;var&quot;..i..&quot;.pitF&quot;..index,var.pitF[index],&quot;n&quot;);
+			index = index + 1;
+		end
+		i = i + 1;
+	end
+	
+	saveVariableFile(&quot;test&quot;);
+	closeVariableFile();
+end
+--读取运行参数
+function loadVarToFile()
+	if(not openVariableFile(&quot;test&quot;))
+	then
+		return false;
+	end
+
+	pgtF = getFileVariable(&quot;pgtF&quot;,&quot;n&quot;);
+
+	local i = 1;
+	while(i &lt; variateCount + 1)
+	do
+		local var = {};
+		var.name = getFileVariable(&quot;var&quot;..i..&quot;.name&quot;,&quot;s&quot;);
+		var.max = getFileVariable(&quot;var&quot;..i..&quot;.max&quot;,&quot;n&quot;);
+		var.mini = getFileVariable(&quot;var&quot;..i..&quot;.mini&quot;,&quot;n&quot;);
+		var.pgt = getFileVariable(&quot;var&quot;..i..&quot;.pgt&quot;,&quot;n&quot;);
+
+		print(&quot;vaar.name:&quot;..var.name);
+
+		var.vit = {};
+		var.pit = {};
+		var.pitF = {};
+		var.variate = {};
+		local index = 1;
+		while(index &lt; valueCount + 1)
+		do
+			var.variate[index] = getFileVariable(&quot;var&quot;..i..&quot;.variate&quot;..index,&quot;n&quot;);
+			print(&quot;,var.variate&quot;..index..&quot;:&quot;..var.variate[index]);
+			var.vit[index] = getFileVariable(&quot;var&quot;..i..&quot;.vit&quot;..index,&quot;n&quot;);
+			var.pit[index] = getFileVariable(&quot;var&quot;..i..&quot;.pit&quot;..index,&quot;n&quot;);
+			var.pitF[index] = getFileVariable(&quot;var&quot;..i..&quot;.pitF&quot;..index,&quot;n&quot;);
+			index = index + 1;
+		end
+		variates[i] = var;
+		i = i + 1;
+	end
+end
+
+function printInformation()
+	if(variateCount &lt; 1)
+	then
+		return;
+	end
+	cppPrint(&quot;——————第&quot;..getHistorySize()..&quot;轮历史最优数据——————&quot;);
+	cppPrint(&quot;F = &quot;..pgtF);
+	local i = 1;
+	while(i &lt; variateCount + 1)
+	do
+		local var = variates[i];
+		cppPrint(var.name..&quot; = &quot;..var.pgt);
+		i = i + 1;
+	end
+end
+--判断两个f哪一个更符合预期
+--如果第一个f更符合预期 则返回true
+function compareF(f1,f2)
+if(excpectMod == 0)
+then
+	if(math.abs(f1 - excpectF) &lt; math.abs(f2 - excpectF))
+	then
+		return true;
+	end
+	return false;
+end
+if(excpectMod == 1)
+then
+	if(f1 &gt; f2)
+	then
+		return true;
+	end
+	return false;
+end
+end
+--保留五位数小数点的随机浮点数
+function randmoFloat(mini,max)
+	local bei = 100000;
+	local i = bei*mini;
+	local a = bei*max;
+	print(i);
+	print(a);
+	local rand = 0
+	if(i &lt; a)
+	then
+		rand = math.random(math.floor(i),math.floor(a));
+	else
+		rand = math.random(math.floor(a),math.floor(i));
+	end
+	
+	print(&quot;rand&quot;..rand);
+	return rand/bei;
+end
+--添加参数函数
+function addVar(name,max,mini,count)
+    local var = {};
+    local i = 1;
+	local v = {};
+	var.vit = {};
+	var.pgt = 0;
+	var.pit = {};
+	var.pitF = {};
+    while(i &lt; count + 1)
+	do
+		--设置参数值
+		v[i] = randmoFloat(mini,max);
+		--初始化参数的增量
+		local vitV = math.abs(mini - max)/2;
+		var.vit[i] = randmoFloat(-vitV,vitV);
+		--var.vit[i] = vitV;
+		var.pitF[i] = 0;
+		var.pit[i] = 0;
+		i = i + 1;
+	end
+    var.variate = v;
+    var.name = name;
+    var.max = max;
+    var.mini = mini;
+    variateCount = variateCount + 1;
+    variates[variateCount] = var;
+	valueCount = count;
+	
+	print(&quot;------&quot;);
+end
+function rand()
+	return math.random();
+end
+function init()
+ 
+ --判断是否按上次的优化数据继续优化
+ if(continue)
+ then
+	loadVarToFile();
+ end
+ local index = 1;
+ while(index &lt; variateCount + 1)
+ do
+	--输出参数值
+	local i = 1;
+	local log = variates[index].name..&quot;= &quot;
+	while(i &lt; valueCount + 1)
+	do
+		log = log..variates[index].variate[i]..&quot;,&quot;;
+		i = i + 1;
+	end
+	--cppPrint(log);
+	--往c中添加变量
+	addVariate(variates[index].name,variates[index].variate);
+	index = index + 1;
+ end
+end
+function resultDataFilter()
+ getAllResult();
+ while(nextResult())
+ do
+	if(not openH5File())
+	then
+		print(&quot;open h5file false1!&quot;);
+		return false;
+	end
+	if(not findResultData(observeName))
+	then
+		print(&quot;find result false2!&quot;);
+		return false;
+	end
+ 
+	if(not openDataSet())
+	then
+		print(&quot;open data set false3!&quot;);
+		return false;
+	end
+	local valueSize = getDataSetVlaueSize();
+	local i = 0;
+	local max = getValue(0);
+	local mini = getValue(0);
+	local add = 0;
+	local addCount = 0;
+	while(i &lt; valueSize)
+	do
+		local time = getValue(i);
+		if(time &gt; miniTime and time &lt; maxTime)
+		then
+			local value = getValue(i+1);
+			addCount = addCount + 1;
+			add = add + value;
+			if(value &gt; max)
+			then
+				max = value;
+			end
+			if(value &lt; mini)
+			then
+				mini = value;
+			end
+		end
+		i = i + 2;
+	end
+	local av = add/addCount;
+	local f = getF(mini,max,av);
+	addParam(f);
+	closeH5File();
+ end
+ saveParamsInHistory();
+ local groupIndex = getHistorySize() - 1;
+ local groupSize = getGroupSize(groupIndex);
+ local index = 0;
+ local maxF = 0;
+ local maxFIndex = 0;
+ while(index &lt; groupSize)
+ do
+	local F = getParam(groupIndex,index,0);
+	local pitF = variates[1].pitF[index + 1];
+	print(&quot;pitf=&quot;..pitF..&quot;,F=&quot;..F..&quot;,x=&quot;..variates[1].variate[index + 1]);
+	if(compareF(F,pitF))
+	then
+		local countIndex = 1;
+		while(countIndex &lt; variateCount + 1)
+		do
+			variates[countIndex].pitF[index + 1] = F;
+			variates[countIndex].pit[index + 1] = variates[countIndex].variate[index + 1];
+			--local error = variates[countIndex].pit[index + 1];
+			--if( math.abs(F - 500093) &lt; 1 and math.abs(error - 0.029) &gt; 0.001)
+			--then
+			--	pgtF = 500000;
+			--end
+			--print(&quot;pitf=&quot;..F..&quot;pit=&quot;..variates[countIndex].pit[index + 1]);
+			countIndex = countIndex + 1;
+		end
+    end
+	--在这里使用F初始化pgtF
+	if(pgtFInit)
+	then
+		pgtF = F;
+		pgtFInit = false;
+	end
+	
+	if(compareF(F,pgtF))
+	then
+		--保存最好的结果
+		saveResultToWorkPath(index,&quot;best&quot;);
+		
+		pgtF = F;
+        local tempIndex = 1;
+        while(tempIndex &lt; variateCount + 1)
+        do
+			variates[tempIndex].pgt = variates[tempIndex].variate[index + 1];
+			print(&quot;pgtF=&quot;..F..&quot;pgt=&quot;..variates[tempIndex].pgt)
+			tempIndex = tempIndex + 1;
+		end
+    end
+	index = index + 1;
+ end
+ printInformation();
+ return true;
+end
+
+function resultExpcet()
+  --如果超过最大优化次数 则也停止优化
+ if(getHistorySize() &gt;= optimizeMaxCount)
+ then
+    return true;
+ end
+
+ --判断目标模式
+if(excpectMod == 0)
+then
+	--cppPrint(&quot;pgtF&quot;..pgtF..&quot;,excpectF:&quot;..excpectF..&quot;,accuracy:&quot;..accuracy);
+	if(math.abs(pgtF - excpectF) &lt; accuracy * math.abs(pgtF))
+ 	then
+	return true;
+	end
+	return false;
+end
+if(excpectMod == 1)
+then
+   if(pgtF &gt; excpectF)
+	then
+   		return true;
+   	end
+   return false;
+end
+end
+function optimize()
+ local variateIndex = 1;
+ while(variateIndex &lt; variateCount + 1)
+ do
+     local index = 1;
+     local tempVariate = variates[variateIndex];
+	 --cppPrint(&quot;variateIndex:&quot;..variateIndex);
+	 while(index &lt; valueCount + 1)
+	 do
+		--cppPrint(&quot;index:&quot;..index)
+        local temp = 0;
+        local value = tempVariate.variate[index];
+		local vit = tempVariate.vit[index];
+        local pit = tempVariate.pit[index];
+        local pgt = tempVariate.pgt;
+        local mini = tempVariate.mini;
+		local max = tempVariate.max;
+		vmax=(max-mini)*0.15;
+		vmin = -vmax;
+        temp = omiga*vit + c1*rand()*(pit - value) + c2*rand()*(pgt - value);
+		--cppPrint(&quot;omiga:&quot;..omiga..&quot;,vit:&quot;..vit..&quot;,cl:&quot;..c1..&quot;,pit:&quot;..pit..&quot;,pgt:&quot;..pgt..&quot;,value:&quot;..value);
+		while(temp &lt; vmin  or temp &gt; vmax )
+		do 
+			--cppPrint(&quot;temp&quot;..temp..&quot;,vmin:&quot;..vmin..&quot;,vmax:&quot;..vmax);
+		  if (temp &lt; vmin)
+          then 
+              temp = vmin  + math.abs(temp  - vmin )	
+          else
+			  temp = vmax  - math.abs(vmax  - temp);
+			end		
+        end		
+ 		tempVariate.vit[index] = temp;
+        value = value + temp;
+		while(value &lt; mini or value &gt; max)
+		do
+			--cppPrint(&quot;value:&quot;..value..&quot;,mini:&quot;..mini..&quot;,max:&quot;..max);
+			if(value &lt; mini)
+			then
+				value = mini + math.abs(value - mini);
+			else
+				value = max - math.abs(max - value);
+			end
+		end
+		tempVariate.variate[index] = value;
+		index = index + 1;	
+     end
+     variates[variateIndex] = tempVariate;
+	 variateIndex = variateIndex + 1;
+ end
+ saveVarToFile();
+ init();
+end</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QListWidget" name="listWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAsNeeded</enum>
+     </property>
+     <property name="flow">
+      <enum>QListView::LeftToRight</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>开始</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="text">
+        <string>停止</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+  <action name="actionShowLuaEditor">
+   <property name="text">
+    <string>显示脚本编辑器</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CodeEditor</class>
+   <extends>QPlainTextEdit</extends>
+   <header location="global">Editor/codeeditor.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

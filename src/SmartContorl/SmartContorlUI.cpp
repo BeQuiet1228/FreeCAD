@@ -14,9 +14,16 @@
 #include "qcustomplot.h"
 #include "VariateChart.h"
 #include "xml/pugixml.hpp"
+#include "OptimizeCurse.h"
+#include "DataVisualization/Data.h"
+#include "DataVisualization/Plot.h"
+#include "DataVisualization/RendererFactory.h"
 #include <QTextCodec>
 #include <QScrollBar>
 #include <QTextCursor>
+#include "GeneticAlgorithm.h"
+#include "ChartEvent.h"
+#include "Event/EventManager.h"
 SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	:QDialog(parent), ui(new Ui::SmartContorlUI)
 {
@@ -27,8 +34,8 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	auto contorlInterface = ContorlInterface::GetInstance();
 
 #ifdef SMART_EXE
-	//std::string m3dPath = "E:/test/test.m3d";
-	std::string m3dPath = "D:/wdtProject/test/test.m3d";
+	std::string m3dPath = "D:/test/MILO_P.m3d";
+	//std::string m3dPath = "D:/test/match.m3d";
 	smartContorl->setM3dPath(m3dPath);
 	loadParameterXml();
 #else
@@ -78,13 +85,22 @@ void SmartContorlUI::on_pushButton_clicked()
 {
 	auto str = replaceVariate();
 	smartContorl->chipicCount = this->ui->spinBoxRunCount->value();
-	smartContorl->run(str);
+	auto optimize = new OptimizeCurseLua();
+
+	//添加变量
+	for each (auto var in variateDatas)
+	{
+		OPtimizeVariate v;
+		v.name = var->name;
+		v.min = var->mini;
+		v.max = var->max;
+		optimize->optimizeVariates.push_back(v);
+	}
+
+	optimize->luaLoadFromString(str.toStdString());
+	smartContorl->setOptimizeCurse(optimize);
+	smartContorl->run();
 	smartContorl->setRunDataMakeType(SmartContorl::CONBINATION);
-	//int count = this->ui->spinBoxCount->value();
-	//for (auto iter=variateDatas.begin();iter!=variateDatas.end();iter++)
-	//{
-	//	smartContorl->luaInit((*iter)->name.toStdString(),(*iter)->max,(*iter)->mini,count);
-	//}
 	saveParameterXml();
 }
 
@@ -97,29 +113,29 @@ void SmartContorlUI::on_pushButton_2_clicked()
 //载入按钮
 void SmartContorlUI::on_pushButton_3_clicked()
 {
-	auto  str = ui->textEdit->toPlainText();
-
-	smartContorl->luaLoadFromString(str.toStdString());
+// 	auto  str = ui->textEdit->toPlainText();
+// 
+// 	smartContorl->luaLoadFromString(str.toStdString());
 }
 //初始化按钮
 void SmartContorlUI::on_pushButton_4_clicked()
 {
-	smartContorl->luaInit();
+/*	smartContorl->luaInit();*/
 }
 //数据筛选按钮
 void SmartContorlUI::on_pushButton_5_clicked()
 {
-	smartContorl->luaResultDataFilter();
+/*	smartContorl->luaResultDataFilter();*/
 }
 //预期对比按钮
 void SmartContorlUI::on_pushButton_6_clicked()
 {
-	smartContorl->luaResultExpcet();
+/*	smartContorl->luaResultExpcet();*/
 }
 //参数优化
 void SmartContorlUI::on_pushButton_7_clicked()
 {
-	smartContorl->luaOptimize();
+/*	smartContorl->luaOptimize();*/
 }
 
 void SmartContorlUI::on_pushButton_8_clicked()
@@ -127,18 +143,23 @@ void SmartContorlUI::on_pushButton_8_clicked()
 
 }
 
+namespace DV {
+	class CurveData;
+};
+
 void SmartContorlUI::on_pushButtonF_clicked()
 {
 	auto histroy = SmartContorlData::GetInstance()->smartContorl->getHistoryDatas();
 	if (histroy.size() < 1)
 		return;
+#if 0
 	auto variates = histroy.begin()->variates;
 	if (variates.size() < 1)
 		return;
 	auto valueCount = variates.begin()->values.size();
 
 
- 
+
 	QVector<QVector<double>> values;
 	QVector<double> keys;
 	int key = 1;
@@ -166,6 +187,67 @@ void SmartContorlUI::on_pushButtonF_clicked()
 	chart->clearGraph();
 	chart->setDatas(keys, values, "F");
 	chart->show();
+#else
+	auto valueCount = histroy.begin()->datas.size();
+
+	std::vector<DV::Data::ValuesPtr> listValues;
+	listValues.reserve(valueCount);
+
+	for (int i = 0; i < valueCount; i++)
+	{
+		DV::Data::ValuesPtr valuePtr(new DV::Data::Values());
+		listValues.push_back(valuePtr);
+	}
+
+	std::vector<std::map<QString, std::vector<double>>> parValues;
+	for (int i = 0; i < valueCount; i++)
+	{
+		std::map<QString, std::vector<double>> parValue;
+		for (auto iter = histroy.begin()->variates.begin(); iter != histroy.begin()->variates.end(); iter++)
+		{
+			parValue[iter->name] = std::vector<double>();
+		}
+		parValues.push_back(parValue);
+	}
+
+
+	int temp = 1;
+	for (auto historyIter = histroy.begin(); historyIter != histroy.end(); historyIter++)
+	{
+		auto datas = historyIter->datas;
+		for (int i = 0; i < datas.size(); i++)
+		{
+			auto f = datas[i]->resultData->getValue(0);
+			listValues[i]->push_back(temp);
+			listValues[i]->push_back(f);
+		}
+		auto varuates = historyIter->variates;
+		for (auto iter = varuates.begin(); iter != varuates.end(); iter++)
+		{
+			int count = iter->values.size();
+			for (int i = 0; i < count; i++)
+			{
+				parValues[i][iter->name].push_back(iter->values[i]);
+			}
+		}
+
+		temp++;
+	}
+
+	std::list<std::shared_ptr<DV::CurveData>> dataList;
+	for (int i = 0; i < valueCount; i++)
+	{
+		auto curveData = DV::RendererFactory::creatCurveData(listValues[i],parValues[i]);
+		dataList.push_back(curveData);
+	}
+
+	auto renderers = DV::RendererFactory::creatMultipleCurveRenderers(dataList);
+	auto adapter = DV::RendererFactory::creatMultipleTimeAdapter(renderers);
+	
+	ChartEvent* event = new ChartEvent();
+	event->setAdapter(adapter);
+	EV::EventManager::postEvent(event);
+#endif
 
 }
 
@@ -228,15 +310,6 @@ void SmartContorlUI::chipicStartFinished(unsigned long threadID)
 	auto m3dPath = manager->getM3dpathForThreadID(threadID);
 	pathMap.insert(std::map<unsigned long, QString>::value_type(threadID, m3dPath));
 
-	if (manager->chipicMap.size() < 8)
-	{
-		if (m3dDatas.size() <= 0)
-			return;
-		auto data = m3dDatas.front();
-		m3dDatas.pop_front();
-		manager->sendStartChipicMessage(data.m3dPath.toStdString(), 1);
-	}
-
 
 }
 
@@ -263,14 +336,6 @@ void SmartContorlUI::chipicWorkFinished(unsigned long threadID)
 		fileMaker.cutFile(m3dpath, fileMaker.filePath);
 	}
 
-	if (manager->chipicMap.size() < 8)
-	{
-		if (m3dDatas.size() <= 0)
-			return;
-		auto data = m3dDatas.front();
-		m3dDatas.pop_front();
-		manager->sendStartChipicMessage(data.m3dPath.toStdString(), 1);
-	}
 
 }
 
@@ -288,6 +353,8 @@ void SmartContorlUI::pringLuaLog(std::string str)
 	this->ui->plainTextEdit->setPlainText(text);
 	ui->plainTextEdit->moveCursor(QTextCursor::End);
 }
+
+
 
 void SmartContorlUI::on_pushButtonVariateMax_clicked()
 {
@@ -307,7 +374,7 @@ void SmartContorlUI::on_pushButtonVariateMax_clicked()
 			selectIndex = indexs.begin()->row();
 	}
 
-
+#if 0
 	QVector<QVector<double>> values;
 	QVector<double> keys;
 	int key = 1;
@@ -335,6 +402,70 @@ void SmartContorlUI::on_pushButtonVariateMax_clicked()
 	chart->setDatas(keys, values, variates.begin()->name);
 	chart->show();
 	chart->setAttribute(Qt::WA_DeleteOnClose);
+#else
+	std::vector<DV::Data::ValuesPtr> listValues;
+	listValues.reserve(valueCount);
+
+	for (int i = 0; i < valueCount; i++)
+	{
+		DV::Data::ValuesPtr valuePtr(new DV::Data::Values());
+		listValues.push_back(valuePtr);
+	}
+
+	std::vector<std::map<QString, std::vector<double>>> parValues;
+	for (int i = 0; i < valueCount; i++)
+	{
+		auto parV = std::map<QString, std::vector<double>>();
+		for (int j = 0; j < variates.size(); j++)
+		{
+			if(j == selectIndex)
+				continue;
+			parV[variates[j].name] = std::vector<double>();
+		}
+		parV["F"] = std::vector<double>();
+		parValues.push_back(parV);
+	}
+	int temp = 1;
+	for (auto historyIter = histroy.begin(); historyIter != histroy.end(); historyIter++)
+	{
+		auto historyValues = historyIter->variates.at(selectIndex).values;
+		for (int i = 0; i < historyValues.size(); i++)
+		{
+			listValues[i]->push_back(temp);
+			listValues[i]->push_back(historyValues[i]);
+		}
+		temp++;
+		for (int index = 0; index < historyIter->variates.size(); index++)
+		{
+			if(index == selectIndex)
+				continue;
+			auto values = historyIter->variates.at(index).values;
+			for (int i = 0; i < values.size(); i++)
+			{
+				parValues[i][historyIter->variates[index].name].push_back(values.at(i));
+			}
+		}
+
+		for (int index = 0; index < historyIter->datas.size(); index++)
+		{
+			parValues[index]["F"].push_back(historyIter->datas[index]->resultData->getValue(0));
+		}
+	}
+
+	std::list<std::shared_ptr<DV::CurveData>> dataList;
+	for (int i =0;i < listValues.size();i++ )
+	{
+		auto curveData = DV::RendererFactory::creatCurveData(listValues[i],parValues[i]);
+		dataList.push_back(curveData);
+	}
+	
+	auto renderers = DV::RendererFactory::creatMultipleCurveRenderers(dataList);
+	auto adapter = DV::RendererFactory::creatMultipleTimeAdapter(renderers);
+
+	ChartEvent* event = new ChartEvent();
+	event->setAdapter(adapter);
+	EV::EventManager::postEvent(event);
+#endif
 }
 
 void SmartContorlUI::on_comboBoxExcpcet_currentIndexChanged(int index)
@@ -362,9 +493,9 @@ QString SmartContorlUI::replaceVariate()
 	QString text;
 #ifdef SMART_EXE
 	{
-		QFile file(QString::fromLocal8Bit("E:/工作/优化算法/脚本.lua"));
+		QFile file(QString::fromLocal8Bit("D:/script/script.lua"));
 		file.open(QIODevice::ReadOnly);
-		text = file.readAll();
+		text = QString::fromUtf8(file.readAll());
 		file.close();
 	}
 #else

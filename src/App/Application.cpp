@@ -433,42 +433,50 @@ App::Document* App::Application::newDocument(Document* doc, const char * Name /*
 * @param const char * UserName
 * @return App::Document*
 */
-App::Document* App::Application::newDocumentM3dText(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
+App::Document* App::Application::newDocumentM3dText(const std::string& path, const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
 {
 	//切换到对应的工作台
 	Base::InterpreterSingleton python;
 	python.runString("Gui.activateWorkbench(\"StartWorkbench\")");
-	return newDocument(new DocumentM3dText(), Name, UserName);
+    auto doc = new DocumentM3dText();
+    doc->FileName.setValue(path);
+	return newDocument(doc, Name, UserName);
 }
 
-App::Document* App::Application::newDocumentH5(const char* Name/* = 01*/, const char* UserName/* = 01*/)
+App::Document* App::Application::newDocumentH5(const std::string& path, const char* Name/* = 01*/, const char* UserName/* = 01*/)
 {
-
-	return newDocument(new DocumentH5(),Name,UserName);
+	auto doc = new DocumentH5();
+	doc->FileName.setValue(path);
+	return newDocument(doc,Name,UserName);
 }
-App::Document* App::Application::newDocumentM2dText(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
+App::Document* App::Application::newDocumentM2dText(const std::string& path, const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
 {
 	//切换到对应的工作台
 	Base::InterpreterSingleton python;
 	python.runString("Gui.activateWorkbench(\"StartWorkbench\")");
-
-	return newDocument(new DocumentM2dText, Name, UserName);
+	auto doc = new DocumentM2dText();
+	doc->FileName.setValue(path);
+	return newDocument(doc, Name, UserName);
 }
 
-App::Document* App::Application::newDocumentM3dMode(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
+App::Document* App::Application::newDocumentM3dMode(const std::string& path, const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
 {
 	//切换到对应的工作台
 	Base::InterpreterSingleton python;
 	python.runString("Gui.activateWorkbench(\"Modeling3DWorkbench\")");
-	return newDocument(new DocumentM3dMod(), Name, UserName);
+	auto doc = new DocumentM3dMod();
+	doc->FileName.setValue(path);
+	return newDocument(doc, Name, UserName);
 }
 
-App::Document* App::Application::newDocumentM2dMod(const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
+App::Document* App::Application::newDocumentM2dMod(const std::string& path, const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
 {
 	//切换到对应的工作台
 	Base::InterpreterSingleton python;
 	python.runString("Gui.activateWorkbench(\"Modeling2DWorkbench\")");
-	return newDocument(new DocumentM2dMod(), Name, UserName);
+	auto doc = new DocumentM2dMod();
+	doc->FileName.setValue(path);
+	return newDocument(doc, Name, UserName);
 }
 
 App::Document* App::Application::openDocument3dMod(const char * FileName /*= 0l*/)
@@ -496,7 +504,7 @@ App::Document* App::Application::openDocument3dMod(const char * FileName /*= 0l*
 	// Use the same name for the internal and user name.
 	// The file name is UTF-8 encoded which means that the internal name will be modified
 	// to only contain valid ASCII characters but the user name will be kept.
-	Document* newDoc = newDocumentM3dMode(File.fileNamePure().c_str(), File.fileNamePure().c_str());
+	Document* newDoc = newDocumentM3dMode(FileName, File.fileNamePure().c_str());
 
 	newDoc->FileName.setValue(File.filePath());
 
@@ -547,7 +555,7 @@ App::Document* App::Application::openDocument2dMod(const char * FileName /*= 0l*
 	// Use the same name for the internal and user name.
 	// The file name is UTF-8 encoded which means that the internal name will be modified
 	// to only contain valid ASCII characters but the user name will be kept.
-	Document* newDoc = newDocumentM2dMod(File.fileNamePure().c_str(), File.fileNamePure().c_str());
+	Document* newDoc = newDocumentM2dMod(FileName,File.fileNamePure().c_str(), File.fileNamePure().c_str());
 
 	newDoc->FileName.setValue(File.filePath());
 

@@ -17,6 +17,7 @@
 #include "MDIView.h"
 #include "DataVisualization3dView.h"
 #include "ControlerItemListWidget.h"
+#include "SuperDog.h"
 DocumentPic::DocumentPic(App::Document* pcDocument, Gui::Application* app)
 	:Gui::Document(pcDocument,app)
 {
@@ -224,6 +225,45 @@ void DocumentPic::showProcessingBatchView()
 	mw->addWindow(mdi);
 }
 
+void DocumentPic::showGeneticAlgorithmView()
+{
+	/*
+	*	判断主窗口中是否已经含有优化算法窗口。
+	*	如果已经含有则将窗口置为活动。
+	*	如果不含有则增加。
+	*/
+	auto mw = Gui::MainWindow::getInstance();
+	auto views = this->getMDIViews();
+	for (auto iter = views.begin(); iter != views.end(); iter++)
+	{
+		auto psoView = dynamic_cast<GeneticAlgorithmView*> (*iter);
+		if (!psoView)
+			continue;
+		mw->setActiveWindow(psoView);
+		return;
+	}
+	GeneticAlgorithmView* mdi = new GeneticAlgorithmView(this);
+	mdi->init(getTextPath());
+	mw->addWindow(mdi);
+}
+
+void DocumentPic::showMultipleTargetGeneticAlgorithmView()
+{
+	auto mw = Gui::MainWindow::getInstance();
+	auto views = this->getMDIViews();
+	for (auto iter = views.begin(); iter != views.end(); iter++)
+	{
+		auto psoView = dynamic_cast<MultipleTargetGeneticAlgorithmView*> (*iter);
+		if (!psoView)
+			continue;
+		mw->setActiveWindow(psoView);
+		return;
+	}
+	MultipleTargetGeneticAlgorithmView* mdi = new MultipleTargetGeneticAlgorithmView(this);
+	mdi->init(getTextPath());
+	mw->addWindow(mdi);
+}
+
 void DocumentPic::save()
 {
 	Document::save();
@@ -263,6 +303,15 @@ bool DocumentPic::onMsg(const char* pMsg, const char** ppReturn)
 		this->showProcessingBatchView();
 		return true;
 	}
+	else if (strcmp("showGeneticAlgorithm", pMsg) == 0) {
+		this->showGeneticAlgorithmView();
+		return true;
+	}
+	else if (strcmp("showMultipleTargetGeneticAlgorithm", pMsg) == 0) {
+		this->showMultipleTargetGeneticAlgorithmView();
+		return true;
+	}
+
 
 	return false;
 }
@@ -275,24 +324,60 @@ bool DocumentPic::onHasMsg(const char* pMsg) const
 	else if (strcmp("SaveAs", pMsg) == 0) {
 		return true;
 	}else if (strcmp("RunChipic", pMsg) == 0) {
+#ifdef SUPER_DOG
+		if (!Gui::SuperDog::login())
+			return false;
+#endif // SUPER_DOG
 		auto control = ContorlInterface::GetInstance();
 		if (control->hasAutoChipicRuning())
 			return false;
 		return true;
 	}
 	else if (strcmp("ParalleRunChipic", pMsg) == 0) {
+#ifdef SUPER_DOG
+		if (!Gui::SuperDog::login())
+			return false;
+#endif // SUPER_DOG
 		auto control = ContorlInterface::GetInstance();
 		if (control->hasChipicRuning())
 			return false;
 		return true;
 	}
 	else if (strcmp("showPSOView", pMsg) == 0) {
+#ifdef SUPER_DOG
+		if (!Gui::SuperDog::login())
+			return false;
+#endif // SUPER_DOG
 		auto control = ContorlInterface::GetInstance();
 		if (control->hasChipicRuning())
 			return false;
 		return true;
 	}
 	else if (strcmp("showProcessingBatchView", pMsg) == 0) {
+#ifdef SUPER_DOG
+		if (!Gui::SuperDog::login())
+			return false;
+#endif // SUPER_DOG
+		auto control = ContorlInterface::GetInstance();
+		if (control->hasChipicRuning())
+			return false;
+		return true;
+	}
+	else if (strcmp("showGeneticAlgorithm", pMsg) == 0) {
+#ifdef SUPER_DOG
+		if (!Gui::SuperDog::login())
+			return false;
+#endif // SUPER_DOG
+		auto control = ContorlInterface::GetInstance();
+		if (control->hasChipicRuning())
+			return false;
+		return true;
+	}
+	else if (strcmp("showMultipleTargetGeneticAlgorithm", pMsg) == 0) {
+#ifdef SUPER_DOG
+		if (!Gui::SuperDog::login())
+			return false;
+#endif // SUPER_DOG
 		auto control = ContorlInterface::GetInstance();
 		if (control->hasChipicRuning())
 			return false;
@@ -363,12 +448,24 @@ void DocumentText::initMDIView()
 DocumentPic* CreatePICDocument(App::Document* doc, Gui::Application* app)
 {
 	//判断是否为文本编辑器工程，如果是那么不显示3D视窗
-	if (doc->classID == 1 || doc->classID == 4 )
+	switch (doc->classID)
 	{
-		return new DocumentText(doc,app);
-	}else if (doc->classID == 5) {
+	case 1:
+		return new DocumentText(doc, app);
+		break;
+	case 2:
+		return new DocumentPic(doc, app);
+		break;
+	case 3:
+		return new Document2DPic(doc, app);
+		break;
+	case 4:
+		return new DocumentText2D(doc, app);
+		break;
+	case 5:
 		return new DocumentH5File(doc, app);
-	}else {
+		break;
+	default:
 		return new DocumentPic(doc, app);
 	}
 }
@@ -382,4 +479,32 @@ DocumentH5File::DocumentH5File(App::Document* pcDocument, Gui::Application* app)
 bool DocumentH5File::onHasMsg(const char* pMsg) const
 {
 	return false;
+}
+
+Document2DPic::Document2DPic(App::Document* pcDocument, Gui::Application* app)
+	:DocumentPic(pcDocument,app)
+{
+
+}
+
+bool Document2DPic::onHasMsg(const char* pMsg) const
+{
+	if (strcmp("ParalleRunChipic", pMsg) == 0) {
+		return false;
+	}
+	return	DocumentPic::onHasMsg(pMsg);
+}
+
+DocumentText2D::DocumentText2D(App::Document* pcDocument, Gui::Application* app)
+	:DocumentText(pcDocument,app)
+{
+
+}
+
+bool DocumentText2D::onHasMsg(const char* pMsg) const
+{
+	if (strcmp("ParalleRunChipic", pMsg) == 0) {
+		return false;
+	}
+	return	DocumentText::onHasMsg(pMsg);
 }

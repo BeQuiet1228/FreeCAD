@@ -1,0 +1,5 @@
+import PolygonalCommand
+import PolygonalDialogMain
+import PolygonalInstance
+import PolygonalDialog
+import ItemWidget3D

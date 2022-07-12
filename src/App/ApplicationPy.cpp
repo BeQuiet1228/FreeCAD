@@ -294,7 +294,7 @@ PyObject* Application::sNewDocumentM3dMod(PyObject *self, PyObject *args, PyObje
 		return NULL;
 
 	PY_TRY{
-		App::Document* doc = GetApplication().newDocumentM3dMode(docName, usrName);
+		App::Document* doc = GetApplication().newDocumentM3dMode("unnamed", "unnamed");
 		PyMem_Free(docName);
 		PyMem_Free(usrName);
 		return doc->getPyObject();
@@ -308,7 +308,7 @@ PyObject* Application::sNewDocumentM2dMod(PyObject *self, PyObject *args, PyObje
 		return NULL;
 
 	PY_TRY{
-		App::Document* doc = GetApplication().newDocumentM2dMod(docName, usrName);
+		App::Document* doc = GetApplication().newDocumentM2dMod("unnamed", "unnamed");
 		PyMem_Free(docName);
 		PyMem_Free(usrName);
 		return doc->getPyObject();
@@ -321,8 +321,8 @@ PyObject* Application::sNewDocumentM3dText(PyObject *self, PyObject *args, PyObj
 	if (!PyArg_ParseTuple(args, "|etet", "utf-8", &docName, "utf-8", &usrName))
 		return NULL;
 
-	PY_TRY{
-		App::Document* doc = GetApplication().newDocumentM3dText(docName, usrName);
+    PY_TRY{
+        App::Document * doc = GetApplication().newDocumentM3dText("unnamed", "unnamed");
 		PyMem_Free(docName);
 		PyMem_Free(usrName);
 		return doc->getPyObject();
@@ -336,7 +336,7 @@ PyObject* Application::sNewDocumentM2dText(PyObject *self, PyObject *args, PyObj
 		return NULL;
 
 	PY_TRY{
-		App::Document* doc = GetApplication().newDocumentM2dText(docName, usrName);
+		App::Document* doc = GetApplication().newDocumentM2dText("unnamed", "unnamed");
 		PyMem_Free(docName);
 		PyMem_Free(usrName);
 		return doc->getPyObject();

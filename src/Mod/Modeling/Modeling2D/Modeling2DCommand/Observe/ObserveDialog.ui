@@ -1,0 +1,759 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>539</width>
+    <height>635</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>时间观测设置</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_13">
+   <item row="0" column="0">
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>502</width>
+        <height>620</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_12">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>名称：</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>别名：</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" rowspan="2">
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0" colspan="2">
+          <widget class="QLineEdit" name="le_name"/>
+         </item>
+         <item row="0" column="2">
+          <widget class="QComboBox" name="cb_observationType">
+           <item>
+            <property name="text">
+             <string>时间观测点</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>时间观测线</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>时间观测面</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLineEdit" name="le_alias"/>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>类型：</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QComboBox" name="cb_optionType">
+           <item>
+            <property name="text">
+             <string>未指定</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>观测类型</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="1" column="2">
+             <widget class="QLineEdit" name="le_point1_X"/>
+            </item>
+            <item row="1" column="4">
+             <widget class="QComboBox" name="cb_point1_name">
+              <item>
+               <property name="text">
+                <string>NULL</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="1" column="3">
+             <widget class="QLineEdit" name="le_point1_Y"/>
+            </item>
+            <item row="2" column="3">
+             <widget class="QLineEdit" name="le_point2_Y">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QLabel" name="lb_x">
+              <property name="text">
+               <string>X</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QLineEdit" name="le_point2_X">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2" colspan="2">
+             <widget class="QGroupBox" name="groupBox_2">
+              <property name="styleSheet">
+               <string notr="true">border:none</string>
+              </property>
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout">
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QRadioButton" name="rb_isCheckNormal1">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>X</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="rb_isCheckNormal2">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>Y</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>起点：</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>法向：</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3">
+             <widget class="QLabel" name="lb_y">
+              <property name="text">
+               <string>Y</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="4">
+             <widget class="QComboBox" name="cb_point2_name">
+              <item>
+               <property name="text">
+                <string>NULL</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>起点：</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2">
+        <widget class="QGroupBox" name="groupBox_7">
+         <property name="title">
+          <string>参数</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_11">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="gridLayout_10">
+            <item row="0" column="1">
+             <widget class="QRadioButton" name="rb_isTimeAverage">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>时间平均</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QRadioButton" name="rb_isRcAnalyze">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>RC分析</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="cb_isDataDisplay">
+              <property name="text">
+               <string>数据平滑处理：</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_13">
+              <property name="text">
+               <string>过滤时间参数：</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QLabel" name="label_14">
+              <property name="text">
+               <string>ns</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="le_filteringTimeParameter">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QPushButton" name="pb_ok">
+              <property name="text">
+               <string>确定</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pb_cancel">
+              <property name="text">
+               <string>取消</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="2">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>观测项</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_8">
+          <item row="1" column="0">
+           <widget class="QGroupBox" name="groupBox_5">
+            <property name="title">
+             <string>分类子项</string>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_7">
+             <item row="0" column="0">
+              <layout class="QGridLayout" name="gridLayout_5">
+               <item row="0" column="2">
+                <widget class="QComboBox" name="cb_fieldPower">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>S.DA</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QComboBox" name="cb_field"/>
+               </item>
+               <item row="0" column="1">
+                <widget class="QComboBox" name="cb_fieldIntegral">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>E.DL</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>H.DL</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>J.DA</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="0" column="3">
+                <widget class="QComboBox" name="cb_fieldEnergy">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>EM</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ELECTRIC</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>MAGNETIC</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLineEdit" name="le_particles1">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>phase1</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="cb_particles2">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>EMIT_EPS</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>CHARGE</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ENERGY</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>VRATIO</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QComboBox" name="cb_particles3">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>CHARGE</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>CURRENT</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ENERGY</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>POWER</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>VOLTAGE</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="3">
+                <widget class="QComboBox" name="cb_particles4">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>ALL</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ELECTRON</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>PROTON</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QGroupBox" name="groupBox_6">
+            <property name="title">
+             <string/>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QCheckBox" name="cb_isFFT">
+               <property name="text">
+                <string>进行快速傅里叶变换</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="rb_isRealAnalysis">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>实分析</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="rb_isComplexAnalysis">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>复分析</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QGroupBox" name="groupBox_4">
+            <property name="title">
+             <string>分类项</string>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_6">
+             <item row="0" column="0">
+              <layout class="QGridLayout" name="gridLayout_4">
+               <item row="0" column="2">
+                <widget class="QRadioButton" name="rb_isFieldPower">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>场功率</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QRadioButton" name="rb_isField">
+                 <property name="text">
+                  <string>场</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QRadioButton" name="rb_isFieldIntegral">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>场积分</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="3">
+                <widget class="QRadioButton" name="rb_isFieldEnergy">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>场能量</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QRadioButton" name="rb_isParticleStatistics">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>粒子统计</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QRadioButton" name="rb_isCollectedParticles">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>收集粒子</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QRadioButton" name="rb_isEmittedParticle">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>发射粒子</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="3">
+                <widget class="QRadioButton" name="rb_isAnnihilatingParticle">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>湮灭粒子</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <layout class="QGridLayout" name="gridLayout_9">
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="cb_isFrequencyRange">
+              <property name="text">
+               <string>频率范围</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="le_timeRange1">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QCheckBox" name="cb_isTimeRange">
+              <property name="text">
+               <string>时间范围</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="le_frequencyRange1">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3">
+             <widget class="QLineEdit" name="le_frequencyRange2">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="3">
+             <widget class="QLineEdit" name="le_timeRange2">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>至</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>至</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="4">
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>Ghz</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="4">
+             <widget class="QLabel" name="label_12">
+              <property name="text">
+               <string>ns</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QCheckBox" name="cb_isObservationInterval">
+              <property name="text">
+               <string>观察间隔</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1" colspan="3">
+             <widget class="QLineEdit" name="le_observationInterval">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>pb_ok</tabstop>
+  <tabstop>pb_cancel</tabstop>
+  <tabstop>le_alias</tabstop>
+  <tabstop>cb_optionType</tabstop>
+  <tabstop>le_point1_X</tabstop>
+  <tabstop>le_point1_Y</tabstop>
+  <tabstop>cb_point1_name</tabstop>
+  <tabstop>le_point2_X</tabstop>
+  <tabstop>le_point2_Y</tabstop>
+  <tabstop>cb_point2_name</tabstop>
+  <tabstop>rb_isCheckNormal1</tabstop>
+  <tabstop>rb_isCheckNormal2</tabstop>
+  <tabstop>rb_isField</tabstop>
+  <tabstop>rb_isFieldIntegral</tabstop>
+  <tabstop>rb_isFieldPower</tabstop>
+  <tabstop>rb_isFieldEnergy</tabstop>
+  <tabstop>rb_isParticleStatistics</tabstop>
+  <tabstop>rb_isCollectedParticles</tabstop>
+  <tabstop>rb_isEmittedParticle</tabstop>
+  <tabstop>rb_isAnnihilatingParticle</tabstop>
+  <tabstop>cb_field</tabstop>
+  <tabstop>cb_fieldIntegral</tabstop>
+  <tabstop>cb_fieldPower</tabstop>
+  <tabstop>cb_fieldEnergy</tabstop>
+  <tabstop>le_particles1</tabstop>
+  <tabstop>cb_particles2</tabstop>
+  <tabstop>cb_particles3</tabstop>
+  <tabstop>cb_particles4</tabstop>
+  <tabstop>cb_isFFT</tabstop>
+  <tabstop>rb_isRealAnalysis</tabstop>
+  <tabstop>rb_isComplexAnalysis</tabstop>
+  <tabstop>cb_isFrequencyRange</tabstop>
+  <tabstop>le_frequencyRange1</tabstop>
+  <tabstop>le_frequencyRange2</tabstop>
+  <tabstop>cb_isTimeRange</tabstop>
+  <tabstop>le_timeRange1</tabstop>
+  <tabstop>le_timeRange2</tabstop>
+  <tabstop>cb_isObservationInterval</tabstop>
+  <tabstop>le_observationInterval</tabstop>
+  <tabstop>cb_isDataDisplay</tabstop>
+  <tabstop>rb_isTimeAverage</tabstop>
+  <tabstop>rb_isRcAnalyze</tabstop>
+  <tabstop>le_filteringTimeParameter</tabstop>
+  <tabstop>cb_observationType</tabstop>
+  <tabstop>le_name</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

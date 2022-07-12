@@ -1,0 +1,4 @@
+import VectorCommand
+import VectorInstance
+import VectorDialog
+import VectorDlgMain

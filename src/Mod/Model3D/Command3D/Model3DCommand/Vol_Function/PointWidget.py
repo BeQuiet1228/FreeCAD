@@ -1,0 +1,95 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'PointWidget.ui'
+#
+# Created: Thu Apr  1 10:54:07 2021
+#      by: pyside-uic 0.2.15 running on PySide 1.2.4
+#
+# WARNING! All changes made in this file will be lost!
+
+from PySide import QtCore, QtGui
+from Model3D.Tools import Completer
+
+class Ui_Form(object):
+    def setupUi(self, Form):
+        Form.setObjectName("Form")
+        Form.resize(471, 196)
+        self.gridLayout = QtGui.QGridLayout(Form)
+        self.gridLayout.setObjectName("gridLayout")
+        spacerItem = QtGui.QSpacerItem(50, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem, 0, 1, 1, 1)
+        self.label_x2 = QtGui.QLabel(Form)
+        self.label_x2.setObjectName("label_x2")
+        self.gridLayout.addWidget(self.label_x2, 0, 2, 1, 1)
+        spacerItem1 = QtGui.QSpacerItem(49, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem1, 0, 3, 1, 1)
+        spacerItem2 = QtGui.QSpacerItem(50, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem2, 0, 4, 1, 1)
+        self.label_y2 = QtGui.QLabel(Form)
+        self.label_y2.setObjectName("label_y2")
+        self.gridLayout.addWidget(self.label_y2, 0, 5, 1, 1)
+        spacerItem3 = QtGui.QSpacerItem(49, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem3, 0, 6, 1, 1)
+        spacerItem4 = QtGui.QSpacerItem(50, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem4, 0, 7, 1, 1)
+        self.label_z2 = QtGui.QLabel(Form)
+        self.label_z2.setObjectName("label_z2")
+        self.gridLayout.addWidget(self.label_z2, 0, 8, 1, 1)
+        spacerItem5 = QtGui.QSpacerItem(49, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem5, 0, 9, 1, 1)
+        self.label = QtGui.QLabel(Form)
+        self.label.setObjectName("label")
+        self.gridLayout.addWidget(self.label, 1, 0, 1, 1)
+        self.lineEdit_point1x = Completer.AutoCompleteEdit(Form)
+        self.lineEdit_point1x.setObjectName("lineEdit_point1x")
+        self.gridLayout.addWidget(self.lineEdit_point1x, 1, 1, 1, 3)
+        self.lineEdit_point1y = Completer.AutoCompleteEdit(Form)
+        self.lineEdit_point1y.setObjectName("lineEdit_point1y")
+        self.gridLayout.addWidget(self.lineEdit_point1y, 1, 4, 1, 3)
+        self.lineEdit_point1z = Completer.AutoCompleteEdit(Form)
+        self.lineEdit_point1z.setObjectName("lineEdit_point1z")
+        self.gridLayout.addWidget(self.lineEdit_point1z, 1, 7, 1, 3)
+        self.label_2 = QtGui.QLabel(Form)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout.addWidget(self.label_2, 2, 0, 1, 1)
+        self.lineEdit_point2x = Completer.AutoCompleteEdit(Form)
+        self.lineEdit_point2x.setObjectName("lineEdit_point2x")
+        self.gridLayout.addWidget(self.lineEdit_point2x, 2, 1, 1, 3)
+        self.lineEdit_point2y = Completer.AutoCompleteEdit(Form)
+        self.lineEdit_point2y.setObjectName("lineEdit_point2y")
+        self.gridLayout.addWidget(self.lineEdit_point2y, 2, 4, 1, 3)
+        self.lineEdit_point2z = Completer.AutoCompleteEdit(Form)
+        self.lineEdit_point2z.setObjectName("lineEdit_point2z")
+        self.gridLayout.addWidget(self.lineEdit_point2z, 2, 7, 1, 3)
+        self.label_3 = QtGui.QLabel(Form)
+        self.label_3.setObjectName("label_3")
+        self.gridLayout.addWidget(self.label_3, 3, 0, 1, 1)
+        self.textEdit_expression = QtGui.QTextEdit(Form)
+        self.textEdit_expression.setObjectName("textEdit_expression")
+        self.gridLayout.addWidget(self.textEdit_expression, 3, 1, 1, 9)
+        self.label_4 = QtGui.QLabel(Form)
+        self.label_4.setObjectName("label_4")
+        self.gridLayout.addWidget(self.label_4, 4, 0, 1, 1)
+        self.spinBox_x = QtGui.QSpinBox(Form)
+        self.spinBox_x.setObjectName("spinBox_x")
+        self.gridLayout.addWidget(self.spinBox_x, 4, 1, 1, 3)
+        self.spinBox_y = QtGui.QSpinBox(Form)
+        self.spinBox_y.setObjectName("spinBox_y")
+        self.gridLayout.addWidget(self.spinBox_y, 4, 4, 1, 3)
+        self.spinBox_z = QtGui.QSpinBox(Form)
+        self.spinBox_z.setObjectName("spinBox_z")
+        self.gridLayout.addWidget(self.spinBox_z, 4, 7, 1, 3)
+
+        self.retranslateUi(Form)
+        QtCore.QMetaObject.connectSlotsByName(Form)
+
+    def retranslateUi(self, Form):
+        Form.setWindowTitle(QtGui.QApplication.translate("Form", "Form", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_x2.setText(QtGui.QApplication.translate("Form", "X", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_y2.setText(QtGui.QApplication.translate("Form", "Y", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_z2.setText(QtGui.QApplication.translate("Form", "Z", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("Form", "Point_1:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("Form", "Point_2:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("Form", "Expression:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_4.setText(QtGui.QApplication.translate("Form", "ReSolution:", None, QtGui.QApplication.UnicodeUTF8))
+

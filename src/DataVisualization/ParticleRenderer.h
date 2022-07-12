@@ -4,6 +4,7 @@
 #include "ParticleData.h"
 #include <QPointF>
 #include <QColor>
+#include <vector>
 namespace DV {
 	class ParticleRenderer :public Renderer {
 	public:
@@ -27,5 +28,7 @@ namespace DV {
 		QColor particleColor;
 		int particleSize;
 		bool isAA;
+		//¡£◊”÷÷¿‡ª≠± 
+		std::vector<QPen> pens;
 	};
 };

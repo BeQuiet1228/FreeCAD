@@ -1,6 +1,6 @@
 #add_subdirectory(Icons)
 add_subdirectory(Stylesheets)
-
+#add_definitions(-DSUPER_DOG)
 if(WIN32)
 add_definitions(-DFCGui -DQIIS_MAKEDLL -DQSINT_MAKEDLL -DOVR_OS_WIN32 -DQUARTER_INTERNAL -DQUARTER_MAKE_DLL -DCOIN_DLL)
 endif(WIN32)
@@ -56,6 +56,8 @@ if(MSVC)
 		 Editor
          transition
 		 DataVisualization3D
+		 Event
+		 ${FREECAD_LIBPACK_DIR}/lib/superDog/dog_windows_x64_3160985.lib
     )
 	if(contorl_client_dll)
 	list(APPEND FreeCADGui_LIBS
@@ -843,11 +845,16 @@ SET(DATA_VISUALIZATION_GUI_SRC
 	HDF5DataItem2DDoubleClickEventHander.cpp
 	ControlerItemListWidget.cpp
 	ControlerItemListWidget.h
+	SuperDog.h
+	SuperDog.cpp
+	InputLineEdit.cpp
+	InputLineEdit.h
 )
 SET(DATA_VISUALIZATION_GUI_MOC_H
 	Hdf5DataItem.h
 	DataVisualizationTree.h
 	ControlerItemListWidget.h
+	InputLineEdit.h
 )
 
 if (BUILD_QT5)

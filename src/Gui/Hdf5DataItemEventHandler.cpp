@@ -33,6 +33,14 @@ void Gui::HDF5DataItem3DDoubleClickEventHander::trigger(HDF5DataItem* item)
 		controler = DV3D::ControlerFactory::CreatControler(item->getHdf5Data());
 		controlerItem = DV3D::ControlerItemFactor::CreatControlerItemForHdf5Name(item->getHdf5Data().name);
 	}
+
+	if (!controler)
+	{
+		delete controlerItem;
+		return;
+	}
+
+
 	controler->setObjectName(item->getNmae().toStdString());
 
 	//添加一个save按钮 ，并且传入工程路径作为路径选择的文件浏览器起始路径

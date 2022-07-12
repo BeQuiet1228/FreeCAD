@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="26px" height="26px" viewBox="0 0 26 26" enable-background="new 0 0 26 26" xml:space="preserve">
+<rect x="10.001" y="1.692" fill="#EC2232" width="13.675" height="2.697"/>
+<rect x="2.529" y="21.674" fill="#EC2232" width="13.792" height="2.698"/>
+<rect x="0.518" y="7.576" fill="#FABEC3" width="16.59" height="8.481"/>
+<rect x="6.629" fill="#FABEC3" width="12.399" height="26"/>
+<g>
+	<defs>
+		<rect id="SVGID_1_" width="26" height="26"/>
+	</defs>
+	<clipPath id="SVGID_2_">
+		<use xlink:href="#SVGID_1_"  overflow="visible"/>
+	</clipPath>
+	<polyline clip-path="url(#SVGID_2_)" fill="none" stroke="#EC2232" stroke-width="1.31" stroke-miterlimit="10" points="
+		17.438,16.265 17.438,2.284 10.669,2.284 	"/>
+	<polyline clip-path="url(#SVGID_2_)" fill="none" stroke="#EC2232" stroke-width="1.31" stroke-miterlimit="10" points="
+		8.353,10.031 8.353,24.013 15.119,24.013 	"/>
+</g>
+<rect x="13.259" y="3.981" fill="#EC2232" width="1.59" height="10.585"/>
+<rect x="10.67" y="11.816" fill="#EC2232" width="1.59" height="10.584"/>
+</svg>

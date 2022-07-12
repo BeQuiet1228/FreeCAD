@@ -391,7 +391,7 @@ namespace DV {
 	void Plot::canvasConnect()
 	{
 		connect(canvas, SIGNAL(emitSelectRect(QRect)), this, SLOT(canvasSelectRect(QRect)));
-		connect(canvas, SIGNAL(emitSelectPoint(QPoint)), this, SLOT(canvasSelectPoint(QPoint)));
+		connect(canvas, SIGNAL(emitSelectPoint(QPoint)), this, SLOT(canvasSelectPoint(QPoint))); 
 		connect(canvas, SIGNAL(emitResize(QSize)), this, SLOT(canvasResize(QSize)));
 	}
 
