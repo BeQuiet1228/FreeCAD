@@ -18,6 +18,7 @@
 #include "DataVisualization3dView.h"
 #include "ControlerItemListWidget.h"
 #include "SuperDog.h"
+#include "DataVisualization/C_encoding.h"
 DocumentPic::DocumentPic(App::Document* pcDocument, Gui::Application* app)
 	:Gui::Document(pcDocument,app)
 {
@@ -277,10 +278,32 @@ void DocumentPic::saveAs()
 bool DocumentPic::onMsg(const char* pMsg, const char** ppReturn)
 {
 	if (strcmp("Save", pMsg) == 0) {
+#ifdef SUPER_DOG
+		if (!Gui::SuperDog::login())
+		{
+			QMessageBox::StandardButton result = QMessageBox::information(
+				nullptr,
+				DV::GetEncodingstr("ÌáÊ¾", ENCODING_GB2312),
+				DV::GetEncodingstr("Î´¼ì²âµ½¼ÓÃÜ¹·£¬±£´æÊ§°Ü£¡", ENCODING_GB2312), QMessageBox::Yes );
+			return false;
+		}
+			
+#endif // SUPER_DOG
 		this->save();
 		return true;
 	}
 	else if (strcmp("SaveAs", pMsg) == 0) {
+#ifdef SUPER_DOG
+		if (!Gui::SuperDog::login())
+		{
+			QMessageBox::StandardButton result = QMessageBox::information(
+				nullptr,
+				DV::GetEncodingstr("ÌáÊ¾", ENCODING_GB2312),
+				DV::GetEncodingstr("Î´¼ì²âµ½¼ÓÃÜ¹·£¬±£´æÊ§°Ü£¡", ENCODING_GB2312), QMessageBox::Yes);
+			return false;
+		}
+
+#endif // SUPER_DOG
 		this->saveAs();
 		return true;
 	}else if (strcmp("RunChipic", pMsg) == 0) {
