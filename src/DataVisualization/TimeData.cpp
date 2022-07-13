@@ -144,8 +144,8 @@ namespace DV {
 		//如果y轴范围太小，则将数据置于中心
 		if (abs(yr.min - yr.max) < 1e-36)
 		{
-			yr.min -= 100;
-			yr.max += 100;
+			yr.min -= yr.min*0.0001 + 100;
+			yr.max += yr.max*0.0001 + 100;
 		}
 
 		setXRang(xr);

@@ -121,6 +121,7 @@ bool DV::CurveRenderer::drawPointImage()
 	return true;
 }
 
+
 void DV::CurveRenderer::loadconfig()
 {
 
