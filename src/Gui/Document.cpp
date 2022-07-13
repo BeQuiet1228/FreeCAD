@@ -69,6 +69,7 @@
 #include "PlotMDIView.h"
 #include "Gui\DockWindowManager.h"
 #include "View3dMDI.h"
+#include "SuperDog.h"
 using namespace Gui;
 
 namespace Gui {
@@ -1282,7 +1283,12 @@ bool Document::canClose ()
 	}
 
     bool ok = true;
-    if (isModified()) {
+#ifdef SUPER_DOG
+    if (isModified() && Gui::SuperDog::login())
+#else
+    if (isModified())
+#endif
+    {
         QMessageBox box(getActiveView());
         box.setIcon(QMessageBox::Question);
         box.setWindowTitle(QObject::tr("Unsaved document"));

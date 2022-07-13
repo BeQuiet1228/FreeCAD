@@ -14,11 +14,13 @@ View3dMDI::~View3dMDI()
 
 bool View3dMDI::onMsg(const char* pMsg, const char** ppReturn)
 {
+	auto doc = dynamic_cast<DocumentPic*>(getGuiDocument());
+	if (!doc)
+		return false;
+	if (doc->onMsg(pMsg,ppReturn))
+		return true;
 	if (View3DInventor::onMsg(pMsg, ppReturn))
 		return true;
-	if (onMsgChipic(pMsg, ppReturn, getGuiDocument()))
-		return true;
-
 	return false;
 }
 
