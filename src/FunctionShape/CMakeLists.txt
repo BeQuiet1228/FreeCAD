@@ -1,5 +1,6 @@
 #设置项目名称
 project(FunctionShape)
+add_compile_options(/bigobj)
 #引入头文件
 include_directories(
     ${CMAKE_BINARY_DIR}/src
@@ -23,6 +24,9 @@ SET(SRC
 	TestFunctionExport.cpp
 	FunctionShape.cpp
 	FunctionShape.h
+	exprtk.hpp
+	Function.cpp
+	Function.h
 )
 
 

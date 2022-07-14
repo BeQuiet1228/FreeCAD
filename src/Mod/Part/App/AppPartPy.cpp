@@ -278,6 +278,8 @@ namespace Part {
 	public:
 		Module() : Py::ExtensionModule<Module>("Part")
 		{
+			add_varargs_method("makeFunctionShape", &Module::makeFunctionShape, 
+				"make function shape!!!");
 			add_varargs_method("updateBoolean", &Module::updateBoolean,
 				"updateBoolean() -- update the boolean of Document."
 				);
@@ -1815,14 +1817,10 @@ namespace Part {
 					d.SetCoord(vec.x, vec.y, vec.z);
 				}
 
-				//测试代码
-// 				BRepPrimAPI_MakeSphere mkSphere(gp_Ax2(p, d), radius, angle1*(M_PI / 180), angle2*(M_PI / 180), angle3*(M_PI / 180));
-// 				TopoDS_Shape shape = mkSphere.Shape();
-				FS::FunctionShape fs;
-				fs.buildShape();
+ 				BRepPrimAPI_MakeSphere mkSphere(gp_Ax2(p, d), radius, angle1*(M_PI / 180), angle2*(M_PI / 180), angle3*(M_PI / 180));
+ 				TopoDS_Shape shape = mkSphere.Shape();
 
-
-				return Py::asObject(new TopoShapeSolidPy(new TopoShape(fs.getShape())));
+				return Py::asObject(new TopoShapeSolidPy(new TopoShape(shape)));
 			}
 			catch (Standard_DomainError) {
 				throw Py::Exception(PartExceptionOCCDomainError, "creation of sphere failed");
@@ -1887,6 +1885,28 @@ namespace Part {
 			catch (Standard_DomainError) {
 				throw Py::Exception(PartExceptionOCCDomainError, "creation of cone failed");
 			}
+		}
+		Py::Object makeFunctionShape(const Py::Tuple& args)
+		{
+			FS::Bounds bounds;
+			char* func;
+			char* sys;
+			double rxt = -1, ryt = -1, rzt = -1;
+			//精度
+			PyObject* pPnt = 0, * pDir = 0;
+			if (!PyArg_ParseTuple(args.ptr(), "ddddddssddd",
+				  &bounds.xmin, &bounds.xmax, &bounds.ymin, &bounds.ymax, &bounds.zmin, &bounds.zmax,
+				  &sys,&func, &rxt,&ryt,&rzt
+			))
+				throw Py::Exception();
+			if (std::string(func) == "")
+				throw Py::Exception();
+			FS::FunctionShape fs;
+			fs.setBounds(bounds);
+			fs.setSamplingRate(rxt, ryt, rzt);
+			fs.setFunction(func);
+			fs.buildShape();
+			return Py::asObject(new TopoShapeSolidPy(new TopoShape(fs.getShape())));
 		}
 
 		void testTime(std::string mark,clock_t &t0, clock_t t1){

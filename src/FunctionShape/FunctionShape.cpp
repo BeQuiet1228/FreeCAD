@@ -5,6 +5,7 @@
 #include <vtkSampleFunction.h>
 #include <vtkNew.h>
 #include <vtkContourFilter.h>
+#include <vtkImplicitFunction.h>
 
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Wire.hxx>
@@ -21,7 +22,7 @@
 #include <TopoDS.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
 #include <BRepAlgoAPI_Cut.hxx>
-
+#include "Function.h"
 
 namespace FS {
 
@@ -40,6 +41,9 @@ namespace FS {
 		double rx, ry, rz;
 
 		vtkNew<vtkContourFilter> contourFilter;
+		
+		//函数对象
+		FunctionString* function = nullptr;
 
 	};
 }
@@ -91,7 +95,7 @@ void FS::FunctionShape::setBounds(const Bounds& b)
 	autoBoundsUpRange();
 }
 
-void FS::FunctionShape::set(const unsigned int& x, const unsigned int& y, const unsigned int& z)
+void FS::FunctionShape::setSamplingRate(const unsigned int& x, const unsigned int& y, const unsigned int& z)
 {
 	d->dx = x;
 	d->dy = y;
@@ -99,16 +103,24 @@ void FS::FunctionShape::set(const unsigned int& x, const unsigned int& y, const 
 	autoBoundsUpRange();
 }
 
+void FS::FunctionShape::setFunction(const std::string& function)
+{
+	delete d->function;
+	auto func = new FunctionString();
+	func->setFunctionString(function);
+	d->function = func;
+}
+
 vtkPolyData* FS::FunctionShape::generatePolyData()
 {
 	//创建一个隐函数
-	MyFuntion* function;
-	function = new MyFuntion1();
+// 	if(!d->function)
+// 		d->function = new MyFuntion4();
 
 	//对函数进行采样
 	vtkNew<vtkSampleFunction> sample;
 	sample->SetSampleDimensions(d->dx,d->dy,d->dz);
-	sample->SetImplicitFunction(function);
+	sample->SetImplicitFunction(d->function);
 	//设置函数采样范围
 	Bounds& bounds = d->bounds;
 	sample->SetModelBounds(bounds.xmin - d->rx, bounds.xmax + d->rx,bounds.ymin - d->ry,bounds.ymax + d->ry,bounds.zmin - d->rz,bounds.zmax + d->rz);

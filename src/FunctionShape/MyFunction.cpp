@@ -102,3 +102,34 @@ void MyFuntion3::EvaluateGradient(double x[3], double g[3])
 {
 
 }
+
+
+
+MyFuntion4::MyFuntion4()
+{
+
+	symbol_table.add_variable("x", x);
+	symbol_table.add_variable("y", y);
+	symbol_table.add_variable("z", z);
+
+	symbol_table.add_constants();
+
+	std::string expression_string =
+		"x*x + y*y + z*z -1";
+	
+	expression.register_symbol_table(symbol_table);
+	parser.compile(expression_string, expression);
+}
+
+double MyFuntion4::EvaluateFunction(double d[3])
+{
+	x = d[0];
+	y = d[1];
+	z = d[2];
+	return expression.value();
+}
+
+void MyFuntion4::EvaluateGradient(double x[3], double g[3])
+{
+
+}
