@@ -598,6 +598,19 @@ void Hdf5IO::deleteH5File()
 	hdf5DataList.clear();
 }
 
+void Hdf5IO::insertHdf5Group(const std::vector<std::string>& headList, const std::vector<VectorF>& valuesList, const int& row)
+{
+	int groupSize = Hdf5File->getNumObjs();
+	std::string groupName = "DataGroup" + std::to_string(groupSize);
+	Group group = Hdf5File->createGroup(groupName);
+
+	Hdf5Data::insertHeadInGroup(group, headList);
+	for (int i = 0; i < valuesList.size(); i++)
+	{
+		Hdf5Data::initGroupFromValue(group, valuesList.at(i), "data_" + std::to_string(i),row,i);
+	}
+}
+
 /**
 * @brief Hdf5IO::getGrdData
 * @return void
@@ -1053,9 +1066,9 @@ void Hdf5Data::initHeadFromList(Group& newgroup, std::vector<std::string> HList)
 	DataType dataType(H5T_STRING, 128);
 	for (int i = 0; i < atCount; i++)
 	{
-		Attribute attr = group.openAttribute(i);
+		std::string attrName = "attr" + std::to_string(i);
 
-		Attribute toAttr = newgroup.createAttribute(attr.getName(), dataType, attr_dataspace);
+		Attribute toAttr = newgroup.createAttribute(attrName, dataType, attr_dataspace);
 		QString str = QString::fromStdString(HList.at(i));
 		QStringList sl = str.split("=");
 		if (sl.size() < 2)
@@ -1065,44 +1078,60 @@ void Hdf5Data::initHeadFromList(Group& newgroup, std::vector<std::string> HList)
 	}
 }
 
-void Hdf5Data::initGroupFromValue(Group& newgroup, std::shared_ptr<VectorF> values) {
+
+void Hdf5Data::insertHeadInGroup(Group& newgroup, std::vector<std::string> HList)
+{
+	//初始化属性
+	int atCount = HList.size();
+	hsize_t dims[1] = { 1 };
+	DataSpace attr_dataspace = DataSpace(1, dims);
+	DataType dataType(H5T_STRING, 128);
+	for (int i = 0; i < atCount; i++)
+	{
+		std::string attrName = "attr" + std::to_string(i);
+
+		Attribute toAttr = newgroup.createAttribute(attrName, dataType, attr_dataspace);
+		QString str = QString::fromStdString(HList.at(i));
+		toAttr.write(dataType, str.toStdString());
+	}
+}
+
+void Hdf5Data::initGroupFromValue(Group& newgroup, const VectorF& values, const std::string& dataSetName  /*= "datasetGrd"*/, const int& row /*= 2*/, const int& rank)
+{
 	//初始化Group
 	hsize_t dimsf[2];
-	dimsf[0] = (*values).size() / 2;
-	dimsf[1] = 2;
+	dimsf[0] = values.size() / row;
+	dimsf[1] = row;
 
 	float* valuesptr(new float[dimsf[0] * dimsf[1]]);
-	std::copy(values->begin(), values->end(), valuesptr);
+	std::copy(values.begin(), values.end(), valuesptr);
 
 	DataSpace dataSpace(2, dimsf);
-	std::string newDataSetName = "datasetGrd";
-	DataSet& newDataSet(newgroup.createDataSet(newDataSetName.c_str(), PredType::NATIVE_FLOAT, dataSpace));
+	DataSet& newDataSet(newgroup.createDataSet(dataSetName.c_str(), PredType::NATIVE_FLOAT, dataSpace));
 	newDataSet.write(valuesptr, PredType::NATIVE_FLOAT);
 
 	delete[] valuesptr;
 }
 
-/**
-* @使用指定的容器数据搭建新的DataGroup
-*/
-void Hdf5IO::addNewGroup(Hdf5IO& hdf5IO, Hdf5Data& data, std::shared_ptr<VectorF> values, std::vector<std::string> HList)
+void Hdf5IO::addNewGroup(Hdf5IO& hdf5IO, Hdf5Data& data, const VectorF& values, std::vector<std::string> HList)
 {
 	//新的Group
 	Hdf5Data newH5data(hdf5IO.Hdf5File);
 
 	int groupSize = hdf5IO.Hdf5File->getNumObjs();
-	std::string groupName = "DataGroup" + QString::number(groupSize).toStdString();
+	std::string groupName = "DataGroup" + std::to_string(groupSize);
 	Group toGroup(hdf5IO.Hdf5File->createGroup(groupName));
-	
+
 	data.initHeadFromList(toGroup, HList);
 	data.initGroupFromValue(toGroup, values);
 
-	newH5data.group = toGroup; 
+	newH5data.group = toGroup;
 	newH5data.headList = HList;
 	newH5data.init();
 }
 
-void Hdf5IO::addSubGroup(Hdf5Data& data, Group group, std::shared_ptr<VectorF> values, std::vector<std::string> HList) {
+void Hdf5IO::addSubGroup(Hdf5Data& data, Group group, const VectorF& values, std::vector<std::string> HList)
+{
 	//添加subGroup
 	int num = group.getNumObjs() + 1;
 	std::string subGroupName = "subGroup" + std::to_string(num);

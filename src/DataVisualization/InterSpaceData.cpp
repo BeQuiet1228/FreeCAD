@@ -97,7 +97,7 @@ namespace DV {
 			std::cerr << "open group fail" << std::endl;
 		}
 
-		Hdf5IO::addSubGroup(h5Data, tmpgroup, this->points, headList);
+		Hdf5IO::addSubGroup(h5Data, tmpgroup, *points, headList);
 
 		return true;
 	}

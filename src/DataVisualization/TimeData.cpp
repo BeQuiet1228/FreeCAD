@@ -277,7 +277,7 @@ namespace DV {
 			std::cerr << "open group fail" << std::endl;
 		}
 
-		Hdf5IO::addSubGroup(h5Data, tmpgroup, this->points, headList);
+		Hdf5IO::addSubGroup(h5Data, tmpgroup, *points, headList);
 
 		return true;
 	}
@@ -297,7 +297,7 @@ namespace DV {
 		Hdf5Data* newh5Data = new Hdf5Data(h5Data);
 		int groupSize = newh5Data->group.getNumObjs();
 		std::string groupName = "DataGroup" + QString::number(groupSize).toStdString();
-		Hdf5IO::addNewGroup(*temp, *newh5Data, this->points, headList);
+		Hdf5IO::addNewGroup(*temp, *newh5Data, *points, headList);
 		
 		if (-1 != res)
 			res = Hdf5IO::closeH5File(res);

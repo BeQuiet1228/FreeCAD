@@ -55,8 +55,10 @@ public:
 	bool initM2dStructInformation();
 	void init();
 
-	void initHeadFromList(Group& newgroup, std::vector<std::string> List);
-	void initGroupFromValue(Group& newgroup, std::shared_ptr<VectorF> values);
+	static void initHeadFromList(Group& newgroup, std::vector<std::string> List);
+	static void insertHeadInGroup(Group& newgroup, std::vector<std::string> List);
+	static void initGroupFromValue(Group& newgroup, const VectorF& values, 
+		const std::string& dataSetName = "datasetGrd", const int& row = 2,const int &rank = 0);
 
 private:
 	//初始化数据
@@ -87,6 +89,8 @@ public:
 
 	//释放h5文件
 	void deleteH5File();
+	//保存数据到h5文件
+	void insertHdf5Group(const std::vector<std::string> &headList, const std::vector<VectorF>& valuesList, const int& row);
 private:
 	std::shared_ptr<H5File> Hdf5File;
 	//获取一个数据组
@@ -130,8 +134,8 @@ public:
 	static int openH5File(const std::string &fileName);
 	static int closeH5File(int H5id);
 
-	static void Hdf5IO::addNewGroup(Hdf5IO& hdf5IO, Hdf5Data& data, std::shared_ptr<VectorF> values, std::vector<std::string> HList);
-	static void addSubGroup(Hdf5Data& data, Group group, std::shared_ptr<VectorF> values, std::vector<std::string> HList);
+	static void Hdf5IO::addNewGroup(Hdf5IO& hdf5IO, Hdf5Data& data, const  VectorF& values, std::vector<std::string> HList);
+	static void addSubGroup(Hdf5Data& data, Group group, const VectorF& values, std::vector<std::string> HList);
 
 private:
 	//新增方法2021/6/30

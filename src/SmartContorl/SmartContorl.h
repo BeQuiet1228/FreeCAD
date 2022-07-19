@@ -129,6 +129,8 @@ public:
 private:
 	//判断优化方法是否可用
 	bool controlModIsRuning();
+	//对运行数据进行处理
+	bool resultDataFilter();
 public Q_SLOTS:
 	void chipicWorkFinished(unsigned long threadID);
 	void chipicStartFinished(unsigned long threadID);

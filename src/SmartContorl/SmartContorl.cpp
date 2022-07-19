@@ -133,7 +133,7 @@ void SmartContorl::runChipic()
 void SmartContorl::dataOptimize()
 {
 	//运算结果数据筛选
-	bool ok = optimizeCurse->resultDataFilter(this);
+	bool ok = resultDataFilter();
 	//清理h5对象 这个暂时放在这里，后续应当写到lua脚本中
 	SmartContorlData::GetInstance()->clearH5Object();
 	//如果结果数据筛选失败，那么给出提示
@@ -413,6 +413,76 @@ bool SmartContorl::controlModIsRuning()
 	}
 
 	return ok;
+}
+
+bool SmartContorl::resultDataFilter()
+{
+	bool ok = optimizeCurse->resultDataFilter(this);
+	if (!ok)
+		return ok;
+	std::vector<VectorF> valuesList;
+	std::vector<std::string> headList;
+
+	auto hisoty = getHistoryDatas();
+	if (hisoty.size() == 0)
+		return false;
+
+	//获取变量个数和目标函数个数
+	int varCount = 0, functionCount = 0;
+	varCount = hisoty[0].variates.size();
+	functionCount = hisoty[0].datas[0]->resultData->size();
+
+	//生成h5文件需要的头信息
+	{
+		headList.push_back("$smartControl");
+		headList.push_back(std::to_string(varCount));
+		headList.push_back(std::to_string(functionCount));
+		std::string varNames;
+		for (auto var : hisoty[0].variates)
+		{
+			varNames += " " + var.name.toStdString();
+		}
+		headList.push_back(varNames);
+	}
+	//获取数据
+	{
+		//数据集的个数，对应种群个数
+		int dataSetCount =  hisoty[0].datas.size();
+
+		//初始化vector
+		for (int i = 0; i < dataSetCount; i++)
+			valuesList.push_back(VectorF());
+		/*
+		* 搜集数据信息
+		* 信息的排列方式为 变量参数 、目标函数值
+		*/
+		for (auto his : hisoty)
+		{
+			auto vars = his.variates;
+			ChipicRunDatas datas = his.datas;
+
+			for (int i = 0; i < dataSetCount; i++)
+			{
+				for (auto var : vars)
+				{
+					valuesList[i].push_back(var.values[i]);
+				}
+				auto d = datas[i];
+				auto result = d->resultData;
+				for (int j = 0; j < result->size(); j++)
+				{
+					valuesList[i].push_back(result->getValue(j));
+				}
+			}
+		}
+	}
+	//将数据保存到H5文件
+	auto path = this->fileMaker.m3dPath;
+	path = path.left(path.length() - 4) + "_opt.h5";
+	
+	Hdf5IO::creatNewH5File(path.toStdString());
+	Hdf5IO hdf5(path.toStdString());
+	hdf5.insertHdf5Group(headList, valuesList, varCount + functionCount);
 }
 
 /**
