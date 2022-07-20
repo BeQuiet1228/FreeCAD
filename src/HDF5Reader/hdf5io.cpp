@@ -815,6 +815,19 @@ bool Hdf5Data::initM2dStructInformation()
 	return true;
 }
 
+bool Hdf5Data::initCustomInformation()
+{
+	if (headList.size() == 0)
+		return false;
+	QString str = QString::fromStdString(headList.at(0));
+	QStringList sl = str.split("=");
+	if (sl.size() < 2)
+		return false;
+	str = sl.at(1);
+	name = str.toStdString();
+	return true;
+}
+
 /**
 * @brief Hdf5Data::init 初始化数据信息
 * @return void
@@ -826,6 +839,9 @@ void Hdf5Data::init()
 	if (initM3dStructInformation())
 		return;
 	if (initM2dStructInformation())
+		return;
+	//这是最宽松的判断，所以必须放在最后，否则会跳过一些复杂的格式
+	if (initCustomInformation())
 		return;
 }
 
@@ -1053,6 +1069,24 @@ std::string H5DataHead::getAttributeForIndex(std::string str, int index)
 	if (index > attributeIndex)
 		return attributes.at(attributeIndex);
 	return attributes.at(index);
+}
+
+std::string H5DataHead::getAttribute(const std::string& str)
+{
+	std::string value = "";
+	for (auto iter = str.begin(); iter != str.end(); iter++)
+	{
+		if(*iter != '=')
+			continue;
+		iter++;
+		while (iter != str.end())
+		{
+			value += *iter;
+			iter++;
+		}
+		break;
+	}
+	return value;
 }
 
 /*

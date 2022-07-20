@@ -3,6 +3,7 @@
 #include "sstream"
 #include "HDF5DataItem2DDoubleClickEventHander.h"
 #include "Hdf5DataItemEventHandler.h"
+#include <cassert>
 /**
 * @time	2021/12/20
 * @brief Gui::HDF5DataItem2DFactory::CreatHDF5Items 创建item
@@ -30,6 +31,9 @@ Gui::HDF5DataItemFactory::HDF5DataItems Gui::HDF5DataItem2DFactory::CreatHDF5Ite
 	if (item)
 		items.push_back(item);
 	item = CreatRangDataItem(datas);
+	if (item)
+		items.push_back(item);
+	item = CreatSmartControlDataItem(datas);
 	if (item)
 		items.push_back(item);
 	return items;
@@ -89,6 +93,70 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatRangDataItem(Hdf5Data& data,
 	subNodeItem = typeNodeItem->addSubItem(subNodeItem);
 	typeNodeItem = parentItem->addSubItem(typeNodeItem);
 	return parentItem;
+}
+
+Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatSmartControlDataItem(Hdf5Data& data, HDF5DataItem* parentItem /*= nullptr*/)
+{
+	if (nullptr == parentItem)
+	{
+		parentItem = new HDF5DataItem("优化算法");
+	}
+	std::vector<std::string>& heads = data.headList;
+	assert(heads.size() >= 4 && "heads size ! >= 4");
+
+	auto varItem = new HDF5DataItem(gbkStdstringToQstring("参数"));
+	auto functionItem = new HDF5DataItem(gbkStdstringToQstring("目标函数值"));
+	parentItem->addSubItem(varItem);
+	parentItem->addSubItem(functionItem);
+
+	//增加参数选项
+	QString temp = QString::fromStdString(heads[3]);
+	QStringList vars = temp.split(" ");
+	//选项在数据中的索引
+	int index = 0;
+	for (int i = 1; i < vars.size(); i++)
+	{
+		auto nodeItem = new HDF5DataItem(data, vars.at(i));
+		nodeItem->cmds.push_back(std::to_string(index));
+		itemSetHander(nodeItem);
+		varItem->addSubItem(nodeItem);
+		index++;
+	}
+	//增加目标函数选项
+	temp = QString::fromStdString(heads[2]);
+	vars = temp.split("=");
+	assert(vars.size() == 2);
+
+	int functionCount = vars.at(1).toInt();
+	for (int i = 0; i < functionCount; i++)
+	{
+		auto nodeItem = new HDF5DataItem(data, QString("Function_%1").arg(i));
+		nodeItem->cmds.push_back(std::to_string(index));
+		itemSetHander(nodeItem);
+		functionItem->addSubItem(nodeItem);
+		index++;
+	}
+	return parentItem;
+}
+
+Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatSmartControlDataItem(std::vector<Hdf5Data>& datas)
+{
+	HDF5DataItem* item = new HDF5DataItem(gbkStdstringToQstring("优化算法"));
+	for (auto iter = datas.begin(); iter != datas.end();)
+	{
+		if (iter->name != "$smartControl")
+		{
+			iter++;
+			continue;
+		}
+		auto h5ddata = *iter;
+		iter = datas.erase(iter);
+		CreatSmartControlDataItem(h5ddata, item);
+	}
+	if (item->rowCount() != 0)
+		return item;
+	delete item;
+	return nullptr;
 }
 
 Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatRangDataItem(std::vector<Hdf5Data>& datas)

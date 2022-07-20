@@ -47,7 +47,7 @@ namespace DV {
 		static RendererPtr creatVectorRender(Hdf5Data h5d);
 		//创建一个多个时间图一起显示的适配器
 		static std::shared_ptr<CurveData> creatCurveData(Data::ValuesPtr values);
-		static std::shared_ptr<CurveData> creatCurveData(Data::ValuesPtr values,std::map<QString,std::vector<double>> par);
+		static std::shared_ptr<CurveData> creatCurveData(Data::ValuesPtr values,std::map<QString,std::vector<float>> par);
 		static Renderers creatMultipleCurveRenderers(std::list<std::shared_ptr<CurveData>> timeDatas);
 		static std::list<std::shared_ptr<TimeData>> creatMultipleCurveData(std::vector<Data::ValuesPtr> listValues);
 		static Renderers creatMultipleTimeRenderers(std::list<std::shared_ptr<TimeData>> timeDatas);
@@ -58,6 +58,7 @@ namespace DV {
 
 		//框架改动之后的新接口
 		PlotAdapterPtr creatPlotAdapter(Hdf5Data h5d, DirectionType type = X_Y);
+		PlotAdapterPtr creatSmartControlPlotAdapter(Hdf5Data h5data,const int &dataIndex);
 	public:
 
 
