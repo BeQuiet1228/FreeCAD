@@ -1,7 +1,7 @@
 # encoding:utf-8
 import FreeCAD
 import FreeCADGui
-from Model3D.Tools import FileView3D, M3DTools, ObjectTools
+from Model3D.Tools import FileView3D, M3DTools, ObjectTools, Tools3D
 from Model3D.M3DFileNew import M3DObject, M3DEmission, M3DObserve, M3DProject, M3DPhysices
 
 blankSpace = " "
@@ -23,12 +23,17 @@ class CreateM3DCommand:
 
     def Activated(self):
         # 如果当前窗口没有m3d对应的窗口，则创建一个新的窗口
+        # fileView = FileView3D.FileView()
+        # if fileView.getThisSubWindow() is None:
+        #     fileView.showThisSubWindow()
         m3d = M3D()
         m3d_text = m3d.getM3DText()
+        #FileView3D.FileView().updateText(m3d_text)
         FreeCADGui.displayText(m3d_text)
         pass
 
     def GetResources(self):
+
         return {'Accel': "M3D",
                 'MenuText': "M3D",
                 'ToolTip': "生成M3D文本", }
@@ -40,6 +45,7 @@ FreeCADGui.addCommand('CreateM3D_new', CreateM3DCommand())
 def setM3DToInterface():
     m3d = M3D()
     m3d_text = m3d.getM3DText()
+    #FileView3D.FileView().updateText(m3d_text)
     FreeCADGui.displayText(m3d_text)
     return m3d_text
 
@@ -145,6 +151,8 @@ class M3D:
         return m3d_text
 
     def getSystemStr(self):
+        # temp1 = ""
+        # return temp1
         curSystem = "SYSTEM "
         if FreeCAD.ActiveDocument.CoordinateSystem == u'Rectangular':
             curSystem += "CARTESIAN"
@@ -156,6 +164,8 @@ class M3D:
         return curSystem
 
     def getHeaderStr(self):
+        # temp1 = ""
+        # return temp1
         obj_dict = M3DTools.getHeaderDict()
         self.HeaderStr = []
 
@@ -179,14 +189,18 @@ class M3D:
         res_grid_str = ""
         parmeter_str=[]
         grid_dict = M3DTools.getGridDict()
+        # p_str=M3DProject.Parameter()
         for i in grid_dict[ObjectTools.ObjectType.Simu]:
             res_net_str, gg_str = M3DProject.NetStepSetting(i)
             parmeter_str.append(res_net_str)
         for i in parmeter_str:
             res_grid_str += i+"\n"
+        # res_grid_str=p_str+res_grid_str
         return res_grid_str, gg_str
 
     def getModelStr(self):
+        # temp1 = ""
+        # return temp1
         obj_dict = M3DTools.getAllModelObjDict()
         self.getAllModelObjStr = []
         self.objToOtherStr = []
@@ -372,6 +386,8 @@ class M3D:
         """
         按顺序返回与体属性相关的命令，可以参与布尔运算的体
         """
+        # temp1 = ""
+        # return temp1
         VolOrderList = []
         VolOrderListStr = ""
         model_str = ""
@@ -381,6 +397,7 @@ class M3D:
         for i in VolList:
             if i.Type == ObjectTools.ObjectType.Vol_Conformal:
                 model_str, pap_str = M3DObject.VolConformal(i)
+            # VolOrderList.append(pap_str)
             elif i.Type == ObjectTools.ObjectType.Vol_Annular:
                 model_str, pap_str = M3DObject.VolAnnular(i)
             elif i.Type == ObjectTools.ObjectType.Vol_Cylinder:
@@ -414,6 +431,9 @@ class M3D:
             # 草图拉伸体
             elif i.Type == ObjectTools.ObjectType.Vol_Draft_Extrude:
                 model_str, pap_str = M3DObject.VolDraft_Extrude(i)
+            # 草图旋转体
+            elif i.Type == ObjectTools.ObjectType.Vol_Draft_Revolution:
+                model_str, pap_str = M3DObject.VolDraft_Revolution(i)
             elif i.Type == ObjectTools.ObjectType.Vol_Array:
                 model_str, pap_str = M3DObject.VolArray(i)
             elif i.Type == ObjectTools.ObjectType.Vol_ParamArray:
@@ -545,6 +565,8 @@ class M3D:
         return res_material_str, res_panel_str, res_pap_str
 
     def getSimulationSettingStr(self):
+        # temp1 = ""
+        # return temp1
         """
         返回时域计算设置
         """
@@ -623,6 +645,8 @@ class M3D:
         return timer_str, res_obj_str, res_ap_str
 
     def getDumpOptionsStr(self):
+        # temp1 = ""
+        # return temp1
         res_do_str = ""
         do_dict = M3DTools.getDumpOptions()
         for i in do_dict[ObjectTools.ObjectType.DataProcess]:
@@ -632,6 +656,8 @@ class M3D:
         return res_do_str
 
     def getRunOptionsStr(self):
+        # temp1 = ""
+        # return temp1
         res_ro_str = ""
         ro_dict = M3DTools.getRunOptions()
         for i in ro_dict[ObjectTools.ObjectType.RunOptions]:
@@ -641,6 +667,8 @@ class M3D:
         return res_ro_str
 
     def getRunStr(self):
+        # temp1 = ""
+        # return temp1
         run_str = "START;" + "\n" + "STOP;" + "\n\n"
         return run_str
 

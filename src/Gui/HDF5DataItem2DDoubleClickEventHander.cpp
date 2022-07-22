@@ -92,7 +92,7 @@ void Gui::HDF5DataItem2DDoubleClickEventHander::setStructData(Hdf5Data data)
 */
 DV::PlotAdapterPtr Gui::HDF5DataItem2DDoubleClickEventHander::creatPlotAdapter(Hdf5Data h5d, HDF5DataItem* item)
 {
-	if (h5d.name == "$smartControl")
+	if (h5d.name == "smartControl")
 	{
 		assert(item->cmds.size() != 0);
 		int index = std::stoi(item->cmds[0]);

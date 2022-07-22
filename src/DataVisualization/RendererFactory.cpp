@@ -366,7 +366,7 @@ namespace DV {
 
 	DV::PlotAdapterPtr RendererFactory::creatSmartControlPlotAdapter(Hdf5Data h5data, const int& dataIndex)
 	{
-		if (h5data.name != "$smartControl")
+		if (h5data.name != "smartControl")
 			return PlotAdapterPtr();
 		auto listData = CurveData::Hdf5DataToListCurveData(h5data, dataIndex);
 		auto renderer = creatMultipleCurveRenderers(listData);

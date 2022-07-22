@@ -144,7 +144,7 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatSmartControlDataItem(std::ve
 	HDF5DataItem* item = new HDF5DataItem(gbkStdstringToQstring("ÓÅ»¯Ëã·¨"));
 	for (auto iter = datas.begin(); iter != datas.end();)
 	{
-		if (iter->name != "$smartControl")
+		if (iter->name != "smartControl")
 		{
 			iter++;
 			continue;
