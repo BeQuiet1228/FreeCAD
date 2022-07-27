@@ -158,7 +158,7 @@ namespace DV {
 
 		}
 		else {                  //没有负值，留出上方空间即可
-			yr.max += (yr.max -yr.min) *1.15;
+			yr.max += (yr.max -yr.min) *0.15;
 		}
 		setXRang(timeData->getXRang());
 		setYRang(yr);
