@@ -247,7 +247,7 @@ namespace DV {
 	* @param std::vector<double>> par
 	* @return std::shared_ptr<DV::CurveData>
 	*/
-	std::shared_ptr<DV::CurveData> RendererFactory::creatCurveData(Data::ValuesPtr values, std::map<QString, std::vector<double>> par)
+	std::shared_ptr<DV::CurveData> RendererFactory::creatCurveData(Data::ValuesPtr values, std::map<QString, std::vector<float>> par)
 	{
 		auto data = new CurveData();
 		data->setPoints(values);
@@ -258,7 +258,7 @@ namespace DV {
 
 	std::shared_ptr<DV::CurveData> RendererFactory::creatCurveData(Data::ValuesPtr values)
 	{
-		return creatCurveData(values, std::map<QString, std::vector<double>>());
+		return creatCurveData(values, std::map<QString, std::vector<float>>());
 	}
 
 	Renderers RendererFactory::creatMultipleCurveRenderers(std::list<std::shared_ptr<CurveData>> timeDatas)
@@ -362,6 +362,15 @@ namespace DV {
 		}
 
 		return adapter;
+	}
+
+	DV::PlotAdapterPtr RendererFactory::creatSmartControlPlotAdapter(Hdf5Data h5data, const int& dataIndex)
+	{
+		if (h5data.name != "smartControl")
+			return PlotAdapterPtr();
+		auto listData = CurveData::Hdf5DataToListCurveData(h5data, dataIndex);
+		auto renderer = creatMultipleCurveRenderers(listData);
+		return creatMultipleTimeAdapter(renderer);
 	}
 
 };

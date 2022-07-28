@@ -3,6 +3,7 @@
 #include <HDF5Reader/hdf5io.h>
 #include <memory>
 #include <QList>
+#include <vector>
 namespace Gui {
 	class HDF5DataItemEventHander;
 	/*
@@ -48,6 +49,10 @@ namespace Gui {
 		//合并两个相同的item
 		bool mergeItem(HDF5DataItem* item);
 		bool mergeItem(QStandardItem* item, HDF5DataItem* h5item);
+
+		//携带参数
+		//用于在触发双击事件时对数据进行特殊处理
+		std::vector<std::string> cmds;
 
 	public:
 		//重写运算符

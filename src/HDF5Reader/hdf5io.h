@@ -53,6 +53,7 @@ public:
 	bool initPlanemation();
 	bool initM3dStructInformation();
 	bool initM2dStructInformation();
+	bool initCustomInformation();
 	void init();
 
 	static void initHeadFromList(Group& newgroup, std::vector<std::string> List);
@@ -154,5 +155,7 @@ public:
 public:
 	//获取$分割的属性
 	static std::string  getAttributeForIndex(std::string str,int index);
+	//获取 = 号右边的值
+	static std::string  getAttribute(const std::string& str);
 	
 };

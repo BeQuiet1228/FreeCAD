@@ -199,13 +199,13 @@ void SmartContorlUI::on_pushButtonF_clicked()
 		listValues.push_back(valuePtr);
 	}
 
-	std::vector<std::map<QString, std::vector<double>>> parValues;
+	std::vector<std::map<QString, std::vector<float>>> parValues;
 	for (int i = 0; i < valueCount; i++)
 	{
-		std::map<QString, std::vector<double>> parValue;
+		std::map<QString, std::vector<float>> parValue;
 		for (auto iter = histroy.begin()->variates.begin(); iter != histroy.begin()->variates.end(); iter++)
 		{
-			parValue[iter->name] = std::vector<double>();
+			parValue[iter->name] = std::vector<float>();
 		}
 		parValues.push_back(parValue);
 	}
@@ -412,17 +412,17 @@ void SmartContorlUI::on_pushButtonVariateMax_clicked()
 		listValues.push_back(valuePtr);
 	}
 
-	std::vector<std::map<QString, std::vector<double>>> parValues;
+	std::vector<std::map<QString, std::vector<float>>> parValues;
 	for (int i = 0; i < valueCount; i++)
 	{
-		auto parV = std::map<QString, std::vector<double>>();
+		auto parV = std::map<QString, std::vector<float>>();
 		for (int j = 0; j < variates.size(); j++)
 		{
 			if(j == selectIndex)
 				continue;
-			parV[variates[j].name] = std::vector<double>();
+			parV[variates[j].name] = std::vector<float>();
 		}
-		parV["F"] = std::vector<double>();
+		parV["F"] = std::vector<float>();
 		parValues.push_back(parV);
 	}
 	int temp = 1;

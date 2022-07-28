@@ -434,7 +434,7 @@ bool SmartContorl::resultDataFilter()
 
 	//生成h5文件需要的头信息
 	{
-		headList.push_back("$smartControl");
+		headList.push_back("smartControl");
 		headList.push_back(std::to_string(varCount));
 		headList.push_back(std::to_string(functionCount));
 		std::string varNames;

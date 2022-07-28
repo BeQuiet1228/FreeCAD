@@ -50,7 +50,7 @@ void Gui::HDF5DataItem2DDoubleClickEventHander::trigger(HDF5DataItem* item)
 	auto h5data = item->getHdf5Data();
 	std::string name = item->text().toStdString();
 	//获取适配器
-	auto plotAdapter = creatPlotAdapter(h5data, name);
+	auto plotAdapter = creatPlotAdapter(h5data, item);
 	//获取Plot
 	auto guidoc = dynamic_cast<DocumentPic*>(Gui::Application::Instance->activeDocument());
 	assert(guidoc && "guidoc == nullptr!");//添加断言
@@ -90,10 +90,17 @@ void Gui::HDF5DataItem2DDoubleClickEventHander::setStructData(Hdf5Data data)
 * @param std::string name
 * @return DV::PlotAdapterPtr
 */
-DV::PlotAdapterPtr Gui::HDF5DataItem2DDoubleClickEventHander::creatPlotAdapter(Hdf5Data h5d, std::string name)
+DV::PlotAdapterPtr Gui::HDF5DataItem2DDoubleClickEventHander::creatPlotAdapter(Hdf5Data h5d, HDF5DataItem* item)
 {
+	if (h5d.name == "smartControl")
+	{
+		assert(item->cmds.size() != 0);
+		int index = std::stoi(item->cmds[0]);
+		return factoryPtr->creatSmartControlPlotAdapter(h5d, index);
+	}
 	if (h5d.name != "struct")
 		return factoryPtr->creatPlotAdapter(h5d);
+	std::string name = item->text().toStdString();
 	DV::DirectionType type = DV::X_Y;
 	for (auto& it : structDirectTypelist)
 	{

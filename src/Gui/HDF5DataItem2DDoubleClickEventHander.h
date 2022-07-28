@@ -10,7 +10,7 @@ namespace Gui
 		void trigger(HDF5DataItem* item) override;
 		void setStructData(Hdf5Data data);
 	private:
-		DV::PlotAdapterPtr creatPlotAdapter(Hdf5Data h5d, std::string name);
+		DV::PlotAdapterPtr creatPlotAdapter(Hdf5Data h5d, HDF5DataItem* item);
 	private:
 		std::shared_ptr<DV::RendererFactory> factoryPtr;
 	};
