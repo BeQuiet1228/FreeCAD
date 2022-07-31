@@ -243,6 +243,16 @@ def getDumpOptions():
             res_dict[ObjectType.DataProcess].append(i)
     return res_dict
 
+def getCollectionOutput():
+    """
+    获取Collection Output有关的的字典
+    """
+    res_dict = {ObjectType.CollectionOutput: []}
+    ro_list = ObjectTools.getAllPhyAndProObjects()
+    for i in ro_list:
+        if i.Type == ObjectType.CollectionOutput:
+            res_dict[ObjectType.CollectionOutput].append(i)
+    return res_dict
 
 def getRunOptions():
     """
