@@ -75,14 +75,11 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
         path_str = ""
         dialog = Gui.QFileDialog(self)
         dialog.setFileMode(Gui.QFileDialog.Directory)
+        dialog.setFileMode(Gui.QFileDialog.AnyFile)
 
         if dialog.exec_():
             # 接受选中文件的路径，默认为列表
             filenames = dialog.selectedFiles()
         path_str = filenames[0]
-        # root = ttt.Tk()
-        # root.withdraw()
-        # path_str = filedialog.askopenfilename()
-        # Tools3D.sayz("+++++++++enter path_str 1: ")
         self.ui.path.setText(path_str)
         self.obj.path = path_str
