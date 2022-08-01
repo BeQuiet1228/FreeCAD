@@ -353,6 +353,8 @@ def getFormByObj(obj):
         Form = Physics3DCommand.RunOptions.RunOptionsDialogMain.ShowDialog(obj)
     elif obj.Type == ObjectTools.ObjectType.NewParticle:
         Form = Physics3DCommand.ParticleDefine.ParticleDefineDialogMain.ShowDialog(obj)
+    elif obj.Type == ObjectTools.ObjectType.CollectionOutput:
+        Form = Physics3DCommand.CollectionOutput.CollectionOutputDialogMain.ShowDialog(obj)
     # 宏粒子合并
     elif obj.Type == ObjectTools.ObjectType.MacroParticle:
         Form = Physics3DCommand.MacroParticle.MacroParticleDialogMain.ShowDialog(obj)

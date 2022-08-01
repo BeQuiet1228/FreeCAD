@@ -92,6 +92,7 @@ class ObjectType:
     NewParticle = "ParticleDefine"
     # 宏粒子合并
     MacroParticle = "MacroParticle"
+    CollectionOutput = "CollectionOutput"
 
 
 # 定义属性

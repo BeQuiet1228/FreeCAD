@@ -85,6 +85,7 @@ class M3D:
         self.plots_str = ""
         self.dump_str = ""
         self.runOptions_str = ""
+        self.collectionOutput_str = ""
         self.run_str = ""
 
     def getM3DText(self):
@@ -100,6 +101,7 @@ class M3D:
         self.simulation_str = self.getSimulationSettingStr()
         self.defTimerStr, self.fromObserveToPanelStr, self.plots_str = self.getAllPlotsStr()
         self.dump_str = self.getDumpOptionsStr()
+        self.collectionOutput_str = self.getCollectionOutputStr()
         self.runOptions_str = self.getRunOptionsStr()
         self.run_str = self.getRunStr()
         # SYSTEM
@@ -134,6 +136,9 @@ class M3D:
         # SIMULATION SETTINGS
         m3d_text += getNewBlock("SIMULATION SETTINGS")
         m3d_text += self.simulation_str
+        # collectionOutput
+        m3d_text += getNewBlock("COLLECTION OUTPUT")
+        m3d_text += self.collectionOutput_str
         # ALL PLOTS
         m3d_text += getNewBlock("ALL PLOTS")
         m3d_text += self.defTimerStr
@@ -654,6 +659,17 @@ class M3D:
             if len(res_do_str) != 0:
                 res_do_str += "\n"
         return res_do_str
+
+    def getCollectionOutputStr(self):
+        # temp1 = ""
+        # return temp1
+        res_ro_str = ""
+        ro_dict = M3DTools.getCollectionOutput()
+        for i in ro_dict[ObjectTools.ObjectType.CollectionOutput]:
+            res_ro_str += M3DProject.CollectionOutput(i)
+            if len(res_ro_str) != 0:
+                res_ro_str += "\n"
+        return res_ro_str
 
     def getRunOptionsStr(self):
         # temp1 = ""
