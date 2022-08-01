@@ -27,6 +27,8 @@ public:
 	void setCurrentChipicM3dPath(const std::string& path, const int& threadCount = 1);
 	//打开log文件
 	void openLog();
+	//获取log的内容
+	QString  getLogContent();
 private:
 	QString m3dPath;
 

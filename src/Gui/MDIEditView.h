@@ -28,6 +28,7 @@ public:
 class MDIEditView :public MDIViewPIC{
 public:
 	MDIEditView(DocumentPic* doc,QWidget* parent = 0);
+	MDIEditView(DocumentPic* doc, CodeEditor* editor,QWidget* parent = 0);
 	~MDIEditView() {}; //这里qobject会自动释放掉指针 可以不管(仅对继承qobject且设置parent的对象有效)
 	
 	void setText(const QString& text);
@@ -41,7 +42,7 @@ public:
 	void setReadOnly(const bool& b);
 
 protected:
-	M3dEditor*codeEditor;
+	CodeEditor* codeEditor;
 };
 
 class MDIM3dOr2dEditorView :public MDIEditView {
@@ -58,4 +59,16 @@ public:
 	Cmds getM3dCmds();
 	//跳转到指定行
 	void gotoLine(const int& mun);
+private:
+	M3dEditor* m3dEditor;
+};
+
+class LogView :public MDIEditView {
+public:
+	LogView(DocumentPic* doc, QWidget* parent = 0);
+	~LogView();
+
+public:
+	void setText(const QString& text);
+
 };

@@ -1,6 +1,12 @@
 #include "openLog.h"
 #include <QProcess>
 #include <QFileInfo>
+#include <QFileInfo>
+#include <QFile>
+#include <QDir>
+#include <iostream>
+#include <QTextIStream>
+#include <QTextCodec>
 std::shared_ptr<OpenLog> OpenLog::_instance;
 
 OpenLog::OpenLog()
@@ -49,5 +55,24 @@ void OpenLog::openLog()
 	pr.waitForFinished();
 #endif
 
+}
+
+QString OpenLog::getLogContent()
+{
+	QFile file(this->m3dPath);
+	if (!file.exists())
+		return "";
+	if (!file.open(QIODevice::ReadOnly))
+		return "";
+	auto byte = file.readAll();
+	QTextStream stream(&file);
+	QString str = file.readAll();
+	file.close();
+	QTextCodec* pCodec = QTextCodec::codecForName("gb2312");
+	if (!pCodec)
+		return str;
+	str = pCodec->toUnicode(byte.data(), byte.length());
+
+	return str;
 }
 

@@ -304,3 +304,17 @@ M3dCommandType::M3dCommandType(const QString& w)
 {
 
 }
+
+
+LogEditor::LogEditor(QWidget* parent /*= 0*/)
+	:CodeEditor(parent)
+{
+	QFont f("Microsoft YaHei");
+	f.setPointSize(12);
+	this->setFont(f);
+}
+
+LogEditor::~LogEditor()
+{
+
+}

@@ -26,6 +26,22 @@ MDIEditView::MDIEditView(DocumentPic* doc, QWidget* parent /*= 0*/)
 	setCentralWidget(frame);
 }
 
+MDIEditView::MDIEditView(DocumentPic* doc, CodeEditor* editor, QWidget* parent /*= 0*/)
+	: MDIViewPIC(doc, parent)
+{
+	auto frame = new QFrame(this);
+	auto layout = new QHBoxLayout();
+	codeEditor = editor;
+	editor->setParent(this);
+	layout->addWidget(editor);
+	layout->setMargin(0);
+	frame->setLayout(layout);
+	layout->setSpacing(0);
+
+
+	setCentralWidget(frame);
+}
+
 void MDIEditView::setText(const QString& text)
 {
 	codeEditor->setPlainText(text);
@@ -99,18 +115,20 @@ void MDIEditView::setReadOnly(const bool& b)
 
 Cmds MDIM3dOr2dEditorView::getM3dCmds()
 {
-	return codeEditor->getCmds();
+	return m3dEditor->getCmds();
 }
 
 void MDIM3dOr2dEditorView::gotoLine(const int& mun)
 {
-	codeEditor->gotoLine(mun);
+	m3dEditor->gotoLine(mun);
 }
 
 MDIM3dOr2dEditorView::MDIM3dOr2dEditorView(DocumentPic* doc, QWidget* parent /*= 0*/)
 	: MDIEditView(doc, parent)
 {
 	connect(codeEditor, SIGNAL(textChanged()), this, SLOT(textChange()));
+	m3dEditor = dynamic_cast<M3dEditor*>(codeEditor);
+	assert(m3dEditor);
 }
 
 void MDIM3dOr2dEditorView::textChange()
@@ -123,6 +141,23 @@ void MDIM3dOr2dEditorView::textChange()
 	doct->setContent(codeEditor->toPlainText());
 }
 
+LogView::LogView(DocumentPic* doc, QWidget* parent /*= 0*/)
+	:MDIEditView(doc, new LogEditor(),parent)
+{
+	setWindowTitle(QString::fromLocal8Bit("LOG"));
+}
 
+LogView::~LogView()
+{
+
+}
+
+
+void LogView::setText(const QString& text)
+{	
+	codeEditor->setPlainText(text);
+}
 
 #include "moc_MDIEditView.cpp"
+
+

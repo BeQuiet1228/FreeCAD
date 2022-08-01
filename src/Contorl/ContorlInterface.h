@@ -63,5 +63,7 @@ public:
 	unsigned int getChipicThreadCount(unsigned long threadID);
 	//chipic运行模式是否是自动
 	bool chipicRunModIsAuto();
+	//获取log信息
+	QString getLogContent();
 
 };

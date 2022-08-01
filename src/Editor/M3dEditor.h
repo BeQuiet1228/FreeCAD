@@ -73,3 +73,9 @@ public:
 private:
 	M3dCommadAnalysis analysis;
 };
+
+class EDITOR_EXPORT LogEditor :public CodeEditor {
+public:
+	LogEditor(QWidget* parent = 0);
+	~LogEditor();
+};

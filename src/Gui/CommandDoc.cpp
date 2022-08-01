@@ -80,6 +80,7 @@
 #include <App/Application.h>
 #include "GuiCommand.h"
 #include "ParticleSwarmOptimizationMDI.h"
+#include "MDIEditView.h"
 using namespace Gui;
 
 //===========================================================================
@@ -2282,7 +2283,24 @@ void StdCmdOpenLog::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
     auto contorl = ContorlInterface::GetInstance();
-    contorl->buttonClicked(5);
+    QString log = contorl->getLogContent();
+
+	auto guidoc = dynamic_cast<DocumentPic*>(Gui::Application::Instance->activeDocument());
+	assert(guidoc && "guidoc == nullptr!");//添加断言
+	std::list<Gui::MDIView*> list = guidoc->getMDIViews();
+	LogView* ptr = nullptr;
+	for each (Gui::MDIView * var in list)
+	{
+		ptr = dynamic_cast<LogView*>(var);
+		if (ptr) break;
+	}
+	if (nullptr == ptr)
+	{
+		ptr = new LogView(guidoc);
+		Gui::MainWindow::getInstance()->addWindow(ptr);
+	}
+	Gui::MainWindow::getInstance()->setActiveWindow(ptr);
+    ptr->setText(log);
 }
 bool StdCmdOpenLog::isActive(void)
 {

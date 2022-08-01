@@ -5,6 +5,7 @@
 #include <QString>
 #include "MessageTransition.h"
 #include "Chipic.h"
+#include "openLog.h"
 std::shared_ptr<ContorlInterface> ContorlInterface::_instance;
 ContorlInterface::ContorlInterface()
 {
@@ -155,6 +156,11 @@ bool ContorlInterface::chipicRunModIsAuto()
 {
 	auto manager = getChipicManager();
 	return	(manager->getRunType() == ChipicManager::AUTO);
+}
+
+QString ContorlInterface::getLogContent()
+{
+	return OpenLog::GetInstance()->getLogContent();
 }
 
 /**
