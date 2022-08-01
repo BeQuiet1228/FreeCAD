@@ -19,7 +19,7 @@ def Load(workbench):
     clip = ['Clip_3D']
 
     otherSetting_3D = ['CreateNewMaterial_3D', 'CreateFieldSetting_3D', 'TimeDomainSetting_3D', 'CreateMacroParticle_3D',
-                    'CreateParticleDefine_3D', "CreateMark"]
+                    'CreateParticleDefine_3D', "CreateMark", "CreateCollectionOutput_3D"]
 
     cmdBoundary_3D = ['CreatePort_3D', 'Create3DFreeSpace', 'Create3DSymtry','CreateSolend_3D',
                      'Create_3D_Foil', 'Create3D_Driv', 'CreateInductor_3D']
@@ -32,7 +32,7 @@ def Load(workbench):
     cmdTimer_3D = ['CreateDefTimer_3D', 'CreateCustomTimer_3D']
 
     cmdProjectSettinglst_3D = ['CreateModelingInfo', 'NetStepSetting_3D', 'CreateDataProcessingSetting',
-                            'CreateRunOptions', 'Std_My_Parameter', "CreateCollectionOutput_3D"]
+                            'CreateRunOptions', 'Std_My_Parameter']
 
     view = ["Std_ViewAxo", "Separator", "Std_ViewFront", "Std_ViewTop", "Std_ViewRight",
             "Separator", "Std_ViewRear", "Std_ViewBottom", "Std_ViewLeft", "Separator", "Std_MeasureDistance"]
