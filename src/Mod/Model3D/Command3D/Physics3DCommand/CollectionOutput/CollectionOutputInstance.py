@@ -4,10 +4,9 @@ from Model3D.Tools import Tools3D, ObjectTools, InitDoc3D
 
 class CollectionOutput(object):
     def __init__(self):
-        self.obj = FreeCAD.ActiveDocument.getObject("collectionOutput")
-        if self.obj is None:
-            self.obj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", "collectionOutput")
-            self.__setProperty()
+        FreeCAD.ActiveDocument.openTransaction("CreateCollectionOutput_3D")
+        self.obj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", "collectionOutput")
+        self.__setProperty()
         InitDoc3D.addObjectToGroup_helper(self.obj, "CollectionOutput", "收集粒子数据导出")
         FreeCAD.ActiveDocument.commitTransaction()
 
