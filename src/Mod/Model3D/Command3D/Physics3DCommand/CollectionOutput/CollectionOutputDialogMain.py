@@ -78,8 +78,8 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
     def select_path(self):
         path_str = ""
         dialog = Gui.QFileDialog(self)
-        dialog.setFileMode(Gui.QFileDialog.Directory)
-        # dialog.setFileMode(Gui.QFileDialog.AnyFile)
+        # dialog.setFileMode(Gui.QFileDialog.Directory)
+        dialog.setFileMode(Gui.QFileDialog.AnyFile)
 
         if dialog.exec_():
             # 接受选中文件的路径，默认为列表
