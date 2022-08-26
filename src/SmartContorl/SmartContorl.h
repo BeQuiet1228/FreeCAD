@@ -97,6 +97,8 @@ public:
 public:
 	//同时运行chipic的个数
 	unsigned int chipicCount = 6;
+	//最大优化次数
+	unsigned int maxCount = 0;
 private:
 	//参数组
 	std::vector<Variate> variates;
