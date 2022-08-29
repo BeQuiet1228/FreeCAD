@@ -76,7 +76,7 @@ def initGroup():
     project_list.append(createInitGroup("DataProcess", "数据导出设定"))
     project_list.append(createInitGroup("RunOptions", "运行处理选项"))
     project_list.append(createInitGroup("FieldSetting", "场及函数定义"))
-    project_list.append(createInitGroup("CollectionOutput", "收集体导出"))
+    project_list.append(createInitGroup("CollectionOutput", "收集粒子数据导出"))
 
     # 将二级目录添加到一级目录中
     for i in model_list:
@@ -277,7 +277,7 @@ def addObjectToGroup(obj):
     elif obj.Type == ObjectType.FieldSetting:
         addObjectToGroup_helper(obj, "FieldSetting", "场及函数定义")
     elif obj.Type == ObjectType.CollectionOutput:
-        addObjectToGroup_helper(obj, "CollectionOutput", "收集体导出")
+        addObjectToGroup_helper(obj, "CollectionOutput", "收集粒子数据导出")
 
 
 # 事件监听器
