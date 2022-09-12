@@ -513,7 +513,7 @@ Document2DPic::Document2DPic(App::Document* pcDocument, Gui::Application* app)
 bool Document2DPic::onHasMsg(const char* pMsg) const
 {
 	if (strcmp("ParalleRunChipic", pMsg) == 0) {
-		return false;
+		return true;
 	}
 	return	DocumentPic::onHasMsg(pMsg);
 }
