@@ -527,7 +527,7 @@ DocumentText2D::DocumentText2D(App::Document* pcDocument, Gui::Application* app)
 bool DocumentText2D::onHasMsg(const char* pMsg) const
 {
 	if (strcmp("ParalleRunChipic", pMsg) == 0) {
-		return false;
+		return true;
 	}
 	return	DocumentText::onHasMsg(pMsg);
 }
