@@ -103,12 +103,14 @@ void FS::FunctionShape::setSamplingRate(const unsigned int& x, const unsigned in
 	autoBoundsUpRange();
 }
 
-void FS::FunctionShape::setFunction(const std::string& function)
+void FS::FunctionShape::setFunction(const std::string& function, const Type& type)
 {
 	delete d->function;
-	auto func = new FunctionString();
-	func->setFunctionString(function);
-	d->function = func;
+// 	if (type == XYZ)
+// 		d->function = new FunctionString();
+// 	else
+		d->function = new FunctionStringClinder();
+	d->function->setFunctionString(function);
 }
 
 vtkPolyData* FS::FunctionShape::generatePolyData()

@@ -36,7 +36,11 @@ namespace FS {
 	public:
 		FunctionShape();
 		~FunctionShape();
-
+		enum Type
+		{
+			XYZ= 0,
+			RTZ =1
+		};
 	public:
 		//构建模型
 		void buildShape();
@@ -47,7 +51,7 @@ namespace FS {
 		//设置采样率
 		void setSamplingRate(const unsigned int& x, const unsigned int& y, const unsigned int& z);
 		//设置函数
-		void setFunction(const std::string& function);
+		void setFunction(const std::string& function,const Type& type = XYZ);
 	private:
 		//生成vtk多边形数据
 		vtkPolyData* generatePolyData();
