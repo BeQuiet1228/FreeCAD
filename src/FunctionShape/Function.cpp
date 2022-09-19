@@ -116,7 +116,7 @@ double FS::FunctionStringClinder::EvaluateFunction(double d[3])
 	t = t > 0 ? t : 2*M_PI + t;
 	t = t / (2*M_PI) * 360;
 	z = d[2];
-	if (!inCylinder())
-		return 0.1;
+// 	if (!inCylinder())
+// 		return 0.1;
 	return expression.value();
 }

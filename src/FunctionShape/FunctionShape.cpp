@@ -22,6 +22,7 @@
 #include <TopoDS.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
 #include <BRepAlgoAPI_Cut.hxx>
+# include <BRepPrimAPI_MakeCylinder.hxx>
 #include "Function.h"
 
 namespace FS {
@@ -46,6 +47,71 @@ namespace FS {
 		FunctionString* function = nullptr;
 
 	};
+
+}
+
+void FS:: FunctionShapeCylinder::setFunction(const std::string& function)
+{
+	delete d->function;
+	d->function = new FunctionStringClinder();
+	d->function->setFunctionString(function);
+}
+
+FS::FunctionShapeCylinder::FunctionShapeCylinder()
+	:rMax(0),rMin(0),tMin(0),tMax(0),zMin(0),zMax(0)
+{
+
+}
+
+void FS::FunctionShapeCylinder::setBoundsCylinder(const double& rmin, const double& rmax, const double& tmin, const double& tmax, const double& zmin, const double& zmax)
+{
+	Bounds bounds;
+	rMin = rmin;
+	rMax = rmax;
+	tMin = tmin;
+	tMax = tmax;
+	zMin = zmin;
+	zMax = zmax;
+
+	bounds.xmax = rMax;
+	bounds.ymax = rMax;
+	bounds.xmin = -rMax;
+	bounds.ymin = -rMax;
+	bounds.zmin = zMin;
+	bounds.zmax = zMax;
+
+	setBounds(bounds);
+
+}
+
+TopoDS_Shape FS::FunctionShapeCylinder::disposBounds(TopoDS_Solid sd)
+{
+	//边界厚度
+//需要确保多余的部分全部被切掉
+	double hx = 2 * d->rx;
+	double hy = 2 * d->ry;
+	double hz = 2 * d->rz;
+
+	//生成边界盒子
+	Bounds& bounds = d->bounds;
+	gp_Pnt p1(bounds.xmin - hx, bounds.ymin - hy, bounds.zmin - hz);
+	gp_Pnt p2(bounds.xmax + hx, bounds.ymax + hy, bounds.zmax + hz);
+	BRepPrimAPI_MakeBox box(p1, p2);
+	box.Build();
+
+	gp_Pnt p(0, 0, 0);
+	gp_Dir dir(0, 0, 1);
+	BRepPrimAPI_MakeCylinder mkCyl(gp_Ax2(p, dir),d->bounds.xmax ,d->bounds.zmax, M_PI );
+	mkCyl.Build();
+
+	BRepAlgoAPI_Cut cut(box.Solid(), mkCyl.Solid());
+	cut.Build();
+
+	//使用边界盒子剪切函数
+	BRepAlgoAPI_Cut cut2(sd, cut.Shape());
+	cut2.Build();
+
+	return cut2.Shape();
 }
 
 FS::FunctionShape::FunctionShape()
@@ -103,13 +169,10 @@ void FS::FunctionShape::setSamplingRate(const unsigned int& x, const unsigned in
 	autoBoundsUpRange();
 }
 
-void FS::FunctionShape::setFunction(const std::string& function, const Type& type)
+void FS::FunctionShape::setFunction(const std::string& function)
 {
 	delete d->function;
-// 	if (type == XYZ)
-// 		d->function = new FunctionString();
-// 	else
-		d->function = new FunctionStringClinder();
+ 	d->function = new FunctionStringClinder();
 	d->function->setFunctionString(function);
 }
 

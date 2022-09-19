@@ -30,17 +30,17 @@ namespace FS {
 		double xmin, xmax, ymin, ymax, zmin, zmax;
 
 	};
-
+	enum CoordinateType
+	{
+		XYZ = 0,
+		RTZ = 1
+	};
 	class FunctionShapeD;
 	class DATA_VISUALIZATION_EXPORT FunctionShape {
 	public:
 		FunctionShape();
-		~FunctionShape();
-		enum Type
-		{
-			XYZ= 0,
-			RTZ =1
-		};
+		virtual ~FunctionShape();
+
 	public:
 		//构建模型
 		void buildShape();
@@ -51,18 +51,31 @@ namespace FS {
 		//设置采样率
 		void setSamplingRate(const unsigned int& x, const unsigned int& y, const unsigned int& z);
 		//设置函数
-		void setFunction(const std::string& function,const Type& type = XYZ);
-	private:
+		virtual void setFunction(const std::string& function);
+	protected:
 		//生成vtk多边形数据
 		vtkPolyData* generatePolyData();
 		//缝补多边形数据
 		TopoDS_Shape sewingPolydata(vtkPolyData* polydata);
 		//shape数据转换为solid
 		TopoDS_Solid shapeToSolid(TopoDS_Shape shape);
-		TopoDS_Shape disposBounds(TopoDS_Solid sd);
+		virtual TopoDS_Shape disposBounds(TopoDS_Solid sd);
 		//计算边界扩大范围
 		void autoBoundsUpRange();
-	private:
+	protected:
 		FunctionShapeD *d;
+	};
+
+	class DATA_VISUALIZATION_EXPORT FunctionShapeCylinder : public FunctionShape {
+	public:
+		FunctionShapeCylinder();
+	public:
+		virtual void setFunction(const std::string& function) override;
+		void setBoundsCylinder(const double& rmin, const double& rmax, const double& tmin, const double& tmax, const double& zmin, const double& zmax);
+	protected:
+		virtual TopoDS_Shape disposBounds(TopoDS_Solid sd) override;
+	private:
+		double rMin, rMax, tMin, tMax, zMax, zMin;
+
 	};
 }
