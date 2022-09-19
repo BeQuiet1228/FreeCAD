@@ -19,6 +19,8 @@
 #include <TopExp_Explorer.hxx>
 #include <BRepBuilderAPI_MakeSolid.hxx>
 #include <BRepLib.hxx>
+#include <BRepBuilderAPI_Transform.hxx>
+#include <gp_Trsf.hxx>
 #include <TopoDS.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
 #include <BRepAlgoAPI_Cut.hxx>
@@ -99,13 +101,40 @@ TopoDS_Shape FS::FunctionShapeCylinder::disposBounds(TopoDS_Solid sd)
 	BRepPrimAPI_MakeBox box(p1, p2);
 	box.Build();
 
+	/*
+		生成函数边界，这里需要特殊处理theta 和R 方向的参数。
+		R会影响边界区域变成一个环形
+		Theta则会影响边界区域变成一个扇形
+	*/
+
+	//生成圆柱
 	gp_Pnt p(0, 0, zMin);
 	gp_Dir dir(0, 0, 1);
 	double theta = M_PI / 180 * (tMax - tMin);
-	BRepPrimAPI_MakeCylinder mkCyl(gp_Ax2(p, dir),d->bounds.xmax ,d->bounds.zmax - d->bounds.zmin, theta);
+	BRepPrimAPI_MakeCylinder mkCyl(gp_Ax2(p, dir),rMax ,zMax - zMin, theta);
 	mkCyl.Build();
 
-	BRepAlgoAPI_Cut cut(box.Solid(), mkCyl.Solid());
+	TopoDS_Shape cyl = mkCyl.Solid();
+	//如果r大于0  小于0的情况不处理，r不能小于0
+	if (rMin > 0)
+	{
+		BRepPrimAPI_MakeCylinder mkcy2(gp_Ax2(p, dir), rMin, zMax - zMin, 2*M_PI);
+		mkcy2.Build();
+		BRepAlgoAPI_Cut cut3(cyl, mkcy2.Solid());
+		cut3.Build();
+		cyl = cut3.Shape();
+	}
+	//如果theta的起始点不为0 那么旋转theta值
+	if (tMin != 0)
+	{
+		gp_Trsf myTrsf;
+		myTrsf.SetRotation(gp::OZ(), M_PI / 180*tMin);
+		BRepBuilderAPI_Transform xform(cyl, myTrsf);
+		cyl = xform.Shape();
+	}
+
+
+	BRepAlgoAPI_Cut cut(box.Solid(), cyl);
 	cut.Build();
 
 	//使用边界盒子剪切函数
@@ -173,7 +202,7 @@ void FS::FunctionShape::setSamplingRate(const unsigned int& x, const unsigned in
 void FS::FunctionShape::setFunction(const std::string& function)
 {
 	delete d->function;
- 	d->function = new FunctionStringClinder();
+ 	d->function = new FunctionString();
 	d->function->setFunctionString(function);
 }
 

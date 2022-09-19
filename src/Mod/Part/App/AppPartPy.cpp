@@ -1312,7 +1312,6 @@ namespace Part {
 
 				return Py::asObject(new TopoShapeSolidPy(new TopoShape(result)));
 
-
 			}
 			catch (...){
 				std::cerr << "makeExtrude Error!" << std::endl;
