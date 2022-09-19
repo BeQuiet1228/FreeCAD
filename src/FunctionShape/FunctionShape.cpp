@@ -99,9 +99,10 @@ TopoDS_Shape FS::FunctionShapeCylinder::disposBounds(TopoDS_Solid sd)
 	BRepPrimAPI_MakeBox box(p1, p2);
 	box.Build();
 
-	gp_Pnt p(0, 0, 0);
+	gp_Pnt p(0, 0, zMin);
 	gp_Dir dir(0, 0, 1);
-	BRepPrimAPI_MakeCylinder mkCyl(gp_Ax2(p, dir),d->bounds.xmax ,d->bounds.zmax, M_PI );
+	double theta = M_PI / 180 * (tMax - tMin);
+	BRepPrimAPI_MakeCylinder mkCyl(gp_Ax2(p, dir),d->bounds.xmax ,d->bounds.zmax - d->bounds.zmin, theta);
 	mkCyl.Build();
 
 	BRepAlgoAPI_Cut cut(box.Solid(), mkCyl.Solid());

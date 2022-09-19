@@ -1901,12 +1901,28 @@ namespace Part {
 				throw Py::Exception();
 			if (std::string(func) == "")
 				throw Py::Exception();
-			FS::FunctionShape fs;
-			fs.setBounds(bounds);
-			fs.setSamplingRate(rxt, ryt, rzt);
-			fs.setFunction(func);
-			fs.buildShape();
-			return Py::asObject(new TopoShapeSolidPy(new TopoShape(fs.getShape())));
+
+			if (strcmp("Rectangular", sys) == 0)
+			{
+				FS::FunctionShape fs;
+				fs.setBounds(bounds);
+				fs.setSamplingRate(rxt, ryt, rzt);
+				fs.setFunction(func);
+				fs.buildShape();
+				return Py::asObject(new TopoShapeSolidPy(new TopoShape(fs.getShape())));
+			}else {
+				FS::FunctionShapeCylinder fs;
+				if (strcmp("Polar", sys) == 0)
+					fs.setBoundsCylinder(bounds.xmin, bounds.xmax, bounds.ymin, bounds.ymax, bounds.zmin, bounds.zmax);
+				else
+					fs.setBoundsCylinder(bounds.ymin, bounds.ymax, bounds.zmin, bounds.zmax, bounds.xmin, bounds.xmax);
+				fs.setSamplingRate(rxt, ryt, rzt);
+				fs.setFunction(func);
+				fs.buildShape();
+				return Py::asObject(new TopoShapeSolidPy(new TopoShape(fs.getShape())));
+			}
+
+
 		}
 
 		void testTime(std::string mark,clock_t &t0, clock_t t1){
