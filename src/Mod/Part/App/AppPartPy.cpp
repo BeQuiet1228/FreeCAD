@@ -157,6 +157,7 @@
 #include <windows.h>
 #include <string>
 #include <cstring>
+#include "FunctionShape/FunctionShape.h"
 
 #ifdef FCUseFreeType
 #  include "FT2FC.h"
@@ -277,6 +278,8 @@ namespace Part {
 	public:
 		Module() : Py::ExtensionModule<Module>("Part")
 		{
+			add_varargs_method("makeFunctionShape", &Module::makeFunctionShape, 
+				"make function shape!!!");
 			add_varargs_method("updateBoolean", &Module::updateBoolean,
 				"updateBoolean() -- update the boolean of Document."
 				);
@@ -1309,7 +1312,6 @@ namespace Part {
 
 				return Py::asObject(new TopoShapeSolidPy(new TopoShape(result)));
 
-
 			}
 			catch (...){
 				std::cerr << "makeExtrude Error!" << std::endl;
@@ -1813,8 +1815,10 @@ namespace Part {
 					Base::Vector3d vec = static_cast<Base::VectorPy*>(pDir)->value();
 					d.SetCoord(vec.x, vec.y, vec.z);
 				}
-				BRepPrimAPI_MakeSphere mkSphere(gp_Ax2(p, d), radius, angle1*(M_PI / 180), angle2*(M_PI / 180), angle3*(M_PI / 180));
-				TopoDS_Shape shape = mkSphere.Shape();
+
+ 				BRepPrimAPI_MakeSphere mkSphere(gp_Ax2(p, d), radius, angle1*(M_PI / 180), angle2*(M_PI / 180), angle3*(M_PI / 180));
+ 				TopoDS_Shape shape = mkSphere.Shape();
+
 				return Py::asObject(new TopoShapeSolidPy(new TopoShape(shape)));
 			}
 			catch (Standard_DomainError) {
@@ -1880,6 +1884,44 @@ namespace Part {
 			catch (Standard_DomainError) {
 				throw Py::Exception(PartExceptionOCCDomainError, "creation of cone failed");
 			}
+		}
+		Py::Object makeFunctionShape(const Py::Tuple& args)
+		{
+			FS::Bounds bounds;
+			char* func;
+			char* sys;
+			double rxt = -1, ryt = -1, rzt = -1;
+			//精度
+			PyObject* pPnt = 0, * pDir = 0;
+			if (!PyArg_ParseTuple(args.ptr(), "ddddddssddd",
+				  &bounds.xmin, &bounds.xmax, &bounds.ymin, &bounds.ymax, &bounds.zmin, &bounds.zmax,
+				  &sys,&func, &rxt,&ryt,&rzt
+			))
+				throw Py::Exception();
+			if (std::string(func) == "")
+				throw Py::Exception();
+
+			if (strcmp("Rectangular", sys) == 0)
+			{
+				FS::FunctionShape fs;
+				fs.setBounds(bounds);
+				fs.setSamplingRate(rxt, ryt, rzt);
+				fs.setFunction(func);
+				fs.buildShape();
+				return Py::asObject(new TopoShapeSolidPy(new TopoShape(fs.getShape())));
+			}else {
+				FS::FunctionShapeCylinder fs;
+				if (strcmp("Polar", sys) == 0)
+					fs.setBoundsCylinder(bounds.xmin, bounds.xmax, bounds.ymin, bounds.ymax, bounds.zmin, bounds.zmax);
+				else
+					fs.setBoundsCylinder(bounds.ymin, bounds.ymax, bounds.zmin, bounds.zmax, bounds.xmin, bounds.xmax);
+				fs.setSamplingRate(rxt, ryt, rzt);
+				fs.setFunction(func);
+				fs.buildShape();
+				return Py::asObject(new TopoShapeSolidPy(new TopoShape(fs.getShape())));
+			}
+
+
 		}
 
 		void testTime(std::string mark,clock_t &t0, clock_t t1){

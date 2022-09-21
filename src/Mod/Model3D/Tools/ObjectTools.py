@@ -428,11 +428,7 @@ def parseExpressionStr(expressionStr):
     propertyList = [i for i in propertyList if i not in ['DynamicData', 'ExpressionEngine', 'Label', 'Proxy', 'Type']]
     resultExpressionStr = expressionStr
     for propertyItem in propertyList:
-        if hasattr(getattr(paramObj, propertyItem), "Value"):
-            resultExpressionStr = re.sub("\\b" + propertyItem + "\\b",
-                                         str(getattr(paramObj, propertyItem).Value),
-                                         resultExpressionStr,
-                                         flags=re.IGNORECASE)
+        resultExpressionStr = re.sub("\\b" + propertyItem + "\\b",str(getattr(paramObj, propertyItem)),resultExpressionStr,flags=re.IGNORECASE)
     FreeCAD.Console.PrintError(resultExpressionStr)
     return resultExpressionStr
 
