@@ -154,7 +154,8 @@ void SmartContorl::dataOptimize()
 	//清空完成运算数据
 	//this->clearFinishData();
 	//判断数据是否符合预期，符合则结束运行
-	if (optimizeCurse->resultExpcet(this))
+	//或者是达到最大优化次数
+	if (historyDatas.size() > maxCount || optimizeCurse->resultExpcet(this))
 	{
 		runing = false;
 		return;
@@ -425,7 +426,7 @@ bool SmartContorl::resultDataFilter()
 
 	auto hisoty = getHistoryDatas();
 	if (hisoty.size() == 0)
-		return false;
+		return ok;
 
 	//获取变量个数和目标函数个数
 	int varCount = 0, functionCount = 0;

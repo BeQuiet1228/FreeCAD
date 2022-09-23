@@ -217,7 +217,7 @@ namespace DV {
 		contourRd->setContourLevels(listlevel);
 		emit updatePlot();
 	}
-	void ContourPlotAdapter::autoMaxRender()
+	void ContourPlotAdapter::autoMaxRenderRange()
 	{
 		if (!mainRenderer)
 		{

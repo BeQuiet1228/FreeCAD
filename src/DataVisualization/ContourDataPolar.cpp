@@ -105,7 +105,7 @@ namespace DV {
 	double PolarMatrixRasterData::value(double x, double y) const
 	{
 		double r, theta;
-		theta = qAtan2(x, y);
+		//theta = qAtan2(x, y);
 		r = sqrt(pow(x, 2) + pow(y, 2));
 
 		theta = FastAtan2(y, x);

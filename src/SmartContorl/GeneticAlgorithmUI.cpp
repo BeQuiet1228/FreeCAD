@@ -76,6 +76,7 @@ void GeneticAlgorithmUI::on_pushButton_clicked()
 {
 	auto str = replaceVariate();
 	smartContorl->chipicCount = this->ui->spinBoxRunCount->value();
+	smartContorl->maxCount = this->ui->spinBoxOptimizeCount->value();
 	auto optimize = new GeneticAlgorithm();
 	//auto optimize = new OptimizeCurseLua();
 
