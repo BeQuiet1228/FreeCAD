@@ -138,8 +138,8 @@ namespace DV {
 					yr.max = 1;
 				}
 				else {
-					yr.min -= abs(xr.min) * 0.2;
-					yr.max += abs(xr.max) * 0.2;
+					yr.min -= abs(yr.min) * 0.2;
+					yr.max += abs(yr.max) * 0.2;
 				}
 			}
 
