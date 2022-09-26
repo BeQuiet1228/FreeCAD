@@ -211,21 +211,21 @@ namespace DV {
 		//粒子的数据是x坐标的位置进行排序的
 		Rang xr, yr;
 		auto iter = particles.begin();
-		xr.min = iter->x;
-		iter = particles.end();
-		iter--;
-		xr.max = iter->x;
-
-		iter = particles.begin();
 		yr.min = yr.max = particles.begin()->y;
+		xr.min = xr.max = iter->x;
 		for (; iter != particles.end(); iter++)
 		{
 			if (yr.min > iter->y)
 				yr.min = iter->y;
 			else if (yr.max < iter->y)
 				yr.max = iter->y;
-		}
 
+			if (xr.min > iter->x)
+				xr.min = iter->x;
+			else if (xr.max < iter->x)
+				xr.max = iter->x;
+		}
+		
 		setXRang(xr);
 		setYRang(yr);
 

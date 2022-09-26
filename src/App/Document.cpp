@@ -1849,7 +1849,7 @@ void Document::restore (void)
 bool Document::isSaved() const
 {
     std::string name = FileName.getValue();
-    return !name.empty();
+    return (!name.empty()) || name == "unnamed";
 }
 
 /** Label is the visible name of a document shown e.g. in the windows title
