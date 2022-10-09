@@ -1,8 +1,8 @@
 #pragma once
-#include "TimeData.h"
+#include "TimeAlgData.h"
 #include"exportConfig.hpp"
 namespace DV {
-	class DATA_VISUALIZATION_EXPORT InterspaceData :public TimeData {
+	class DATA_VISUALIZATION_EXPORT InterspaceData :public TimeAlgData {
 	public:
 		InterspaceData(Hdf5Data& h5Data, const RunMod& mod = SINGLE_THREAD);
 		~InterspaceData() = default;

@@ -422,13 +422,5 @@ namespace DV {
 		(_pensize > 0 && _pensize < 6) ? (pensize = _pensize) : (pensize);
 		isAA = atoi(timeconfig.getGroup("AlisAttitude").getValue("isAlis").c_str());
 	}
-
-	/**-
-	* @brief TimeRenderer::getTimedata 获取传入的数据data
-	* @return void
-	*/
-	std::shared_ptr<TimeData> TimeRenderer::getTimedata() {
-		return std::dynamic_pointer_cast<TimeData>(data);//data为基类初始化后的成员,外部也可以通过基类的getData获取数据再进行转变，这里提供方便
-	}
 };
 
