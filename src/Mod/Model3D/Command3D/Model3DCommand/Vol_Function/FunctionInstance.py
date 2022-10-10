@@ -28,9 +28,6 @@ class VolFunction:
         pz = fp.precision_z
 
         expressionStr = ObjectTools.parseExpressionStr(fp.Expression.replace(" ", ""))
-        Tools3D.sayz("------------------------------")
-        Tools3D.sayz(expressionStr)
-        Tools3D.sayz("------------------------------")
         try:
             fp.Shape = Part.makeFunctionShape(minX, maxX, minY, maxY, minZ, maxZ,
                                                sys,
