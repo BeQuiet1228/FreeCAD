@@ -1,7 +1,7 @@
 #include "InterSpaceData.h"
 namespace DV {
 	InterspaceData::InterspaceData(Hdf5Data& h5Data, const RunMod& mod /*= SINGLE_THREAD*/)
-		:TimeData(h5Data, mod)
+		:TimeAlgData(h5Data, mod)
 	{
 
 	}

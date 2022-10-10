@@ -139,7 +139,7 @@ class GetProperty:
             obj.addProperty("App::PropertyDistance", "Point2X").Point2X = 0
             obj.addProperty("App::PropertyAngle", "Point2Y").Point2Y = 360
             obj.addProperty("App::PropertyDistance", "Point2Z").Point2Z = 0
-            obj.addProperty("App::PropertyString", "Normal", "Normal", "").Normal = "R"
+            obj.addProperty("App::PropertyString", "Normal", "Normal", "").Normal = "Z"
         else:
             obj.addProperty("App::PropertyDistance", "Point1X").Point1X = 0
             obj.addProperty("App::PropertyDistance", "Point1Y").Point1Y = 0

@@ -66,7 +66,7 @@ class SpecialCone:
             obj.addProperty("App::PropertyAngle", "Point1Y", "Cone", " centre point1 Y").Point1Y = 0
             obj.addProperty("App::PropertyDistance", "Point1Z", "Cone", " centre point1 Z").Point1Z = 0
             obj.addProperty("App::PropertyDistance", "Point2X", "Cone", " centre point2 X").Point2X = 0
-            obj.addProperty("App::PropertyAngle", "Point2Y", "Cone", " centre point2 Y").Point2Y = 360
+            obj.addProperty("App::PropertyAngle", "Point2Y", "Cone", " centre point2 Y").Point2Y = 0
             obj.addProperty("App::PropertyDistance", "Point2Z", "Cone", " centre point2 Z").Point2Z = 0
         else:
             obj.addProperty("App::PropertyDistance", "Point1X", "Cone", " centre point1 X").Point1X = 0
@@ -74,7 +74,7 @@ class SpecialCone:
             obj.addProperty("App::PropertyAngle", "Point1Z", "Cone", " centre point1 Z").Point1Z = 0
             obj.addProperty("App::PropertyDistance", "Point2X", "Cone", " centre point2 X").Point2X = 0
             obj.addProperty("App::PropertyDistance", "Point2Y", "Cone", " centre point2 Y").Point2Y = 0
-            obj.addProperty("App::PropertyAngle", "Point2Z", "Cone", " centre point2 Z").Point2Z = 360
+            obj.addProperty("App::PropertyAngle", "Point2Z", "Cone", " centre point2 Z").Point2Z = 0
         obj.addProperty("App::PropertyLength", "Radius_Bottom", "Cone", "Radius_Bottom").Radius_Bottom = 0.02
         obj.addProperty("App::PropertyLength", "Radius_Top", "Cone", "Radius_Top").Radius_Top = 0.01
         Tools3D.addCommonPropertyToObject(obj)

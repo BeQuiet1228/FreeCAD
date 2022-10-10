@@ -55,7 +55,7 @@ class Cylinder:
             obj.addProperty("App::PropertyAngle", "Point1Y", "Cylinder", " centre point1 Y").Point1Y = 0
             obj.addProperty("App::PropertyDistance", "Point1Z", "Cylinder", " centre point1 Z").Point1Z = 0
             obj.addProperty("App::PropertyDistance", "Point2X", "Cylinder", " centre point2 X").Point2X = 0
-            obj.addProperty("App::PropertyAngle", "Point2Y", "Cylinder", " centre point2 Y").Point2Y = 360
+            obj.addProperty("App::PropertyAngle", "Point2Y", "Cylinder", " centre point2 Y").Point2Y = 0
             obj.addProperty("App::PropertyDistance", "Point2Z", "Cylinder", " centre point2 Z").Point2Z = 0
         else:
             obj.addProperty("App::PropertyDistance", "Point1X", "Cylinder", " centre point1 X").Point1X = 0
@@ -63,7 +63,7 @@ class Cylinder:
             obj.addProperty("App::PropertyAngle", "Point1Z", "Cylinder", " centre point1 Z").Point1Z = 0
             obj.addProperty("App::PropertyDistance", "Point2X", "Cylinder", " centre point2 X").Point2X = 0
             obj.addProperty("App::PropertyDistance", "Point2Y", "Cylinder", " centre point2 Y").Point2Y = 0
-            obj.addProperty("App::PropertyAngle", "Point2Z", "Cylinder", " centre point2 Z").Point2Z = 360
+            obj.addProperty("App::PropertyAngle", "Point2Z", "Cylinder", " centre point2 Z").Point2Z = 0
 
         obj.addProperty("App::PropertyLength", "Radius", "Cylinder", "Radius").Radius = 0.02
         Tools3D.addCommonPropertyToObject(obj)

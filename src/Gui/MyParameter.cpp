@@ -230,7 +230,6 @@ bool MyParameter::isValidWithName(const std::string& param_name) {
     return res;
 }
 
-
 //分析表达式_expression的类型
 param_type MyParameter::typeAnalysis(const QString& text) {
     DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("Param");
@@ -282,6 +281,49 @@ param_type MyParameter::typeAnalysis(const QString& text) {
         this->error_message = e.what();
         return param_type::type_error;
     }
+}
+
+bool MyParameter::isBooleanFresh() {
+    std::vector<std::string> res;
+    DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("Param");
+    if (docObj == nullptr) {
+        return false;
+    }
+
+    std::vector<App::DocumentObject*> temp_v = docObj->getInList();
+    std::vector<std::string> changeName = updateParamValueMap();
+    int max_row = this->tableWidget->rowCount();
+    // 该循环是所有使用Param的体(object)
+    for (const auto& i : temp_v) {
+        boost::unordered_map<const ObjectIdentifier, const PropertyExpressionEngine::ExpressionInfo> pee =
+            i->ExpressionEngine.getExpressions();
+        // 该循环是该object所有的表达式
+        for (auto it = pee.begin(); it != pee.end(); ++it) {
+            // 该循环是查询obj的表达式是否使用了param_names里面的变量
+            for (const auto& j : changeName) {
+                if (findWholeWordsOnly(it->second.expression->toString(), j)) {
+                    return true;
+                }
+            }
+        }
+    }
+    
+    return false;
+}
+
+std::vector<std::string> MyParameter::updateParamValueMap() {
+    std::vector<std::string> changeName;
+    int max_row = this->tableWidget->rowCount();
+    for (int i = 0; i < max_row; ++i) {
+        std::string name = (tableWidget->item(i, 0)->text()).toStdString();
+        std::string value = (tableWidget->item(i, 2)->text()).toStdString();
+        if (paramValueMap.count(name) && paramValueMap[name] != value) {
+            changeName.emplace_back(name);
+        }
+        this->paramValueMap[name] = value;
+    }
+
+    return changeName;
 }
 
 /************************************************** 与控件相关代码 ******************************************************************/
@@ -408,8 +450,7 @@ void MyParameter::addProperty(param_type _type, const QString& name) {
     }
 }
 
-// 将row行变量的值填写到该行的第3列，类型填写到该行的第4列
-void MyParameter::setValueToItem(param_type cur_type, const QString& name, int row) {
+QString MyParameter::getValueFromName(param_type cur_type, const QString& name) {
     DocumentObject* docObj = App::GetApplication().getActiveDocument()->getObject("Param");
     App::ObjectIdentifier p(ObjectIdentifier::parse(docObj, name.toStdString()));
     QString temp;
@@ -422,8 +463,10 @@ void MyParameter::setValueToItem(param_type cur_type, const QString& name, int r
         App::PropertyString* param_str = dynamic_cast<App::PropertyString*>(p.getProperty());
         temp = QString::fromStdString(std::string(param_str->getValue()));
     }
-    tableWidget->item(row, 2)->setText(temp);
+    return temp;
+}
 
+void MyParameter::setTypeToItem(param_type cur_type, int row) {
     switch (cur_type) {
     case param_type::type_float:
         tableWidget->item(row, 3)->setText(QString::fromUtf8("float"));
@@ -448,6 +491,13 @@ void MyParameter::setValueToItem(param_type cur_type, const QString& name, int r
     default:
         break;
     }
+}
+
+// 将row行变量的值填写到该行的第3列，类型填写到该行的第4列
+void MyParameter::setValueToItem(param_type cur_type, const QString& name, int row) {
+    QString temp = getValueFromName(cur_type, name);
+    tableWidget->item(row, 2)->setText(temp);
+    setTypeToItem(cur_type, row);
 }
 
 // m3d
@@ -675,7 +725,10 @@ void MyParameter::recoveryData() {
         QString expression = tableWidget->item(i, 1)->text();
         param_type _type = typeAnalysis(expression);
         if (this->changeProperty(_type, name, expression)) {
-            this->setValueToItem(_type, name, i);
+            QString temp = getValueFromName(_type, name);
+            tableWidget->item(i, 2)->setText(temp);
+            setTypeToItem(_type, i);
+            this->paramValueMap[p[i][0]] = temp.toStdString();
         }
     }
 }
@@ -735,6 +788,7 @@ void MyParameter::deleteParam() {
     // 判断输入的变量是否有效并且需要删除
     if (this->delete_param_dlg->isNeedToDelete && this->delete_param_dlg->isDeleted()) {
         std::string delete_param = this->delete_param_dlg->getParamName();
+        paramValueMap.erase(delete_param);
         int p_row = 0;  // param row
         for (int i = 0; i < allParamName.size(); ++i) {
             if (delete_param == allParamName[i]) {
@@ -831,8 +885,10 @@ void MyParameter::changeParamName() {
 void MyParameter::updateM3D() {
     if (GetApplication().getActiveDocument()->classID == 2) {
         Base::InterpreterSingleton python;
-        python.runString("FreeCADGui.runCommand('Refresh_3D')");
-        python.runString("FreeCADGui.runCommand('UpdateBooleanCommand_3D')");
+        if (isBooleanFresh()) {
+            python.runString("FreeCADGui.runCommand('Refresh_3D')");
+            python.runString("FreeCADGui.runCommand('UpdateBooleanCommand_3D')");
+        }
         python.runString("FreeCADGui.runCommand('CreateM3D_new')");
         python.runString("FreeCADGui.runCommand('SingleClickParaCommand')");
         python.runString("FreeCADGui.runCommand('Std_My_Parameter')");

@@ -19,6 +19,7 @@
 #include "ContourPlotAdapter.h"
 #include "phasorPlotAdapter.h"
 #include "TimePlotAdapter.h"
+#include "TimeAlgPlotAdapter.h"
 #include "ParticleAdapter.h"
 #include "TimeMultiplePlotAdapter.h"
 #include "CurveData.h"
@@ -69,7 +70,7 @@ namespace DV {
 	{
 		if (h5d.name == "OBSERVE")
 		{
-			std::shared_ptr<TimeData> d(new TimeData(h5d));
+			std::shared_ptr<TimeData> d(new TimeAlgData(h5d));
 			TimeRenderer* r = new TimeRenderer(d);
 			return RendererPtr(r);
 
@@ -354,7 +355,7 @@ namespace DV {
 		}
 		else if (h5d.name == "OBSERVE" || h5d.name == "RANGE")
 		{
-			adapter.reset(new TimePlotAdapter(renders));
+			adapter.reset(new TimeAlgPlotAdapter(renders));
 		}
 		else {
 			adapter.reset(new PlotAdapter);

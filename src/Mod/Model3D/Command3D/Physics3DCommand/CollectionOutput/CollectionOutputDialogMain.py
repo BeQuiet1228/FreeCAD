@@ -55,6 +55,10 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             Tools3D.sayz("收集体未指定！！！！")
             self.isKeepData = False
             self.close()
+        elif self.ui.path.text() == " ":
+            Tools3D.sayz("导出路径未指定！！！！")
+            self.isKeepData = False
+            self.close()
         else:
             self.isKeepData = True
             self.close()
@@ -74,7 +78,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
     def select_path(self):
         path_str = ""
         dialog = Gui.QFileDialog(self)
-        dialog.setFileMode(Gui.QFileDialog.Directory)
+        # dialog.setFileMode(Gui.QFileDialog.Directory)
         dialog.setFileMode(Gui.QFileDialog.AnyFile)
 
         if dialog.exec_():

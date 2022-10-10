@@ -2,6 +2,7 @@
 #define GUI_MYPARAMETER_H
 #include "PreCompiled.h"
 
+#include <unordered_map>
 #include <QDialog>
 #include <QTableWidget>
 #include <QLineEdit>
@@ -111,6 +112,14 @@ public:
 	std::string afterName;
 	std::vector<QTextCursor> cursorLocation;
 	void replaceBtnisEnable(bool);
+
+public:
+	//存储初始参数列表信息
+	std::unordered_map<std::string, std::string> paramValueMap;
+	QString getValueFromName(param_type cur_type, const QString& name);
+	void setTypeToItem(param_type cur_type, int row);
+	bool isBooleanFresh();
+	std::vector<std::string> updateParamValueMap();		//只更新map时可不接受返回值
 };
 
 

@@ -28,7 +28,7 @@ class CreateCollectionOutputCommand:
         IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Model3D/Resources3D/ProjectSetting/宏粒子合并.svg"
         MenuText = Tools3D.QT_TRANSLATE_NOOP(
             'CreateCollectionOutput',
-            '收集体导出')
+            '收集粒子数据导出')
         ToolTip = Tools3D.QT_TRANSLATE_NOOP(
             'CreateCollectionOutput',
             'Absorption Space')
