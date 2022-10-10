@@ -148,17 +148,11 @@ namespace DV {
 		auto yr = timeData->getYRang();
 		if (yr.min < 0)
 		{
-			float j = (yr.max - yr.min) / 6;    //总长度除以8,得到平均值（上方多留一格所以除以8）
-			int m = yr.max / j;       //获得正值需要多少格
-			if ((m * j) > yr.max)    //解决浮点数精度问题（8.9999/3.0=3的问题）
-				m--;
-			int n = -(6 - m - 1); //获得负值需要的格数
-			yr.max = j * (m + 1);   //获得最大值
-			yr.min = j * (n - 1);  //获得最小值
-
+			yr.max += (yr.max - yr.min) * 0.1;
+			yr.min -= (yr.max - yr.min) * 0.1;
 		}
 		else {                  //没有负值，留出上方空间即可
-			yr.max += (yr.max -yr.min) *0.15;
+			yr.max += (yr.max -yr.min) *0.1;
 		}
 		setXRang(timeData->getXRang());
 		setYRang(yr);
