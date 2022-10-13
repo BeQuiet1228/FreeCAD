@@ -168,6 +168,8 @@ namespace DV
 			direction = R;
 		else if (str == "R*sin")
 			direction = THETA;
+		else if (str == "Phi")
+			direction = THETA;
 		else
 			direction = NONE;
 
