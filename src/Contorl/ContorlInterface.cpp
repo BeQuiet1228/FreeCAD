@@ -57,6 +57,9 @@ void ContorlInterface::setDataBar(ContorlDataBar* bar)
 void ContorlInterface::setM3dPath(const std::string& path)
 {
 	contorl->m3dPath = path;
+	//设置当前log文件的路径
+	auto log = OpenLog::GetInstance();
+	log->setCurrentChipicM3dPath(path);
 }
 
 void ContorlInterface::senWinMessage(const int& type, const int& wParam, const int& lParam)
