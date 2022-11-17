@@ -498,7 +498,7 @@ def Foil(obj):
         temp_m3d += M3DShare.PointCoordinates().point1(obj)
         temp_m3d += M3DShare.PointCoordinates().point2(obj)
         temp_m3d += semicolon+newLine
-        temp_m3d_pap += "FOIL"+blankSpace+material+blankSpace+obj.foilThickness+blankSpace+obj.Label+semicolon+newLine
+        temp_m3d_pap += "FOIL"+blankSpace+obj.Label+blankSpace+obj.foilThickness+blankSpace+material+semicolon+newLine
     else:
         temp_m3d_pap += "FOIL"+blankSpace+obj.foilType+blankSpace+obj.foilThickness+blankSpace+material+semicolon+newLine
     return temp_m3d_cp, temp_m3d, temp_m3d_pap
