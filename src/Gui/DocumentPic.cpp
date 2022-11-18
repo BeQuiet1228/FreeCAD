@@ -78,6 +78,8 @@ void DocumentPic::releaseH5Object()
 {
 	auto mw = Gui::MainWindow::getInstance();
 	auto view = mw->windows();
+	mw->hideControlTree();
+	mw->hideVisualizationTree();
 
 	//ÒÆ³ýÍ¼±í´°¿Ú
 	for (auto iter = view.begin(); iter != view.end(); iter++)
