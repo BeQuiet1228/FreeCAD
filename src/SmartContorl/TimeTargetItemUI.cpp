@@ -5,6 +5,7 @@ TimeTargetItemUI::TimeTargetItemUI(QWidget* parent /*= 0*/)
 {
 	ui->setupUi(this);
 	connect(ui->comboBoxExcpcet, SIGNAL(currentIndexChanged(int)), this, SLOT(currentIndexChange(int)));
+	ui->widgetAccuracy->hide();
 }
 
 TimeTargetItemUI::~TimeTargetItemUI()
