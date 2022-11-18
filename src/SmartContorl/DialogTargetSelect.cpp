@@ -1,7 +1,7 @@
 #include "DialogTargetSelect.h"
 #include "ui_DialogTargetSelect.h"
 DialogTargetSelect::DialogTargetSelect(QWidget* parent /*= 0*/)
-	:ui(new Ui::DialogTargetSelect),index(0)
+	:ui(new Ui::DialogTargetSelect),index(-1)
 {
 	ui->setupUi(this);
 }

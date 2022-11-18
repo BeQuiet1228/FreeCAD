@@ -4,6 +4,8 @@ FrequencyTargetItemUI::FrequencyTargetItemUI(QWidget* parent /*= 0*/)
 	:ui(new Ui::FrequencyTargetItemUI())
 {
 	ui->setupUi(this);
+	ui->label_6->hide();
+	ui->lineEditMaxF->hide();
 }
 
 FrequencyTargetItemUI::~FrequencyTargetItemUI()

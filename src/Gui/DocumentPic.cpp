@@ -265,6 +265,22 @@ void DocumentPic::showMultipleTargetGeneticAlgorithmView()
 	mw->addWindow(mdi);
 }
 
+bool DocumentPic::disposSuperDog()
+{
+#ifdef SUPER_DOG
+	if (!Gui::SuperDog::login())
+	{
+		QMessageBox::StandardButton result = QMessageBox::information(
+			nullptr,
+			DV::GetEncodingstr("ÌáÊ¾", ENCODING_GB2312),
+			DV::GetEncodingstr("Î´¼ì²âµ½¼ÓÃÜ¹·£¡", ENCODING_GB2312), QMessageBox::Yes);
+		return false;
+	}
+#endif // SUPER_DOG
+
+	return true;
+}
+
 void DocumentPic::save()
 {
 	Document::save();
@@ -278,35 +294,19 @@ void DocumentPic::saveAs()
 bool DocumentPic::onMsg(const char* pMsg, const char** ppReturn)
 {
 	if (strcmp("Save", pMsg) == 0) {
-#ifdef SUPER_DOG
-		if (!Gui::SuperDog::login())
-		{
-			QMessageBox::StandardButton result = QMessageBox::information(
-				nullptr,
-				DV::GetEncodingstr("ÌáÊ¾", ENCODING_GB2312),
-				DV::GetEncodingstr("Î´¼ì²âµ½¼ÓÃÜ¹·£¬±£´æÊ§°Ü£¡", ENCODING_GB2312), QMessageBox::Yes );
+		if (!disposSuperDog())
 			return false;
-		}
-			
-#endif // SUPER_DOG
 		this->save();
 		return true;
 	}
 	else if (strcmp("SaveAs", pMsg) == 0) {
-#ifdef SUPER_DOG
-		if (!Gui::SuperDog::login())
-		{
-			QMessageBox::StandardButton result = QMessageBox::information(
-				nullptr,
-				DV::GetEncodingstr("ÌáÊ¾", ENCODING_GB2312),
-				DV::GetEncodingstr("Î´¼ì²âµ½¼ÓÃÜ¹·£¬±£´æÊ§°Ü£¡", ENCODING_GB2312), QMessageBox::Yes);
+		if (!disposSuperDog())
 			return false;
-		}
-
-#endif // SUPER_DOG
 		this->saveAs();
 		return true;
 	}else if (strcmp("RunChipic", pMsg) == 0) {
+		if (!disposSuperDog())
+			return false;
 		this->runChipic();
 		return true;
 	}
@@ -315,22 +315,32 @@ bool DocumentPic::onMsg(const char* pMsg, const char** ppReturn)
 		return true;
 	}
 	else if (strcmp("ParalleRunChipic", pMsg) == 0) {
+		if (!disposSuperDog())
+			return false;
 		this->paralleRunChipic();
 		return true;
 	}
 	else if (strcmp("showPSOView", pMsg) == 0) {
+		if (!disposSuperDog())
+			return false;
 		this->showParticleSwarmOptimizationView();
 		return true;
 	}
 	else if (strcmp("showProcessingBatchView", pMsg) == 0) {
+		if (!disposSuperDog())
+			return false;
 		this->showProcessingBatchView();
 		return true;
 	}
 	else if (strcmp("showGeneticAlgorithm", pMsg) == 0) {
+		if (!disposSuperDog())
+			return false;
 		this->showGeneticAlgorithmView();
 		return true;
 	}
 	else if (strcmp("showMultipleTargetGeneticAlgorithm", pMsg) == 0) {
+		if (!disposSuperDog())
+			return false;
 		this->showMultipleTargetGeneticAlgorithmView();
 		return true;
 	}
@@ -347,60 +357,36 @@ bool DocumentPic::onHasMsg(const char* pMsg) const
 	else if (strcmp("SaveAs", pMsg) == 0) {
 		return true;
 	}else if (strcmp("RunChipic", pMsg) == 0) {
-#ifdef SUPER_DOG
-		if (!Gui::SuperDog::login())
-			return false;
-#endif // SUPER_DOG
 		auto control = ContorlInterface::GetInstance();
 		if (control->hasAutoChipicRuning())
 			return false;
 		return true;
 	}
 	else if (strcmp("ParalleRunChipic", pMsg) == 0) {
-#ifdef SUPER_DOG
-		if (!Gui::SuperDog::login())
-			return false;
-#endif // SUPER_DOG
 		auto control = ContorlInterface::GetInstance();
 		if (control->hasChipicRuning())
 			return false;
 		return true;
 	}
 	else if (strcmp("showPSOView", pMsg) == 0) {
-#ifdef SUPER_DOG
-		if (!Gui::SuperDog::login())
-			return false;
-#endif // SUPER_DOG
 		auto control = ContorlInterface::GetInstance();
 		if (control->hasChipicRuning())
 			return false;
 		return true;
 	}
 	else if (strcmp("showProcessingBatchView", pMsg) == 0) {
-#ifdef SUPER_DOG
-		if (!Gui::SuperDog::login())
-			return false;
-#endif // SUPER_DOG
 		auto control = ContorlInterface::GetInstance();
 		if (control->hasChipicRuning())
 			return false;
 		return true;
 	}
 	else if (strcmp("showGeneticAlgorithm", pMsg) == 0) {
-#ifdef SUPER_DOG
-		if (!Gui::SuperDog::login())
-			return false;
-#endif // SUPER_DOG
 		auto control = ContorlInterface::GetInstance();
 		if (control->hasChipicRuning())
 			return false;
 		return true;
 	}
 	else if (strcmp("showMultipleTargetGeneticAlgorithm", pMsg) == 0) {
-#ifdef SUPER_DOG
-		if (!Gui::SuperDog::login())
-			return false;
-#endif // SUPER_DOG
 		auto control = ContorlInterface::GetInstance();
 		if (control->hasChipicRuning())
 			return false;

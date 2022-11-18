@@ -198,9 +198,11 @@ void MultipleTargetGeneticAlgorithmUI::on_pushButtonDeleteVariate_clicked()
 void MultipleTargetGeneticAlgorithmUI::on_pushButtonAddTarget_clicked()
 {
 	DialogTargetSelect diaglog;
-	diaglog.exec();
+	diaglog.exec(); 
 	auto listWidget = ui->listWidgetTarget;
 	QWidget* widget;
+	if (diaglog.index == -1)
+		return;
 	if (diaglog.index == 0)
 	{
 		widget = new TimeTargetItemUI(listWidget);;
