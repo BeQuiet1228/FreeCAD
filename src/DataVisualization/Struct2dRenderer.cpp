@@ -41,11 +41,6 @@ namespace DV {
 		QPainter painter(&img);
 		painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
-		/*
-			用于合并的画布和，画师
-		*/
-		QImage img1(getSize(), QImage::Format_ARGB32);
-		QPainter painter1(&img1);
 		//多边形绘制
 		std::vector<QImage> imgs;
 		std::map<int, std::map<int, std::vector<QPointF>>> map = d->GetAllinfo();
@@ -78,6 +73,8 @@ namespace DV {
 					painter.drawPath(painterPath);
 				}
 				else {
+					QImage img1(getSize(), QImage::Format_ARGB32);
+					QPainter painter1(&img1);
 					createImg(iterpro, xr, yr, xScale, yScale, img1, painter1);
 					painter.drawImage(0, 0, img1);
 				}
@@ -368,8 +365,6 @@ namespace DV {
 		painter.setClipPath(path);//将多边形数据裁剪出来
 		//绘制多边形	
 		drawPolygons(painter, innerpolyF);
-		painter.save();
-		painter.restore();
 		return ;
 	}
 
