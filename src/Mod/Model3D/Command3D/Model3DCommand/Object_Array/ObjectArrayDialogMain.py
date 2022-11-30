@@ -102,6 +102,7 @@ class ShowDialog(QtGui.QDialog):
                 # 经initBaseObj()初始化后，comboBox_base仅有一项，即obj.BaseType，CurrentIndex置为0即可
                 self.ui.comboBox_base.setCurrentIndex(0)
                 self.ui.comboBox_base.setEnabled(False)
+                self.ui.comboBox_attribute.setEnabled(False)
             else:
                 itemIndex2 = self.ui.comboBox_base.findText(str(self.obj.BaseType))
                 self.ui.comboBox_base.setCurrentIndex(itemIndex2)

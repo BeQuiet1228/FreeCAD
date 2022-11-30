@@ -89,6 +89,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             # 自感系数
             self.obj.isCheckSelfInductor = self.ui.checkBox_induc.isChecked()
             self.obj.selfInductorCoefficient = self.ui.LineEdit_induc.text()
+            self.ui.LineEdit_induc.setEnabled(self.obj.isCheckSelfInductor)
         except:
             import traceback
             Tools3D.sayz("error:" + traceback.format_exc())
