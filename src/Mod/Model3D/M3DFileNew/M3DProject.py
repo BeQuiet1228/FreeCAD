@@ -254,3 +254,12 @@ def TimeDomainSetting(obj):
         temp_m3d_ss += "DURATION" + blankSpace + obj.computationTime + semicolon + newLine
 
     return temp_m3d_ss
+
+def CollectionOutput(obj):
+    """"
+    收集体导出
+    """
+    temp_m3d_ro = ""
+    temp_m3d_ro += "OUTPAR DESTROYED" + blankSpace + obj.collectionType + blankSpace + "FILEPATH" + blankSpace + "\"" + obj.path + "\"" + semicolon + newLine
+
+    return temp_m3d_ro

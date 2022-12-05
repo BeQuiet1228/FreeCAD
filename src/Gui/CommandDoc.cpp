@@ -2282,8 +2282,7 @@ StdCmdOpenLog::StdCmdOpenLog()
 void StdCmdOpenLog::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
-    auto contorl = ContorlInterface::GetInstance();
-    QString log = contorl->getLogContent();
+
 
 	auto guidoc = dynamic_cast<DocumentPic*>(Gui::Application::Instance->activeDocument());
 	assert(guidoc && "guidoc == nullptr!");//添加断言
@@ -2300,6 +2299,9 @@ void StdCmdOpenLog::activated(int iMsg)
 		Gui::MainWindow::getInstance()->addWindow(ptr);
 	}
 	Gui::MainWindow::getInstance()->setActiveWindow(ptr);
+	auto contorl = ContorlInterface::GetInstance();
+    contorl->setM3dPath(guidoc->getTextPath());
+	QString log = contorl->getLogContent();
     ptr->setText(log);
 }
 bool StdCmdOpenLog::isActive(void)

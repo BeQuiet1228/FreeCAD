@@ -74,6 +74,7 @@ void MultipleTargetGeneticAlgorithmUI::on_pushButton_clicked()
 {
 	auto str = replaceVariate();
 	smartContorl->chipicCount = this->ui->spinBoxRunCount->value();
+	smartContorl->maxCount = this->ui->spinBoxOptimizeCount->value();
 	auto optimize = new MultipleTargetGeneticAlgorithm();
 	//auto optimize = new OptimizeCurseLua();
 
@@ -197,9 +198,11 @@ void MultipleTargetGeneticAlgorithmUI::on_pushButtonDeleteVariate_clicked()
 void MultipleTargetGeneticAlgorithmUI::on_pushButtonAddTarget_clicked()
 {
 	DialogTargetSelect diaglog;
-	diaglog.exec();
+	diaglog.exec(); 
 	auto listWidget = ui->listWidgetTarget;
 	QWidget* widget;
+	if (diaglog.index == -1)
+		return;
 	if (diaglog.index == 0)
 	{
 		widget = new TimeTargetItemUI(listWidget);;
@@ -605,7 +608,7 @@ void MultipleTargetGeneticAlgorithmUI::saveParameterXml()
 	auto parNode = root.append_child("Parameter");
 	auto configNode = root.append_child("Config");
 	auto targetNode = root.append_child("Target");
-// 	configNode.append_attribute("OptimizeCount") = ui->spinBoxOptimizeCount->value();
+ 	configNode.append_attribute("OptimizeCount") = ui->spinBoxOptimizeCount->value();
 	configNode.append_attribute("RunCount") = ui->spinBoxCount->value();
 	configNode.append_attribute("RunMaxCount") = ui->spinBoxRunCount->value();
 
@@ -677,7 +680,7 @@ void MultipleTargetGeneticAlgorithmUI::loadParameterXml()
 
 
 // 
-// 	ui->spinBoxOptimizeCount->setValue(configNode.attribute("OptimizeCount").as_int());
+ 	ui->spinBoxOptimizeCount->setValue(configNode.attribute("OptimizeCount").as_int());
 	ui->spinBoxRunCount->setValue(configNode.attribute("RunMaxCount").as_int());
 	ui->spinBoxCount->setValue(configNode.attribute("RunCount").as_int());
 

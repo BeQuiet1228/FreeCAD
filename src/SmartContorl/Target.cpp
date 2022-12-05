@@ -23,6 +23,7 @@ bool Target::comparison(const double& par1, const double& par2)
 	return targetComprison->comparison(par1, par2);
 }
 
+
 void Target::setTargetComprison(TargetComprison* com)
 {
 	this->targetComprison = com;
@@ -231,7 +232,12 @@ double TargetFrequency::getTagetValue(const std::string& filePath)
 	for (int i = 1; i < value.size() - 2; i = i + 2) {
 		add = add + ((1- value[i]/e1) * (value[i + 1] - value[i - 1]));
 	}
+#if 0
 	return add * temp;
+#else
+
+	return add * temp / value[value.size() - 2];
+#endif
 }
 
 void TargetFrequency::setFrequencyRange(const double& max, const double& min)
@@ -268,4 +274,28 @@ std::vector<float> TargetFrequency::getH5DataValue(const std::string& filePath)
 		std::cerr << "TargetFrequency::getH5DataValue Hdf5IO::getValue failde!" << std::endl;
 		return std::vector<float>();
 	}
+}
+
+Hdf5Data TargetFrequency::getH5Data(const std::string& filePath)
+{
+	Hdf5IO H5IO(filePath);
+	H5IO.initHdf5Data();
+
+	Hdf5Data data;
+	for each (Hdf5Data d in H5IO.hdf5DataList) {
+		if (d.petName != Name)
+			continue;
+		if (d.headList.size() < 14)
+			continue;
+		//判断头信息中有fft
+		if (d.headList[13].find("FFT") == std::string::npos)
+			continue;	
+		data = d;		
+	}
+
+	if (data.petName != Name)
+	{
+		std::cerr << "Targer::getH5Data not find pet name!" << std::endl;
+	}
+	return data;
 }

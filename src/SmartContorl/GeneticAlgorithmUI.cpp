@@ -76,6 +76,7 @@ void GeneticAlgorithmUI::on_pushButton_clicked()
 {
 	auto str = replaceVariate();
 	smartContorl->chipicCount = this->ui->spinBoxRunCount->value();
+	smartContorl->maxCount = this->ui->spinBoxOptimizeCount->value();
 	auto optimize = new GeneticAlgorithm();
 	//auto optimize = new OptimizeCurseLua();
 
@@ -481,9 +482,9 @@ QString GeneticAlgorithmUI::replaceVariate()
 	QString config = "";
 	temp = QString("observeName = \"%1\";\n").arg(this->ui->lineEditName->text());
 	config += temp;
-	temp = QString("maxTime = %1;\n").arg(this->ui->lineEditMaxTime->text().toInt());
+	temp = QString("maxTime = %1;\n").arg(this->ui->lineEditMaxTime->text().toDouble());
 	config += temp;
-	temp = QString("miniTime = %1;\n").arg(this->ui->lineEditMiniTime->text().toInt());
+	temp = QString("miniTime = %1;\n").arg(this->ui->lineEditMiniTime->text().toDouble());
 	config += temp;
 	temp = QString("excpectF = %1;\n").arg(this->ui->lineEditMaxF->text().toLongLong());
 	config += temp;

@@ -68,7 +68,7 @@ class GetProperty:
             obj.addProperty("App::PropertyAngle", "Point1Y").Point1Y = 0
             obj.addProperty("App::PropertyDistance", "Point1Z").Point1Z = 0
             obj.addProperty("App::PropertyDistance", "Point2X").Point2X = 0
-            obj.addProperty("App::PropertyAngle", "Point2Y").Point2Y = 360
+            obj.addProperty("App::PropertyAngle", "Point2Y").Point2Y = 0
             obj.addProperty("App::PropertyDistance", "Point2Z").Point2Z = 0
         else:
             obj.addProperty("App::PropertyDistance", "Point1X").Point1X = 0
@@ -76,7 +76,7 @@ class GetProperty:
             obj.addProperty("App::PropertyAngle", "Point1Z").Point1Z = 0
             obj.addProperty("App::PropertyDistance", "Point2X").Point2X = 0
             obj.addProperty("App::PropertyDistance", "Point2Y").Point2Y = 0
-            obj.addProperty("App::PropertyAngle", "Point2Z").Point2Z = 360
+            obj.addProperty("App::PropertyAngle", "Point2Z").Point2Z = 0
 
         obj.addProperty("App::PropertyDistance", "Radius1").Radius1 = 0.005
         obj.addProperty("App::PropertyDistance", "Radius2").Radius2 = 0.01

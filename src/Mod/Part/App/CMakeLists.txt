@@ -34,6 +34,7 @@ if(FREETYPE_FOUND)
     set(Part_LIBS 
         ${Part_LIBS}
         ${FREETYPE_LIBRARIES}
+		FunctionShape
     )
 endif(FREETYPE_FOUND)
 

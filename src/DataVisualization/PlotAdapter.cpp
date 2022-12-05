@@ -118,6 +118,30 @@ namespace DV {
 			yr.max = syr.max > yr.max ? syr.max : yr.max;
 			yr.min = syr.min < yr.min ? syr.min : yr.min;
 		}
+		//如果范围之差为0,则做特殊处理
+			if (!(xr.max > xr.min || xr.max < xr.min))
+			{
+				if (xr.min == 0.0)
+				{
+					xr.min = -1;
+					xr.max = 1;
+				}else {
+					xr.min -= abs(xr.min) * 0.2;
+					xr.max += abs(xr.max) * 0.2;
+				}
+			}
+			if (!(yr.max > yr.min || yr.max < yr.min))
+			{
+				if (yr.min == 0.0)
+				{
+					yr.min = -1;
+					yr.max = 1;
+				}
+				else {
+					yr.min -= abs(yr.min) * 0.2;
+					yr.max += abs(yr.max) * 0.2;
+				}
+			}
 
 		setRenderRange(xr.min, xr.max, yr.min, yr.max);
 	}

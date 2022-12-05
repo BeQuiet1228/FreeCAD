@@ -58,8 +58,26 @@ namespace DV {
 		//获取横纵坐标的个数
 		posxSize = (*it)->size(); it++;
 		posySize = (*it)->size();
-		setXTag("Z(m)");
-		setYTag("R(m)");
+
+		//判断坐标系，给横纵轴标签
+		do{
+			if(this->h5Data.headList.size() < 3)
+				break;
+			QString str =QString::fromStdString(this->h5Data.headList[2]);
+			auto ls = str.split("$");
+			if(ls.size() < 2)
+				break;
+			if (ls[1] == "cartesian")
+			{
+				setXTag("X(m)");
+				setYTag("Y(m)");
+			}
+			else {
+				setXTag("Z(m)");
+				setYTag("R(m)");
+			}
+		} while (0);
+
 		//初始化范围
 		initXYRang();
 		initdata();

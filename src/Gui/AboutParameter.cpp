@@ -45,7 +45,7 @@ std::vector<std::string> findLinkWithObject(const std::vector<std::string>& para
 	}
 	std::vector<App::DocumentObject*> temp_v = docObj->getInList();
 	// 该循环是所有使用Param的体(object)
-	for (const auto& i : temp_v) {
+  	for (const auto& i : temp_v) {
 		boost::unordered_map<const ObjectIdentifier, const PropertyExpressionEngine::ExpressionInfo> pee =
 			i->ExpressionEngine.getExpressions();
 		// 该循环是该object所有的表达式

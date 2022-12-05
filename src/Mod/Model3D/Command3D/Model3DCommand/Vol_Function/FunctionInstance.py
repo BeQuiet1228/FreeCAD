@@ -22,26 +22,16 @@ class VolFunction:
 
         sys = FreeCAD.ActiveDocument.CoordinateSystem
 
-        if sys == "Rectangular":
-            px = fp.precision_x * 0.001
-            py = fp.precision_y * 0.001
-            pz = fp.precision_z * 0.001
-        elif sys == "Polar":
-            px = fp.precision_x * 0.001
-            py = fp.precision_y
-            pz = fp.precision_z * 0.001
-        else:
-            px = fp.precision_x * 0.001
-            py = fp.precision_y * 0.001
-            pz = fp.precision_z
+        
+        px = fp.precision_x 
+        py = fp.precision_y 
+        pz = fp.precision_z
+
         expressionStr = ObjectTools.parseExpressionStr(fp.Expression.replace(" ", ""))
         try:
-            fp.Shape = PartChipic.makeFuncMesh(1,
-                                               expressionStr,
-                                               minX, maxX, minY, maxY, minZ, maxZ,
+            fp.Shape = Part.makeFunctionShape(minX, maxX, minY, maxY, minZ, maxZ,
                                                sys,
-                                               str(20),
-                                               fp.Attribute,
+                                               expressionStr,
                                                px, py, pz)
             return
         except:

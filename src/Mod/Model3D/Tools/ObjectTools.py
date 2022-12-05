@@ -92,6 +92,7 @@ class ObjectType:
     NewParticle = "ParticleDefine"
     # 宏粒子合并
     MacroParticle = "MacroParticle"
+    CollectionOutput = "CollectionOutput"
 
 
 # 定义属性
@@ -426,12 +427,9 @@ def parseExpressionStr(expressionStr):
     propertyList = paramObj.PropertiesList
     propertyList = [i for i in propertyList if i not in ['DynamicData', 'ExpressionEngine', 'Label', 'Proxy', 'Type']]
     resultExpressionStr = expressionStr
+    resultExpressionStr = re.sub("\\b\\*\\*\\b","^",resultExpressionStr,flags=re.IGNORECASE)
     for propertyItem in propertyList:
-        if hasattr(getattr(paramObj, propertyItem), "Value"):
-            resultExpressionStr = re.sub("\\b" + propertyItem + "\\b",
-                                         str(getattr(paramObj, propertyItem).Value),
-                                         resultExpressionStr,
-                                         flags=re.IGNORECASE)
+        resultExpressionStr = re.sub("\\b" + propertyItem + "\\b",str(getattr(paramObj, propertyItem)),resultExpressionStr,flags=re.IGNORECASE)
     FreeCAD.Console.PrintError(resultExpressionStr)
     return resultExpressionStr
 

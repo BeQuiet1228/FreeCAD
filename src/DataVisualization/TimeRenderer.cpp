@@ -148,17 +148,11 @@ namespace DV {
 		auto yr = timeData->getYRang();
 		if (yr.min < 0)
 		{
-			float j = (yr.max - yr.min) / 6;    //总长度除以8,得到平均值（上方多留一格所以除以8）
-			int m = yr.max / j;       //获得正值需要多少格
-			if ((m * j) > yr.max)    //解决浮点数精度问题（8.9999/3.0=3的问题）
-				m--;
-			int n = -(6 - m - 1); //获得负值需要的格数
-			yr.max = j * (m + 1);   //获得最大值
-			yr.min = j * (n - 1);  //获得最小值
-
+			yr.max += (yr.max - yr.min) * 0.1;
+			yr.min -= (yr.max - yr.min) * 0.1;
 		}
 		else {                  //没有负值，留出上方空间即可
-			yr.max += (yr.max -yr.min) *0.15;
+			yr.max += (yr.max -yr.min) *0.1;
 		}
 		setXRang(timeData->getXRang());
 		setYRang(yr);
@@ -421,14 +415,6 @@ namespace DV {
 		(_penColor != Qt::white) ? (penColor = _penColor) : (penColor = Qt::red);
 		(_pensize > 0 && _pensize < 6) ? (pensize = _pensize) : (pensize);
 		isAA = atoi(timeconfig.getGroup("AlisAttitude").getValue("isAlis").c_str());
-	}
-
-	/**-
-	* @brief TimeRenderer::getTimedata 获取传入的数据data
-	* @return void
-	*/
-	std::shared_ptr<TimeData> TimeRenderer::getTimedata() {
-		return std::dynamic_pointer_cast<TimeData>(data);//data为基类初始化后的成员,外部也可以通过基类的getData获取数据再进行转变，这里提供方便
 	}
 };
 

@@ -37,6 +37,11 @@ namespace DV {
 		{
 			return true;
 		}break;
+		case Z_THETA:
+		{
+			if (xtag.find("Z") != std::string::npos && ytag.find("Phi") != std::string::npos)
+				return true;
+		}
 		case NONE:
 			return true;
 			break;

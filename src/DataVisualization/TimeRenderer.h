@@ -36,9 +36,5 @@ namespace DV {
 		unsigned __int32 pensize;
 		QColor penColor;
 		bool isAA;
-
-		//增加处理传入数据的的修改——zzhou
-	public:
-		std::shared_ptr<TimeData> getTimedata();
 	};
 };

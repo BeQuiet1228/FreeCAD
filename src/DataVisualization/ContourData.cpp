@@ -308,8 +308,17 @@ namespace DV {
 		title += "观察时间:";
 		title += DataInformationGetter::getObserveTime(headList.at(12)) + end;
 		title += "观察分量:";
-		title += DataInformationGetter::getObserveObejct(headList.at(2)) + end;
-		title += "观测面:";
+		title += DataInformationGetter::getObserveObejct(headList.at(2));
+		//获取观察分量单位
+		{
+			if (headList.size() >= 15)
+			{
+				auto str = QString::fromStdString(headList.at(14)).simplified();
+				auto lstr = str.split(" ");
+				title += lstr.at(lstr.size() -1).toStdString();
+			}
+		}
+		title +=end + "观测面:";
 		title += DataInformationGetter::getObserveFace(headList.at(16)) + end;
 
 		return title;

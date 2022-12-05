@@ -23,7 +23,8 @@ namespace DV {
 		X_Z = X | Z,
 		Y_Z = Y | Z,
 		R_Z = R | Z,
-		R_THETA = R | THETA
+		R_THETA = R | THETA,
+		Z_THETA = Z | THETA
 	};
 	enum SaveMod {
 		//ÐÂ½¨

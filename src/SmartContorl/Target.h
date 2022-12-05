@@ -38,12 +38,11 @@ public:
 public:
 	virtual double getTagetValue(const std::string& filePath) = 0;
 	virtual bool comparison(const double& par1, const double& par2);
-
 	void setTargetComprison(TargetComprison* com);
 	TargetComprison* getTargetComprison();
 protected:
 	virtual std::vector<float> getH5DataValue(const std::string& filePath)=0;
-	Hdf5Data getH5Data(const std::string& filePath);
+	virtual Hdf5Data getH5Data(const std::string& filePath);
 public:
 	std::string Name;
 private:
@@ -86,6 +85,9 @@ public:
 	double getMaxFrequency();
 	double getMinFrequency();
 	std::vector<float> getH5DataValue(const std::string& filePath);
+
+protected:
+	virtual Hdf5Data getH5Data(const std::string& filePath) override;
 private:
 	double maxFrequency, minFrequency;
 };

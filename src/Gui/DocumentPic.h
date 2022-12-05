@@ -32,6 +32,8 @@ public:
 	void showGeneticAlgorithmView();
 	//显示多目标遗传算法
 	void showMultipleTargetGeneticAlgorithmView();
+	//检测加密狗是否存在
+	bool disposSuperDog();
 
 	//保存与另存为
 	virtual void save();

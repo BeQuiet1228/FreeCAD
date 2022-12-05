@@ -439,14 +439,16 @@ App::Document* App::Application::newDocumentM3dText(const std::string& path, con
 	Base::InterpreterSingleton python;
 	python.runString("Gui.activateWorkbench(\"StartWorkbench\")");
     auto doc = new DocumentM3dText();
-    doc->FileName.setValue(path);
+    if(path != "unnamed")
+        doc->FileName.setValue(path);
 	return newDocument(doc, Name, UserName);
 }
 
 App::Document* App::Application::newDocumentH5(const std::string& path, const char* Name/* = 01*/, const char* UserName/* = 01*/)
 {
 	auto doc = new DocumentH5();
-	doc->FileName.setValue(path);
+    if (path != "unnamed")
+	    doc->FileName.setValue(path);
 	return newDocument(doc,Name,UserName);
 }
 App::Document* App::Application::newDocumentM2dText(const std::string& path, const char * Name /*= 0l*/, const char * UserName /*= 0l*/)
@@ -455,7 +457,8 @@ App::Document* App::Application::newDocumentM2dText(const std::string& path, con
 	Base::InterpreterSingleton python;
 	python.runString("Gui.activateWorkbench(\"StartWorkbench\")");
 	auto doc = new DocumentM2dText();
-	doc->FileName.setValue(path);
+    if (path != "unnamed")
+	    doc->FileName.setValue(path);
 	return newDocument(doc, Name, UserName);
 }
 
@@ -465,7 +468,8 @@ App::Document* App::Application::newDocumentM3dMode(const std::string& path, con
 	Base::InterpreterSingleton python;
 	python.runString("Gui.activateWorkbench(\"Modeling3DWorkbench\")");
 	auto doc = new DocumentM3dMod();
-	doc->FileName.setValue(path);
+    if (path != "unnamed")
+	    doc->FileName.setValue(path);
 	return newDocument(doc, Name, UserName);
 }
 
@@ -475,7 +479,8 @@ App::Document* App::Application::newDocumentM2dMod(const std::string& path, cons
 	Base::InterpreterSingleton python;
 	python.runString("Gui.activateWorkbench(\"Modeling2DWorkbench\")");
 	auto doc = new DocumentM2dMod();
-	doc->FileName.setValue(path);
+    if (path != "unnamed")
+	    doc->FileName.setValue(path);
 	return newDocument(doc, Name, UserName);
 }
 

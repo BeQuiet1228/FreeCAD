@@ -65,6 +65,7 @@ SET(MY_MOC_HDR RenderThread.h
 	ParticleConfigWidget.h
 	##zhaozhou
 	TimePlotAdapter.h
+	TimeAlgPlotAdapter.h
 	FourierDialog.h
 	)
 SET(TIME_SRC TimeData.h
@@ -77,6 +78,10 @@ SET(TIME_SRC TimeData.h
 	FourierDialog.cpp
 	TimeMultiplePlotAdapter.h
 	TimeMultiplePlotAdapter.cpp
+	TimeAlgData.h
+	TimeAlgData.cpp
+	TimeAlgPlotAdapter.cpp
+	TimeAlgPlotAdapter.h
 )
 SET(CURVE_SRC
 	CurveData.cpp

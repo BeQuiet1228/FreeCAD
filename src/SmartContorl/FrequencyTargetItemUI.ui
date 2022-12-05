@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>215</width>
-    <height>124</height>
+    <height>128</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,7 +37,7 @@
      <item>
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>筛选数据最小时间:</string>
+        <string>目标最小频率:</string>
        </property>
       </widget>
      </item>
@@ -62,7 +62,7 @@
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>筛选数据最大时间:</string>
+        <string>目标最大频率:</string>
        </property>
       </widget>
      </item>
