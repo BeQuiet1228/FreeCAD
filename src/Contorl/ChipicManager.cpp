@@ -17,20 +17,19 @@
 #include "ContorlButtonBar.h"
 #include "LocalEimtter.h"
 #include "Contorl.h"
+#include <cctype>
 
 //m3d路径长度字节限制
 const unsigned int modeThresHold = 100;
 bool isBlank(std::string input)
 {
-	const char* str = input.c_str();
-	for (auto i = 0; i < input.length(); i++)
-	{
-		if (0 != isspace(str[i]))
-		{
-			return true;
+	for (char c : input) {
+		if (std::isspace(c)) {
+			return false;
+			break;
 		}
 	}
-	return false;
+	return true;
 }
 ChipicManager::ChipicManager()
 {
