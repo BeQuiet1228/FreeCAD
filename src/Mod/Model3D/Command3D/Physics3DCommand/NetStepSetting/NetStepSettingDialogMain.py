@@ -45,3 +45,13 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             self.obj.isStartUsing = self.ui.checkBox.isChecked()
         except:
             Tools3D.sayz("error:" + traceback.format_exc())
+
+    def slotOK(self):
+        FreeCAD.ActiveDocument.Param.removeProperty("DX1")
+        FreeCAD.ActiveDocument.Param.removeProperty("DX2")
+        FreeCAD.ActiveDocument.Param.removeProperty("DX3")
+        FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX1").DX1 = self.ui.LineEdit_stride_x.text()
+        FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX2").DX2 = self.ui.LineEdit_stride_y.text()
+        FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX3").DX3 = self.ui.LineEdit_stride_z.text()
+        self.isKeepData = True
+        self.close()
