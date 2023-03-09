@@ -26,15 +26,23 @@ bool DocumentM3dText::save()
 {
 	auto  filePath = this->FileName.getValue();
 
-	boost::filesystem::path path(filePath);
 	boost::filesystem::path::imbue(
 		std::locale(std::locale(), new std::codecvt_utf8_utf16<wchar_t>()));
+	boost::filesystem::path path(filePath);
 	boost::filesystem::fstream fs(path, std::ios::out);
-	fs.clear();
-	fs << this->content.toStdString();
-	fs.close();
+	if (fs.is_open()) {
+		fs.clear();
+		auto temp = this->content.toStdString();
+		fs << this->content.toStdString();
+		fs.close();
+		return true;
+	}else{
+		std::cerr << " DocumentM3dText::save() fstream not open file £¡" << std::endl;
+		return false;
+	}
 
-	return true;
+
+	return false;
 }
 
 
