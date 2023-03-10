@@ -3,6 +3,7 @@ import NetStepSettingDialog
 import traceback
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
 from Model3D.Tools import Tools3D
+import FreeCAD
 
 
 class ShowDialog(BaseDialogMain.BasePhysicsDialog):
