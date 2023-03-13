@@ -25,11 +25,11 @@ bool isBlank(std::string input)
 {
 	for (char c : input) {
 		if (std::isspace(c)) {
-			return false;
+			return true;
 			break;
 		}
 	}
-	return true;
+	return false;
 }
 ChipicManager::ChipicManager()
 {
