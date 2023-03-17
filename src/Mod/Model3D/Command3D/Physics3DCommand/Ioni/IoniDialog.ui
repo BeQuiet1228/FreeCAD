@@ -6,164 +6,365 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>526</width>
-    <height>199</height>
+    <width>565</width>
+    <height>290</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>气体电离</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
-   <item>
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>气体电离</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>552</width>
+     <height>281</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string/>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="0">
+     <widget class="QLabel" name="Label_type">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>气体电离：</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="cb_type">
       <item>
-       <widget class="QComboBox" name="cb_type">
-        <item>
-         <property name="text">
-          <string>ARGON</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>NITROGEN_GAS</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>OXYGEN_GAS</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>HYDROGEN_GAS</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>HELIUM</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>MERCURY</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>WATER_VAPOR</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>NEON</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>KRYPTON</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>XENON</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>CARBON_DIOXIDE</string>
-         </property>
-        </item>
+       <property name="text">
+        <string>ARGON</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>NITROGEN_GAS</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>OXYGEN_GAS</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>HYDROGEN_GAS</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>HELIUM</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>MERCURY</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>WATER_VAPOR</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>NEON</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>KRYPTON</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>XENON</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>CARBON_DIOXIDE</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QLabel" name="Label_Shadow">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>正交投影体：</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
+     <widget class="StyledComboBox" name="ComboBox_Shadow">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>1</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>3000</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="sizeIncrement">
+       <size>
+        <width>1</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="editable">
+       <bool>false</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string>未指定</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="4">
+     <widget class="QGroupBox" name="groupBox_Port">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="title">
+       <string>波导端口</string>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="2" column="3">
+          <widget class="QLineEdit" name="LineEdit_end_y">
+           <property name="text">
+            <string>0mm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" colspan="2" alignment="Qt::AlignHCenter">
+          <widget class="QLabel" name="label_X">
+           <property name="text">
+            <string>R</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_start">
+           <property name="text">
+            <string>起点：</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" colspan="2">
+          <widget class="QLineEdit" name="LineEdit_end_x">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="text">
+            <string>0mm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="4">
+          <widget class="QLineEdit" name="LineEdit_start_z">
+           <property name="text">
+            <string>0mm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3" alignment="Qt::AlignHCenter">
+          <widget class="QLabel" name="label_Y">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>Θ</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_end">
+           <property name="text">
+            <string>止点：</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="4">
+          <widget class="QLineEdit" name="LineEdit_end_z">
+           <property name="text">
+            <string>0mm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="2">
+          <widget class="QLineEdit" name="LineEdit_start_x">
+           <property name="text">
+            <string>0mm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="5">
+          <widget class="StyledComboBox" name="ComboBox_start">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <item>
+            <property name="text">
+             <string>NULL</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="2" column="5">
+          <widget class="StyledComboBox" name="ComboBox_end">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <item>
+            <property name="text">
+             <string>NULL</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="0" column="4" alignment="Qt::AlignHCenter">
+          <widget class="QLabel" name="label_Z">
+           <property name="text">
+            <string> Z</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QLineEdit" name="LineEdit_start_y">
+           <property name="text">
+            <string>0mm</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="4">
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="lb_name">
+        <property name="text">
+         <string>名字：</string>
+        </property>
        </widget>
       </item>
-      <item>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>气体温度：</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>K</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>气体压强：</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="le_temperature">
-          <property name="text">
-           <string>300</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="le_pressure">
-          <property name="text">
-           <string>1333.22</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>Pa</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="lb_name">
-          <property name="text">
-           <string>名字：</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="le_name"/>
-        </item>
-       </layout>
+      <item row="0" column="1" colspan="2">
+       <widget class="QLineEdit" name="le_name"/>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>气体温度：</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QLineEdit" name="le_temperature">
+        <property name="text">
+         <string>300</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="5">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>K</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>  气体压强
+时间函数F(T)：</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2" colspan="3">
+       <widget class="QTextEdit" name="le_pressure">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="5">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Pa</string>
+        </property>
+       </widget>
       </item>
      </layout>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="pb_ok">
-       <property name="text">
-        <string>确定</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pb_cancel">
-       <property name="text">
-        <string>取消</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-  </layout>
+    </item>
+    <item row="3" column="3">
+     <widget class="QPushButton" name="pb_cancel">
+      <property name="text">
+       <string>取消</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0" colspan="3">
+     <widget class="QPushButton" name="pb_ok">
+      <property name="text">
+       <string>确定</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>StyledComboBox</class>
+   <extends>QComboBox</extends>
+   <header>StyledComboBox.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>pb_ok</tabstop>
   <tabstop>pb_cancel</tabstop>
   <tabstop>cb_type</tabstop>
   <tabstop>le_name</tabstop>
-  <tabstop>le_pressure</tabstop>
   <tabstop>le_temperature</tabstop>
  </tabstops>
  <resources/>

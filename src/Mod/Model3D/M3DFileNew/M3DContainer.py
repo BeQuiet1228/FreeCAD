@@ -500,7 +500,8 @@ class M3D:
 
         # IONI
         for i in pp_dict[ObjectTools.ObjectType.IONI]:
-            ioni_str = M3DEmission.Ioni(i)
+            ioni_vol, ioni_str = M3DEmission.Ioni(i)
+            self.PanelStr.append(ioni_vol)
             self.PropertiesAndProcessesStr.append(ioni_str)
 
         # PORT

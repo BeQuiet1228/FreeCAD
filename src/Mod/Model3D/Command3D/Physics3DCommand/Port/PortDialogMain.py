@@ -31,6 +31,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
 
     def loadDialog(self):
         try:
+            Tools3D.setLineEditsCompleter(Tools3D.getAllLineEdits(self.ui))
             self.defaultValue = ["OSYS$MIDPLANE1", "OSYS$MIDPLANE2", "OSYS$MIDPLANE3"]
             # 根据坐标系初始化面板
             Tools3D.switchPointLabel(self.ui)

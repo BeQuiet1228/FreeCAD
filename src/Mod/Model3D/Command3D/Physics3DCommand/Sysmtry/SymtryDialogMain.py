@@ -18,6 +18,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
         此处写对话框的逻辑,注意异常处理
         """
         try:
+            Tools3D.setLineEditsCompleter(Tools3D.getAllLineEdits(self.ui))
             #代码补全
             self.defaultValue = ["OSYS$MIDPLANE1","OSYS$MIDPLANE2","OSYS$MIDPLANE3"]
             # 这段代码暂时注释

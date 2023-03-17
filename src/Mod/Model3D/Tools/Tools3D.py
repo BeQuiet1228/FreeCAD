@@ -892,8 +892,9 @@ def getParamsList():
     if paramObj is None:
         return []
     params = paramObj.PropertiesList
-    paramsExtra = ["DX1", "DX2", "DX3"]
-    paramsList = params + paramsExtra
+    # paramsExtra = ["DX1", "DX2", "DX3"]
+    # paramsList = params + paramsExtra
+    paramsList = params
     return paramsList
 
 

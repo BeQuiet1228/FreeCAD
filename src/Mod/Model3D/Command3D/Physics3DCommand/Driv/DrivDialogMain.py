@@ -14,6 +14,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
 
     def loadDialog(self):
         try:
+            Tools3D.setLineEditsCompleter(Tools3D.getAllLineEdits(self.ui))
             self.defaultValue = ["OSYS$AREA"]
             self.ui.radioButton_x.clicked.connect(self.slotRadioButton)
             self.ui.radioButton_y.clicked.connect(self.slotRadioButton)

@@ -14,6 +14,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
 
     def loadDialog(self):
         try:
+            Tools3D.setLineEditsCompleter(Tools3D.getAllLineEdits(self.ui))
             # 输入框变化时
             self.ui.LineEdit_start_x.textChanged.connect(self.LineEdit_start_x_textChanged)
             self.ui.LineEdit_start_y.textChanged.connect(self.LineEdit_start_y_textChanged)
