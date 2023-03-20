@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import FreeCAD
-from Model3D.Tools import Tools3D, ObjectTools
+from Model3D.Tools import Tools3D, ObjectTools, ExpressionTools3D
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
 import SymtryDialog
 
@@ -21,6 +21,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             Tools3D.setLineEditsCompleter(Tools3D.getAllLineEdits(self.ui))
             #代码补全
             self.defaultValue = ["OSYS$MIDPLANE1","OSYS$MIDPLANE2","OSYS$MIDPLANE3"]
+            self.normalUnit = ["0mm", "0deg"]
             # 这段代码暂时注释
             self.ui.radioButton_forward.setChecked(True)
             # 获取当前坐标系及坐标系单位
@@ -150,17 +151,24 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             temp = ""
             if self.obj.symmetricalType == "周期对称" or self.obj.symmetricalType == u"周期对称":
                 coodinate = FreeCAD.ActiveDocument.CoordinateSystem
+                normalParam = ExpressionTools3D.processingLengthExpression(self.obj.theNormalCycle)
+                paraX1 = ExpressionTools3D.processingLengthExpression(self.obj.point1_X)
+                paraX2 = ExpressionTools3D.processingLengthExpression(self.obj.point2_X)
+                paraY1 = ExpressionTools3D.processingLengthExpression(self.obj.point1_Y)
+                paraY2 = ExpressionTools3D.processingLengthExpression(self.obj.point2_Y)
+                paraZ1 = ExpressionTools3D.processingLengthExpression(self.obj.point1_Z)
+                paraZ2 = ExpressionTools3D.processingLengthExpression(self.obj.point2_Z)
                 if self.obj.isCheckNormal1:
-                    temp = self.obj.point1_X.replace(" ", "") + "+" + self.obj.theNormalCycle.replace(" ", "")
+                    temp = paraX1.replace(" ", "") + "+" + normalParam.replace(" ", "")
                     self.obj.setExpression("helper", temp)
                 elif self.obj.isCheckNormal2:
-                    temp = self.obj.point1_Y.replace(" ", "") + "+" + self.obj.theNormalCycle.replace(" ", "")
+                    temp = paraY1.replace(" ", "") + "+" + normalParam.replace(" ", "")
                     if coodinate == u'Polar':
                         self.obj.setExpression("helper1", temp)
                     else:
                         self.obj.setExpression("helper", temp)
                 elif self.obj.isCheckNormal3:
-                    temp = self.obj.point1_Z.replace(" ", "") + "+" + self.obj.theNormalCycle.replace(" ", "")
+                    temp = paraZ1.replace(" ", "") + "+" + normalParam.replace(" ", "")
                     if coodinate == u"Cylindrical":
                         self.obj.setExpression("helper1", temp)
                     else:
@@ -189,23 +197,37 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
 
     # 点击法向按钮
     def radioButton_clicked(self):
+        coodinate = FreeCAD.ActiveDocument.CoordinateSystem
         if self.ui.radioButton_x.isChecked():
             self.ui.LineEdit_end_x.setEnabled(False)
             self.ui.LineEdit_end_y.setEnabled(True)
             self.ui.LineEdit_end_z.setEnabled(True)
             self.ui.LineEdit_end_x.setText(self.ui.LineEdit_start_x.text())
+            self.ui.LineEdit_Normal.setText(self.normalUnit[0])
 
         elif self.ui.radioButton_y.isChecked():
             self.ui.LineEdit_end_y.setEnabled(False)
             self.ui.LineEdit_end_x.setEnabled(True)
             self.ui.LineEdit_end_z.setEnabled(True)
             self.ui.LineEdit_end_y.setText(self.ui.LineEdit_start_y.text())
+            if coodinate == u'Rectangular' or coodinate == 'Rectangular':
+                self.ui.LineEdit_Normal.setText(self.normalUnit[0])
+            elif coodinate == u'Polar' or coodinate == 'Polar':
+                self.ui.LineEdit_Normal.setText(self.normalUnit[1])
+            elif coodinate == u'Cylindrical' or coodinate == 'Cylindrical':
+                self.ui.LineEdit_Normal.setText(self.normalUnit[0])
 
         elif self.ui.radioButton_z.isChecked():
             self.ui.LineEdit_end_z.setEnabled(False)
             self.ui.LineEdit_end_x.setEnabled(True)
             self.ui.LineEdit_end_y.setEnabled(True)
             self.ui.LineEdit_end_z.setText(self.ui.LineEdit_start_z.text())
+            if coodinate == u'Rectangular' or coodinate == 'Rectangular':
+                self.ui.LineEdit_Normal.setText(self.normalUnit[0])
+            elif coodinate == u'Polar' or coodinate == 'Polar':
+                self.ui.LineEdit_Normal.setText(self.normalUnit[0])
+            elif coodinate == u'Cylindrical' or coodinate == 'Cylindrical':
+                self.ui.LineEdit_Normal.setText(self.normalUnit[1])
 
     def checkBox_x_clicked(self):
         if self.ui.checkBox_x.isChecked():

@@ -51,8 +51,20 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
         FreeCAD.ActiveDocument.Param.removeProperty("DX1")
         FreeCAD.ActiveDocument.Param.removeProperty("DX2")
         FreeCAD.ActiveDocument.Param.removeProperty("DX3")
-        FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX1").DX1 = self.ui.LineEdit_stride_x.text()
-        FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX2").DX2 = self.ui.LineEdit_stride_y.text()
-        FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX3").DX3 = self.ui.LineEdit_stride_z.text()
+
+        # 获取坐标系，根据坐标系添加DX1,DX2,DX3
+        coodinate = FreeCAD.ActiveDocument.CoordinateSystem
+        if coodinate == u'Rectangular' or coodinate == 'Rectangular':
+            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX1").DX1 = self.ui.LineEdit_stride_x.text()
+            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX2").DX2 = self.ui.LineEdit_stride_y.text()
+            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX3").DX3 = self.ui.LineEdit_stride_z.text()
+        elif coodinate == u'Polar' or coodinate == 'Polar':
+            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX1").DX1 = self.ui.LineEdit_stride_x.text()
+            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyAngle", "DX2").DX2 = self.ui.LineEdit_stride_y.text()
+            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX3").DX3 = self.ui.LineEdit_stride_z.text()
+        elif coodinate == u'Cylindrical' or coodinate == 'Cylindrical':
+            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX1").DX1 = self.ui.LineEdit_stride_x.text()
+            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX2").DX2 = self.ui.LineEdit_stride_y.text()
+            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyAngle", "DX3").DX3 = self.ui.LineEdit_stride_z.text()
         self.isKeepData = True
         self.close()
