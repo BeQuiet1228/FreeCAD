@@ -232,3 +232,19 @@ def Ioni(obj):
                     obj.gasTemperature + blankSpace + "ACTIONAREA" + blankSpace + vol_lable + semicolon + newLine
     ioni_m3d += newLine + temp_m3d_pap
     return temp_m3d, ioni_m3d
+
+
+def GasOut(obj):
+    temp_m3d = ""
+    direction = ""
+
+    if obj.isNegative:
+        direction = "negative"
+    else:
+        direction = "positive"
+
+    temp_m3d += "OUTGAS" + blankSpace + obj.absorbVol + blankSpace + obj.density + blankSpace + obj.area + \
+                blankSpace + obj.threshold + blankSpace + obj.grid + blankSpace + obj.normal + blankSpace + \
+                direction + semicolon + newLine
+
+    return temp_m3d

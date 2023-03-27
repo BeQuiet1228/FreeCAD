@@ -25,7 +25,7 @@ def Load(workbench):
                      'Create_3D_Foil', 'Create3D_Driv', 'CreateInductor_3D']
 
     cmdEmit_3D = ['CreateBeam_3D', 'CreateExps_3D', 'CreateGyro_3D', 'CreateFeld_3D', 'CreateTher_3D',
-                        'CreateSecd_3D', 'Create3D_Popu', 'CreateIoni_3D']
+                        'CreateSecd_3D', 'Create3D_Popu', 'CreateIoni_3D', 'CreateGasOut_3D']
 
     cmdObserve_3D = ['CreateObserve_3D', 'CreateCntr_3D', 'CreateAreaRan_3D', 'CreatePhasSpace_3D', 'CreateVector_3D']
 

@@ -8,6 +8,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PySide import QtCore, QtGui
+from Model3D.Tools import Completer
 
 class Ui_Dialog_WorkSpaceDlg(object):
     def setupUi(self, Dialog_WorkSpaceDlg):
@@ -27,7 +28,8 @@ class Ui_Dialog_WorkSpaceDlg(object):
         self.label_end = QtGui.QLabel(self.groupBox_WorkSpace_X)
         self.label_end.setObjectName("label_end")
         self.horizontalLayout_end.addWidget(self.label_end)
-        self.LineEdit_stride_x = QtGui.QLineEdit(self.groupBox_WorkSpace_X)
+        # self.LineEdit_stride_x = QtGui.QLineEdit(self.groupBox_WorkSpace_X)
+        self.LineEdit_stride_x = Completer.AutoCompleteEdit(self.groupBox_WorkSpace_X)
         self.LineEdit_stride_x.setEnabled(True)
         self.LineEdit_stride_x.setObjectName("LineEdit_stride_x")
         self.horizontalLayout_end.addWidget(self.LineEdit_stride_x)
@@ -67,7 +69,8 @@ class Ui_Dialog_WorkSpaceDlg(object):
         self.label_end_6 = QtGui.QLabel(self.groupBox_WorkSpace_Y)
         self.label_end_6.setObjectName("label_end_6")
         self.horizontalLayout_end_6.addWidget(self.label_end_6)
-        self.LineEdit_stride_y = QtGui.QLineEdit(self.groupBox_WorkSpace_Y)
+        # self.LineEdit_stride_y = QtGui.QLineEdit(self.groupBox_WorkSpace_Y)
+        self.LineEdit_stride_y = Completer.AutoCompleteEdit(self.groupBox_WorkSpace_Y)
         self.LineEdit_stride_y.setEnabled(True)
         self.LineEdit_stride_y.setObjectName("LineEdit_stride_y")
         self.horizontalLayout_end_6.addWidget(self.LineEdit_stride_y)
@@ -128,7 +131,8 @@ class Ui_Dialog_WorkSpaceDlg(object):
         self.label_end_7 = QtGui.QLabel(self.groupBox_WorkSpace_Z)
         self.label_end_7.setObjectName("label_end_7")
         self.horizontalLayout_end_7.addWidget(self.label_end_7)
-        self.LineEdit_stride_z = QtGui.QLineEdit(self.groupBox_WorkSpace_Z)
+        # self.LineEdit_stride_z = QtGui.QLineEdit(self.groupBox_WorkSpace_Z)
+        self.LineEdit_stride_z = Completer.AutoCompleteEdit(self.groupBox_WorkSpace_Z)
         self.LineEdit_stride_z.setEnabled(True)
         self.LineEdit_stride_z.setObjectName("LineEdit_stride_z")
         self.horizontalLayout_end_7.addWidget(self.LineEdit_stride_z)

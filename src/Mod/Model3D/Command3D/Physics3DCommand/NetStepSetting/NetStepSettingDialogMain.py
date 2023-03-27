@@ -2,7 +2,7 @@
 import NetStepSettingDialog
 import traceback
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
-from Model3D.Tools import Tools3D
+from Model3D.Tools import Tools3D, ExpressionTools3D
 import FreeCAD
 
 
@@ -15,6 +15,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
         self.ui.setupUi(self)
 
     def loadDialog(self):
+        Tools3D.setLineEditsCompleter(Tools3D.getAllLineEdits(self.ui))
         self.setModal(True)
         # 根据坐标系初始化面板
         coord = Tools3D.getCoordinate()
@@ -48,23 +49,35 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             Tools3D.sayz("error:" + traceback.format_exc())
 
     def slotOK(self):
-        FreeCAD.ActiveDocument.Param.removeProperty("DX1")
-        FreeCAD.ActiveDocument.Param.removeProperty("DX2")
-        FreeCAD.ActiveDocument.Param.removeProperty("DX3")
+        paramList = Tools3D.getParamsList()
+        if 'DX1' in paramList:
+            FreeCAD.ActiveDocument.Param.removeProperty("DX1")
+        if 'DX2' in paramList:
+            FreeCAD.ActiveDocument.Param.removeProperty("DX2")
+        if 'DX3' in paramList:
+            FreeCAD.ActiveDocument.Param.removeProperty("DX3")
 
         # 获取坐标系，根据坐标系添加DX1,DX2,DX3
         coodinate = FreeCAD.ActiveDocument.CoordinateSystem
+        Dx1Str = ExpressionTools3D.processingLengthExpression(self.ui.LineEdit_stride_x.text())
+        Dx2Str = ExpressionTools3D.processingLengthExpression(self.ui.LineEdit_stride_y.text())
+        Dx3Str = ExpressionTools3D.processingLengthExpression(self.ui.LineEdit_stride_z.text())
         if coodinate == u'Rectangular' or coodinate == 'Rectangular':
-            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX1").DX1 = self.ui.LineEdit_stride_x.text()
-            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX2").DX2 = self.ui.LineEdit_stride_y.text()
-            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX3").DX3 = self.ui.LineEdit_stride_z.text()
+            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX1")
+            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX2")
+            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX3")
         elif coodinate == u'Polar' or coodinate == 'Polar':
-            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX1").DX1 = self.ui.LineEdit_stride_x.text()
-            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyAngle", "DX2").DX2 = self.ui.LineEdit_stride_y.text()
-            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX3").DX3 = self.ui.LineEdit_stride_z.text()
+            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX1")
+            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyAngle", "DX2")
+            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX3")
         elif coodinate == u'Cylindrical' or coodinate == 'Cylindrical':
-            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX1").DX1 = self.ui.LineEdit_stride_x.text()
-            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX2").DX2 = self.ui.LineEdit_stride_y.text()
-            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyAngle", "DX3").DX3 = self.ui.LineEdit_stride_z.text()
+            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX1")
+            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyLength", "DX2")
+            FreeCAD.ActiveDocument.Param.addProperty("App::PropertyAngle", "DX3")
+
+        FreeCAD.ActiveDocument.Param.setExpression("DX1", Dx1Str.replace("", ""))
+        FreeCAD.ActiveDocument.Param.setExpression("DX2", Dx2Str.replace("", ""))
+        FreeCAD.ActiveDocument.Param.setExpression("DX3", Dx3Str.replace("", ""))
+
         self.isKeepData = True
         self.close()

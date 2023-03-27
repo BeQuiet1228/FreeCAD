@@ -321,6 +321,9 @@ def getFormByObj(obj):
     elif obj.Type == ObjectTools.ObjectType.IONI:
         # 气体电离
         Form = Physics3DCommand.Ioni.IoniDialogMain.ShowDialog(obj)
+    elif obj.Type == ObjectTools.ObjectType.GASOUT:
+        # 气体吸附
+        Form = Physics3DCommand.GasOut.GasOutDialogMain.ShowDialog(obj)
     # 观测设置
     elif obj.Type == ObjectTools.ObjectType.CNTR:
         Form = Physics3DCommand.Cntr.CntrDialogMain.ShowDialog(obj)

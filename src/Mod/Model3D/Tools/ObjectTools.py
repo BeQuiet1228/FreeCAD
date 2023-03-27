@@ -72,6 +72,7 @@ class ObjectType:
     THER = "Ther"
     SECD = "Secd"
     IONI = "Ioni"
+    GASOUT = "GasOut"
     # 观测设置
     CNTR = "Cntr"
     Vector = "Vector"
