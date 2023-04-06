@@ -112,13 +112,14 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
                 self.ui.ComboBox_symmetric.findText(str(self.obj.symmetricalType)))
             self.ui.ComboBox_type.setCurrentIndex(self.ui.ComboBox_type.findText(str(self.obj.assignType)))
             # 法向周期
-            self.ui.LineEdit_Normal.setText(self.obj.theNormalCycle)
+            
             self.checkBox_x_clicked()
             self.checkBox_y_clicked()
             self.checkBox_z_clicked()
 
             if self.ui.ComboBox_Shadow.currentIndex() == 0:
                 self.radioButton_clicked()
+            self.ui.LineEdit_Normal.setText(self.obj.theNormalCycle)
 
             # 正向反向选择
             if self.obj.isNegative == True:

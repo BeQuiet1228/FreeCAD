@@ -227,7 +227,7 @@ def Ioni(obj):
         temp_m3d += M3DShare.PointCoordinates().point2(obj) + semicolon + newLine
 
     ioni_m3d += "FUNCTION" + blankSpace + obj.GPreTimeFunction + ".F(T) = " + obj.gasPressure + semicolon
-    temp_m3d_pap += "GASGAS" + blankSpace + "GASKING" + blankSpace + obj.ionizationOfGas + blankSpace + "PRESSURETM" + \
+    temp_m3d_pap += "GASGAS" + blankSpace + "GASKIND" + blankSpace + obj.ionizationOfGas + blankSpace + "PRESSURETM" + \
                     blankSpace + obj.GPreTimeFunction + ".F" + blankSpace + "TEMPERATURE" + blankSpace + \
                     obj.gasTemperature + blankSpace + "ACTIONAREA" + blankSpace + vol_lable + semicolon + newLine
     ioni_m3d += newLine + temp_m3d_pap
