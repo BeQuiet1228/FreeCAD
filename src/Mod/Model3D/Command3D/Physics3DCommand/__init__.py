@@ -31,3 +31,4 @@ import ModelingInfo
 import NetStepSetting
 import TimeDomainSetting
 import CollectionOutput
+import GasOut

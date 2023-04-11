@@ -73,11 +73,24 @@ namespace DV {
 
 		fft(Ydata, fs);//主要的FFT程序，对Y数据进行FFT变换
 
-		int num = (indexR - indexL) / 16;
-		for (int index = 0; index <= num; ++index) {
-			(*nowPoints).emplace_back(index * fs);
+		int num = (indexR - indexL) / 2;
+		float maxY = *max_element(Ydata.begin(), Ydata.begin() + num);
+		indexR = indexL + (indexR - indexL) / 2;
+		float maxYOrder = maxY / 50.0;
+		int indexOrder = 0;
+		for (int index = num; index >= 0; --index) {
+			if (abs(Ydata[index]) > maxYOrder) {
+				indexOrder = index;
+				break;
+			}
+		}
+
+		indexOrder = std::min(indexOrder + indexOrder / 10, num);
+		for (int index = 0; index <= indexOrder; ++index) {
+			(*nowPoints).emplace_back((indexL + index) * fs);
 			(*nowPoints).emplace_back(Ydata[index]);
 		}
+		
 		points = nowPoints;
 		addHeadlistStr(13, XScope, "FFT");
 		updateData(TimeDataForFFT, "Frequency(Hz)", getYTag());

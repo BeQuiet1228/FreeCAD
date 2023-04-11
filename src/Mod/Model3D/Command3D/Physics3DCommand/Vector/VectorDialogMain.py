@@ -15,6 +15,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
 
     def loadDialog(self):
         try:
+            Tools3D.setLineEditsCompleter(Tools3D.getAllLineEdits(self.ui))
             self.default_list = ["OSYS$MIDPLANE1", "OSYS$MIDPLANE2", "OSYS$MIDPLANE3"]
             # 对话框的初始化
             self.refreshCombox()

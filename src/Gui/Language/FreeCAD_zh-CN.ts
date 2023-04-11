@@ -5338,7 +5338,7 @@ Be aware the point where you click matters.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>ä½ ç¡®å®è¦å³é­å·¥ç¨å¹¶å³é­ä»¿çç¨åºåï¼QAQ</source>
+        <source>ä½ ç¡®å®è¦å³é­å·¥ç¨å¹¶å³é­ä»¿çç¨åºåï¼QAQ</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6373,6 +6373,13 @@ Be aware the point where you click matters.</source>
     <message>
         <source>Loading the file %1 is not supported</source>
         <translation>不支持加载文件 %1</translation>
+    </message>
+</context>
+<context>
+    <name>StdCmdOpenComboView</name>
+    <message>
+        <source>open_ComboView</source>
+        <translation>组合浏览器</translation>
     </message>
 </context>
 <context>

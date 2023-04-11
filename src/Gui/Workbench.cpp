@@ -641,7 +641,7 @@ ToolBarItem* StdWorkbench::setupToolBars() const
 
 	ToolBarItem* help = new ToolBarItem(root);
 	help->setCommand("about");
-	*help << "Std_Example" <<"Std_Open_User_book" << "Std_Open_Command_book" << "Std_About" << "Std_Run_Super_Tube";
+	*help << "Std_Example" <<"Std_Open_User_book" << "Std_Open_Command_book" << "Std_About" << "Std_Run_Super_Tube" << "Std_open_ComboView";
 
 
 /*	ToolBarItem* projectSetting = new ToolBarItem(root);

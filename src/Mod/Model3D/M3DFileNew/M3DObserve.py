@@ -75,15 +75,23 @@ def Cntr(obj):
     Oline_temp = ""
     Timer_name = M3DShare.getTimerM3D(obj)
 
+    tmp_line = ""
+    if obj.observationField == "IONS" or obj.observationField == "ELECTRON":
+        tmp_line = "PARTICLE_DENSE" + blankSpace + obj.observationField
+    elif obj.observationField == "GAS":
+        tmp_line = "OUTER_GAS"
+    else:
+        tmp_line = "FIELD" + blankSpace + obj.observationField
+
     # 是否指定正交投影面
     if obj.orthogonalProjectionPlane == "未指定":
         temp_m3d += "AREA" + blankSpace + obj.Label + blankSpace + "CONFORMAL"
         temp_m3d += M3DShare.PointCoordinates().point1(obj)
         temp_m3d += M3DShare.PointCoordinates().point2(obj) + semicolon + newLine
-        ProjectionLine_temp = "CONTOUR" + blankSpace + "FIELD" + blankSpace + obj.observationField + \
+        ProjectionLine_temp = "CONTOUR" + blankSpace + tmp_line + \
                               blankSpace + obj.Label
     else:
-        ProjectionLine_temp = "CONTOUR" + blankSpace + "FIELD" + blankSpace + obj.observationField + blankSpace + \
+        ProjectionLine_temp = "CONTOUR" + blankSpace + tmp_line + blankSpace + \
                               obj.orthogonalProjectionPlane
     # 是否选中等值线填充
     if obj.isoline:

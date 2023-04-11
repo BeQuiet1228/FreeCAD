@@ -8,6 +8,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PySide import QtCore, QtGui
+from Model3D.Tools import Completer
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -64,7 +65,8 @@ class Ui_Dialog(object):
         self.label_5 = QtGui.QLabel(self.groupBox_Port)
         self.label_5.setObjectName("label_5")
         self.gridLayout.addWidget(self.label_5, 13, 2, 1, 1)
-        self.LineEdit_start_x = QtGui.QLineEdit(self.groupBox_Port)
+        #self.LineEdit_start_x = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_start_x = Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_start_x.setObjectName("LineEdit_start_x")
         self.gridLayout.addWidget(self.LineEdit_start_x, 1, 1, 1, 1)
         self.ComboBox_end = QtGui.QComboBox(self.groupBox_Port)
@@ -87,7 +89,8 @@ class Ui_Dialog(object):
         self.le_SL1.setEnabled(False)
         self.le_SL1.setObjectName("le_SL1")
         self.gridLayout.addWidget(self.le_SL1, 13, 1, 1, 1)
-        self.LineEdit_end_x = QtGui.QLineEdit(self.groupBox_Port)
+        #self.LineEdit_end_x = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_end_x = Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_end_x.setEnabled(True)
         self.LineEdit_end_x.setObjectName("LineEdit_end_x")
         self.gridLayout.addWidget(self.LineEdit_end_x, 3, 1, 1, 1)
@@ -124,16 +127,20 @@ class Ui_Dialog(object):
         self.label_Y = QtGui.QLabel(self.groupBox_Port)
         self.label_Y.setObjectName("label_Y")
         self.gridLayout.addWidget(self.label_Y, 0, 2, 1, 2)
-        self.LineEdit_end_z = QtGui.QLineEdit(self.groupBox_Port)
+        #self.LineEdit_end_z = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_end_z = Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_end_z.setObjectName("LineEdit_end_z")
         self.gridLayout.addWidget(self.LineEdit_end_z, 3, 4, 1, 1)
-        self.LineEdit_start_z = QtGui.QLineEdit(self.groupBox_Port)
+        #self.LineEdit_start_z = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_start_z = Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_start_z.setObjectName("LineEdit_start_z")
         self.gridLayout.addWidget(self.LineEdit_start_z, 1, 4, 1, 1)
-        self.LineEdit_start_y = QtGui.QLineEdit(self.groupBox_Port)
+        #self.LineEdit_start_y = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_start_y = Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_start_y.setObjectName("LineEdit_start_y")
         self.gridLayout.addWidget(self.LineEdit_start_y, 1, 2, 1, 2)
-        self.LineEdit_end_y = QtGui.QLineEdit(self.groupBox_Port)
+        #self.LineEdit_end_y = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_end_y = Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_end_y.setEnabled(True)
         self.LineEdit_end_y.setObjectName("LineEdit_end_y")
         self.gridLayout.addWidget(self.LineEdit_end_y, 3, 2, 1, 2)

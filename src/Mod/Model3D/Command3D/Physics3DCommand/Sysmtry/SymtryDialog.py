@@ -8,6 +8,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PySide import QtCore, QtGui
+from Model3D.Tools import Completer
 
 class Ui_Dialog_SymDlg(object):
     def setupUi(self, Dialog_SymDlg):
@@ -136,14 +137,17 @@ class Ui_Dialog_SymDlg(object):
         self.label_end = QtGui.QLabel(self.groupBox_Port)
         self.label_end.setObjectName("label_end")
         self.horizontalLayout_end.addWidget(self.label_end)
-        self.LineEdit_end_x = QtGui.QLineEdit(self.groupBox_Port)
+        #self.LineEdit_end_x = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_end_x = Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_end_x.setEnabled(False)
         self.LineEdit_end_x.setObjectName("LineEdit_end_x")
         self.horizontalLayout_end.addWidget(self.LineEdit_end_x)
-        self.LineEdit_end_y = QtGui.QLineEdit(self.groupBox_Port)
+        #self.LineEdit_end_y = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_end_y = Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_end_y.setObjectName("LineEdit_end_y")
         self.horizontalLayout_end.addWidget(self.LineEdit_end_y)
-        self.LineEdit_end_z = QtGui.QLineEdit(self.groupBox_Port)
+        #self.LineEdit_end_z = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_end_z = Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_end_z.setObjectName("LineEdit_end_z")
         self.horizontalLayout_end.addWidget(self.LineEdit_end_z)
         self.ComboBox_end = StyledComboBox(self.groupBox_Port)
@@ -189,13 +193,16 @@ class Ui_Dialog_SymDlg(object):
         self.label_start = QtGui.QLabel(self.groupBox_Port)
         self.label_start.setObjectName("label_start")
         self.horizontalLayout_start.addWidget(self.label_start)
-        self.LineEdit_start_x = QtGui.QLineEdit(self.groupBox_Port)
+        #self.LineEdit_start_x = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_start_x = Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_start_x.setObjectName("LineEdit_start_x")
         self.horizontalLayout_start.addWidget(self.LineEdit_start_x)
-        self.LineEdit_start_y = QtGui.QLineEdit(self.groupBox_Port)
+        #self.LineEdit_start_y = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_start_y = Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_start_y.setObjectName("LineEdit_start_y")
         self.horizontalLayout_start.addWidget(self.LineEdit_start_y)
-        self.LineEdit_start_z = QtGui.QLineEdit(self.groupBox_Port)
+        #self.LineEdit_start_z = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_start_z = Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_start_z.setObjectName("LineEdit_start_z")
         self.horizontalLayout_start.addWidget(self.LineEdit_start_z)
         self.ComboBox_start = StyledComboBox(self.groupBox_Port)
@@ -257,7 +264,8 @@ class Ui_Dialog_SymDlg(object):
         self.label_6 = QtGui.QLabel(self.groupBox_Port2)
         self.label_6.setObjectName("label_6")
         self.horizontalLayout_end_3.addWidget(self.label_6)
-        self.LineEdit_Normal = QtGui.QLineEdit(self.groupBox_Port2)
+        # self.LineEdit_Normal = QtGui.QLineEdit(self.groupBox_Port2)
+        self.LineEdit_Normal = Completer.AutoCompleteEdit(self.groupBox_Port2)
         self.LineEdit_Normal.setObjectName("LineEdit_Normal")
         self.horizontalLayout_end_3.addWidget(self.LineEdit_Normal)
         self.gridLayout_6.addLayout(self.horizontalLayout_end_3, 1, 0, 1, 1)
@@ -332,6 +340,6 @@ class Ui_Dialog_SymDlg(object):
         self.ComboBox_symmetric.setItemText(2, QtGui.QApplication.translate("Dialog_SymDlg", "周期对称", None, QtGui.QApplication.UnicodeUTF8))
         self.ComboBox_type.setItemText(0, QtGui.QApplication.translate("Dialog_SymDlg", "未指定", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("Dialog_SymDlg", "法向周期：", None, QtGui.QApplication.UnicodeUTF8))
-        self.LineEdit_Normal.setText(QtGui.QApplication.translate("Dialog_SymDlg", "0deg", None, QtGui.QApplication.UnicodeUTF8))
+        self.LineEdit_Normal.setText(QtGui.QApplication.translate("Dialog_SymDlg", "0mm", None, QtGui.QApplication.UnicodeUTF8))
 
 from StyledComboBox import StyledComboBox
