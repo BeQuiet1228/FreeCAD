@@ -2,32 +2,23 @@
 
 # Form implementation generated from reading ui file 'IoniDialog.ui'
 #
-# Created: Wed Mar 15 16:31:58 2023
-#      by: pyside-uic 0.2.15 running on PySide 1.2.4
+# Created: Fri May 21 16:15:19 2021
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
 from PySide import QtCore, QtGui
-from Model3D.Tools import Completer
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(565, 290)
+        Dialog.resize(526, 199)
+        self.verticalLayout_2 = QtGui.QVBoxLayout(Dialog)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.groupBox = QtGui.QGroupBox(Dialog)
-        self.groupBox.setGeometry(QtCore.QRect(10, 10, 552, 281))
-        self.groupBox.setTitle("")
         self.groupBox.setObjectName("groupBox")
-        self.gridLayout_3 = QtGui.QGridLayout(self.groupBox)
-        self.gridLayout_3.setObjectName("gridLayout_3")
-        self.Label_type = QtGui.QLabel(self.groupBox)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.Label_type.sizePolicy().hasHeightForWidth())
-        self.Label_type.setSizePolicy(sizePolicy)
-        self.Label_type.setObjectName("Label_type")
-        self.gridLayout_3.addWidget(self.Label_type, 0, 0, 1, 1)
+        self.verticalLayout = QtGui.QVBoxLayout(self.groupBox)
+        self.verticalLayout.setObjectName("verticalLayout")
         self.cb_type = QtGui.QComboBox(self.groupBox)
         self.cb_type.setObjectName("cb_type")
         self.cb_type.addItem("")

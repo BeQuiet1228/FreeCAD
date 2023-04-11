@@ -2,19 +2,8 @@
 import IoniDialog
 import traceback
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
-from Model3D.Tools import Tools3D, ObjectTools
+from Model3D.Tools import Tools3D
 
-def setGPreTimeFunction(Str):
-    num = 0
-    Str = Str[::-1]
-    index = 0
-    for i in Str:
-        if i.isdigit():
-            num = num + int(i) * pow(10, index)
-            index += 1
-        else:
-            break
-    return str(num)
 
 class ShowDialog(BaseDialogMain.BasePhysicsDialog):
     def __init__(self, obj, isNew=False, parent=None):

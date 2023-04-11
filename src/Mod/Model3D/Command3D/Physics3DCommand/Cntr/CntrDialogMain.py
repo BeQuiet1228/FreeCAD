@@ -125,7 +125,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             Tools3D.sayz("error:" + traceback.format_exc())
 
     def initObservationField(self):
-        list = ["E1", "E2", "E3", "B1", "B2", "B3", "J1", "J2", "J3", "ELECTRON", "IONS", "GAS", "Q0",
+        list = ["E1", "E2", "E3", "B1", "B2", "B3", "J1", "J2", "J3", "Q0",
                 "E1AV", "E2AV", "E3AV", "B1AV", "B2AV", "B3AV", "B1ST", "B2ST",
                 "B3ST", "PHST", "|B|", "|E|"]
         for i in range(0, len(list)):

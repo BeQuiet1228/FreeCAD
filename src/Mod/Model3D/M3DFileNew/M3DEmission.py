@@ -215,23 +215,11 @@ def Popu(obj):
 
 # 气体电离
 def Ioni(obj):
-    temp_m3d = ""
     temp_m3d_pap = ""
-    ioni_m3d = ""
-
-    vol_lable = obj.ioniType
-    if obj.ioniType == "未指定":
-        vol_lable = obj.Label
-        temp_m3d += "VOLUME" + blankSpace + obj.Label + blankSpace + "CONFORMAL"
-        temp_m3d += M3DShare.PointCoordinates().point1(obj)
-        temp_m3d += M3DShare.PointCoordinates().point2(obj) + semicolon + newLine
-
-    ioni_m3d += "FUNCTION" + blankSpace + obj.GPreTimeFunction + ".F(T) = " + obj.gasPressure + semicolon
-    temp_m3d_pap += "GASGAS" + blankSpace + "GASKIND" + blankSpace + obj.ionizationOfGas + blankSpace + "PRESSURETM" + \
-                    blankSpace + obj.GPreTimeFunction + ".F" + blankSpace + "TEMPERATURE" + blankSpace + \
-                    obj.gasTemperature + blankSpace + "ACTIONAREA" + blankSpace + vol_lable + semicolon + newLine
-    ioni_m3d += newLine + temp_m3d_pap
-    return temp_m3d, ioni_m3d
+    temp_m3d_pap += "GASGAS" + blankSpace + "GASKIND" + blankSpace + obj.ionizationOfGas + blankSpace + "PRESSURE" + \
+                    blankSpace + obj.gasPressure + blankSpace + "TEMPERATURE" + blankSpace + obj.gasTemperature
+    temp_m3d_pap += semicolon + newLine
+    return temp_m3d_pap
 
 
 def GasOut(obj):
