@@ -1129,14 +1129,13 @@ namespace DV {
 		{
 			unsigned int difval = 1;
 			std::vector<QPoint>::iterator startiter = iter->second.begin();
+			auto afterIter = startiter;
 			for (auto itersecond = iter->second.begin() + 1; itersecond != iter->second.end(); itersecond++)
 			{
-				unsigned int distance = (itersecond->x() - startiter->x()) * (itersecond->x() - startiter->x()) +
-					(itersecond->y() - startiter->y()) * (itersecond->y() - startiter->y());
-				unsigned int sqareDifval = difval * difval;
-				if (distance == sqareDifval)
+				
+				if (afterIter->x() == itersecond->x() || afterIter->y() == itersecond->y())
 				{
-					difval += 1;
+			
 				}
 				else
 				{
@@ -1144,12 +1143,15 @@ namespace DV {
 					QPointF startPoint(*(IMX->begin() + startiter->x()), *(IMY->begin() + startiter->y()));
 					QPointF endPoint(*(IMX->begin() + enditer->x()), *(IMY->begin() + enditer->y()));
 
-					if (startPoint.x() == endPoint.x() && IMY->size() > enditer->y() + 1)	endPoint.setY(*(IMY->begin() + enditer->y() + 1));
-					else if (IMX->size() > enditer->x() + 1)endPoint.setX(*(IMX->begin() + enditer->x() + 1));
+					if (startPoint.x() == endPoint.x() && IMY->size() > enditer->y() + 1)	
+						endPoint.setY(*(IMY->begin() + enditer->y() + 1));
+					else if (IMX->size() > enditer->x() + 1)
+						endPoint.setX(*(IMX->begin() + enditer->x() + 1));
 					allLines[iter->first].push_back(QLineF(startPoint, endPoint));
 					startiter = itersecond;
 					difval = 1;
 				}
+				afterIter = itersecond;
 			}
 			auto enditer = iter->second.end() - 1;
 			QPointF startPoint(*(IMX->begin() + startiter->x()), *(IMY->begin() + startiter->y()));
