@@ -1072,6 +1072,10 @@ namespace DV {
 	std::list<unsigned __int64> StructData::isAnAttritbute(unsigned __int64 p, PROPERTYPE sp)
 	{
 		std::list<unsigned __int64> list;
+		if (0 == p)
+		{
+			list.push_back(0);
+		}
 #define CPM(a,b)\
 	if((a)&(b)) list.push_back(b);
 		switch (sp)
@@ -1087,10 +1091,6 @@ namespace DV {
 			CPM(rectPro, PERMEABILITY);
 			CPM(rectPro, FREESPACE);
 			CPM(rectPro, FOIL);
-			if (0 == rectPro)
-			{
-				list.push_back(0);
-			}
 			return list;
 		}
 		case StructData::LINEPROPER:
