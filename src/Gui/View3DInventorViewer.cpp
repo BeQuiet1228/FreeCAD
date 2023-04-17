@@ -83,7 +83,7 @@
 # include <QBitmap>
 # include <QMimeData>
 #endif
-
+# include <GL/gl.h>
 #include <sstream>
 #include <Base/Console.h>
 #include <Base/Stream.h>
@@ -126,11 +126,16 @@
 #include <Inventor/elements/SoOverrideElement.h>
 #include <Inventor/elements/SoLightModelElement.h>
 #include <QGesture>
-
+#include <QFile>
 #include "SoTouchEvents.h"
 #include "WinNativeGestureRecognizers.h"
 #include "Document.h"
-
+#include <GL/glu.h>
+#include <GL/GLU.h>
+#include <QImage>
+#include <mutex>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 //#define FC_LOGGING_CB
 
 using namespace Gui;
@@ -201,6 +206,48 @@ static unsigned char rotate_mask_bitmap[ROTATE_BYTES] = {
  0xff,0xff,0x00,0xff,0x00,0xff,0x38,0x7f,0x3c,0xff,0x3f,0xff,0x3f,0xff,0x1f,
  0xf7,0x0f
 };
+
+
+// 加载PNG文件作为OpenGL纹理，并返回纹理ID
+unsigned int loadTexture(const char* path)
+{
+	unsigned int textureID; // 纹理ID
+	glGenTextures(1, &textureID); // 生成一个纹理ID
+
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 0); // 加载PNG文件像素数据
+	if (data) // 如果数据加载成功
+	{
+		GLenum format;
+		if (nrChannels == 1)
+			format = GL_RED;
+		else if (nrChannels == 3)
+			format = GL_RGB;
+		else if (nrChannels == 4)
+			format = GL_RGBA;
+
+		// 创建纹理
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+		// 设置纹理选项
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		// 释放图像数据
+		//stbi_image_free(data);
+	}
+	else // 如果加载失败
+	{
+		std::cout << "Failed to load texture" << std::endl;
+		//stbi_image_free(data);
+	}
+
+	return textureID;
+}
 
 
 /*!
@@ -338,6 +385,7 @@ View3DInventorViewer::View3DInventorViewer(QWidget* parent, const QtGLWidget* sh
 	  allowredir(false), overrideMode("As Is"), _viewerPy(0)
 {
     init();
+    
 }
 
 View3DInventorViewer::View3DInventorViewer(const QtGLFormat& format, QWidget* parent, const QtGLWidget* sharewidget)
@@ -1643,6 +1691,91 @@ void View3DInventorViewer::renderGLImage()
     glEnable(GL_DEPTH_TEST);
 }
 
+int LoadTexture(const char* filename, int width, int height)
+{
+	GLuint texture;
+	unsigned char* data;
+	FILE* file;
+
+	//读文件
+	file = fopen(filename, "rb");
+	if (file == NULL) return 0;
+
+	data = (unsigned char*)malloc(width * height * 3);
+	fread(data, width * height * 3, 1, file);
+	fclose(file);
+
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	//线性滤图
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	//生成纹理
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, data);
+	free(data); //释放纹理
+	return texture;
+}
+void orthogonalStart(const int& w1,const int& h1)
+{
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+ /*   gluOrtho2D(-w1 / 2, w1 / 2, -h1 / 2, h1 / 2);*/
+    glOrtho(-w1 / 2, w1 / 2, -h1 / 2, h1 / 2, -100, 100);
+	glMatrixMode(GL_MODELVIEW);
+}
+
+void orthogonalEnd()
+{
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+}
+
+
+void background(const  int &w,const int& h,const int& textuer)
+{
+	// texture width/height
+	const int width = 700;
+	const int height = 200;
+
+    int  t = loadTexture("./fs.png");
+	 glEnable(GL_BLEND);
+	 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	 glBindTexture(GL_TEXTURE_2D, t);
+	 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	 glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	 //even better quality, but this will do for now.
+	 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	 //to the edge of our shape.
+	 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	orthogonalStart(w,h);
+	glPushMatrix();
+	glTranslatef(-width / 2, -height / 2, -99);
+	glBegin(GL_QUADS);
+	glTexCoord2i(0, 0); glVertex2i(0, 0);
+	glTexCoord2i(1, 0); glVertex2i(width, 0);
+	glTexCoord2i(1, 1); glVertex2i(width, height);
+	glTexCoord2i(0, 1); glVertex2i(0, height);
+	glEnd();
+	glPopMatrix();
+
+	orthogonalEnd();
+    glBindTexture(GL_TEXTURE_2D, NULL);
+}
+
 // #define ENABLE_GL_DEPTH_RANGE
 // The calls of glDepthRange inside renderScene() causes problems with transparent objects
 // so that's why it is disabled now: http://forum.freecadweb.org/viewtopic.php?f=3&t=6037&hilit=transparency
@@ -1652,6 +1785,7 @@ void View3DInventorViewer::renderGLImage()
 // upon spin.
 void View3DInventorViewer::renderScene(void)
 {
+
     // Must set up the OpenGL viewport manually, as upon resize
     // operations, Coin won't set it up until the SoGLRenderAction is
     // applied again. And since we need to do glClear() before applying
@@ -1665,6 +1799,8 @@ void View3DInventorViewer::renderScene(void)
     glClearColor(col.redF(), col.greenF(), col.blueF(), 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
+
+   
 
 #if defined(ENABLE_GL_DEPTH_RANGE)
     // using 90% of the z-buffer for the background and the main node
@@ -1746,6 +1882,8 @@ void View3DInventorViewer::renderScene(void)
         stream << framesPerSecond[0] << " ms / " << framesPerSecond[1] << " fps";
         draw2DString(stream.str().c_str(), SbVec2s(10,10), SbVec2f(0.1f,0.1f));
     }
+	glEnable(GL_TEXTURE_2D);
+    background(size[0], size[1],backgroundTextuerID);
 
 #if 0 // this breaks highlighting of edges
     glEnable(GL_LIGHTING);

@@ -445,6 +445,8 @@ private:
     friend class NavigationStyle;
     friend class GLPainter;
     friend class ViewerEventFilter;
+    //backgrou textuer ID
+    int backgroundTextuerID;
 };
 
 } // namespace Gui
