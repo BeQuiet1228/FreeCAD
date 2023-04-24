@@ -393,6 +393,8 @@ namespace DV {
 		}
 		return false;
 	}
+
+
 	/**
 	* @brief StructData::loadroomPolarRz 转换成绘制数据-polar坐标系-R_Z方向
 	* @return bool
@@ -1112,6 +1114,9 @@ namespace DV {
 #undef CPM(a,b)
 	}
 
+
+	
+
 	/**
 	* @brief  StructData::createLines 生成线段
 	* @param  std::map<int
@@ -1127,15 +1132,81 @@ namespace DV {
 		allLines.clear();
 		for (auto iter = points.begin(); iter != points.end(); iter++)
 		{
+			//单独处理port
+			if (iter->first == 256 || iter->first == 512 || iter->first == 1024)
+			{
+				PortDirection pd = getPortDirection(iter->first);
+				if(pd == PORT_BAD)
+					continue;
+				std::list<QPoint> ps;
+				for (auto p : iter->second)
+				{
+					ps.push_back(p);
+				}
+
+				while (ps.size())
+				{
+					auto i = ps.begin();
+					auto startPoint = *i;
+					auto endPoint = startPoint;
+					i = ps.erase(i);
+					for (; i != ps.end();)
+					{
+						if (pd == PORT_X)
+						{
+							if (endPoint.x() == i->x() && endPoint.y() + 1 == i->y())
+							{
+								endPoint = *i;
+								i = ps.erase(i);
+								continue;;
+							}
+						}else {
+							if (endPoint.y() == i->y() && endPoint.x() + 1 == i->x())
+							{
+								endPoint = *i;
+								i = ps.erase(i);
+								continue;;
+							}
+						}
+						i++;
+					}
+
+					if (startPoint == endPoint)
+					{
+						if (pd == PORT_X)
+						{
+							 
+							if(endPoint.y()+1 < IMX->size())
+								endPoint.setY(endPoint.y() + 1);
+						}
+						else {
+							if (endPoint.x() + 1 < IMY->size())
+								endPoint.setX(endPoint.x() + 1);
+						}
+					}
+
+					if (startPoint == endPoint)
+						continue;
+
+					QPointF p1(IMX->at(startPoint.x()), IMY->at(startPoint.y()));
+					QPointF p2(IMX->at(endPoint.x()),IMY->at(endPoint.y()));
+					allLines[iter->first].push_back(QLineF(p1, p2));
+				}
+
+
+				continue;
+			}
+
 			unsigned int difval = 1;
 			std::vector<QPoint>::iterator startiter = iter->second.begin();
-			auto afterIter = startiter;
 			for (auto itersecond = iter->second.begin() + 1; itersecond != iter->second.end(); itersecond++)
 			{
-				
-				if (afterIter->x() == itersecond->x() || afterIter->y() == itersecond->y())
+				unsigned int distance = (itersecond->x() - startiter->x()) * (itersecond->x() - startiter->x()) +
+					(itersecond->y() - startiter->y()) * (itersecond->y() - startiter->y());
+				unsigned int sqareDifval = difval * difval;
+				if (distance == sqareDifval)
 				{
-			
+					difval += 1;
 				}
 				else
 				{
@@ -1143,15 +1214,12 @@ namespace DV {
 					QPointF startPoint(*(IMX->begin() + startiter->x()), *(IMY->begin() + startiter->y()));
 					QPointF endPoint(*(IMX->begin() + enditer->x()), *(IMY->begin() + enditer->y()));
 
-					if (startPoint.x() == endPoint.x() && IMY->size() > enditer->y() + 1)	
-						endPoint.setY(*(IMY->begin() + enditer->y() + 1));
-					else if (IMX->size() > enditer->x() + 1)
-						endPoint.setX(*(IMX->begin() + enditer->x() + 1));
+					if (startPoint.x() == endPoint.x() && IMY->size() > enditer->y() + 1)	endPoint.setY(*(IMY->begin() + enditer->y() + 1));
+					else if (IMX->size() > enditer->x() + 1)endPoint.setX(*(IMX->begin() + enditer->x() + 1));
 					allLines[iter->first].push_back(QLineF(startPoint, endPoint));
 					startiter = itersecond;
 					difval = 1;
 				}
-				afterIter = itersecond;
 			}
 			auto enditer = iter->second.end() - 1;
 			QPointF startPoint(*(IMX->begin() + startiter->x()), *(IMY->begin() + startiter->y()));
@@ -1224,26 +1292,6 @@ namespace DV {
 	{
 		return mCtype;
 	}
-	void StructData::setXRang(const Rang& rg)
-	{
-		std::lock_guard<std::mutex> am(xRangMutex);
-		xRang = rg;
-	}
-	void StructData::setYRang(const Rang& rg)
-	{
-		std::lock_guard<std::mutex> am(yRangMutex);
-		yRang = rg;
-	}
-	Data::Rang StructData::getXRang()
-	{
-		std::lock_guard<std::mutex> am(xRangMutex);
-		return xRang;
-	}
-	Data::Rang StructData::getYRang()
-	{
-		std::lock_guard<std::mutex> am(yRangMutex);
-		return yRang;
-	}
 	std::map<int, std::vector<QRectF>> StructData::GetAllcutInfo()
 	{
 		return allcutroom;
@@ -1267,6 +1315,62 @@ namespace DV {
 	{
 		return mendpoint;
 	}
+
+	DV::StructData::PortDirection StructData::getPortDirection(const int& type)
+	{
+		switch (mType)
+		{
+		case DV::X_Y:
+			if (type == 256)
+				return PORT_X;
+			else if (type == 512)
+				return PORT_Y;
+			else if (type == 1024)
+				return PORT_BAD;
+			break;
+		case DV::X_Z:
+			if (type == 256)
+				return PORT_X;
+			else if (type == 512)
+				return PORT_BAD;
+			else if (type == 1024)
+				return PORT_Y;
+			break;
+		case DV::Y_Z:
+			if (type == 256)
+				return PORT_BAD;
+			else if (type == 512)
+				return PORT_X;
+			else if (type == 1024)
+				return PORT_Y;
+			break;
+		case DV::R_Z:
+				if (type == 256)
+					return PORT_Y;
+				else if (type == 512)
+					return PORT_BAD;
+				else if (type == 1024)
+					return PORT_X;
+				break;
+			break;
+		case DV::R_THETA:
+				if (type == 256)
+					return PORT_X;
+				else if (type == 512)
+					return PORT_Y;
+				else if (type == 1024)
+					return PORT_BAD;
+				break;
+			break;
+		case DV::Z_THETA:
+			break;
+		default:
+			break;
+		}
+
+		return PORT_BAD;
+	}
+
 	/***************************************/
 	//struct _3DPointf
 	int _3DPointf::operator ==(const _3DPointf& that) const
