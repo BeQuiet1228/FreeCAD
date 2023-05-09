@@ -26,11 +26,11 @@ public:
 
 protected:
 	virtual std::vector<int> getCrossPool(SmartContorl* smartControl) override;
-
 private:
 	using TargetLayer = std::map<int, std::list<TargetList>>;
 	//生成支配关系层级
 	TargetLayer generateTargetListLayer(std::list<TargetList> targetLists);
+	void printLayer(TargetLayer& layer, SmartContorl* smartControl);
 private:
 	//所有的目标类型
 	std::vector<Target*> targets;

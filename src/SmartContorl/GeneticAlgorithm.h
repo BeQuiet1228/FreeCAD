@@ -29,6 +29,8 @@ protected:
 	//ªÒ»°Ωª≤Ê≥ÿ
 	virtual std::vector<int> getCrossPool(SmartContorl* smartControl);
 
+protected:
+	ChipicRunDatas bestRunData;
 private:
 	double mutationProbability;
 	double mutationProbabilityRange;

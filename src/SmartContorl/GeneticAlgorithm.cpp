@@ -110,6 +110,7 @@ std::vector<int> GeneticAlgorithm::getCrossPool(SmartContorl* smartControl)
 			indexs.push_back(index);
 		}
 	}
+
 	return indexs;
 #endif
 }
@@ -190,11 +191,8 @@ std::vector<float> GeneticAlgorithm::getCurrentFs(SmartContorl* smartControl)
 	int excpectFMod = getExcpectMod();
 	std::vector<float> functionValue;
 	auto historyDatas = smartControl->getHistoryDatas();
-	if (historyDatas.size() <= 0)
-		return std::vector<float>();
-	SmartContorl::HistoryData  history = *historyDatas.rbegin();
 
-	for (auto iter = history.datas.begin(); iter != history.datas.end(); iter++)
+	for (auto iter = bestRunData.begin(); iter != bestRunData.end(); iter++)
 	{
 		float f = (*iter)->resultData->getValue(0);
 
@@ -242,7 +240,26 @@ void GeneticAlgorithm::optimize(SmartContorl* smartControl)
 		return ;
 	SmartContorl::HistoryData  history = *historyDatas.rbegin();
 
-	auto indexs = getCrossPool(smartControl);
+	//扩大个体挑选范围
+	if (bestRunData.size() == 0)
+		bestRunData = history.datas;
+	else
+	{
+		bestRunData.insert(bestRunData.end(), history.datas.begin(), history.datas.end());
+		auto indexs = getCrossPool(smartControl);
+
+		ChipicRunDatas newBestRunDatas;
+		for (auto index : indexs)
+		{
+			newBestRunDatas.push_back(bestRunData[index]);
+		}
+		bestRunData = newBestRunDatas;
+	}
+		
+
+/*	auto indexs = getCrossPool(smartControl);*/
+	
+
 	int count = history.datas.size();
 	std::vector<Variate> Variates = history.variates;
 	for (auto iter = Variates.begin(); iter != Variates.end(); iter++) {
@@ -251,12 +268,12 @@ void GeneticAlgorithm::optimize(SmartContorl* smartControl)
 	std::vector<int> pool1,pool2;
 	//随机挑选两个个体进行交叉
 	std::random_device rd;
-	const int MaxRandom = indexs.size() - 1;
+	const int MaxRandom = bestRunData.size() - 1;
 	std::uniform_int_distribution<int> distribution(0, MaxRandom);
 	while(Variates.begin()->values.size()< count){
 
-		int p1 = indexs[distribution(rd)];
-		int p2 = indexs[distribution(rd)];
+		int p1 = distribution(rd);
+		int p2 = distribution(rd);
 
 		//跳过重复抽取的
 		if(p1 == p2)
@@ -279,8 +296,8 @@ void GeneticAlgorithm::optimize(SmartContorl* smartControl)
 		pool1.push_back(p1);
 		pool2.push_back(p2);
 
-		QString variate1 = history.datas[p1]->variate;
-		QString variate2 = history.datas[p2]->variate;
+		QString variate1 = bestRunData[p1]->variate;
+		QString variate2 = bestRunData[p2]->variate;
 
 		auto vars1 = getVariate(variate1);
 		auto vars2 = getVariate(variate2);
@@ -354,7 +371,6 @@ void GeneticAlgorithm::optimize(SmartContorl* smartControl)
 
 		smartControl->addVariate(v);
 	}
-
 }
 
 void GeneticAlgorithm::setMutationProbability(const double& probability)

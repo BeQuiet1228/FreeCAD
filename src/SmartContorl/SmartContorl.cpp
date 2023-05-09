@@ -16,7 +16,7 @@ extern "C"{
 #include <QTextCodec>
 #include <QFileInfo>
 
-QString gbkStdstringToQstring(const std::string& str)
+QString SmartContorl::gbkStdstringToQstring(const std::string& str)
 {
 	QTextCodec* pCodec = QTextCodec::codecForName("gb2312");
 	if (!pCodec) return "";
@@ -255,6 +255,17 @@ void SmartContorl::clearFinishData()
 */
 void SmartContorl::printLog(const std::string& log)
 {
+	//保存log到文件
+	auto p = this->fileMaker.m3dPath;
+	p = p.left(p.length() - 4) + "_log.text";
+	QFile file(p);
+	if (file.open(QIODevice::ReadWrite))
+	{
+		QTextStream stream(&file);
+		stream << QString::fromStdString(log);
+	}
+	file.close();
+
 	emit smartContorlLog(log);
 }
 void SmartContorl::run()
@@ -280,7 +291,7 @@ void SmartContorl::run()
 void SmartContorl::initDataFile()
 {
 	auto p = this->fileMaker.m3dPath;
-	p = p.left(p.length() - 4) + ".data";
+	p = p.left(p.length() - 4) + "_log.text";
 	QFile file(p);
 	if (!file.open(QIODevice::ReadWrite))
 	{
@@ -296,6 +307,7 @@ void SmartContorl::initDataFile()
 
 void SmartContorl::saveCurrentData()
 {
+#if 0
 	auto p = this->fileMaker.m3dPath;
 	p = p.left(p.length() - 4) + ".data";
 	QFile file(p);
@@ -314,8 +326,7 @@ void SmartContorl::saveCurrentData()
 	}
 	stream << "-------------------------------------\n";
 	file.close();
-
-	file.close();
+#endif
 }
 
 int SmartContorl::getHistorySize()
