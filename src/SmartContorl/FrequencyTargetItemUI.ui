@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>215</width>
-    <height>128</height>
+    <width>229</width>
+    <height>124</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -85,14 +85,14 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_8">
      <item>
-      <widget class="QLabel" name="label_6">
+      <widget class="QLabel" name="labelG">
        <property name="text">
-        <string>F预期值:</string>
+        <string>G值:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEditMaxF">
+      <widget class="QLineEdit" name="lineEditG">
        <property name="text">
         <string>500000</string>
        </property>

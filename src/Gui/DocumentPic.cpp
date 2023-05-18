@@ -267,6 +267,23 @@ void DocumentPic::showMultipleTargetGeneticAlgorithmView()
 	mw->addWindow(mdi);
 }
 
+void DocumentPic::showMultipleTargetGeneticAlgorithmGView()
+{
+	auto mw = Gui::MainWindow::getInstance();
+	auto views = this->getMDIViews();
+	for (auto iter = views.begin(); iter != views.end(); iter++)
+	{
+		auto psoView = dynamic_cast<MultipleTargetGeneticAlgorithmGView*> (*iter);
+		if (!psoView)
+			continue;
+		mw->setActiveWindow(psoView);
+		return;
+	}
+	MultipleTargetGeneticAlgorithmGView* mdi = new MultipleTargetGeneticAlgorithmGView(this);
+	mdi->init(getTextPath());
+	mw->addWindow(mdi);
+}
+
 bool DocumentPic::disposSuperDog()
 {
 #ifdef SUPER_DOG
@@ -346,7 +363,12 @@ bool DocumentPic::onMsg(const char* pMsg, const char** ppReturn)
 		this->showMultipleTargetGeneticAlgorithmView();
 		return true;
 	}
-
+	else if (strcmp("showMultipleTargetGeneticAlgorithmG", pMsg) == 0) {
+		if (!disposSuperDog())
+			return false;
+		this->showMultipleTargetGeneticAlgorithmGView();
+		return true;
+	}
 
 	return false;
 }
@@ -389,6 +411,12 @@ bool DocumentPic::onHasMsg(const char* pMsg) const
 		return true;
 	}
 	else if (strcmp("showMultipleTargetGeneticAlgorithm", pMsg) == 0) {
+		auto control = ContorlInterface::GetInstance();
+		if (control->hasChipicRuning())
+			return false;
+		return true;
+	}
+	else if (strcmp("showMultipleTargetGeneticAlgorithmG", pMsg) == 0) {
 		auto control = ContorlInterface::GetInstance();
 		if (control->hasChipicRuning())
 			return false;

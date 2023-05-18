@@ -9,7 +9,7 @@ class FrequencyTargetItemUI :public QWidget,public TargetItem{
 public:
 	FrequencyTargetItemUI(QWidget* parent = 0);
 	~FrequencyTargetItemUI();
-
+	void showG();
 public:
 	virtual void loadTarget(Target* target) override;
 	virtual Target* GenerateTarget() override;

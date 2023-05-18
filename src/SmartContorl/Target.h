@@ -45,6 +45,15 @@ protected:
 	virtual Hdf5Data getH5Data(const std::string& filePath);
 public:
 	std::string Name;
+public:
+	double getG() {
+		return g;
+	};
+	void setG(const double& g) {
+		this->g = g;
+	};
+private:
+	double g;
 private:
 	TargetComprison *targetComprison;
 };

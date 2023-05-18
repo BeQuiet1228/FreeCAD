@@ -6,11 +6,17 @@ TimeTargetItemUI::TimeTargetItemUI(QWidget* parent /*= 0*/)
 	ui->setupUi(this);
 	connect(ui->comboBoxExcpcet, SIGNAL(currentIndexChanged(int)), this, SLOT(currentIndexChange(int)));
 	ui->widgetAccuracy->hide();
+	ui->widgetG->hide();
 }
 
 TimeTargetItemUI::~TimeTargetItemUI()
 {
 	delete ui;
+}
+
+void TimeTargetItemUI::showG()
+{
+	ui->widgetG->show();
 }
 
 void TimeTargetItemUI::loadTarget(TargetTime* target)
@@ -19,7 +25,7 @@ void TimeTargetItemUI::loadTarget(TargetTime* target)
 	ui->lineEditMaxTime->setText(QString::number(target->getMaxTime()));
 	ui->lineEditMiniTime->setText(QString::number(target->getMinTime()));
 	ui->lineEditMaxF->setText(QString::number(target->value));
-
+	ui->lineEditG->setText(QString::number(target->getG()));
 	//判断目标类型
 	if (dynamic_cast<TargetTimeMin*>(target))
 	{
@@ -95,7 +101,7 @@ TargetTime* TimeTargetItemUI::GenerateTimeTarget()
 		approach->expect = value;
 		target->setTargetComprison(approach);
 	}
-
+	target->setG(ui->lineEditG->text().toDouble());
 	return target;
 }
 
@@ -109,6 +115,7 @@ void TimeTargetItemUI::saveXml(pugi::xml_node node)
 	node.append_attribute("F") = ui->lineEditMaxF->text().toLongLong();
 	node.append_attribute("ExcpectMod") = ui->comboBoxExcpcet->currentIndex();
 	node.append_attribute("Accuracy") = ui->lineEditAccuracy->text().toStdString().c_str();
+	node.append_attribute("GValue") = ui->lineEditG->text().toStdString().c_str();
 }
 
 void TimeTargetItemUI::loadXml(pugi::xml_node node)
@@ -120,6 +127,7 @@ void TimeTargetItemUI::loadXml(pugi::xml_node node)
 	ui->lineEditMaxF->setText(QString::number(node.attribute("F").as_llong()));
 	ui->comboBoxExcpcet->setCurrentIndex(node.attribute("ExcpectMod").as_int());
 	ui->lineEditAccuracy->setText(QString::number(node.attribute("Accuracy").as_double()));
+	ui->lineEditG->setText(QString::number(node.attribute("GValue").as_double()));
 }
 
 void TimeTargetItemUI::currentIndexChange(int index)

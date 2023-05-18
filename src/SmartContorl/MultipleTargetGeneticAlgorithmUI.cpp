@@ -75,7 +75,12 @@ void MultipleTargetGeneticAlgorithmUI::on_pushButton_clicked()
 	auto str = replaceVariate();
 	smartContorl->chipicCount = this->ui->spinBoxRunCount->value();
 	smartContorl->maxCount = this->ui->spinBoxOptimizeCount->value();
-	auto optimize = new MultipleTargetGeneticAlgorithm();
+	
+	MultipleTargetGeneticAlgorithm* optimize;
+	if (GMod)
+		optimize = new MultipleTargetGeneticAlgorithmG();
+	else
+		auto optimize = new MultipleTargetGeneticAlgorithm();
 	//auto optimize = new OptimizeCurseLua();
 
 	//Ìí¼Ó±äÁ¿
@@ -205,10 +210,16 @@ void MultipleTargetGeneticAlgorithmUI::on_pushButtonAddTarget_clicked()
 		return;
 	if (diaglog.index == 0)
 	{
-		widget = new TimeTargetItemUI(listWidget);;
+		auto t = new TimeTargetItemUI(listWidget);
+		if (this->GMod)
+			t->showG();
+		widget = t;
 	}
 	else {
-		widget = new FrequencyTargetItemUI(listWidget);
+		auto t = new FrequencyTargetItemUI(listWidget);
+		if (this->GMod)
+			t->showG();
+		widget = t;
 	}
 	
 	QListWidgetItem *item = new QListWidgetItem(listWidget);
@@ -597,11 +608,22 @@ void MultipleTargetGeneticAlgorithmUI::saveParameterXml()
 	if (!result)
 	{
 		doc.reset();
-		root = doc.append_child("MultipleTargetGeneticAlgorithm");
+		if (!GMod)
+			root = doc.append_child("MultipleTargetGeneticAlgorithm");
+		else
+			root = doc.append_child("MultipleTargetGeneticAlgorithmGMod");
 	}
 	else {
-		doc.remove_child("MultipleTargetGeneticAlgorithm");
-		root = doc.append_child("MultipleTargetGeneticAlgorithm");
+		if (!GMod)
+		{
+			doc.remove_child("MultipleTargetGeneticAlgorithm");
+			root = doc.append_child("MultipleTargetGeneticAlgorithm");
+		}
+		else
+		{
+			doc.remove_child("MultipleTargetGeneticAlgorithmGMod");
+			root = doc.append_child("MultipleTargetGeneticAlgorithmGMod");
+		}
 	}
 
 
@@ -648,7 +670,11 @@ void MultipleTargetGeneticAlgorithmUI::loadParameterXml()
 	auto result = document.load_file(ret.c_str());
 	if (!result)
 		return;
-	pugi::xml_node root = document.child("MultipleTargetGeneticAlgorithm");
+	pugi::xml_node root;
+	if(!GMod)
+		root = document.child("MultipleTargetGeneticAlgorithm");
+	else
+		root = document.child("MultipleTargetGeneticAlgorithmGMod");
 	if (root.empty())
 		return;
 
@@ -662,9 +688,20 @@ void MultipleTargetGeneticAlgorithmUI::loadParameterXml()
 		std::string id = iter->attribute("ID").as_string();
 		TargetItem* targetItem;
 		if (id == "TimeTarget")
-			targetItem = new TimeTargetItemUI(listWidget);
+		{
+			auto t = new TimeTargetItemUI(listWidget);
+			if (GMod)
+				t->showG();
+			targetItem = t;
+		}
 		else
-			targetItem = new FrequencyTargetItemUI(listWidget);
+		{
+			auto t = new FrequencyTargetItemUI(listWidget);
+			if (GMod)
+				t->showG();
+			targetItem = t;
+		}
+			
 		targetItem->loadXml(*iter);
 
 		auto widget = dynamic_cast<QWidget*>(targetItem);
@@ -717,4 +754,10 @@ bool MultipleTargetGeneticAlgorithmUI::getRunning()
 {
 	return smartContorl->runing;
 }
+
+void MultipleTargetGeneticAlgorithmUI::setGMod(const bool& b)
+{
+	GMod = b;
+}
+
 #include "moc_MultipleTargetGeneticAlgorithmUI.cpp"

@@ -87,7 +87,7 @@ std::vector<int> MultipleTargetGeneticAlgorithm::getCrossPool(SmartContorl* smar
 	printLayer(layer, smartControl);
 
 	std::vector<int> indexs;
-	while (indexs.size() < currentTargetLists.size() / 2)
+	while (indexs.size() < currentTargetLists.size())
 	{
 		layer = generateTargetListLayer(tempLists);
 
@@ -105,7 +105,7 @@ std::vector<int> MultipleTargetGeneticAlgorithm::getCrossPool(SmartContorl* smar
 					iter++;
 			}
 			indexs.push_back(t.rank);
-			if (indexs.size() >= currentTargetLists.size() / 2)
+			if (indexs.size() >= currentTargetLists.size())
 				break;
 		}
 
@@ -199,3 +199,80 @@ void MultipleTargetGeneticAlgorithm::printLayer(TargetLayer& layer, SmartContorl
 	smartControl->printLog(tempStr.toStdString());
 }
 
+
+MultipleTargetGeneticAlgorithm::TargetLayer MultipleTargetGeneticAlgorithmG::generateTargetListLayer(std::list<TargetList> targetLists)
+{
+	//清除之前的支配关系
+	for each (auto t in targetLists)
+	{
+		t.parentCount = 0;
+	}
+
+	//建立目标之间的支配关系
+	//支配 A个体中的所有目标都优于B个体中的目标，那么A支配B
+	//需要计算出每个个体被支配的个数，以作为优劣排序的依据
+	for (TargetList& list : targetLists) {
+
+		for (auto tempList : targetLists) {
+			//不与自己相比
+			if (list.rank == tempList.rank)
+				continue;
+			//对比所有参数
+			bool gOk1 = true;
+			//检查个体是否再g点上
+			for (int i = 0; i < targets.size(); i++)
+			{
+				//如果目标再g点之上，那么支配所有没有再G点上的，
+				gOk1 = gOk1 && targets[i]->comparison(list.TargetValues[i], targets[i]->getG());
+
+			}
+
+			//检查对比个体是否再点上
+			bool gOk2 = true;
+			for (int i = 0; i < targets.size(); i++)
+			{
+				//如果目标再g点之上，那么支配所有没有再G点上的，
+				gOk2 = gOk2 && targets[i]->comparison(tempList.TargetValues[i], targets[i]->getG());
+
+			}
+
+			//如果有一个个体再G点上可以直接判断出支配关系
+			if (gOk1 == true && gOk2 == false)
+			{
+				continue;
+			}else if (gOk1 == false && gOk2 == true) {
+				list.parentCount++;
+				continue;
+			}
+
+			bool ok = false;
+			for (int i = 0; i < targets.size(); i++)
+			{
+
+				ok = ok || targets[i]->comparison(list.TargetValues[i], tempList.TargetValues[i]);
+			}
+			//如果没有一项目标值优于tempList，那么增加被支配数量
+			if (!ok)
+				list.parentCount++;
+
+		}
+	}
+
+	//根据被支配次数划分层级
+	TargetLayer layer;
+	for (auto list : targetLists)
+	{
+		auto iter = layer.find(list.parentCount);
+		if (iter == layer.end())
+		{
+			std::list<TargetList> tl;
+			tl.push_back(list);
+			layer.insert(TargetLayer::value_type(list.parentCount, tl));
+		}
+		else {
+			iter->second.push_back(list);
+		}
+	}
+
+	return layer;
+}
