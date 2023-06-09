@@ -5338,11 +5338,11 @@ Be aware the point where you click matters.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>ä½ ç¡®å®è¦å³é­å·¥ç¨å¹¶å³é­ä»¿çç¨åºåï¼QAQ</source>
+        <source>Export data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Export data</source>
+        <source>ä½ ç¡®å®è¦å³é­å·¥ç¨å¹¶å³é­ä»¿çç¨åºåï¼QAQ</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6261,6 +6261,21 @@ Be aware the point where you click matters.</source>
     </message>
 </context>
 <context>
+    <name>StdCmdMultipleTargetGeneticAlgorithmG</name>
+    <message>
+        <source>File</source>
+        <translation type="unfinished">文件</translation>
+    </message>
+    <message>
+        <source>MultipleTargetGeneticAlgorithmG</source>
+        <translation type="unfinished">G占优多目标算法</translation>
+    </message>
+    <message>
+        <source>SmartContorl</source>
+        <translation type="unfinished">优化算法</translation>
+    </message>
+</context>
+<context>
     <name>StdCmdMyParameter</name>
     <message>
         <source>My_Parameter</source>
@@ -6380,6 +6395,10 @@ Be aware the point where you click matters.</source>
     <message>
         <source>open_ComboView</source>
         <translation>组合浏览器</translation>
+    </message>
+    <message>
+        <source>Std_open_ComboView</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
