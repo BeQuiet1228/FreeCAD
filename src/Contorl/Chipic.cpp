@@ -132,10 +132,16 @@ void Chipic::sendMessage(const UINT& type, const WPARAM& wParam, const LPARAM& l
 */
 void Chipic::closeChipic()
 {
+#if 1
+	//关闭chipic时只发送关闭消息，不做任何其他处理，然后等待程序的退出消息
+	sendMessage(0, 0, 0);
+#else
 	sendMessage(0, 0, 0);
 	auto msg = MessageTransition::creatCloseChipicJsonMessage(threadID);
 	auto sender = MessageSender::GetInstance();
 	sender->sendJsonMessage(msg);
+#endif
+
 }
 
 /**
@@ -525,6 +531,16 @@ bool Chipic::disposChipicBusy(const Message& msg)
 	return  true;
 }
 
+bool Chipic::disposChipicCloseWinMessage(const Message& msg)
+{
+	if (msg.Msg != 300 || msg.wParam != 200)
+		return false;
+	auto m = MessageTransition::creatCloseChipicJsonMessage(threadID);
+	auto sender = MessageSender::GetInstance();
+	sender->sendJsonMessage(m);
+	return true;
+}
+
 void Chipic::restartTimeoutTimer()
 {
 	timer->stop();
@@ -605,6 +621,14 @@ void Chipic::disposJsonMessage(const std::string& json)
 		setIsUpdate(true);
 		return;
 	}
+	//处理关闭消息
+	if (disposChipicCloseWinMessage(msg))
+	{
+		emit stateUpdate(this->threadID);
+		setIsUpdate(true);
+		return;
+	}
+
 	//查看结果图
 	if (disposResultMapMessage(msg))
 		return;

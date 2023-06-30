@@ -757,12 +757,16 @@ void NetworkServer::sendFile(const std::string& targetPath, const std::string& f
 */
 void NetworkServer::closeChipic(const unsigned long& ID)
 {
+#if 0
 
+#else
 	//创建一个关闭消息
 	auto json = MessageTransition::creatCloseChipicJsonMessage(ID);
 	//关闭正在运行的
 	auto sender = MessageSender::GetInstance();
 	sender->sendJsonMessage(json);
+#endif
+
 }
 /**
 * 这个消息主要是为了防止消息队列溢出，这种类型的消息在服务端就处理了
