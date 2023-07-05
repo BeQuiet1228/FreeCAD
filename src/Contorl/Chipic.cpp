@@ -132,7 +132,7 @@ void Chipic::sendMessage(const UINT& type, const WPARAM& wParam, const LPARAM& l
 */
 void Chipic::closeChipic()
 {
-#if 1
+#if 0
 	//关闭chipic时只发送关闭消息，不做任何其他处理，然后等待程序的退出消息
 	sendMessage(0, 0, 0);
 #else
@@ -142,6 +142,11 @@ void Chipic::closeChipic()
 	sender->sendJsonMessage(msg);
 #endif
 
+}
+
+void Chipic::sendCloseChipicMessage()
+{
+	sendMessage(0, 0, 0);
 }
 
 /**
@@ -533,7 +538,7 @@ bool Chipic::disposChipicBusy(const Message& msg)
 
 bool Chipic::disposChipicCloseWinMessage(const Message& msg)
 {
-	if (msg.Msg != 300 || msg.wParam != 200)
+	if (msg.Msg != 300 || msg.wParam != 200||msg.lParam !=1)
 		return false;
 	auto m = MessageTransition::creatCloseChipicJsonMessage(threadID);
 	auto sender = MessageSender::GetInstance();

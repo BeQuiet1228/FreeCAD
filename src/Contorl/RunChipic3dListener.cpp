@@ -410,7 +410,7 @@ bool RunChipic3dListener::receiveMessage(Message &msg,const int &ms){
         msg.Msg = m.message - WM_USER;
         msg.wParam = m.wParam;
         msg.lParam = m.lParam;
-#ifdef IMY_DEBUG
+#ifdef MY_DEBUG
 		std::cerr << "RunChipic3dListener::receiveMessage,Msg:" << msg.Msg <<
 			",wParam:" << msg.wParam << ",lParam:" << msg.lParam << std::endl;
 #endif // MY_DEBUG

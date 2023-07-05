@@ -41,6 +41,8 @@ public:
 	void sendMessage(const UINT& type, const WPARAM& wParam, const LPARAM& lParam,const DWORD& thradId = 0);
 	//关闭chipic
 	void closeChipic();
+	//发送关闭消息
+	void sendCloseChipicMessage();
 	//打开log文件
 	void openLogFile();
 	//获取运行结果数据路径

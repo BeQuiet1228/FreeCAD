@@ -139,7 +139,7 @@ void ChipicManager::runButtonClicked(const std::string& m3dPath /*= ""*/)
 	{
 		sendStartChipicMessage(m3dPath, 1);
 	}else{
-		CurrentChipic->closeChipic();
+		CurrentChipic->sendCloseChipicMessage();
 		Contorl::closePlot();
 	}
 }
