@@ -86,8 +86,9 @@ namespace DV {
 		}
 
 		indexOrder = std::min(indexOrder + indexOrder / 10, num);
+		indexOrder = std::max(indexOrder, num / 2);
 		for (int index = 0; index <= indexOrder; ++index) {
-			(*nowPoints).emplace_back((indexL + index) * fs);
+			(*nowPoints).emplace_back(index * fs);
 			(*nowPoints).emplace_back(Ydata[index]);
 		}
 		
@@ -161,6 +162,7 @@ namespace DV {
 		}
 
 		indexOrder = std::min(indexOrder + (indexOrder - indexL) / 10, indexR);
+		indexOrder = std::max(indexOrder, indexR / 2);
 		for (int index = indexL; index <= indexOrder; ++index) {
 			(*nowPoints).emplace_back(points->at(index * 2));
 			(*nowPoints).emplace_back(points->at(index * 2 + 1));
