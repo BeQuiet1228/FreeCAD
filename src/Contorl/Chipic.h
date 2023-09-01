@@ -96,6 +96,8 @@ private:
 	//重启状态检测定时器
 	void restartTimeoutTimer();
 public:
+	//是否为等待关闭的状态
+	bool isWaitclose;
 	//运行状态
 	bool runState;
 	//暂停状态

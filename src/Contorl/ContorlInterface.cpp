@@ -85,8 +85,17 @@ void ContorlInterface::closeAllChipic()
 */
 bool ContorlInterface::hasChipicRuning()
 {
-	if (contorl->chipicManager.chipicMap.size() != 0)
-		return true;
+	//2023.9.1 修改
+	//增加一个等待关闭的状态
+	//因为这里的立即关闭程序修改为了等待chipic释放资源后关闭，有一定延迟
+	//为了防止多次判断是否关闭，这里的逻辑修改为等待关闭状态的chipic不算运行的 
+
+
+	for (auto iter  = contorl->chipicManager.chipicMap.begin();iter != contorl->chipicManager.chipicMap.end();iter++)
+	{
+		if (!iter->second->isWaitclose)
+			return true;
+	}
 	return false;
 }
 

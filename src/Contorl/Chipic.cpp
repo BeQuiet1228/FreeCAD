@@ -95,6 +95,9 @@ void Chipic::init()
 
 	threadCount = 1;
 
+	//等待关闭状态
+	isWaitclose = false;
+
 }
 
 
@@ -147,6 +150,8 @@ void Chipic::closeChipic()
 void Chipic::sendCloseChipicMessage()
 {
 	sendMessage(0, 0, 0);
+	//发送消息后，将状态设置为等待关闭的状态
+	isWaitclose = true;
 }
 
 /**
