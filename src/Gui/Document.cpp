@@ -1322,7 +1322,7 @@ bool Document::canClose ()
         case QMessageBox::Discard:
             ok = true;
 			////这里将文档改为未修改
-			//setModified(false);
+			setModified(false);
             break;
         case QMessageBox::Cancel:
             ok = false;
