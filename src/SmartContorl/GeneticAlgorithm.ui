@@ -43,7 +43,7 @@
           <item>
            <widget class="QSpinBox" name="spinBoxRunCount">
             <property name="value">
-             <number>3</number>
+             <number>6</number>
             </property>
            </widget>
           </item>
