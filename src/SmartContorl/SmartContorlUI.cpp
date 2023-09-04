@@ -571,8 +571,8 @@ void SmartContorlUI::saveParameterXml()
 		root = doc.append_child("ParticleSwarmOptimization");
 	}
 
-	auto parNode = doc.append_child("Parameter");
-	auto configNode = doc.append_child("Config");
+	auto parNode = root.append_child("Parameter");
+	auto configNode = root.append_child("Config");
 	configNode.append_attribute("OptimizeCount") = ui->spinBoxOptimizeCount->value();
 	configNode.append_attribute("RunCount") = ui->spinBoxCount->value();
 	configNode.append_attribute("RunMaxCount") = ui->spinBoxRunCount->value();
@@ -620,8 +620,8 @@ void SmartContorlUI::loadParameterXml()
 
 
 
-	auto parNode = document.child("Parameter");
-	auto configNode = document.child("Config");
+	auto parNode = root.child("Parameter");
+	auto configNode = root.child("Config");
 
 
 	ui->spinBoxOptimizeCount->setValue(configNode.attribute("OptimizeCount").as_int());
