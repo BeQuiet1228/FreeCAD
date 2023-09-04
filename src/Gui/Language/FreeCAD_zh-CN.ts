@@ -6039,7 +6039,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>GeneticAlgorithm</source>
-        <translation type="unfinished">遗传算法</translation>
+        <translation type="unfinished">单目标遗传优化</translation>
     </message>
     <message>
         <source>SmartContorl</source>
@@ -6253,7 +6253,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>MultipleTargetGeneticAlgorithm</source>
-        <translation type="unfinished">多目标遗传算法</translation>
+        <translation type="unfinished">多目标遗传优化</translation>
     </message>
     <message>
         <source>SmartContorl</source>
@@ -6268,7 +6268,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>MultipleTargetGeneticAlgorithmG</source>
-        <translation type="unfinished">G占优多目标算法</translation>
+        <translation type="unfinished">多目标G占优优化</translation>
     </message>
     <message>
         <source>SmartContorl</source>
@@ -6905,7 +6905,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>SmartContorl</source>
-        <translation>优化算法</translation>
+        <translation type="unfinished">单目标粒子群优化</translation>
     </message>
 </context>
 <context>
