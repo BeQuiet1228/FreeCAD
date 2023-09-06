@@ -135,7 +135,7 @@ void Chipic::sendMessage(const UINT& type, const WPARAM& wParam, const LPARAM& l
 */
 void Chipic::closeChipic()
 {
-#if 0
+#if 1
 	//关闭chipic时只发送关闭消息，不做任何其他处理，然后等待程序的退出消息
 	sendMessage(0, 0, 0);
 #else
@@ -660,8 +660,8 @@ void Chipic::buttonClicked(int clickType)
 	switch (HintDailog::ClinkeType(clickType))
 	{
 	case HintDailog::MODE1_EXIT:
-		//sendMessage(108, 3, 4);
-		closeChipic();
+		sendMessage(108, 3, 4);
+		//closeChipic();
 		break;
 	case HintDailog::MODE1_LOSE:
 		sendMessage(108, 3, 1);
@@ -676,8 +676,8 @@ void Chipic::buttonClicked(int clickType)
 		sendMessage(108, 3, -2);
 		break;
 	case HintDailog::MODE2_EXIT:
-		//sendMessage(108, 8, 3);
-		closeChipic();
+		sendMessage(108, 8, 3);
+		//closeChipic();
 		break;
 	case HintDailog::MODE2_CONTINUE:
 		sendMessage(108, 8, 1);
@@ -686,8 +686,8 @@ void Chipic::buttonClicked(int clickType)
 		sendMessage(108, 8, -1);
 		break;
 	case HintDailog::MODE3_EXIT:
-		//sendMessage(108, 4, 0);
-		closeChipic();
+		sendMessage(108, 4, 0);
+		//closeChipic();
 		break;
 	case HintDailog::NULL_TYPE:
 		break;
