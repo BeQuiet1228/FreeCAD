@@ -54,6 +54,7 @@ bool OptimizeCurseLua::resultExpcet(SmartContorl* smartControl)
 
 void OptimizeCurseLua::optimize(SmartContorl* smartCOntrol)
 {
+	callLuaFunction("printInformation");
 	callLuaFunction("optimize");
 }
 

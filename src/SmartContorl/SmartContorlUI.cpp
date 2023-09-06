@@ -492,9 +492,9 @@ QString SmartContorlUI::replaceVariate()
 		vars += temp;
 	}
 	QString text;
-#ifdef SMART_EXE
+#if 1
 	{
-		QFile file(QString::fromLocal8Bit("D:/script/script.lua"));
+		QFile file(QString::fromLocal8Bit("://script/script.lua"));
 		file.open(QIODevice::ReadOnly);
 		text = QString::fromUtf8(file.readAll());
 		file.close();

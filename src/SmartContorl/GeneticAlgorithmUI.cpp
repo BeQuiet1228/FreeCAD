@@ -32,7 +32,7 @@ GeneticAlgorithmUI::GeneticAlgorithmUI(QWidget * parent /*= 0*/)
 	auto contorlInterface = ContorlInterface::GetInstance();
 
 #ifdef SMART_EXE
-	std::string m3dPath = "D:/test/MILO_P.m3d";
+	std::string m3dPath = "E:/youhuasuanfa/match.m3d";
 	//std::string m3dPath = "D:/test/match.m3d";
 	smartContorl->setM3dPath(m3dPath);
 	loadParameterXml();
@@ -464,9 +464,9 @@ QString GeneticAlgorithmUI::replaceVariate()
 		vars += temp;
 	}
 	QString text;
-#ifdef SMART_EXE
+#if 1
 	{
-		QFile file(QString::fromLocal8Bit("D:/script/script.lua"));
+		QFile file(QString::fromLocal8Bit("://script/script.lua"));
 		file.open(QIODevice::ReadOnly);
 		text = QString::fromUtf8(file.readAll());
 		file.close();

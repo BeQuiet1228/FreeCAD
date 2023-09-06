@@ -31,6 +31,8 @@ protected:
 
 protected:
 	ChipicRunDatas bestRunData;
+	//结果最优的数据
+	ChipicRunDataPtr resutData;
 private:
 	double mutationProbability;
 	double mutationProbabilityRange;

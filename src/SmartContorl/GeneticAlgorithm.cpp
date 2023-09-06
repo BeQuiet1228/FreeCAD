@@ -192,18 +192,47 @@ std::vector<float> GeneticAlgorithm::getCurrentFs(SmartContorl* smartControl)
 	std::vector<float> functionValue;
 	auto historyDatas = smartControl->getHistoryDatas();
 
+	//获取所有的目标函数值,并比较出最好的
 	for (auto iter = bestRunData.begin(); iter != bestRunData.end(); iter++)
 	{
+		
 		float f = (*iter)->resultData->getValue(0);
+		float bestF;
+		if (resutData)
+			bestF = resutData->resultData->getValue(0);
+		else
+		{
+			bestF = f;
+			resutData = *iter;
+		}
+			
 
 		//如果为接近目标，则修改f的值为越小越好
 		if (excpectFMod == 0)
 		{
-			f = abs(excpectF - f);
+			float tempF = abs(excpectF - f);
+			if (tempF < abs(excpectF - bestF))
+				resutData = *iter;
 			//f = excpectF - f;
+		}else {
+			if (f > bestF)
+			{
+				resutData = *iter;
+			}
 		}
 
 		functionValue.push_back(f);
+	}
+
+	{
+		std::string str = "";
+		str += "======== " + std::to_string(historyDatas.size());
+		str += "========\n";
+		str += "F  =  " + std::to_string(resutData->resultData->getValue(0)) + "\n";
+		str += resutData->variate.toStdString();
+
+
+		smartControl->printLog(str);
 	}
 
 	return functionValue;
@@ -238,6 +267,10 @@ void GeneticAlgorithm::optimize(SmartContorl* smartControl)
 	auto historyDatas = smartControl->getHistoryDatas();
 	if (historyDatas.size() <= 0)
 		return ;
+
+
+
+
 	SmartContorl::HistoryData  history = *historyDatas.rbegin();
 
 	//扩大个体挑选范围
