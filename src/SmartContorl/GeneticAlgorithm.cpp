@@ -8,6 +8,7 @@ extern "C" {
 #include <iostream>
 #include <QString>
 #include <list>
+#include "Transition/transition.h"
 GeneticAlgorithm::GeneticAlgorithm()
 	:mutationProbabilityRange(0.5),mutationProbability(0.35)
 {
@@ -197,43 +198,16 @@ std::vector<float> GeneticAlgorithm::getCurrentFs(SmartContorl* smartControl)
 	{
 		
 		float f = (*iter)->resultData->getValue(0);
-		float bestF;
-		if (resutData)
-			bestF = resutData->resultData->getValue(0);
-		else
-		{
-			bestF = f;
-			resutData = *iter;
-		}
-			
-
+		
 		//如果为接近目标，则修改f的值为越小越好
 		if (excpectFMod == 0)
 		{
-			float tempF = abs(excpectF - f);
-			if (tempF < abs(excpectF - bestF))
-				resutData = *iter;
+			f = abs(excpectF - f);
 			//f = excpectF - f;
-		}else {
-			if (f > bestF)
-			{
-				resutData = *iter;
-			}
 		}
-
 		functionValue.push_back(f);
 	}
 
-	{
-		std::string str = "";
-		str += "======== " + std::to_string(historyDatas.size());
-		str += "========\n";
-		str += "F  =  " + std::to_string(resutData->resultData->getValue(0)) + "\n";
-		str += resutData->variate.toStdString();
-
-
-		smartControl->printLog(str);
-	}
 
 	return functionValue;
 }
@@ -262,15 +236,64 @@ std::vector<float> GeneticAlgorithm::generatRular(std::vector<float> targetValue
 	return rular;
 }
 
+void GeneticAlgorithm::printBestF(SmartContorl* smartControl)
+{
+	double excpectF = getExcpectF();
+	int excpectFMod = getExcpectMod();
+	std::vector<float> functionValue;
+	auto historyDatas = smartControl->getHistoryDatas();
+
+	//获取所有的目标函数值,并比较出最好的
+	for (auto iter = bestRunData.begin(); iter != bestRunData.end(); iter++)
+	{
+
+		float f = (*iter)->resultData->getValue(0);
+		float bestF;
+		if (resutData)
+			bestF = resutData->resultData->getValue(0);
+		else
+		{
+			bestF = f;
+			resutData = *iter;
+		}
+
+
+		//如果为接近目标，则修改f的值为越小越好
+		if (excpectFMod == 0)
+		{
+			float tempF = abs(excpectF - f);
+			if (tempF < abs(excpectF - bestF))
+				resutData = *iter;
+			//f = excpectF - f;
+		}
+		else {
+			if (f > bestF)
+			{
+				resutData = *iter;
+			}
+		}
+
+	}
+
+	{
+		std::string str = "";
+		str += "======== ";
+		str += gbkStdstringToQstring("第%1轮最优").arg(historyDatas.size()).toStdString();
+		str += "========\n";
+		str += "F  =  " + std::to_string(resutData->resultData->getValue(0)) + "\n";
+		str += resutData->variate.toStdString();
+
+		smartControl->printLog(str);
+	}
+}
+
 void GeneticAlgorithm::optimize(SmartContorl* smartControl)
 {
 	auto historyDatas = smartControl->getHistoryDatas();
 	if (historyDatas.size() <= 0)
 		return ;
 
-
-
-
+	
 	SmartContorl::HistoryData  history = *historyDatas.rbegin();
 
 	//扩大个体挑选范围
@@ -404,6 +427,8 @@ void GeneticAlgorithm::optimize(SmartContorl* smartControl)
 
 		smartControl->addVariate(v);
 	}
+
+	printBestF(smartControl);
 }
 
 void GeneticAlgorithm::setMutationProbability(const double& probability)

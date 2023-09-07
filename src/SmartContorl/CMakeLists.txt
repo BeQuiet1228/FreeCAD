@@ -252,6 +252,7 @@ list(APPEND QT_LIB
 	Editor
 	DataVisualization
 	Event
+	transition
 	)
 if(contorl_client_dll)
 list(APPEND QT_LIB

@@ -17,6 +17,7 @@ private:
 	double getBeta();
  	std::vector<float> getCurrentFs(SmartContorl* smartControl);
 	std::vector<float> generatRular(std::vector<float> targetValues);
+	void printBestF(SmartContorl* smartControl);
 public:
  	virtual void optimize(SmartContorl* smartControl);
 
