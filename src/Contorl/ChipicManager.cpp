@@ -166,7 +166,9 @@ void ChipicManager::chipicWorkFinished()
 
 	chipic->closeChipic();
 	Contorl::closePlot();
-	showWorkFinishedBox();
+	//如果不为自动运行则显示提示框
+	if(!chipic->getIsAuto())
+		showWorkFinishedBox();
 	emit finishChipicM3dPath(chipic->threadID);
 	emit openH5Result(resultPath);
 }

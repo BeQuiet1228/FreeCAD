@@ -114,6 +114,11 @@ std::vector<int> MultipleTargetGeneticAlgorithm::getCrossPool(SmartContorl* smar
 	return indexs;
 }
 
+void MultipleTargetGeneticAlgorithm::printBestF(SmartContorl* smartControl)
+{
+
+}
+
 MultipleTargetGeneticAlgorithm::TargetLayer MultipleTargetGeneticAlgorithm::generateTargetListLayer(std::list<TargetList> targetLists)
 {
 	//清除之前的支配关系

@@ -104,6 +104,13 @@ public:
 	bool pausState;
 	//定时器状态
 	bool timerSate;
+	/*
+	* 2023.9.8修改了chipic关闭的逻辑，
+	* 现在以任何方式关闭程序都需要程序回执关闭信息才能真正的关闭
+	* 所以需要先记录运行状态，然后再程序关闭后处理文件操作 
+	*/
+	//是否已完成计算
+	bool chipicIsFinish;
 	//迭代次数、当前迭代次数
 	int iterationCount, currentIteration;
 	//粒子数目

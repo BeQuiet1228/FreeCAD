@@ -26,6 +26,7 @@ public:
 
 protected:
 	virtual std::vector<int> getCrossPool(SmartContorl* smartControl) override;
+	void printBestF(SmartContorl* smartControl);
 	//生成支配关系层级
 	using TargetLayer = std::map<int, std::list<TargetList>>;
 	virtual TargetLayer generateTargetListLayer(std::list<TargetList> targetLists);

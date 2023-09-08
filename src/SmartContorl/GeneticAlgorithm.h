@@ -17,7 +17,6 @@ private:
 	double getBeta();
  	std::vector<float> getCurrentFs(SmartContorl* smartControl);
 	std::vector<float> generatRular(std::vector<float> targetValues);
-	void printBestF(SmartContorl* smartControl);
 public:
  	virtual void optimize(SmartContorl* smartControl);
 
@@ -29,6 +28,7 @@ public:
 protected:
 	//ªÒ»°Ωª≤Ê≥ÿ
 	virtual std::vector<int> getCrossPool(SmartContorl* smartControl);
+	virtual void printBestF(SmartContorl* smartControl);
 
 protected:
 	ChipicRunDatas bestRunData;

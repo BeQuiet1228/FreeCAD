@@ -98,6 +98,9 @@ void Chipic::init()
 	//等待关闭状态
 	isWaitclose = false;
 
+	//chipic是否计算完成
+	chipicIsFinish = false;
+
 }
 
 
@@ -521,7 +524,9 @@ bool Chipic::disposChipicFinished(const Message& msg)
 		timer->stop();
 	//完成的时候就将状态设置为未运行，这里主要可以避免关闭时和异常退出检测发生冲突
 	this->runState = false;
-	emit workFinished();
+	this->chipicIsFinish = true;
+//  修改为程序彻底关闭时发送
+//	emit workFinished();
 	return true;
 }
 
@@ -545,6 +550,9 @@ bool Chipic::disposChipicCloseWinMessage(const Message& msg)
 {
 	if (msg.Msg != 300 || msg.wParam != 200||msg.lParam !=1)
 		return false;
+	//如果状态为计算完成状态，则发送信号
+	emit workFinished();
+
 	auto m = MessageTransition::creatCloseChipicJsonMessage(threadID);
 	auto sender = MessageSender::GetInstance();
 	sender->sendJsonMessage(m);
