@@ -412,6 +412,7 @@ bool ChipicManager::dispoesStartChipicMessage(const std::string json)
 		if ((*iter)->m3dPath == m3dPath)
 		{
 			newChipic = *iter;
+			waitStartChipic.erase(iter);
 		}
 	}
 
