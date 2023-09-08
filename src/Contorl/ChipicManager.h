@@ -3,6 +3,7 @@
 #include <map>
 #include <Windows.h>
 #include <memory>
+#include <list>
 #include "ContorlConfig.hpp"
 class Chipic;
 class LoadingDialog;
@@ -28,6 +29,8 @@ public:
 	std::shared_ptr<Chipic> CurrentChipic;
 	//计算程序集合
 	std::map<DWORD, std::shared_ptr<Chipic>> chipicMap;
+	//等待启动
+	std::list<std::shared_ptr<Chipic>> waitStartChipic;
 Q_SIGNALS:
 	//当前计算程序有信息更新
 	void currentChipicStateUpdate();

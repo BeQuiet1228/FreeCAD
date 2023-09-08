@@ -390,8 +390,8 @@ bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId, const int& 
 */
 bool ChipicManager::dispoesStartChipicMessage(const std::string json)
 {
-	//新建chipic对象
-	std::shared_ptr<Chipic> newChipic(new Chipic);
+
+
 	//获取chipic的各种信息
 	neb::CJsonObject jsonObject(json);
 	std::string temp;
@@ -404,6 +404,29 @@ bool ChipicManager::dispoesStartChipicMessage(const std::string json)
 
 	jsonObject.Get("threadCount", temp);
 	int threadCount = std::stoi(temp);
+
+	//新建chipic对象
+	std::shared_ptr<Chipic> newChipic;
+	for (auto iter = waitStartChipic.begin(); iter != waitStartChipic.end(); iter++)
+	{
+		if ((*iter)->m3dPath == m3dPath)
+		{
+			newChipic = *iter;
+		}
+	}
+
+	//做错误处理
+	{
+		if (!newChipic)
+		{
+			auto msg = MessageTransition::creatCloseChipicJsonMessage(threadId);
+			auto sender = MessageSender::GetInstance();
+			sender->sendJsonMessage(msg);
+			std::cerr << "ChipicManager::dispoesStartChipicMessage not find new chipic!!" << std::endl;
+			return false;
+		}
+	}
+
 
 	newChipic->threadID = threadId;
 	newChipic->runState = true;
@@ -548,6 +571,12 @@ void ChipicManager::sendStartChipicMessage(const std::string& path, const int& t
 			return;
 		}
 	}
+	//新建chipic对象
+	std::shared_ptr<Chipic> newChipic(new Chipic);
+	newChipic->m3dPath = path;
+	waitStartChipic.push_back(newChipic);
+	if (runType == AUTO)
+		newChipic->setIsAuto(true);
 	
 	sender->sendJsonMessage(MessageTransition::creatRunChipicJsonMessage(path, threadCount));
 

@@ -101,6 +101,7 @@ void Chipic::init()
 	//chipic是否计算完成
 	chipicIsFinish = false;
 
+	isDisposCloseMessage = false;
 }
 
 
@@ -550,8 +551,15 @@ bool Chipic::disposChipicCloseWinMessage(const Message& msg)
 {
 	if (msg.Msg != 300 || msg.wParam != 200||msg.lParam !=1)
 		return false;
+	if (isDisposCloseMessage)
+		return false;
+	isDisposCloseMessage = true;
 	//如果状态为计算完成状态，则发送信号
-	emit workFinished();
+	if (chipicIsFinish)
+	{
+		emit workFinished();
+	}
+		
 
 	auto m = MessageTransition::creatCloseChipicJsonMessage(threadID);
 	auto sender = MessageSender::GetInstance();

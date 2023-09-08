@@ -111,6 +111,10 @@ public:
 	*/
 	//是否已完成计算
 	bool chipicIsFinish;
+	/*
+	* 关闭消息可能重复发送，记录处理标志，如果已经处理过了就不再处理了
+	*/
+	bool isDisposCloseMessage;
 	//迭代次数、当前迭代次数
 	int iterationCount, currentIteration;
 	//粒子数目
