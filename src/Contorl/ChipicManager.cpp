@@ -413,6 +413,7 @@ bool ChipicManager::dispoesStartChipicMessage(const std::string json)
 		{
 			newChipic = *iter;
 			waitStartChipic.erase(iter);
+			break;
 		}
 	}
 
