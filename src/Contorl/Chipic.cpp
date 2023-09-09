@@ -554,16 +554,16 @@ bool Chipic::disposChipicCloseWinMessage(const Message& msg)
 	if (isDisposCloseMessage)
 		return false;
 	isDisposCloseMessage = true;
+	
+	auto m = MessageTransition::creatCloseChipicJsonMessage(threadID);
+	auto sender = MessageSender::GetInstance();
+	sender->sendJsonMessage(m);
+
 	//如果状态为计算完成状态，则发送信号
 	if (chipicIsFinish)
 	{
 		emit workFinished();
 	}
-		
-
-	auto m = MessageTransition::creatCloseChipicJsonMessage(threadID);
-	auto sender = MessageSender::GetInstance();
-	sender->sendJsonMessage(m);
 	return true;
 }
 
