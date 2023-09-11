@@ -287,6 +287,17 @@ function resultDataFilter()
 	then
 		pgtF = F;
 		pgtFInit = false;
+		--保存最好的结果
+		saveResultToWorkPath(index,"best");
+		
+		pgtF = F;
+        local tempIndex = 1;
+        while(tempIndex < variateCount + 1)
+        do
+			variates[tempIndex].pgt = variates[tempIndex].variate[index + 1];
+			--cppPrint("pgtF="..F.."pgt="..variates[tempIndex].pgt)
+			tempIndex = tempIndex + 1;
+		end
 	end
 	
 	if(compareF(F,pgtF))
