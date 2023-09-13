@@ -42,6 +42,7 @@
 class SoTranslation;
 class SoTransform;
 class SoText2;
+class BackGroundTexture;
 namespace Quarter = SIM::Coin3D::Quarter;
 
 class SoSeparator;
@@ -447,6 +448,9 @@ private:
     friend class ViewerEventFilter;
     //backgrou textuer ID
     int backgroundTextuerID;
+
+    //…Ë÷√±≥æ∞Õº∆¨
+    BackGroundTexture* backGroundTexture;
 };
 
 } // namespace Gui

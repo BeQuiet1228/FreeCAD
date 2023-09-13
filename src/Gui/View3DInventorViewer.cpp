@@ -207,47 +207,123 @@ static unsigned char rotate_mask_bitmap[ROTATE_BYTES] = {
  0xf7,0x0f
 };
 
+class BackGroundTexture {
+public:
+    BackGroundTexture() {
+         data = stbi_load("./fs.png", &width, &height, &nrChannels, 0); // 加载PNG文件像素数据
+         if (data)
+         {
+             loadOk = true;
+         }
+         else {
+             loadOk = false;
+         }
+         textuerID = 0;
+    };
+    ~BackGroundTexture() {
+        stbi_image_free(data);
+    };
 
-// 加载PNG文件作为OpenGL纹理，并返回纹理ID
-unsigned int loadTexture(const char* path)
-{
-	unsigned int textureID; // 纹理ID
-	glGenTextures(1, &textureID); // 生成一个纹理ID
+    GLuint creatTextureID() {
+        GLuint textureID; // 纹理ID
+		glGenTextures(1, &textureID); // 生成一个纹理ID
 
-	int width, height, nrChannels;
-	unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 0); // 加载PNG文件像素数据
-	if (data) // 如果数据加载成功
+		if (loadOk) // 如果数据加载成功
+		{
+			GLenum format;
+			if (nrChannels == 1)
+				format = GL_RED;
+			else if (nrChannels == 3)
+				format = GL_RGB;
+			else if (nrChannels == 4)
+				format = GL_RGBA;
+
+			// 创建纹理
+			glBindTexture(GL_TEXTURE_2D, textureID);
+			glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+			// 设置纹理选项
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			// 释放图像数据
+			//stbi_image_free(data);
+		}
+		else // 如果加载失败
+		{
+			std::cout << "Failed to load texture" << std::endl;
+			//stbi_image_free(data);
+		}
+        return textureID;
+    
+    }
+
+	void orthogonalStart(const int& w1, const int& h1)
 	{
-		GLenum format;
-		if (nrChannels == 1)
-			format = GL_RED;
-		else if (nrChannels == 3)
-			format = GL_RGB;
-		else if (nrChannels == 4)
-			format = GL_RGBA;
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();
+		/*   gluOrtho2D(-w1 / 2, w1 / 2, -h1 / 2, h1 / 2);*/
+		glOrtho(-w1 / 2, w1 / 2, -h1 / 2, h1 / 2, -100, 100);
+		glMatrixMode(GL_MODELVIEW);
+	}
 
-		// 创建纹理
-		glBindTexture(GL_TEXTURE_2D, textureID);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+	void orthogonalEnd()
+	{
+		glMatrixMode(GL_PROJECTION);
+		glPopMatrix();
+		glMatrixMode(GL_MODELVIEW);
+	}
+
+
+	void background(const  int& w, const int& h, const int& textuer)
+	{
+		// texture width/height
+		const int width = 700;
+		const int height = 200;
+
+        if(textuerID)
+            glDeleteTextures(1, &textuerID);
+
+		textuerID= creatTextureID();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glBindTexture(GL_TEXTURE_2D, textuerID);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-		// 设置纹理选项
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		//even better quality, but this will do for now.
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		// 释放图像数据
-		//stbi_image_free(data);
+		//to the edge of our shape.
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		orthogonalStart(w, h);
+		glPushMatrix();
+		glTranslatef(-width / 2, -height / 2, -99);
+		glBegin(GL_QUADS);
+		glTexCoord2i(0, 0); glVertex2i(0, 0);
+		glTexCoord2i(1, 0); glVertex2i(width, 0);
+		glTexCoord2i(1, 1); glVertex2i(width, height);
+		glTexCoord2i(0, 1); glVertex2i(0, height);
+		glEnd();
+		glPopMatrix();
+
+		orthogonalEnd();
+		glBindTexture(GL_TEXTURE_2D, NULL);
 	}
-	else // 如果加载失败
-	{
-		std::cout << "Failed to load texture" << std::endl;
-		//stbi_image_free(data);
-	}
-
-	return textureID;
-}
+private:
+    int width, height, nrChannels;
+    unsigned char* data;
+    bool loadOk;
+    GLuint textuerID;
+};
 
 
 /*!
@@ -580,6 +656,9 @@ void View3DInventorViewer::init()
     cursor = QBitmap::fromData(QSize(PAN_WIDTH, PAN_HEIGHT), pan_bitmap);
     mask = QBitmap::fromData(QSize(PAN_WIDTH, PAN_HEIGHT), pan_mask_bitmap);
     panCursor = QCursor(cursor, mask, PAN_HOT_X, PAN_HOT_Y);
+
+
+    backGroundTexture = new BackGroundTexture();
 }
 
 View3DInventorViewer::~View3DInventorViewer()
@@ -1721,60 +1800,7 @@ int LoadTexture(const char* filename, int width, int height)
 	free(data); //释放纹理
 	return texture;
 }
-void orthogonalStart(const int& w1,const int& h1)
-{
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
- /*   gluOrtho2D(-w1 / 2, w1 / 2, -h1 / 2, h1 / 2);*/
-    glOrtho(-w1 / 2, w1 / 2, -h1 / 2, h1 / 2, -100, 100);
-	glMatrixMode(GL_MODELVIEW);
-}
 
-void orthogonalEnd()
-{
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-}
-
-
-void background(const  int &w,const int& h,const int& textuer)
-{
-	// texture width/height
-	const int width = 700;
-	const int height = 200;
-
-    int  t = loadTexture("./fs.png");
-	 glEnable(GL_BLEND);
-	 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	 glBindTexture(GL_TEXTURE_2D, t);
-	 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	 glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-	 //even better quality, but this will do for now.
-	 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	 //to the edge of our shape.
-	 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	orthogonalStart(w,h);
-	glPushMatrix();
-	glTranslatef(-width / 2, -height / 2, -99);
-	glBegin(GL_QUADS);
-	glTexCoord2i(0, 0); glVertex2i(0, 0);
-	glTexCoord2i(1, 0); glVertex2i(width, 0);
-	glTexCoord2i(1, 1); glVertex2i(width, height);
-	glTexCoord2i(0, 1); glVertex2i(0, height);
-	glEnd();
-	glPopMatrix();
-
-	orthogonalEnd();
-    glBindTexture(GL_TEXTURE_2D, NULL);
-}
 
 // #define ENABLE_GL_DEPTH_RANGE
 // The calls of glDepthRange inside renderScene() causes problems with transparent objects
@@ -1883,7 +1909,7 @@ void View3DInventorViewer::renderScene(void)
         draw2DString(stream.str().c_str(), SbVec2s(10,10), SbVec2f(0.1f,0.1f));
     }
 	glEnable(GL_TEXTURE_2D);
-    background(size[0], size[1],backgroundTextuerID);
+    backGroundTexture->background(size[0], size[1], backgroundTextuerID);
 
 #if 0 // this breaks highlighting of edges
     glEnable(GL_LIGHTING);
