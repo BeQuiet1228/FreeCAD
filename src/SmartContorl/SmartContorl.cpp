@@ -414,7 +414,7 @@ void SmartContorl::stop()
 bool SmartContorl::controlModIsRuning()
 {
 	auto control = ContorlInterface::GetInstance();
-	bool ok = control->hasChipicRuning();
+	bool ok = control->hasChipicRuning() || runing;
 	if (ok)
 	{
 		QMessageBox* msgBox = new QMessageBox;
