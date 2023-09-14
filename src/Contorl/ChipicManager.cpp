@@ -170,7 +170,9 @@ void ChipicManager::chipicWorkFinished()
 	if(!chipic->getIsAuto())
 		showWorkFinishedBox();
 	emit finishChipicM3dPath(chipic->threadID);
-	emit openH5Result(resultPath);
+	//如果为自动运行则不打开结果图文件
+	if(!chipic->getIsAuto())
+		emit openH5Result(resultPath);
 }
 
 /**

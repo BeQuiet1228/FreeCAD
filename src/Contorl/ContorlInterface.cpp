@@ -105,7 +105,15 @@ bool ContorlInterface::hasChipicRuning()
 */
 bool ContorlInterface::hasManualChipicRuning()
 {
-	return hasChipicRuning() && (getChipicManager()->getRunType() == ChipicManager::MANUAL);
+	if (getChipicManager()->getRunType() != ChipicManager::MANUAL)
+		return false;
+	for (auto iter = contorl->chipicManager.chipicMap.begin(); iter != contorl->chipicManager.chipicMap.end(); iter++)
+	{
+		if (iter->second->isWaitclose || iter->second->getIsAuto())
+			continue;
+		return true;
+	}
+	return false;
 }
 
 bool ContorlInterface::hasAutoChipicRuning()
