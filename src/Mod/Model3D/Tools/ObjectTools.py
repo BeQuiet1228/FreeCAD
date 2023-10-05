@@ -362,9 +362,34 @@ def updateWhenOrderChanged(obj, lastOrder, newOrder):
     """
     当Order发生变化时自动调整所有obj的Order
     """
+    # 首先判断newOrder, lastOrder均在合理范围内
+    if 0 <= newOrder < objNumbers:
+        pass
+    else:
+        FreeCAD.Console.PrintError("error:传入的order:  " + str(newOrder) + "不在合理范围内\n")
+        newOrder = objNumbers - 1
+
     ordered_list = getOrderedObjects()  # 已经排序的obj的list
     objNumbers = len(ordered_list)  # 当前所有obj的数量
-
+    tempOrder = 0
+    for i in ordered_list:
+        if i == obj:
+            if tempOrder != newOrder:
+                continue
+        if tempOrder == newOrder:
+            if i == obj:
+                i.Order = tempOrder
+                tempOrder = tempOrder + 1
+                continue
+            else:
+                obj.Order = tempOrder
+                tempOrder = tempOrder +1
+                i.Order = tempOrder
+                tempOrder = tempOrder +1
+                continue
+        i.Order = tempOrder
+        tempOrder = tempOrder +1
+    return
     if objNumbers == 1:
         obj.Order = 0
         return

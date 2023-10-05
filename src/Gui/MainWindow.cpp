@@ -1725,12 +1725,48 @@ void MainWindow::insertFromMimeData (const QMimeData * mimeData)
         App::Document* doc = App::GetApplication().getActiveDocument();
         if (!doc) doc = App::GetApplication().newDocument();
 
+       /*如果复制的对象有order属性，那么需要重新设置order的值
+       * 因为在读取数据之前就会将复制对象添加到doc中
+       * 所以需要在读取之前获取当前所有拥有order对象的数量
+       * 然后根据数量值往前增加
+       */
+        int orderObjectCount = 0;
+        {
+            auto allObjects= doc->getObjects();
+            for (auto iter = allObjects.begin(); iter != allObjects.end(); iter++)
+            {
+                auto pr = (*iter)->getPropertyByName("Order");
+                if (pr == nullptr)
+                    continue;
+                orderObjectCount++;
+            }
+        }
+        
+       
         doc->openTransaction("Paste");
         Base::ByteArrayIStreambuf buf(res);
         std::istream in(0);
         in.rdbuf(&buf);
         MergeDocuments mimeView(doc);
         std::vector<App::DocumentObject*> newObj = mimeView.importObjects(in);
+        //为复制的对象追加设置order属性
+        {
+            for (auto iter = newObj.begin(); iter != newObj.end(); iter++)
+            {
+                auto pr = (*iter)->getPropertyByName("Order");
+                if (pr != nullptr)
+                {
+                    if (pr->getTypeId() != App::PropertyInteger::getClassTypeId())
+                        continue;
+                    auto intPr = dynamic_cast<App::PropertyInteger*>(pr);
+                    if(!intPr)
+                        continue;
+                    intPr->setValue(orderObjectCount);
+                    orderObjectCount++;
+                }
+            }
+        }
+
         std::vector<App::DocumentObjectGroup*> grp = Gui::Selection().getObjectsOfType<App::DocumentObjectGroup>();
         if (grp.size() == 1) {
             Gui::Document* gui = Application::Instance->getDocument(doc);
