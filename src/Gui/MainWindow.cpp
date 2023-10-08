@@ -1772,6 +1772,8 @@ void MainWindow::insertFromMimeData (const QMimeData * mimeData)
             Gui::Document* gui = Application::Instance->getDocument(doc);
             if (gui)
                 gui->addRootObjectsToGroup(newObj, grp.front());
+            //复制之后刷新布尔运算
+            Gui::Application::Instance->commandManager().runCommandByName("UpdateBooleanCommand_3D");
         }
         doc->commitTransaction();
     }
