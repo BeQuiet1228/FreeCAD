@@ -378,10 +378,17 @@ void GeneticAlgorithm::optimize(SmartContorl* smartControl)
 			}
 		}
 		
+		/*
+		* 2023-10-31
+		* 这里需要限制的变量值不能超过个体的个数
+		* 因为后面生产个体时是直接使用变量数来生成的，这会到处个体数超过限制。
+		*/
 		for (auto i = 0; i < Variates.size(); i++)
 		{
-			Variates[i].values.push_back(newVars1[i]);
-			Variates[i].values.push_back(newVars2[i]);
+			if (Variates[i].values.size() < count)
+				Variates[i].values.push_back(newVars1[i]);
+			if (Variates[i].values.size() < count)
+				Variates[i].values.push_back(newVars2[i]);
 		}
 
 	}
