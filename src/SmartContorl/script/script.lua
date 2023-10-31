@@ -131,21 +131,16 @@ end
 end
 --保留五位数小数点的随机浮点数
 function randmoFloat(mini,max)
-	local bei = 100000;
-	local i = bei*mini;
-	local a = bei*max;
-	print(i);
-	print(a);
-	local rand = 0
-	if(i < a)
+	if(mini > max)
 	then
-		rand = math.random(math.floor(i),math.floor(a));
-	else
-		rand = math.random(math.floor(a),math.floor(i));
+		local temp = max
+		max = mini
+		mini = temp
 	end
 	
-	print("rand"..rand);
-	return rand/bei;
+	local randomValue = mini + math.random() * (max - mini)
+	print("rand value"..randomValue);
+	return randomValue;
 end
 --添加参数函数
 function addVar(name,max,mini,count)
