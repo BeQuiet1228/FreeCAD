@@ -106,8 +106,8 @@ bool ViewProviderDragger::doubleClicked(void)
 
 void ViewProviderDragger::setupContextMenu(QMenu* menu, QObject* receiver, const char* member)
 {
-    QAction* act = menu->addAction(QObject::tr("Transform"), receiver, member);
-    act->setData(QVariant((int)ViewProvider::Transform));
+    //QAction* act = menu->addAction(QObject::tr("Transform"), receiver, member);
+    //act->setData(QVariant((int)ViewProvider::Transform));
 }
 
 bool ViewProviderDragger::setEdit(int ModNum)

@@ -50,8 +50,8 @@ class VolComformal:
                         angle_start = fp.Point1Y.Value % 360.0
                         angle_end = fp.Point2Y.Value % 360.0
                         # 始末位置的角度，采用弧度制
-                        theta_start = (fp.Point1Y.Value % 360.0) * math.pi / 180.0
-                        theta_end = (fp.Point2Y.Value % 360.0) * math.pi / 180.0
+                        theta_start = (fp.Point1Y.Value % 360.01) * math.pi / 180.0
+                        theta_end = (fp.Point2Y.Value % 360.01) * math.pi / 180.0
                 else:
                     if fp.Point1Y.Value < 0 or fp.Point2Y < 0:
                         Tools3D.sayz(u"R不能为负")
@@ -65,13 +65,17 @@ class VolComformal:
                         maxRadius = max(fp.Point1Y.Value, fp.Point2Y.Value)
                         angle_start = fp.Point1Z.Value % 360.0
                         angle_end = fp.Point2Z.Value % 360.0
-                        theta_start = (fp.Point1Z.Value % 360.0) * math.pi / 180.0
-                        theta_end = (fp.Point2Z.Value % 360.0) * math.pi / 180.0
+                        theta_start = (fp.Point1Z.Value % 360.01) * math.pi / 180.0
+                        theta_end = (fp.Point2Z.Value % 360.01) * math.pi / 180.0
+
+
 
                 normalVec = FreeCAD.Vector(0, 0, height)
                 o_bottom = FreeCAD.Vector(0, 0, h_bottom)
                 o_top = FreeCAD.Vector(0, 0, h_top)
                 angle = math.fabs(theta_end - theta_start)
+                
+                Tools3D.sayz("s " + str(theta_start) + "    ,   e  " +str(theta_end) + "   a  " + str(angle))
 
                 # 建模(采用环形区域体Annular_Section建模方法)
                 if angle == 0:

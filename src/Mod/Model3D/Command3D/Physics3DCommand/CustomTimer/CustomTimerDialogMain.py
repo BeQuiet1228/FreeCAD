@@ -54,7 +54,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             self.obj.startTime = self.ui.LineEdit_start.text().replace(" ", "")
             self.obj.endTime = self.ui.LineEdit_end.text().replace(" ", "")
             self.obj.period = self.ui.LineEdit_period.text().replace(" ", "")
-            self.obj.DiscreteTime = self.ui.LineEdit_Discrete_time.text().replace(" ", "")
+            self.obj.DiscreteTime = self.ui.LineEdit_Discrete_time.text()
         except:
             Tools3D.sayz("CustomTimer加载数据时出现异常")
             Tools3D.sayz("error:" + traceback.format_exc())
