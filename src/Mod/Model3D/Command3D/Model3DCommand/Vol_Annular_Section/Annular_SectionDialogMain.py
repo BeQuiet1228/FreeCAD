@@ -85,9 +85,23 @@ class ShowDialog(BaseDialogMain.BaseModelDialog):
         judge = self.judgePoint()
         if judge:
             QtGui.QMessageBox.information(None, "", "无法有效绘制圆环体，请检查输入数据。")
-        else:
-            self.isKeepData = True
-            self.close()
+            return
+        if Tools3D.getCoordinateString() ==  u"Polar":
+            if self.obj.Point3Y > self.obj.Point4Y:
+                QtGui.QMessageBox.information(None, "", "point3 的theta值大于point4的theta值， 无法有效绘制圆环体。")
+                return
+            if self.obj.Point3Y > 360 or self.obj.Point4Y > 360:
+                QtGui.QMessageBox.information(None, "", "point3 point4的theta值大于360")
+                return
+        if Tools3D.getCoordinateString() ==  u"Cylindrical":
+            if self.obj.Point3Z > self.obj.Point4Z:
+                QtGui.QMessageBox.information(None, "", "point3 的theta值大于point4的theta值， 无法有效绘制圆环体。")
+                return
+            if self.obj.Point3Z > 360 or self.obj.Point4Z > 360:
+                QtGui.QMessageBox.information(None, "", "point3 point4的theta值大于360")
+                return
+        self.isKeepData = True
+        self.close()
 
     def judgePoint(self):
         if self.obj.Point1X.Value == self.obj.Point2X.Value and self.obj.Point1Y.Value == self.obj.Point2Y.Value and \

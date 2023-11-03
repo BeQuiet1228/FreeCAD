@@ -74,8 +74,6 @@ class VolComformal:
                 o_bottom = FreeCAD.Vector(0, 0, h_bottom)
                 o_top = FreeCAD.Vector(0, 0, h_top)
                 angle = math.fabs(theta_end - theta_start)
-                
-                Tools3D.sayz("s " + str(theta_start) + "    ,   e  " +str(theta_end) + "   a  " + str(angle))
 
                 # 建模(采用环形区域体Annular_Section建模方法)
                 if angle == 0:

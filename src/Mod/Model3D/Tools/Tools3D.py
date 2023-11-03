@@ -306,6 +306,8 @@ def getCoordinate():
         unitList = ["Z", "R", u"Theta", "m", "m", "deg"]
     return unitList
 
+def getCoordinateString():
+    return FreeCAD.ActiveDocument.CoordinateSystem
 
 def switchPointLabel(ui):
     """
