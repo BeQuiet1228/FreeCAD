@@ -76,17 +76,18 @@ class VolComformal:
                 angle = math.fabs(theta_end - theta_start)
 
                 # 建模(采用环形区域体Annular_Section建模方法)
-                if angle == 0:
+                if angle == 0 or 2*math.pi == math.fabs(angle):
                     # 夹角为0，则说明投影出的是一个完整的环形体
                     if minRadius == 0:
-                        minRadius = 0.00002
-                    e1 = Part.makeCircle(minRadius, o_bottom, normalVec)
-                    e2 = Part.makeCircle(maxRadius, o_bottom, normalVec)
-                    wires = [e1, e2]
-                    line = Part.makeLine(o_bottom, o_top)
-                    path = Part.Wire(line)
-                    shapeCircle = Part.makeFace(wires, "Part::FaceMakerBullseye")
-                    fp.Shape = path.makePipe(shapeCircle)
+                        fp.Shape = Part.makeCircle(maxRadius, o_bottom, normalVec)
+                    else:
+                        e1 = Part.makeCircle(minRadius, o_bottom, normalVec)
+                        e2 = Part.makeCircle(maxRadius, o_bottom, normalVec)
+                        wires = [e1, e2]
+                        line = Part.makeLine(o_bottom, o_top)
+                        path = Part.Wire(line)
+                        shapeCircle = Part.makeFace(wires, "Part::FaceMakerBullseye")
+                        fp.Shape = path.makePipe(shapeCircle)
                     return
                 else:
                     sinValue = math.sin(angle / 4.0)
