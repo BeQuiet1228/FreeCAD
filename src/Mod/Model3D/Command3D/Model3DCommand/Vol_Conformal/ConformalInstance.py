@@ -79,7 +79,12 @@ class VolComformal:
                 if angle == 0 or 2*math.pi == math.fabs(angle):
                     # 夹角为0，则说明投影出的是一个完整的环形体
                     if minRadius == 0:
-                        fp.Shape = Part.makeCircle(maxRadius, o_bottom, normalVec)
+                        e2 = Part.makeCircle(maxRadius, o_bottom, normalVec)
+                        wires = [e2]
+                        line = Part.makeLine(o_bottom, o_top)
+                        path = Part.Wire(line)
+                        shapeCircle = Part.makeFace(wires, "Part::FaceMakerBullseye")
+                        fp.Shape = path.makePipe(shapeCircle)
                     else:
                         e1 = Part.makeCircle(minRadius, o_bottom, normalVec)
                         e2 = Part.makeCircle(maxRadius, o_bottom, normalVec)
