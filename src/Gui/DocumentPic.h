@@ -35,7 +35,7 @@ public:
 	//显示G占优多目标遗传算法
 	void showMultipleTargetGeneticAlgorithmGView();
 	//检测加密狗是否存在
-	bool disposSuperDog();
+	static bool disposSuperDog();
 
 	//保存与另存为
 	virtual void save();

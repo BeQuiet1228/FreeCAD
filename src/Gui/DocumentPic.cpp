@@ -313,8 +313,6 @@ void DocumentPic::saveAs()
 bool DocumentPic::onMsg(const char* pMsg, const char** ppReturn)
 {
 	if (strcmp("Save", pMsg) == 0) {
-		if (!disposSuperDog())
-			return false;
 		this->save();
 		return true;
 	}

@@ -102,6 +102,8 @@ void Chipic::init()
 	chipicIsFinish = false;
 
 	isDisposCloseMessage = false;
+
+	this->errorExit = false;
 }
 
 

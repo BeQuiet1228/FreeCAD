@@ -115,6 +115,8 @@ public:
 	* 关闭消息可能重复发送，记录处理标志，如果已经处理过了就不再处理了
 	*/
 	bool isDisposCloseMessage;
+	//如果已经处理过错误退出消息则不再多次处理
+	bool errorExit;
 	//迭代次数、当前迭代次数
 	int iterationCount, currentIteration;
 	//粒子数目

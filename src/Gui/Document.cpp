@@ -640,6 +640,8 @@ App::Document* Document::getDocument(void) const
 /// Save the document
 bool Document::save(void)
 {
+	if (!DocumentPic::disposSuperDog())
+		return false;
     if (d->_pcDocument->isSaved()) {
         try {
             Gui::WaitCursor wc;

@@ -375,8 +375,15 @@ bool ChipicManager::disposeCloseChipicMessage(const DWORD& threadId, const int& 
 		/*这里增加一个判断，如果chipic的状态已经为false了，则不在处理异常退出消息*/
 	//	if (!chipic->second->runState)
 	//		return true;
+		//如果错误退出消息已经被处理过了，则不再重复处理
+		if (chipic->second->errorExit)
+			return true;
+		chipic->second->errorExit = true;
+
 		unsigned long id = chipic->second->threadID;
-		chipic->second->closeChipic();
+		auto msg = MessageTransition::creatCloseChipicJsonMessage(id);
+		auto sender = MessageSender::GetInstance();
+		sender->sendJsonMessage(msg);
 		emit chipicErrorClose(id);
 		showDailLog("提示", "chipic异常退出");
 		Contorl::closePlot();
