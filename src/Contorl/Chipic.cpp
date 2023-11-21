@@ -8,6 +8,7 @@
 #include <QVBoxLayout>
 #include "MessageTransition.h"
 #include "MessageSender.h"
+#include "JsonMessageGetter.h"
 #include <QFileInfo>
 #include <QProcess>
 #include <QMessageBox>
@@ -104,6 +105,8 @@ void Chipic::init()
 	isDisposCloseMessage = false;
 
 	this->errorExit = false;
+
+	watchDog = 6;
 }
 
 
@@ -577,6 +580,9 @@ void Chipic::restartTimeoutTimer()
 
 void Chipic::disposJsonMessage(const std::string& json)
 {
+	//喂狗
+	watchDog = 9;
+
 	Message msg = MessageTransition::jsonToWinMessage(json);
 	//处理提示消息
 	if (disposHintMessage(msg))
@@ -725,8 +731,24 @@ void Chipic::timerOut()
 	/* 2020.12.22 更新
 		加上宏判断，避免在生成exe做调试的时候输出过多的调试信息，影响判断
 	*/
+	/*
+	* 2023-11-20
+	* 增加看门狗机制
+	* 这个机制为了解决内核在出现错误且进程又没有退出的情况
+	* 在这里将看门狗标标志-1，如果看门狗标志 <0 ,那么表示内核程序出现错误
+	*/
+
 #ifndef _CONTORL_EXE_
-	this->sendMessage(886, 886, 886, this->threadID);
+	//this->sendMessage(886, 886, 886, this->threadID);
+
+	watchDog--;
+	//如果看门狗小于0，那么发送一个错误退出消息
+	if (watchDog < 0)
+	{
+		auto msg =  MessageTransition::creatCloseChipicJsonMessage(threadID,1);
+		JsonMessageGetter::GetInstance()->addJsonMessage(msg);
+	}
+		
 #endif
 }
 

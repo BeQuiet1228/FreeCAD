@@ -132,11 +132,34 @@ void SmartContorl::runChipic()
 */
 void SmartContorl::dataOptimize()
 {
+	/*
+	* 2023-11-20
+	* 如果在优化中出现错误退出的情况，那么不处理H5数据，直接重新调用优化函数
+	* 这个操作等效于重新生成优化的参数
+	*/
+
+	if (optimizeCurse->hasError())
+	{
+		optimizeCurse->setHasError(false);
+		//调用优化算法对参数进行优化
+		//如果还没有优化过则调用初始化函数
+		if (historyDatas.size() == 0)
+			optimizeCurse->init(this);
+		else
+			optimizeCurse->optimize(this);
+		//清理掉之前已完成的数据
+		this->chipicDataFinish.clear();
+		//运行优化之后的参数
+		this->makeRunData();
+		this->runChipic();
+		return;
+	}
+
 	//运算结果数据筛选
 	bool ok = resultDataFilter();
 	//清理h5对象 这个暂时放在这里，后续应当写到lua脚本中
 	SmartContorlData::GetInstance()->clearH5Object();
-	//如果结果数据筛选失败，那么给出提示
+	//如果结果数据筛选失败，那么给出提示,或者运行出现错误
 	if (!ok)
 	{
 // 		QMessageBox* msgBox = new QMessageBox;
@@ -592,7 +615,22 @@ void SmartContorl::chipicAnalysisFinished(unsigned long threadID)
 
 void SmartContorl::chipicErrorClose(unsigned long threadID)
 {
-	std::cerr << "Error exit!" << std::endl;
+	std::cerr << "Call SmartContorl::chipicErrorClose" << std::endl;
+#if 1
+	/*
+	* 2023-11-20
+	* 修改对优化过程中错误退出的处理方式
+	* 出现错误时不再重新使用当前文本启动内核
+	* 而是重新启动优化函数，生成新的文本进行优化
+	* 这样是为了避免因为生成参数的原因导致的错误退出，会导致每次重新生成依然会出现问题。
+	*/
+	//设置错误
+	optimizeCurse->setHasError(true);
+	chipicWorkFinished(threadID);
+	return;
+#endif
+
+
 	//找到chipicdata对象
 	auto dataIter = chipicDataRuning.begin();
 	for (; dataIter != chipicDataRuning.end(); dataIter++)
@@ -604,7 +642,6 @@ void SmartContorl::chipicErrorClose(unsigned long threadID)
 		return;
 	auto chipicData = dataIter->second;
 	chipicData->deleteItemAndBarPtr();
-
 	/*
 		判断错误重启的次数，如果超过三次，则判定这个文本有问题。给出提示并停止优化
 	*/

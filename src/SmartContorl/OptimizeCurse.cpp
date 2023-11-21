@@ -7,6 +7,11 @@ extern "C" {
 #include <iostream>
 #include "LuaCInterface.h"
 
+class OptimizeCurseD {
+public:
+	bool hasError;
+};
+
 OptimizeCurseLua::OptimizeCurseLua()
 {
 	lua_state = luaL_newstate();
@@ -110,3 +115,23 @@ void OptimizeCurseLua::callLuaFunction(const std::string& functionName, const in
 	printLuaError(erro);
 }
 
+OptimizeCurse::OptimizeCurse()
+{
+	d = new OptimizeCurseD();
+	d->hasError = false;
+}
+
+OptimizeCurse::~OptimizeCurse()
+{
+	delete d;
+}
+
+bool OptimizeCurse::hasError()
+{
+	return d->hasError;
+}
+
+void OptimizeCurse::setHasError(const bool& b)
+{
+	d->hasError = b;
+}

@@ -137,6 +137,8 @@ public:
 	std::string m3dPath;
 	//定时检查内核是否还在运行
 	QTimer * timer;
+	//看门狗标志
+	int watchDog;
 public:
 	void disposJsonMessage(const std::string& json);
 	
