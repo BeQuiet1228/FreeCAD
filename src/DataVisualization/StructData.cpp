@@ -26,7 +26,9 @@ namespace DV {
 	* @param DirectionType _type ·½Ïò
 	* @param const RunMod& mod
 	*/
-	StructData::StructData(Hdf5Data& heData, DirectionType _type, const RunMod& mod) :XYData(heData, mod), istrue(false),
+	StructData::StructData(Hdf5Data& heData, DirectionType _type, 
+		const bool& useAnchor,const float& achor,const RunMod & mod) 
+		:XYData(heData, mod), istrue(useAnchor),_face_point_index(achor),
 		isloadRoom(false) {
 		switch (heData.coordinateSystem)
 		{

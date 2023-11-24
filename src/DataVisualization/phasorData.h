@@ -27,6 +27,8 @@ namespace DV {
 			sizeToLen,
 			sizeToColor = 1,
 		};
+		
+		float getStructFaceAnchor();
 	protected:
 
 		virtual void restorDeriveData() override;

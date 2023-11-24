@@ -47,17 +47,35 @@ namespace DV {
 		if (renderer->getNeedStrucuType() != Data::NEED_STRUCT)
 			return renderers;
 		//如果是等位图，那么必须使用观测面初始化结构图
-		auto contourRender = std::dynamic_pointer_cast<ContourRender>(renderer);
-
-		if (contourRender)
 		{
-			auto sRender = creatContourStructRender(contourRender);
-			if (sRender)
+			auto contourRender = std::dynamic_pointer_cast<ContourRender>(renderer);
+
+			if (contourRender)
 			{
-				renderers.push_back(sRender);
-				return renderers;
+				auto sRender = creatContourStructRender(contourRender);
+				if (sRender)
+				{
+					renderers.push_back(sRender);
+					return renderers;
+				}
 			}
 		}
+		//如果是矢量图那么需要使用锚点生成
+		{
+			auto vectorRender = std::dynamic_pointer_cast<phasorRenderer>(renderer);
+			if (vectorRender){
+				auto sRender = creatStructRenderWithAnchor(structData, vectorRender->getStructFaceAnchor(),
+					renderer->getDirection()
+				);
+
+				if (sRender)
+				{
+					renderers.push_back(sRender);
+					return renderers;
+				}
+			}
+		}
+
 
 		RendererPtr structRenderer = creatRenderer(structData, renderer->getDirection());
 		renderers.push_back(structRenderer);
@@ -147,6 +165,24 @@ namespace DV {
 		InterspaceData* data = new InterspaceData(h5d);
 		return DataPtr(data);
 	}
+
+	RendererPtr RendererFactory::creatStructRenderWithAnchor(Hdf5Data h5d, const float& anchor, DirectionType type /*= X_Y*/)
+	{
+		//需要判断结构图是2维的还是3维的
+		if (h5d.listDataSet.size() > 3)
+		{
+			std::shared_ptr<StructData> _structdata(new StructData(h5d, type,true,anchor));
+			StructRender* _StructureRenderer = new StructRender(_structdata);
+			return RendererPtr(_StructureRenderer);
+		}
+		else
+		{
+			std::shared_ptr<Struct2dData> _structdata(new Struct2dData(h5d));
+			Struct2DRenderer* _struct2drenderer = new Struct2DRenderer(_structdata);
+			return RendererPtr(_struct2drenderer);
+		}
+	}
+
 	RendererPtr RendererFactory::creatStructRender(Hdf5Data h5d, DirectionType type)
 	{
 		//需要判断结构图是2维的还是3维的

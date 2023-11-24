@@ -7,6 +7,34 @@ namespace DV {
 	}
 	phasorData::~phasorData() {
 	}
+
+	float phasorData::getStructFaceAnchor()
+	{
+		if (headList.size() < 16)
+			return 0;
+		
+
+		QString qstr = QString::fromStdString(headList[15]);
+		QStringList sl = qstr.split(",");
+		if (sl.size() != 2)
+			return 0;
+		qstr = sl[0];
+		auto str = qstr.toStdString();
+		sl = qstr.split("(");
+		if (sl.size() != 2)
+			return 0;
+		qstr = sl[0];
+		str = qstr.toStdString();
+		sl = qstr.split("=");
+		if (sl.size() != 3)
+			return 0;
+		auto value = sl[2];
+		str = value.toStdString();
+
+		return value.toFloat();
+	}
+
+
 	void phasorData::restorDeriveData()
 	{
 

@@ -454,4 +454,11 @@ namespace DV {
 		std::shared_ptr<phasorData> d = std::dynamic_pointer_cast<phasorData>(data);
 		return d->GetdisMode();
 	}
+
+	float phasorRenderer::getStructFaceAnchor()
+	{
+		std::shared_ptr<phasorData> d = std::dynamic_pointer_cast<phasorData>(data);
+		return d->getStructFaceAnchor();
+	}
+
 };

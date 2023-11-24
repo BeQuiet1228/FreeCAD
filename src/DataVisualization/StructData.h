@@ -93,7 +93,8 @@ namespace DV {
 			PORT_Y,
 			PORT_BAD
 		};
-		StructData(Hdf5Data& heData, DirectionType _type, const RunMod& mod = SINGLE_THREAD);
+		StructData(Hdf5Data& heData, DirectionType _type,const bool& useAnchor = false,
+			const float& achor = 0.0, const RunMod& mod = SINGLE_THREAD);
 		StructData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf endpoint, const RunMod& mod = SINGLE_THREAD);
 	public:
 		virtual bool loadPoint();
