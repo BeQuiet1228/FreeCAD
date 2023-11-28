@@ -236,6 +236,57 @@ namespace DV {
 		}
 		return axis_ylist;
 	}
+
+	bool phasorData::getDataDirection()
+	{
+		if (this->headList.size() < 11)
+			return false;
+		QString str = QString::fromStdString(this->headList[11]);
+		auto sl = str.split("(");
+		if (sl.size() < 2)
+			return false;
+		str = sl[1];
+		sl = str.split(",");
+		if (sl.size() < 2)
+			return false;
+		str = sl[0];
+		str = str.right(str.size() - 1);
+
+		std::string s = str.toStdString();
+
+		if (s == "x")
+		{
+			if (std::string::npos == getXTag().find("X"))
+				return false;
+			return true;
+		}
+		else if(s == "y")
+		{
+			if (std::string::npos == getXTag().find("Y"))
+				return false;
+			return true;
+		}
+		else if (s == "z")
+		{
+			if (std::string::npos == getXTag().find("Z"))
+				return false;
+			return true;
+		}
+		else if (s == "phi")
+		{
+			if (std::string::npos == getXTag().find("sin"))
+				return false;
+			return true;
+		}
+		else if (s == "rho")
+		{
+			if (std::string::npos == getXTag().find("cos"))
+				return false;
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	* @brief phasorData::getAllCutRoom 获取全部切割空间
 	* @return QVector<QRectF>
@@ -269,6 +320,21 @@ namespace DV {
 			datasetEmB = *iter; iter++;
 			datasetEmC = *iter;
 		}
+#if 0
+		//如果数据与结构是反的，那么需要对调场数据
+		if (!getDataDirection())
+		{
+			auto size = datasetEmC->size() / 2;
+			float temp = 0;
+			for (int i = 0; i < size; i++)
+			{
+				temp = (*datasetEmC)[i];
+				(*datasetEmC)[i] = (*datasetEmC)[i + size];
+				(*datasetEmC)[i + size] = temp;
+			}
+		}
+#endif
+
 		if (mPiflist_rect.empty())
 			return false;
 		//获取起点p1

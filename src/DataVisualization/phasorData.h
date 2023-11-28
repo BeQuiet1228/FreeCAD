@@ -41,6 +41,8 @@ namespace DV {
 		//获取坐标的刻度
 		std::vector<qreal> getaxis_x();
 		std::vector<qreal> getaxis_y();
+		//检查结构数据和场数据是否是相反的
+		bool getDataDirection();
 	public:
 		virtual bool loadPoint();
 		virtual unsigned int findIndexFromXValueL(const float& x) override;
