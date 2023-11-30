@@ -209,7 +209,11 @@ then
 	loadVarToFile();
  end
  
- local index = 1;
+	addVarToCpp();
+end
+
+function addVarToCpp()
+local index = 1;
  while(index < variateCount + 1)
  do
 	--输出参数值
@@ -226,6 +230,7 @@ then
 	index = index + 1;
  end
 end
+
 function resultDataFilter()
  getAllResult();
  while(nextResult())
@@ -316,7 +321,7 @@ function resultDataFilter()
         while(tempIndex < variateCount + 1)
         do
 			variates[tempIndex].pgt = variates[tempIndex].variate[index + 1];
-			cppPrint("pgtF="..F.."pgt="..variates[tempIndex].pgt)
+			--cppPrint("pgtF="..F.."pgt="..variates[tempIndex].pgt)
 			tempIndex = tempIndex + 1;
 		end
 	end
@@ -331,7 +336,7 @@ function resultDataFilter()
         while(tempIndex < variateCount + 1)
         do
 			variates[tempIndex].pgt = variates[tempIndex].variate[index + 1];
-			cppPrint("pgtF="..F.."pgt="..variates[tempIndex].pgt)
+			--cppPrint("pgtF="..F.."pgt="..variates[tempIndex].pgt)
 			tempIndex = tempIndex + 1;
 		end
     end
@@ -416,5 +421,5 @@ function optimize()
 	 variateIndex = variateIndex + 1;
  end
  saveVarToFile();
- init();
+ addVarToCpp();
 end
