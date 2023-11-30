@@ -7,6 +7,8 @@ pgtF = 0;
 pgtFInit = true;
 pitF = 0;
 valueCount = 0;
+--还未初始化的参数
+variatesConfig = {}
 --获取F得定义
 function getF(minif,maxf,avf)
 	if(fmod == 0)
@@ -142,8 +144,23 @@ function randmoFloat(mini,max)
 	print("rand value"..randomValue);
 	return randomValue;
 end
---添加参数函数
+
+--添加参数配置
 function addVar(name,max,mini,count)
+	local var = {};
+	var.name = name;
+	var.max = max;
+	var.mini = mini;
+	var.count = count;
+	
+	variateCount= variateCount + 1;
+	variatesConfig[variateCount] = var;
+	valueCount = count;
+	
+end
+
+--添加参数函数
+function addVarInformation(name,max,mini,count,index)
     local var = {};
     local i = 1;
 	local v = {};
@@ -167,22 +184,31 @@ function addVar(name,max,mini,count)
     var.name = name;
     var.max = max;
     var.mini = mini;
-    variateCount = variateCount + 1;
-    variates[variateCount] = var;
-	valueCount = count;
+
+    variates[index] = var;
 	
 	print("------");
 end
 function rand()
 	return math.random();
 end
+
+function generateVariarte()
+	for i = 1, #variatesConfig do
+		local var = variatesConfig[i];
+		addVarInformation(var.name,var.max,var.mini,var.count,i);
+	end
+end
+
 function init()
  
+ generateVariarte()
  --判断是否按上次的优化数据继续优化
  if(continue)
- then
+then
 	loadVarToFile();
  end
+ 
  local index = 1;
  while(index < variateCount + 1)
  do
@@ -290,7 +316,7 @@ function resultDataFilter()
         while(tempIndex < variateCount + 1)
         do
 			variates[tempIndex].pgt = variates[tempIndex].variate[index + 1];
-			--cppPrint("pgtF="..F.."pgt="..variates[tempIndex].pgt)
+			cppPrint("pgtF="..F.."pgt="..variates[tempIndex].pgt)
 			tempIndex = tempIndex + 1;
 		end
 	end
@@ -305,7 +331,7 @@ function resultDataFilter()
         while(tempIndex < variateCount + 1)
         do
 			variates[tempIndex].pgt = variates[tempIndex].variate[index + 1];
-			--cppPrint("pgtF="..F.."pgt="..variates[tempIndex].pgt)
+			cppPrint("pgtF="..F.."pgt="..variates[tempIndex].pgt)
 			tempIndex = tempIndex + 1;
 		end
     end
