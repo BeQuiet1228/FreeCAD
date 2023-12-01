@@ -163,6 +163,7 @@ namespace DV {
 					_rectf.setRight(valuesA_list[valueA + 1]);
 					_rectf.setTop(valueB_list[valueB + 1]);
 					_rectf.setBottom(valueB_list[valueB]);
+					_rectf.translate(_rectf.width() / 2, _rectf.height() / 2);
 					mPiflist_rect.push_back(_rectf);
 				}
 			}
@@ -179,6 +180,7 @@ namespace DV {
 					_rectf.setRight(valuesA_list[valueA + 1]);
 					_rectf.setTop(valueB_list[valueB + 1]);
 					_rectf.setBottom(valueB_list[valueB]);
+					_rectf.translate(_rectf.width() / 2, _rectf.height() / 2);
 					mPiflist_rect.push_back(_rectf);
 				}
 			}
