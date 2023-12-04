@@ -150,20 +150,28 @@ namespace DV {
 		//获取y轴上的全部点
 		std::vector<qreal> valueB_list = getaxis_y();
 		//获取全部的切割空间
+		float width = 0, hieght = 0;
+		if (valueB_list.size() < 2)
+			return false;
+		if (valuesA_list.size() < 2)
+			return false;
+		width = abs(valuesA_list[1] - valuesA_list[0]);
+		hieght = abs(valueB_list[1] - valueB_list[0]);
+
 #pragma region 
 		if (this->istrue)
 		{
-			for (auto valueA = 0; valueA < valuesA_list.size() - 1; valueA++)
+			for (auto valueA = 0; valueA < valuesA_list.size(); valueA++)
 			{
-				for (auto valueB = 0; valueB < valueB_list.size() - 1; valueB++)
+				for (auto valueB = 0; valueB < valueB_list.size(); valueB++)
 				{
 					//获取切割矩形
 					QRectF _rectf;
-					_rectf.setLeft(valuesA_list[valueA]);
-					_rectf.setRight(valuesA_list[valueA + 1]);
-					_rectf.setTop(valueB_list[valueB + 1]);
-					_rectf.setBottom(valueB_list[valueB]);
-					_rectf.translate(_rectf.width() / 2, _rectf.height() / 2);
+					_rectf.setX(valuesA_list[valueA]);
+					_rectf.setY(valueB_list[valueB]);
+					_rectf.setWidth(width);
+					_rectf.setHeight(hieght);
+					//_rectf.translate(_rectf.width() / 2, _rectf.height() / 2);
 					mPiflist_rect.push_back(_rectf);
 				}
 			}
@@ -176,11 +184,11 @@ namespace DV {
 				{
 					//获取切割矩形
 					QRectF _rectf;
-					_rectf.setLeft(valuesA_list[valueA]);
-					_rectf.setRight(valuesA_list[valueA + 1]);
-					_rectf.setTop(valueB_list[valueB + 1]);
-					_rectf.setBottom(valueB_list[valueB]);
-					_rectf.translate(_rectf.width() / 2, _rectf.height() / 2);
+					_rectf.setX(valuesA_list[valueA]);
+					_rectf.setY(valueB_list[valueB]);
+					_rectf.setWidth(width);
+					_rectf.setHeight(hieght);
+					//_rectf.translate(_rectf.width() / 2, _rectf.height() / 2);
 					mPiflist_rect.push_back(_rectf);
 				}
 			}
@@ -207,7 +215,6 @@ namespace DV {
 			iter++;
 		}
 		Data::ValuesPtr datasetEmA = *iter;
-		axis_xlist.push_back(0);
 		for (auto iter_A = datasetEmA->begin(); iter_A != datasetEmA->end(); iter_A++)
 		{
 			axis_xlist.push_back(*iter_A);
@@ -231,7 +238,6 @@ namespace DV {
 			iter++;
 		}
 		Data::ValuesPtr datasetEmB = *iter;
-		axis_ylist.push_back(0);
 		for (auto iterb = datasetEmB->begin(); iterb != datasetEmB->end(); iterb++)
 		{
 			axis_ylist.push_back(*iterb);
@@ -345,7 +351,7 @@ namespace DV {
 			dataC.push_back(*iterC);
 		for (auto i = 0; i < mPiflist_rect.size(); i++)
 		{
-			p1.push_back(QPointF(mPiflist_rect[i].left(), mPiflist_rect[i].bottom()));
+			p1.push_back(QPointF(mPiflist_rect[i].x(), mPiflist_rect[i].y()));
 		}
 		float Svector = 0;//最大系数
 		unsigned int index_vector = 0;//
