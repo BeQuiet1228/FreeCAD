@@ -110,6 +110,10 @@ namespace DV {
 			yr.min = *(datasetEmA->begin());
 			yr.max = *(datasetEmA->end() - 1);
 			setYRang(yr);
+
+			auto xTag = getXTag();
+			setXTag(getYTag());
+			setYTag(xTag);
 		}
 		else
 		{
