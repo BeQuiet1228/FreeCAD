@@ -178,9 +178,9 @@ namespace DV {
 		}
 		else
 		{
-			for (auto valueB = 0; valueB < valueB_list.size() - 1; valueB++)
+			for (auto valueB = 0; valueB < valueB_list.size(); valueB++)
 			{
-				for (auto valueA = 0; valueA < valuesA_list.size() - 1; valueA++)
+				for (auto valueA = 0; valueA < valuesA_list.size(); valueA++)
 				{
 					//»ñÈ¡ÇÐ¸î¾ØÐÎ
 					QRectF _rectf;
