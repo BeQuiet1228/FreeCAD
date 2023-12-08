@@ -739,9 +739,9 @@ void Chipic::timerOut()
 	*/
 
 #ifndef _CONTORL_EXE_
-	//this->sendMessage(886, 886, 886, this->threadID);
+	this->sendMessage(886, 886, 886, this->threadID);
 	//如果程序是暂停状态不执行看门狗判断
-	if (this->pausState)
+	if (this->pausState && !isAuto)
 		return;
 	watchDog--;
 	//如果看门狗小于0，那么发送一个错误退出消息
