@@ -458,6 +458,12 @@ def parseExpressionStr(expressionStr):
     resultExpressionStr = re.sub("\\b\\*\\*\\b","^",resultExpressionStr,flags=re.IGNORECASE)
     for propertyItem in propertyList:
         resultExpressionStr = re.sub("\\b" + propertyItem + "\\b",str(getattr(paramObj, propertyItem)),resultExpressionStr,flags=re.IGNORECASE)
+    #特殊字符全部改为小写
+    resultExpressionStr = resultExpressionStr.lower()
+    #去掉deg
+    resultExpressionStr = re.sub("deg\\b","",resultExpressionStr,flags=re.IGNORECASE)
+    #theta替换为t
+    resultExpressionStr = re.sub("\\btheta\\b","t",resultExpressionStr,flags=re.IGNORECASE)
     FreeCAD.Console.PrintError(resultExpressionStr)
     return resultExpressionStr
 
