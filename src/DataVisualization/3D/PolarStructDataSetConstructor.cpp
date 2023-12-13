@@ -46,7 +46,7 @@ vtkSmartPointer<vtkDataSet> DV3D::PolarStructDaraSetConstruct::creatDataset() {
 		long long rIndex = iter[1];
 		long long thetaIndex = iter[2];
 		long long type = iter[3];
-		if (((iter)[3] & 0x03) != 0x03)
+		if (((iter)[3] & 0x03) != 0x03 && ((iter)[3] & 0x08) != 0x08)
 			continue;
 		if (zIndex == zSize || rIndex == rSize || thetaIndex == thetaSize)
 			continue;

@@ -27,7 +27,7 @@ vtkSmartPointer<vtkDataSet> DV3D::CylinderPlanConstruct::creatDataset()
 		long long rIndex = i[1];
 		long long thetaIndex = i[2];
 		long long type = i[3];
-		if ((type & 0x03) != 0x03)
+		if ((type & 0x03) != 0x03 && (type & 0x08) != 0x08)
 			continue;
 		if (zIndex == zSize || rIndex == rSize || thetaIndex == thetaSize)
 			continue;
