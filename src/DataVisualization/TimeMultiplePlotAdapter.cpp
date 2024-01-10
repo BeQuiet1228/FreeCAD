@@ -63,10 +63,9 @@ void DV::TimeMultiplePlotAdapter::findPointRender(const float& x, const float& y
 	
 	//获取离点击坐标最近的点
 	int minIndex = 0;
-	double minDistance = 999999999;
-	//如果只有一个渲染器，那么默认为0
+	double minDistance = renderers[0]->getDistance(futuers[0].result(), point);
 
-	for (int i = 1; i < renderers.size(); i++)
+	for (int i = 0; i < renderers.size(); i++)
 	{
 		double distance = renderers[i]->getDistance(futuers[i].result(), point);
 		if (distance < minDistance)

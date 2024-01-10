@@ -264,10 +264,11 @@ namespace DV {
 			2. 给定一个正方形边长的初始长度。
 			3. 如果在第一个区域中为找到一个点，那么增加正方形边长，继续寻找。
 			4. 当在某个区域中找到一些点之后，将这些点与点击点的距离算出来比较，得出最近点。
+			5. 为了防止程序进入死循环，在循环中设置rank 小于10
 		*/
 
 		std::list<QPointF> points;	//区域中的点
-		for (unsigned int rank = 1; points.size() == 0; rank++)
+		for (unsigned int rank = 1; points.size() == 0 && rank < 10; rank++)
 		{
 			//正常行边长
 			unsigned long riseLength = 10 * pow(2, rank);
@@ -293,7 +294,7 @@ namespace DV {
 
 			//寻找区域中的点
 			QPointF p;
-			for (int index = startIndex; index < endIndex; index++)
+			for (int index = startIndex; index <= endIndex; index++)
 			{
 				p = timeData->getPoint(index);
 				float y = (p.y() - yr.min) * yScale;
@@ -304,6 +305,9 @@ namespace DV {
 
 		}
 
+		//如果没有找到任何一个点，那么返回数据中的第一个点
+		if (points.size() == 0)
+			return timeData->getPoint(0);
 		//距离
 		float minDistance;
 		QPointF temp;
