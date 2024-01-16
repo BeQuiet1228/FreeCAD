@@ -19,6 +19,7 @@
 #include "AboutParameter.h"
 #include "dlgchangenamedialog.h"
 #include <sstream>
+#include "Transition/transition.h"
 
 
 //#include "DlgExpressionInput.h"
@@ -200,6 +201,12 @@ bool MyParameter::isValidWithName(int row) {
             res = true;
         }
     }
+	//FreeCAD的bug,不能使用h作为变量名
+    if (param_name == "h" || param_name == "H")
+    {
+        showNameErorrDailog();
+        res = false;
+    }
     return res;
 }
 
@@ -217,6 +224,12 @@ bool MyParameter::isValidWithName(const std::string& param_name, int row) {
             res = true;
         }
     }
+	//FreeCAD的bug,不能使用h作为变量名
+	if (param_name == "h" || param_name == "H")
+	{
+		showNameErorrDailog();
+		res = false;
+	}
     return res;
 }
 
@@ -227,6 +240,12 @@ bool MyParameter::isValidWithName(const std::string& param_name) {
     if ((!param_name.empty()) && (std::regex_match(param_name, r))) {
         res = true;
     }
+	//FreeCAD的bug,不能使用h作为变量名
+	if (param_name == "h" || param_name == "H")
+	{
+		showNameErorrDailog();
+		res = false;
+	}
     return res;
 }
 
@@ -741,7 +760,6 @@ void MyParameter::insertParam() {
     QString name = this->insert_param_dlg->getName();
     int row = this->insert_param_dlg->getRow();
     if (!this->isValidWithName(name.toStdString(), row)) {
-        // 变量名无效，无法插入变量，将错误信息反馈给用户
         return;
     }
     if (row >= 0 && row <= this->tableWidget->rowCount() - 1) {
@@ -1034,6 +1052,26 @@ void MyParameter::copyParam() {
     QClipboard* clipboard = QApplication::clipboard();
     QString clipNewText = this->tableWidget->currentItem()->text();
     clipboard->setText(clipNewText);
+}
+
+void MyParameter::showNameErorrDailog()
+{
+	QMessageBox msgBox;
+
+	// 设置提示框的标题
+	msgBox.setWindowTitle(gbkStdstringToQstring("提示"));
+
+	// 设置提示框的文本消息
+	msgBox.setText(gbkStdstringToQstring("变量名非法，或者与系统变量重名！"));
+
+	// 设置按钮
+	msgBox.setStandardButtons(QMessageBox::Ok );
+
+	// 设置默认按钮
+	msgBox.setDefaultButton(QMessageBox::Ok);
+
+	// 获取用户的响应
+	int ret = msgBox.exec();
 }
 
 //用户选中向上插入参数
