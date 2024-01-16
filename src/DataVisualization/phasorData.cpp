@@ -7,6 +7,34 @@ namespace DV {
 	}
 	phasorData::~phasorData() {
 	}
+
+	float phasorData::getStructFaceAnchor()
+	{
+		if (headList.size() < 16)
+			return 0;
+		
+
+		QString qstr = QString::fromStdString(headList[15]);
+		QStringList sl = qstr.split(",");
+		if (sl.size() != 2)
+			return 0;
+		qstr = sl[0];
+		auto str = qstr.toStdString();
+		sl = qstr.split("(");
+		if (sl.size() != 2)
+			return 0;
+		qstr = sl[0];
+		str = qstr.toStdString();
+		sl = qstr.split("=");
+		if (sl.size() != 3)
+			return 0;
+		auto value = sl[2];
+		str = value.toStdString();
+
+		return value.toFloat();
+	}
+
+
 	void phasorData::restorDeriveData()
 	{
 
@@ -82,6 +110,10 @@ namespace DV {
 			yr.min = *(datasetEmA->begin());
 			yr.max = *(datasetEmA->end() - 1);
 			setYRang(yr);
+
+			auto xTag = getXTag();
+			setXTag(getYTag());
+			setYTag(xTag);
 		}
 		else
 		{
@@ -122,35 +154,45 @@ namespace DV {
 		//获取y轴上的全部点
 		std::vector<qreal> valueB_list = getaxis_y();
 		//获取全部的切割空间
+		float width = 0, hieght = 0;
+		if (valueB_list.size() < 2)
+			return false;
+		if (valuesA_list.size() < 2)
+			return false;
+		width = abs(valuesA_list[1] - valuesA_list[0]);
+		hieght = abs(valueB_list[1] - valueB_list[0]);
+
 #pragma region 
 		if (this->istrue)
 		{
-			for (auto valueA = 0; valueA < valuesA_list.size() - 1; valueA++)
+			for (auto valueA = 0; valueA < valuesA_list.size(); valueA++)
 			{
-				for (auto valueB = 0; valueB < valueB_list.size() - 1; valueB++)
+				for (auto valueB = 0; valueB < valueB_list.size(); valueB++)
 				{
 					//获取切割矩形
 					QRectF _rectf;
-					_rectf.setLeft(valuesA_list[valueA]);
-					_rectf.setRight(valuesA_list[valueA + 1]);
-					_rectf.setTop(valueB_list[valueB + 1]);
-					_rectf.setBottom(valueB_list[valueB]);
+					_rectf.setX(valuesA_list[valueA]);
+					_rectf.setY(valueB_list[valueB]);
+					_rectf.setWidth(width);
+					_rectf.setHeight(hieght);
+					//_rectf.translate(_rectf.width() / 2, _rectf.height() / 2);
 					mPiflist_rect.push_back(_rectf);
 				}
 			}
 		}
 		else
 		{
-			for (auto valueB = 0; valueB < valueB_list.size() - 1; valueB++)
+			for (auto valueB = 0; valueB < valueB_list.size(); valueB++)
 			{
-				for (auto valueA = 0; valueA < valuesA_list.size() - 1; valueA++)
+				for (auto valueA = 0; valueA < valuesA_list.size(); valueA++)
 				{
 					//获取切割矩形
 					QRectF _rectf;
-					_rectf.setLeft(valuesA_list[valueA]);
-					_rectf.setRight(valuesA_list[valueA + 1]);
-					_rectf.setTop(valueB_list[valueB + 1]);
-					_rectf.setBottom(valueB_list[valueB]);
+					_rectf.setX(valuesA_list[valueA]);
+					_rectf.setY(valueB_list[valueB]);
+					_rectf.setWidth(width);
+					_rectf.setHeight(hieght);
+					//_rectf.translate(_rectf.width() / 2, _rectf.height() / 2);
 					mPiflist_rect.push_back(_rectf);
 				}
 			}
@@ -177,7 +219,6 @@ namespace DV {
 			iter++;
 		}
 		Data::ValuesPtr datasetEmA = *iter;
-		axis_xlist.push_back(0);
 		for (auto iter_A = datasetEmA->begin(); iter_A != datasetEmA->end(); iter_A++)
 		{
 			axis_xlist.push_back(*iter_A);
@@ -201,13 +242,63 @@ namespace DV {
 			iter++;
 		}
 		Data::ValuesPtr datasetEmB = *iter;
-		axis_ylist.push_back(0);
 		for (auto iterb = datasetEmB->begin(); iterb != datasetEmB->end(); iterb++)
 		{
 			axis_ylist.push_back(*iterb);
 		}
 		return axis_ylist;
 	}
+
+	bool phasorData::getDataDirection()
+	{
+		if (this->headList.size() < 11)
+			return false;
+		QString str = QString::fromStdString(this->headList[11]);
+		auto sl = str.split("(");
+		if (sl.size() < 2)
+			return false;
+		str = sl[1];
+		sl = str.split(",");
+		if (sl.size() < 2)
+			return false;
+		str = sl[0];
+		str = str.right(str.size() - 1);
+
+		std::string s = str.toStdString();
+
+		if (s == "x")
+		{
+			if (std::string::npos == getXTag().find("X"))
+				return false;
+			return true;
+		}
+		else if(s == "y")
+		{
+			if (std::string::npos == getXTag().find("Y"))
+				return false;
+			return true;
+		}
+		else if (s == "z")
+		{
+			if (std::string::npos == getXTag().find("Z"))
+				return false;
+			return true;
+		}
+		else if (s == "phi")
+		{
+			if (std::string::npos == getXTag().find("sin"))
+				return false;
+			return true;
+		}
+		else if (s == "rho")
+		{
+			if (std::string::npos == getXTag().find("cos"))
+				return false;
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	* @brief phasorData::getAllCutRoom 获取全部切割空间
 	* @return QVector<QRectF>
@@ -241,6 +332,21 @@ namespace DV {
 			datasetEmB = *iter; iter++;
 			datasetEmC = *iter;
 		}
+#if 0
+		//如果数据与结构是反的，那么需要对调场数据
+		if (!getDataDirection())
+		{
+			auto size = datasetEmC->size() / 2;
+			float temp = 0;
+			for (int i = 0; i < size; i++)
+			{
+				temp = (*datasetEmC)[i];
+				(*datasetEmC)[i] = (*datasetEmC)[i + size];
+				(*datasetEmC)[i + size] = temp;
+			}
+		}
+#endif
+
 		if (mPiflist_rect.empty())
 			return false;
 		//获取起点p1
@@ -249,7 +355,7 @@ namespace DV {
 			dataC.push_back(*iterC);
 		for (auto i = 0; i < mPiflist_rect.size(); i++)
 		{
-			p1.push_back(QPointF(mPiflist_rect[i].left(), mPiflist_rect[i].bottom()));
+			p1.push_back(QPointF(mPiflist_rect[i].x(), mPiflist_rect[i].y()));
 		}
 		float Svector = 0;//最大系数
 		unsigned int index_vector = 0;//

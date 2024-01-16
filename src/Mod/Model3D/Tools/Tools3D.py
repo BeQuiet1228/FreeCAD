@@ -306,6 +306,8 @@ def getCoordinate():
         unitList = ["Z", "R", u"Theta", "m", "m", "deg"]
     return unitList
 
+def getCoordinateString():
+    return FreeCAD.ActiveDocument.CoordinateSystem
 
 def switchPointLabel(ui):
     """
@@ -892,8 +894,9 @@ def getParamsList():
     if paramObj is None:
         return []
     params = paramObj.PropertiesList
-    paramsExtra = ["DX1", "DX2", "DX3"]
-    paramsList = params + paramsExtra
+    # paramsExtra = ["DX1", "DX2", "DX3"]
+    # paramsList = params + paramsExtra
+    paramsList = params
     return paramsList
 
 

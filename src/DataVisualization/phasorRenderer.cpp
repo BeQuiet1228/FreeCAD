@@ -245,7 +245,7 @@ namespace DV {
 				painter.setPen(pen);
 				transitionpointF(p1[i], xScale, yScale, xr, yr);
 				p2[i].setX(p1[i].x() + p2[i].x() * maxCoef * 0.9);
-				p2[i].setY(p1[i].y() - p2[i].y() * maxCoef * 0.9);
+				p2[i].setY(p1[i].y() + p2[i].y() * maxCoef * 0.9);
 				painter.drawLine(p1[i], p2[i]);
 				painter.drawLine(p2[i], GetarrowTop(p2[i], p1[i]));
 				painter.drawLine(p2[i], GetarrowBottom(p2[i], p1[i]));
@@ -454,4 +454,11 @@ namespace DV {
 		std::shared_ptr<phasorData> d = std::dynamic_pointer_cast<phasorData>(data);
 		return d->GetdisMode();
 	}
+
+	float phasorRenderer::getStructFaceAnchor()
+	{
+		std::shared_ptr<phasorData> d = std::dynamic_pointer_cast<phasorData>(data);
+		return d->getStructFaceAnchor();
+	}
+
 };

@@ -7,6 +7,8 @@
 #include <codecvt>
 #include <QByteArray>
 #include <QTextCodec>
+#include <QMessageBox>
+#include "DataVisualization/C_encoding.h"
 DocumentM3dText::DocumentM3dText()
 {
 	classID = 1;
@@ -38,6 +40,10 @@ bool DocumentM3dText::save()
 		return true;
 	}else{
 		std::cerr << " DocumentM3dText::save() fstream not open file ！" << std::endl;
+		QMessageBox::StandardButton result = QMessageBox::information(
+			nullptr,
+			DV::GetEncodingstr("提示", ENCODING_GB2312),
+			DV::GetEncodingstr("文件保存失败，检查文件路径以及文件的读写权限是否正确！", ENCODING_GB2312), QMessageBox::Yes);
 		return false;
 	}
 

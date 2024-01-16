@@ -43,7 +43,7 @@
           <item>
            <widget class="QSpinBox" name="spinBoxRunCount">
             <property name="value">
-             <number>3</number>
+             <number>6</number>
             </property>
            </widget>
           </item>
@@ -801,7 +801,7 @@ function resultDataFilter()
         while(tempIndex &lt; variateCount + 1)
         do
 			variates[tempIndex].pgt = variates[tempIndex].variate[index + 1];
-			print(&quot;pgtF=&quot;..F..&quot;pgt=&quot;..variates[tempIndex].pgt)
+			cppPrint(&quot;pgtF=&quot;..F..&quot;pgt=&quot;..variates[tempIndex].pgt)
 			tempIndex = tempIndex + 1;
 		end
     end

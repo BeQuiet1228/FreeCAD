@@ -42,6 +42,7 @@ namespace DV {
 		static RendererPtr creatContuorRender(Hdf5Data h5d);
 		static DataPtr creatInterspaceData(Hdf5Data h5d);
 
+		static RendererPtr creatStructRenderWithAnchor(Hdf5Data h5d, const float& anchor,DirectionType type = X_Y);
 		static RendererPtr creatStructRender(Hdf5Data h5d, DirectionType type = X_Y);
 		static RendererPtr creatStructRender(Hdf5Data h5d, STRUCTTYPE md, const _3DPointf& start, const _3DPointf& end);
 		static RendererPtr creatVectorRender(Hdf5Data h5d);

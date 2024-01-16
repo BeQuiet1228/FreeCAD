@@ -101,3 +101,25 @@ void MultipleTargetGeneticAlgorithmView::init(const std::string& path)
 		smartControlWidget = w;
 	}
 }
+
+MultipleTargetGeneticAlgorithmGView::MultipleTargetGeneticAlgorithmGView(DocumentPic* pcDocument, QWidget* parent /*= 0*/)
+	: ParticleSwarmOptimizationMDI(pcDocument, parent)
+{
+	setWindowTitle(gbkStdstringToQstring("G占优多目标遗传算法"));
+}
+
+MultipleTargetGeneticAlgorithmGView::~MultipleTargetGeneticAlgorithmGView()
+{
+
+}
+
+void MultipleTargetGeneticAlgorithmGView::init(const std::string& path)
+{
+	QWidget* w = SmartContorlInterface::creatMultipleGeneticAlgorithmGUI(path);
+	setCentralWidget(w);
+	if (nullptr != w)
+	{
+		smartControlWidget = w;
+	}
+}
+

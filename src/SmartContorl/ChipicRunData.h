@@ -24,6 +24,9 @@ public:
 			return 0.0;
 		return data.at(index);
 	}
+	std::vector<float> getData() {
+		return data;
+	}
 private:
 	std::vector<float> data;
 };

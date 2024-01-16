@@ -640,6 +640,8 @@ App::Document* Document::getDocument(void) const
 /// Save the document
 bool Document::save(void)
 {
+	if (!DocumentPic::disposSuperDog())
+		return false;
     if (d->_pcDocument->isSaved()) {
         try {
             Gui::WaitCursor wc;
@@ -1322,7 +1324,7 @@ bool Document::canClose ()
         case QMessageBox::Discard:
             ok = true;
 			////这里将文档改为未修改
-			//setModified(false);
+			setModified(false);
             break;
         case QMessageBox::Cancel:
             ok = false;

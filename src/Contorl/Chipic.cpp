@@ -8,6 +8,7 @@
 #include <QVBoxLayout>
 #include "MessageTransition.h"
 #include "MessageSender.h"
+#include "JsonMessageGetter.h"
 #include <QFileInfo>
 #include <QProcess>
 #include <QMessageBox>
@@ -95,6 +96,17 @@ void Chipic::init()
 
 	threadCount = 1;
 
+	//等待关闭状态
+	isWaitclose = false;
+
+	//chipic是否计算完成
+	chipicIsFinish = false;
+
+	isDisposCloseMessage = false;
+
+	this->errorExit = false;
+
+	watchDog = 6;
 }
 
 
@@ -132,10 +144,23 @@ void Chipic::sendMessage(const UINT& type, const WPARAM& wParam, const LPARAM& l
 */
 void Chipic::closeChipic()
 {
+#if 1
+	//关闭chipic时只发送关闭消息，不做任何其他处理，然后等待程序的退出消息
+	sendMessage(0, 0, 0);
+#else
 	sendMessage(0, 0, 0);
 	auto msg = MessageTransition::creatCloseChipicJsonMessage(threadID);
 	auto sender = MessageSender::GetInstance();
 	sender->sendJsonMessage(msg);
+#endif
+
+}
+
+void Chipic::sendCloseChipicMessage()
+{
+	sendMessage(0, 0, 0);
+	//发送消息后，将状态设置为等待关闭的状态
+	isWaitclose = true;
 }
 
 /**
@@ -505,7 +530,9 @@ bool Chipic::disposChipicFinished(const Message& msg)
 		timer->stop();
 	//完成的时候就将状态设置为未运行，这里主要可以避免关闭时和异常退出检测发生冲突
 	this->runState = false;
-	emit workFinished();
+	this->chipicIsFinish = true;
+//  修改为程序彻底关闭时发送
+//	emit workFinished();
 	return true;
 }
 
@@ -525,6 +552,26 @@ bool Chipic::disposChipicBusy(const Message& msg)
 	return  true;
 }
 
+bool Chipic::disposChipicCloseWinMessage(const Message& msg)
+{
+	if (msg.Msg != 300 || msg.wParam != 200||msg.lParam !=1)
+		return false;
+	if (isDisposCloseMessage)
+		return false;
+	isDisposCloseMessage = true;
+	
+	auto m = MessageTransition::creatCloseChipicJsonMessage(threadID);
+	auto sender = MessageSender::GetInstance();
+	sender->sendJsonMessage(m);
+
+	//如果状态为计算完成状态，则发送信号
+	if (chipicIsFinish)
+	{
+		emit workFinished();
+	}
+	return true;
+}
+
 void Chipic::restartTimeoutTimer()
 {
 	timer->stop();
@@ -533,6 +580,9 @@ void Chipic::restartTimeoutTimer()
 
 void Chipic::disposJsonMessage(const std::string& json)
 {
+	//喂狗
+	watchDog = 3;
+
 	Message msg = MessageTransition::jsonToWinMessage(json);
 	//处理提示消息
 	if (disposHintMessage(msg))
@@ -605,6 +655,14 @@ void Chipic::disposJsonMessage(const std::string& json)
 		setIsUpdate(true);
 		return;
 	}
+	//处理关闭消息
+	if (disposChipicCloseWinMessage(msg))
+	{
+		emit stateUpdate(this->threadID);
+		setIsUpdate(true);
+		return;
+	}
+
 	//查看结果图
 	if (disposResultMapMessage(msg))
 		return;
@@ -626,8 +684,8 @@ void Chipic::buttonClicked(int clickType)
 	switch (HintDailog::ClinkeType(clickType))
 	{
 	case HintDailog::MODE1_EXIT:
-		//sendMessage(108, 3, 4);
-		closeChipic();
+		sendMessage(108, 3, 4);
+		//closeChipic();
 		break;
 	case HintDailog::MODE1_LOSE:
 		sendMessage(108, 3, 1);
@@ -642,8 +700,8 @@ void Chipic::buttonClicked(int clickType)
 		sendMessage(108, 3, -2);
 		break;
 	case HintDailog::MODE2_EXIT:
-		//sendMessage(108, 8, 3);
-		closeChipic();
+		sendMessage(108, 8, 3);
+		//closeChipic();
 		break;
 	case HintDailog::MODE2_CONTINUE:
 		sendMessage(108, 8, 1);
@@ -652,8 +710,8 @@ void Chipic::buttonClicked(int clickType)
 		sendMessage(108, 8, -1);
 		break;
 	case HintDailog::MODE3_EXIT:
-		//sendMessage(108, 4, 0);
-		closeChipic();
+		sendMessage(108, 4, 0);
+		//closeChipic();
 		break;
 	case HintDailog::NULL_TYPE:
 		break;
@@ -673,8 +731,26 @@ void Chipic::timerOut()
 	/* 2020.12.22 更新
 		加上宏判断，避免在生成exe做调试的时候输出过多的调试信息，影响判断
 	*/
+	/*
+	* 2023-11-20
+	* 增加看门狗机制
+	* 这个机制为了解决内核在出现错误且进程又没有退出的情况
+	* 在这里将看门狗标标志-1，如果看门狗标志 <0 ,那么表示内核程序出现错误
+	*/
+
 #ifndef _CONTORL_EXE_
 	this->sendMessage(886, 886, 886, this->threadID);
+	//如果程序是暂停状态不执行看门狗判断
+	if (this->pausState && !isAuto)
+		return;
+	watchDog--;
+	//如果看门狗小于0，那么发送一个错误退出消息
+	if (watchDog < 0)
+	{
+		auto msg =  MessageTransition::creatCloseChipicJsonMessage(threadID,1);
+		JsonMessageGetter::GetInstance()->addJsonMessage(msg);
+	}
+		
 #endif
 }
 

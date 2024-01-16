@@ -16,6 +16,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
 
     def loadDialog(self):
         try:
+            Tools3D.setLineEditsCompleter(Tools3D.getAllLineEdits(self.ui))
             self.default_list = ["OSYS$MIDLINE1", "OSYS$MIDLINE2", "OSYS$MIDLINE3"]
             self.initChooseParticle()
             self.initParticleType()

@@ -2,7 +2,7 @@
 # 此文件存放波导端口、吸收边界、对称边界、螺旋线圈、空间电流源、箔片、电感、新型材料定义、宏粒子合并、新型粒子定义、MARK
 import M3DShare
 import FreeCAD
-from Model3D.Tools import Tools3D, ObjectTools
+from Model3D.Tools import Tools3D, ObjectTools, ExpressionTools3D
 
 blankSpace = " "
 semicolon = ";"
@@ -43,10 +43,18 @@ def Port(obj):
         temp1 = ""
         temp2 = ""
         temp3 = ""
+
+        # 如果有参数将前面添加Param供FreeCAD识别为具体的数值
+        paraX1 = ExpressionTools3D.processingLengthExpression(obj.point1_X)
+        paraX2 = ExpressionTools3D.processingLengthExpression(obj.point2_X)
+        paraY1 = ExpressionTools3D.processingLengthExpression(obj.point1_Y)
+        paraY2 = ExpressionTools3D.processingLengthExpression(obj.point2_Y)
+        paraZ1 = ExpressionTools3D.processingLengthExpression(obj.point1_Z)
+        paraZ2 = ExpressionTools3D.processingLengthExpression(obj.point2_Z)
         # 判断起点和终点
-        temp1 += obj.point1_X.replace(' ', '') + "-" + obj.point2_X.replace(' ', '')
-        temp2 += obj.point1_Y.replace(' ', '') + "-" + obj.point2_Y.replace(' ', '')
-        temp3 += obj.point1_Z.replace(' ', '') + "-" + obj.point2_Z.replace(' ', '')
+        temp1 += paraX1.replace(' ', '') + "-" + paraX2.replace(' ', '')
+        temp2 += paraY1.replace(' ', '') + "-" + paraY2.replace(' ', '')
+        temp3 += paraZ1.replace(' ', '') + "-" + paraZ2.replace(' ', '')
         obj.setExpression("helper1", temp1)
         obj.setExpression("helper2", temp2)
         obj.setExpression("helper3", temp3)
@@ -498,7 +506,7 @@ def Foil(obj):
         temp_m3d += M3DShare.PointCoordinates().point1(obj)
         temp_m3d += M3DShare.PointCoordinates().point2(obj)
         temp_m3d += semicolon+newLine
-        temp_m3d_pap += "FOIL"+blankSpace+material+blankSpace+obj.foilThickness+blankSpace+obj.Label+semicolon+newLine
+        temp_m3d_pap += "FOIL"+blankSpace+obj.Label+blankSpace+obj.foilThickness+blankSpace+material+semicolon+newLine
     else:
         temp_m3d_pap += "FOIL"+blankSpace+obj.foilType+blankSpace+obj.foilThickness+blankSpace+material+semicolon+newLine
     return temp_m3d_cp, temp_m3d, temp_m3d_pap

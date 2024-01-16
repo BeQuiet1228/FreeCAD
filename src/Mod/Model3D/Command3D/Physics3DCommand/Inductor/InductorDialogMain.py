@@ -14,6 +14,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
 
     def loadDialog(self):
         try:
+            Tools3D.setLineEditsCompleter(Tools3D.getAllLineEdits(self.ui))
             # 输入框变化时
             self.ui.LineEdit_start_x.textChanged.connect(self.LineEdit_start_x_textChanged)
             self.ui.LineEdit_start_y.textChanged.connect(self.LineEdit_start_y_textChanged)
@@ -89,6 +90,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             # 自感系数
             self.obj.isCheckSelfInductor = self.ui.checkBox_induc.isChecked()
             self.obj.selfInductorCoefficient = self.ui.LineEdit_induc.text()
+            self.ui.LineEdit_induc.setEnabled(self.obj.isCheckSelfInductor)
         except:
             import traceback
             Tools3D.sayz("error:" + traceback.format_exc())

@@ -2483,6 +2483,41 @@ bool StdCmdMyParameter::isActive(void)
     return false;
 }
 
+//===========================================================================
+// Std_open_ComboView
+//===========================================================================
+
+DEF_STD_CMD_A(StdCmdOpenComboView);
+
+StdCmdOpenComboView::StdCmdOpenComboView()
+    : Command("Std_open_ComboView")
+{
+    // setting the
+    sGroup = QT_TR_NOOP("open_ComboView");
+    sMenuText = QT_TR_NOOP("open_ComboView");
+    sToolTipText = QT_TR_NOOP("open_ComboView");
+    sWhatsThis = "Std_open_ComboView";
+    sStatusTip = QT_TR_NOOP("Std_open_ComboView");
+    sPixmap = "help-supertube";
+}
+
+void StdCmdOpenComboView::activated(int iMsg)
+{
+    Q_UNUSED(iMsg);
+    auto widget = DockWindowManager::instance()->getDockWindow("Combo View");
+    if (!widget)
+        return;
+    auto docWidget = dynamic_cast<QDockWidget*>(widget->parent());
+    docWidget->show();
+}
+
+bool StdCmdOpenComboView::isActive(void)
+{
+    if (App::GetApplication().getActiveDocument())
+        return true;
+    return false;
+}
+
 namespace Gui {
 
 void CreateDocCommands(void)
@@ -2543,6 +2578,8 @@ void CreateDocCommands(void)
     /*lzg*/
     //自定义变量
     rcCmdMgr.addCommand(new StdCmdMyParameter());
+
+    rcCmdMgr.addCommand(new StdCmdOpenComboView());
     //添加自定义的commad
     creatGuiCommand();
 }

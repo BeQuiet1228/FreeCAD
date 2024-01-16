@@ -69,6 +69,17 @@ QWidget* SmartContorlInterface::creatGeneticAlgorithmUI(const std::string& path)
 QWidget* SmartContorlInterface::creatMultipleGeneticAlgorithmUI(const std::string& path)
 {
 	auto contorlUi = new MultipleTargetGeneticAlgorithmUI();
+	
+	contorlUi->setTextPath(path);
+	contorlUi->loadParameterXml();
+	return contorlUi;
+}
+
+QWidget* SmartContorlInterface::creatMultipleGeneticAlgorithmGUI(const std::string& path)
+{
+	auto contorlUi = new MultipleTargetGeneticAlgorithmUI();
+	contorlUi->setGMod(true);
+
 	contorlUi->setTextPath(path);
 	contorlUi->loadParameterXml();
 	return contorlUi;

@@ -1,5 +1,5 @@
 #include  "MultipleTargetGeneticAlgorithm.h"
-
+#include <QTextCodec>
 MultipleTargetGeneticAlgorithm::MultipleTargetGeneticAlgorithm()
 {
 
@@ -24,7 +24,7 @@ bool MultipleTargetGeneticAlgorithm::resultDataFilter(SmartContorl* smarControl)
 	auto historyData = *historyDatas.rbegin();
 	ChipicRunDatas runDatas = historyData.datas;
 	std::list<TargetList> targetLists;
-	for each (auto runData in runDatas) {
+	for (auto runData : runDatas) {
 		TargetList targetList;
 		targetList.rank = runData->rank;
 	 	std::string hdf5Path = runData->h5FilePath.toStdString();
@@ -67,11 +67,27 @@ void MultipleTargetGeneticAlgorithm::addTarget(Target* target)
 
 std::vector<int> MultipleTargetGeneticAlgorithm::getCrossPool(SmartContorl* smartControl)
 {
-	auto tempLists = currentTargetLists;
-	TargetLayer layer;
-	std::vector<int> indexs;
+	std::list<TargetList> tempLists;
+	int index = 0;
+	for (auto runData : bestRunData) {
+		TargetList targetList;
+		targetList.rank = index;
+		for (auto d : runData->resultData->getData())
+		{
+			targetList.TargetValues.push_back(d);
+		}
 
-	while (indexs.size() < currentTargetLists.size() / 2)
+		tempLists.push_back(targetList);
+		index++;
+	}
+
+	TargetLayer layer;
+	layer = generateTargetListLayer(tempLists);
+	//输出信息到控制台
+	printLayer(layer, smartControl);
+
+	std::vector<int> indexs;
+	while (indexs.size() < currentTargetLists.size())
 	{
 		layer = generateTargetListLayer(tempLists);
 
@@ -89,13 +105,18 @@ std::vector<int> MultipleTargetGeneticAlgorithm::getCrossPool(SmartContorl* smar
 					iter++;
 			}
 			indexs.push_back(t.rank);
-			if (indexs.size() >= currentTargetLists.size() / 2)
+			if (indexs.size() >= currentTargetLists.size())
 				break;
 		}
 
 	}
 
 	return indexs;
+}
+
+void MultipleTargetGeneticAlgorithm::printBestF(SmartContorl* smartControl)
+{
+
 }
 
 MultipleTargetGeneticAlgorithm::TargetLayer MultipleTargetGeneticAlgorithm::generateTargetListLayer(std::list<TargetList> targetLists)
@@ -109,9 +130,9 @@ MultipleTargetGeneticAlgorithm::TargetLayer MultipleTargetGeneticAlgorithm::gene
 	//建立目标之间的支配关系
 	//支配 A个体中的所有目标都优于B个体中的目标，那么A支配B
 	//需要计算出每个个体被支配的个数，以作为优劣排序的依据
-	for each (auto list in targetLists) {
+	for(TargetList& list :targetLists) {
 
-		for each (auto tempList in targetLists) {
+		for (auto tempList:targetLists) {
 			//不与自己相比
 			if (list.rank == tempList.rank)
 				continue;
@@ -130,7 +151,7 @@ MultipleTargetGeneticAlgorithm::TargetLayer MultipleTargetGeneticAlgorithm::gene
 
 	//根据被支配次数划分层级
 	TargetLayer layer;
-	for each (auto list in targetLists)
+	for (auto list : targetLists)
 	{
 		auto iter = layer.find(list.parentCount);
 		if (iter == layer.end())
@@ -146,3 +167,117 @@ MultipleTargetGeneticAlgorithm::TargetLayer MultipleTargetGeneticAlgorithm::gene
 	return layer;
 }
 
+void MultipleTargetGeneticAlgorithm::printLayer(TargetLayer& layer, SmartContorl* smartControl)
+{
+	QString tempStr;
+	tempStr += smartControl->gbkStdstringToQstring("====第") + QString::number(smartControl->getHistoryDatas().size());
+	tempStr += smartControl->gbkStdstringToQstring("代支配集====");
+	tempStr += "\n";
+
+	int count = 0;
+	int rank = 0;
+	for (auto iter = layer.begin(); iter != layer.end(); iter++)
+	{
+		for (auto targetList : iter->second)
+		{
+			tempStr += QString::fromLocal8Bit("-------------");
+			tempStr += "\n";
+			tempStr += "layer = " + QString::number(rank);
+			tempStr += "\n";
+			tempStr += bestRunData[targetList.rank]->variate;
+			tempStr += "\n";
+
+			for (auto i = 0;i < targetList.TargetValues.size();i++)
+			{
+				tempStr += "f" + QString::number(i);
+				tempStr += "=" + QString::number(targetList.TargetValues[i]);
+				tempStr += "\n";
+			}
+			count++;
+			if(count == bestRunData.size()/2)
+				break;
+		}
+		rank++;
+		if (count == bestRunData.size() / 2)
+			break;
+	}
+	smartControl->printLog(tempStr.toStdString());
+}
+
+
+MultipleTargetGeneticAlgorithm::TargetLayer MultipleTargetGeneticAlgorithmG::generateTargetListLayer(std::list<TargetList> targetLists)
+{
+	//清除之前的支配关系
+	for each (auto t in targetLists)
+	{
+		t.parentCount = 0;
+	}
+
+	//建立目标之间的支配关系
+	//支配 A个体中的所有目标都优于B个体中的目标，那么A支配B
+	//需要计算出每个个体被支配的个数，以作为优劣排序的依据
+	for (TargetList& list : targetLists) {
+
+		for (auto tempList : targetLists) {
+			//不与自己相比
+			if (list.rank == tempList.rank)
+				continue;
+			//对比所有参数
+			bool gOk1 = true;
+			//检查个体是否再g点上
+			for (int i = 0; i < targets.size(); i++)
+			{
+				//如果目标再g点之上，那么支配所有没有再G点上的，
+				gOk1 = gOk1 && targets[i]->comparison(list.TargetValues[i], targets[i]->getG());
+
+			}
+
+			//检查对比个体是否再点上
+			bool gOk2 = true;
+			for (int i = 0; i < targets.size(); i++)
+			{
+				//如果目标再g点之上，那么支配所有没有再G点上的，
+				gOk2 = gOk2 && targets[i]->comparison(tempList.TargetValues[i], targets[i]->getG());
+
+			}
+
+			//如果有一个个体再G点上可以直接判断出支配关系
+			if (gOk1 == true && gOk2 == false)
+			{
+				continue;
+			}else if (gOk1 == false && gOk2 == true) {
+				list.parentCount++;
+				continue;
+			}
+
+			bool ok = false;
+			for (int i = 0; i < targets.size(); i++)
+			{
+
+				ok = ok || targets[i]->comparison(list.TargetValues[i], tempList.TargetValues[i]);
+			}
+			//如果没有一项目标值优于tempList，那么增加被支配数量
+			if (!ok)
+				list.parentCount++;
+
+		}
+	}
+
+	//根据被支配次数划分层级
+	TargetLayer layer;
+	for (auto list : targetLists)
+	{
+		auto iter = layer.find(list.parentCount);
+		if (iter == layer.end())
+		{
+			std::list<TargetList> tl;
+			tl.push_back(list);
+			layer.insert(TargetLayer::value_type(list.parentCount, tl));
+		}
+		else {
+			iter->second.push_back(list);
+		}
+	}
+
+	return layer;
+}

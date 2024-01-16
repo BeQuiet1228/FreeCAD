@@ -23,6 +23,7 @@ namespace DV {
 		virtual bool setDefaultRang(QSize&) override;
 		virtual Data::Rang getValueRange() override;
 		phasorData::DISMODE getMode();
+		float getStructFaceAnchor();
 	private:
 		QPointF GetarrowTop(QPointF endpoint, QPointF startpoint);
 		QPointF GetarrowBottom(QPointF endpoint, QPointF startpoint);

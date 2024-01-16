@@ -105,6 +105,8 @@ private Q_SLOTS:
 	void closeReplaceDlg();
 	void copyParam();
 	
+private:
+	void showNameErorrDailog();
 
 public:
 	//属性用于替换功能

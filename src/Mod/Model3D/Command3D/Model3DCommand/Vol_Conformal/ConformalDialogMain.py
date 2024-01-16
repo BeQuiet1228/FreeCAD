@@ -61,9 +61,23 @@ class ShowDialog(BaseDialogMain.BaseModelDialog):
         judge = self.judgePoint()
         if judge:
             QtGui.QMessageBox.information(None, "", "无法有效绘制正投影体，请检查坐标。")
-        else:
-            self.isKeepData = True
-            self.close()
+            return
+        if Tools3D.getCoordinateString() ==  u"Polar":
+            if self.obj.Point1Y > self.obj.Point2Y:
+                QtGui.QMessageBox.information(None, "", "point1 的theta值大于point2的theta值， 无法有效绘制圆环体。")
+                return
+            if self.obj.Point1Y > 360 or self.obj.Point2Y > 360:
+                QtGui.QMessageBox.information(None, "", "point1 point2的theta值大于360")
+                return
+        if Tools3D.getCoordinateString() ==  u"Cylindrical":
+            if self.obj.Point1Z > self.obj.Point2Z:
+                QtGui.QMessageBox.information(None, "", "point1 的theta值大于point2的theta值， 无法有效绘制圆环体。")
+                return
+            if self.obj.Point1Z > 360 or self.obj.Point2Z > 360:
+                QtGui.QMessageBox.information(None, "", "point1 point2的theta值大于360")
+                return       
+        self.isKeepData = True
+        self.close()
 
     def judgePoint(self):
         # 如果两个点X,Y,Z有一个相同，则不能构成正投影体

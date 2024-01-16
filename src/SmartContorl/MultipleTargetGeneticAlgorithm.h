@@ -26,16 +26,21 @@ public:
 
 protected:
 	virtual std::vector<int> getCrossPool(SmartContorl* smartControl) override;
-
-private:
-	using TargetLayer = std::map<int, std::list<TargetList>>;
+	void printBestF(SmartContorl* smartControl);
 	//生成支配关系层级
-	TargetLayer generateTargetListLayer(std::list<TargetList> targetLists);
-private:
+	using TargetLayer = std::map<int, std::list<TargetList>>;
+	virtual TargetLayer generateTargetListLayer(std::list<TargetList> targetLists);
+	void printLayer(TargetLayer& layer, SmartContorl* smartControl);
+
 	//所有的目标类型
 	std::vector<Target*> targets;
 	//当前次所有个体的目标值信息
 	std::list<TargetList> currentTargetLists;
 	//历史所有个体的目标值信息
 	std::list<std::list<TargetList>> historyTargetList;
+};
+
+class MultipleTargetGeneticAlgorithmG :public MultipleTargetGeneticAlgorithm {
+protected:
+	virtual TargetLayer generateTargetListLayer(std::list<TargetList> targetLists) override;
 };

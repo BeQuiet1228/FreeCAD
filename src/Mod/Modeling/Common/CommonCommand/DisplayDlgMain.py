@@ -172,6 +172,7 @@ def new_getSelectionObj3D():
                     # 至此baseObj对话框成功弹出，等待对话快关闭后，对baseObj做删除Type和Order及从分组中删除
                     # 整体目的：将baseObj调出用来更改arry模型，但caseObj不参与bool运算，并且不生成M3D，所以临时使用后要将其删除
                     group = obj[0].InList
+                    ArryObj[obj[0].Label].Attribute = Form.obj.Attribute
                     obj[0].ViewObject.hide()
                     # 删除原group下的baseObj，这里的group[0]为阵列体，group[1]为baseObj
                     group[1].removeObject(obj[0])
@@ -320,6 +321,9 @@ def getFormByObj(obj):
     elif obj.Type == ObjectTools.ObjectType.IONI:
         # 气体电离
         Form = Physics3DCommand.Ioni.IoniDialogMain.ShowDialog(obj)
+    elif obj.Type == ObjectTools.ObjectType.GASOUT:
+        # 气体吸附
+        Form = Physics3DCommand.GasOut.GasOutDialogMain.ShowDialog(obj)
     # 观测设置
     elif obj.Type == ObjectTools.ObjectType.CNTR:
         Form = Physics3DCommand.Cntr.CntrDialogMain.ShowDialog(obj)

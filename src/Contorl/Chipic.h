@@ -41,6 +41,8 @@ public:
 	void sendMessage(const UINT& type, const WPARAM& wParam, const LPARAM& lParam,const DWORD& thradId = 0);
 	//关闭chipic
 	void closeChipic();
+	//发送关闭消息
+	void sendCloseChipicMessage();
 	//打开log文件
 	void openLogFile();
 	//获取运行结果数据路径
@@ -89,15 +91,32 @@ private:
 	bool disposChipicFinished(const Message& msg);
 	//处理chipic输出图繁忙消息
 	bool disposChipicBusy(const Message& msg);
+	//处理chipic关闭消息
+	bool disposChipicCloseWinMessage(const Message& msg);
 	//重启状态检测定时器
 	void restartTimeoutTimer();
 public:
+	//是否为等待关闭的状态
+	bool isWaitclose;
 	//运行状态
 	bool runState;
 	//暂停状态
 	bool pausState;
 	//定时器状态
 	bool timerSate;
+	/*
+	* 2023.9.8修改了chipic关闭的逻辑，
+	* 现在以任何方式关闭程序都需要程序回执关闭信息才能真正的关闭
+	* 所以需要先记录运行状态，然后再程序关闭后处理文件操作 
+	*/
+	//是否已完成计算
+	bool chipicIsFinish;
+	/*
+	* 关闭消息可能重复发送，记录处理标志，如果已经处理过了就不再处理了
+	*/
+	bool isDisposCloseMessage;
+	//如果已经处理过错误退出消息则不再多次处理
+	bool errorExit;
 	//迭代次数、当前迭代次数
 	int iterationCount, currentIteration;
 	//粒子数目
@@ -118,6 +137,8 @@ public:
 	std::string m3dPath;
 	//定时检查内核是否还在运行
 	QTimer * timer;
+	//看门狗标志
+	int watchDog;
 public:
 	void disposJsonMessage(const std::string& json);
 	

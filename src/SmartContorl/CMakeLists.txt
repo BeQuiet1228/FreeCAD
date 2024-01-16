@@ -146,6 +146,10 @@ include_directories(
     ${PYCXX_INCLUDE_DIR}
 )
 
+set(QRC_SRC
+	res.qrc
+)
+
 #处理ui和qrc文件
 if (BUILD_QT5)
     QT5_ADD_RESOURCES(Gui_QRC_SRCS ${QRC_SRC})
@@ -248,6 +252,7 @@ list(APPEND QT_LIB
 	Editor
 	DataVisualization
 	Event
+	transition
 	)
 if(contorl_client_dll)
 list(APPEND QT_LIB

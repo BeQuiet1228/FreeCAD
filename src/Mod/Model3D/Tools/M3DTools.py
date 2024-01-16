@@ -287,6 +287,7 @@ def getAllPropertiesAndProcessesObj():
                 ObjectType.SECD: [],
                 ObjectType.IONI: [],
                 ObjectType.MacroParticle: [],
+                ObjectType.GASOUT: [],
                 }
 
     pp_list = ObjectTools.getAllPhyAndProObjects()  # physics and project list , 请不要混淆
@@ -323,6 +324,8 @@ def getAllPropertiesAndProcessesObj():
             res_dict[ObjectType.SECD].append(i)
         elif i.Type == ObjectType.IONI:
             res_dict[ObjectType.IONI].append(i)
+        elif i.Type == ObjectType.GASOUT:
+            res_dict[ObjectType.GASOUT].append(i)
         elif i.Type == ObjectType.MacroParticle:
             res_dict[ObjectType.MacroParticle].append(i)
 

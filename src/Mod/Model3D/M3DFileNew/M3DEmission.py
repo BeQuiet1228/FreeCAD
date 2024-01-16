@@ -216,7 +216,23 @@ def Popu(obj):
 # 气体电离
 def Ioni(obj):
     temp_m3d_pap = ""
-    temp_m3d_pap += "GASGAS" + blankSpace + "GASKING" + blankSpace + obj.ionizationOfGas + blankSpace + "PRESSURE" + \
+    temp_m3d_pap += "GASGAS" + blankSpace + "GASKIND" + blankSpace + obj.ionizationOfGas + blankSpace + "PRESSURE" + \
                     blankSpace + obj.gasPressure + blankSpace + "TEMPERATURE" + blankSpace + obj.gasTemperature
     temp_m3d_pap += semicolon + newLine
     return temp_m3d_pap
+
+
+def GasOut(obj):
+    temp_m3d = ""
+    direction = ""
+
+    if obj.isNegative:
+        direction = "negative"
+    else:
+        direction = "positive"
+
+    temp_m3d += "OUTGAS" + blankSpace + obj.absorbVol + blankSpace + obj.density + blankSpace + obj.area + \
+                blankSpace + obj.threshold + blankSpace + obj.grid + blankSpace + obj.normal + blankSpace + \
+                direction + semicolon + newLine
+
+    return temp_m3d

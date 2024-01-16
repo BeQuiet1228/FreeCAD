@@ -59,9 +59,36 @@ bool GuiCmdPlotEqualProportion::isActive() {
 }
 
 
+DEF_STD_CMD_A(StdCmdMultipleTargetGeneticAlgorithmG);
+
+StdCmdMultipleTargetGeneticAlgorithmG::StdCmdMultipleTargetGeneticAlgorithmG()
+	: Command("Std_Multiple_TargetGenetic_Algorithm_G")
+{
+	// setting the
+	sGroup = QT_TR_NOOP("File");
+	sMenuText = QT_TR_NOOP("MultipleTargetGeneticAlgorithmG");
+	sToolTipText = QT_TR_NOOP("MultipleTargetGeneticAlgorithmG");
+	sWhatsThis = "Std_Paralle_Run";
+	sStatusTip = QT_TR_NOOP("SmartContorl");
+	sPixmap = "smartContorl";
+}
+
+void StdCmdMultipleTargetGeneticAlgorithmG::activated(int iMsg)
+{
+	Q_UNUSED(iMsg);
+	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
+	getGuiApplication()->sendMsgToActiveView("showMultipleTargetGeneticAlgorithmG");
+}
+bool StdCmdMultipleTargetGeneticAlgorithmG::isActive(void)
+{
+	return getGuiApplication()->sendHasMsgToActiveView("showMultipleTargetGeneticAlgorithmG");
+}
+
+
 void creatGuiCommand()
 {
 	Gui::CommandManager& rcCmdMgr = Gui::Application::Instance->commandManager();
 	rcCmdMgr.addCommand(new GuiCmdPlotDataExport);
 	rcCmdMgr.addCommand(new GuiCmdPlotEqualProportion);
+	rcCmdMgr.addCommand(new StdCmdMultipleTargetGeneticAlgorithmG);
 }

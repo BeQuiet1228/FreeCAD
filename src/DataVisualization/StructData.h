@@ -87,17 +87,20 @@ namespace DV {
 			DRIVER,//DRIVER--2^11/2048,2^12/4096,2^13/8192
 			INDUCTOR//INDUCTOR--2^14/16384,2^15/32768,2^16/65536
 		};
-		StructData(Hdf5Data& heData, DirectionType _type, const RunMod& mod = SINGLE_THREAD);
+
+		enum PortDirection {
+			PORT_X = 0,
+			PORT_Y,
+			PORT_BAD
+		};
+		StructData(Hdf5Data& heData, DirectionType _type,const bool& useAnchor = false,
+			const float& achor = 0.0, const RunMod& mod = SINGLE_THREAD);
 		StructData(Hdf5Data& heData, _3DPointf startpoint, _3DPointf endpoint, const RunMod& mod = SINGLE_THREAD);
 	public:
 		virtual bool loadPoint();
 		DirectionType GetDirectionType();
 		C_TYPE GetC_TYPE();
 		bool loadroom();
-		void setXRang(const Rang& rg);
-		void setYRang(const Rang& rg);
-		Rang getXRang();
-		Rang getYRang();
 		std::map<int, std::vector<QRectF>>GetAllcutInfo();
 		std::map<int, std::vector<CutCir>> GetAllcurInfo_cir();
 		std::map<unsigned __int64, std::vector<QLineF>> GetProperLines();
@@ -105,6 +108,7 @@ namespace DV {
 		bool getIsface();
 		_3DPointf getStartPoint();
 		_3DPointf getEndPoint();
+		PortDirection getPortDirection(const int& type);
 	protected:
 		virtual bool initXYRang() { return 0; }
 		virtual void restorDeriveData() override {}
@@ -138,8 +142,6 @@ namespace DV {
 		bool istrue;
 		_3DPointf mstartpoint;
 		_3DPointf mendpoint;
-		Rang xRang, yRang;
-		std::mutex xRangMutex, yRangMutex;
 		//确定面的索引
 		float _face_point_index;
 		//因为重复处理会消耗时间，所以设定开关，防止重复读取

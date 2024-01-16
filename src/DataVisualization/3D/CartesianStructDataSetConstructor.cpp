@@ -41,7 +41,7 @@ vtkSmartPointer<vtkDataSet> DV3D::CartesianStructDataSetConstructor::creatDatase
 		int zIndex = *iter;
 		iter++;
 		int type = *iter;
-		if ((type & 0x03) != 0x03)
+		if ((type & 0x03) != 0x03 && (type & 0x08) != 0x08)
 			continue;
 		vtkIdType cell[8] = {
 			getPointID(xIndex - 1,yIndex - 1,zIndex - 1),

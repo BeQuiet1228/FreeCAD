@@ -248,8 +248,10 @@ void TreeWidget::contextMenuEvent (QContextMenuEvent * e)
 
         // if only one item is selected setup the edit menu
         if (this->selectedItems().size() == 1) {
+            int s = editMenu.actions().size();
             objitem->object()->setupContextMenu(&editMenu, this, SLOT(onStartEditing()));
             QList<QAction*> editAct = editMenu.actions();
+            s = editMenu.actions().size();
             if (!editAct.isEmpty()) {
                 QAction* topact = contextMenu.actions().front();
                 for (QList<QAction*>::iterator it = editAct.begin(); it != editAct.end(); ++it)

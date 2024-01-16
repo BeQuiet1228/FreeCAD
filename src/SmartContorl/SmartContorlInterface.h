@@ -14,6 +14,7 @@ public:
 	static QWidget* createCalcWidget(const std::string& path);
 	static QWidget* creatGeneticAlgorithmUI(const std::string& path);
 	static QWidget* creatMultipleGeneticAlgorithmUI(const std::string& path);
+	static QWidget* creatMultipleGeneticAlgorithmGUI(const std::string& path);
 public slots:
 	void buttonClicked(int type);
 };

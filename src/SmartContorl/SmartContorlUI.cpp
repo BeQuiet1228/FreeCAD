@@ -34,7 +34,7 @@ SmartContorlUI::SmartContorlUI(QWidget * parent /*= 0*/)
 	auto contorlInterface = ContorlInterface::GetInstance();
 
 #ifdef SMART_EXE
-	std::string m3dPath = "D:/test/MILO_P.m3d";
+	std::string m3dPath = "E:/youhuasuanfa/2dyouhua/rbwo.m2d";
 	//std::string m3dPath = "D:/test/match.m3d";
 	smartContorl->setM3dPath(m3dPath);
 	loadParameterXml();
@@ -492,9 +492,9 @@ QString SmartContorlUI::replaceVariate()
 		vars += temp;
 	}
 	QString text;
-#ifdef SMART_EXE
+#if 1
 	{
-		QFile file(QString::fromLocal8Bit("D:/script/script.lua"));
+		QFile file(QString::fromLocal8Bit("://script/script.lua"));
 		file.open(QIODevice::ReadOnly);
 		text = QString::fromUtf8(file.readAll());
 		file.close();
@@ -552,9 +552,27 @@ QString SmartContorlUI::replaceVariate()
 
 void SmartContorlUI::saveParameterXml()
 {
+
 	pugi::xml_document doc;
-	auto parNode = doc.append_child("Parameter");
-	auto configNode = doc.append_child("Config");
+	auto path = smartContorl->getM3dPath();
+	path = path.left(path.length() - 4) + ".cc";
+	auto gbk = QTextCodec::codecForName("gb2312");
+
+	std::string ret = gbk->fromUnicode(path).data();
+	auto result = doc.load_file(ret.c_str());
+	pugi::xml_node root;
+	if (!result)
+	{
+		doc.reset();
+		root = doc.append_child("ParticleSwarmOptimization");
+	}
+	else {
+		doc.remove_child("ParticleSwarmOptimization");
+		root = doc.append_child("ParticleSwarmOptimization");
+	}
+
+	auto parNode = root.append_child("Parameter");
+	auto configNode = root.append_child("Config");
 	configNode.append_attribute("OptimizeCount") = ui->spinBoxOptimizeCount->value();
 	configNode.append_attribute("RunCount") = ui->spinBoxCount->value();
 	configNode.append_attribute("RunMaxCount") = ui->spinBoxRunCount->value();
@@ -578,11 +596,7 @@ void SmartContorlUI::saveParameterXml()
 		node.append_attribute("Max") = max.c_str();
 		node.append_attribute("Mini") = mini.c_str();
 	}
-	auto path = smartContorl->getM3dPath();
-	path = path.left(path.length() - 4) + ".cc";
-	auto gbk = QTextCodec::codecForName("gb2312");
 
-	std::string ret = gbk->fromUnicode(path).data();
 	doc.save_file(ret.c_str());
 
 	
@@ -595,12 +609,19 @@ void SmartContorlUI::loadParameterXml()
 	path = path.left(path.length() - 4) + ".cc";
 	auto gbk = QTextCodec::codecForName("gb2312");
 
+
 	std::string ret = gbk->fromUnicode(path).data();
 	auto result = document.load_file(ret.c_str());
 	if (!result)
 		return;
-	auto parNode = document.child("Parameter");
-	auto configNode = document.child("Config");
+	pugi::xml_node root = document.child("ParticleSwarmOptimization");
+	if (root.empty())
+		return;
+
+
+
+	auto parNode = root.child("Parameter");
+	auto configNode = root.child("Config");
 
 
 	ui->spinBoxOptimizeCount->setValue(configNode.attribute("OptimizeCount").as_int());

@@ -8,6 +8,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PySide import QtCore, QtGui
+from Model3D.Tools import Completer
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -66,7 +67,8 @@ class Ui_Dialog(object):
         self.label_Y.setSizePolicy(sizePolicy)
         self.label_Y.setObjectName("label_Y")
         self.gridLayout.addWidget(self.label_Y, 0, 2, 1, 1)
-        self.LineEdit_end_x = QtGui.QLineEdit(self.groupBox_Port)
+        #self.LineEdit_end_x = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_end_x = Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_end_x.setEnabled(False)
         self.LineEdit_end_x.setObjectName("LineEdit_end_x")
         self.gridLayout.addWidget(self.LineEdit_end_x, 5, 1, 1, 1)
@@ -82,7 +84,8 @@ class Ui_Dialog(object):
         self.radioButton_x.setChecked(True)
         self.radioButton_x.setObjectName("radioButton_x")
         self.gridLayout.addWidget(self.radioButton_x, 7, 1, 1, 1)
-        self.LineEdit_start_x = QtGui.QLineEdit(self.groupBox_Port)
+        #self.LineEdit_start_x = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_start_x = Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_start_x.setObjectName("LineEdit_start_x")
         self.gridLayout.addWidget(self.LineEdit_start_x, 2, 1, 1, 1)
         self.label_end = QtGui.QLabel(self.groupBox_Port)
@@ -97,7 +100,8 @@ class Ui_Dialog(object):
         self.ComboBox_start.setObjectName("ComboBox_start")
         self.ComboBox_start.addItem("")
         self.gridLayout.addWidget(self.ComboBox_start, 2, 4, 1, 1)
-        self.LineEdit_end_y = QtGui.QLineEdit(self.groupBox_Port)
+        #self.LineEdit_end_y = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_end_y = Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_end_y.setEnabled(True)
         self.LineEdit_end_y.setObjectName("LineEdit_end_y")
         self.gridLayout.addWidget(self.LineEdit_end_y, 5, 2, 1, 1)
@@ -123,7 +127,8 @@ class Ui_Dialog(object):
         self.radioButton_y = QtGui.QRadioButton(self.groupBox_Port)
         self.radioButton_y.setObjectName("radioButton_y")
         self.gridLayout.addWidget(self.radioButton_y, 7, 2, 1, 1)
-        self.LineEdit_start_y = QtGui.QLineEdit(self.groupBox_Port)
+        #self.LineEdit_start_y = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_start_y = Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_start_y.setObjectName("LineEdit_start_y")
         self.gridLayout.addWidget(self.LineEdit_start_y, 2, 2, 1, 1)
         spacerItem5 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
@@ -149,10 +154,12 @@ class Ui_Dialog(object):
         self.ComboBox = QtGui.QComboBox(self.groupBox_Port)
         self.ComboBox.setObjectName("ComboBox")
         self.gridLayout.addWidget(self.ComboBox, 9, 1, 1, 2)
-        self.LineEdit_start_z = QtGui.QLineEdit(self.groupBox_Port)
+        #self.LineEdit_start_z = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_start_z = Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_start_z.setObjectName("LineEdit_start_z")
         self.gridLayout.addWidget(self.LineEdit_start_z, 2, 3, 1, 1)
-        self.LineEdit_end_z = QtGui.QLineEdit(self.groupBox_Port)
+        #self.LineEdit_end_z = QtGui.QLineEdit(self.groupBox_Port)
+        self.LineEdit_end_z = Completer.AutoCompleteEdit(self.groupBox_Port)
         self.LineEdit_end_z.setEnabled(True)
         self.LineEdit_end_z.setObjectName("LineEdit_end_z")
         self.gridLayout.addWidget(self.LineEdit_end_z, 5, 3, 1, 1)

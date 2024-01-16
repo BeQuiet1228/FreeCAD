@@ -503,6 +503,11 @@ class M3D:
             ioni_str = M3DEmission.Ioni(i)
             self.PropertiesAndProcessesStr.append(ioni_str)
 
+        # GASOUT
+        for i in pp_dict[ObjectTools.ObjectType.GASOUT]:
+            gasout_str = M3DEmission.GasOut(i)
+            self.PropertiesAndProcessesStr.append(gasout_str)
+
         # PORT
         for i in pp_dict[ObjectTools.ObjectType.PORT]:
             model_str, prot_str = M3DPhysices.Port(i)

@@ -7,10 +7,11 @@ struct OPtimizeVariate
 	double max, min;
 };
 
+class OptimizeCurseD;
 class OptimizeCurse {
 public:
-	OptimizeCurse() {};
-	~OptimizeCurse() {};
+	OptimizeCurse();
+	~OptimizeCurse();
 
 public:
 	virtual void init(SmartContorl* smartControl) = 0;
@@ -19,6 +20,12 @@ public:
 	virtual void optimize(SmartContorl* smartCOntrol) = 0;
 
 	std::vector<OPtimizeVariate> optimizeVariates;
+
+	bool hasError();
+	void setHasError(const bool& b);
+
+private:
+	OptimizeCurseD* d;
 };
 
 class OptimizeCurseLua :public OptimizeCurse{

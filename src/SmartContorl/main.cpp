@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 // 	GeneticAlgorithm g;
 // 	g.test();
 
-	MultipleTargetGeneticAlgorithmUI w;
+	SmartContorlUI w;
 	w.show();
 
 // 	QFile file("testdsadas.tt");

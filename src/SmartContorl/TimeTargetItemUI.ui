@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>261</width>
-    <height>212</height>
+    <height>256</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -243,6 +243,22 @@
          <string>（按百分比输入1=1%）</string>
         </property>
        </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widgetG" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="labelG">
+        <property name="text">
+         <string>G值：</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEditG"/>
       </item>
      </layout>
     </widget>

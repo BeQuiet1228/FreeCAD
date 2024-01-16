@@ -30,6 +30,8 @@ public:
 	//载入优化配置
 	void loadParameterXml();
 	bool getRunning();
+
+	void setGMod(const bool& b);
 private:
 	Ui::MultipleTargetGeneticAlgorithmUI* ui;
 	//组合之后的文件信息
@@ -44,6 +46,9 @@ private:
 	SmartContorl* smartContorl;
 	//变量列表
 	std::vector<std::shared_ptr<VariateData>> variateDatas;
+
+	//是否是G占优模式
+	bool GMod = false;
 
 public Q_SLOTS:
 	void on_pushButton_clicked();

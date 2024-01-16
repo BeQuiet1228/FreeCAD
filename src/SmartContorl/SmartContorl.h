@@ -94,6 +94,7 @@ public:
 	//optimizeCurse get and set
 	OptimizeCurse* getOptimizeCurse();
 	void setOptimizeCurse(OptimizeCurse* op);
+	static QString gbkStdstringToQstring(const std::string& str);
 public:
 	//同时运行chipic的个数
 	unsigned int chipicCount = 6;

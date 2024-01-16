@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import FreeCAD
-from Model3D.Tools import Tools3D, ObjectTools
+from Model3D.Tools import Tools3D, ObjectTools, ExpressionTools3D
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
 import PortDialog
 import traceback
@@ -31,6 +31,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
 
     def loadDialog(self):
         try:
+            Tools3D.setLineEditsCompleter(Tools3D.getAllLineEdits(self.ui))
             self.defaultValue = ["OSYS$MIDPLANE1", "OSYS$MIDPLANE2", "OSYS$MIDPLANE3"]
             # 根据坐标系初始化面板
             Tools3D.switchPointLabel(self.ui)
@@ -381,40 +382,46 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
         if self.obj.isCheckNormalization:
             temp = ""
             coodinate = FreeCAD.ActiveDocument.CoordinateSystem
+            paraX1 = ExpressionTools3D.processingLengthExpression(self.obj.point1_X)
+            paraX2 = ExpressionTools3D.processingLengthExpression(self.obj.point2_X)
+            paraY1 = ExpressionTools3D.processingLengthExpression(self.obj.point1_Y)
+            paraY2 = ExpressionTools3D.processingLengthExpression(self.obj.point2_Y)
+            paraZ1 = ExpressionTools3D.processingLengthExpression(self.obj.point1_Z)
+            paraZ2 = ExpressionTools3D.processingLengthExpression(self.obj.point2_Z)
             if coodinate == u'Rectangular':
                 if self.obj.isCheckNormal1:
-                    temp = self.obj.point1_Z.replace(" ", "") + "+" + self.obj.point2_Z.replace(" ", "")
+                    temp = paraZ1.replace(" ", "") + "+" + paraZ2.replace(" ", "")
                 elif self.obj.isCheckNormal2:
-                    temp = self.obj.point1_X.replace(" ", "") + "+" + self.obj.point2_X.replace(" ", "")
+                    temp = paraX1.replace(" ", "") + "+" + paraX2.replace(" ", "")
                 elif self.obj.isCheckNormal3:
-                    temp = self.obj.point1_Y.replace(" ", "") + "+" + self.obj.point2_Y.replace(" ", "")
+                    temp = paraY1.replace(" ", "") + "+" + paraY2.replace(" ", "")
                 self.obj.setExpression("helper", temp)
                 # self.obj.helper = (self.obj.helper.Value) / 2
                 # Tools3D.sayz(str((self.obj.helper) / 2) + "teeeeeeeeeer")
             elif coodinate == u"Polar":
                 if self.obj.isCheckNormal1:
-                    temp = self.obj.point1_Y.replace(" ", "") + "+" + self.obj.point2_Y.replace(" ", "")
+                    temp = paraY1.replace(" ", "") + "+" + paraY2.replace(" ", "")
                     self.obj.setExpression("helper0", temp)
                     # self.obj.helper0 = (self.obj.helper0.Value) / 2
                 elif self.obj.isCheckNormal2:
-                    temp = self.obj.point1_Z.replace(" ", "") + "+" + self.obj.point2_Z.replace(" ", "")
+                    temp = paraZ1.replace(" ", "") + "+" + paraZ2.replace(" ", "")
                     self.obj.setExpression("helper", temp)
                     # self.obj.helper = (self.obj.helper.Value) / 2
                 elif self.obj.isCheckNormal3:
-                    temp = self.obj.point1_Y.replace(" ", "") + "+" + self.obj.point2_Y.replace(" ", "")
+                    temp = paraY1.replace(" ", "") + "+" + paraY2.replace(" ", "")
                     self.obj.setExpression("helper0", temp)
                     # self.obj.helper0 = (self.obj.helper0.Value) / 2
             elif coodinate == u"Cylindrical":
                 if self.obj.isCheckNormal1:
-                    temp = self.obj.point1_Z.replace(" ", "") + "+" + self.obj.point2_Z.replace(" ", "")
+                    temp = paraZ1.replace(" ", "") + "+" + paraZ2.replace(" ", "")
                     self.obj.setExpression("helper0", temp)
                     # self.obj.helper0 = (self.obj.helper0.Value) / 2
                 elif self.obj.isCheckNormal2:
-                    temp = self.obj.point1_Z.replace(" ", "") + "+" + self.obj.point2_Z.replace(" ", "")
+                    temp = paraZ1.replace(" ", "") + "+" + paraZ2.replace(" ", "")
                     self.obj.setExpression("helper0", temp)
                     # self.obj.helper0 = (self.obj.helper0.Value) / 2
                 elif self.obj.isCheckNormal3:
-                    temp = self.obj.point1_X.replace(" ", "") + "+" + self.obj.point2_X.replace(" ", "")
+                    temp = paraX1.replace(" ", "") + "+" + paraX2.replace(" ", "")
                     self.obj.setExpression("helper", temp)
                     # self.obj.helper = (self.obj.helper.Value / 2)
             else:

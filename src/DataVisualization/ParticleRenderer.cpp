@@ -191,9 +191,10 @@ namespace DV {
 		3. 如果在第一个区域中为找到一个点，那么增加正方形边长，继续寻找。
 		4. 当在某个区域中找到一些点之后，将这些点与点击点的距离算出来比较，得出最近点。
 		*/
-
+		//获取数据对象
+		auto pd = std::dynamic_pointer_cast<ParticleData>(data);
 		std::list<ParticleData::Particle> particles;	//区域中的点
-		for (unsigned int rank = 1; particles.size() == 0; rank++)
+		for (unsigned int rank = 1; particles.size() == 0 && rank < 10; rank++)
 		{
 			//正常行边长
 			unsigned long riseLength = 10 * pow(2, rank);
@@ -204,8 +205,7 @@ namespace DV {
 			yMax = point.y() + riseLength;
 			yMin = point.y() - riseLength;
 
-			//获取数据对象
-			auto pd = std::dynamic_pointer_cast<ParticleData>(data);
+
 			if (!pd)
 			{
 #ifdef MY_DEBUG
@@ -219,7 +219,7 @@ namespace DV {
 
 			//寻找区域中的点
 			ParticleData::Particle p;
-			for (int index = startIndex; index < endIndex; index++)
+			for (int index = startIndex; index <= endIndex; index++)
 			{
 				p = pd->getParticleHard(index);
 				float y = (p.y - yr.min) * yScale;
@@ -229,6 +229,9 @@ namespace DV {
 			}
 
 		}
+
+		if(particles.size() == 0)
+			return pd->getParticleHard(0);
 
 		//距离
 		float minDistance;

@@ -72,6 +72,7 @@ class ObjectType:
     THER = "Ther"
     SECD = "Secd"
     IONI = "Ioni"
+    GASOUT = "GasOut"
     # 观测设置
     CNTR = "Cntr"
     Vector = "Vector"
@@ -363,7 +364,34 @@ def updateWhenOrderChanged(obj, lastOrder, newOrder):
     """
     ordered_list = getOrderedObjects()  # 已经排序的obj的list
     objNumbers = len(ordered_list)  # 当前所有obj的数量
+    # 首先判断newOrder, lastOrder均在合理范围内
+    if 0 <= newOrder < objNumbers:
+        pass
+    else:
+        FreeCAD.Console.PrintError("error:传入的order:  " + str(newOrder) + "不在合理范围内\n")
+        newOrder = objNumbers - 1
 
+    tempOrder = 0
+    for i in ordered_list:
+        if i == obj:
+            if tempOrder != newOrder:
+                continue
+        if tempOrder == newOrder:
+            if i == obj:
+                i.Order = tempOrder
+                tempOrder = tempOrder + 1
+                continue
+            else:
+                obj.Order = tempOrder
+                tempOrder = tempOrder +1
+                i.Order = tempOrder
+                tempOrder = tempOrder +1
+                continue
+        i.Order = tempOrder
+        tempOrder = tempOrder +1
+    if obj.Order != newOrder:
+        obj.Order = newOrder
+    return
     if objNumbers == 1:
         obj.Order = 0
         return
@@ -430,6 +458,12 @@ def parseExpressionStr(expressionStr):
     resultExpressionStr = re.sub("\\b\\*\\*\\b","^",resultExpressionStr,flags=re.IGNORECASE)
     for propertyItem in propertyList:
         resultExpressionStr = re.sub("\\b" + propertyItem + "\\b",str(getattr(paramObj, propertyItem)),resultExpressionStr,flags=re.IGNORECASE)
+    #特殊字符全部改为小写
+    resultExpressionStr = resultExpressionStr.lower()
+    #去掉deg
+    resultExpressionStr = re.sub("deg\\b","",resultExpressionStr,flags=re.IGNORECASE)
+    #theta替换为t
+    resultExpressionStr = re.sub("\\btheta\\b","t",resultExpressionStr,flags=re.IGNORECASE)
     FreeCAD.Console.PrintError(resultExpressionStr)
     return resultExpressionStr
 

@@ -28,7 +28,12 @@ public:
 protected:
 	//获取交叉池
 	virtual std::vector<int> getCrossPool(SmartContorl* smartControl);
+	virtual void printBestF(SmartContorl* smartControl);
 
+protected:
+	ChipicRunDatas bestRunData;
+	//结果最优的数据
+	ChipicRunDataPtr resutData;
 private:
 	double mutationProbability;
 	double mutationProbabilityRange;

@@ -5338,11 +5338,11 @@ Be aware the point where you click matters.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>ä½ ç¡®å®è¦å³é­å·¥ç¨å¹¶å³é­ä»¿çç¨åºåï¼QAQ</source>
+        <source>Export data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Export data</source>
+        <source>ä½ ç¡®å®è¦å³é­å·¥ç¨å¹¶å³é­ä»¿çç¨åºåï¼QAQ</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6039,7 +6039,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>GeneticAlgorithm</source>
-        <translation type="unfinished">遗传算法</translation>
+        <translation type="unfinished">单目标遗传优化</translation>
     </message>
     <message>
         <source>SmartContorl</source>
@@ -6253,7 +6253,22 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>MultipleTargetGeneticAlgorithm</source>
-        <translation type="unfinished">多目标遗传算法</translation>
+        <translation type="unfinished">多目标遗传优化</translation>
+    </message>
+    <message>
+        <source>SmartContorl</source>
+        <translation type="unfinished">优化算法</translation>
+    </message>
+</context>
+<context>
+    <name>StdCmdMultipleTargetGeneticAlgorithmG</name>
+    <message>
+        <source>File</source>
+        <translation type="unfinished">文件</translation>
+    </message>
+    <message>
+        <source>MultipleTargetGeneticAlgorithmG</source>
+        <translation type="unfinished">多目标G占优优化</translation>
     </message>
     <message>
         <source>SmartContorl</source>
@@ -6373,6 +6388,17 @@ Be aware the point where you click matters.</source>
     <message>
         <source>Loading the file %1 is not supported</source>
         <translation>不支持加载文件 %1</translation>
+    </message>
+</context>
+<context>
+    <name>StdCmdOpenComboView</name>
+    <message>
+        <source>open_ComboView</source>
+        <translation>组合浏览器</translation>
+    </message>
+    <message>
+        <source>Std_open_ComboView</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6879,7 +6905,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>SmartContorl</source>
-        <translation>优化算法</translation>
+        <translation type="unfinished">单目标粒子群优化</translation>
     </message>
 </context>
 <context>

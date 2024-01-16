@@ -3,6 +3,9 @@
 #include "Target.h"
 #include "xml/pugixml.hpp"
 #include "TargetItem.h"
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
 namespace Ui {
 	class TimeTargetItemUI;
 }
@@ -12,6 +15,8 @@ class TimeTargetItemUI :public QWidget ,public TargetItem{
 public:
 	TimeTargetItemUI(QWidget* parent = 0);
 	~TimeTargetItemUI();
+
+	void showG();
 public:
 	void loadTarget(TargetTime* target);
 	TargetTime* GenerateTimeTarget();

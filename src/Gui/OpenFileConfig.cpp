@@ -159,9 +159,17 @@ void FileFormatM2DText::open(const QStringList& fileList)
 
 void FileFormatM3dMod::open(const QStringList& fileList)
 {
+	auto start_time = std::chrono::high_resolution_clock::now(); // 记录开始时间
+
 	for (auto iter = fileList.begin(); iter != fileList.end(); iter++)
 	{
 		App::GetApplication().openDocument3dMod(iter->toUtf8());
 		Base::Interpreter().runString("import Modeling\nModeling.Common.Tools.DocumentTools.initWhenOpenFCStdFile()\n");
 	}
+
+	auto end_time = std::chrono::high_resolution_clock::now(); // 记录结束时间
+	std::chrono::duration<double> elapsed_time = end_time - start_time; // 计算经过的时间
+
+	// 使用 std::cerr 输出执行时间
+	std::cerr << "Open document time:  " << elapsed_time.count() << " s" << std::endl;
 }

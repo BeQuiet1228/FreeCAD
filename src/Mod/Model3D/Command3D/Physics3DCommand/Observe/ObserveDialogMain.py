@@ -17,6 +17,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
         """
         初始化界面，设置界面逻辑，绑定信号与槽
         """
+        Tools3D.setLineEditsCompleter(Tools3D.getAllLineEdits(self.ui))
         self.default_point_list = []
         self.default_line_list = []
         self.default_plane_list = ["OSYS$MIDPLANE1", "OSYS$MIDPLANE2", "OSYS$MIDPLANE3"]

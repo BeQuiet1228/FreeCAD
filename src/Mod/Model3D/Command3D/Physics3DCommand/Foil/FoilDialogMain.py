@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from Model3D.Tools import Tools3D,ObjectTools
+from Model3D.Tools import Tools3D, ObjectTools
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain
 import FoilDialog
 
@@ -17,6 +17,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
         此处写对话框的逻辑,注意异常处理
         """
         try:
+            Tools3D.setLineEditsCompleter(Tools3D.getAllLineEdits(self.ui))
             #代码补全
             self.defaultValue = ["OSYS$VOLUME"]
             # 这段代码暂时注释

@@ -625,8 +625,8 @@ ToolBarItem* StdWorkbench::setupToolBars() const
 
 	ToolBarItem* run = new ToolBarItem(root);
 	run->setCommand("run");
-	*run << "Std_Run_M3d" << "Std_Paralle_Run" << "Std_Smart_Contrl" << "Std_Connect_Way" << "Std_Open_Log"<<"Std_Smart_Calc"
-        <<"Std_Genetic_Algorithm" << "Std_Multiple_TargetGenetic_Algorithm";
+	*run << "Std_Run_M3d" << "Std_Paralle_Run"  << "Std_Connect_Way" << "Std_Open_Log"<<"Std_Smart_Calc"
+        << "Std_Smart_Contrl" <<"Std_Genetic_Algorithm" << "Std_Multiple_TargetGenetic_Algorithm" << "Std_Multiple_TargetGenetic_Algorithm_G";
 
 	ToolBarItem* visu = new ToolBarItem(root);
 
@@ -641,7 +641,7 @@ ToolBarItem* StdWorkbench::setupToolBars() const
 
 	ToolBarItem* help = new ToolBarItem(root);
 	help->setCommand("about");
-	*help << "Std_Example" <<"Std_Open_User_book" << "Std_Open_Command_book" << "Std_About" << "Std_Run_Super_Tube";
+	*help << "Std_Example" <<"Std_Open_User_book" << "Std_Open_Command_book" << "Std_About" << "Std_Run_Super_Tube" << "Std_open_ComboView";
 
 
 /*	ToolBarItem* projectSetting = new ToolBarItem(root);
