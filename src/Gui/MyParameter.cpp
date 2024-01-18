@@ -29,7 +29,6 @@ using namespace App;
 //using namespace Base;
 
 MyParameter::MyParameter(QWidget* parent) : QWidget(parent) {
-    initUnit();
     this->param_m3d = new neb::CJsonObject();
     if (this->objectName().isEmpty())
         this->setObjectName(QString::fromUtf8("Dialog"));
@@ -52,10 +51,8 @@ MyParameter::MyParameter(QWidget* parent) : QWidget(parent) {
     tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(this->tableWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(slotCustomContextMenu(QPoint)));
 
-    QObject::connect(this->tableWidget, SIGNAL(cellChanged(int, int)), this, SLOT(cellDoubleClicked(int, int)));
-    //QObject::connect(this, SIGNAL(visibilityChanged(bool)), this, SLOT(updateM3D()));
-
     this->addNewLine(0);
+    QObject::connect(this->tableWidget, SIGNAL(cellChanged(int, int)), this, SLOT(cellDoubleClicked(int, int)));
 
     gl = new QGridLayout(this);
     gl->setObjectName(QString::fromUtf8("gridLayout"));
@@ -96,6 +93,7 @@ MyParameter::MyParameter(QWidget* parent) : QWidget(parent) {
     gl->addWidget(delete_btn, 2, 1, 1, 1);
 
     gl->addWidget(updateM3D_btn, 3, 0, 1, 2);
+    initUnit();
 }
 
 MyParameter::~MyParameter()
@@ -1054,7 +1052,8 @@ void MyParameter::initUnit()
 	while ((pos = input.find(' ')) != std::string::npos) {
 		token = input.substr(0, pos);
 		// 将每一项插入std::map并初始化为0
-		unitMap[token] = 0;
+        if(token != "")
+		    unitMap[token] = 0;
 		// 删掉已处理的部分
 		input.erase(0, pos + 1);
 	}
@@ -1065,10 +1064,10 @@ bool MyParameter::isUnit(const std::string& parName)
     auto iter = unitMap.find(parName);
     if (iter == unitMap.end())
     {
-        showNameErorrDailog(parName);
-        return false;
+        return true;
     }
-    return true;
+    showNameErorrDailog(parName);
+    return false;
 }
 
 void MyParameter::showNameErorrDailog(const std::string& parName)
