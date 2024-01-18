@@ -12,6 +12,7 @@
 #include <CJsonObject.hpp>
 #include <qmenubar.h>
 #include <qmenu.h>
+#include <map>
 //#include "propertyeditor/PropertyEditor.h"
 
 static QDockWidget* MyparamDockWidget;
@@ -73,7 +74,15 @@ public:
 	void cellChangedWithFirstColumn(int row);
 	std::vector<std::pair<std::string, std::string>> getAllOrderedParam();
 
-
+private:
+	/*
+	* FreeCAD中使用的默认单位不能用于变量名使用
+	* 这里先初始化一个单位字符列表
+	*/
+	std::map<std::string, int> unitMap;
+	void initUnit();
+	bool isUnit(const std::string& parName);
+	void showNameErorrDailog(const std::string& parName);
 	// 与m3d相关
 public:
 	void createParamM3D();
@@ -105,8 +114,6 @@ private Q_SLOTS:
 	void closeReplaceDlg();
 	void copyParam();
 	
-private:
-	void showNameErorrDailog();
 
 public:
 	//属性用于替换功能

@@ -29,6 +29,7 @@ using namespace App;
 //using namespace Base;
 
 MyParameter::MyParameter(QWidget* parent) : QWidget(parent) {
+    initUnit();
     this->param_m3d = new neb::CJsonObject();
     if (this->objectName().isEmpty())
         this->setObjectName(QString::fromUtf8("Dialog"));
@@ -201,12 +202,7 @@ bool MyParameter::isValidWithName(int row) {
             res = true;
         }
     }
-	//FreeCAD的bug,不能使用h作为变量名
-    if (param_name == "h" || param_name == "H")
-    {
-        showNameErorrDailog();
-        res = false;
-    }
+    res = isUnit(param_name);
     return res;
 }
 
@@ -224,12 +220,7 @@ bool MyParameter::isValidWithName(const std::string& param_name, int row) {
             res = true;
         }
     }
-	//FreeCAD的bug,不能使用h作为变量名
-	if (param_name == "h" || param_name == "H")
-	{
-		showNameErorrDailog();
-		res = false;
-	}
+    res = isUnit(param_name);
     return res;
 }
 
@@ -240,12 +231,7 @@ bool MyParameter::isValidWithName(const std::string& param_name) {
     if ((!param_name.empty()) && (std::regex_match(param_name, r))) {
         res = true;
     }
-	//FreeCAD的bug,不能使用h作为变量名
-	if (param_name == "h" || param_name == "H")
-	{
-		showNameErorrDailog();
-		res = false;
-	}
+    res = isUnit(param_name);
     return res;
 }
 
@@ -1054,7 +1040,38 @@ void MyParameter::copyParam() {
     clipboard->setText(clipNewText);
 }
 
-void MyParameter::showNameErorrDailog()
+void MyParameter::initUnit()
+{
+    //防止重复初始化
+    if (unitMap.size() != 0)
+        return;
+
+	std::string input = "mmol mol  deg rad gon S M mA A kA MA pF nF uF mF F C uS mS S kS MS nH uH mH H mV V kV Ohm kOhm MOhm mJ J kJ eV keV MeV kWh Ws VAs CV cal kcal mN N kN MN lbf nm um mm cm dm m km mil thou in ft yd mi cd Wb G T ug mg g kg t oz lb lbm st cwt W kW Pa kPa MPa GPa uTorr  mTorr Torr psi ksi uK  mK K s min h Hz kHz MHz GHz THz ml l cft mph sqft C F u Da sr lm lx px";
+	size_t pos = 0;
+	std::string token;
+
+	// 使用空格分割字符串
+	while ((pos = input.find(' ')) != std::string::npos) {
+		token = input.substr(0, pos);
+		// 将每一项插入std::map并初始化为0
+		unitMap[token] = 0;
+		// 删掉已处理的部分
+		input.erase(0, pos + 1);
+	}
+}
+
+bool MyParameter::isUnit(const std::string& parName)
+{
+    auto iter = unitMap.find(parName);
+    if (iter == unitMap.end())
+    {
+        showNameErorrDailog(parName);
+        return false;
+    }
+    return true;
+}
+
+void MyParameter::showNameErorrDailog(const std::string& parName)
 {
 	QMessageBox msgBox;
 
@@ -1062,7 +1079,7 @@ void MyParameter::showNameErorrDailog()
 	msgBox.setWindowTitle(gbkStdstringToQstring("提示"));
 
 	// 设置提示框的文本消息
-	msgBox.setText(gbkStdstringToQstring("变量名非法，或者与系统变量重名！"));
+	msgBox.setText(gbkStdstringToQstring("变量：" +parName +" 是一个单位，不能作为变量名使用！"));
 
 	// 设置按钮
 	msgBox.setStandardButtons(QMessageBox::Ok );
