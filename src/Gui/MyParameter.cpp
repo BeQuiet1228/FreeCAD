@@ -200,7 +200,7 @@ bool MyParameter::isValidWithName(int row) {
             res = true;
         }
     }
-    res = isUnit(param_name);
+    res = res && isUnit(param_name);
     return res;
 }
 
