@@ -122,7 +122,9 @@ class ObjectArray:
                                     pointValue += stepZ
                             else:
                                 Tools3D.sayz("Point Values Set ERROR!")
-                            objCopy.setExpression(pk, str(pointValue))
+                            tempAttr = getattr(objCopy,str(pk))
+                            objCopy.setExpression(str(pk), None)
+                            tempAttr.Value = pointValue
                             objPointsDict[pk] = pointValue
 
                         objCopy.recompute()
@@ -229,7 +231,9 @@ class ObjectArray:
                                 if m:
                                     pointValue = objPointsDict[pk]
                                     pointValue += step1
-                                    objCopyR.setExpression(pk, str(pointValue))
+                                    tempAttr = getattr(objCopyR,str(pk))
+                                    objCopyR.setExpression(str(pk), None)
+                                    tempAttr.Value = pointValue
                                     objPointsDict[pk] = pointValue
 
                             # 重新计算 objCopyR，更新点坐标
