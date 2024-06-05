@@ -4,6 +4,7 @@ from Model3D.Tools import ObjectTools, Tools3D
 import FreeCADGui
 import FreeCAD
 import time
+from BOPTools import SplitAPI
 
 
 class UpdateBoolean:
@@ -16,6 +17,8 @@ class UpdateBoolean:
             return obj
         else:
             return basObj.fuse(obj)
+            Tools3D.sayz("当前布尔+++")
+            return SplitAPI.booleanFragments([basObj,obj], "Standard")
 
     @staticmethod
     def cut(basObj, obj):
@@ -98,8 +101,7 @@ def boolResult(obj_list):
         if not obj.Shape.isValid():
             Tools3D.sayz(obj.Label + "的Shape存在问题，将其剔除布尔运算，请检查该模型")
             continue
-        shape_list.append(obj.Shape)
-    baseObj = UpdateBoolean.fuse(baseObj, shape_list)
+        baseObj = UpdateBoolean.fuse(baseObj,obj.Shape)
     return baseObj
 
 
