@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ObserveDialog.ui'
+# Form implementation generated from reading ui file 'E:\NewPicGui\FreeCAD\src\Mod\Model3D\Command3D\Physics3DCommand\Observe\ObserveDialog.ui'
 #
-# Created: Fri May 21 16:17:01 2021
+# Created: Mon Jul 22 09:22:53 2024
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
 from PySide import QtCore, QtGui
-from Model3D.Tools import Completer
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -23,7 +22,7 @@ class Ui_Dialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 502, 620))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 494, 712))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.gridLayout_12 = QtGui.QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout_12.setObjectName("gridLayout_12")
@@ -64,28 +63,24 @@ class Ui_Dialog(object):
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.gridLayout_2 = QtGui.QGridLayout()
         self.gridLayout_2.setObjectName("gridLayout_2")
-        #self.LineEdit_start_x = QtGui.QLineEdit(self.groupBox)
-        self.LineEdit_start_x = Completer.AutoCompleteEdit(self.groupBox)
+        self.LineEdit_start_x = QtGui.QLineEdit(self.groupBox)
         self.LineEdit_start_x.setObjectName("LineEdit_start_x")
         self.gridLayout_2.addWidget(self.LineEdit_start_x, 1, 2, 1, 1)
         self.cb_point1_name = QtGui.QComboBox(self.groupBox)
         self.cb_point1_name.setObjectName("cb_point1_name")
         self.cb_point1_name.addItem("")
         self.gridLayout_2.addWidget(self.cb_point1_name, 1, 5, 1, 1)
-        #self.LineEdit_end_y = QtGui.QLineEdit(self.groupBox)
-        self.LineEdit_end_y = Completer.AutoCompleteEdit(self.groupBox)
+        self.LineEdit_end_y = QtGui.QLineEdit(self.groupBox)
         self.LineEdit_end_y.setEnabled(True)
         self.LineEdit_end_y.setObjectName("LineEdit_end_y")
         self.gridLayout_2.addWidget(self.LineEdit_end_y, 2, 3, 1, 1)
-        #self.LineEdit_start_y = QtGui.QLineEdit(self.groupBox)
-        self.LineEdit_start_y = Completer.AutoCompleteEdit(self.groupBox)
+        self.LineEdit_start_y = QtGui.QLineEdit(self.groupBox)
         self.LineEdit_start_y.setObjectName("LineEdit_start_y")
         self.gridLayout_2.addWidget(self.LineEdit_start_y, 1, 3, 1, 1)
         self.label_X = QtGui.QLabel(self.groupBox)
         self.label_X.setObjectName("label_X")
         self.gridLayout_2.addWidget(self.label_X, 0, 2, 1, 1)
-        #self.LineEdit_end_x = QtGui.QLineEdit(self.groupBox)
-        self.LineEdit_end_x = Completer.AutoCompleteEdit(self.groupBox)
+        self.LineEdit_end_x = QtGui.QLineEdit(self.groupBox)
         self.LineEdit_end_x.setEnabled(True)
         self.LineEdit_end_x.setObjectName("LineEdit_end_x")
         self.gridLayout_2.addWidget(self.LineEdit_end_x, 2, 2, 1, 1)
@@ -105,12 +100,10 @@ class Ui_Dialog(object):
         self.cb_point2_name.setObjectName("cb_point2_name")
         self.cb_point2_name.addItem("")
         self.gridLayout_2.addWidget(self.cb_point2_name, 2, 5, 1, 1)
-        #self.LineEdit_start_z = QtGui.QLineEdit(self.groupBox)
-        self.LineEdit_start_z = Completer.AutoCompleteEdit(self.groupBox)
+        self.LineEdit_start_z = QtGui.QLineEdit(self.groupBox)
         self.LineEdit_start_z.setObjectName("LineEdit_start_z")
         self.gridLayout_2.addWidget(self.LineEdit_start_z, 1, 4, 1, 1)
-        #self.LineEdit_end_z = QtGui.QLineEdit(self.groupBox)
-        self.LineEdit_end_z = Completer.AutoCompleteEdit(self.groupBox)
+        self.LineEdit_end_z = QtGui.QLineEdit(self.groupBox)
         self.LineEdit_end_z.setObjectName("LineEdit_end_z")
         self.gridLayout_2.addWidget(self.LineEdit_end_z, 2, 4, 1, 1)
         self.label_Z = QtGui.QLabel(self.groupBox)
@@ -415,7 +408,7 @@ class Ui_Dialog(object):
         self.LineEdit_start_y.setText(QtGui.QApplication.translate("Dialog", "0mm", None, QtGui.QApplication.UnicodeUTF8))
         self.label_X.setText(QtGui.QApplication.translate("Dialog", "X", None, QtGui.QApplication.UnicodeUTF8))
         self.LineEdit_end_x.setText(QtGui.QApplication.translate("Dialog", "0mm", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_7.setText(QtGui.QApplication.translate("Dialog", "起点：", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_7.setText(QtGui.QApplication.translate("Dialog", "终点:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("Dialog", "法向：", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("Dialog", "起点：", None, QtGui.QApplication.UnicodeUTF8))
         self.label_Y.setText(QtGui.QApplication.translate("Dialog", "Y", None, QtGui.QApplication.UnicodeUTF8))
