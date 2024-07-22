@@ -106,7 +106,7 @@ void Chipic::init()
 
 	this->errorExit = false;
 
-	watchDog = 6;
+	watchDog = 18;
 }
 
 
@@ -581,7 +581,7 @@ void Chipic::restartTimeoutTimer()
 void Chipic::disposJsonMessage(const std::string& json)
 {
 	//喂狗
-	watchDog = 3;
+	watchDog = 18;
 
 	Message msg = MessageTransition::jsonToWinMessage(json);
 	//处理提示消息
