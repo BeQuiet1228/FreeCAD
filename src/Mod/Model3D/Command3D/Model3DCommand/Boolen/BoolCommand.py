@@ -2,8 +2,18 @@
 import FreeCAD
 import FreeCADGui
 from Model3D.Tools import ObjectTools, UpdataBoolen3D, Tools3D
-from PySide.QtGui import QApplication, QMessageBox
+from PySide.QtGui import QApplication, QMessageBox,QCheckBox
 
+
+class CustomMessageBox(QMessageBox):
+    def __init__(self, *args, **kwargs):
+        super(CustomMessageBox, self).__init__(*args, **kwargs)
+        self.checkbox = QCheckBox("是否不在提醒？并不再重新运算！")
+        layout = self.layout()
+        layout.addWidget(self.checkbox, 1, 1)
+
+    def isChecked(self):
+        return self.checkbox.isChecked()
 
 class BooleanCommand:
     """
@@ -19,15 +29,21 @@ class BooleanCommand:
         # UpdataBoolen3D.UpdateBoolean.boolean(ObjectTools.getAllValidModelObj())
         UpdataBoolen3D.UpdateBoolean.boolean(UpdataBoolen3D.boolResultList())
         if  not FreeCAD.ActiveDocument.ResultShape.Shape.isValid():
-            msgBox = QMessageBox()
+            if not hasattr(FreeCAD.ActiveDocument.Param, 'B_test'):
+                FreeCAD.ActiveDocument.Param.addProperty("App::PropertyBool", 'B_test')
+                FreeCAD.ActiveDocument.Param.B_test = False
+            else:
+                if FreeCAD.ActiveDocument.Param.B_test:
+                    return
+            msgBox = CustomMessageBox()
             msgBox.setText("布尔运算错误")  # 设置要显示的文本
             msgBox.setInformativeText("布尔运算出错，你是否要重新进行布尔运算？")
             msgBox.setWindowTitle("错误")  # 设置窗口标题
             msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)  # 设置按钮
 
-
             # 显示消息框并获取用户的点击结果
             retval = msgBox.exec_()
+            FreeCAD.ActiveDocument.Param.B_test = msgBox.isChecked()
             if retval == QMessageBox.Ok:
                 FreeCADGui.runCommand('UpdateBooleanCommand_3D')
 
