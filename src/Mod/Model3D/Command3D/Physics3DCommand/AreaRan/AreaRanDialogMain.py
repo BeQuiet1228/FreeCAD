@@ -91,6 +91,8 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             self.ui.comboBox_particleType.setCurrentIndex(
                 self.ui.comboBox_particleType.findText(str(self.obj.particleType)))
             self.ui.comboBox_axis.setCurrentIndex(self.ui.comboBox_axis.findText(str(self.obj.particleAxis)))
+            if hasattr(self.obj, 'testPar'):
+                self.ui.comboBox_test.setCurrentIndex(self.ui.comboBox_test.findText(str(self.obj.testPar)))
 
             self.ui.checkBox_Fourier.setChecked(self.obj.isFFT)
             self.ui.radioButton_real.setChecked(self.obj.isRealAnalysis)
@@ -137,6 +139,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             self.obj.chooseParticle = self.ui.comboBox_particle.currentText()
             self.obj.particleType = self.ui.comboBox_particleType.currentText()
             self.obj.particleAxis = self.ui.comboBox_axis.currentText()
+            self.obj.testPar = self.ui.comboBox_test.currentText()
 
             self.obj.isFFT = self.ui.checkBox_Fourier.isChecked()
             self.obj.isRealAnalysis = self.ui.radioButton_real.isChecked()
@@ -192,6 +195,7 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
         self.ui.comboBox_particle.setEnabled(self.ui.radioButton_particles.isChecked())
         self.ui.comboBox_particleType.setEnabled(self.ui.radioButton_particles.isChecked())
         self.ui.comboBox_axis.setEnabled(self.ui.radioButton_particles.isChecked())
+        self.ui.comboBox_test.setEnabled(self.ui.radioButton_particles.isChecked())
         # self.ui.checkBox_Fourier.setEnabled(not self.ui.radioButton_particles.isChecked())
 
     def checkBoxFourier(self):
@@ -209,9 +213,12 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             self.ui.comboBox_particleType.addItem(i)
 
     def initParticleAxis(self):
-        particleAxis = ["X1", "X2"]
+        particleAxis = ["X1", "X2","X3"]
         for i in particleAxis:
             self.ui.comboBox_axis.addItem(i)
+        testAxis = ["POSITIVE_FLUX","negative_FLUX","DENSITY"]
+        for i in testAxis:
+            self.ui.comboBox_test.addItem(i)
 
     def ComboBox_Shadow_clicked(self):
         try:

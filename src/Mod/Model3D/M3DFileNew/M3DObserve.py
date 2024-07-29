@@ -224,7 +224,8 @@ def AreaRan(obj):
     else:
         temp_m3d = ""
         temp_m3d_ap += "RANGE" + blankSpace + "PARTICLE" + blankSpace + obj.chooseParticle + blankSpace + \
-                       obj.particleType + blankSpace + obj.particleAxis + blankSpace + Timer_name + semicolon + newLine
+                       obj.particleType + blankSpace + obj.particleAxis + blankSpace + Timer_name + \
+                        " WEIGHTING "+obj.testPar+semicolon + newLine
 
     return temp_m3d, temp_m3d_ap
 

@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'AreaRanDialog.ui'
+# Form implementation generated from reading ui file 'E:\PICGUI\PICGUI_SRC\src\Mod\Model3D\Command3D\Physics3DCommand\AreaRan\AreaRanDialog.ui'
 #
-# Created: Fri May 21 16:08:19 2021
+# Created: Mon Jul 29 09:59:26 2024
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
 from PySide import QtCore, QtGui
-from Model3D.Tools import Completer
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -65,22 +64,18 @@ class Ui_Dialog(object):
         self.label = QtGui.QLabel(self.groupBox_Port)
         self.label.setObjectName("label")
         self.gridLayout_5.addWidget(self.label, 3, 0, 1, 1)
-        #self.LineEdit_start_x = QtGui.QLineEdit(self.groupBox_Port)
-        self.LineEdit_start_x = Completer.AutoCompleteEdit(self.groupBox_Port)
+        self.LineEdit_start_x = QtGui.QLineEdit(self.groupBox_Port)
         self.LineEdit_start_x.setObjectName("LineEdit_start_x")
         self.gridLayout_5.addWidget(self.LineEdit_start_x, 1, 1, 1, 1)
-        #self.LineEdit_end_x = QtGui.QLineEdit(self.groupBox_Port)
-        self.LineEdit_end_x = Completer.AutoCompleteEdit(self.groupBox_Port)
+        self.LineEdit_end_x = QtGui.QLineEdit(self.groupBox_Port)
         self.LineEdit_end_x.setEnabled(True)
         self.LineEdit_end_x.setObjectName("LineEdit_end_x")
         self.gridLayout_5.addWidget(self.LineEdit_end_x, 2, 1, 1, 1)
-        #self.LineEdit_end_y = QtGui.QLineEdit(self.groupBox_Port)
-        self.LineEdit_end_y = Completer.AutoCompleteEdit(self.groupBox_Port)
+        self.LineEdit_end_y = QtGui.QLineEdit(self.groupBox_Port)
         self.LineEdit_end_y.setEnabled(True)
         self.LineEdit_end_y.setObjectName("LineEdit_end_y")
         self.gridLayout_5.addWidget(self.LineEdit_end_y, 2, 2, 1, 1)
-        #self.LineEdit_start_y = QtGui.QLineEdit(self.groupBox_Port)
-        self.LineEdit_start_y = Completer.AutoCompleteEdit(self.groupBox_Port)
+        self.LineEdit_start_y = QtGui.QLineEdit(self.groupBox_Port)
         self.LineEdit_start_y.setObjectName("LineEdit_start_y")
         self.gridLayout_5.addWidget(self.LineEdit_start_y, 1, 2, 1, 1)
         self.label_X = QtGui.QLabel(self.groupBox_Port)
@@ -133,15 +128,13 @@ class Ui_Dialog(object):
         self.radioButton_z.setObjectName("radioButton_z")
         self.horizontalLayout_6.addWidget(self.radioButton_z)
         self.gridLayout_5.addWidget(self.groupBox_5, 3, 1, 1, 3)
-        #self.LineEdit_start_z = QtGui.QLineEdit(self.groupBox_Port)
-        self.LineEdit_start_z = Completer.AutoCompleteEdit(self.groupBox_Port)
+        self.LineEdit_start_z = QtGui.QLineEdit(self.groupBox_Port)
         self.LineEdit_start_z.setObjectName("LineEdit_start_z")
         self.gridLayout_5.addWidget(self.LineEdit_start_z, 1, 3, 1, 1)
         self.label_Z = QtGui.QLabel(self.groupBox_Port)
         self.label_Z.setObjectName("label_Z")
         self.gridLayout_5.addWidget(self.label_Z, 0, 3, 1, 1)
-        #self.LineEdit_end_z = QtGui.QLineEdit(self.groupBox_Port)
-        self.LineEdit_end_z = Completer.AutoCompleteEdit(self.groupBox_Port)
+        self.LineEdit_end_z = QtGui.QLineEdit(self.groupBox_Port)
         self.LineEdit_end_z.setEnabled(True)
         self.LineEdit_end_z.setObjectName("LineEdit_end_z")
         self.gridLayout_5.addWidget(self.LineEdit_end_z, 2, 3, 1, 1)
@@ -232,6 +225,10 @@ class Ui_Dialog(object):
         self.comboBox_axis.setEnabled(False)
         self.comboBox_axis.setObjectName("comboBox_axis")
         self.horizontalLayout_7.addWidget(self.comboBox_axis)
+        self.comboBox_test = QtGui.QComboBox(self.groupBox)
+        self.comboBox_test.setEnabled(False)
+        self.comboBox_test.setObjectName("comboBox_test")
+        self.horizontalLayout_7.addWidget(self.comboBox_test)
         self.gridLayout_4.addLayout(self.horizontalLayout_7, 2, 0, 1, 2)
         self.gridLayout_3.addWidget(self.groupBox, 1, 0, 1, 1)
         self.horizontalLayout_start_2 = QtGui.QHBoxLayout()

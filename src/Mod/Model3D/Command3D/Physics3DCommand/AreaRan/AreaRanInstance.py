@@ -31,6 +31,7 @@ class AreaRan(object):
         obj.addProperty("App::PropertyString", "chooseParticle").chooseParticle = "CURRENT"
         obj.addProperty("App::PropertyString", "particleType").particleType = "ELECTRON"
         obj.addProperty("App::PropertyString", "particleAxis").particleAxis = "X1"
+        obj.addProperty("App::PropertyString", "testPar").testPar = "POSITIVE_FLUX"
         self.obj.addProperty("App::PropertyString", "timer").timer = "默认定时器"
         Tools3D.addCommonStartEndCoordinate(obj)
         Tools3D.addCommonDirection(obj)

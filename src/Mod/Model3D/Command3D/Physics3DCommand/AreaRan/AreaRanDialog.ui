@@ -460,6 +460,13 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QComboBox" name="comboBox_test">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>
