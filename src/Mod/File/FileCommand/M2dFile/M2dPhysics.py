@@ -71,9 +71,9 @@ def Foil(obj):
         temp_m2d += M2dObject.PointCoordinates().point1(obj)
         temp_m2d += M2dObject.PointCoordinates().point2(obj)
         temp_m2d += semicolon+newLine
-        temp_m2d_pap += "FOIL"+blankSpace+material+blankSpace+obj.foilThickness+blankSpace+obj.Label+semicolon+newLine
+        temp_m2d_pap += "FOIL"+blankSpace+obj.Label+blankSpace+obj.foilThickness+blankSpace+material+semicolon+newLine
     else:
-        temp_m2d_pap += "FOIL"+blankSpace+material+blankSpace+obj.foilThickness+blankSpace+obj.foilType+semicolon+newLine
+        temp_m2d_pap += "FOIL"+blankSpace+obj.foilType+blankSpace+obj.foilThickness+blankSpace+material+semicolon+newLine
     return temp_m2d_cp, temp_m2d, temp_m2d_pap
 
 
