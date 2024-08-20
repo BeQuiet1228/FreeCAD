@@ -32,7 +32,7 @@ def Load(workbench):
     cmdTimer_3D = ['CreateDefTimer_3D', 'CreateCustomTimer_3D']
 
     cmdProjectSettinglst_3D = ['CreateModelingInfo', 'NetStepSetting_3D', 'CreateDataProcessingSetting',
-                            'CreateRunOptions', 'Std_My_Parameter']
+                            'CreateChipicContinue','CreateRunOptions', 'Std_My_Parameter']
 
     view = ["Std_ViewAxo", "Separator", "Std_ViewFront", "Std_ViewTop", "Std_ViewRight",
             "Separator", "Std_ViewRear", "Std_ViewBottom", "Std_ViewLeft", "Separator", "Std_MeasureDistance"]
