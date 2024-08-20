@@ -320,7 +320,7 @@ void MainWindow::inintContorlUI()
 		wd->setLayout(layout);
 		layout->addWidget(contorlButtonBar);
 		layout->addWidget(contorlDataBar);
-		contorlDockWidget = DockWindowManager::instance()->addDockWindow("contorl", wd,Qt::DockWidgetArea::RightDockWidgetArea);
+		contorlDockWidget = DockWindowManager::instance()->addDockWindow("control", wd,Qt::DockWidgetArea::RightDockWidgetArea);
 
 		layout->addStretch();
 	});
