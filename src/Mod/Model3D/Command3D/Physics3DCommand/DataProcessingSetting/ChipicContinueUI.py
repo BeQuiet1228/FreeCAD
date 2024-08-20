@@ -1,0 +1,90 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'C:\PICGUIC_L\Mod\Model3D\Command3D\Physics3DCommand\DataProcessingSetting\ChipicContinue.ui'
+#
+# Created: Mon Aug 19 15:29:12 2024
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+#
+# WARNING! All changes made in this file will be lost!
+
+from PySide import QtCore, QtGui
+
+class Ui_ChipicContinueUI(object):
+    def setupUi(self, ChipicContinueUI):
+        ChipicContinueUI.setObjectName("ChipicContinueUI")
+        ChipicContinueUI.resize(396, 249)
+        self.verticalLayout_3 = QtGui.QVBoxLayout(ChipicContinueUI)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.checkBoxData = QtGui.QCheckBox(ChipicContinueUI)
+        self.checkBoxData.setObjectName("checkBoxData")
+        self.verticalLayout_3.addWidget(self.checkBoxData)
+        self.groupBox = QtGui.QGroupBox(ChipicContinueUI)
+        self.groupBox.setObjectName("groupBox")
+        self.verticalLayout = QtGui.QVBoxLayout(self.groupBox)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label_3 = QtGui.QLabel(self.groupBox)
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout_2.addWidget(self.label_3)
+        self.lineEditFileName = QtGui.QLineEdit(self.groupBox)
+        self.lineEditFileName.setObjectName("lineEditFileName")
+        self.horizontalLayout_2.addWidget(self.lineEditFileName)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.label_2 = QtGui.QLabel(self.groupBox)
+        self.label_2.setObjectName("label_2")
+        self.horizontalLayout.addWidget(self.label_2)
+        self.lineEditCycel = QtGui.QLineEdit(self.groupBox)
+        self.lineEditCycel.setObjectName("lineEditCycel")
+        self.horizontalLayout.addWidget(self.lineEditCycel)
+        self.label = QtGui.QLabel(self.groupBox)
+        self.label.setObjectName("label")
+        self.horizontalLayout.addWidget(self.label)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.verticalLayout_3.addWidget(self.groupBox)
+        self.checkBoxContinue = QtGui.QCheckBox(ChipicContinueUI)
+        self.checkBoxContinue.setObjectName("checkBoxContinue")
+        self.verticalLayout_3.addWidget(self.checkBoxContinue)
+        self.groupBox_2 = QtGui.QGroupBox(ChipicContinueUI)
+        self.groupBox_2.setObjectName("groupBox_2")
+        self.verticalLayout_2 = QtGui.QVBoxLayout(self.groupBox_2)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.horizontalLayout_3 = QtGui.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.label_4 = QtGui.QLabel(self.groupBox_2)
+        self.label_4.setObjectName("label_4")
+        self.horizontalLayout_3.addWidget(self.label_4)
+        self.comboBoxFileName = QtGui.QComboBox(self.groupBox_2)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.comboBoxFileName.sizePolicy().hasHeightForWidth())
+        self.comboBoxFileName.setSizePolicy(sizePolicy)
+        self.comboBoxFileName.setObjectName("comboBoxFileName")
+        self.horizontalLayout_3.addWidget(self.comboBoxFileName)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_3)
+        self.verticalLayout_3.addWidget(self.groupBox_2)
+        self.buttonBox = QtGui.QDialogButtonBox(ChipicContinueUI)
+        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName("buttonBox")
+        self.verticalLayout_3.addWidget(self.buttonBox)
+
+        self.retranslateUi(ChipicContinueUI)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), ChipicContinueUI.accept)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), ChipicContinueUI.reject)
+        QtCore.QMetaObject.connectSlotsByName(ChipicContinueUI)
+
+    def retranslateUi(self, ChipicContinueUI):
+        ChipicContinueUI.setWindowTitle(QtGui.QApplication.translate("ChipicContinueUI", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxData.setText(QtGui.QApplication.translate("ChipicContinueUI", "数据记录", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBox.setTitle(QtGui.QApplication.translate("ChipicContinueUI", "数据记录", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("ChipicContinueUI", "文件名称:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("ChipicContinueUI", "记录周期：", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("ChipicContinueUI", "ns", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxContinue.setText(QtGui.QApplication.translate("ChipicContinueUI", "断点续算", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBox_2.setTitle(QtGui.QApplication.translate("ChipicContinueUI", "断点续算设置", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_4.setText(QtGui.QApplication.translate("ChipicContinueUI", "续算文件:", None, QtGui.QApplication.UnicodeUTF8))
+

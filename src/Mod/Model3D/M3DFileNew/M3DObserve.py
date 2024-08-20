@@ -1,6 +1,8 @@
 # encoding:utf-8
 # 此文件存放等位图、矢量图、空间图、相空间图、时间图的m3d
 import M3DShare
+import FreeCAD
+import FreeCADGui
 
 blankSpace = " "
 semicolon = ";"
@@ -62,7 +64,11 @@ def DefaultTimer(obj):
                            blankSpace + obj.discreteTime + semicolon + newLine
     return temp_m3d_ap
 
-
+def ChipicContinueM3d():
+    info = FreeCAD.ActiveDocument.getObject("ChipicContinueInfo")
+    if info is None:
+        return ""
+    return info.m3d
 def Cntr(obj):
     """
         Cntr

@@ -605,7 +605,8 @@ class M3D:
             timer_str = M3DObserve.DefaultTimer(i)
             if len(timer_str) != 0:
                 timer_str += "\n"
-
+        timer_str += M3DObserve.ChipicContinueM3d()
+        timer_str += "\n"
         # CustomTimer
         for i in ap_dict[ObjectTools.ObjectType.CustomTimer]:
             ap_str = M3DObserve.CustomTimer(i)
