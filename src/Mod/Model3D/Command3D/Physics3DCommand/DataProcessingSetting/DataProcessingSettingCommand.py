@@ -57,7 +57,8 @@ class ChipicContinueDialog(QtGui.QDialog):
             self.info = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", "ChipicContinueInfo")
             self.info.addProperty("App::PropertyBool", "ContinueData").ContinueData = False
             self.info.addProperty("App::PropertyBool", "ContinueFile").ContinueFile = False
-            self.info.addProperty("App::PropertyString", "cycle").cycle = "10"
+            self.info.addProperty("App::PropertyString", "cycle").cycle = \
+                str(int(FreeCAD.ActiveDocument.getObject("TimeDomainSetting").computationTime)/3)
             self.info.addProperty("App::PropertyString", "DataFileName").DataFileName = "Data"
             self.info.addProperty("App::PropertyString", "ContinueFileName").ContinueFileName = "Data"
             self.info.addProperty("App::PropertyString", "m3d").m3d = ""
@@ -71,8 +72,8 @@ class ChipicContinueDialog(QtGui.QDialog):
         self.info.ContinueFileName =  self.ui.comboBoxFileName.currentText()
         m3d = ""
         if self.info.ContinueData:
-            m3d += "TIMER Record Timer PERIODIC REAL 0 100000 " + self.info.cycle+";\n"
-            m3d += "record Record Timer "+self.info.DataFileName +" 5;\n"
+            m3d += "TIMER RcdTimer PERIODIC REAL 0 100000 " + self.info.cycle+";\n"
+            m3d += "record RcdTimer "+self.info.DataFileName +" 5;\n"
         if self.info.ContinueFile:
             m3d += "CONTINUE " +self.info.ContinueFileName +";\n"
         self.info.m3d = m3d
