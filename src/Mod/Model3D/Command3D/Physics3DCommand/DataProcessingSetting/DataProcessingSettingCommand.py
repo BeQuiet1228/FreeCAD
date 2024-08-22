@@ -57,9 +57,8 @@ class ChipicContinueDialog(QtGui.QDialog):
             self.info = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", "ChipicContinueInfo")
             self.info.addProperty("App::PropertyBool", "ContinueData").ContinueData = False
             self.info.addProperty("App::PropertyBool", "ContinueFile").ContinueFile = False
-            self.info.addProperty("App::PropertyString", "cycle").cycle = \
-                str(int(FreeCAD.ActiveDocument.getObject("TimeDomainSetting").computationTime)/3)
-            self.info.addProperty("App::PropertyString", "DataFileName").DataFileName = "Data"
+            self.info.addProperty("App::PropertyString", "cycle").cycle = "10"
+            self.info.addProperty("App::PropertyString", "DataFileName").DataFileName = "RcdFile"
             self.info.addProperty("App::PropertyString", "ContinueFileName").ContinueFileName = "Data"
             self.info.addProperty("App::PropertyString", "m3d").m3d = ""
         self.initGUI()
@@ -72,8 +71,9 @@ class ChipicContinueDialog(QtGui.QDialog):
         self.info.ContinueFileName =  self.ui.comboBoxFileName.currentText()
         m3d = ""
         if self.info.ContinueData:
-            m3d += "TIMER RcdTimer PERIODIC REAL 0 100000 " + self.info.cycle+";\n"
-            m3d += "record RcdTimer "+self.info.DataFileName +" 5;\n"
+            m3d += "TIMER RcdTimer PERIODIC REAL %.2e %.2e %.2e ;\n"\
+                %(float(self.info.cycle)*1E-9,500*1E-9,float(self.info.cycle)*1E-9)
+            m3d += "record RcdTimer "+self.info.DataFileName +";\n"
         if self.info.ContinueFile:
             m3d += "CONTINUE " +self.info.ContinueFileName +";\n"
         self.info.m3d = m3d
@@ -82,7 +82,7 @@ class ChipicContinueDialog(QtGui.QDialog):
         doc_path = os.path.dirname(FreeCADGui.ActiveDocument.Document.FileName)
 
         # 列出所有.data 文件
-        data_files = [f for f in os.listdir(doc_path) if f.endswith('.data')]
+        data_files = [f for f in os.listdir(doc_path) if f.endswith('.rcf')]
         self.ui.comboBoxFileName.clear()
         for file_name in data_files:
             self.ui.comboBoxFileName.addItem(file_name)
