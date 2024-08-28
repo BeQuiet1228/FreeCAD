@@ -573,8 +573,8 @@ def VolExtruded(obj):
     temp_m3d = ""
     temp_m3d_pap = ""
     temp_m3d += "VOLUME" + blankSpace + obj.Label + blankSpace + "EXTRUDED"
-    temp_m3d += newLine + tab + obj.Line
     temp_m3d += newLine + tab + obj.Area
+    temp_m3d += newLine + tab + obj.Line
     temp_m3d += semicolon + newLine
     temp_m3d += Mark(obj)
     temp_m3d_pap += ShareAttribute(obj)
