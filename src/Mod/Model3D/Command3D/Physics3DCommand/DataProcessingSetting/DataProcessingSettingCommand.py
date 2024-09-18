@@ -61,6 +61,7 @@ class ChipicContinueDialog(QtGui.QDialog):
             self.info.addProperty("App::PropertyString", "DataFileName").DataFileName = "RcdFile"
             self.info.addProperty("App::PropertyString", "ContinueFileName").ContinueFileName = "Data"
             self.info.addProperty("App::PropertyString", "m3d").m3d = ""
+            self.info.addProperty("App::PropertyString", "FileCount").FileCount = "1"
         self.initGUI()
         #InitDoc3D.addObjectToGroup_helper(self.info, "ChipicContinueInfo", "断点续算设置")
     def saveInfo(self):
@@ -69,20 +70,21 @@ class ChipicContinueDialog(QtGui.QDialog):
         self.info.cycle = self.ui.lineEditCycel.text()
         self.info.DataFileName = self.ui.lineEditFileName.text()
         self.info.ContinueFileName =  self.ui.comboBoxFileName.currentText()
+        self.info.FileCount = str(self.ui.spinBox.value())
         m3d = ""
         if self.info.ContinueData:
             m3d += "TIMER RcdTimer PERIODIC REAL %.2e %.2e %.2e ;\n"\
                 %(float(self.info.cycle)*1E-9,500*1E-9,float(self.info.cycle)*1E-9)
-            m3d += "record RcdTimer "+self.info.DataFileName +";\n"
+            m3d += "record RcdTimer "+self.info.DataFileName+" "+self.info.FileCount +";\n"
         if self.info.ContinueFile:
             m3d += "CONTINUE " +self.info.ContinueFileName +";\n"
         self.info.m3d = m3d
     def initGUI(self):
-        # 获取当前文档的文件路径
         doc_path = os.path.dirname(FreeCADGui.ActiveDocument.Document.FileName)
-
-        # 列出所有.data 文件
-        data_files = [f for f in os.listdir(doc_path) if f.endswith('.rcf')]
+        if os.path.exists(doc_path):
+            data_files = [f for f in os.listdir(doc_path) if f.endswith('.rcf')]
+        else:
+            data_files = []
         self.ui.comboBoxFileName.clear()
         for file_name in data_files:
             self.ui.comboBoxFileName.addItem(file_name)
@@ -94,6 +96,7 @@ class ChipicContinueDialog(QtGui.QDialog):
         if index == -1:
             index = 0  # 如果没有找到，设置为0
         self.ui.comboBoxFileName.setCurrentIndex(index)  # 设置选中项
+        self.ui.spinBox.setValue(int(self.info.FileCount))
 
         
     

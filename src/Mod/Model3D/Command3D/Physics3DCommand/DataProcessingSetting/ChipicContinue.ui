@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>396</width>
-    <height>249</height>
+    <width>361</width>
+    <height>309</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -57,6 +57,24 @@
          <widget class="QLabel" name="label">
           <property name="text">
            <string>ns</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>记录数据文件数量：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBox">
+          <property name="minimum">
+           <number>1</number>
           </property>
          </widget>
         </item>

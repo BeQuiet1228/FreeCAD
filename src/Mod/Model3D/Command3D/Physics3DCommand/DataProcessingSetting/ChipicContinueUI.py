@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\PICGUIC_L\Mod\Model3D\Command3D\Physics3DCommand\DataProcessingSetting\ChipicContinue.ui'
+# Form implementation generated from reading ui file 'E:\NewPicGui\FreeCAD\src\Mod\Model3D\Command3D\Physics3DCommand\DataProcessingSetting\ChipicContinue.ui'
 #
-# Created: Mon Aug 19 15:29:12 2024
+# Created: Wed Sep 18 14:32:08 2024
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_ChipicContinueUI(object):
     def setupUi(self, ChipicContinueUI):
         ChipicContinueUI.setObjectName("ChipicContinueUI")
-        ChipicContinueUI.resize(396, 249)
+        ChipicContinueUI.resize(361, 309)
         self.verticalLayout_3 = QtGui.QVBoxLayout(ChipicContinueUI)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.checkBoxData = QtGui.QCheckBox(ChipicContinueUI)
@@ -43,6 +43,16 @@ class Ui_ChipicContinueUI(object):
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
         self.verticalLayout.addLayout(self.horizontalLayout)
+        self.horizontalLayout_4 = QtGui.QHBoxLayout()
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.label_5 = QtGui.QLabel(self.groupBox)
+        self.label_5.setObjectName("label_5")
+        self.horizontalLayout_4.addWidget(self.label_5)
+        self.spinBox = QtGui.QSpinBox(self.groupBox)
+        self.spinBox.setMinimum(1)
+        self.spinBox.setObjectName("spinBox")
+        self.horizontalLayout_4.addWidget(self.spinBox)
+        self.verticalLayout.addLayout(self.horizontalLayout_4)
         self.verticalLayout_3.addWidget(self.groupBox)
         self.checkBoxContinue = QtGui.QCheckBox(ChipicContinueUI)
         self.checkBoxContinue.setObjectName("checkBoxContinue")
@@ -84,6 +94,7 @@ class Ui_ChipicContinueUI(object):
         self.label_3.setText(QtGui.QApplication.translate("ChipicContinueUI", "文件名称:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("ChipicContinueUI", "记录周期：", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("ChipicContinueUI", "ns", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_5.setText(QtGui.QApplication.translate("ChipicContinueUI", "记录数据文件数量：", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxContinue.setText(QtGui.QApplication.translate("ChipicContinueUI", "断点续算", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_2.setTitle(QtGui.QApplication.translate("ChipicContinueUI", "断点续算设置", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("ChipicContinueUI", "续算文件:", None, QtGui.QApplication.UnicodeUTF8))
