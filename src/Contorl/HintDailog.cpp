@@ -99,8 +99,6 @@ void HintDailog::buttonExitClincked()
 {
 	int temp = MODE1_EXIT;
 	temp += (mode - 1) * 5;
-	if (ui->checkBox->isChecked())
-		temp++;
 	auto  t = ClinkeType(temp);
 	this->close();
 	emit buttonClicked(t);
