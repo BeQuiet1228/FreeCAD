@@ -73,6 +73,7 @@ public Q_SLOTS:
 	void on_pushButtonF_clicked();
 	void on_pushButtonAddVariate_clicked();
 	void on_pushButtonDeleteVariate_clicked();
+	void on_pushButtonEditVariate_clicked();
 	void chipicStartFinished(unsigned long threadID);
 	void chipicWorkFinished(unsigned long threadID);
 	void addListWidgetItem(QListWidgetItem *item,QWidget *widget);

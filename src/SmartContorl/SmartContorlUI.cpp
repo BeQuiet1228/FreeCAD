@@ -292,6 +292,40 @@ void SmartContorlUI::on_pushButtonDeleteVariate_clicked()
 	}
 }
 
+void SmartContorlUI::on_pushButtonEditVariate_clicked()
+{
+	auto items = this->ui->listWidgetVariate->selectedItems();
+	if (items.size() < 1)
+		return;
+	auto item = items.begin();
+	std::shared_ptr<VariateData> data;
+	for (auto iter = variateDatas.begin(); iter != variateDatas.end(); iter++)
+	{
+		if ((*iter)->item == *item)
+		{
+			data = *iter;
+			(*iter)->deleteUI();
+			variateDatas.erase(iter);
+			
+			break;
+		}
+	}
+	VariateInputDialog d;
+	d.setData(data);
+	d.exec();
+	data = d.getData();
+	data->count = this->ui->spinBoxCount->value();
+	data->item = new QListWidgetItem();
+	data->widget = new VariateItemWidget();
+	data->widget->setData(data);
+	variateDatas.push_back(data);
+
+	this->ui->listWidgetVariate->addItem(data->item);
+	auto size = data->widget->size();
+	data->item->setSizeHint(size);
+	this->ui->listWidgetVariate->setItemWidget(data->item, data->widget);
+}
+
 void SmartContorlUI::chipicStartFinished(unsigned long threadID)
 {
 	auto contorl = ContorlInterface::GetInstance();

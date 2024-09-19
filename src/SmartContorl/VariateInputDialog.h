@@ -12,6 +12,7 @@ public:
 	~VariateInputDialog();
 	//获取variate数据
 	std::shared_ptr<VariateData> getData();
+	void setData(std::shared_ptr<VariateData>);
 	//ok按钮是否被点击
 	bool okClicked = false;
 protected:

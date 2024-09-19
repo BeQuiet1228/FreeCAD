@@ -107,6 +107,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="pushButtonEditVariate">
+            <property name="text">
+             <string>修改变量</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="pushButtonDeleteVariate">
             <property name="text">
              <string>删除变量</string>

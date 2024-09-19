@@ -23,10 +23,20 @@ std::shared_ptr<VariateData> VariateInputDialog::getData()
 	data->name = this->ui->lineEditName->text();
 	data->max = this->ui->lineEditMax->text().toDouble();
 	data->mini = this->ui->lineEditMini->text().toDouble();
+	if (data->max < data->mini)
+		std::swap(data->max, data->mini);
 	data->stepLength = this->ui->stepsize->text().toInt();
 	return data;
 }
 
+
+void VariateInputDialog::setData(std::shared_ptr<VariateData> d)
+{
+	this->ui->lineEditName->setText(d->name);
+	this->ui->lineEditMax->setText(QString::number(d->max));
+	this->ui->lineEditMini->setText(QString::number(d->mini));
+	this->ui->stepsize->setValue(d->stepLength);
+}
 
 void VariateInputDialog::on_pushButtonOk_clicked()
 {
