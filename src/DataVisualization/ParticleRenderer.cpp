@@ -96,6 +96,14 @@ namespace DV {
 		return true;
 	}
 
+	float ParticleRenderer::getStructFaceAnchor()
+	{
+		auto d = std::dynamic_pointer_cast<ParticleData>(data);
+		if (!d)
+			return 0;
+		return d->getStructFaceAnchor();
+	}
+
 	void ParticleRenderer::dataInit()
 	{
 		Renderer::dataInit();

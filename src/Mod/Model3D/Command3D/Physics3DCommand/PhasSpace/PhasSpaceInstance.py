@@ -28,6 +28,8 @@ class PhasSpace(object):
         self.obj.addProperty("App::PropertyString", "thickValue2").thickValue2 = "0"
         self.obj.addProperty("App::PropertyBool", "isSuffix").isSuffix = False
         self.obj.addProperty("App::PropertyString", "suffix").suffix = "phase1"
+        self.obj.addProperty("App::PropertyBool", "isCROSS").isCROSS = False
+        self.obj.addProperty("App::PropertyString", "CROSS").CROSS = "0"
         if not hasattr(self.obj, "Observation"):
             self.obj.addProperty("App::PropertyString", "Observation")
 

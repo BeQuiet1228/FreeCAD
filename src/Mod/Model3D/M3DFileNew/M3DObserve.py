@@ -148,6 +148,7 @@ def PhasSpace(obj):
                     obj.verticalAxisShow + blankSpace
     Thickness_temp = ""
     Suffix_temp = ""
+    CROSS_temp = ""
     Timer_name = M3DShare.getTimerM3D(obj)
 
     if obj.observationParticle == u'全部':
@@ -167,8 +168,16 @@ def PhasSpace(obj):
     # 是否选中后缀
     if obj.isSuffix:
         Suffix_temp = blankSpace + "SUFFIX" + blankSpace + obj.suffix
+    
+    if not hasattr(obj, "isCROSS"):
+        obj.addProperty("App::PropertyBool", "isCROSS").isCROSS = False
+    if not hasattr(obj, "CROSS"):
+        obj.addProperty("App::PropertyString", "CROSS").CROSS = "0"
+    #是否选中轴
+    if obj.isCROSS:
+        CROSS_temp = blankSpace + "CROSS_SECTION" + blankSpace + obj.CROSS
 
-    temp_m3d_ap += temp_m3d_use + '%s%s%s%s' % (Timer_name, Particle_temp, Thickness_temp, Suffix_temp) +\
+    temp_m3d_ap += temp_m3d_use + '%s%s%s%s%s' % (Timer_name, Particle_temp, Thickness_temp, Suffix_temp,CROSS_temp) +\
                    semicolon + newLine
 
     return temp_m3d_ap

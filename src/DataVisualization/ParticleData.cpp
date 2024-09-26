@@ -200,6 +200,19 @@ namespace DV {
 		return particleDisplaySwitch[index];
 	}
 
+	float ParticleData::getStructFaceAnchor()
+	{
+		if (headList.size() < 16)
+			return 0;
+
+
+		QString qstr = QString::fromStdString(headList[15]);
+		QStringList sl = qstr.split(":");
+		if (sl.size() != 2)
+			return 0;
+		return sl[1].toFloat();
+	}
+
 	/**
 	* @brief ParticleData::initXYRang ³õÊ¼»¯xyµÄ·¶Î§
 	* @return bool

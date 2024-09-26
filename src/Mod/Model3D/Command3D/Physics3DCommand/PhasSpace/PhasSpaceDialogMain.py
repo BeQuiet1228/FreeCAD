@@ -54,6 +54,9 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
 
             self.ui.checkBox_suffix.setChecked(self.obj.isSuffix)
             self.ui.le_phase.setText(self.obj.suffix)
+            
+            self.ui.checkBox_CROSS.setChecked(self.obj.isCROSS)
+            self.ui.lineEdit_CROSS.setText(self.obj.CROSS)
 
         except AttributeError:
             Tools3D.sayz("PhasSpace--异常--在读取Object属性时出现异常")
@@ -80,7 +83,8 @@ class ShowDialog(BaseDialogMain.BasePhysicsDialog):
             self.obj.thickValue2 = self.ui.le_thick2.text()
             self.obj.isSuffix = self.ui.checkBox_suffix.isChecked()
             self.obj.suffix = self.ui.le_phase.text()
-
+            self.obj.isCROSS = self.ui.checkBox_CROSS.isChecked()
+            self.obj.CROSS = self.ui.lineEdit_CROSS.text()
         except:
             Tools3D.sayz("error:" + traceback.format_exc())
         pass

@@ -75,6 +75,21 @@ namespace DV {
 				}
 			}
 		}
+		//如果是相空间图那么需要使用锚点生成
+		{
+			auto particleRender = std::dynamic_pointer_cast<ParticleRenderer>(renderer);
+			if (particleRender) {
+				auto sRender = creatStructRenderWithAnchor(structData, particleRender->getStructFaceAnchor(),
+					renderer->getDirection()
+				);
+
+				if (sRender)
+				{
+					renderers.push_back(sRender);
+					return renderers;
+				}
+			}
+		}
 
 
 		RendererPtr structRenderer = creatRenderer(structData, renderer->getDirection());

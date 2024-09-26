@@ -13,8 +13,10 @@ Gui::HDF5DataItem::HDF5DataItem(const Hdf5Data& h5data, const QString& name, con
 {
 	this->hdf5data = h5data;
 	setName(name);
+	setTitle(name);
 	this->itemType = type;
 	setEditable(false);
+	time = 0;
 }
 
 Gui::HDF5DataItem::HDF5DataItem(const HDF5DataItem& item)
@@ -24,6 +26,8 @@ Gui::HDF5DataItem::HDF5DataItem(const HDF5DataItem& item)
 	this->itemType = item.itemType;
 	this->hdf5data = item.hdf5data;
 	this->doubleClickEventHander = item.doubleClickEventHander;
+	this->time = item.time;
+	this->title = item.title;
 	
 	auto subItems = getSubItems();
 	for (auto iter = subItems.begin(); iter != subItems.end(); iter++)
@@ -37,8 +41,10 @@ Gui::HDF5DataItem::HDF5DataItem(const QString& name, const ItemType& type /*= FO
 	:QStandardItem(QIcon(IconPath[type]), name)
 {
 	setName(name);
+	setTitle(name);
 	this->itemType = type;
 	setEditable(false);
+	time = 0;
 }
 
 Gui::HDF5DataItem::~HDF5DataItem()
@@ -81,6 +87,16 @@ void Gui::HDF5DataItem::setName(const QString& name)
 QString Gui::HDF5DataItem::getNmae()
 {
 	return this->name;
+}
+
+void Gui::HDF5DataItem::setTime(const float& t)
+{
+	time = t;
+}
+
+void Gui::HDF5DataItem::setTitle(const QString& t)
+{
+	title = t;
 }
 
 void Gui::HDF5DataItem::triggerDoubleClickEvent()
@@ -187,17 +203,25 @@ bool Gui::HDF5DataItem::mergeItem(QStandardItem* item, HDF5DataItem* h5item)
 
 bool Gui::HDF5DataItem::operator>(const HDF5DataItem& item)
 {
-	if (this->name > item.name)
+	if (this->title > item.title)
 		return true;
+	if (this->title == item.title)
+		return this->time > item.time;
 	return false;
 }
 
-bool Gui::HDF5DataItem::operator<(const HDF5DataItem& item)
+bool Gui::HDF5DataItem::operator<(const QStandardItem& item) const
 {
-	if (this->name < item.name)
+	auto it = dynamic_cast<const Gui::HDF5DataItem*>(&item);
+	if (!it)
+		return false;
+	if (this->title < it->title)
 		return true;
+	if (this->title == it->title)
+		return this->time < it->time;
 	return false;
 }
+
 
 /**
 * @brief Gui::HDF5DataItem::deleteQlistQStandardItem 释放掉所有item的内存

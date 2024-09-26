@@ -766,6 +766,8 @@ namespace DV {
 					__int64 cutCirSize = (var.point2 - 1) * CutNum + (var.point3 - 1);
 					if (cutCirSize < CutCirlist.size())
 					{
+						if(var.pointproperty & StructData::structType::PERFECTCONDUCTOR)
+							listcir[StructData::structType::PERFECTCONDUCTOR].push_back(CutCirlist[(var.point2 - 1) * CutNum + (var.point3 - 1)]);
 						listcir[var.pointproperty].push_back(CutCirlist[(var.point2 - 1) * CutNum + (var.point3 - 1)]);
 					}
 				}

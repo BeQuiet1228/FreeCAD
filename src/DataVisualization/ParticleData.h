@@ -41,6 +41,8 @@ namespace DV {
 		//设置粒子显示与否
 		void setDisplayParticle(const int& index,const bool& b = true);
 		bool getDisplayParticle(const int& index);
+		//获取结构图锚点
+		float getStructFaceAnchor();
 	protected:
 		bool initXYRang() override;
 		virtual void restorDeriveData() {};

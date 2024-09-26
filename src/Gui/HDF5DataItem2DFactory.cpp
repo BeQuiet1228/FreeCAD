@@ -64,7 +64,8 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatRangDataItem(Hdf5Data& data,
 	{
 		parentItem = new HDF5DataItem("空间变化图");
 	}
-	std::string typeNode, subNode;
+	std::string typeNode, subNode,title;
+	float time;
 	{
 		std::stringstream ss, subss;
 		std::string art3 = getEffePartStr(data.headList[2]);
@@ -76,6 +77,7 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatRangDataItem(Hdf5Data& data,
 		art3 = getEffePartStr(data.headList[2]);
 		//观测时刻
 		std::string art12 = getEffePartStr(data.headList[11]);
+		time = std::stof(art12.substr(art12.find("TIME") + 5, art12.find("SEC")));
 		{
 			art14.erase(0, art14.find("=") + 1);
 			art14.erase(art14.find(" "), art14.size());
@@ -85,10 +87,13 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatRangDataItem(Hdf5Data& data,
 		subss << art14 << " " << art3 << " " << art12;
 		typeNode = ss.str();
 		subNode = subss.str();
+		title = art14;
 	}
 	//创建节点
 	auto typeNodeItem = new HDF5DataItem(typeNode.c_str());
 	auto subNodeItem = new HDF5DataItem(data, subNode.c_str());
+	subNodeItem->setTime(time);
+	subNodeItem->setTitle(title.c_str());
 	itemSetHander(subNodeItem);
 	subNodeItem = typeNodeItem->addSubItem(subNodeItem);
 	typeNodeItem = parentItem->addSubItem(typeNodeItem);
@@ -434,11 +439,13 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatVectorDataItem(Hdf5Data& dat
 		parentItem = new HDF5DataItem(gbkStdstringToQstring("矢量图"));
 	}
 	std::string typeNode;
-	std::string subNode;
+	std::string subNode,title;
+	float time;
 	{
 		auto art3=getEffePartStr(data.headList[2]);
 		auto art14=getEffePartStr(data.headList[13]);
 		auto art12 = getEffePartStr(data.headList[11]);
+		time = std::stof(art14.substr(art14.find("TIME") + 5, art14.find("SEC")));
 		std::stringstream ss, subs;
 		art12.erase(0, art12.find("("));
 		art3.erase(0, art3.find("$") + 1);
@@ -447,17 +454,33 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatVectorDataItem(Hdf5Data& dat
 		subs << art3 << " " << art14;
 		typeNode = ss.str();
 		subNode = subs.str();
+		title = art3;
 	}
 	//创建节点
 	//auto typeNodeItem = findTypeItem(parentItem, typeNode);
 	auto typeNodeItem=new HDF5DataItem(typeNode.c_str());
 	auto subNodeItem = new HDF5DataItem(data,subNode.c_str());
+	subNodeItem->setTime(time);
+	subNodeItem->setTitle(title.c_str());
 	itemSetHander(subNodeItem);
 	subNodeItem = typeNodeItem->addSubItem(subNodeItem);
 	typeNodeItem = parentItem->addSubItem(typeNodeItem);
 	
 	return parentItem;
 }
+
+std::string trim(const std::string& str) {
+	// 去掉前后的空格
+	size_t first = str.find_first_not_of(' ');
+	size_t last = str.find_last_not_of(' ');
+
+	if (first == std::string::npos || last == std::string::npos) {
+		return ""; // 如果字符串全是空格，返回空字符串
+	}
+
+	return str.substr(first, last - first + 1);
+}
+
 
 Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatPhasespaceDataItem(Hdf5Data& data, HDF5DataItem* parentItem /*= nullptr*/)
 {
@@ -467,6 +490,8 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatPhasespaceDataItem(Hdf5Data&
 	}
 	std::string typeNode;
 	std::string subNode;
+	float time;
+	QString titile;
 	{
 		auto art3 = getEffePartStr(data.headList[2]);
 		typeNode = art3.substr(0,art3.find("-#"));
@@ -474,11 +499,23 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatPhasespaceDataItem(Hdf5Data&
 		int pos = art3.find("$");
 		art3 = (pos == std::string::npos) ? ("") : art3.erase(0,art3.find("$")+1);
 		{
+			time = std::stof(art12.substr(art12.find("TIME") + 5, art12.find("SEC")));
 			std::stringstream s1;
 			s1 << art12.substr(art12.find("OF") + 2, (art12.find("VS") - (art12.find("OF") + 2)))
 				<< " " << art12.substr(art12.find("VS") + 2, (art12.find("AT") - (art12.find("VS") + 2)));
+			titile = s1.str().c_str();
 			s1 << " " << art12.substr(art12.find("TIME") + 5, (art12.size() - (art12.find("TIME") + 5)));
 			art12 = s1.str();
+			
+			// 查找冒号的位置
+			size_t colonPos = data.headList[15].find(':');
+
+			// 检查冒号是否存在
+			if (colonPos != std::string::npos) {
+				// 从冒号后一个位置开始提取子字符串
+				art12 += " CS"+trim(data.headList[15].substr(colonPos + 1));
+			}
+
 		}
 		std::stringstream subss;
 		subss << art3 << " " << art12;
@@ -486,11 +523,21 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatPhasespaceDataItem(Hdf5Data&
 	}
 	//创建树控件节点
 	//auto typeNodeItem = findTypeItem(parentItem, typeNode);
+	//2024-9-26 取消相空间图的父节点
+#if 0
 	auto typeNodeItem=new HDF5DataItem(typeNode.c_str());
 	auto subNodeItem = new HDF5DataItem(data,subNode.c_str());
 	itemSetHander(subNodeItem);
+	subNodeItem->setTitle(titile);
 	subNodeItem = typeNodeItem->addSubItem(subNodeItem);
 	typeNodeItem = parentItem->addSubItem(typeNodeItem);
+#else
+	auto subNodeItem = new HDF5DataItem(data, subNode.c_str());
+	subNodeItem->setTime(time);
+	subNodeItem->setTitle(titile);
+	itemSetHander(subNodeItem);
+	subNodeItem =  parentItem->addSubItem(subNodeItem);
+#endif
 	
 	return parentItem;
 }
@@ -549,21 +596,26 @@ Gui::HDF5DataItem* Gui::HDF5DataItem2DFactory::CreatContourDataItem(Hdf5Data& da
 		parentItem = new HDF5DataItem(gbkStdstringToQstring("2D等位图"));
 	}
 	std::string typeNode;//分类
-	std::string subNode;//
+	float time;
+	std::string subNode,title;//
 	{
 		std::string art3 = getEffePartStr(data.headList[2]);
 		typeNode = art3.substr(0, art3.find("-#"));
 		std::string art13 = getEffePartStr(data.headList[12]);
 		art3.erase(0, art3.find("$") + 1);
-		art13.erase(0, art13.find("TIME"));
+		art13.erase(0, art13.find("TIME") +4);
 		std::stringstream subss;
 		subss << art3 << " " << art13;
 		subNode = subss.str();
+		time = std::stof(art13.substr(0,art13.find("SEC")));
+		title = art3;
 	}
 	//查找是否已经创建过了
 	//auto typeNodeItem = findTypeItem(parentItem, typeNode);
 	auto typeNodeItem=new HDF5DataItem(typeNode.c_str());
 	auto subNodeItem = new HDF5DataItem(data,subNode.c_str());
+	subNodeItem->setTime(time);
+	subNodeItem->setTitle(title.c_str());
 	itemSetHander(subNodeItem);
 	subNodeItem = typeNodeItem->addSubItem(subNodeItem);
 	typeNodeItem = parentItem->addSubItem(typeNodeItem);

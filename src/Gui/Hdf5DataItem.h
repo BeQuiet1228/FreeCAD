@@ -38,6 +38,8 @@ namespace Gui {
 		void setName(const QString& name);
 		QString getNmae();
 
+		void setTime(const float& t);
+		void setTitle(const QString& t);
 
 		//触发双击事件
 		virtual void triggerDoubleClickEvent();
@@ -59,7 +61,7 @@ namespace Gui {
 		bool operator==(const HDF5DataItem& item);
 		bool operator!=(const HDF5DataItem & item);
 		bool operator>(const HDF5DataItem& item);
-		bool operator<(const HDF5DataItem& item);
+		bool operator<(const QStandardItem& item)const override;
 	public:
 		void deleteQlistQStandardItem(QList<QStandardItem*> listItem);
 		//从一个list中拿走第一个并转换类型
@@ -68,6 +70,10 @@ namespace Gui {
 		Hdf5Data hdf5data;
 		QString name;
 		ItemType itemType;
+		//用于存储有时间点的图的时间点
+		float time;
+		//用于排序的标题
+		QString title;
 		static const QString IconPath[2];
 		//双击事件处理器
 		std::shared_ptr<HDF5DataItemEventHander> doubleClickEventHander;
