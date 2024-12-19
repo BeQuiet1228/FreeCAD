@@ -61,7 +61,7 @@ void RunChipic3d::runWithNotLonelinessMode(const QString &m3dpath, const int &co
 	//初始化mpi
 	initMpi();
 	//生成配置文件
-	makeCfgFile(path, m3dName, count);
+	makeCfgFile(path, m3dName, count,coreType);
 
 	//执行并行运算
 	if (mpiProcess != nullptr)
@@ -108,7 +108,7 @@ void RunChipic3d::run(const std::string &m3dpath, const int &count /*= 1*/)
 	}
 	else if (count > 1)
 	{
-		runWithNotLonelinessMode(QString::fromStdString(m3dpath), count);
+		runWithNotLonelinessMode(QString::fromStdString(m3dpath), count,type);
 	}
 }
 
@@ -118,7 +118,7 @@ void RunChipic3d::run(const std::string &m3dpath, const int &count /*= 1*/)
  * @param fileName 文件名
  * @param count 并行数量
  */
-void RunChipic3d::makeCfgFile(const QString &path, const QString &fileName, const int &count)
+void RunChipic3d::makeCfgFile(const QString &path, const QString &fileName, const int &count, const CoreType& coreType)
 {
     QFile file(path + fileName);
     QDir dir;
@@ -144,13 +144,16 @@ void RunChipic3d::makeCfgFile(const QString &path, const QString &fileName, cons
 		std::cerr << "RunChipic3d::makeCfgFile open cfg.txt failed" << std::endl;
         return;
     }
+
+	QString chipicPath = coreType == M3D ? chipicM3dPath : chipicM2dPath;
+
     QTextStream out(&cfg);
 	out.setCodec("GB2312");
     for(int i = 1; i <= count; i++)
     {
         out << q2s("-n 1 -wdir") << QLatin1Char(' ')
             << directories[i-1] << QLatin1Char(' ')
-            << chipicM3dPath << QLatin1Char(' ')
+            << chipicPath << QLatin1Char(' ')
             << filenames[i-1] << QLatin1Char('\n');
     }
     cfg.close();
