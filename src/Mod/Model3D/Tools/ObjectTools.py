@@ -50,6 +50,7 @@ class ObjectType:
     # 参数阵列体
     Vol_ParamArray = "Vol_ParamArray"
     Vol_Test = "Vol_Test"
+    Vol_STL = "Vol_STL"
 
     #草图建模的拉伸
     Vol_Draft_Extrude = "Vol_Draft_Extrude"

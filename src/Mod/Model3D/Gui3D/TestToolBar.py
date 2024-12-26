@@ -10,7 +10,7 @@ def Load(workbench):
                    'CreateVolAnnular_Section_3D', 'CreateVolFunction_3D']
 
     cmdSpecial_3D = ['CreateVolPyramid_3D', 'Create_3D_Wedge', 'CreateVolRhombus_3D', 'Create3DExtruded',
-                    'Create_3D_Tetrahedron', 'CreateVolHelical_3D']
+                    'Create_3D_Tetrahedron', 'CreateVolHelical_3D','CreateSTL_Vol']
 
     # 草图旋转体暂时隐藏'CreateDraftRevolution_3D',
     cmd3dComplex_3D = ['CreateVolRevolution_3D', 'CreateDraftExtruded_3D',
