@@ -178,6 +178,22 @@ class Vol_STL:
 
         gmsh.write('F:/PICGUIC_L/Example/3d/MILO-C/test.msh')
 
+        #获取包围盒
+        # 获取所有实体的维度和标签
+        entities = gmsh.model.getEntities()
+        # 遍历所有实体
+        for dim, tag in entities:
+            # 获取当前实体的包围盒
+            bbox = gmsh.model.getBoundingBox(dim, tag)
+
+            # 更新全局包围盒的最小和最大坐标
+            fp.minX = min(fp.minX, bbox[0])
+            fp.minY = min(fp.minY, bbox[1])
+            fp.minZ = min(fp.minZ, bbox[2])
+            fp.maxX = max(fp.maxX, bbox[3])
+            fp.maxY = max(fp.maxY, bbox[4])
+            fp.maxZ = max(fp.maxZ, bbox[5])
+        
         # except:
         #     Tools3D.sayz("Redraw Point Failed!")
 
@@ -193,7 +209,14 @@ class GetProperty:
     def __setProperty(self, obj):
         obj.addProperty("App::PropertyString", "Type").Type = ObjectTools.ObjectType.Vol_STL
         obj.addProperty("App::PropertyString", "FilePath").FilePath = "C:/PICGUIC_L/Example/3d/MILO-C/123_CC.stl"
-        Tools3D.addCommonProperty(obj)
+        obj.addProperty("App::PropertyFloat","minX").minX = float("inf")
+        obj.addProperty("App::PropertyFloat","minY").minY = float("inf")
+        obj.addProperty("App::PropertyFloat","minZ").minZ = float("inf")
+        obj.addProperty("App::PropertyFloat","maxX").maxX = float("-inf")
+        obj.addProperty("App::PropertyFloat","maxY").maxY = float("-inf")
+        obj.addProperty("App::PropertyFloat","maxZ").maxZ = float("-inf")
+        
+        Tools3D.addCommonPropertyToObject(obj)
         Tools3D.addAttributeToObject(obj)
 
 

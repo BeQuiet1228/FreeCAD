@@ -4,6 +4,7 @@ import FreeCAD
 from Model3D.Tools import Tools3D, ObjectTools
 from Model3D.Tools.ObjectTools import Attribute
 import re
+import os
 
 blankSpace = " "
 semicolon = ";"
@@ -135,7 +136,6 @@ def Mark(obj):
             temp_m3d += blankSpace + "MAXIMUM"
         temp_m3d += blankSpace + "SIZE" + blankSpace + obj.MarkZ + semicolon + newLine
     return temp_m3d
-
 
 def Line(obj):
     temp_m3d = ""
@@ -383,6 +383,30 @@ def VolConformal(obj):
     temp_m3d += Mark(obj)
     temp_m3d_pap += ShareAttribute(obj)
     return temp_m3d, temp_m3d_pap
+
+def VolSTL(obj):
+    temp_m3d = ""
+    temp_m3d_pap = ""
+    conformalName = obj.Label + ".CON"
+    temp_m3d += "VOLUME %s CONFORMAL %s,%s,%s %s,%s,%s;\n"%(conformalName,\
+        str(obj.minX)+"mm-DX1",str(obj.minY)+"mm-DX2",str(obj.minZ)+"mm-DX3",\
+        str(obj.maxX)+"mm+DX1",str(obj.maxY)+"mm+DX2",str(obj.maxZ)+"mm+DX3")
+    temp_m3d += "MARK %s X1 SIZE DX1;\n"%(conformalName)
+    temp_m3d += "MARK %s X2 SIZE DX2;\n"%(conformalName)
+    temp_m3d += "MARK %s X3 SIZE DX3;\n"%(conformalName)
+    temp_m3d += "POINT" + blankSpace + obj.Label+".LO"+blankSpace + \
+        str(obj.minX)+"mm,"+str(obj.minY)+"mm,"+str(obj.minZ)+"mm;"+newLine
+    temp_m3d += "POINT" + blankSpace + obj.Label+".HI"+blankSpace + \
+        str(obj.maxX)+"mm,"+str(obj.maxY)+"mm,"+str(obj.maxZ)+"mm;"+newLine
+    base_name, _ = os.path.splitext(obj.FilePath) # 分离文件名和扩展名
+    output_file = base_name + ".txt" # 构建新的文件名
+    temp_m3d += "VOLUME %s CADLIST \"%s\" 17 %s %s ;" %\
+    (obj.Label,output_file,obj.Label+".LO",obj.Label+".HI")
+    temp_m3d += semicolon + newLine
+    temp_m3d += Mark(obj)
+    temp_m3d_pap += ShareAttribute(obj)
+    return temp_m3d, temp_m3d_pap
+
 
 
 def VolAnnular(obj):

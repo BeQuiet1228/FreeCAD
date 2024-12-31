@@ -209,6 +209,10 @@ class M3D:
         obj_dict = M3DTools.getAllModelObjDict()
         self.getAllModelObjStr = []
         self.objToOtherStr = []
+        for i in obj_dict[ObjectTools.ObjectType.Vol_STL]:
+            model_str, pap_str = M3DObject.VolSTL(i)
+            self.getAllModelObjStr.append(model_str)
+            self.objToOtherStr.append(pap_str)
 
         for i in obj_dict[ObjectTools.ObjectType.Point]:
             model_str, pap_str = M3DObject.Point(i)
@@ -398,10 +402,11 @@ class M3D:
         model_str = ""
         pap_str = ""
         VolList = ObjectTools.getAllValidModelObj()
-
         for i in VolList:
             if i.Type == ObjectTools.ObjectType.Vol_Conformal:
                 model_str, pap_str = M3DObject.VolConformal(i)
+            elif i.Type == ObjectTools.ObjectType.Vol_STL:
+                model_str, pap_str = M3DObject.VolSTL(i)
             # VolOrderList.append(pap_str)
             elif i.Type == ObjectTools.ObjectType.Vol_Annular:
                 model_str, pap_str = M3DObject.VolAnnular(i)
