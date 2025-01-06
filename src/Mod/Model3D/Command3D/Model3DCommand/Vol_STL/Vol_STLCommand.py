@@ -29,10 +29,10 @@ class CreateVol_STLCommand:
         IconPath = FreeCAD.ConfigGet("AppHomePath") + "Mod/Model3D/Resources3D/Model/3D_Point.svg"
         MenuText = Tools3D.QT_TRANSLATE_NOOP(
             'CreateFoil',
-            '导入STL')
+            '导入体')
         ToolTip = Tools3D.QT_TRANSLATE_NOOP(
             'CreateFoil',
-            '导入STL')
+            '导入体')
         return {'Pixmap': IconPath,
                 'MenuText': MenuText,
                 'ToolTip': ToolTip}

@@ -6,6 +6,7 @@ import Mesh
 import Part
 import os
 import gmsh
+from FreeCAD import Base
 
 # 定义 Z88 文件写入函数
 def write_z88_mesh_to_file(femnodes_mesh, femelement_table, z88_element_type, f):
@@ -90,41 +91,46 @@ class Vol_STL:
 
     def onChanged(self, fp, prop):
         pass
-
+    def disposSTL(sekf,fp):
+        pass
     def execute(self, fp):
         #try:
-        mesh = Mesh.Mesh(fp.FilePath)
-        shape = Part.Shape()
-        shape.makeShapeFromMesh(mesh.Topology, 1)
-        solid = Part.Solid(shape)
-        fp.Shape = solid
-        # base_name, _ = os.path.splitext(fp.FilePath) # 分离文件名和扩展名
-        # brep_filepath = base_name + ".brep" # 构建新的文件名
-        # shape.exportBrep(brep_filepath)
-        
         gmsh.initialize()
         gmsh.open(fp.FilePath) # 3D STL file of a cylinder
-        surfaces = gmsh.model.getEntities(2)
-        for dim, tag in surfaces:
-            sloop = gmsh.model.geo.addSurfaceLoop([tag])  # 使用表面循环生成体数据
-            volume = gmsh.model.geo.addVolume([sloop])
-        gmsh.model.geo.synchronize()#等待生成完成
-        # gmsh.model.mesh.classifySurfaces(gmsh.pi, True, True, gmsh.pi)
-        # gmsh.model.mesh.createGeometry()
-        # s = gmsh.model.getEntities(2)
-        # surf = gmsh.model.geo.addSurfaceLoop([e[1] for e in s])
-        # vol = gmsh.model.geo.addVolume([surf])
-        # gmsh.model.geo.synchronize()
+        if fp.FilePath.lower().endswith('.step') or fp.FilePath.lower().endswith('.stp'):
+            sh = Part.Shape()
+            sh.read(fp.FilePath)
+            # 创建 Compound
+            fp.Shape = sh
+        else:
+            mesh = Mesh.Mesh(fp.FilePath)
+            shape = Part.Shape()
+            shape.makeShapeFromMesh(mesh.Topology, 1)
+            solid = Part.Solid(shape)
+            fp.Shape = solid
+            scale_factor = 0.001  # 1毫米 = 0.001米
+            fp.Shape.scale(scale_factor)
+            # base_name, _ = os.path.splitext(fp.FilePath) # 分离文件名和扩展名
+            # brep_filepath = base_name + ".brep" # 构建新的文件名
+            # shape.exportBrep(brep_filepath)
 
-        # gmsh.option.setNumber('Mesh.Algorithm',1)
-        # gmsh.option.setNumber('Mesh.MeshSizeMax', 0.05)
-        # gmsh.option.setNumber('Mesh.MeshSizeMin', 0.05)
-        # gmsh.option.setNumber("Mesh.Algorithm3D", 4)  # 使用 Delaunay 算法
-        # gmsh.option.setNumber("Mesh.ElementOrder", 1) # 设置网格的阶数，1 表示线性网格
-        # gmsh.option.setNumber("Mesh.Optimize", 1)    # 优化网格质量（可选）
+
+            surfaces = gmsh.model.getEntities(2)
+            for dim, tag in surfaces:
+                sloop = gmsh.model.geo.addSurfaceLoop([tag])  # 使用表面循环生成体数据
+                volume = gmsh.model.geo.addVolume([sloop])
+            gmsh.model.geo.synchronize()#等待生成完成
+            
+        scale_factor = 0.001  # 1毫米 = 0.001米
+        transform = Base.Matrix()  # 创建一个单位矩阵
+        transform.scale(scale_factor, scale_factor, scale_factor)  # 设置缩放比例
+        # 应用缩放变换
+        fp.Shape = fp.Shape.transformGeometry(transform)    
+          
+            
         gmsh.model.mesh.generate(3)
-        Tools3D.sayz('Model ' + gmsh.model.getCurrent() + ' (' +
-            str(gmsh.model.getDimension()) + 'D)')
+        # Tools3D.sayz('Model ' + gmsh.model.getCurrent() + ' (' +
+        #     str(gmsh.model.getDimension()) + 'D)')
 
           # 节点数据
         femnodes_mesh = {}
@@ -201,14 +207,14 @@ class Vol_STL:
 class GetProperty:
     def __init__(self):
         #FreeCAD.ActiveDocument.openTransaction('CreatePoint_3D')
-        self.obj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", ObjectTools.ObjectType.Vol_STL)
+        self.obj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", "Vol_Import")
         self.__setProperty(self.obj)
-        InitDoc3D.addObjectToGroup_helper(self.obj, 'PointG', '点')
+        InitDoc3D.addObjectToGroup_helper(self.obj, "Vol_Import", "导入体")
         FreeCAD.ActiveDocument.commitTransaction()
 
     def __setProperty(self, obj):
         obj.addProperty("App::PropertyString", "Type").Type = ObjectTools.ObjectType.Vol_STL
-        obj.addProperty("App::PropertyString", "FilePath").FilePath = "C:/PICGUIC_L/Example/3d/MILO-C/123_CC.stl"
+        obj.addProperty("App::PropertyString", "FilePath").FilePath = ""
         obj.addProperty("App::PropertyFloat","minX").minX = float("inf")
         obj.addProperty("App::PropertyFloat","minY").minY = float("inf")
         obj.addProperty("App::PropertyFloat","minZ").minZ = float("inf")

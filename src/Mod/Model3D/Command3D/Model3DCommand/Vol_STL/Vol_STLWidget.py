@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\PICGUIC_L\Mod\Model3D\Command3D\Model3DCommand\Vol_STL\Vol_STLWidget.ui'
 #
-# Created: Mon Dec 23 10:40:48 2024
+# Created: Thu Jan 02 15:23:38 2025
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,8 +12,10 @@ from PySide import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(408, 92)
-        self.horizontalLayout = QtGui.QHBoxLayout(Form)
+        Form.resize(408, 56)
+        self.verticalLayout_2 = QtGui.QVBoxLayout(Form)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.label = QtGui.QLabel(Form)
         self.label.setObjectName("label")
@@ -24,6 +26,7 @@ class Ui_Form(object):
         self.pushButton = QtGui.QPushButton(Form)
         self.pushButton.setObjectName("pushButton")
         self.horizontalLayout.addWidget(self.pushButton)
+        self.verticalLayout_2.addLayout(self.horizontalLayout)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)

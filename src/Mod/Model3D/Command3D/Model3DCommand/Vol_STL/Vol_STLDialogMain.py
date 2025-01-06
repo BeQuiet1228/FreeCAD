@@ -2,6 +2,9 @@
 from PySide import QtGui
 import FreeCAD
 import Part
+import gmsh
+import re
+import Mesh
 import FreeCADGui
 from Model3D.Command3D.Model3DCommand.BaseUI import BaseDialogMain, BaseDialog
 from Model3D.Tools import Tools3D
@@ -44,7 +47,7 @@ class ShowDialog(BaseDialogMain.BaseModelDialog):
             self, 
             "选择一个 STL 文件", 
             self.obj.FilePath, 
-            "STL 文件 (*.stl);;所有文件 (*)"
+            "STL 文件 (*.stl *.step *stp);;所有文件 (*)"
         )
         
         # 检查是否选择了文件
@@ -52,7 +55,6 @@ class ShowDialog(BaseDialogMain.BaseModelDialog):
             self.Vol_STLWidget.ui.lineEdit.setText(file_path)
         else:
             QMessageBox.warning(self, "警告", "未选择任何文件！")
-
     def getInfoFromObj(self):
         self.Vol_STLWidget.ui.lineEdit.setText(self.obj.FilePath)
         pass
