@@ -127,7 +127,7 @@ class Vol_STL:
         # 应用缩放变换
         fp.Shape = fp.Shape.transformGeometry(transform)    
           
-            
+        gmsh.option.setNumber("Mesh.MeshSizeFactor", 0.1)      
         gmsh.model.mesh.generate(3)
         # Tools3D.sayz('Model ' + gmsh.model.getCurrent() + ' (' +
         #     str(gmsh.model.getDimension()) + 'D)')
