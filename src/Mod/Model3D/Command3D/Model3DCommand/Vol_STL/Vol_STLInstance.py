@@ -108,8 +108,6 @@ class Vol_STL:
             shape.makeShapeFromMesh(mesh.Topology, 1)
             solid = Part.Solid(shape)
             fp.Shape = solid
-            scale_factor = 0.001  # 1毫米 = 0.001米
-            fp.Shape.scale(scale_factor)
             # base_name, _ = os.path.splitext(fp.FilePath) # 分离文件名和扩展名
             # brep_filepath = base_name + ".brep" # 构建新的文件名
             # shape.exportBrep(brep_filepath)
