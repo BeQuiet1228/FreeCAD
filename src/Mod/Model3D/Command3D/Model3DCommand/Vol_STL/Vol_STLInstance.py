@@ -125,7 +125,7 @@ class Vol_STL:
         # 应用缩放变换
         fp.Shape = fp.Shape.transformGeometry(transform)    
           
-        gmsh.option.setNumber("Mesh.MeshSizeFactor", 0.1)      
+        gmsh.option.setNumber("Mesh.MeshSizeFactor", 0.7)      
         gmsh.model.mesh.generate(3)
         # Tools3D.sayz('Model ' + gmsh.model.getCurrent() + ' (' +
         #     str(gmsh.model.getDimension()) + 'D)')
@@ -180,7 +180,7 @@ class Vol_STL:
         with open(output_file, "w") as f:
             write_z88_mesh_to_file(femnodes_mesh, femelement_table, z88_element_type, f)
 
-        gmsh.write('F:/PICGUIC_L/Example/3d/MILO-C/test.msh')
+        #gmsh.write('F:/PICGUIC_L/Example/3d/MILO-C/test.msh')
 
         #获取包围盒
         # 获取所有实体的维度和标签
@@ -207,7 +207,7 @@ class GetProperty:
         #FreeCAD.ActiveDocument.openTransaction('CreatePoint_3D')
         self.obj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", "Vol_Import")
         self.__setProperty(self.obj)
-        InitDoc3D.addObjectToGroup_helper(self.obj, "Vol_Import", "导入体")
+        InitDoc3D.addObjectToGroup_helper(self.obj, "Vol_Import_gr", "导入体")
         FreeCAD.ActiveDocument.commitTransaction()
 
     def __setProperty(self, obj):

@@ -5263,7 +5263,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>Transform</source>
-        <translation>变形</translation>
+        <translation type="obsolete">变形</translation>
     </message>
     <message>
         <source>Do you want to close this dialog?</source>
@@ -5927,6 +5927,17 @@ Be aware the point where you click matters.</source>
     <message>
         <source>find text</source>
         <translation>查找文本</translation>
+    </message>
+</context>
+<context>
+    <name>StdCmdFixRun</name>
+    <message>
+        <source>File</source>
+        <translation type="unfinished">文件</translation>
+    </message>
+    <message>
+        <source>FixRun</source>
+        <translation>流体混合</translation>
     </message>
 </context>
 <context>
