@@ -66,6 +66,7 @@ public:
 	void setThreadId(const DWORD& id);
 public:
 	static std::shared_ptr<RunChipic3dListener> runChipic3d(const std::string &m3dpath, const int &count,const std::string userName = "default_userName");
+	static std::shared_ptr<RunChipic3dListener> runChipicFix(const std::string& m3dpath, const int& count, const std::string userName = "default_userName");
 private:
 	//根据进程名获取所有线程的id
 	int GetMainThreadIdFromName(LPCSTR szName, std::vector<DWORD>& threads);

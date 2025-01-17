@@ -77,6 +77,7 @@ public:
 	bool ButtonParalleRunClicked(const std::string& m3dPath);
 	//发送启动消息
 	void sendStartChipicMessage(const std::string& path, const int& threadCount);
+	void sendStartChipicFixMessage(const std::string& path, const int& threadCount);
 	//获取chipic的运行线程数
 	int getChipicThreadCount(unsigned long threadID);
 	//设置运行状态

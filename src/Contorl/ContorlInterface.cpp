@@ -183,6 +183,11 @@ QString ContorlInterface::getLogContent()
 	return OpenLog::GetInstance()->getLogContent();
 }
 
+void ContorlInterface::startChipicFix(const std::string& path)
+{
+	contorl->chipicManager.sendStartChipicFixMessage(path, 1);
+}
+
 /**
 * @brief ContorlInterface::getChipicManager 返回chipic管理器指针  这个指针由contorl对象管理 
 * @return ChipicManager*

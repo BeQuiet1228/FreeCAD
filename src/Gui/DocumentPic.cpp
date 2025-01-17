@@ -189,6 +189,15 @@ void DocumentPic::paralleRunChipic()
 	contorl->buttonClicked(1);
 }
 
+void DocumentPic::runChipicFix()
+{
+	auto mw = Gui::MainWindow::getInstance();
+	mw->setContorlUI();
+	this->releaseH5Object();
+	auto contorl = ContorlInterface::GetInstance();
+	contorl->startChipicFix(getTextPath());
+}
+
 void DocumentPic::showParticleSwarmOptimizationView()
 {
 	/*
@@ -336,6 +345,11 @@ bool DocumentPic::onMsg(const char* pMsg, const char** ppReturn)
 			return false;
 		this->paralleRunChipic();
 		return true;
+	}else if (strcmp("FixRunChipic", pMsg) == 0) {
+		if (!disposSuperDog())
+			return false;
+		this->runChipicFix();
+		return true;
 	}
 	else if (strcmp("showPSOView", pMsg) == 0) {
 		if (!disposSuperDog())
@@ -385,6 +399,12 @@ bool DocumentPic::onHasMsg(const char* pMsg) const
 		return true;
 	}
 	else if (strcmp("ParalleRunChipic", pMsg) == 0) {
+		auto control = ContorlInterface::GetInstance();
+		if (control->hasChipicRuning())
+			return false;
+		return true;
+	}
+	else if (strcmp("FixRunChipic", pMsg) == 0) {
 		auto control = ContorlInterface::GetInstance();
 		if (control->hasChipicRuning())
 			return false;
@@ -529,6 +549,9 @@ bool Document2DPic::onHasMsg(const char* pMsg) const
 	if (strcmp("ParalleRunChipic", pMsg) == 0) {
 		return false;
 	}
+	if (strcmp("FixRunChipic", pMsg) == 0) {
+		return false;
+	}
 	return	DocumentPic::onHasMsg(pMsg);
 }
 
@@ -541,6 +564,9 @@ DocumentText2D::DocumentText2D(App::Document* pcDocument, Gui::Application* app)
 bool DocumentText2D::onHasMsg(const char* pMsg) const
 {
 	if (strcmp("ParalleRunChipic", pMsg) == 0) {
+		return false;
+	}
+	if (strcmp("FixRunChipic", pMsg) == 0) {
 		return false;
 	}
 	return	DocumentText::onHasMsg(pMsg);

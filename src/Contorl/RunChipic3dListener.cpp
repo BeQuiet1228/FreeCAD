@@ -207,6 +207,22 @@ std::shared_ptr<RunChipic3dListener> RunChipic3dListener::runChipic3d(const std:
 	return listener;
 }
 
+std::shared_ptr<RunChipic3dListener> RunChipic3dListener::runChipicFix(const std::string& m3dpath, const int& count, const std::string userName /*= "default_userName"*/)
+{
+	std::shared_ptr<RunChipic3d> chipic3d(new RunChipic3d());
+	chipic3d->runfix(m3dpath);
+
+	std::shared_ptr<RunChipic3dListener> listener(new RunChipic3dListener);
+
+	listener->runchipic3dPtr = chipic3d;
+	listener->m3dPath = m3dpath;
+	listener->threadCount = count;
+	listener->userName = userName;
+	listener->workThreadOn();
+
+	return listener;
+}
+
 /**
 * @brief RunChipic3dListener::setWorkThreadFlag
 * @param const bool & flag

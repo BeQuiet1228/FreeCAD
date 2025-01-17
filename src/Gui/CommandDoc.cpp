@@ -1898,25 +1898,6 @@ void StdCmdRunM3d::activated(int iMsg)
     mw->inintContorlUI();
 
     getGuiApplication()->sendMsgToActiveView("RunChipic");
-	
-#if 0  //新的结构将运行代码放入了主窗口，所以这里的代码暂时不需要
-	auto contorl = ContorlInterface::GetInstance();
-	if (!contorl->hasChipicRuning())
-	{
-        //设置主界面上的ui
-        auto mw = Gui::MainWindow::getInstance();
-        mw->setContorlUI();
-
-        //设置运行路
-        Gui::Document* guiDoc = Gui::Application::Instance->activeDocument();
-        auto picDoc = dynamic_cast<DocumentPic*>(guiDoc);
-        if (!picDoc)
-            return;
-        std::string path = picDoc->getTextPath();
-        contorl->setM3dPath(path);
-    }
-	contorl->buttonClicked(0);
-#endif // _DEBUG
 }
 bool StdCmdRunM3d::isActive(void)
 {
@@ -2167,6 +2148,36 @@ bool StdCmdParalleRun::isActive(void)
 {
     return getGuiApplication()->sendHasMsgToActiveView("ParalleRunChipic");
 }
+
+DEF_STD_CMD_A(StdCmdFixRun);
+
+StdCmdFixRun::StdCmdFixRun()
+	: Command("Std_Fix_Run")
+{
+	// setting the
+	sGroup = QT_TR_NOOP("File");
+	sMenuText = QT_TR_NOOP("FixRun");
+	sToolTipText = QT_TR_NOOP("FixRun");
+	sWhatsThis = "Std_Fix_Run";
+	sStatusTip = QT_TR_NOOP("FixRun");
+	sPixmap = "paralleRun";
+}
+
+//并行运行
+void StdCmdFixRun::activated(int iMsg)
+{
+	Q_UNUSED(iMsg);
+	auto mw = MainWindow::getInstance();
+	mw->inintContorlUI();
+	//调用保存
+	doCommand(Command::Gui, "Gui.SendMsgToActiveView(\"Save\")");
+	getGuiApplication()->sendMsgToActiveView("FixRunChipic");
+}
+bool StdCmdFixRun::isActive(void)
+{
+	return getGuiApplication()->sendHasMsgToActiveView("FixRunChipic");
+}
+
 DEF_STD_CMD_A(StdCmdSmartContorl);
 
 StdCmdSmartContorl::StdCmdSmartContorl()
@@ -2531,6 +2542,7 @@ void CreateDocCommands(void)
     rcCmdMgr.addCommand(new StdCmdMergeProjects());
     rcCmdMgr.addCommand(new StdCmdExportGraphviz());
 
+    rcCmdMgr.addCommand(new StdCmdFixRun());
 	rcCmdMgr.addCommand(new StdCmdRunM3d());
 	rcCmdMgr.addCommand(new StdCmdFindm());
 	rcCmdMgr.addCommand(new StdCmdParalleRun());

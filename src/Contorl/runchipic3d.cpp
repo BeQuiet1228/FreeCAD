@@ -14,6 +14,10 @@ RunChipic3d::RunChipic3d()
     //初始化变量
     mpiProcess = nullptr;
 
+	chipicPath[M2D] = q2s("core/m2d/Chipic3d.exe");
+	chipicPath[M3D] = q2s("core/m3d/Chipic3d.exe");
+	chipicPath[FIX] = q2s("core/fix/Chipic3d.exe");
+
 }
 
 RunChipic3d::~RunChipic3d()
@@ -35,7 +39,7 @@ void RunChipic3d::runWithLonelinessMode(const QString &m3dPath, const CoreType &
 	if (chipicProcess != nullptr)
 		delete chipicProcess;
 
-	QString tempPath = (coreType == M3D)?chipicM3dPath:chipicM2dPath;
+	QString tempPath = chipicPath[coreType];
 	chipicProcess = new QProcess;
 	QString cmd = tempPath + q2s(" \"") + m3dPath + q2s("\"");
 #ifdef MY_DEBUG
@@ -110,6 +114,13 @@ void RunChipic3d::run(const std::string &m3dpath, const int &count /*= 1*/)
 	{
 		runWithNotLonelinessMode(QString::fromStdString(m3dpath), count);
 	}
+}
+
+void RunChipic3d::runfix(const std::string& m3dpath)
+{
+	CoreType type = FIX;
+	runWithLonelinessMode(QString::fromStdString(m3dpath), type);
+
 }
 
 /**

@@ -59,10 +59,15 @@ bool LocalEmitter::disposRunChipicJsonMessage(const std::string& json)
 
 	MessageTransition::getPath(jsonObject, m3dPath);
 	jsonObject.Get("threadCount", temp);
-	int threadCount = std::stoi(temp);
-
 	MessageTransition::getUserName(jsonObject, userName);
-	runChipic(m3dPath, threadCount,userName);
+	int threadCount = std::stoi(temp);
+	std::string  fix;
+	if (!jsonObject.Get("fix", fix))
+	{
+		runChipic(m3dPath, threadCount, userName);
+	}else {
+		runChipicFix(m3dPath, threadCount, userName);
+	}
 
 	return false;
 }
@@ -119,6 +124,13 @@ bool LocalEmitter::disposeCloseChipicJsonMessage(const std::string& json)
 void LocalEmitter::runChipic(const std::string& m3dPath, const int& threadCount, const std::string& userName /*= "defaultUser"*/)
 {
 	auto  listener = RunChipic3dListener::runChipic3d(m3dPath, threadCount,userName);
+
+	listenerList.push_back(listener);
+}
+
+void LocalEmitter::runChipicFix(const std::string& m3dPath, const int& threadCount, const std::string& userName /*= "defaultUser"*/)
+{
+	auto  listener = RunChipic3dListener::runChipicFix(m3dPath, threadCount, userName);
 
 	listenerList.push_back(listener);
 }

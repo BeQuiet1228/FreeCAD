@@ -66,4 +66,6 @@ public:
 	//获取log信息
 	QString getLogContent();
 
+	void startChipicFix(const std::string& path);
+
 };

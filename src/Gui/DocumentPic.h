@@ -24,6 +24,7 @@ public:
 	void stopChipic();
 	//并行运行
 	void paralleRunChipic();
+	void runChipicFix();
 	//显示粒子群优化算法窗口
 	void showParticleSwarmOptimizationView();
 	//显示批处理窗口

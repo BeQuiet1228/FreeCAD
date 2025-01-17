@@ -625,7 +625,7 @@ ToolBarItem* StdWorkbench::setupToolBars() const
 
 	ToolBarItem* run = new ToolBarItem(root);
 	run->setCommand("run");
-	*run << "Std_Run_M3d" << "Std_Paralle_Run"  << "Std_Connect_Way" << "Std_Open_Log"<<"Std_Smart_Calc"
+	*run << "Std_Run_M3d" << "Std_Paralle_Run"  <<"Std_Fix_Run"<< "Std_Connect_Way" << "Std_Open_Log"<<"Std_Smart_Calc"
         << "Std_Smart_Contrl" <<"Std_Genetic_Algorithm" << "Std_Multiple_TargetGenetic_Algorithm" << "Std_Multiple_TargetGenetic_Algorithm_G";
 
 	ToolBarItem* visu = new ToolBarItem(root);

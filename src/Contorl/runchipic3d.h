@@ -14,8 +14,10 @@ public:
       X64
     };
 	enum CoreType{
-		M2D,
-		M3D
+		M2D = 0,
+		M3D,
+        FIX,
+        TYPE_SIZE
 	};
     RunChipic3d();
 	~RunChipic3d();
@@ -25,9 +27,12 @@ public:
     void runWithNotLonelinessMode(const QString &m3dpath,const int &count,const CoreType& coreType = M3D);
 	//启动chipic
 	void run(const std::string &m3dpath, const int &count = 1);
+    void runfix(const std::string& m3dpath);
 private:
+    QString chipicPath[TYPE_SIZE];
     //m3d运算程序类型
     const QString chipicM3dPath = q2s("core/m3d/Chipic3d.exe");
+    const QString chipicFixPath = q2s("core/m3d/Chipic3dfix.exe");
     //mpi的路径
     const QString mpiPath = q2s("MPICH2/bin/");
 	//m2d的chipic路径

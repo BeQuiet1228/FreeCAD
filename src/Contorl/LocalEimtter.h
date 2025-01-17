@@ -23,6 +23,7 @@ private:
 	bool disposeCloseChipicJsonMessage(const std::string& json);
 	//Æô¶¯m3d
 	void runChipic(const std::string& m3dPath, const int& threadCount,const std::string& userName = "defaultUser");
+	void runChipicFix(const std::string& m3dPath, const int& threadCount, const std::string& userName = "defaultUser");
 	//·¢ËÍwinMessage
 	void sendWinMessage(const std::string& json);
 private:

@@ -51,7 +51,12 @@ bool View3dMDI::onMsgChipic(const char* pMsg, const char** ppReturn, Gui::Docume
 	}else if (strcmp("ParalleRunChipic", pMsg) == 0) {
 		picDoc->paralleRunChipic();
 		return true;
-	}else if (strcmp("showPSOView", pMsg) == 0) {
+	}
+	else if (strcmp("FixRunChipic", pMsg) == 0) {
+		picDoc->runChipicFix();
+		return true;
+	}
+	else if (strcmp("showPSOView", pMsg) == 0) {
 		picDoc->showParticleSwarmOptimizationView();
 		return true;
 	}
@@ -75,7 +80,14 @@ bool View3dMDI::onHasMsgChipic(const char* pMsg)
 		if (control->hasChipicRuning())
 			return false;
 		return true;
-	}else if (strcmp("showPSOView", pMsg) == 0) {
+	}
+	else if (strcmp("FixRunChipic", pMsg) == 0) {
+		auto control = ContorlInterface::GetInstance();
+		if (control->hasChipicRuning())
+			return false;
+		return true;
+	}
+	else if (strcmp("showPSOView", pMsg) == 0) {
 		auto control = ContorlInterface::GetInstance();
 		if (control->hasChipicRuning())
 			return false;

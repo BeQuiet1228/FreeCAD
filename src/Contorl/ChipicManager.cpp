@@ -595,6 +595,58 @@ void ChipicManager::sendStartChipicMessage(const std::string& path, const int& t
 
 }
 
+void ChipicManager::sendStartChipicFixMessage(const std::string& path, const int& threadCount)
+{
+	//判断路径中是否存在空白字符
+	bool ok = isBlank(path);
+	if (ok)
+	{
+		QMessageBox::information(nullptr,
+			MessageTransition::gbkStdstringToQstring("错误"),
+			MessageTransition::gbkStdstringToQstring("路径中存在空白字符,请修改路径"),
+			QMessageBox::Yes);
+		return;
+	}
+	//判断路径是否存在
+	if (!detectionFilePathUTF8(path))
+		return;
+	//这里对路径长度进行判断,如果超过限度长度直接返回
+	if (modeThresHold <= path.length())
+	{
+		QMessageBox::information(nullptr,
+			MessageTransition::gbkStdstringToQstring("错误"),
+			MessageTransition::gbkStdstringToQstring("文件路径过长,请尝试修改路径"),
+			QMessageBox::Yes);
+		return;
+	}
+	//设置当前log文件的路径
+	auto log = OpenLog::GetInstance();
+	log->setCurrentChipicM3dPath(path, threadCount);
+	//发送启动消息
+	auto sender = MessageSender::GetInstance();
+	//如果消息发射器为网络发射器 则需要判断客户端是否已是登录状态
+	if (sender->getEmitterTypeID() == 2)
+	{
+		auto client = NetworkClient::GetInstance();
+		//如果客户端处于未登录状态 则显示登录提示框
+		if (!client->login)
+		{
+			client->showLocginDialog();
+			return;
+		}
+	}
+	//新建chipic对象
+	std::shared_ptr<Chipic> newChipic(new Chipic);
+	newChipic->m3dPath = path;
+	waitStartChipic.push_back(newChipic);
+	if (runType == AUTO)
+		newChipic->setIsAuto(true);
+
+	sender->sendJsonMessage(MessageTransition::creatRunChipicFixJsonMessage(path, threadCount));
+
+	showLoadDailog();
+}
+
 /**
 * @brief ChipicManager::getChipicThreadCount 获取线程数
 * @param unsigned long thrdadID
