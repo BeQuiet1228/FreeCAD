@@ -195,6 +195,8 @@ def getFormByObj(obj):
     if obj.Type == ObjectTools.ObjectType.Point:
         # 点
         Form = Model3DCommand.Point_3D.Point3DDialogMain.ShowDialog(obj)
+    elif obj.Type == ObjectTools.ObjectType.Vol_STL:
+        Form = Model3DCommand.Vol_STL.Vol_STLDialogMain.ShowDialog(obj)
     elif obj.Type == ObjectTools.ObjectType.Line_Conformal:
         # 正投影线
         Form = Model3DCommand.Line_Conformal.LineConformalDialogMain.ShowDialog(obj)

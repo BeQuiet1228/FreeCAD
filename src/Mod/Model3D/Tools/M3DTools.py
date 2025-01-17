@@ -9,6 +9,7 @@ def getAllModelObjDict():
     """
     res_dict = {
         ObjectType.Point: [],
+        ObjectType.Vol_STL: [],
         ObjectType.Line_Conformal: [],
         ObjectType.Line_Oblique: [],
         ObjectType.Area_Conformal: [],
@@ -41,6 +42,8 @@ def getAllModelObjDict():
     for i in obj_List:
         if not hasattr(i, "Type"):
             continue
+        if i.Type == ObjectType.Vol_STL:
+            res_dict[ObjectType.Vol_STL].append(i)
         if i.Type == ObjectType.Point:
             res_dict[ObjectType.Point].append(i)
 

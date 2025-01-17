@@ -41,7 +41,7 @@ private:
 
 private:
     //生成配置文件
-    void makeCfgFile(const QString &path,const QString &fileName,const int &count);
+    void makeCfgFile(const QString &path,const QString &fileName,const int &count, const CoreType& coreType = M3D);
     //初始化mpi
     void initMpi();
     //std::string 转换为qstring

@@ -40,6 +40,7 @@ def initGroup():
 
     # 模型二级目录
     model_list = []
+    model_list.append(createInitGroup("Vol_Import", "导入体"))
     model_list.append(createInitGroup("PointG", "点"))
     model_list.append(createInitGroup("LineG", "线"))
     model_list.append(createInitGroup("AreaG", "面"))

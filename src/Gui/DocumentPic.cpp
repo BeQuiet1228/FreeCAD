@@ -547,7 +547,7 @@ Document2DPic::Document2DPic(App::Document* pcDocument, Gui::Application* app)
 bool Document2DPic::onHasMsg(const char* pMsg) const
 {
 	if (strcmp("ParalleRunChipic", pMsg) == 0) {
-		return false;
+		return true;
 	}
 	if (strcmp("FixRunChipic", pMsg) == 0) {
 		return false;
@@ -564,7 +564,7 @@ DocumentText2D::DocumentText2D(App::Document* pcDocument, Gui::Application* app)
 bool DocumentText2D::onHasMsg(const char* pMsg) const
 {
 	if (strcmp("ParalleRunChipic", pMsg) == 0) {
-		return false;
+		return true;
 	}
 	if (strcmp("FixRunChipic", pMsg) == 0) {
 		return false;
