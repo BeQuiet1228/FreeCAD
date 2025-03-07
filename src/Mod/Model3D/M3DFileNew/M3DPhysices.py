@@ -239,7 +239,7 @@ def Port(obj):
         if obj.isCircuit:
             temp_m3d_cir += newLine + tab + "CIRCUIT" + blankSpace + obj.circuit+blankSpace+portName\
                             +".F"+blankSpace+"OBS$"+obj.observeName + semicolon
-            temp_m3d_ObserveName += newLine + "OBSERVE" + blankSpace + "FIELD_INTEGRAL E.DL" +blankSpace + portName +\
+            temp_m3d_ObserveName += newLine + "OBSERVE" + blankSpace + "FIELD_INTEGRAL E.DL" +blankSpace + portName + ".LINE" +\
                                     blankSpace + "suffix"+blankSpace+obj.observeName
 
     if obj.isCheckNormal1 == True :
