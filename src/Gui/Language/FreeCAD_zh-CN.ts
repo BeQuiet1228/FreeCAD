@@ -5937,7 +5937,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>FixRun</source>
-        <translation>流体混合</translation>
+        <translation type="unfinished">GPU加速</translation>
     </message>
 </context>
 <context>
