@@ -100,3 +100,22 @@ protected:
 private:
 	double maxFrequency, minFrequency;
 };
+
+class TargetTimeDouble :public TargetTime {
+public:
+	std::string name1,name2;
+	enum TargetType{
+		MAX = 0,
+		Mini,
+		Mean
+	};
+public:
+	virtual double getTagetValue(const std::string& filePath);
+	void setType(const TargetType & t);
+private:
+	TargetType targetType;
+	double getMaxTarget(const std::string& filePath);
+	double getMiniTarget(const std::string& filePath);
+	double getMeanTarget(const std::string& filePath);
+	double getTarget(const std::string& filePath);
+};

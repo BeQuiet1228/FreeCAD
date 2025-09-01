@@ -15,8 +15,10 @@ void DialogTargetSelect::on_pushButtonOk_clicked()
 {
 	if (ui->radioButton->isChecked())
 		index = 0;
-	else
+	else if (ui->radioButton_2->isChecked())
 		index = 1;
+	else
+		index = 2;
 	this->close();
 }
 

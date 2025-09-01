@@ -299,3 +299,93 @@ Hdf5Data TargetFrequency::getH5Data(const std::string& filePath)
 	}
 	return data;
 }
+
+double TargetTimeDouble::getTagetValue(const std::string& filePath)
+{
+	this->Name = name1;
+	double t1 = getTarget(filePath);
+	this->Name = name2;
+	double t2 = getTarget(filePath);
+
+	return t1 / t2;
+}
+
+void TargetTimeDouble::setType(const TargetType& t)
+{
+	this->targetType = t;
+}
+
+double TargetTimeDouble::getMaxTarget(const std::string& filePath)
+{
+	std::vector<float> value = getH5DataValue(filePath);
+
+	if (value.size() < 2)
+		return 0.0;
+	float max = value[1];
+	for (int i = 1; i < value.size(); i = i + 2) {
+		if (value.at(i - 1) < timesMin)
+			continue;
+		if (value.at(i - 1) > timesMax)
+			break;
+		max = max < value.at(i) ? value.at(i) : max;
+	}
+
+	return max;
+}
+
+double TargetTimeDouble::getMiniTarget(const std::string& filePath)
+{
+	std::vector<float> value = getH5DataValue(filePath);
+
+	if (value.size() < 2)
+		return 0.0;
+	float min = value[1];
+	for (int i = 1; i < value.size(); i = i + 2) {
+		if (value.at(i - 1) < timesMin)
+			continue;
+		if (value.at(i - 1) > timesMax)
+			break;
+		min = min > value.at(i) ? value.at(i) : min;
+	}
+
+	return min;
+}
+
+double TargetTimeDouble::getMeanTarget(const std::string& filePath)
+{
+	std::vector<float> value = getH5DataValue(filePath);
+
+	if (value.size() < 2)
+		return 0.0;
+	double addValue = 0.0;
+	int valueCount = 0;
+	for (int i = 1; i < value.size(); i = i + 2) {
+		if (value.at(i - 1) < timesMin)
+			continue;
+		if (value.at(i - 1) > timesMax)
+			break;
+		addValue += value.at(i);
+		valueCount++;
+	}
+
+	return addValue / valueCount;
+}
+
+double TargetTimeDouble::getTarget(const std::string& filePath)
+{
+	switch (targetType)
+	{
+	case TargetTimeDouble::MAX:
+		return getMaxTarget(filePath);
+		break;
+	case TargetTimeDouble::Mini:
+		return getMiniTarget(filePath);
+		break;
+	case TargetTimeDouble::Mean:
+		return getMeanTarget(filePath);
+		break;
+	default:
+		return 0.0;
+		break;
+	}
+}

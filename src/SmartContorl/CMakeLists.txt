@@ -12,6 +12,7 @@ SET(UI_SRC
 	TimeTargetItemUI.ui
 	FrequencyTargetItemUI.ui
 	DialogTargetSelect.ui
+	TimeDoubleTargetItemUI.ui
 )
 SET(GUI_CPP_SRC
 	ListChipicWidget.cpp

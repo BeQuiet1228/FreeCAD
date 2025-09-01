@@ -215,8 +215,14 @@ void MultipleTargetGeneticAlgorithmUI::on_pushButtonAddTarget_clicked()
 			t->showG();
 		widget = t;
 	}
-	else {
+	else if(diaglog.index == 1) {
 		auto t = new FrequencyTargetItemUI(listWidget);
+		if (this->GMod)
+			t->showG();
+		widget = t;
+	}
+	else {
+		auto t = new TimeDoubleTargetItemUI(listWidget);
 		if (this->GMod)
 			t->showG();
 		widget = t;
@@ -690,6 +696,13 @@ void MultipleTargetGeneticAlgorithmUI::loadParameterXml()
 		if (id == "TimeTarget")
 		{
 			auto t = new TimeTargetItemUI(listWidget);
+			if (GMod)
+				t->showG();
+			targetItem = t;
+		}
+		else if (id == "TimeTargetDouble")
+		{
+			auto t = new TimeDoubleTargetItemUI(listWidget);
 			if (GMod)
 				t->showG();
 			targetItem = t;
