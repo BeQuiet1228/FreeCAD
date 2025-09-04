@@ -105,8 +105,8 @@ std::vector<int> MultipleTargetGeneticAlgorithm::getCrossPool(SmartContorl* smar
 					iter++;
 			}
 			indexs.push_back(t.rank);
-			if (indexs.size() >= currentTargetLists.size())
-				break;
+			//if (indexs.size() >= currentTargetLists.size())
+			//	break;
 		}
 
 	}

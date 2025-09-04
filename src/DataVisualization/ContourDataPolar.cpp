@@ -198,6 +198,7 @@ namespace DV {
 		listOb.push_back("ephi");
 		listOb.push_back("bz");
 		listOb.push_back("brho");
+		listOb.push_back("jphi");
 
 		bool ok = false;
 		for (auto iter = listOb.begin(); iter != listOb.end(); iter++)
