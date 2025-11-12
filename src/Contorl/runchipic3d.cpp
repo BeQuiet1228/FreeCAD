@@ -85,7 +85,7 @@ void RunChipic3d::runWithNotLonelinessMode(const QString &m3dpath, const int &co
 	if (chipicProcess != nullptr)
 		delete chipicProcess;
 	chipicProcess = new QProcess;
-	cmd = mpiPath + q2s("mpiexec.exe -configfile ") + path + q2s("cfg.txt -phrase 0");
+	cmd = mpiPath + q2s("mpiexec.exe -configfile ") + path + q2s("cfg.txt");
 	chipicProcess->start(cmd);
 #ifdef MY_LOG
 	std::cerr << "notLonelinessMod start cmd:" << cmd.toStdString() << std::endl;
