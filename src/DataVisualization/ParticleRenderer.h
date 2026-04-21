@@ -6,7 +6,7 @@
 #include <QColor>
 #include <vector>
 namespace DV {
-	class ParticleRenderer :public Renderer {
+	class DATA_VISUALIZATION_EXPORT ParticleRenderer :public Renderer {
 	public:
 		ParticleRenderer(std::shared_ptr<ParticleData> data);
 		~ParticleRenderer();
@@ -18,7 +18,10 @@ namespace DV {
 		//新增加
 		virtual void loadconfig() override;
 		virtual bool setDefaultRang(QSize&) override;
-
+		//新增加2025/12.17
+		void setParticleColor(const QColor& color);
+		void setParticleSize(int size);
+		void setAA(bool enable);
 		//获取锚点
 		float getStructFaceAnchor();
 	private:

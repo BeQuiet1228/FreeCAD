@@ -11,6 +11,7 @@ SET(UI_SRC
 	MultipleTargetGeneticAlgorithm.ui
 	TimeTargetItemUI.ui
 	FrequencyTargetItemUI.ui
+	PiModeTargetItemUI.ui
 	DialogTargetSelect.ui
 	TimeDoubleTargetItemUI.ui
 )
@@ -119,6 +120,7 @@ SET(MY_MOC_HDR
 	GeneticAlgorithmUI.h
 	MultipleTargetGeneticAlgorithmUI.h
 	TimeTargetItemUI.h
+	PiModeTargetItemUI.h
 	ListChipicWidget.h
 	DialogTargetSelect.h
 )
@@ -145,6 +147,7 @@ include_directories(
     ${XercesC_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIR}
     ${PYCXX_INCLUDE_DIR}
+	${CMAKE_SOURCE_DIR}/src/DataVisualization
 )
 
 set(QRC_SRC
@@ -194,6 +197,8 @@ SET (SRC
 	MultipleTargetGeneticAlgorithmUI.h
 	TimeTargetItemUI.cpp
 	TimeTargetItemUI.h
+	PiModeTargetItemUI.cpp
+	PiModeTargetItemUI.h
 	ChartEvent.cpp
 	ChartEvent.h
 	TargetItem.cpp
@@ -254,6 +259,8 @@ list(APPEND QT_LIB
 	DataVisualization
 	Event
 	transition
+	hdf5
+    hdf5_cpp
 	)
 if(contorl_client_dll)
 list(APPEND QT_LIB

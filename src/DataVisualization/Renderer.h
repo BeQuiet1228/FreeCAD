@@ -1,4 +1,5 @@
 #pragma once
+#include"exportConfig.hpp"
 #include <QImage>
 #include <mutex>
 #include <QSize>
@@ -8,7 +9,7 @@
 #include <QImage>
 #include <map>
 namespace DV {
-	class Renderer {
+	class DATA_VISUALIZATION_EXPORT Renderer {
 	public:
 		using AutoMutex = std::lock_guard<std::mutex>;
 	public:

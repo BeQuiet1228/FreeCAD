@@ -17,9 +17,10 @@ void DialogTargetSelect::on_pushButtonOk_clicked()
 		index = 0;
 	else if (ui->radioButton_2->isChecked())
 		index = 1;
-	else
+	else if (ui->radioButton_3->isChecked())
 		index = 2;
+	else
+		index = 3;
 	this->close();
 }
-
 #include "moc_DialogTargetSelect.cpp"

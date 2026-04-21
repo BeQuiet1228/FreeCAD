@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+  <class>PiModeTargetItemUI</class>
+  <widget class="QWidget" name="PiModeTargetItemUI">
+    <property name="geometry">
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>229</width>
+        <height>124</height>
+      </rect>
+    </property>
+    <property name="windowTitle">
+      <string>Form</string>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+            <widget class="QLabel" name="label_4">
+              <property name="text">
+                <string>识别轮辐个数:</string>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QLineEdit" name="lineEditWheelCount">
+              <property name="text">
+                <string>0</string>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QLabel" name="label_12">
+              <property name="text">
+                <string>个</string>
+              </property>
+            </widget>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <item>
+            <widget class="QLabel" name="labelG">
+              <property name="text">
+                <string>G值:</string>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QLineEdit" name="lineEditG">
+              <property name="text">
+                <string>500000</string>
+              </property>
+            </widget>
+          </item>
+        </layout>
+      </item>
+    </layout>
+  </widget>
+  <resources/>
+  <connections/>
+</ui>

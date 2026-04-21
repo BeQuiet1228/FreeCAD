@@ -5,7 +5,7 @@
 #include "StructData.h"
 #include <QColor>
 namespace DV {
-	class StructRender :public Renderer
+	class DATA_VISUALIZATION_EXPORT StructRender :public Renderer
 	{
 	public:
 		StructRender(std::shared_ptr<StructData> data);
