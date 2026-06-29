@@ -27,6 +27,7 @@
 #include "Event/EventManager.h"
 #include "DialogTargetSelect.h"
 #include "FrequencyTargetItemUI.h"
+#include "PiModeTargetItemUI.h"
 MultipleTargetGeneticAlgorithmUI::MultipleTargetGeneticAlgorithmUI(QWidget* parent /*= 0*/)
 	:QDialog(parent), ui(new Ui::MultipleTargetGeneticAlgorithmUI)
 {
@@ -221,16 +222,24 @@ void MultipleTargetGeneticAlgorithmUI::on_pushButtonAddTarget_clicked()
 			t->showG();
 		widget = t;
 	}
-	else {
+	// 2: 多时间观测 (TimeDouble)
+	else if (diaglog.index == 2) {
 		auto t = new TimeDoubleTargetItemUI(listWidget);
-		if (this->GMod)
-			t->showG();
+		if (this->GMod) t->showG();
 		widget = t;
 	}
-	
-	QListWidgetItem *item = new QListWidgetItem(listWidget);
-	item->setSizeHint(widget->size());
-	listWidget->setItemWidget(item, widget);
+	// 【新增】3: π模识别 (PiMode)
+	else if (diaglog.index == 3) {
+		auto t = new PiModeTargetItemUI(listWidget); // 创建我们的新类
+		if (this->GMod) t->showG();
+		widget = t;
+	}
+
+	if (widget) { // 确保 widget 不为空再添加
+		QListWidgetItem *item = new QListWidgetItem(listWidget);
+		item->setSizeHint(widget->size());
+		listWidget->setItemWidget(item, widget);
+	}
 }
 
 void MultipleTargetGeneticAlgorithmUI::on_pushButtonDeleteTarget_clicked()
@@ -705,6 +714,13 @@ void MultipleTargetGeneticAlgorithmUI::loadParameterXml()
 			auto t = new TimeDoubleTargetItemUI(listWidget);
 			if (GMod)
 				t->showG();
+			targetItem = t;
+		}
+		//新增处理PiModeTarget
+		else if (id == "PiModeTarget")
+		{
+			auto t = new PiModeTargetItemUI(listWidget);
+			if (GMod) t->showG();
 			targetItem = t;
 		}
 		else

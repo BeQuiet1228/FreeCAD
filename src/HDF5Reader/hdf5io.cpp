@@ -4,6 +4,7 @@
 #include <QStringList>
 #include <QTextCodec>
 #include <QFile>
+#include <qDebug>
 Hdf5IO::Hdf5IO(std::string fileName)
 {
 	setFilePath(fileName);

@@ -179,6 +179,26 @@ namespace DV {
 		setImage(img);
 		return true;
 	}
+	//新添加2025/12/27
+	void ParticleRenderer::setParticleColor(const QColor& color)
+	{
+		this->particleColor = color;
+
+		// 【重要】因为你的代码里有个 pens 缓存了画笔
+		// 改了颜色必须清空这个缓存，下次 drawImage 才会用新颜色
+		this->pens.clear();
+	}
+	void ParticleRenderer::setParticleSize(int size)
+	{
+		this->particleSize = size;
+		// 【注意】粒子大小变了，之前的画笔也得作废，所以要清空
+		this->pens.clear();
+	}
+
+	void ParticleRenderer::setAA(bool enable)
+	{
+		this->isAA = enable;
+	}
 
 	/**
 	* @brief ParticleRenderer::findParticle 根据屏幕上点击的坐标 寻找近似点

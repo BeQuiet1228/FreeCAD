@@ -45,6 +45,16 @@
     </widget>
    </item>
    <item>
+     <widget class="QRadioButton" name="radioButton_4">
+       <property name="text">
+         <string>π模识别</string>
+       </property>
+       <property name="checked">
+         <bool>false</bool>
+       </property>
+     </widget>
+   </item>
+   <item>
     <widget class="QPushButton" name="pushButtonOk">
      <property name="text">
       <string>确定</string>

@@ -27,7 +27,17 @@ public:
 	int errorRange;
 	virtual bool comparison(const double& par1, const double& par2) override;
 };
+//2026.1.16新增
+class TargetComparisonProminence : public TargetComprison {
+public:
+	TargetComparisonProminence();
+	virtual ~TargetComparisonProminence() {}
 
+public:
+	double expect; // 目标轮辐数 (例如 10.0)
+	// 重写比较逻辑
+	virtual bool comparison(const double& par1, const double& par2) override;
+};
 
 class Target {
 public:
@@ -118,4 +128,23 @@ private:
 	double getMiniTarget(const std::string& filePath);
 	double getMeanTarget(const std::string& filePath);
 	double getTarget(const std::string& filePath);
+};
+// 新增：YOLO π模识别目标类
+class TargetPiMode : public Target {
+public:
+	TargetPiMode();
+	virtual ~TargetPiMode();
+public:
+	// 重写获取目标值的函数，这里将调用 Python
+	virtual double getTagetValue(const std::string& filePath) override;
+	virtual std::vector<float> getH5DataValue(const std::string& filePath) override { return std::vector<float>(); }
+
+	void setTargetWheelCount(int count);
+	int getTargetWheelCount() const;
+protected:
+	// 读取 Python 生成的结果文件
+	double readPythonResult(const std::string& resultPath);
+
+private:
+	int m_targetWheelCount; // 期望识别到的轮辐数量
 };
