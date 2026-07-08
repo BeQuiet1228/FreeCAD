@@ -1,0 +1,345 @@
+/* ========================== titleBar 顶栏区域 ========================== */
+
+#WindowDef{
+	margin:0px;
+	background-color: #0D4B80;
+	border: none;
+}
+#titleBar{
+	background-color: #0D4B80;
+}
+#labelTitle{
+	color: #FFFFFF;
+    font-family: "Microsoft YaHei", "Segoe UI", sans-serif;
+    font-size: 13px;
+    font-weight: normal;
+	margin-left:5px;/*leave some space between title with icon and widget*/
+	margin-right:10px;
+}
+#ToolbarWidget{
+	background-color: #0D4B80;
+}
+#btMini,#btMaxShow,#btClose{
+	background-color:rgba(0,0,0,0);
+	border-width:0px;
+}
+
+/* 顶栏按钮：悬浮时变白 */
+QToolBar QToolButton:hover {
+    background: #FFFFFF;
+    border: 1px solid #E0E0E0;
+    border-radius: 2px;
+}
+
+#btClose:hover{
+	background-color: #e40f0f;
+	border-width:0px;
+}
+
+#btMini:hover,#btMaxShow:hover{
+	background-color: #1565A0;
+	border-width:0px;
+}
+
+QToolBar{
+	background-color:rgba(0,0,0,0);
+	border-width:0px;
+}
+
+QToolBar QToolButton:hover {
+    background-color: #FFFFFF;
+    border-radius: 3px;
+}
+
+
+/* ========================== widgetTab — Ribbon 选项卡区 ========================== */
+
+#widgetTab{
+	background-color: #0D4B80;
+	border: none;
+}
+ #ribbonTabWidget QTabBar {
+      left: 10px;
+  }
+
+
+#ribbonTabWidget   QTabBar::tab {
+      background: #0D4B80;
+      font-family: "Microsoft YaHei", "Segoe UI", sans-serif;
+	  font-size: 12px;
+	  color: #FFFFFF;
+	  border: 1px solid transparent;
+      border-bottom: 1px solid #DCDCDC;  /* 未选中tab：底边灰色，盖住蓝色越界 */
+      border-radius: 0px;
+      min-width: 50px;
+	  min-height:20px;
+      padding: 2px 6px;
+      margin-right:0px;
+	  margin-bottom:0px;
+  }
+
+
+ #ribbonTabWidget  QTabBar::tab:selected {
+    background: #F5F5F5;
+    color: #0D4B80;
+    border: 1px solid #DCDCDC;
+    border-bottom: 1px solid #F5F5F5;  /* 选中tab：底边与内容区同色，无缝连接 */
+  }
+
+
+  #ribbonTabWidget QTabBar::tab:hover {
+    background: #1565A0;
+    color: #FFFFFF;
+    border: 1px solid #1565A0;
+    border-bottom: 1px solid #DCDCDC;  /* hover tab：底边灰色 */
+}
+
+
+#ribbonTabWidget QTabWidget::pane {
+	background: #FFFFFF;
+	border: 1px solid #DCDCDC;
+    border-top: none;
+   }
+
+
+#ribbonTabWidget QStackedWidget#qt_tabwidget_stackedwidget {
+	border: none;
+    margin: 0px;
+    background: #FFFFFF;
+ }
+
+ 
+#PICRibbonTabContent {
+	background: #F5F5F5;
+}
+
+
+#PICRibbonButtonGroup{
+	background: transparent;
+	border: none;
+    border-right:1px solid #C0C0C0;
+	margin:4px;
+	padding:8px;
+}
+
+
+#labelGroupName{
+	font: 75 9pt "微软雅黑";
+}
+#PICRibbonButtonGroup QToolButton{
+	font: 9pt "微软雅黑";
+	font-weight: 400;
+	color: #000000;
+	line-height: 7px;
+}
+#PICRibbonButtonGroup QToolButton:hover{
+	background-color: #E8F4FC;
+	border-radius: 2px;
+	border: 1px solid #0066CC;
+}
+
+
+/* ========================== centerWidget — 主工作区 ========================== */
+
+QMainWindow{
+	background-color:#ffffff;
+}
+
+#PlotToolbar{
+	background-color: #FFFFFF;
+	margin-top:20;
+}
+
+
+/* ========================== 其他控件（运行信息框、控制面板、进度条等） ========================== */
+
+
+#ContorlButtonBar{
+    background:rgb(255,255,255);
+}
+
+#ContorlButtonBar QToolButton{
+    border:2px solid rgb(200,210,220);
+    border-radius:7px;
+    height:50px;
+    width:160px;
+    padding:2px 4px;
+    background:center,rgb(240,242,245);
+}
+
+#ContorlButtonBar QToolButton:hover{
+    color:rgb(255, 255, 255);
+    border:2px solid #0066CC;
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+        stop:0 #E8F4FC,
+        stop:0.3 #0066CC,
+        stop:1 #0055AA);
+}
+
+#ContorlButtonBar QToolButton:pressed
+{
+    border:2px solid #004488;
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+        stop:0 #0055AA,
+        stop:1 #003366);
+}
+
+
+#ControlDockWidget{
+	border: solid;
+    border-width:1px;
+	border-color: #E0E0E0;
+}
+#Form{
+    background:white;
+}
+
+#Form QLabel {
+    font-family: "Microsoft YaHei";
+    font-size: 12px;
+    color: rgb(152,154,153);
+    font-style: normal;
+    font-weight: normal;
+    text-align: left;
+    padding: 0px;
+}
+
+#progressBarIterationCount {
+    border:1px solid #D0D0D0;
+    background:rgb(240,240,240);
+    text-align:center;
+    border-radius:3px;
+}
+
+#progressBarIterationCount::chunk{
+    border-top-left-radius:3px;
+    border-bottom-left-radius:3px;
+    background:qlineargradient(spread:pad,x1:0,y1:0,x2:1,y2:0,stop:0 #3399FF,stop:1 #0066CC);
+}
+
+#ControlerItem QToolButton{
+	border: solid;
+    border-right-width:0px;
+}
+#toolButtonVisible{
+	mini-width:64px;
+	mini-height:64px;
+}
+
+#ControlerItem QSlider::groove:horizontal{
+	background-color: rgb(200, 200, 200);
+	height:8px;
+}
+
+#ControlerItem QSlider::handle:horizontal{
+	width:13px;
+	margin-top:-3px;
+	margin-bottom:-3px;
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:0.0454545, x2:0.505682, y2:1, stop:0 rgba(72, 182, 255, 255), stop:0.982955 rgba(71, 156, 213, 255), stop:1 rgba(255, 255, 255, 255));
+}
+
+OriginUI--InputLineEdit{
+	padding-left:10px;
+	padding-right:10px;
+}
+OriginUI--InputLineEdit QLineEdit{
+	border: 1px solid #D0D0D0;
+	border-radius: 4px;
+	background-color: #FFFFFF;
+	font: 12pt "Microsoft YaHei";
+	color: #333333;
+	padding-left:5px;
+	padding-right:5px;
+}
+OriginUI--InputLineEdit QToolButton{
+	border: 1px solid #D0D0D0;
+	border-radius: 4px;
+	background-color: #F5F5F5;
+	padding-left:5px;
+	padding-right:5px;
+}
+OriginUI--InputLineEdit QToolButton:pressed{
+	padding-right:3px;
+	padding-bottom:-3px;
+}
+OriginUI--InputLineEdit QToolButton:hover{
+	background-color: #E8F4FC;
+	border: 1px solid #0066CC;
+}
+OriginUI--InputLineEdit QLineEdit:focus{
+	border: 1px solid #0066CC;
+}
+
+/* ========================== Ribbon Draft Overrides ==========================
+   Experimental copy based on CST_Style.qss. Keep CST_Style.qss unchanged.
+   Focus: cleaner CST-like ribbon density, softer hover, clearer separators.
+============================================================================ */
+
+#PICRibbonButtonGroup {
+    background: transparent;
+    border: none;
+    border-right: 1px solid #D2D8DF;
+    margin: 2px 0px;
+    padding: 2px 5px 0px 5px;
+}
+
+#labelGroupName {
+    color: #333333;
+    font: 8pt "Microsoft YaHei";
+    padding-top: 1px;
+}
+
+#PICRibbonButtonGroup QToolButton {
+    color: #111111;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 2px 3px;
+    font: 9pt "Microsoft YaHei";
+}
+
+#PICRibbonButtonGroup QToolButton:hover {
+    color: #111111;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 #F8F8F8,
+        stop:1 #D8D8D8);
+    border: 1px solid #A8A8A8;
+}
+
+#PICRibbonButtonGroup QToolButton:pressed,
+#PICRibbonButtonGroup QToolButton:open {
+    color: #111111;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 #E0E0E0,
+        stop:1 #BEBEBE);
+    border: 1px solid #8F8F8F;
+}
+
+#PICRibbonButtonGroup QToolButton::menu-indicator {
+    image: url(qss:images/down_arrow_dark.png);
+    width: 9px;
+    height: 9px;
+    subcontrol-origin: padding;
+    subcontrol-position: right center;
+    right: 3px;
+}
+
+QMenu {
+    color: #111111;
+    background-color: #FFFFFF;
+    border: 1px solid #B8C5D2;
+    padding: 3px;
+}
+
+QMenu::item {
+    background-color: transparent;
+    padding: 4px 22px 4px 26px;
+    border: 1px solid transparent;
+}
+
+QMenu::item:selected,
+QMenu::item:pressed {
+    color: #111111;
+    background-color: #E6E6E6;
+    border: 1px solid #D6D6D6;
+}

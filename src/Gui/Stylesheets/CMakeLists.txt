@@ -1,5 +1,7 @@
 
 SET(Stylesheets_Files
+    "CST_Style.qss"
+    "CST_Style_RibbonHoverGray.qss"
     "Dark-blue.qss"
     "Dark-green.qss"
     "Dark-orange.qss"
