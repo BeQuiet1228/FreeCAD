@@ -6,6 +6,43 @@
 #include <QDebug>
 #include <QGridLayout>
 #include "picgui_ribbon/moc_PICRibbonButtonGroup.cpp"
+
+namespace {
+
+bool isRibbonCellFree(QGridLayout* layout, int row, int column, int rowSpan)
+{
+  for (int i = 0; i < rowSpan; ++i) {
+    if (layout->itemAtPosition(row + i, column))
+      return false;
+  }
+  return true;
+}
+
+void findRibbonButtonPosition(QGridLayout* layout, bool largeButton, int& row, int& column, int& rowSpan)
+{
+  row = 0;
+  column = 0;
+  rowSpan = largeButton ? 3 : 1;
+
+  if (largeButton) {
+    while (!isRibbonCellFree(layout, 0, column, rowSpan))
+      ++column;
+    return;
+  }
+
+  while (true) {
+    for (int i = 0; i < 3; ++i) {
+      if (isRibbonCellFree(layout, i, column, 1)) {
+        row = i;
+        return;
+      }
+    }
+    ++column;
+  }
+}
+
+}
+
 PICRibbonButtonGroup::PICRibbonButtonGroup(QWidget *parent)
   : QWidget(parent)
   , ui(new Ui::PICRibbonButtonGroup)
@@ -40,16 +77,40 @@ int PICRibbonButtonGroup::buttonCount() const
 void PICRibbonButtonGroup::addButton(QToolButton *button)
 {
   button->setParent(this);
-  button->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-  button->setMinimumSize(24, 24);
   button->setAutoRaise(true);
-  button->setIconSize(QSize(20,20));
-  button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-  int btnCount = buttonCount();
 
-  int xPos = btnCount % 3;
-  int yPos = btnCount / 3;
-  ui->gridLayout_btn->addWidget(button, xPos, yPos);
+  QString ribbonButtonSize = button->property("RibbonButtonSize").toString();
+  bool largeButton = ribbonButtonSize == QString::fromLatin1("large")
+      || ribbonButtonSize == QString::fromLatin1("dropdown");
+
+  if (ribbonButtonSize == QString::fromLatin1("large")) {
+    button->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    button->setMinimumSize(58, 64);
+    button->setIconSize(QSize(28,28));
+    button->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    button->setStyleSheet(QString());
+  }
+  else if (ribbonButtonSize == QString::fromLatin1("dropdown")) {
+    button->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    button->setMinimumSize(58, 64);
+    button->setIconSize(QSize(28,28));
+    button->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    button->setPopupMode(QToolButton::InstantPopup);
+    button->setStyleSheet(QString());
+  }
+  else {
+    button->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    button->setMinimumSize(92, 24);
+    button->setIconSize(QSize(18,18));
+    button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    button->setStyleSheet(QString::fromLatin1("QToolButton { text-align: left; }"));
+  }
+
+  int xPos = 0;
+  int yPos = 0;
+  int rowSpan = 1;
+  findRibbonButtonPosition(ui->gridLayout_btn, largeButton, xPos, yPos, rowSpan);
+  ui->gridLayout_btn->addWidget(button, xPos, yPos, rowSpan, 1, Qt::AlignLeft | Qt::AlignTop);
 }
 
 void PICRibbonButtonGroup::removeButton(QToolButton *button)

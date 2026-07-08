@@ -8,6 +8,7 @@
 #include <QPainter>
 #include "picgui_ribbon/moc_PICRibbon.cpp"
 #include <iostream>
+#include <QMenu>
 #include"darWer.h"
 #define DEBUGINNG 0
 #ifndef WIGET_INTERVAL
@@ -258,7 +259,19 @@ PICRibbonTabContent *Ribbon::get_tab_by_name(QString &name)
 void Ribbon::addAction(const QString &tabName, const QString &groupName, QAction *action)
 {
 	QToolButton *b = new QToolButton;
-	b->setDefaultAction(action);
+	if (action->menu()) {
+		b->setText(action->text());
+		b->setIcon(action->icon());
+		b->setToolTip(action->toolTip());
+		b->setStatusTip(action->statusTip());
+		b->setMenu(action->menu());
+		b->setPopupMode(QToolButton::InstantPopup);
+		b->setProperty("RibbonButtonSize", action->property("RibbonButtonSize"));
+	}
+	else {
+		b->setDefaultAction(action);
+		b->setProperty("RibbonButtonSize", action->property("RibbonButtonSize"));
+	}
 	this->addButton(tabName, groupName, b);
 }
 /**

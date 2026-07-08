@@ -27,6 +27,7 @@
 # include <QAction>
 # include <QToolBar>
 # include <QToolButton>
+# include <QMenu>
 #endif
 
 #include "ToolBarManager.h"
@@ -40,10 +41,140 @@
 #include "MainWindowDef.h"
 #include "TabWidgetInterface.hpp"
 #include <QToolButton>
+#include <QMenu>
 #include "Command.h"
 #include "Action.h"
 
 using namespace Gui;
+#ifdef _PICGUI_
+namespace {
+
+bool isLargeRibbonCommand(const std::string& groupCommand, const std::string& command, bool firstCommandInGroup)
+{
+	if (command == "Std_New" || command == "Std_Open" || command == "Std_Save")
+		return true;
+	if (command == "Std_Cut" || command == "Std_Copy" || command == "Std_Paste")
+		return true;
+	if (command == "Std_Run_M3d" || command == "Std_Paralle_Run")
+		return true;
+	if (command == "Std_Data_Visualization_Auto_Max" || command == "gui_plot_data_export")
+		return true;
+	if (command == "Std_Example" || command == "Std_Open_User_book" || command == "Std_About")
+		return true;
+	if (groupCommand == "Navigation" && command == "Web_OpenWebsite")
+		return true;
+	return firstCommandInGroup;
+}
+
+bool isOptimizeCommand(const std::string& command)
+{
+	return command == "Std_Smart_Calc"
+		|| command == "Std_Smart_Contrl"
+		|| command == "Std_Genetic_Algorithm"
+		|| command == "Std_Multiple_TargetGenetic_Algorithm"
+		|| command == "Std_Multiple_TargetGenetic_Algorithm_G";
+}
+
+void setRibbonButtonSize(QAction* action, const std::string& groupCommand, const std::string& command, bool firstCommandInGroup)
+{
+	if (!action)
+		return;
+	action->setProperty("RibbonButtonSize", isLargeRibbonCommand(groupCommand, command, firstCommandInGroup) ? QString::fromLatin1("large") : QString::fromLatin1("small"));
+}
+
+void resolveRibbonLocation(const std::string& groupCommand, QString& tabName, QString& groupName)
+{
+	groupName = QString::fromLocal8Bit(groupCommand.c_str());
+	tabName = QString::fromLocal8Bit("其他");
+	if (groupCommand == "about"){
+		tabName = QString::fromLocal8Bit("开始");
+		groupName = QString::fromLocal8Bit("帮助");
+	}else if (groupCommand == "File")
+	{
+		tabName = QString::fromLocal8Bit("开始");
+		groupName = QString::fromLocal8Bit("文件");
+	}else if (groupCommand == "edit"){
+		tabName = QString::fromLocal8Bit("开始");
+		groupName = QString::fromLocal8Bit("编辑");
+	}else if (groupCommand == "run"){
+		tabName = QString::fromLocal8Bit("开始");
+		groupName = QString::fromLocal8Bit("运行");
+	}else if (groupCommand == "optimize"){
+		tabName = QString::fromLocal8Bit("开始");
+		groupName = QString::fromLocal8Bit("优化");
+	}
+	else if (groupCommand == "工程设置"){
+		tabName = QString::fromLocal8Bit("开始");
+	}else if (groupCommand == "点线面"
+		|| (groupCommand == "常用体")
+		|| (groupCommand == "特殊体") || (groupCommand == "复杂体")
+		|| (groupCommand == "约束工具") || (groupCommand == "工具")
+		|| (groupCommand == "视图")){
+		tabName = QString::fromLocal8Bit("建模");
+	}
+	else if (groupCommand == "边界设置" || groupCommand == "发射设置"
+		|| groupCommand == "观测设置" || groupCommand == "其他设置"
+		|| groupCommand == "定时器设置"){
+		tabName = QString::fromLocal8Bit("物理设置");
+	}else if (groupCommand == "DataVisualization") {
+		tabName = QString::fromLocal8Bit("开始");
+		groupName = QString::fromLocal8Bit("后处理");
+	}
+}
+
+const int MaxVisibleSmallRibbonButtons = 5;
+
+QAction* createRibbonMenuAction(const QString& text, QMenu* menu, const QIcon& icon, QWidget* parent)
+{
+	if (!menu || menu->actions().isEmpty())
+		return 0;
+
+	QAction* menuAction = new QAction(parent);
+	menuAction->setText(text);
+	menuAction->setToolTip(text);
+	menuAction->setStatusTip(text);
+	if (!icon.isNull())
+		menuAction->setIcon(icon);
+	menuAction->setMenu(menu);
+	menuAction->setProperty("RibbonButtonSize", QString::fromLatin1("dropdown"));
+	return menuAction;
+}
+QAction* createOptimizeMenuAction(CommandManager& cmdManager, const QList<ToolBarItem*>& cmds, QWidget* parent)
+{
+	QMenu* optimizeMenu = new QMenu(QString::fromLocal8Bit("优化"), parent);
+	optimizeMenu->setObjectName(QString::fromLatin1("RibbonOptimizeMenu"));
+
+	QAction* firstAction = 0;
+	for(auto cmdItem = cmds.begin();cmdItem != cmds.end();cmdItem++)
+	{
+		const std::string command = (*cmdItem)->command();
+		if (!isOptimizeCommand(command))
+			continue;
+
+		auto cmd = cmdManager.getCommandByName(command.c_str());
+		if (!cmd)
+			continue;
+
+		auto action = cmdManager.creatAction(cmd);
+		QAction* qAction = action->getQAction();
+		if (!qAction)
+			continue;
+
+		if (!firstAction)
+			firstAction = qAction;
+		optimizeMenu->addAction(qAction);
+	}
+
+	if (optimizeMenu->actions().isEmpty()) {
+		delete optimizeMenu;
+		return 0;
+	}
+
+	return createRibbonMenuAction(QString::fromLocal8Bit("优化"), optimizeMenu, firstAction ? firstAction->icon() : QIcon(), parent);
+}
+
+}
+#endif
 
 ToolBarItem::ToolBarItem()
 {
@@ -212,51 +343,68 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 	auto groupItems = toolBarItems->getItems();
 	for(auto group = groupItems.begin();group!= groupItems.end();group++)
 	{
+		const std::string groupCommand = (*group)->command();
 		auto cmds = (*group)->getItems();
+		QString groupName;
+		QString tabName;
+		resolveRibbonLocation(groupCommand, tabName, groupName);
+
+		if (groupCommand == "optimize") {
+			QAction* optimizeAction = createOptimizeMenuAction(cmdManager, cmds, tabWidget);
+			if (optimizeAction)
+				tabWidget->addAction(tabName, groupName, optimizeAction);
+			continue;
+		}
+
+		bool firstCommandInGroup = true;
+		QList<QAction*> largeActions;
+		QList<QAction*> smallActions;
+
 		for(auto cmdItem = cmds.begin();cmdItem != cmds.end();cmdItem++)
 		{
-			auto cmd = cmdManager.getCommandByName((*cmdItem)->command().c_str());
+			const std::string command = (*cmdItem)->command();
+			auto cmd = cmdManager.getCommandByName(command.c_str());
 			if (!cmd)
 				continue;
 			auto action = cmdManager.creatAction(cmd);
 			auto qAction = action->getQAction();
-			QString groupName = QString::fromLocal8Bit((*group)->command().c_str());
-			QString tabName = QString::fromLocal8Bit("其他");
-			if ((*group)->command() == "about"){
-				tabName = QString::fromLocal8Bit("开始");
-				groupName = QString::fromLocal8Bit("帮助");
-			}else if ((*group)->command() == "File")
-			{
-				tabName = QString::fromLocal8Bit("开始");
-				groupName = QString::fromLocal8Bit("文件");
-			}else if ((*group)->command() == "edit"){
-				tabName = QString::fromLocal8Bit("开始");
-				groupName = QString::fromLocal8Bit("编辑");
-			}else if ((*group)->command() == "run"){
-				tabName = QString::fromLocal8Bit("开始");
-				groupName = QString::fromLocal8Bit("运行");
-			}
-			else if ((*group)->command() == "工程设置"){
-				tabName = QString::fromLocal8Bit("开始");
-			}else if ((*group)->command() == "titleBar"){
+			setRibbonButtonSize(qAction, groupCommand, command, firstCommandInGroup);
+			firstCommandInGroup = false;
+			if (groupCommand == "titleBar"){
 				mainwindow->mainWindowDef->addTitleShortcutAction(qAction);
 				continue;
-			}else if ((*group)->command() == "点线面"
-				|| ((*group)->command() == "常用体")
-				|| ((*group)->command() == "特殊体") || ((*group)->command() == "复杂体")
-				|| ((*group)->command() == "约束工具") || ((*group)->command() == "工具")
-				|| ((*group)->command() == "视图")){
-				tabName = QString::fromLocal8Bit("建模");
 			}
-			else if ((*group)->command() == "边界设置" || (*group)->command() == "发射设置"
-				|| (*group)->command() == "观测设置" || (*group)->command() == "其他设置"
-				|| (*group)->command() == "定时器设置"){
-				tabName = QString::fromLocal8Bit("物理设置");
-            }else if ((*group)->command() == "DataVisualization") {
-				tabName = QString::fromLocal8Bit("开始");
-				groupName = QString::fromLocal8Bit("后处理");
-            }
-			tabWidget->addAction(tabName,groupName, qAction);	
+
+			if (qAction->property("RibbonButtonSize").toString() == QString::fromLatin1("large"))
+				largeActions.append(qAction);
+			else
+				smallActions.append(qAction);
+		}
+
+		for (auto action = largeActions.begin(); action != largeActions.end(); ++action)
+			tabWidget->addAction(tabName, groupName, *action);
+
+		int visibleSmallButtonCount = smallActions.count();
+		if (smallActions.count() > MaxVisibleSmallRibbonButtons + 1)
+			visibleSmallButtonCount = MaxVisibleSmallRibbonButtons;
+
+		for (int i = 0; i < visibleSmallButtonCount; ++i)
+			tabWidget->addAction(tabName, groupName, smallActions.at(i));
+
+		if (smallActions.count() > visibleSmallButtonCount) {
+			QMenu* overflowMenu = new QMenu(QString::fromLocal8Bit("更多"), tabWidget);
+			overflowMenu->setObjectName(QString::fromLatin1("RibbonOverflowMenu"));
+			QIcon overflowIcon;
+			for (int i = visibleSmallButtonCount; i < smallActions.count(); ++i) {
+				if (overflowIcon.isNull())
+					overflowIcon = smallActions.at(i)->icon();
+				overflowMenu->addAction(smallActions.at(i));
+			}
+			QAction* overflowAction = createRibbonMenuAction(QString::fromLocal8Bit("更多"), overflowMenu, overflowIcon, tabWidget);
+			if (overflowAction)
+				tabWidget->addAction(tabName, groupName, overflowAction);
+			else
+				delete overflowMenu;
 		}
 	}
 	tabWidget->setTabOlder(QString::fromLocal8Bit("开始"),0);
