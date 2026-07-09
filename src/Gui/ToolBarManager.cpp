@@ -385,7 +385,7 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
 			tabWidget->addAction(tabName, groupName, *action);
 
 		int visibleSmallButtonCount = smallActions.count();
-		if (smallActions.count() > MaxVisibleSmallRibbonButtons + 1)
+		if (smallActions.count() > MaxVisibleSmallRibbonButtons + 2)
 			visibleSmallButtonCount = MaxVisibleSmallRibbonButtons;
 
 		for (int i = 0; i < visibleSmallButtonCount; ++i)

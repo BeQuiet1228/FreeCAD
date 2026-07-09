@@ -2,6 +2,15 @@
 #include"darWer.h"
 #include<QBoxLayout>
 #include"qstring.h"
+namespace {
+
+QAction* ribbonActionObject(QToolButton* button)
+{
+	QObject* object = button->property("RibbonActionObject").value<QObject*>();
+	return qobject_cast<QAction*>(object);
+}
+
+}
 darWer::darWer(QWidget* parent):/*QWidget(parent)*/QFrame(parent)
 {
 	initUI();
@@ -69,7 +78,11 @@ QList<QAction*> darWer::get_action_all()
 	QList<QAction*> list;
 	for (int i = 0; i < list_b.count(); i++)
 	{
-		list.append(list_b.at(i)->actions());
+		QAction* ribbonAction = ribbonActionObject(list_b.at(i));
+		if (ribbonAction)
+			list.append(ribbonAction);
+		else
+			list.append(list_b.at(i)->actions());
 	}
 	return list;
 }

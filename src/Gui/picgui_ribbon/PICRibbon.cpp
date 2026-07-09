@@ -24,6 +24,73 @@
 #define TIME_OUT (200)
 #endif
 
+namespace {
+
+QToolButton* createRibbonToolButtonFromAction(QAction* action)
+{
+	QToolButton* button = new QToolButton;
+	if (!action)
+		return button;
+
+	if (action->menu()) {
+		button->setText(action->text());
+		button->setIcon(action->icon());
+		button->setToolTip(action->toolTip());
+		button->setStatusTip(action->statusTip());
+		button->setMenu(action->menu());
+		button->setPopupMode(QToolButton::InstantPopup);
+	}
+	else {
+		button->setDefaultAction(action);
+	}
+
+	button->setProperty("RibbonButtonSize", action->property("RibbonButtonSize"));
+	button->setProperty("RibbonActionObject", QVariant::fromValue(static_cast<QObject*>(action)));
+	return button;
+}
+
+QIcon firstActionIcon(const std::list<QAction*>& actions)
+{
+	for (auto action = actions.begin(); action != actions.end(); ++action) {
+		if (*action && !(*action)->icon().isNull())
+			return (*action)->icon();
+	}
+	return QIcon(QString::fromUtf8(":/drawer/icons/shousuo.svg"));
+}
+
+void addRibbonActionsToMenu(QMenu* menu, const std::list<QAction*>& actions)
+{
+	if (!menu)
+		return;
+
+	for (auto action = actions.begin(); action != actions.end(); ++action) {
+		if (!*action)
+			continue;
+
+		if ((*action)->menu()) {
+			menu->addActions((*action)->menu()->actions());
+		}
+		else {
+			menu->addAction(*action);
+		}
+	}
+}
+
+QToolButton* createCollapsedGroupButton(const QString& groupName, const std::list<QAction*>& actions)
+{
+	QToolButton* button = new QToolButton;
+	button->setText(groupName);
+	button->setIcon(firstActionIcon(actions));
+	button->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+	button->setMenu(new QMenu(button));
+	addRibbonActionsToMenu(button->menu(), actions);
+	button->setPopupMode(QToolButton::InstantPopup);
+	button->setProperty("RibbonButtonSize", QString::fromLatin1("dropdown"));
+	return button;
+}
+
+}
+
 Ribbon::Ribbon(QWidget *parent)
   : QTabWidget(parent)
 {
@@ -258,20 +325,7 @@ PICRibbonTabContent *Ribbon::get_tab_by_name(QString &name)
 */
 void Ribbon::addAction(const QString &tabName, const QString &groupName, QAction *action)
 {
-	QToolButton *b = new QToolButton;
-	if (action->menu()) {
-		b->setText(action->text());
-		b->setIcon(action->icon());
-		b->setToolTip(action->toolTip());
-		b->setStatusTip(action->statusTip());
-		b->setMenu(action->menu());
-		b->setPopupMode(QToolButton::InstantPopup);
-		b->setProperty("RibbonButtonSize", action->property("RibbonButtonSize"));
-	}
-	else {
-		b->setDefaultAction(action);
-		b->setProperty("RibbonButtonSize", action->property("RibbonButtonSize"));
-	}
+	QToolButton *b = createRibbonToolButtonFromAction(action);
 	this->addButton(tabName, groupName, b);
 }
 /**
@@ -518,7 +572,15 @@ void Ribbon::buttomclicked()
 {
 	//HidemyDar();
 	hidebtn();
-	QToolButton* qtoolbutton = static_cast<QToolButton*>(QObject::sender());
+	QObject* senderObject = QObject::sender();
+	QToolButton* qtoolbutton = dynamic_cast<QToolButton*>(senderObject);
+	if (!qtoolbutton) {
+		QMenu* menu = dynamic_cast<QMenu*>(senderObject);
+		if (menu)
+			qtoolbutton = dynamic_cast<QToolButton*>(menu->parent());
+	}
+	if (!qtoolbutton)
+		return;
 	for(auto index=qToolButtons.begin();index!=qToolButtons.end();index++)
 		for (auto subIndex = index->second.begin(); subIndex != index->second.end(); subIndex++)
 		{
@@ -550,8 +612,6 @@ void Ribbon::showdrawerGroup(QString GroupName,QToolButton* buttom)
 		}
 		else
 		{
-			QIcon icon(QString::fromUtf8(":/drawer/icons/zhankai.svg"));
-			buttom->setIcon(icon);
 			//newGroup->setWindowFlags(Qt::FramelessWindowHint);
 			//QPalette pal = newGroup->palette();
 			//pal.setColor(QPalette::Background, QColor(189,193,190,250));
@@ -566,32 +626,16 @@ void Ribbon::showdrawerGroup(QString GroupName,QToolButton* buttom)
 					return;
 				}
 				QWidget* mainWiget = reinterpret_cast<QWidget*>(MaindefStie);
-				QPoint widgetPos = mainWiget->mapFromGlobal(mapToGlobal(group->pos()));
-				QSize groupSize = group->size();
-				QRect groupRect;
-				groupRect.setLeft(widgetPos.x());
-				groupRect.setTop(widgetPos.y());
-				groupRect.setWidth(groupSize.width());
-				groupRect.setHeight(groupSize.height());
-				if (groupRect.center().x()+newGroup->size().width()>mainWiget->width())
-				{
-					QPoint centerPos;
-					centerPos.setY(groupRect.center().y()+buttom->size().height()*2);
-					//int distance = mainWiget->width() - (groupRect.center().x() + newGroup->size().width()) - WIGET_INTERVAL;
-					//centerPos.setX(groupRect.center().x()+distance);
-					centerPos.setX(mainWiget->width()-newGroup->width());
-					newGroup->move(centerPos);
-				}
-				else
-				{
-					QPoint groupCenterPos = groupRect.center();
-					QPoint centerPos;
-					centerPos.setX(groupRect.center().x());
-					//centerPos.setY(groupRect.center().y() + newGroup->size().height() / 2);
-					centerPos.setY(groupRect.center().y()+buttom->size().height()*2);
-					newGroup->move(centerPos);
-				}
-				QSize widgetSize = mainWiget->size();
+				QPoint popupPos = mainWiget->mapFromGlobal(buttom->mapToGlobal(QPoint(0, buttom->height())));
+				if (popupPos.x() + newGroup->width() > mainWiget->width())
+					popupPos.setX(mainWiget->width() - newGroup->width());
+				if (popupPos.x() < 0)
+					popupPos.setX(0);
+				if (popupPos.y() + newGroup->height() > mainWiget->height())
+					popupPos.setY(mainWiget->height() - newGroup->height());
+				if (popupPos.y() < 0)
+					popupPos.setY(0);
+				newGroup->move(popupPos);
 
 			}
 			newGroup->show();
@@ -702,8 +746,7 @@ void Ribbon::slotTimerOut()
 						std::list<QAction*> mActions = mDarWer->get_action_all().toStdList();
 						for (auto itAction=mActions.begin();itAction!=mActions.end();itAction++)
 						{
-							QToolButton* b = new QToolButton();
-							b->setDefaultAction(*itAction);
+							QToolButton* b = createRibbonToolButtonFromAction(*itAction);
 							(*iterItem)->addButton(b);
 						}
 						(*iterItem)->setMaximumWidth(mDarWer->getSize().width());
@@ -728,8 +771,7 @@ void Ribbon::slotTimerOut()
 					darWer* newGroup = new darWer(parent);
 					for (auto itAction = mActions.begin(); itAction != mActions.end(); itAction++)
 					{
-						QToolButton* b = new QToolButton;
-						b->setDefaultAction(*itAction);
+						QToolButton* b = createRibbonToolButtonFromAction(*itAction);
 						newGroup->addButton(b);
 					}
 					//newGroup->resize(groups[groupIndex]->size());
@@ -742,15 +784,10 @@ void Ribbon::slotTimerOut()
 					groups[groupIndex]->removeButtons();
 					//插入抽屉按钮
 					{
-						QToolButton* darwerButton = new QToolButton();
-						QIcon icon(QString::fromUtf8(":/drawer/icons/shousuo.svg"));
-						QSize sizeicon(32,32);
-						darwerButton->setIcon(icon);
-						darwerButton->setMaximumSize(sizeicon);
+						QToolButton* darwerButton = createCollapsedGroupButton(groups[groupIndex]->title(), mActions);
 						groups[groupIndex]->addButton(darwerButton);
 						groups[groupIndex]->resize(DARWER_SIZE,101);
 						qToolButtons[tabName][groups[groupIndex]->title()] = darwerButton;
-						QObject::connect(darwerButton,SIGNAL(clicked()),this,SLOT(buttomclicked()));
 					}
 					if (parentSize.width() > mtabItemSize)
 						break;
@@ -797,7 +834,9 @@ void Ribbon::hidebtn(){
 	for (auto index = qToolButtons.begin(); index != qToolButtons.end(); index++)
 		for (auto subIndex = index->second.begin(); subIndex != index->second.end(); subIndex++)
 		{
-			QIcon icon(QString::fromUtf8(":/drawer/icons/shousuo.svg"));
-			subIndex->second->setIcon(icon);
+			if (subIndex->second->text().isEmpty()) {
+				QIcon icon(QString::fromUtf8(":/drawer/icons/shousuo.svg"));
+				subIndex->second->setIcon(icon);
+			}
 		}
 }
